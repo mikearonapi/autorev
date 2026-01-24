@@ -166,7 +166,7 @@
    RESPONSIVE ADJUSTMENTS
    ========================================================================== */
 
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .modalContent {
     padding: var(--space-4, 16px);
   }

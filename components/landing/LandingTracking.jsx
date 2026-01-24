@@ -11,7 +11,7 @@ export default function LandingTracking({ pageId }) {
   useEffect(() => {
     try {
       trackPageView(window.location.pathname, document.title);
-      trackEvent('landing_page_view', { landing_page: pageId });
+      trackEvent('Landing Page Viewed', { landing_page: pageId });
     } catch (err) {
       // Analytics should never break the page
       console.warn('[LandingTracking] Failed to track landing page view:', err);

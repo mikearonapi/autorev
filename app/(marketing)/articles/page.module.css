@@ -2,7 +2,8 @@
 
 .page {
   min-height: 100vh;
-  background: var(--bg-primary, #0a0a0f);
+  /* Transparent to show body gradient */
+  background: transparent;
   /* Account for fixed header + banner */
   padding-top: var(--content-offset-mobile, 88px);
 }
@@ -54,7 +55,7 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  background: linear-gradient(135deg, #e94560, #ff6b6b);
+  background: linear-gradient(135deg, var(--color-error, #e94560), var(--color-error, #ff6b6b));
   color: var(--brand-text-primary);
   font-size: 0.75rem;
   font-weight: 700;
@@ -78,7 +79,7 @@
 }
 
 .accent {
-  background: linear-gradient(135deg, #e94560, #ff6b6b);
+  background: linear-gradient(135deg, var(--color-error, #e94560), var(--color-error, #ff6b6b));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -97,9 +98,9 @@
   position: sticky;
   top: calc(var(--header-height, 56px) + var(--beta-banner-height, 44px));
   z-index: 100;
-  background: #0a0a0f;
+  background: var(--color-bg-base, #0a0a0f);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 -20px 0 #0a0a0f, 0 2px 8px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 -20px 0 var(--color-bg-base, #0a0a0f), 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 @media (min-width: 768px) {
@@ -367,7 +368,7 @@
 }
 
 /* Mobile Responsive */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .hero {
     padding: 4rem 1.5rem 2.5rem;
   }

@@ -112,7 +112,7 @@ export default function CarActionMenu({
   const canCompare = !isCompareFull || isComparing;
 
   // Handle adding to collection (ownership)
-  // Uses minimum loading duration to prevent flickering on fast operations
+  // Optimistic UI pattern: immediately show success, sync in background
   // NOTE: useCallback must be called unconditionally (before any early returns)
   const handleAddToCollection = useCallback(async (e) => {
     e?.stopPropagation?.();
@@ -120,39 +120,37 @@ export default function CarActionMenu({
     
     if (!car || isOwned || isAdding) return;
     
-    const startTime = Date.now();
+    // Briefly show adding state for tactile feedback
     setIsAdding(true);
     
+    const yearMatch = car.years?.match(/(\d{4})/);
+    const year = yearMatch ? parseInt(yearMatch[1]) : new Date().getFullYear();
+    const { make, model } = extractMakeModel(car);
+    
+    // Optimistic: immediately notify parent of success
+    onAction?.('added-to-collection', car);
+    
+    // Auto-remove from favorites when promoted to owned (optimistic)
+    if (isFav) {
+      removeFavorite(car.slug);
+    }
+    
+    // Clear adding state quickly for responsive feel
+    setTimeout(() => setIsAdding(false), 150);
+    
+    // Save in background
     try {
-      const yearMatch = car.years?.match(/(\d{4})/);
-      const year = yearMatch ? parseInt(yearMatch[1]) : new Date().getFullYear();
-      const { make, model } = extractMakeModel(car);
-
       await addVehicle({
         year,
         make,
         model,
         matchedCarSlug: car.slug,
       });
-
-      // Auto-remove from favorites when promoted to owned
-      if (isFav) {
-        removeFavorite(car.slug);
-      }
-
-      onAction?.('added-to-collection', car);
     } catch (err) {
       console.error('[CarActionMenu] Error adding to collection:', err);
-    } finally {
-      // Ensure minimum loading duration to prevent flickering
-      const elapsed = Date.now() - startTime;
-      const remaining = MIN_LOADING_DURATION_MS - elapsed;
-      
-      if (remaining > 0) {
-        setTimeout(() => setIsAdding(false), remaining);
-      } else {
-        setIsAdding(false);
-      }
+      // Revert: notify parent of failure
+      onAction?.('add-to-collection-failed', car);
+      // Note: Provider will handle data revert via React Query
     }
   }, [car, isOwned, isAdding, addVehicle, isFav, removeFavorite, onAction]);
 
@@ -479,7 +477,7 @@ export function QuickActionButton({ car, action, size = 'default', showLabel = f
   const isComparing = car && isInCompare(car.slug);
 
   // NOTE: useCallback must be called unconditionally (before any early returns)
-  const handleClick = useCallback(async (e) => {
+  const handleCarActionClick = useCallback(async (e) => {
     e?.stopPropagation?.();
     e?.preventDefault?.();
 
@@ -538,7 +536,7 @@ export function QuickActionButton({ car, action, size = 'default', showLabel = f
   return (
     <button 
       className={`${sizeClass} ${isActive ? styles.quickBtnActive : ''}`}
-      onClick={handleClick}
+      onClick={handleCarActionClick}
       disabled={isLoading || (action === 'own' && isOwned)}
       data-theme={theme !== 'auto' ? theme : undefined}
     >

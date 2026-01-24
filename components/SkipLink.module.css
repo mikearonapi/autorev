@@ -1,0 +1,43 @@
+/**
+ * Skip Link Styles
+ * 
+ * Hidden by default, visible when focused via keyboard (Tab).
+ * High contrast for visibility, positioned at top of viewport.
+ */
+
+.skipLink {
+  /* Visually hidden by default */
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  
+  /* Styling when visible */
+  background: var(--color-accent, #00d4ff);
+  color: var(--color-text-inverse, #000);
+  padding: 12px 24px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  border-radius: 0 0 8px 8px;
+  z-index: 10000;
+  
+  /* Smooth transition */
+  transition: top 0.2s ease;
+}
+
+/* Show on focus (keyboard navigation) */
+.skipLink:focus {
+  top: 0;
+  outline: 2px solid var(--color-accent, #00d4ff);
+  outline-offset: 2px;
+}
+
+/* High contrast for accessibility */
+@media (prefers-contrast: high) {
+  .skipLink {
+    background: var(--color-bg-base, #000000);
+    color: var(--color-text-primary, #ffffff);
+    border: 2px solid var(--color-text-primary, #ffffff);
+  }
+}

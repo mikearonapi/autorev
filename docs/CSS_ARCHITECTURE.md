@@ -113,10 +113,31 @@ Page-specific `.module.css` files should only contain:
 | `--color-bg-elevated` | `#1b263b` | Cards, modals |
 | `--color-text-primary` | `#ffffff` | Main text |
 | `--color-text-secondary` | `#94a3b8` | Secondary text |
-| `--color-accent-lime` | `#d4ff00` | Primary CTAs |
-| `--color-accent-teal` | `#10b981` | Improvements |
-| `--color-accent-blue` | `#3b82f6` | Baseline values |
+| `--color-text-tertiary` | `#64748b` | Tertiary/muted text |
+| `--color-accent-lime` | `#d4ff00` | Primary CTAs, highlights |
+| `--color-accent-lime-dark` | `#bfe600` | Lime hover states |
+| `--color-accent-teal` | `#10b981` | Success, improvements, positive |
+| `--color-accent-blue` | `#3b82f6` | Baseline values, info, links |
 | `--color-accent-gold` | `#d4a84b` | Labels, secondary buttons |
+| `--color-warning` | `#f59e0b` | Warnings, attention needed |
+| `--color-error` | `#ef4444` | Errors, destructive actions |
+| `--color-error-dark` | `#dc2626` | Error hover states |
+
+**Usage Pattern (always include fallback):**
+
+```css
+/* ✅ CORRECT: Variable with fallback */
+.button {
+  background: var(--color-accent-lime, #d4ff00);
+  color: var(--color-text-primary, #ffffff);
+}
+
+/* ❌ WRONG: Hardcoded hex */
+.button {
+  background: #d4ff00;
+  color: #ffffff;
+}
+```
 
 ### Spacing (4px Base)
 

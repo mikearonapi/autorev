@@ -2,6 +2,7 @@
    InstallPathSelector Component Styles
    
    Choose your own adventure buttons for DIY vs Service Center path.
+   Premium dark theme matching Insights page tiles.
    ========================================================================== */
 
 .container {
@@ -46,9 +47,12 @@
   gap: var(--space-4, 16px);
   padding: var(--space-5, 20px);
   
-  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
-  border: 2px solid transparent;
-  border-radius: var(--radius-xl, 16px);
+  /* Premium Dark Theme - matches Insights smartCard */
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  /* Premium inner highlight */
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
   
   text-align: left;
   cursor: pointer;
@@ -56,8 +60,9 @@
 }
 
 .pathButton:hover {
-  background: var(--color-bg-card-hover, rgba(255, 255, 255, 0.08));
-  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.08);
+  transform: translateY(-2px);
 }
 
 .pathButton:focus-visible {
@@ -65,15 +70,17 @@
   outline-offset: 2px;
 }
 
-/* Active State - Both use teal for selections */
+/* Active State */
 .diyButton.active,
 .serviceButton.active {
   background: rgba(16, 185, 129, 0.08);
-  border-color: var(--color-accent-teal, #10b981);
+  border-color: rgba(16, 185, 129, 0.3);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
 }
 
 .diyButton.active .buttonIcon,
 .serviceButton.active .buttonIcon {
+  background: rgba(16, 185, 129, 0.15);
   color: var(--color-accent-teal, #10b981);
 }
 
@@ -94,15 +101,17 @@
   width: 48px;
   height: 48px;
   
+  /* Dark Theme Icon Bg */
   background: rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-lg, 12px);
   
-  color: var(--color-text-secondary, #94a3b8);
+  color: var(--color-text-tertiary, #64748b);
   transition: color 0.2s ease, background-color 0.2s ease;
 }
 
 .pathButton:hover .buttonIcon {
   background: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 .buttonContent {
@@ -116,14 +125,16 @@
   font-family: var(--font-display, 'Oswald', sans-serif);
   font-size: var(--text-lg, 18px);
   font-weight: 600;
-  color: var(--color-text-primary, #fff);
+  /* Dark Theme Text */
+  color: var(--color-text-primary, #ffffff);
   line-height: 1.2;
 }
 
 .buttonDescription {
   font-family: var(--font-body, 'Inter', sans-serif);
   font-size: var(--text-sm, 14px);
-  color: var(--color-text-tertiary, #64748b);
+  /* Dark Theme Text */
+  color: var(--color-text-secondary, #94a3b8);
   line-height: 1.4;
 }
 
@@ -145,7 +156,7 @@
    RESPONSIVE ADJUSTMENTS
    ========================================================================== */
 
-@media (max-width: 639px) {
+@media (min-width: 640px) {
   .pathButton {
     padding: var(--space-4, 16px);
   }

@@ -3,8 +3,8 @@
    Matches garage/my-performance styling with progress bars
    
    Brand Colors:
-   - Teal (#10b981): Section headers, improved values, upgrade fills
-   - Blue (#3b82f6): Stock/baseline values, stock fills
+   - Teal (var(--color-accent-teal, #10b981)): Section headers, improved values, upgrade fills
+   - Blue (var(--color-accent-blue, #3b82f6)): Stock/baseline values, stock fills
    =========================================== */
 
 .calcPerformance {
@@ -191,7 +191,7 @@
    RESPONSIVE
    =========================================== */
 
-@media (max-width: 600px) {
+@media (min-width: 601px) {
   .section {
     padding: 16px;
     border-radius: 14px;

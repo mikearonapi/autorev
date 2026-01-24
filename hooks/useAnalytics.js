@@ -13,7 +13,7 @@
  * 
  * Usage:
  *   const { trackEvent, trackFeatureUsage, trackSearch, trackGoal } = useAnalytics();
- *   trackEvent('button_clicked', { buttonId: 'signup-cta' });
+ *   trackEvent('Button Clicked', { buttonId: 'signup-cta' });
  *   trackFeatureUsage('al_chat');
  *   trackSearch('nissan gtr', 'car_search', 15);
  *   trackGoal('signup_completed');
@@ -184,7 +184,7 @@ export function useAnalytics() {
       const firstTouch = getFirstTouch();
       
       // Track signup event
-      await trackEvent('signup_completed', { method: 'email' });
+      await trackEvent('Signup Completed', { method: 'email' });
       
       // Save attribution
       const attributionData = {
@@ -212,7 +212,7 @@ export function useAnalytics() {
    * Track onboarding step completion
    */
   const trackOnboardingStep = useCallback((step, stepName, data = {}) => {
-    trackEvent(`onboarding_step_${step}`, {
+    trackEvent(`Onboarding Step ${step}`, {
       step,
       stepName,
       ...data
@@ -223,7 +223,7 @@ export function useAnalytics() {
    * Track feature usage (stored separately for adoption analysis)
    */
   const trackFeature = useCallback((featureName, data = {}) => {
-    trackEvent(`feature_${featureName}`, data, { category: 'feature' });
+    trackEvent(`Feature ${featureName}`, data, { category: 'feature' });
   }, [trackEvent]);
   
   /**
@@ -255,7 +255,7 @@ export function useAnalytics() {
       }
       
       // Also track as regular event
-      trackEvent(`feature_used`, { featureKey, carContext }, { category: 'feature' });
+      trackEvent('Feature Used', { featureKey, carContext }, { category: 'feature' });
     } catch {
       // Silently fail
     }
@@ -390,7 +390,7 @@ export function useAnalytics() {
    * Track error for monitoring
    */
   const trackError = useCallback((errorType, errorMessage, context = {}) => {
-    trackEvent('error_occurred', {
+    trackEvent('Error Occurred', {
       errorType,
       errorMessage: errorMessage?.substring(0, 500),
       ...context
@@ -416,113 +416,119 @@ export function useAnalytics() {
 
 /**
  * Infer event category from event name
+ * Updated to work with Title Case event names
  */
 function inferCategory(eventName) {
-  if (eventName.includes('signup') || eventName.includes('onboarding')) return 'onboarding';
-  if (eventName.includes('subscription') || eventName.includes('checkout') || eventName.includes('upgrade')) return 'conversion';
-  if (eventName.includes('car_') || eventName.includes('garage') || eventName.includes('al_')) return 'feature';
-  if (eventName.includes('click') || eventName.includes('nav') || eventName.includes('search')) return 'navigation';
+  const lower = eventName.toLowerCase();
+  if (lower.includes('signup') || lower.includes('onboarding')) return 'onboarding';
+  if (lower.includes('subscription') || lower.includes('checkout') || lower.includes('upgrade')) return 'conversion';
+  if (lower.includes('car') || lower.includes('garage') || lower.includes('al ')) return 'feature';
+  if (lower.includes('click') || lower.includes('nav') || lower.includes('search')) return 'navigation';
   return 'engagement';
 }
 
 /**
  * Standard event names for consistency
+ * 
+ * NAMING CONVENTION: "Object + Past-Tense Verb" in Title Case
+ * Examples: "User Signed Up", "Car Viewed", "Build Shared"
+ * 
  * BUILD PIVOT: Events organized around the Build user journey
  */
 export const ANALYTICS_EVENTS = {
   // Onboarding
-  SIGNUP_STARTED: 'signup_started',
-  SIGNUP_COMPLETED: 'signup_completed',
-  ONBOARDING_STARTED: 'onboarding_started',
-  ONBOARDING_COMPLETED: 'onboarding_completed',
-  ONBOARDING_SKIPPED: 'onboarding_skipped',
+  SIGNUP_STARTED: 'Signup Started',
+  SIGNUP_COMPLETED: 'Signup Completed',
+  ONBOARDING_STARTED: 'Onboarding Started',
+  ONBOARDING_COMPLETED: 'Onboarding Completed',
+  ONBOARDING_SKIPPED: 'Onboarding Skipped',
   
   // BUILD FUNNEL - Core events for the Build pivot
   // Step 1: Discovery
-  TUNING_SHOP_VIEWED: 'tuning_shop_viewed',
-  BUILD_CAR_SELECTED: 'build_car_selected',
-  BUILD_CONFIGURATION_STARTED: 'build_configuration_started',
+  TUNING_SHOP_VIEWED: 'Tuning Shop Viewed',
+  BUILD_CAR_SELECTED: 'Build Car Selected',
+  BUILD_CONFIGURATION_STARTED: 'Build Configuration Started',
   
   // Step 2: Configuration
-  MOD_CATEGORY_VIEWED: 'mod_category_viewed',
-  MOD_ADDED_TO_BUILD: 'mod_added_to_build',
-  MOD_REMOVED_FROM_BUILD: 'mod_removed_from_build',
-  PERFORMANCE_PREVIEW_VIEWED: 'performance_preview_viewed',
-  COST_SUMMARY_VIEWED: 'cost_summary_viewed',
+  MOD_CATEGORY_VIEWED: 'Mod Category Viewed',
+  MOD_ADDED_TO_BUILD: 'Mod Added To Build',
+  MOD_REMOVED_FROM_BUILD: 'Mod Removed From Build',
+  PERFORMANCE_PREVIEW_VIEWED: 'Performance Preview Viewed',
+  COST_SUMMARY_VIEWED: 'Cost Summary Viewed',
   
   // Step 3: Project Management
-  BUILD_PROJECT_CREATED: 'build_project_created',
-  BUILD_PROJECT_SAVED: 'build_project_saved',
-  BUILD_PROJECT_UPDATED: 'build_project_updated',
-  BUILD_PROJECT_DELETED: 'build_project_deleted',
-  MOD_MARKED_INSTALLED: 'mod_marked_installed',
-  MOD_MARKED_PURCHASED: 'mod_marked_purchased',
+  BUILD_PROJECT_CREATED: 'Build Project Created',
+  BUILD_PROJECT_SAVED: 'Build Project Saved',
+  BUILD_PROJECT_UPDATED: 'Build Project Updated',
+  BUILD_PROJECT_DELETED: 'Build Project Deleted',
+  MOD_MARKED_INSTALLED: 'Mod Marked Installed',
+  MOD_MARKED_PURCHASED: 'Mod Marked Purchased',
   
   // Step 4: Community
-  BUILD_SHARED: 'build_shared',
-  BUILD_LIKED: 'build_liked',
-  BUILD_COMMENTED: 'build_commented',
-  COMMUNITY_BUILD_VIEWED: 'community_build_viewed',
-  BUILD_CLONED: 'build_cloned',
+  BUILD_SHARED: 'Build Shared',
+  BUILD_LIKED: 'Build Liked',
+  BUILD_COMMENTED: 'Build Commented',
+  COMMUNITY_BUILD_VIEWED: 'Community Build Viewed',
+  BUILD_CLONED: 'Build Cloned',
   
   // Parts Research
-  PARTS_SEARCH_PERFORMED: 'parts_search_performed',
-  PARTS_FILTER_APPLIED: 'parts_filter_applied',
-  PART_VIEWED: 'part_viewed',
-  PART_ADDED_TO_BUILD: 'part_added_to_build',
-  PART_PRICING_CLICKED: 'part_pricing_clicked',
+  PARTS_SEARCH_PERFORMED: 'Parts Search Performed',
+  PARTS_FILTER_APPLIED: 'Parts Filter Applied',
+  PART_VIEWED: 'Part Viewed',
+  PART_ADDED_TO_BUILD: 'Part Added To Build',
+  PART_PRICING_CLICKED: 'Part Pricing Clicked',
   
   // AI Assistant (Build-focused)
-  AL_CONVERSATION_STARTED: 'al_conversation_started',
-  AL_BUILD_QUESTION_ASKED: 'al_build_question_asked',
-  AL_PART_RECOMMENDATION: 'al_part_recommendation',
-  AL_COMPATIBILITY_CHECK: 'al_compatibility_check',
-  AL_RESPONSE_RATED: 'al_response_rated',
+  AL_CONVERSATION_STARTED: 'AL Conversation Started',
+  AL_BUILD_QUESTION_ASKED: 'AL Build Question Asked',
+  AL_PART_RECOMMENDATION: 'AL Part Recommendation Received',
+  AL_COMPATIBILITY_CHECK: 'AL Compatibility Checked',
+  AL_RESPONSE_RATED: 'AL Response Rated',
   
-  // Legacy events (kept for backwards compatibility)
-  CAR_SELECTED: 'car_selected',
-  CAR_VIEWED: 'car_viewed',
-  CAR_FAVORITED: 'car_favorited',
-  CAR_UNFAVORITED: 'car_unfavorited',
-  CAR_COMPARED: 'car_compared',
-  CAR_SHARED: 'car_shared',
-  GARAGE_ADDED: 'garage_added',
-  GARAGE_REMOVED: 'garage_removed',
-  AL_QUESTION_ASKED: 'al_question_asked',
-  BUILD_CREATED: 'build_created',
-  BUILD_SAVED: 'build_saved',
+  // Car Interactions
+  CAR_SELECTED: 'Car Selected',
+  CAR_VIEWED: 'Car Viewed',
+  CAR_FAVORITED: 'Car Favorited',
+  CAR_UNFAVORITED: 'Car Unfavorited',
+  CAR_COMPARED: 'Car Compared',
+  CAR_SHARED: 'Car Shared',
+  GARAGE_ADDED: 'Garage Vehicle Added',
+  GARAGE_REMOVED: 'Garage Vehicle Removed',
+  AL_QUESTION_ASKED: 'AL Question Asked',
+  BUILD_CREATED: 'Build Created',
+  BUILD_SAVED: 'Build Saved',
   
   // Conversion
-  PRICING_VIEWED: 'pricing_viewed',
-  CHECKOUT_STARTED: 'checkout_started',
-  CHECKOUT_COMPLETED: 'checkout_completed',
-  SUBSCRIPTION_CREATED: 'subscription_created',
-  UPGRADE_COMPLETED: 'upgrade_completed',
-  TRIAL_STARTED: 'trial_started',
+  PRICING_VIEWED: 'Pricing Viewed',
+  CHECKOUT_STARTED: 'Checkout Started',
+  CHECKOUT_COMPLETED: 'Checkout Completed',
+  SUBSCRIPTION_CREATED: 'Subscription Created',
+  UPGRADE_COMPLETED: 'Upgrade Completed',
+  TRIAL_STARTED: 'Trial Started',
   
   // Navigation
-  CTA_CLICKED: 'cta_clicked',
-  SEARCH_PERFORMED: 'search_performed',
-  SEARCH_RESULT_CLICKED: 'search_result_clicked',
-  FILTER_APPLIED: 'filter_applied',
-  NAVIGATION_CLICKED: 'navigation_clicked',
+  CTA_CLICKED: 'CTA Clicked',
+  SEARCH_PERFORMED: 'Search Performed',
+  SEARCH_RESULT_CLICKED: 'Search Result Clicked',
+  FILTER_APPLIED: 'Filter Applied',
+  NAVIGATION_CLICKED: 'Navigation Clicked',
   
   // Engagement
-  PAGE_SCROLLED: 'page_scrolled',
-  VIDEO_PLAYED: 'video_played',
-  VIDEO_COMPLETED: 'video_completed',
-  SHARE_CLICKED: 'share_clicked',
-  COPY_PERFORMED: 'copy_performed',
-  LINK_CLICKED: 'link_clicked',
+  PAGE_SCROLLED: 'Page Scrolled',
+  VIDEO_PLAYED: 'Video Played',
+  VIDEO_COMPLETED: 'Video Completed',
+  SHARE_CLICKED: 'Share Clicked',
+  COPY_PERFORMED: 'Copy Performed',
+  LINK_CLICKED: 'Link Clicked',
   
   // User actions
-  PROFILE_UPDATED: 'profile_updated',
-  SETTINGS_CHANGED: 'settings_changed',
-  NOTIFICATION_CLICKED: 'notification_clicked',
+  PROFILE_UPDATED: 'Profile Updated',
+  SETTINGS_CHANGED: 'Settings Changed',
+  NOTIFICATION_CLICKED: 'Notification Clicked',
   
   // Errors
-  ERROR_OCCURRED: 'error_occurred',
-  PAGE_NOT_FOUND: 'page_not_found'
+  ERROR_OCCURRED: 'Error Occurred',
+  PAGE_NOT_FOUND: 'Page Not Found'
 };
 
 /**
@@ -582,45 +588,47 @@ export const FEATURE_KEYS = {
 
 /**
  * Goal keys for conversion tracking
+ * 
+ * NAMING CONVENTION: "Object + Past-Tense Verb" in Title Case
  * BUILD PIVOT: Goals focused on Build funnel progression
  */
 export const GOAL_KEYS = {
   // Acquisition
-  SIGNUP: 'signup_completed',
-  ONBOARDING: 'onboarding_completed',
+  SIGNUP: 'Signup Completed',
+  ONBOARDING: 'Onboarding Completed',
   
   // BUILD FUNNEL ACTIVATION (Primary metrics)
-  FIRST_TUNING_SHOP_VISIT: 'first_tuning_shop_visit',
-  FIRST_CAR_SELECTED_FOR_BUILD: 'first_car_selected_for_build',
-  FIRST_MOD_ADDED: 'first_mod_added',
-  FIRST_PROJECT_SAVED: 'first_project_saved',
-  FIRST_BUILD_SHARED: 'first_build_shared',
+  FIRST_TUNING_SHOP_VISIT: 'First Tuning Shop Visited',
+  FIRST_CAR_SELECTED_FOR_BUILD: 'First Car Selected For Build',
+  FIRST_MOD_ADDED: 'First Mod Added',
+  FIRST_PROJECT_SAVED: 'First Project Saved',
+  FIRST_BUILD_SHARED: 'First Build Shared',
   
   // BUILD ENGAGEMENT
-  MULTIPLE_PROJECTS: 'multiple_projects_created',
-  BUILD_COMPLETED: 'build_marked_completed',
-  COMMUNITY_INTERACTION: 'community_build_interaction',
+  MULTIPLE_PROJECTS: 'Multiple Projects Created',
+  BUILD_COMPLETED: 'Build Marked Completed',
+  COMMUNITY_INTERACTION: 'Community Build Interaction',
   
   // Parts Engagement
-  FIRST_PART_SEARCH: 'first_part_search',
-  PART_PRICING_CLICKED: 'part_pricing_clicked',
+  FIRST_PART_SEARCH: 'First Part Searched',
+  PART_PRICING_CLICKED: 'Part Pricing Clicked',
   
   // AI Engagement (Build-focused)
-  FIRST_AL_BUILD_CHAT: 'first_al_build_chat',
-  AL_RECOMMENDATION_FOLLOWED: 'al_recommendation_followed',
+  FIRST_AL_BUILD_CHAT: 'First AL Build Chat',
+  AL_RECOMMENDATION_FOLLOWED: 'AL Recommendation Followed',
   
   // Revenue
-  SUBSCRIPTION: 'subscription_created',
-  UPGRADE: 'upgrade_completed',
+  SUBSCRIPTION: 'Subscription Created',
+  UPGRADE: 'Upgrade Completed',
   
-  // Legacy (kept for backwards compatibility)
-  FIRST_CAR_VIEW: 'first_car_view',
-  FIRST_FAVORITE: 'first_favorite',
-  FIRST_AL_CHAT: 'first_al_chat',
+  // Car Interactions
+  FIRST_CAR_VIEW: 'First Car Viewed',
+  FIRST_FAVORITE: 'First Favorite Added',
+  FIRST_AL_CHAT: 'First AL Chat',
   
   // Engagement
-  DEEP_ENGAGEMENT: 'deep_engagement',
-  RETURN_VISIT: 'return_visit'
+  DEEP_ENGAGEMENT: 'Deep Engagement Achieved',
+  RETURN_VISIT: 'Return Visit'
 };
 
 export default useAnalytics;

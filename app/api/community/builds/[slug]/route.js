@@ -16,6 +16,8 @@ import { NextResponse } from 'next/server';
 import { errors } from '@/lib/apiErrors';
 import { createClient } from '@supabase/supabase-js';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { calculateAllModificationGains } from '@/lib/performanceCalculator';
+import { getBearerToken, createAuthenticatedClient, createServerSupabaseClient } from '@/lib/supabaseServer';
 
 // Mark route as dynamic
 export const dynamic = 'force-dynamic';
@@ -37,6 +39,24 @@ async function handleGet(request, { params }) {
       { error: 'Slug is required' },
       { status: 400 }
     );
+  }
+
+  // Get user ID from auth if available (for current user's build detection)
+  let currentUserId = null;
+  try {
+    const bearerToken = getBearerToken(request);
+    const supabase = bearerToken 
+      ? createAuthenticatedClient(bearerToken) 
+      : await createServerSupabaseClient();
+    
+    if (supabase) {
+      const { data: { user } } = bearerToken
+        ? await supabase.auth.getUser(bearerToken)
+        : await supabase.auth.getUser();
+      currentUserId = user?.id;
+    }
+  } catch (e) {
+    // No auth, continue as anonymous
   }
 
   try {
@@ -64,16 +84,10 @@ async function handleGet(request, { params }) {
     const result = postData[0];
     const post = result.post;
     const buildData = result.build_data;
+    const vehicleData = result.vehicle_data; // Direct link to user_vehicles via user_vehicle_id
     
-    // DEBUG: Log what we receive from RPC
-    console.log('[Build API DEBUG] Raw RPC buildData metrics:', {
-      slug,
-      final_zero_to_sixty: buildData?.final_zero_to_sixty,
-      stock_zero_to_sixty: buildData?.stock_zero_to_sixty,
-      final_hp: buildData?.final_hp,
-      stock_hp: buildData?.stock_hp,
-      buildDataKeys: buildData ? Object.keys(buildData) : 'null',
-    });
+    // Check if this is the current user's own build
+    const isOwnBuild = currentUserId && post?.user_id === currentUserId;
 
     // Fetch car data for performance calculations if we have a car_slug
     let carData = null;
@@ -86,6 +100,7 @@ async function handleGet(request, { params }) {
           name,
           hp,
           torque,
+          engine,
           zero_to_sixty,
           braking_60_0,
           lateral_g,
@@ -112,6 +127,99 @@ async function handleGet(request, { params }) {
       if (!carError && car) {
         carData = car;
       }
+    }
+
+    // =========================================================================
+    // COMPUTED PERFORMANCE (SOURCE OF TRUTH)
+    //
+    // ARCHITECTURE: Use PRE-CALCULATED values from user_vehicles
+    // The garage calculates performance when mods are installed and stores
+    // total_hp_gain in user_vehicles. We just READ that value here.
+    // =========================================================================
+    let computedPerformance = null;
+    let buildStatus = null;
+    try {
+      if (carData) {
+        // Get mods from linked vehicle
+        const installedMods = vehicleData?.installed_modifications || [];
+        
+        // Get planned mods from build project (for status comparison only)
+        let plannedMods = [];
+        if (buildData?.selected_upgrades) {
+          const rawSelected = buildData.selected_upgrades;
+          const rawKeys = Array.isArray(rawSelected)
+            ? rawSelected
+            : (rawSelected?.upgrades || []);
+
+          plannedMods = (rawKeys || [])
+            .map((u) => (typeof u === 'string' ? u : u?.key))
+            .filter(Boolean);
+        }
+        
+        // Calculate build status by comparing planned vs installed
+        if (plannedMods.length > 0) {
+          const installedCount = plannedMods.filter(mod => installedMods.includes(mod)).length;
+          if (installedMods.length > 0 && installedCount >= plannedMods.length) {
+            buildStatus = 'complete';
+          } else if (installedCount > 0) {
+            buildStatus = 'in_progress';
+          } else if (installedMods.length > 0) {
+            buildStatus = 'in_progress';
+          } else {
+            buildStatus = 'planned';
+          }
+        } else if (installedMods.length > 0) {
+          buildStatus = 'complete';
+        }
+
+        // Calculate HP using the SAME calculator the garage uses
+        const normalizedCar = {
+          ...carData,
+          zeroToSixty: carData.zero_to_sixty,
+          braking60To0: carData.braking_60_0,
+          lateralG: carData.lateral_g,
+          quarterMile: carData.quarter_mile,
+          curbWeight: carData.curb_weight,
+        };
+        
+        const modGains = installedMods.length > 0 
+          ? calculateAllModificationGains(installedMods, normalizedCar)
+          : { hpGain: 0, torqueGain: 0, zeroToSixtyImprovement: 0 };
+        
+        const stockHp = carData.hp || 0;
+        const stockTorque = carData.torque || 0;
+        const hpGain = modGains.hpGain || 0;
+        const torqueGain = modGains.torqueGain || 0;
+        const zeroToSixtyImprovement = modGains.zeroToSixtyImprovement || 0;
+
+        computedPerformance = {
+          stock: {
+            hp: stockHp,
+            torque: stockTorque,
+            zeroToSixty: carData.zero_to_sixty,
+            braking60To0: carData.braking_60_0,
+            lateralG: carData.lateral_g,
+          },
+          upgraded: {
+            hp: stockHp + hpGain,
+            torque: stockTorque + torqueGain,
+            zeroToSixty: carData.zero_to_sixty 
+              ? Math.max(2.0, carData.zero_to_sixty - zeroToSixtyImprovement) 
+              : null,
+            braking60To0: carData.braking_60_0,
+            lateralG: carData.lateral_g,
+          },
+          hpGain,
+          torqueGain,
+          upgradeKeys: installedMods,
+          installedMods,
+          plannedMods,
+          isCurrentUserBuild: isOwnBuild,
+        };
+      }
+    } catch (e) {
+      console.error('[Build Detail API] Failed to compute performance:', e);
+      computedPerformance = null;
     }
 
     // Fetch community post parts if available
@@ -156,17 +264,6 @@ async function handleGet(request, { params }) {
       }
     }
 
-    // Log build data for debugging performance metrics issue
-    if (buildData) {
-      console.log('[Build Detail API] Performance metrics:', {
-        slug,
-        stock_zero_to_sixty: buildData.stock_zero_to_sixty,
-        final_zero_to_sixty: buildData.final_zero_to_sixty,
-        stock_braking_60_0: buildData.stock_braking_60_0,
-        final_braking_60_0: buildData.final_braking_60_0,
-      });
-    }
-
     return NextResponse.json({
       build: {
         ...post,
@@ -175,6 +272,9 @@ async function handleGet(request, { params }) {
       },
       buildData,
       carData,
+      computedPerformance,
+      buildStatus, // 'complete' | 'in_progress' | 'planned' | null
+      vehicleData, // Current user's vehicle data
       parts,
     }, {
       headers: {

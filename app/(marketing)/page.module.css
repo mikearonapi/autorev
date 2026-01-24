@@ -6,7 +6,8 @@
 .page {
   min-height: 100vh;
   min-height: 100dvh;
-  background: var(--color-bg-base, #0d1b2a);
+  /* Transparent to show body gradient */
+  background: transparent;
   color: var(--color-text-primary, #ffffff);
   overflow-x: hidden;
   position: relative;
@@ -268,7 +269,7 @@
   width: 88px;
   height: 88px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, var(--color-accent-teal, #10b981) 0%, var(--color-accent-teal, #059669) 100%);
   padding: 4px;
   margin-bottom: 20px;
   box-shadow: 
@@ -343,7 +344,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  background: #f8fafc;
+  background: var(--color-bg-muted, #0a1628);
   border: 2px solid var(--color-accent-teal, #10b981);
   border-radius: 24px;
   padding: 8px;
@@ -359,7 +360,7 @@
   background: transparent;
   border: none;
   border-radius: 10px;
-  color: #64748b;
+  color: var(--color-text-tertiary, #64748b);
   cursor: default;
   flex-shrink: 0;
 }
@@ -369,7 +370,7 @@
   padding: 4px 0;
   font-size: 16px;
   font-family: inherit;
-  color: #0d1b2a;
+  color: var(--color-bg-base, #0d1b2a);
   height: 52px;
   line-height: 1.6;
   text-align: left;
@@ -377,7 +378,7 @@
 }
 
 .alInputPlaceholder {
-  color: #94a3b8;
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 .alCursor {
@@ -401,10 +402,10 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  background: #e2e8f0;
+  background: var(--color-border-subtle, #e2e8f0);
   border: none;
   border-radius: 50%;
-  color: #94a3b8;
+  color: var(--color-text-secondary, #94a3b8);
   cursor: default;
   flex-shrink: 0;
   transition: all 0.2s ease;
@@ -412,7 +413,7 @@
 
 .alSendBtnActive {
   background: var(--color-accent-lime, #d4ff00);
-  color: #0a1628;
+  color: var(--color-bg-base, #0a1628);
 }
 
 /* AL Data Access List */

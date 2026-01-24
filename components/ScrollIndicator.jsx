@@ -23,7 +23,7 @@ export default function ScrollIndicator({ className = '' }) {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const handleClick = () => {
+  const handleScrollDownClick = () => {
     if (typeof window === 'undefined') return;
     // Scroll down smoothly by viewport height minus header
     window.scrollBy({
@@ -35,7 +35,7 @@ export default function ScrollIndicator({ className = '' }) {
   return (
     <button 
       className={`${styles.scrollIndicator} ${isVisible ? styles.visible : styles.hidden} ${className}`}
-      onClick={handleClick}
+      onClick={handleScrollDownClick}
       aria-label="Scroll down for more content"
     >
       <div className={styles.scrollContent}>

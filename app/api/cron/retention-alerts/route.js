@@ -13,7 +13,7 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { sendEmail } from '@/lib/email';
+import { sendEmail } from '@/lib/emailService';
 import { logCronError } from '@/lib/serverErrorLogger';
 
 // Use service role for admin operations

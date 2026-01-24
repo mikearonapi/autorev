@@ -217,7 +217,7 @@ export default function ServiceLogModal({
   };
 
   // Handle submit
-  const handleSubmit = async (e) => {
+  const handleServiceLogSubmit = async (e) => {
     e.preventDefault();
     
     if (!validate()) return;
@@ -267,7 +267,7 @@ export default function ServiceLogModal({
           <button className={styles.closeBtn} onClick={onClose}>×</button>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form onSubmit={handleServiceLogSubmit} className={styles.form}>
           {/* Service Category Selection */}
           <div className={styles.categoryGrid}>
             {Object.entries(SERVICE_CATEGORIES).map(([key, cat]) => (

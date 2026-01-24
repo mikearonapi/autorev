@@ -173,7 +173,7 @@
 
 /* Garage placeholder - dark studio theme */
 .garage .placeholder {
-  background: linear-gradient(135deg, #0a0a0f 0%, var(--brand-bg-card-dark) 50%, #0f0f14 100%);
+  background: linear-gradient(135deg, var(--color-bg-base, #0a0a0f) 0%, var(--brand-bg-card-dark) 50%, #0f0f14 100%);
 }
 
 .garage .placeholderGrid {

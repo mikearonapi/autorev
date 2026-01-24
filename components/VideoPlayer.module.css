@@ -251,7 +251,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .overlay {
     padding: 0;
   }

@@ -2,23 +2,23 @@
 
 /* CSS Custom Properties */
 .pageContainer {
-  --admin-bg: #0a0a0f;
-  --admin-bg-gradient: linear-gradient(180deg, #0a0a0f 0%, #0f0f1a 100%);
+  --admin-bg: var(--color-bg-base, #0a0a0f);
+  --admin-bg-gradient: linear-gradient(180deg, var(--color-bg-base, #0a0a0f) 0%, #0f0f1a 100%);
   --admin-card: rgba(255, 255, 255, 0.03);
   --admin-card-hover: rgba(255, 255, 255, 0.05);
   --admin-border: rgba(255, 255, 255, 0.08);
   --admin-accent-blue: var(--brand-blue);
   --admin-accent-purple: var(--brand-purple-accent);
-  --admin-accent-cyan: #06b6d4;
-  --admin-positive: #22c55e;
+  --admin-accent-cyan: var(--color-accent-teal, #06b6d4);
+  --admin-positive: var(--color-success, #22c55e);
   --admin-warning: var(--brand-warning);
-  --admin-negative: #ef4444;
-  --admin-text-primary: #f8fafc;
+  --admin-negative: var(--color-error, #ef4444);
+  --admin-text-primary: var(--color-bg-muted, #f8fafc);
   --admin-text-secondary: var(--brand-text-secondary);
   --admin-text-muted: var(--brand-text-tertiary);
   
   min-height: 100vh;
-  background: var(--admin-bg-gradient);
+  background: transparent;
   color: var(--admin-text-primary);
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   padding-top: 70px;
@@ -339,11 +339,11 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #a5b4fc;
+  color: var(--color-accent-blue-light, #a5b4fc);
 }
 
 .stripeIcon {
-  color: #635BFF;
+  color: var(--color-info, #635bff);
   width: 14px;
   height: 14px;
 }
@@ -912,17 +912,17 @@
 .quickLink.stripeLink {
   background: linear-gradient(135deg, rgba(99, 91, 255, 0.15), rgba(var(--brand-purple-rgb), 0.1));
   border-color: rgba(99, 91, 255, 0.3);
-  color: #a5b4fc;
+  color: var(--color-accent-blue-light, #a5b4fc);
 }
 
 .quickLink.stripeLink:hover {
   background: linear-gradient(135deg, rgba(99, 91, 255, 0.25), rgba(var(--brand-purple-rgb), 0.2));
-  border-color: #635BFF;
+  border-color: var(--color-info, #635bff);
   box-shadow: 0 2px 8px rgba(99, 91, 255, 0.2);
 }
 
 .quickLink.stripeLink svg {
-  color: #635BFF;
+  color: var(--color-info, #635bff);
   opacity: 1;
 }
 
@@ -933,7 +933,7 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1200px) {
+@media (min-width: 1201px) {
   .kpiGrid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -975,7 +975,7 @@
   }
 }
 
-@media (max-width: 900px) {
+@media (min-width: 901px) {
   .chartsGrid,
   .summaryGrid,
   .executiveGrid {
@@ -1009,7 +1009,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .pageContainer {
     padding-top: 60px;
   }
@@ -1057,7 +1057,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .headerTitle {
     gap: 10px;
   }

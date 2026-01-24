@@ -11,9 +11,8 @@ import styles from './GarageHealthRing.module.css';
 
 export default function GarageHealthRing({ 
   score = 0, 
-  totalVehicles = 0,
-  totalHpGain = 0,
-  totalMods = 0,
+  label = 'GARAGE HEALTH',
+  stats = []
 }) {
   // Calculate stroke dash for the ring
   const radius = 70;
@@ -80,28 +79,24 @@ export default function GarageHealthRing({
         
         <div className={styles.centerContent}>
           <span className={styles.scoreValue}>{score}</span>
-          <span className={styles.scoreLabel}>GARAGE HEALTH</span>
+          <span className={styles.scoreLabel}>{label}</span>
         </div>
       </div>
       
-      <div className={styles.stats}>
-        <div className={styles.stat}>
-          <span className={styles.statValue}>{totalVehicles}</span>
-          <span className={styles.statLabel}>Vehicles</span>
+      {stats.length > 0 && (
+        <div className={styles.stats}>
+          {stats.map((stat, index) => (
+            <div key={index} style={{ display: 'contents' }}>
+              <div className={styles.stat}>
+                <span className={styles.statValue} style={{ color: stat.color }}>{stat.value}</span>
+                <span className={styles.statLabel}>{stat.label}</span>
+              </div>
+              {index < stats.length - 1 && <div className={styles.statDivider} />}
+            </div>
+          ))}
         </div>
-        <div className={styles.statDivider} />
-        <div className={styles.stat}>
-          <span className={styles.statValue} style={{ color: totalHpGain > 0 ? '#10b981' : undefined }}>
-            {totalHpGain > 0 ? `+${totalHpGain}` : '—'}
-          </span>
-          <span className={styles.statLabel}>HP Gained</span>
-        </div>
-        <div className={styles.statDivider} />
-        <div className={styles.stat}>
-          <span className={styles.statValue}>{totalMods}</span>
-          <span className={styles.statLabel}>Mods</span>
-        </div>
-      </div>
+      )}
     </div>
   );
 }
+

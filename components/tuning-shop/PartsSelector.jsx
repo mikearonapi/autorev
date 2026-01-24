@@ -33,11 +33,11 @@ import { Icons } from '@/components/ui/Icons';
 import styles from './PartsSelector.module.css';
 
 // Status definitions
-// NOTE: Parts page only handles planned → purchased
+// NOTE: Parts page only handles planned ↔ purchased (bidirectional)
 // The "installed" status is managed by the Install page
 const PART_STATUS = {
   planned: { label: 'Planned', color: 'muted', next: 'purchased', canToggle: true },
-  purchased: { label: 'Purchased', color: 'teal', next: null, canToggle: true }, // Stops here - Install page handles next step
+  purchased: { label: 'Purchased', color: 'teal', next: 'planned', canToggle: true }, // Can toggle back to planned
   installed: { label: 'Installed', color: 'lime', next: null, canToggle: false }, // Read-only on Parts page
 };
 
@@ -105,9 +105,7 @@ function StatusBadge({ status, onClick, disabled }) {
       disabled={!canClick}
       title={canClick 
         ? `Click to mark as ${PART_STATUS[statusInfo.next]?.label}` 
-        : status === 'purchased' 
-          ? 'Ready to install - track on Install page'
-          : statusInfo.label
+        : statusInfo.label
       }
     >
       {status === 'purchased' && <Icons.shoppingCart size={10} />}
@@ -176,7 +174,10 @@ function ShoppingListItem({
     
     const statusUpdate = {
       status: nextStatus,
-      ...(nextStatus === 'purchased' ? { purchasedAt: now } : {}),
+      // Set or clear purchasedAt based on direction
+      ...(nextStatus === 'purchased' 
+        ? { purchasedAt: now } 
+        : { purchasedAt: null }), // Clear when going back to planned
       // NOTE: installed status is handled by Install page, not here
     };
     
@@ -190,12 +191,8 @@ function ShoppingListItem({
   return (
     <div className={`${styles.listItem} ${hasPartDetails ? styles.hasDetails : ''} ${styles[`item${statusInfo.color}`]}`}>
       <div className={styles.itemHeader}>
-        {/* Top row: Status + Name */}
+        {/* Top row: Name + Status (Swapped for better hierarchy) */}
         <div className={styles.itemTopRow}>
-          <div className={styles.itemStatus}>
-            <StatusBadge status={status} onClick={handleStatusToggle} />
-          </div>
-          
           <div className={styles.itemInfo}>
             <span className={styles.itemName}>{upgrade.name}</span>
             {hasPartDetails && (
@@ -203,6 +200,10 @@ function ShoppingListItem({
                 {partDetails.brandName} {partDetails.partName}
               </span>
             )}
+          </div>
+          
+          <div className={styles.itemStatus}>
+            <StatusBadge status={status} onClick={handleStatusToggle} />
           </div>
         </div>
         
@@ -540,12 +541,12 @@ Be specific to my ${carName} and this exact build configuration.`;
 
   return (
     <div className={styles.container}>
-      {/* AL Parts Recommendations CTA - LIME glow at top */}
+      {/* AL Parts Recommendations CTA - Premium Card */}
       <button
         className={styles.alRecommendationsBtn}
         onClick={handleALBuildReview}
       >
-        <ALAvatar size={24} />
+        <ALAvatar size={42} />
         <div className={styles.alRecommendationsText}>
           <span className={styles.alRecommendationsTitle}>AL Parts Recommendations</span>
           <span className={styles.alRecommendationsSubtitle}>
@@ -556,7 +557,7 @@ Be specific to my ${carName} and this exact build configuration.`;
 
       <div className={styles.header}>
         <div className={styles.headerLeft}>
-          <Icons.shoppingCart size={16} />
+          <Icons.shoppingCart size={20} />
           <span className={styles.title}>Parts Shopping List</span>
         </div>
       </div>

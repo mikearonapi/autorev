@@ -36,7 +36,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #3B82F6;
+  color: var(--color-accent-blue, #3b82f6);
   flex-shrink: 0;
 }
 
@@ -90,7 +90,7 @@
 
 .rangeButton.active {
   color: var(--brand-text-primary);
-  background: #3B82F6;
+  background: var(--color-accent-blue, #3b82f6);
 }
 
 /* Content Type Selector */
@@ -154,12 +154,12 @@
 
 .growthBadge.positive {
   background: rgba(var(--brand-success-rgb), 0.15);
-  color: #22C55E;
+  color: var(--color-success, #22c55e);
 }
 
 .growthBadge.negative {
   background: rgba(var(--brand-error-rgb), 0.15);
-  color: #EF4444;
+  color: var(--color-error, #ef4444);
 }
 
 .neutralBadge {
@@ -318,7 +318,7 @@
   width: 28px;
   height: 28px;
   border: 2px solid rgba(var(--brand-blue-rgb), 0.2);
-  border-top-color: #3B82F6;
+  border-top-color: var(--color-accent-blue, #3b82f6);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -356,7 +356,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .header {
     flex-direction: column;
     gap: 12px;

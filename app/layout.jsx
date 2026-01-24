@@ -16,6 +16,7 @@
 import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
 import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import MetaPixel from '@/components/MetaPixel';
 import './globals.css';
@@ -36,10 +37,13 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import FetchInterceptor from '@/components/FetchInterceptor';
 import ConsoleErrorInterceptor from '@/components/ConsoleErrorInterceptor';
 import { BannerProvider } from '@/components/providers/BannerProvider';
+import { PostHogProvider } from '@/components/providers/PostHogProvider';
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 import ScrollToTop from '@/components/ScrollToTop';
 import PageViewTracker from '@/components/PageViewTracker';
 import BetaBanner from '@/components/BetaBanner';
+import SkipLink from '@/components/SkipLink';
 
 // =============================================================================
 // LAZY-LOADED COMPONENTS (Deferred for better LCP)
@@ -59,6 +63,9 @@ const MobileBottomCta = dynamic(() => import('@/components/MobileBottomCta'), { 
 
 // Feedback Corner - Non-critical UI element
 const FeedbackCorner = dynamic(() => import('@/components/FeedbackCorner'), { ssr: false });
+
+// Cookie Consent Banner - GDPR compliance
+const CookieConsent = dynamic(() => import('@/components/CookieConsent'), { ssr: false });
 
 const siteUrl = 'https://autorev.app';
 
@@ -235,7 +242,7 @@ const softwareAppSchema = {
   description: 'AI-powered research platform for sports car enthusiasts. Research cars, manage your collection, plan mods, discover events.',
   featureList: [
     'AI car assistant (AL) for instant answers',
-    'Sports car database with 2,500+ vehicles',
+    'Sports car database with 300+ vehicles',
     'Digital garage for your collection',
     'Modification planner with dyno data',
     'Local car event discovery',
@@ -253,7 +260,7 @@ const softwareAppSchema = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className={fontVariables} data-has-banner="false">
+    <html lang="en" className={fontVariables} data-has-banner="false" suppressHydrationWarning>
       <head>
         {/* =============================================================================
             CRITICAL: Preconnects MUST be first in <head> for maximum effectiveness
@@ -396,6 +403,10 @@ export default function RootLayout({ children }) {
             `,
           }}
         />
+        {/* Skip to main content link - WCAG 2.1 AA compliance */}
+        <SkipLink />
+        
+        <ThemeProvider>
         <GlobalErrorHandler>
           <FetchInterceptor>
             <ConsoleErrorInterceptor>
@@ -403,6 +414,7 @@ export default function RootLayout({ children }) {
                 <QueryProvider>
                   <LoadingProgressProvider>
                     <AuthProvider>
+                      <PostHogProvider>
                       <AppConfigProvider>
                         <CarSelectionProvider>
                           <FavoritesProvider>
@@ -422,7 +434,7 @@ export default function RootLayout({ children }) {
                                     
                                     {/* AI Chat removed - AL now uses dedicated /al page */}
                                     
-                                    <main>
+                                    <main id="main-content" tabIndex={-1}>
                                       {children}
                                     </main>
                                     
@@ -442,6 +454,7 @@ export default function RootLayout({ children }) {
                           </FavoritesProvider>
                         </CarSelectionProvider>
                       </AppConfigProvider>
+                      </PostHogProvider>
                     </AuthProvider>
                   </LoadingProgressProvider>
                 </QueryProvider>
@@ -449,8 +462,11 @@ export default function RootLayout({ children }) {
             </ConsoleErrorInterceptor>
           </FetchInterceptor>
         </GlobalErrorHandler>
+        </ThemeProvider>
         <Analytics />
+        <SpeedInsights sampleRate={0.5} />
         <ServiceWorkerRegistration />
+        <CookieConsent />
       </body>
     </html>
   );

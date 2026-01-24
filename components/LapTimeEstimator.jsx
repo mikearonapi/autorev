@@ -21,6 +21,7 @@ import { Icons } from '@/components/ui/Icons';
 import { useUserTrackTimes, useAddTrackTime, useAnalyzeTrackTimes } from '@/hooks/useUserData';
 import { useTracks } from '@/hooks/useEventsData';
 import { useLapTimeEstimate, useTrackStats, DRIVER_SKILLS, formatLapTime } from '@/hooks/useLapTimeEstimate';
+import { formatDateSimple } from '@/lib/dateUtils';
 
 export default function LapTimeEstimator({
   stockHp,
@@ -596,7 +597,7 @@ export default function LapTimeEstimator({
                         <span className={styles.trackHistoryTime}>{formatLapTime(time.lap_time_seconds)}</span>
                       </div>
                       <div className={styles.trackHistoryItemMeta}>
-                        <span>{new Date(time.session_date).toLocaleDateString()}</span>
+                        <span>{formatDateSimple(time.session_date)}</span>
                         {time.conditions && time.conditions !== 'dry' && (
                           <span className={styles.trackHistoryCondition}>{time.conditions}</span>
                         )}

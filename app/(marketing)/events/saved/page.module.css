@@ -2,7 +2,8 @@
 
 .page {
   min-height: 100vh;
-  background: var(--color-gray-50);
+  /* Transparent to show body gradient */
+  background: transparent;
 }
 
 /* Hero Section - Compact, matches Community */
@@ -229,14 +230,14 @@
 .errorState {
   text-align: center;
   padding: var(--space-2xl) var(--space-md);
-  background: #fef2f2;
+  background: var(--color-error-light, #fef2f2);
   border-radius: var(--radius-lg);
   max-width: 500px;
   margin: 0 auto;
 }
 
 .errorState p {
-  color: #991b1b;
+  color: var(--color-error, #991b1b);
   margin: 0 0 var(--space-md);
 }
 
@@ -252,7 +253,7 @@
 }
 
 .retryButton:hover {
-  background: #b91c1c;
+  background: var(--color-error, #b91c1c);
 }
 
 /* Loading State */

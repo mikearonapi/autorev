@@ -177,7 +177,7 @@
 /* ==========================================================
    MOBILE ADJUSTMENTS
    ========================================================== */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .header {
     padding: 24px 20px 16px;
   }
@@ -213,7 +213,7 @@
 }
 
 /* Small phones */
-@media (max-width: 380px) {
+@media (min-width: 381px) {
   .brandCard {
     width: 68px;
     height: 68px;

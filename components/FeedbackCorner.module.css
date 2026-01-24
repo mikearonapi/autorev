@@ -107,7 +107,7 @@
   top: 50%;
   transform: translateY(-50%);
   padding: 6px 10px;
-  background: #1f2937;
+  background: var(--color-bg-elevated, #1f2937);
   color: var(--brand-text-primary);
   font-size: 12px;
   font-weight: 500;
@@ -126,7 +126,7 @@
   top: 50%;
   transform: translateY(-50%);
   border: 5px solid transparent;
-  border-left-color: #1f2937;
+  border-left-color: var(--color-bg-elevated, #1f2937);
 }
 
 .feedbackCorner:hover .tooltip {
@@ -135,7 +135,7 @@
 }
 
 /* Mobile: maintain 44px touch target */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .feedbackCorner {
     bottom: calc(78px + env(safe-area-inset-bottom, 0px));
     right: 16px;
@@ -155,7 +155,7 @@
 }
 
 /* Small phones (iPhone SE) - maintain 44px touch target */
-@media (max-width: 375px) {
+@media (min-width: 376px) {
   .feedbackCorner {
     bottom: calc(74px + env(safe-area-inset-bottom, 0px));
     right: 12px;

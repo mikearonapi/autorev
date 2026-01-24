@@ -14,23 +14,24 @@
  * URL: /garage/my-specs?car=<carSlug> or ?build=<buildId>
  */
 
-import React, { useState, useEffect, Suspense, useCallback, useRef } from 'react';
+import React, { useState, useEffect, Suspense, useCallback, useRef, useMemo } from 'react';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 import styles from './page.module.css';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { MyGarageSubNav, VehicleInfoBar } from '@/components/garage';
+import { MyGarageSubNav, GarageVehicleSelector } from '@/components/garage';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
-import { useCarsList } from '@/hooks/useCarData';
+import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
 import { useAIChat } from '@/components/AIChatContext';
 import { Icons } from '@/components/ui/Icons';
 import EmptyState from '@/components/ui/EmptyState';
+import { calculateAllModificationGains } from '@/lib/performanceCalculator';
 
 // Local alias for sparkle (used with fill instead of stroke)
 const LocalIcons = {
@@ -55,24 +56,6 @@ function AskALSectionButton({ prompt, category, carName, onClick }) {
       <LocalIcons.sparkle size={12} />
       Ask AL
     </button>
-  );
-}
-
-// Stat component for VehicleInfoBar - shows HP with optional gain
-function HpStat({ hp, finalHp, hpGain }) {
-  const displayHp = finalHp || hp;
-  const hasGain = hpGain && hpGain > 0;
-  
-  return (
-    <div className={styles.statBadge}>
-      <div className={styles.statRow}>
-        <span className={styles.statValue}>{displayHp || '—'}</span>
-        <span className={styles.statLabel}>HP</span>
-      </div>
-      {hasGain && (
-        <span className={styles.statGain}>+{hpGain}</span>
-      )}
-    </div>
   );
 }
 
@@ -110,6 +93,14 @@ function MySpecsContent() {
   
   // Use cached cars data from React Query hook
   const { data: allCars = [], isLoading: carsLoading } = useCarsList();
+  
+  // Get URL params for fallback fetch
+  const carSlugParam = searchParams.get('car');
+  
+  // Fallback: fetch single car if not in list (handles case when full list fails to load)
+  const { data: fallbackCar, isLoading: fallbackLoading } = useCarBySlug(carSlugParam, {
+    enabled: !!carSlugParam && allCars.length === 0 && !carsLoading,
+  });
   
   // Check for action=confirm query param and scroll to confirm button
   const actionParam = searchParams.get('action');
@@ -210,30 +201,34 @@ function MySpecsContent() {
 
   // Get URL params
   const buildIdParam = searchParams.get('build');
-  const carSlugParam = searchParams.get('car');
 
-  // Handle URL params - load build or car
+  // Handle URL params - load build or car (with fallback support)
   useEffect(() => {
-    if (allCars.length === 0) return;
-
-    if (buildIdParam) {
-      if (buildsLoading) return;
-      const build = builds.find(b => b.id === buildIdParam);
-      if (build) {
-        const car = allCars.find(c => c.slug === build.carSlug);
+    // Try to get car from full list first
+    if (allCars.length > 0) {
+      if (buildIdParam) {
+        if (buildsLoading) return;
+        const build = builds.find(b => b.id === buildIdParam);
+        if (build) {
+          const car = allCars.find(c => c.slug === build.carSlug);
+          if (car) {
+            setSelectedCar(car);
+            setCurrentBuildId(buildIdParam);
+          }
+        }
+      } else if (carSlugParam) {
+        const car = allCars.find(c => c.slug === carSlugParam);
         if (car) {
           setSelectedCar(car);
-          setCurrentBuildId(buildIdParam);
+          setCurrentBuildId(null);
         }
       }
-    } else if (carSlugParam) {
-      const car = allCars.find(c => c.slug === carSlugParam);
-      if (car) {
-        setSelectedCar(car);
-        setCurrentBuildId(null);
-      }
+    } else if (fallbackCar && carSlugParam) {
+      // Fallback: use directly fetched car when list is unavailable
+      setSelectedCar(fallbackCar);
+      setCurrentBuildId(null);
     }
-  }, [buildIdParam, carSlugParam, allCars, builds, buildsLoading]);
+  }, [buildIdParam, carSlugParam, allCars, builds, buildsLoading, fallbackCar]);
 
   const handleBack = () => {
     router.push('/garage');
@@ -241,7 +236,8 @@ function MySpecsContent() {
 
   // Loading state
   const isLoadingBuild = buildIdParam && (buildsLoading || carsLoading);
-  if (authLoading || carsLoading || isLoadingBuild) {
+  const isLoadingCar = carSlugParam && carsLoading && !fallbackCar;
+  if (authLoading || isLoadingBuild || isLoadingCar || fallbackLoading) {
     return (
       <div className={styles.page}>
         <LoadingSpinner 
@@ -258,10 +254,26 @@ function MySpecsContent() {
   const currentBuild = builds.find(b => b.id === currentBuildId);
   const buildName = currentBuild?.name;
   
-  // Get build performance data
-  const hpGain = currentBuild?.totalHpGain || 0;
-  const finalHp = currentBuild?.finalHp || (selectedCar?.hp ? selectedCar.hp + hpGain : null);
-  const hasBuildUpgrades = hpGain > 0;
+  // SOURCE OF TRUTH: Calculate HP gain dynamically from installed mods
+  // Never use stored values (currentBuild?.totalHpGain) - they can become stale
+  // See docs/SOURCE_OF_TRUTH.md Rule 8
+  const { hpGain, finalHp, hasBuildUpgrades } = useMemo(() => {
+    const installedMods = userVehicle?.installedModifications || [];
+    
+    if (installedMods.length === 0) {
+      return { hpGain: 0, finalHp: selectedCar?.hp || null, hasBuildUpgrades: false };
+    }
+    
+    const modificationGains = calculateAllModificationGains(installedMods, selectedCar);
+    const calculatedHpGain = modificationGains.hpGain || 0;
+    const calculatedFinalHp = selectedCar?.hp ? selectedCar.hp + calculatedHpGain : null;
+    
+    return {
+      hpGain: calculatedHpGain,
+      finalHp: calculatedFinalHp,
+      hasBuildUpgrades: calculatedHpGain > 0,
+    };
+  }, [userVehicle?.installedModifications, selectedCar]);
 
   // No car selected
   if (!selectedCar) {
@@ -294,11 +306,9 @@ function MySpecsContent() {
         onBack={handleBack}
       />
       
-      <VehicleInfoBar
-        car={selectedCar}
-        buildName={buildName}
-        stat={<HpStat hp={selectedCar.hp} finalHp={finalHp} hpGain={hpGain} />}
-        heroImageUrl={heroImageUrl}
+      <GarageVehicleSelector 
+        selectedCarSlug={selectedCar.slug}
+        buildId={currentBuildId}
       />
 
       <div className={styles.content}>
@@ -503,6 +513,24 @@ function MySpecsContent() {
           </div>
         )}
       </div>
+      
+      {/* Continue to Build CTA */}
+      {selectedCar && (
+        <div className={styles.continueCtaContainer}>
+          <Link 
+            href={currentBuildId ? `/garage/my-build?build=${currentBuildId}` : `/garage/my-build?car=${selectedCar.slug}`}
+            className={styles.continueCta}
+          >
+            <div className={styles.ctaContent}>
+              <span className={styles.ctaTitle}>Ready to configure upgrades?</span>
+            </div>
+            <div className={styles.ctaAction}>
+              <span>Continue to Build</span>
+              <Icons.chevronRight size={18} />
+            </div>
+          </Link>
+        </div>
+      )}
       
       <AuthModal {...authModal.props} />
     </div>

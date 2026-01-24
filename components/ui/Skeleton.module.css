@@ -1,0 +1,223 @@
+/**
+ * Skeleton Loading Component Styles
+ * 
+ * Uses a smooth shimmer animation for visual feedback during loading.
+ * Colors are based on the AutoRev design system.
+ */
+
+/* =============================================================================
+   BASE SKELETON
+   ============================================================================= */
+
+.skeleton {
+  background-color: var(--color-surface-elevated, rgba(255, 255, 255, 0.05));
+  position: relative;
+  overflow: hidden;
+}
+
+/* Variants */
+.rectangular {
+  border-radius: 4px;
+}
+
+.rounded {
+  border-radius: 8px;
+}
+
+.circular {
+  border-radius: 50%;
+}
+
+/* Shimmer animation */
+.animate::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.05) 20%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.05) 80%,
+    transparent 100%
+  );
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .animate::after {
+    animation: none;
+    background: rgba(255, 255, 255, 0.05);
+  }
+}
+
+/* =============================================================================
+   TEXT SKELETON
+   ============================================================================= */
+
+.textWrapper {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* =============================================================================
+   CARD SKELETON
+   ============================================================================= */
+
+.card {
+  background-color: var(--color-card-bg, rgba(255, 255, 255, 0.03));
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.08));
+}
+
+.cardImage {
+  border-radius: 0;
+}
+
+.cardContent {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+/* =============================================================================
+   LIST SKELETON
+   ============================================================================= */
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.listItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background-color: var(--color-surface-elevated, rgba(255, 255, 255, 0.03));
+  border-radius: 8px;
+}
+
+.listItemContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* =============================================================================
+   TABLE SKELETON
+   ============================================================================= */
+
+.table {
+  width: 100%;
+}
+
+.tableHeader {
+  display: grid;
+  gap: 16px;
+  padding: 12px 16px;
+  background-color: var(--color-surface-elevated, rgba(255, 255, 255, 0.05));
+  border-radius: 8px 8px 0 0;
+}
+
+.tableBody {
+  display: flex;
+  flex-direction: column;
+}
+
+.tableRow {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+  border-bottom: 1px solid var(--color-border, rgba(255, 255, 255, 0.08));
+}
+
+.tableHeader,
+.tableRow {
+  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+}
+
+/* =============================================================================
+   STAT SKELETON
+   ============================================================================= */
+
+.stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background-color: var(--color-surface-elevated, rgba(255, 255, 255, 0.03));
+  border-radius: 12px;
+}
+
+/* =============================================================================
+   IMAGE SKELETON
+   ============================================================================= */
+
+.imageSkeleton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* =============================================================================
+   CAR CARD SKELETON (AutoRev specific)
+   ============================================================================= */
+
+.carCard {
+  background-color: var(--color-card-bg, rgba(255, 255, 255, 0.03));
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.08));
+}
+
+.carCardImage {
+  border-radius: 0;
+}
+
+.carCardContent {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.carCardStats {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.carCardFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border, rgba(255, 255, 255, 0.08));
+}

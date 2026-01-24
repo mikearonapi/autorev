@@ -2,7 +2,7 @@
 /**
  * Send test welcome emails
  * 
- * Uses the canonical welcome email template from lib/email.js
+ * Uses the canonical welcome email template from lib/emailService.js
  * This ensures test emails match what users actually receive.
  * 
  * Usage: node scripts/send-test-welcome-email.js email1@example.com email2@example.com
@@ -33,7 +33,7 @@ const supabase = createClient(
  * Note: Using dynamic import since this is an ES module
  */
 async function getWelcomeEmailTemplate() {
-  const { generateWelcomeEmailHtml, generateWelcomeEmailText } = await import('../lib/email.js');
+  const { generateWelcomeEmailHtml, generateWelcomeEmailText } = await import('../lib/emailService.js');
   return { generateWelcomeEmailHtml, generateWelcomeEmailText };
 }
 
@@ -111,7 +111,7 @@ async function sendWelcomeEmail(to) {
   const html = generateWelcomeEmailHtml(templateVars, SITE_URL);
   const text = generateWelcomeEmailText(templateVars, SITE_URL);
 
-  console.log(`  Sending email (using canonical template from lib/email.js)...`);
+  console.log(`  Sending email (using canonical template from lib/emailService.js)...`);
 
   const { data, error } = await resend.emails.send({
     from: 'AutoRev <hello@autorev.app>',
@@ -151,7 +151,7 @@ if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.SUPABASE_SERVICE_ROLE_
 
 console.log('🚀 AutoRev Welcome Email Sender');
 console.log('================================');
-console.log('📧 Using canonical template from lib/email.js');
+console.log('📧 Using canonical template from lib/emailService.js');
 
 for (const email of emails) {
   await sendWelcomeEmail(email);

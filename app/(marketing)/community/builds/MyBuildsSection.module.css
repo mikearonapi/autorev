@@ -30,11 +30,11 @@
 
 .compactLink:hover {
   background: rgba(16, 185, 129, 0.25);
-  color: #e5c158;
+  color: var(--color-accent-amber, #e5c158);
 }
 
 /* Mobile */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .compactSection {
     padding: 0.625rem 0.875rem;
   }

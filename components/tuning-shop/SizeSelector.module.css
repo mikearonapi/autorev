@@ -181,7 +181,7 @@
 }
 
 /* Responsive */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .options {
     gap: 6px;
   }

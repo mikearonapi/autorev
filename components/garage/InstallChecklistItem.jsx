@@ -20,11 +20,12 @@ import { DIYVideoList } from '@/components/garage/DIYVideoEmbed';
 import styles from './InstallChecklistItem.module.css';
 
 // Difficulty colors matching brand guidelines
+// Difficulty colors - matching design system tokens
 const DIFFICULTY_COLORS = {
-  easy: '#10b981', // teal
-  moderate: '#3b82f6', // blue
-  difficult: '#f59e0b', // amber
-  expert: '#ef4444', // red
+  easy: '#10b981', // var(--color-accent-teal)
+  moderate: '#3b82f6', // var(--color-accent-blue)
+  difficult: '#f59e0b', // var(--color-warning)
+  expert: '#ef4444', // var(--color-error)
   'shop-only': '#7c3aed', // purple
 };
 
@@ -125,68 +126,74 @@ export default function InstallChecklistItem({
   
   return (
     <div className={`${styles.item} ${part.installed ? styles.installed : ''}`}>
-      {/* Main Row */}
-      <div className={styles.mainRow}>
+      {/* Main Row - Compact single-line layout */}
+      <div className={styles.mainRow} onClick={onToggleExpand}>
         {/* Checkbox/Status */}
         <div className={styles.statusIcon}>
           {part.installed ? (
             <span className={styles.checkmark}>
-              <Icons.check size={16} />
+              <Icons.check size={14} />
             </span>
           ) : part.status === 'purchased' ? (
             <span className={styles.purchasedCircle}>
-              <Icons.shoppingCart size={12} />
+              <Icons.shoppingCart size={10} />
             </span>
           ) : (
             <span className={styles.pendingCircle} />
           )}
         </div>
         
-        {/* Part Info */}
-        <div className={styles.partInfo} onClick={onToggleExpand}>
-          <div className={styles.partName}>
+        {/* Part Info - Compact layout */}
+        <div className={styles.partInfo}>
+          <span className={styles.partName}>
             {part.name}
             {part.brandName && (
-              <span className={styles.partBrand}>
-                {part.brandName} {part.partName || ''}
-              </span>
+              <span className={styles.partBrand}> · {part.brandName}</span>
             )}
-          </div>
-          
-          {/* Badges Row */}
-          <div className={styles.badges}>
-            {/* Part status - purchased vs planned */}
+          </span>
+        </div>
+        
+        {/* Inline Badge - Only difficulty */}
+        <div className={styles.inlineBadges}>
+          {toolReqs?.difficulty && (
+            <span 
+              className={styles.difficultyBadge}
+              style={{ '--badge-color': difficultyColor }}
+            >
+              {difficultyInfo?.label || toolReqs.difficulty}
+            </span>
+          )}
+        </div>
+        
+        {/* Expand Chevron */}
+        <button 
+          className={`${styles.expandBtn} ${isExpanded ? styles.expanded : ''}`}
+          onClick={(e) => { e.stopPropagation(); onToggleExpand(); }}
+          aria-label={isExpanded ? 'Collapse' : 'Expand'}
+        >
+          <Icons.chevronDown size={16} />
+        </button>
+      </div>
+      
+      {/* Expanded Content */}
+      {isExpanded && (
+        <div className={styles.expandedContent}>
+          {/* Status + Additional Badges Row */}
+          <div className={styles.expandedBadges}>
+            {/* Part status */}
             {part.status === 'purchased' && !part.installed && (
-              <span className={styles.readyBadge}>
-                Ready to Install
-              </span>
+              <span className={styles.readyBadge}>Ready to Install</span>
             )}
             {(!part.status || part.status === 'planned') && !part.installed && (
-              <span className={styles.plannedBadge}>
-                Not Purchased
-              </span>
+              <span className={styles.plannedBadge}>Not Purchased</span>
             )}
-            
-            {/* Difficulty Badge */}
-            {toolReqs?.difficulty && (
-              <InfoTooltip topicKey="installDifficulty" carName={carName} carSlug={carSlug}>
-                <span 
-                  className={styles.difficultyBadge}
-                  style={{ '--badge-color': difficultyColor }}
-                >
-                  {difficultyInfo?.label || toolReqs.difficulty}
-                </span>
-              </InfoTooltip>
-            )}
-            
-            {/* Time Estimate */}
+            {/* Time estimate */}
             {toolReqs?.timeEstimate && (
-              <span className={styles.timeBadge}>
+              <span className={styles.timeDetailBadge}>
                 <Icons.clock size={12} />
                 {toolReqs.timeEstimate}
               </span>
             )}
-            
             {/* Requires Tune Warning */}
             {requiresTune && (
               <span className={styles.warningBadge}>
@@ -194,27 +201,12 @@ export default function InstallChecklistItem({
                 Requires Tune
               </span>
             )}
-            
             {/* DIY Friendly */}
             {toolReqs?.diyFriendly && (
               <span className={styles.diyBadge}>DIY OK</span>
             )}
           </div>
-        </div>
-        
-        {/* Expand Chevron */}
-        <button 
-          className={`${styles.expandBtn} ${isExpanded ? styles.expanded : ''}`}
-          onClick={onToggleExpand}
-          aria-label={isExpanded ? 'Collapse' : 'Expand'}
-        >
-          <Icons.chevronDown size={18} />
-        </button>
-      </div>
-      
-      {/* Expanded Content */}
-      {isExpanded && (
-        <div className={styles.expandedContent}>
+          
           {/* Notes */}
           {toolReqs?.notes && (
             <p className={styles.notes}>{toolReqs.notes}</p>

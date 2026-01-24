@@ -1,0 +1,136 @@
+'use client';
+
+/**
+ * WeeklyPointsSummary Component
+ * 
+ * Simplified points-focused hero card showing:
+ * - Weekly points as the hero number
+ * - Streak badge
+ * - Weekly/monthly/lifetime breakdown
+ * - Category legend (ties to Weekly Activity chart below)
+ * - Info button to open points explainer
+ */
+
+import { useEffect, useState } from 'react';
+import { FlameIcon, InfoIcon } from './DashboardIcons';
+import PointsExplainerModal from './PointsExplainerModal';
+import styles from './WeeklyPointsSummary.module.css';
+
+// Category colors for legend
+const CATEGORIES = [
+  { key: 'al', label: 'AL', color: '#a855f7' },
+  { key: 'community', label: 'Community', color: '#3b82f6' },
+  { key: 'data', label: 'Data', color: '#10b981' },
+  { key: 'garage', label: 'Garage', color: '#d4ff00' },
+];
+
+export default function WeeklyPointsSummary({
+  points = { weekly: 0, monthly: 0, lifetime: 0 },
+  currentStreak = 0,
+  animated = true,
+}) {
+  const [animatedWeeklyPoints, setAnimatedWeeklyPoints] = useState(animated ? 0 : points.weekly);
+  const [showExplainer, setShowExplainer] = useState(false);
+
+  // Animate weekly points count-up
+  useEffect(() => {
+    if (!animated || points.weekly === 0) {
+      setAnimatedWeeklyPoints(points.weekly);
+      return;
+    }
+
+    const duration = 1200;
+    const startTime = Date.now();
+    const startValue = 0;
+
+    const animatePoints = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+
+      setAnimatedWeeklyPoints(Math.round(startValue + (points.weekly - startValue) * eased));
+
+      if (progress < 1) requestAnimationFrame(animatePoints);
+    };
+
+    requestAnimationFrame(animatePoints);
+  }, [points.weekly, animated]);
+
+  // Format points for display
+  const formatPoints = (pts) => {
+    if (pts >= 1000) {
+      return (pts / 1000).toFixed(1).replace(/\.0$/, '') + 'k';
+    }
+    return pts.toLocaleString();
+  };
+
+  return (
+    <div className={styles.container}>
+      {/* Main content row */}
+      <div className={styles.mainRow}>
+        {/* Info button */}
+        <button 
+          className={styles.infoButton}
+          onClick={() => setShowExplainer(true)}
+          aria-label="How to earn points"
+        >
+          <InfoIcon size={16} />
+        </button>
+
+        {/* Center - Hero points */}
+        <div className={styles.heroSection}>
+          <span className={styles.heroValue}>{formatPoints(animatedWeeklyPoints)}</span>
+          <span className={styles.heroLabel}>this week</span>
+        </div>
+
+        {/* Streak badge */}
+        {currentStreak > 0 ? (
+          <div className={styles.streakBadge}>
+            <FlameIcon size={14} />
+            <span className={styles.streakCount}>{currentStreak}</span>
+            <span className={styles.streakUnit}>wk</span>
+          </div>
+        ) : (
+          <div className={styles.streakPlaceholder} />
+        )}
+      </div>
+
+      {/* Points breakdown row */}
+      <div className={styles.statsRow}>
+        <div className={styles.stat}>
+          <span className={styles.statValue}>{formatPoints(points.weekly)}</span>
+          <span className={styles.statLabel}>weekly</span>
+        </div>
+        <span className={styles.statDivider}>·</span>
+        <div className={styles.stat}>
+          <span className={styles.statValue}>{formatPoints(points.monthly)}</span>
+          <span className={styles.statLabel}>monthly</span>
+        </div>
+        <span className={styles.statDivider}>·</span>
+        <div className={styles.stat}>
+          <span className={styles.statValue}>{formatPoints(points.lifetime)}</span>
+          <span className={styles.statLabel}>lifetime</span>
+        </div>
+      </div>
+
+      {/* Category legend */}
+      <div className={styles.legend}>
+        {CATEGORIES.map((cat) => (
+          <div key={cat.key} className={styles.legendItem}>
+            <span 
+              className={styles.legendDot} 
+              style={{ background: cat.color }}
+            />
+            <span className={styles.legendLabel}>{cat.label}</span>
+          </div>
+        ))}
+      </div>
+
+      {/* Points Explainer Modal */}
+      <PointsExplainerModal 
+        isOpen={showExplainer} 
+        onClose={() => setShowExplainer(false)} 
+      />
+    </div>
+  );
+}

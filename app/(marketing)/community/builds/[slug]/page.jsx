@@ -10,6 +10,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { fetchCommunityPostBySlug, getPostShareUrl } from '@/lib/communityService';
 import { supabase } from '@/lib/supabase';
+import { getPerformanceProfile } from '@/lib/performanceCalculator';
 import ShareButtons from './ShareButtons';
 import BuildModsList from './BuildModsList';
 import ImageGallery from './ImageGallery';
@@ -506,6 +507,33 @@ export default async function BuildDetailPage({ params }) {
   // Fetch full car data for performance comparison and experience scores
   const carData = await getCarData(post.car_slug);
 
+  // SOURCE OF TRUTH: compute performance from (car specs + selected upgrades)
+  // Stored buildData.final_* can be stale and diverge from other pages.
+  const computedPerformance = (() => {
+    if (!carData || !post.buildData?.selected_upgrades) return null;
+    const rawSelected = post.buildData.selected_upgrades;
+    const rawKeys = Array.isArray(rawSelected) ? rawSelected : (rawSelected?.upgrades || []);
+    const upgradeKeys = (rawKeys || []).map(u => (typeof u === 'string' ? u : u?.key)).filter(Boolean);
+    if (upgradeKeys.length === 0) return null;
+
+    const normalizedCar = {
+      ...carData,
+      zeroToSixty: carData.zero_to_sixty,
+      braking60To0: carData.braking_60_0,
+      lateralG: carData.lateral_g,
+      quarterMile: carData.quarter_mile,
+      curbWeight: carData.curb_weight,
+    };
+
+    const profile = getPerformanceProfile(normalizedCar, upgradeKeys);
+    return {
+      stock: profile.stockMetrics,
+      upgraded: profile.upgradedMetrics,
+      hpGain: profile.upgradedMetrics.hp - profile.stockMetrics.hp,
+      upgradeKeys,
+    };
+  })();
+
   // Generate comprehensive JSON-LD structured data for SEO
   const jsonLd = generateBuildJsonLd(post, primaryImage, shareUrl, totalModsCount, carData);
 
@@ -542,15 +570,19 @@ export default async function BuildDetailPage({ params }) {
             {/* Hero Stats Overlay */}
             {post.buildData && (
               <div className={styles.heroStats}>
-                {post.buildData.final_hp && (
+                {(computedPerformance?.upgraded?.hp || post.buildData.final_hp) && (
                   <div className={styles.heroStat}>
-                    <span className={styles.heroStatValue}>{post.buildData.final_hp}</span>
+                    <span className={styles.heroStatValue}>
+                      {computedPerformance?.upgraded?.hp ?? post.buildData.final_hp}
+                    </span>
                     <span className={styles.heroStatLabel}>HP</span>
                   </div>
                 )}
-                {post.buildData.total_hp_gain > 0 && (
+                {((computedPerformance?.hpGain ?? post.buildData.total_hp_gain) > 0) && (
                   <div className={styles.heroStat}>
-                    <span className={styles.heroStatValue}>+{post.buildData.total_hp_gain}</span>
+                    <span className={styles.heroStatValue}>
+                      +{computedPerformance?.hpGain ?? post.buildData.total_hp_gain}
+                    </span>
                     <span className={styles.heroStatLabel}>HP Gain</span>
                   </div>
                 )}
@@ -650,7 +682,7 @@ export default async function BuildDetailPage({ params }) {
           )}
 
           {/* Performance Comparison - Stock vs Modified */}
-          {carData && post.buildData?.total_hp_gain > 0 && (
+          {carData && (computedPerformance?.hpGain ?? post.buildData?.total_hp_gain) > 0 && (
             <section className={styles.section}>
               <PerformanceComparison
                 carData={carData}
@@ -690,10 +722,10 @@ export default async function BuildDetailPage({ params }) {
                       <span className={styles.summaryLabel}>Estimated Total Cost</span>
                     </div>
                   )}
-                  {totalModsCount > 0 && post.buildData.total_hp_gain > 0 && (
+                  {totalModsCount > 0 && (computedPerformance?.hpGain ?? post.buildData.total_hp_gain) > 0 && (
                     <div className={styles.summaryCard}>
                       <span className={styles.summaryValue}>
-                        ${Math.round((post.buildData.total_cost_low || post.buildData.total_cost_high || 0) / post.buildData.total_hp_gain).toLocaleString()}
+                        ${Math.round((post.buildData.total_cost_low || post.buildData.total_cost_high || 0) / (computedPerformance?.hpGain ?? post.buildData.total_hp_gain)).toLocaleString()}
                       </span>
                       <span className={styles.summaryLabel}>Cost per HP Gained</span>
                     </div>

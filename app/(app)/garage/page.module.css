@@ -16,7 +16,8 @@
   padding: 0 16px;
   /* Bottom padding for tab bar - uses standardized token */
   padding-bottom: var(--page-bottom-padding);
-  background: var(--brand-bg-primary);
+  /* Transparent to show body gradient */
+  background: transparent;
   color: var(--color-white);
   display: flex;
   flex-direction: column;
@@ -24,7 +25,7 @@
 }
 
 /* Mobile: Tighter horizontal padding */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .page {
     padding: 0 12px;
     padding-bottom: var(--page-bottom-padding);
@@ -49,10 +50,11 @@
   justify-content: space-between;
   padding: 16px 0 4px;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 /* Mobile: Tighter header */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .pageHeader {
     padding: 12px 0 4px;
   }
@@ -84,6 +86,7 @@
   align-items: center;
   justify-content: space-between;
   padding-bottom: 8px;
+  flex-shrink: 0;
 }
 
 .pageSubtitle {
@@ -94,7 +97,7 @@
   line-height: 1.4;
 }
 
-@media (max-width: 360px) {
+@media (min-width: 361px) {
   .pageSubtitle {
     font-size: 0.6875rem;
   }
@@ -337,9 +340,20 @@
 
 /* listViewAddBtn removed - using addVehicleBtn in controls bar */
 
-/* Key Spec Value Modified Indicator */
+/* Key Spec Value Modified Indicator - keep white, don't change color */
 .keySpecValueModified {
-  color: var(--brand-teal, var(--brand-teal)) !important;
+  color: #ffffff !important;
+}
+
+/* Key Spec Value Loading State */
+.keySpecValueLoading {
+  opacity: 0.5;
+  animation: specPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes specPulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 0.8; }
 }
 
 /* Ensure all content is above any backgrounds */
@@ -642,8 +656,11 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  /* No overflow:hidden - allow content to scroll behind tab bar for frosted glass */
+  /* Ensure content fills available space */
+  min-height: 0;
   overflow-x: hidden;
+  /* Add gap between hero and thumbnails */
+  gap: 0;
 }
 
 /* ===========================================
@@ -772,7 +789,7 @@
 }
 
 /* Mobile: Stack build actions vertically */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .buildHeroActions {
     flex-direction: column;
     width: 100%;
@@ -819,23 +836,28 @@
   flex: 1;
   position: relative;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  /* No overflow:hidden - allow content to scroll behind tab bar for frosted glass */
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  /* Ensure it fills the available space */
+  min-height: 0;
   overflow-x: hidden;
 }
 
 .heroImageWrapper {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  /* Use relative positioning with aspect ratio for proper layout flow */
+  position: relative;
+  width: 100%;
+  /* 4:3 aspect ratio - ensures consistent sizing across devices */
+  aspect-ratio: 4 / 3;
+  flex-shrink: 0;
+  overflow: hidden;
 }
 
 /* Container for the car image itself */
 .heroImageContainer {
-  position: relative;
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
 }
@@ -889,7 +911,7 @@
 }
 
 /* CF-008: Mobile - Full width image with proper layout */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .heroImageContainer {
     position: absolute;
     inset: 0;
@@ -914,17 +936,11 @@
   }
 }
 
-/* Small mobile screens - adjusted sizing */
-@media (max-width: 480px) {
+/* Small-medium mobile screens */
+@media (min-width: 481px) {
   .heroNavArrow {
     width: 22px;
     height: 22px;
-  }
-  
-  .heroBottomBtn {
-    padding: 10px 16px;
-    min-width: 70px;
-    font-size: var(--text-2xs);
   }
 }
 
@@ -955,7 +971,7 @@
   max-width: 80%;
 }
 
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .heroPlaceholder svg {
     width: 60px;
     height: 60px;
@@ -1025,7 +1041,7 @@
   line-height: 1.1;
 }
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .vehicleInfoHeader .heroVehicleName {
     font-size: var(--text-h2);
   }
@@ -1072,7 +1088,7 @@
   transition: all 0.3s ease;
 }
 
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   /* Mobile: Scrollable vehicle experience with fixed aspect ratio image */
   .heroDisplay {
     position: relative;
@@ -1203,18 +1219,13 @@
   }
 }
 
-/* Collapsed state - just header visible */
+/* Collapsed state - hide the panel entirely */
 .specPanel_collapsed {
-  /* Width stays the same */
-}
-
-/* Expanded state - key specs visible */
-.specPanel_expanded {
-  /* Width stays the same */
+  display: none !important;
 }
 
 /* Mobile: Ensure expanded panel has enough space for action buttons */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .specPanel_expanded {
     /* Full width on mobile */
     left: 0;
@@ -1246,7 +1257,7 @@
   }
 }
 
-@media (max-width: 1100px) {
+@media (min-width: 1101px) {
   .specPanel_details {
     width: calc(100% - 32px);
     max-width: none;
@@ -1254,7 +1265,7 @@
 }
 
 /* Mobile: Full width panels - must come after max-width: 1100px to override */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .specPanel_details {
     left: 0 !important;
     right: 0 !important;
@@ -1277,7 +1288,7 @@
   margin-bottom: 6px;
 }
 
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .brandLogo {
     margin-bottom: 4px;
   }
@@ -1293,7 +1304,7 @@
   color: var(--brand-teal);
 }
 
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .brandName {
     font-size: var(--text-xs);
     letter-spacing: 0.18em;
@@ -1321,7 +1332,7 @@
 }
 
 /* Mobile: Premium larger vehicle name */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .heroVehicleName {
     font-size: var(--text-h1);
     font-weight: 800;
@@ -1332,7 +1343,7 @@
 }
 
 /* Very narrow screens */
-@media (max-width: 374px) {
+@media (min-width: 375px) {
   .heroVehicleName {
     font-size: var(--text-h2);
   }
@@ -1359,7 +1370,7 @@
 }
 
 /* Mobile: Premium sub info */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .heroSubInfo {
     font-size: var(--text-body);
     color: rgba(255, 255, 255, 0.55);
@@ -1388,7 +1399,7 @@
 }
 
 /* Mobile: Premium full-width spec cards */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .specGrid {
     grid-template-columns: 1fr; /* Single column for premium look */
     gap: 0;
@@ -1420,7 +1431,7 @@
 }
 
 /* Mobile: Larger, more spacious spec rows */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .specItem {
     padding: 14px 16px;
     margin: 0;
@@ -1483,7 +1494,7 @@
 }
 
 /* Mobile - even smaller for narrow screens */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .variantMatchValue {
     font-size: var(--text-2xs);
     max-width: calc(100vw - 60px);
@@ -1609,7 +1620,7 @@
 }
 
 /* Mobile: Larger labels for premium feel */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .specLabel {
     font-size: var(--text-sm);
     color: rgba(255, 255, 255, 0.6);
@@ -1634,7 +1645,7 @@
 }
 
 /* Mobile: Larger, bolder values - Gravl inspired */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .specValue {
     font-size: var(--text-h4);
     font-weight: 700;
@@ -1686,7 +1697,7 @@
 }
 
 /* Mobile: Premium header with drag handle */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .specPanelHeader {
     flex-direction: column;
     gap: 14px;
@@ -1764,7 +1775,7 @@
 }
 
 /* Mobile: Smaller action buttons */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .headerActions {
     gap: 4px;
   }
@@ -1788,7 +1799,7 @@
 }
 
 /* Mobile: Slightly smaller but still touch-friendly */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .headerActionBtn {
     width: 38px;
     height: 38px;
@@ -1827,7 +1838,7 @@
 }
 
 /* Mobile: Slightly smaller but still touch-friendly */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .headerActionBtnOwn {
     width: 38px;
     height: 38px;
@@ -1891,7 +1902,7 @@
 }
 
 /* Mobile: Account for safe area */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .panelCloseBtn {
     top: 14px;
     right: 14px;
@@ -1951,7 +1962,7 @@
 }
 
 /* Mobile: Premium panel body layout */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .specPanelBody {
     margin-top: 0;
     padding-top: 12px;
@@ -2026,7 +2037,7 @@
   color: var(--brand-text-primary);
 }
 
-@media (max-width: 600px) {
+@media (min-width: 601px) {
   .headerToggleBtn span {
     display: none;
   }
@@ -2041,7 +2052,7 @@
 }
 
 /* Hide desktop header toggle on mobile - use mobile action bar instead */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .headerViewToggle {
     display: none;
   }
@@ -2099,35 +2110,26 @@
 }
 
 /* ===========================================
-   KEY SPECS STRIP - Quick stats above action buttons
+   KEY SPECS STRIP - Quick stats below image
    =========================================== */
 
 .keySpecsStrip {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 70px; /* Above the action buttons */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 32px;
-  padding: 14px 20px;
-  z-index: 24;
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  padding: 16px 8px 12px;
+  background: transparent;
+  width: 100%;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  min-height: 60px;
+  z-index: 10;
 }
 
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .keySpecsStrip {
-    position: relative;
-    bottom: auto;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 0;
-    padding: 10px 8px 6px;
-    background: transparent;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    overflow: hidden;
+    padding: 12px 8px 8px;
   }
 }
 
@@ -2135,101 +2137,67 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3px;
+  gap: 2px;
+  padding: 4px 6px;
+  position: relative;
 }
 
-@media (max-width: 767px) {
-  .keySpecItem {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    padding: 8px 6px;
-    position: relative;
-  }
-  
-  /* Divider between items */
-  .keySpecItem:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    height: 40px;
-    width: 1px;
-    background: linear-gradient(180deg,
-      transparent 0%,
-      rgba(255, 255, 255, 0.15) 50%,
-      transparent 100%);
-  }
+/* Accent bar above value - REMOVED per design update */
+/* .keySpecItem::before removed */
+
+/* Divider between items */
+.keySpecItem:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 36px;
+  width: 1px;
+  background: linear-gradient(180deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.12) 50%,
+    transparent 100%);
 }
 
 .keySpecValue {
-  font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: var(--text-h1);
-  font-weight: 800;
-  color: var(--brand-text-primary);
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
   letter-spacing: -0.02em;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  line-height: 1;
 }
 
-@media (max-width: 767px) {
+@media (min-width: 400px) {
   .keySpecValue {
-    font-size: var(--text-stat-hero);  /* Mobile-optimized: increased from 22px per brand guidelines */
-    font-weight: 800;
-    line-height: 1;
-    background: linear-gradient(180deg, var(--brand-text-primary) 0%, rgba(255, 255, 255, 0.85) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-}
-
-@media (max-width: 380px) {
-  .keySpecValue {
-    font-size: var(--text-h2);  /* Slightly smaller on very small screens */
+    font-size: 2rem;
   }
 }
 
 /* Performance stat labels use TEAL - they represent positive metrics */
 .keySpecLabel {
-  font-size: var(--text-2xs);
-  font-weight: 700;
+  font-size: 10px;
+  font-weight: 600;
   color: var(--brand-teal);
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-@media (max-width: 767px) {
-  /* Performance stat labels - teal for visual rhythm */
-  .keySpecLabel {
-    font-size: var(--text-2xs);
-    font-weight: 600;
-    color: var(--brand-teal);
-    letter-spacing: 0.12em;
-  }
+  letter-spacing: 0.08em;
+  margin-top: 2px;
 }
 
 /* ===========================================
-   QUICK ACTION BUTTONS - Compact, no selected state
+   QUICK ACTION BUTTONS - Tab bar below specs
    =========================================== */
 
 .heroBottomBar {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 14px 12px;
-  padding-bottom: calc(14px + env(safe-area-inset-bottom, 0));
-  background: linear-gradient(to top, 
-    rgba(10, 15, 20, 0.95) 0%,
-    rgba(10, 15, 20, 0.7) 70%,
-    transparent 100%);
-  z-index: 25;
+  padding: 8px 8px 16px;
+  background: transparent;
+  flex-shrink: 0;
 }
 
 .heroBottomBtn {
@@ -2237,19 +2205,22 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  min-width: 58px;
-  padding: 10px 12px;
+  gap: 3px;
+  /* Equal width buttons for 6 items */
+  flex: 1;
+  min-width: 0;
+  max-width: 64px;
+  padding: 8px 4px;
   background: rgba(30, 40, 50, 0.8);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  border-radius: 10px;
   color: rgba(255, 255, 255, 0.7);
   font-size: var(--text-2xs);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.03em;
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -2269,8 +2240,8 @@
     from 0deg,
     transparent 0deg,
     transparent 280deg,
-    #d4ff00 320deg,
-    #d4ff00 340deg,
+    var(--color-accent-lime, #d4ff00) 320deg,
+    var(--color-accent-lime, #d4ff00) 340deg,
     transparent 360deg
   );
   transform-origin: center;
@@ -2321,9 +2292,15 @@
 }
 
 .heroBottomBtn svg {
-  width: 19px;
-  height: 19px;
+  width: 16px;
+  height: 16px;
   opacity: 0.85;
+}
+
+/* Button labels */
+.heroBottomBtn span {
+  font-size: 9px;
+  white-space: nowrap;
 }
 
 .heroBottomBtn:hover {
@@ -2360,8 +2337,8 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
-/* Mobile adjustments */
-@media (max-width: 767px) {
+/* Tablet and up adjustments */
+@media (min-width: 768px) {
   .heroNavArrow {
     width: 24px;
     height: 24px;
@@ -2376,40 +2353,17 @@
   }
   
   .heroBottomBar {
-    position: relative;
-    bottom: auto;
-    padding: 4px 8px;
-    gap: 4px;
-    background: transparent;
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    /* Ensure buttons stay above PWA menu */
-    margin-bottom: 8px;
+    gap: 8px;
+    padding: 8px 12px 20px;
   }
   
   .heroBottomBtn {
-    flex: 1 1 auto;
-    padding: 8px 6px;
-    min-width: fit-content;
-    font-size: var(--text-2xs);
-    gap: 3px;
-    border-radius: 10px;
-    position: relative;
-    overflow: hidden;
+    max-width: 72px;
+    padding: 10px 6px;
   }
   
-  .heroBottomBtn::before {
-    border-radius: 12px;
-  }
-  
-  .heroBottomBtn::after {
-    border-radius: 9px;
-  }
-  
-  .heroBottomBtn svg {
-    width: 16px;
-    height: 16px;
+  .heroBottomBtn span {
+    font-size: 10px;
   }
 }
 
@@ -2444,7 +2398,7 @@
   display: none; /* Hidden on desktop */
 }
 
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .mobileActionBar {
     display: flex;
     align-items: center;
@@ -3168,7 +3122,7 @@
 }
 
 /* Mobile: Premium tagline styling */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .detailsSummary {
     font-size: var(--text-body);
     color: rgba(255, 255, 255, 0.65);
@@ -3212,7 +3166,7 @@
   }
 }
 
-@media (max-width: 500px) {
+@media (min-width: 501px) {
   .fullDetailsInPanel {
     grid-template-columns: 1fr;
     gap: 10px;
@@ -3220,7 +3174,7 @@
 }
 
 /* Mobile: Premium single-column layout - consistent width and spacing */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .fullDetailsInPanel {
     display: flex;
     flex-direction: column;
@@ -3230,7 +3184,7 @@
 }
 
 /* CF-009: Mobile-optimized detail blocks - compact and consistent */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .detailBlockTitle {
     font-size: var(--text-xs);
     margin-bottom: 10px;
@@ -3300,7 +3254,7 @@
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-@media (max-width: 600px) {
+@media (min-width: 601px) {
   .prosConsRow {
     flex-direction: column;
     gap: 12px;
@@ -3368,7 +3322,7 @@
 }
 
 /* Mobile: Premium full-width detail cards - COMPACT and CONSISTENT */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .detailBlock {
     background: linear-gradient(
       180deg,
@@ -3399,7 +3353,7 @@
   grid-column: 1 / -1;
 }
 
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .detailBlockWide {
     margin: 0 16px 12px;
     border-radius: 16px;
@@ -3415,7 +3369,7 @@
   grid-column: 1 / -1;
 }
 
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .detailBlockHighlight {
     margin: 0 16px 12px;
     border-radius: 16px;
@@ -3443,7 +3397,7 @@
 }
 
 /* Mobile: Larger, more prominent section titles */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .detailBlockTitle {
     font-size: var(--text-sm);
     letter-spacing: 0.12em;
@@ -3464,7 +3418,7 @@
 }
 
 /* Mobile: More spacious item list */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .detailBlockItems {
     gap: 0;
   }
@@ -3479,7 +3433,7 @@
 }
 
 /* Mobile: COMPACT spec items - consistent and tight spacing */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .detailBlockItem {
     padding: 9px 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
@@ -3502,7 +3456,7 @@
 }
 
 /* Mobile: Compact label styling */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .detailBlockItem span:first-child {
     color: rgba(255, 255, 255, 0.6);
     font-size: var(--text-sm);
@@ -3519,7 +3473,7 @@
 }
 
 /* Mobile: COMPACT values - monospace */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .detailBlockItem span:last-child {
     font-size: var(--text-body);
     font-weight: 700;
@@ -3666,7 +3620,7 @@
 }
 
 /* Mobile: Compact performance card */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .performanceScoreCard {
     margin: 0 16px 12px;
     padding: 14px;
@@ -3681,7 +3635,7 @@
 }
 
 /* Mobile: Smaller gauge */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .performanceScoreGauge {
     width: 90px;
     height: 90px;
@@ -4045,7 +3999,7 @@
   margin-left: 8px;
 }
 
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .expandedActionsRow > div:last-child {
     margin-left: 12px;
   }
@@ -4107,7 +4061,7 @@
 }
 
 /* Mobile and tablet - quickActionBar is now at bottom, no need to constrain width */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .expandedActionsRow {
     width: 100%;
     max-width: 100%;
@@ -4116,7 +4070,7 @@
   }
 }
 
-@media (max-width: 500px) {
+@media (min-width: 501px) {
   .seeDetailsBtn span {
     display: none;
   }
@@ -4137,7 +4091,7 @@
 }
 
 /* Smaller screens - more compact action row */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .expandedActionsRow {
     gap: 8px;
     margin-top: 10px;
@@ -4379,7 +4333,7 @@
 }
 
 /* Mobile: Hide the desktop quickActionBar - use mobileQuickActionBar instead */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .quickActionBar {
     display: none;
   }
@@ -4435,6 +4389,7 @@
 /* ===========================================
    THUMBNAIL STRIP - Gravl-Inspired Vehicle Carousel
    Clean, floating, minimal design
+   Always visible - provides visual navigation
    =========================================== */
 
 .thumbnailContainer {
@@ -4442,30 +4397,26 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 16px 20px;
-  /* Gravl-inspired: Subtle transparent background instead of heavy black */
+  gap: 8px;
+  padding: 12px 16px;
+  /* Gravl-inspired: Subtle transparent background */
   background: transparent;
   flex-shrink: 0;
 }
 
-/* Mobile: Hide thumbnail strip - hero nav arrows are used instead */
-@media (max-width: 767px) {
-  .thumbnailContainer {
-    display: none;
-  }
-}
-
+/* Tablet: More spacing */
 @media (min-width: 768px) {
   .thumbnailContainer {
-    padding: 20px 100px 20px 32px;
+    padding: 16px 32px;
     gap: 12px;
   }
 }
 
+/* Desktop: Even more spacing */
 @media (min-width: 1200px) {
   .thumbnailContainer {
-    padding: 20px 120px 20px 40px;
+    padding: 20px 40px;
+    gap: 14px;
   }
 }
 
@@ -4486,7 +4437,7 @@
   backdrop-filter: blur(8px);
 }
 
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .navArrow {
     width: 32px;
     height: 32px;
@@ -4549,7 +4500,7 @@
 }
 
 /* Mobile: Larger thumbnails for better touch targets */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .thumbnail {
     width: 88px;
     height: 62px;
@@ -4767,7 +4718,7 @@
 }
 
 /* CF-002: On mobile, always show delete button so users can easily remove cars */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .thumbnailDeleteBtn {
     opacity: 1;
   }
@@ -4847,7 +4798,7 @@
 }
 
 /* Mobile: Larger touch targets for reorder buttons */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .reorderBtn {
     width: 40px;
     height: 40px;
@@ -4878,7 +4829,7 @@
 }
 
 /* Mobile: Premium vehicle counter overlaid on image */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .vehicleCounter {
     position: absolute;
     top: auto;
@@ -5103,7 +5054,7 @@
 }
 
 /* Mobile: Slightly smaller title */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .emptyTitle {
     font-size: var(--text-h3);
     letter-spacing: 0.06em;
@@ -5119,7 +5070,7 @@
 }
 
 /* Mobile: Smaller description */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .emptyDescription {
     font-size: var(--text-body);
     max-width: 280px;
@@ -5212,7 +5163,7 @@
    =========================================== */
 
 /* On very narrow screens, hide tab text but keep icons */
-@media (max-width: 374px) {
+@media (min-width: 375px) {
   .tabPill span {
     display: none;
   }
@@ -5782,7 +5733,7 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .carPickerModal {
     width: 100%;
     height: 100%;
@@ -6168,7 +6119,7 @@
   color: var(--text-primary, #ffffff);
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .projectsView {
     padding: var(--space-md, 16px);
   }
@@ -6250,7 +6201,7 @@
 }
 
 /* Mobile: Tighter name row */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .heroVehicleNameRow {
     gap: 8px;
   }
@@ -6568,7 +6519,7 @@
 }
 
 /* Compact on mobile */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .quickActions {
     gap: 4px;
   }
@@ -6670,7 +6621,7 @@
 
 /* Note: Primary .addVehicleBtn definition is at line ~140 with lime styling */
 
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .startBuildBtn {
     padding: 6px 10px;
     font-size: var(--text-xs);

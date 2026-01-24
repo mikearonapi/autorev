@@ -45,7 +45,6 @@ async function handleGet() {
         braking_60_0,
         lateral_g,
         layout,
-        aspiration,
         msrp_new_low,
         msrp_new_high,
         score_sound,
@@ -100,7 +99,6 @@ async function handleGet() {
       braking60To0: car.braking_60_0,
       lateralG: car.lateral_g ? parseFloat(car.lateral_g) : null,
       layout: car.layout,
-      aspiration: car.aspiration,
       msrpNewLow: car.msrp_new_low,
       msrpNewHigh: car.msrp_new_high,
       // Scores

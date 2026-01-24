@@ -12,7 +12,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import styles from './AddFavoritesModal.module.css';
 import { fetchCars } from '@/lib/carsClient';
-import { calculateWeightedScore } from '@/lib/scoring';
+import { calculateWeightedScore, ENTHUSIAST_WEIGHTS } from '@/lib/scoring';
 import CarImage from './CarImage';
 import { Icons } from '@/components/ui/Icons';
 
@@ -27,18 +27,8 @@ export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavo
     fetchCars().then(setAllCars).catch(console.error);
   }, []);
 
-  // Default weights for scoring (balanced enthusiast preferences)
-  const defaultWeights = {
-    powerAccel: 1.5,
-    gripCornering: 1.5,
-    braking: 1.2,
-    trackPace: 1.5,
-    drivability: 1.0,
-    reliabilityHeat: 1.0,
-    soundEmotion: 1.2,
-  };
-
   // Filter and sort cars based on search (from database)
+  // Uses ENTHUSIAST_WEIGHTS from lib/scoring.js for consistent scoring across the app
   const filteredCars = useMemo(() => {
     let results = allCars;
     
@@ -57,7 +47,7 @@ export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavo
     return results
       .map(car => ({
         car,
-        score: calculateWeightedScore(car, defaultWeights)
+        score: calculateWeightedScore(car, ENTHUSIAST_WEIGHTS)
       }))
       .sort((a, b) => b.score - a.score)
       .map(item => item.car)
@@ -70,19 +60,28 @@ export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavo
     return existingFavorites.some(f => f.slug === slug) || recentlyAdded.has(slug);
   };
 
-  // Handle adding a car to favorites
+  // Handle adding a car to favorites - Optimistic UI pattern
   const handleAddFavorite = async (car) => {
     if (isFavorited(car.slug) || addingSlug) return;
     
-    setAddingSlug(car.slug);
+    // Optimistic: immediately mark as added
+    setRecentlyAdded(prev => new Set([...prev, car.slug]));
     
+    // Brief visual feedback for tactile response
+    setAddingSlug(car.slug);
+    setTimeout(() => setAddingSlug(null), 100);
+    
+    // Save in background
     try {
       await onAdd(car);
-      setRecentlyAdded(prev => new Set([...prev, car.slug]));
     } catch (err) {
       console.error('Error adding favorite:', err);
-    } finally {
-      setAddingSlug(null);
+      // Revert on error
+      setRecentlyAdded(prev => {
+        const next = new Set(prev);
+        next.delete(car.slug);
+        return next;
+      });
     }
   };
 

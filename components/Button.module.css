@@ -32,7 +32,7 @@
 .sm {
   padding: var(--space-sm) var(--space-md);
   font-size: var(--font-size-sm);
-  min-height: 40px;
+  min-height: 44px; /* WCAG 2.1 AA touch target requirement */
 }
 
 .md {
@@ -47,15 +47,15 @@
   min-height: 48px;
 }
 
-/* On desktop, can be slightly smaller */
+/* On desktop, maintain 44px minimum for touch/click targets per accessibility standards */
 @media (min-width: 768px) {
   .sm {
-    min-height: 36px;
+    min-height: 44px;
     padding: var(--space-xs) var(--space-md);
   }
   
   .md {
-    min-height: 40px;
+    min-height: 44px;
     padding: var(--space-sm) var(--space-lg);
   }
   

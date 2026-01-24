@@ -8,56 +8,63 @@
  * - Shared: Shows "Shared" indicator with checkmark
  * 
  * When clicked, opens ShareBuildModal for first-time share
- * or toggles visibility for already-shared builds.
+ * or opens edit modal for already-shared builds.
  */
 
 import React, { useState, useCallback } from 'react';
 import { Icons } from '@/components/ui/Icons';
 import ShareBuildModal from '@/components/ShareBuildModal';
+import { useLinkedPost } from '@/hooks/useCommunityData';
 import styles from './ShareBuildButton.module.css';
 
 export default function ShareBuildButton({
   build,
+  vehicle, // Vehicle data to link community post to vehicle
   car,
-  isShared = false,
-  communitySlug = null,
   existingImages = [],
   onShareStatusChange,
   className = '',
 }) {
   const [showModal, setShowModal] = useState(false);
-  const [isToggling, setIsToggling] = useState(false);
 
-  const handleClick = useCallback(async () => {
-    if (isShared) {
-      // Already shared - toggle off (unshare) or open modal to edit
-      setShowModal(true);
-    } else {
-      // Not shared - open modal to share
-      setShowModal(true);
-    }
-  }, [isShared]);
+  // Fetch linked community post data for this build
+  const { 
+    data: linkedCommunityPost, 
+    isLoading: checkingCommunityPost,
+    refetch: refetchLinkedPost,
+  } = useLinkedPost(build?.id, { enabled: !!build?.id });
+
+  // Derive shared state from linked post data
+  const isShared = !!linkedCommunityPost && linkedCommunityPost.is_published !== false;
+
+  const handleShareButtonClick = useCallback(() => {
+    setShowModal(true);
+  }, []);
 
   const handleClose = useCallback(() => {
     setShowModal(false);
-  }, []);
+    // Refetch linked post data in case it was updated
+    refetchLinkedPost();
+  }, [refetchLinkedPost]);
 
   // Handle share status change from modal
   const handleShareChange = useCallback(async (newIsShared, shareData) => {
+    // Refetch to get updated linked post data
+    await refetchLinkedPost();
     if (onShareStatusChange) {
       await onShareStatusChange(newIsShared, shareData);
     }
-  }, [onShareStatusChange]);
+  }, [onShareStatusChange, refetchLinkedPost]);
 
   return (
     <>
       <button
         className={`${styles.shareButton} ${isShared ? styles.shared : ''} ${className}`}
-        onClick={handleClick}
-        disabled={isToggling}
-        title={isShared ? 'Shared to Community' : 'Share to Community'}
+        onClick={handleShareButtonClick}
+        disabled={checkingCommunityPost}
+        title={isShared ? 'Edit Community Post' : 'Share to Community'}
       >
-        {isToggling ? (
+        {checkingCommunityPost ? (
           <span className={styles.spinner} />
         ) : isShared ? (
           <>
@@ -76,11 +83,11 @@ export default function ShareBuildButton({
         isOpen={showModal}
         onClose={handleClose}
         build={build}
+        vehicle={vehicle}
         carSlug={car?.slug}
         carName={car?.name}
         existingImages={existingImages}
-        isShared={isShared}
-        communitySlug={communitySlug}
+        linkedCommunityPost={linkedCommunityPost}
         onShareChange={handleShareChange}
       />
     </>

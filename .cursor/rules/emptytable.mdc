@@ -1,9 +1,0 @@
----
-alwaysApply: true
----
-Some database tables are intentionally empty.
-
-Rules:
-- Do NOT assume empty tables are unused
-- Do NOT remove or repurpose empty tables
-- Treat empty tables as planned features unless told otherwise

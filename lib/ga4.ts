@@ -4,12 +4,14 @@
  * Provides typed functions for tracking GA4 conversion events.
  * All functions safely handle cases where gtag is undefined (ad blockers).
  * 
+ * NAMING CONVENTION: "Object + Past-Tense Verb" in Title Case
+ * 
  * Events tracked:
- * - sign_up: User creates account via Google OAuth
- * - car_selector_complete: User finishes Car Selector and sees results
- * - al_conversation_start: User sends first message to AL
- * - add_to_garage: User adds a car to their garage/favorites
- * - car_detail_view: User views a car detail page
+ * - Sign Up: User creates account via Google OAuth
+ * - Car Selector Completed: User finishes Car Selector and sees results
+ * - AL Conversation Started: User sends first message to AL
+ * - Garage Vehicle Added: User adds a car to their garage/favorites
+ * - Car Detail Viewed: User views a car detail page
  * 
  * @module lib/ga4
  */
@@ -66,7 +68,7 @@ export function trackEvent(
  * Fire when user creates account via Google OAuth
  */
 export function trackSignUp(method: string = 'google'): void {
-  trackEvent('sign_up', {
+  trackEvent('Sign Up', {
     method,
   });
 }
@@ -83,7 +85,7 @@ export function trackTuningShopVisit(params: {
   entryPoint?: string;
   isAuthenticated: boolean;
 }): void {
-  trackEvent('tuning_shop_visit', {
+  trackEvent('Tuning Shop Visited', {
     entry_point: params.entryPoint,
     is_authenticated: params.isAuthenticated,
   });
@@ -98,7 +100,7 @@ export function trackBuildCarSelected(params: {
   carName: string;
   carCategory?: string;
 }): void {
-  trackEvent('build_car_selected', {
+  trackEvent('Build Car Selected', {
     car_slug: params.carSlug,
     car_name: params.carName,
     car_category: params.carCategory,
@@ -116,7 +118,7 @@ export function trackBuildModAdded(params: {
   estimatedCost?: number;
   estimatedHpGain?: number;
 }): void {
-  trackEvent('build_mod_added', {
+  trackEvent('Build Mod Added', {
     car_slug: params.carSlug,
     mod_category: params.modCategory,
     mod_name: params.modName,
@@ -137,7 +139,7 @@ export function trackBuildProjectSaved(params: {
   estimatedTotalHpGain?: number;
   isFirstProject: boolean;
 }): void {
-  trackEvent('build_project_saved', {
+  trackEvent('Build Project Saved', {
     car_slug: params.carSlug,
     car_name: params.carName,
     total_mods: params.totalMods,
@@ -156,7 +158,7 @@ export function trackBuildShared(params: {
   shareMethod: string;
   totalMods: number;
 }): void {
-  trackEvent('build_shared', {
+  trackEvent('Build Shared', {
     car_slug: params.carSlug,
     share_method: params.shareMethod,
     total_mods: params.totalMods,
@@ -174,7 +176,7 @@ export function trackPartPricingClicked(params: {
   carSlug?: string;
   vendor?: string;
 }): void {
-  trackEvent('part_pricing_clicked', {
+  trackEvent('Part Pricing Clicked', {
     part_id: params.partId,
     part_name: params.partName,
     part_category: params.partCategory,
@@ -192,7 +194,7 @@ export function trackALBuildChat(params: {
   questionType?: string;
   page?: string;
 }): void {
-  trackEvent('al_build_chat', {
+  trackEvent('AL Build Chat', {
     car_slug: params.carSlug,
     question_type: params.questionType,
     page: params.page,
@@ -213,7 +215,7 @@ export function trackCarSelectorComplete(params: {
   topCarName?: string;
   filtersApplied?: number;
 }): void {
-  trackEvent('car_selector_complete', {
+  trackEvent('Car Selector Completed', {
     results_count: params.resultsCount,
     top_car_slug: params.topCarSlug,
     top_car_name: params.topCarName,
@@ -230,7 +232,7 @@ export function trackALConversationStart(params: {
   carName?: string;
   page?: string;
 }): void {
-  trackEvent('al_conversation_start', {
+  trackEvent('AL Conversation Started', {
     car_slug: params.carSlug,
     car_name: params.carName,
     page: params.page,
@@ -247,7 +249,7 @@ export function trackAddToGarage(params: {
   carCategory?: string;
   isAuthenticated: boolean;
 }): void {
-  trackEvent('add_to_garage', {
+  trackEvent('Garage Vehicle Added', {
     car_slug: params.carSlug,
     car_name: params.carName,
     car_category: params.carCategory,
@@ -265,7 +267,7 @@ export function trackCarDetailView(params: {
   carCategory?: string;
   priceRange?: string;
 }): void {
-  trackEvent('car_detail_view', {
+  trackEvent('Car Detail Viewed', {
     car_slug: params.carSlug,
     car_name: params.carName,
     car_category: params.carCategory,
@@ -281,7 +283,7 @@ export function trackCarDetailView(params: {
  * Track login event
  */
 export function trackLogin(method: string = 'google'): void {
-  trackEvent('login', {
+  trackEvent('Login', {
     method,
   });
 }
@@ -290,7 +292,7 @@ export function trackLogin(method: string = 'google'): void {
  * Track search event
  */
 export function trackSearch(searchTerm: string): void {
-  trackEvent('search', {
+  trackEvent('Search Performed', {
     search_term: searchTerm,
   });
 }
@@ -303,7 +305,7 @@ export function trackShare(params: {
   contentType: string;
   itemId?: string;
 }): void {
-  trackEvent('share', {
+  trackEvent('Share', {
     method: params.method,
     content_type: params.contentType,
     item_id: params.itemId,

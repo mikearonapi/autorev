@@ -149,7 +149,7 @@
 }
 
 /* Mobile adjustments */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .upgradeHeader {
     padding: 12px 0;
   }

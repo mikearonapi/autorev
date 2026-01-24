@@ -125,7 +125,7 @@
 }
 
 /* On very small screens, hide some labels */
-@media (max-width: 360px) {
+@media (min-width: 361px) {
   .statLabel {
     display: none;
   }
@@ -192,7 +192,7 @@
   white-space: nowrap;
 }
 
-@media (max-width: 400px) {
+@media (min-width: 401px) {
   .saveBtnText {
     display: none;
   }

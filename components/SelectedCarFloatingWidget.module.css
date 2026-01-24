@@ -9,7 +9,7 @@
 }
 
 /* Hide when mobile bottom CTA is showing */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .widget {
     bottom: calc(var(--space-lg) + 60px + env(safe-area-inset-bottom, 0px)); /* Account for mobile CTA + safe area */
   }
@@ -89,7 +89,7 @@
   overflow: hidden;
 }
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .panel {
     width: calc(100vw - var(--space-lg) * 2);
     max-width: 320px;

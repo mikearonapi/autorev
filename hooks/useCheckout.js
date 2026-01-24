@@ -26,11 +26,16 @@ export function useCheckout() {
   /**
    * Start subscription checkout
    * @param {'collector' | 'tuner'} tier - Subscription tier
+   * @param {'month' | 'year'} [interval='month'] - Billing interval
    */
-  const checkoutSubscription = useCallback(async (tier) => {
+  const checkoutSubscription = useCallback(async (tier, interval = 'month') => {
     if (!user) {
-      // Store intended tier and open auth modal
-      localStorage.setItem('autorev_checkout_intent', JSON.stringify({ type: 'subscription', tier }));
+      // Store intended tier, interval and open auth modal
+      localStorage.setItem('autorev_checkout_intent', JSON.stringify({ 
+        type: 'subscription', 
+        tier, 
+        interval,
+      }));
       authModal.openSignUp();
       return;
     }
@@ -42,13 +47,20 @@ export function useCheckout() {
       const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type: 'subscription', tier }),
+        body: JSON.stringify({ type: 'subscription', tier, interval }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
         throw new Error(data.error || 'Checkout failed');
+      }
+
+      // Handle immediate upgrade (no redirect needed)
+      if (data.type === 'upgrade' && data.success) {
+        // Refresh page to show new tier
+        window.location.reload();
+        return;
       }
 
       // Redirect to Stripe Checkout
@@ -151,7 +163,7 @@ export function useCheckout() {
       localStorage.removeItem('autorev_checkout_intent');
 
       if (intent.type === 'subscription') {
-        await checkoutSubscription(intent.tier);
+        await checkoutSubscription(intent.tier, intent.interval || 'month');
         return true;
       } else if (intent.type === 'credits') {
         await checkoutCredits(intent.pack);

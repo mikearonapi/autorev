@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+out/
+dist/
+
+# Generated files
+generated-videos/
+logs/
+reports/
+
+# Package manager
+package-lock.json
+pnpm-lock.yaml
+
+# Misc
+.git/
+.vercel/
+*.min.js
+*.min.css

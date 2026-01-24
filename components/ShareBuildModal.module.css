@@ -251,7 +251,7 @@
 }
 
 .buildStatBadge strong {
-  color: #f0d060;
+  color: var(--color-accent-amber-light, #f0d060);
 }
 
 /* Error */
@@ -516,7 +516,7 @@
 }
 
 /* Mobile Responsive */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .overlay {
     padding: 0;
     align-items: flex-end;
@@ -644,7 +644,7 @@
 }
 
 /* Small phones */
-@media (max-width: 360px) {
+@media (min-width: 361px) {
   .socialBtn {
     width: 44px;
     height: 44px;

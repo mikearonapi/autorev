@@ -1,61 +1,61 @@
 /* Parts List / Shopping List Styles */
+/* Premium Redesign - Matching Insights/Whoop Aesthetic */
+/* Compact layout for better scrolling with many parts */
 
 .container {
-  background: rgba(0, 0, 0, 0.25);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  padding: 20px;
-}
-
-/* Header */
-.header {
+  /* Remove container box - let items breathe like cards */
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 0;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 8px;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.headerLeft {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* Section titles use TEAL per brand guidelines - LARGER than body content */
-.title {
-  font-size: 0.875rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--brand-teal);
-}
-
-/* AL Parts Recommendations CTA - Subtle lime to match Add Part buttons */
+/* AL Parts Recommendations CTA - Premium Card */
 .alRecommendationsBtn {
   display: flex;
   align-items: center;
   gap: 12px;
   width: 100%;
   padding: 14px 16px;
-  margin-bottom: 16px;
-  background: rgba(var(--brand-lime-rgb), 0.12);
-  border: 1px solid rgba(var(--brand-lime-rgb), 0.25);
-  border-radius: 12px;
+  /* Premium glassmorphism with Lime accent */
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.04) 0%, rgba(212, 255, 0, 0.02) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   text-align: left;
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+
+.alRecommendationsBtn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--brand-lime, #d4ff00);
+  opacity: 0.6;
 }
 
 .alRecommendationsBtn:hover {
-  background: rgba(var(--brand-lime-rgb), 0.2);
-  border-color: rgba(var(--brand-lime-rgb), 0.4);
-  transform: translateY(-1px);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.06) 0%, rgba(212, 255, 0, 0.05) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.3), inset 0 1px 0 0 rgba(255, 255, 255, 0.08);
+  border-color: rgba(212, 255, 0, 0.15);
 }
 
 .alRecommendationsBtn .alAvatar {
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .alRecommendationsText {
@@ -65,110 +65,373 @@
 }
 
 .alRecommendationsTitle {
-  font-size: 0.875rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  color: var(--brand-lime);
+  color: var(--brand-text-primary, #fff);
+  letter-spacing: 0.01em;
 }
 
 .alRecommendationsSubtitle {
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.6);
+  line-height: 1.35;
 }
 
+/* Header Section */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0;
+  padding: 0 2px;
+}
 
+.headerLeft {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
 
-/* Status Summary Bar */
+.headerLeft svg {
+  color: var(--brand-teal, #10b981);
+  width: 18px;
+  height: 18px;
+}
+
+.title {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--brand-text-primary, #fff);
+}
+
+/* Status Summary Bar - Styled as pills */
 .statusSummary {
   display: flex;
-  gap: var(--space-4, 16px);
-  padding: var(--space-3, 12px) 0;
-  margin-bottom: var(--space-3, 12px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  gap: 6px;
+  padding: 3px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
+  width: fit-content;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .statusCount {
   display: flex;
   align-items: center;
   gap: 6px;
+  padding: 4px 10px;
+  border-radius: 7px;
   font-size: 0.75rem;
+  transition: all 0.2s ease;
 }
 
 .statusCountNumber {
   font-weight: 700;
   font-family: var(--font-mono, monospace);
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.2);
+  min-width: 18px;
+  text-align: center;
 }
 
 .statusCountLabel {
+  font-weight: 500;
+}
+
+.statusCount.statusmuted {
   color: rgba(255, 255, 255, 0.5);
 }
 
 .statusCount.statusmuted .statusCountNumber {
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.7);
 }
 
-.statusCount.statusteal .statusCountNumber {
+.statusCount.statusteal {
+  background: rgba(16, 185, 129, 0.1);
   color: var(--color-accent-teal, #10b981);
 }
 
-.statusCount.statuslime .statusCountNumber {
-  color: var(--color-accent-lime, #d4ff00);
+.statusCount.statusteal .statusCountNumber {
+  background: rgba(16, 185, 129, 0.2);
+  color: var(--color-accent-teal, #10b981);
 }
 
-/* Status Badge */
+.statusCount.statuslime {
+  background: rgba(212, 255, 0, 0.1);
+  color: var(--brand-lime, #d4ff00);
+}
+
+.statusCount.statuslime .statusCountNumber {
+  background: rgba(212, 255, 0, 0.2);
+  color: var(--brand-lime, #d4ff00);
+}
+
+/* List Items - Card Style matching Insights */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.listItem {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
+  position: relative;
+}
+
+.listItem:hover {
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px -6px rgba(0, 0, 0, 0.2), inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.listItem.hasDetails {
+  border-left: 3px solid var(--color-accent-teal, #10b981);
+}
+
+.listItem.itemteal {
+  border-color: rgba(16, 185, 129, 0.15);
+}
+
+/* Item Header */
+.itemHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 12px 14px;
+}
+
+/* Top Row */
+.itemTopRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.itemInfo {
+  flex: 1;
+  min-width: 0; /* Allow text truncation */
+}
+
+.itemName {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--brand-text-primary, #fff);
+  line-height: 1.3;
+}
+
+.itemBrand {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--color-accent-teal, #10b981);
+  font-weight: 500;
+  margin-top: 2px;
+}
+
+/* Status Badge - Refined Pill */
 .statusBadge {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   padding: 4px 8px;
-  font-size: 0.625rem;
-  font-weight: 600;
+  font-size: 0.6rem;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  border-radius: 4px;
-  border: none;
-  cursor: pointer;
+  letter-spacing: 0.04em;
+  border-radius: 16px; /* Fully rounded */
+  border: 1px solid transparent;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .statusBadge.statusmuted {
-  background: rgba(255, 255, 255, 0.06);
-  color: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.6);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .statusBadge.statusmuted:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .statusBadge.statusteal {
-  background: rgba(16, 185, 129, 0.15);
+  background: rgba(16, 185, 129, 0.1);
   color: var(--color-accent-teal, #10b981);
+  border-color: rgba(16, 185, 129, 0.2);
 }
 
 .statusBadge.statusteal:hover {
-  background: rgba(16, 185, 129, 0.25);
+  background: rgba(16, 185, 129, 0.15);
 }
 
 .statusBadge.statuslime {
+  background: rgba(212, 255, 0, 0.1);
+  color: var(--brand-lime, #d4ff00);
+  border-color: rgba(212, 255, 0, 0.2);
+}
+
+/* Bottom Row */
+.itemBottomRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 8px;
+  margin-top: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.itemSubInfo {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.partDetailsRow {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.itemPrice {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--brand-text-primary, #fff);
+}
+
+.itemVendor {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.noPartText {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+/* Actions */
+.itemActions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Add Button - Refined */
+.addPartBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.addPartBtn:hover {
+  background: var(--brand-lime, #d4ff00);
+  color: var(--brand-bg-primary, #000);
+  border-color: var(--brand-lime, #d4ff00);
+}
+
+/* Find Part Button - Premium Pill */
+.findPartBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  height: 30px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: rgba(212, 255, 0, 0.1);
+  border: 1px solid rgba(212, 255, 0, 0.2);
+  border-radius: 8px;
+  color: var(--brand-lime, #d4ff00);
+  transition: all 0.2s ease;
+}
+
+.findPartBtn:hover {
   background: rgba(212, 255, 0, 0.15);
-  color: var(--color-accent-lime, #d4ff00);
+  border-color: rgba(212, 255, 0, 0.3);
+  transform: translateY(-1px);
 }
 
-.statusBadge.statuslime:hover {
-  background: rgba(212, 255, 0, 0.25);
+.findPartBtn .alAvatar {
+  width: 16px;
+  height: 16px;
 }
 
-/* Installed status - read-only (non-interactive) */
-.statusBadge.statusComplete {
-  cursor: default;
-  opacity: 0.9;
+/* Edit/View Buttons */
+.viewLinkBtn, .editPartInline {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 0;
 }
 
-.statusBadge.statusComplete:hover {
-  transform: none;
+.viewLinkBtn:hover, .editPartInline:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
-/* Ready to Install CTA - links to Install page */
+/* Edit Form */
+.editForm {
+  padding: 14px;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Total Row - Premium Card */
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 16px;
+  background: rgba(16, 185, 129, 0.05);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  border-radius: 12px;
+  margin-top: 4px;
+}
+
+.totalRow span:first-child {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.totalAmount {
+  font-family: var(--font-mono, monospace);
+  font-size: 1.1rem;
+  color: var(--color-accent-teal, #10b981);
+}
+
+/* Ready to Install CTA */
 .readyToInstallCta {
   display: flex;
   align-items: center;
@@ -176,17 +439,18 @@
   gap: 12px;
   padding: 14px 16px;
   margin-top: 16px;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  background: linear-gradient(145deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.2);
   border-radius: 12px;
+  transition: all 0.3s ease;
   text-decoration: none;
-  transition: all 0.2s ease;
 }
 
 .readyToInstallCta:hover {
-  background: rgba(16, 185, 129, 0.18);
-  border-color: rgba(16, 185, 129, 0.4);
-  transform: translateY(-1px);
+  background: linear-gradient(145deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.08) 100%);
+  border-color: rgba(16, 185, 129, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(16, 185, 129, 0.1);
 }
 
 .readyToInstallCtaContent {
@@ -196,14 +460,15 @@
 }
 
 .readyToInstallCtaTitle {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--color-accent-teal, #10b981);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--brand-text-primary, #fff);
 }
 
 .readyToInstallCtaSubtitle {
   font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.6);
+  line-height: 1.3;
 }
 
 .readyToInstallCtaIcon {
@@ -211,513 +476,46 @@
   flex-shrink: 0;
 }
 
-/* Item status colors */
-.listItem.itemmuted {
-  border-color: rgba(255, 255, 255, 0.06);
-}
-
-.listItem.itemteal {
-  border-color: rgba(16, 185, 129, 0.3);
-  background: rgba(16, 185, 129, 0.03);
-}
-
-.listItem.itemlime {
-  border-color: rgba(212, 255, 0, 0.3);
-  background: rgba(212, 255, 0, 0.03);
-}
-
-/* Item Status indicator */
-.itemStatus {
-  flex-shrink: 0;
-}
-
-/* Item Actions container */
-.itemActions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-shrink: 0;
-}
-
-/* Add Part button - circular + icon */
-.addPartBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  background: var(--brand-lime, #d4ff00);
-  border: none;
-  border-radius: 50%;
-  color: var(--brand-bg-primary, #0d1b2a);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  flex-shrink: 0;
-}
-
-.addPartBtn:hover {
-  transform: scale(1.05);
-  box-shadow: 0 0 12px rgba(212, 255, 0, 0.3);
-}
-
-/* Find Part button - subtle lime style */
-.findPartBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  background: rgba(212, 255, 0, 0.1);
-  border: 1px solid rgba(212, 255, 0, 0.25);
-  border-radius: 8px;
-  color: var(--color-accent-lime, #d4ff00);
-  cursor: pointer;
-  transition: all 0.2s ease;
-  white-space: nowrap;
-}
-
-.findPartBtn:hover {
-  background: rgba(212, 255, 0, 0.18);
-  border-color: rgba(212, 255, 0, 0.4);
-}
-
-.findPartBtn .alAvatar {
-  width: 16px;
-  height: 16px;
-}
-
-/* View Link Button */
-.viewLinkBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 28px;
-  height: 28px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 6px;
-  color: rgba(255, 255, 255, 0.6);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.viewLinkBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.9);
-}
-
-/* Part Details Row */
-.partDetailsRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px 12px;
-  margin-top: 4px;
-}
-
-.itemPrice {
-  font-size: 0.75rem;
-  font-weight: 600;
-  font-family: var(--font-mono, monospace);
-  color: var(--color-accent-teal, #10b981);
-}
-
-.itemVendor {
-  font-size: 0.6875rem;
-  color: rgba(255, 255, 255, 0.4);
-}
-
-.noPartText {
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.35);
-  font-style: italic;
-  margin-top: 2px;
-}
-
-/* Shopping List */
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-/* List Item */
-.listItem {
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
-  overflow: hidden;
-  transition: border-color 0.2s;
-}
-
-.listItem.hasDetails {
-  border-color: rgba(16, 185, 129, 0.3);
-}
-
-.itemHeader {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 12px 16px;
-  box-sizing: border-box;
-}
-
-/* Top row: Status badge + Upgrade name */
-.itemTopRow {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-}
-
-/* Bottom row: Sub-details + Actions */
-.itemBottomRow {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding-left: 0; /* Align with name, not status */
-}
-
-.itemSubInfo {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 1;
-  min-width: 0;
-}
-
-/* Checkbox */
-.itemCheckbox {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-}
-
-.checkboxEmpty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 4px;
-}
-
-.checkboxChecked {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  background: var(--brand-teal);
-  border-radius: 4px;
-  color: var(--brand-text-primary);
-}
-
-/* Item Info */
-.itemInfo {
-  flex: 1;
-  min-width: 0;
-  margin: 0;
-  padding: 0;
-}
-
-/* Body content is SMALLER than section headers */
-.itemName {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.95);
-  line-height: 1.3;
-  margin: 0;
-  padding: 0;
-  /* Allow name to wrap for readability */
-  word-wrap: break-word;
-}
-
-.itemBrand {
-  display: block;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
-  margin: 4px 0 0 0;
-  padding: 0;
-  line-height: 1.2;
-}
-
-
-/* Edit Part Button */
-.editPartInline {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  padding: 8px 14px;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1;
-  border-radius: 20px;
-  cursor: pointer;
-  transition: all 0.15s;
-  flex-shrink: 0;
-  white-space: nowrap;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.editPartInline:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: rgba(255, 255, 255, 0.9);
-}
-
-
-/* AL Avatar */
-.alAvatar {
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-
-/* Edit Form */
-.editForm {
-  padding: 0 16px 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.editRow {
-  display: flex;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.input {
-  flex: 1;
-  padding: 10px 12px;
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  color: var(--brand-text-primary);
-  font-size: 13px;
-  transition: border-color 0.2s;
-}
-
-.input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
-}
-
-.input:focus {
-  outline: none;
-  border-color: rgba(var(--brand-blue-rgb), 0.5);
-}
-
-.inputSmall {
-  max-width: 100px;
-}
-
-.editActions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  margin-top: 12px;
-}
-
-.cancelBtn,
-.saveBtn {
-  padding: 8px 16px;
-  font-size: 13px;
-  font-weight: 500;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.cancelBtn {
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.7);
-}
-
-.cancelBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-}
-
-.saveBtn {
-  background: var(--brand-lime);
-  border: none;
-  color: var(--brand-bg-primary);
-}
-
-.saveBtn:hover {
-  background: var(--brand-lime-dark);
-}
-
-/* Total Row */
-.totalRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 14px 16px;
-  margin-top: 12px;
-  background: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  border-radius: 10px;
-  font-size: 14px;
-  color: rgba(255, 255, 255, 0.8);
-}
-
-.totalAmount {
-  font-weight: 600;
-  color: var(--brand-teal);
-  font-size: 16px;
-}
-
-
 /* Mobile Responsive */
 @media (max-width: 640px) {
-  .container {
-    padding: 16px;
-    max-width: 100%;
-    overflow: hidden;
-    box-sizing: border-box;
-  }
-  
-  .header {
-    max-width: 100%;
-  }
-  
-  .headerLeft {
-    flex-wrap: wrap;
-    max-width: 100%;
-  }
-  
-  /* Mobile: Keep header same size as Specs page (0.875rem) */
-  .title {
-    font-size: 0.875rem;
-  }
-  
   .alRecommendationsBtn {
-    padding: 14px;
+    padding: 12px 14px;
     gap: 10px;
   }
   
-  .alRecommendationsText {
-    min-width: 0;
-    overflow: hidden;
+  .alRecommendationsBtn::before {
+    width: 3px;
+    height: 100%;
+    top: 0;
+    left: 0;
   }
-  
-  .alRecommendationsTitle {
-    font-size: 0.8125rem;
-  }
-  
-  .alRecommendationsSubtitle {
-    font-size: 0.6875rem;
-    white-space: normal;
-    line-height: 1.4;
-  }
-  
-  .list {
-    max-width: 100%;
-    overflow: hidden;
-    gap: 10px;
-  }
-  
-  .listItem {
-    max-width: 100%;
-    overflow: hidden;
-    border-radius: 12px;
-  }
-  
-  .editRow {
-    flex-wrap: wrap;
-  }
-  
-  .input {
-    min-width: 0;
-    font-size: 16px; /* Prevent iOS zoom */
-  }
-  
-  .inputSmall {
-    flex: 1;
-    max-width: none;
-  }
-  
-  /* Mobile item layout */
-  .itemHeader {
-    padding: 14px;
-    gap: 10px;
-    max-width: 100%;
-  }
-  
+
   .itemTopRow {
-    gap: 10px;
-  }
-  
-  .itemInfo {
-    min-width: 0;
-    overflow: hidden;
-    flex: 1;
-  }
-  
-  /* Allow full name to show - NO truncation */
-  .itemName {
-    font-size: 0.9375rem;
-    font-weight: 600;
-    white-space: normal;
-    overflow: visible;
-    text-overflow: unset;
-    line-height: 1.35;
-  }
-  
-  .itemBrand {
-    font-size: 0.8125rem;
-    white-space: normal;
-    overflow: visible;
-    text-overflow: unset;
-    margin-top: 3px;
-  }
-  
-  .itemBottomRow {
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-  
-  .noPartText {
-    font-size: 0.8125rem;
-  }
-  
-  .itemActions {
+    flex-direction: row;
+    align-items: center;
     gap: 8px;
   }
   
-  .addPartBtn {
-    width: 32px;
-    height: 32px;
+  .statusBadge {
+    flex-shrink: 0;
+  }
+  
+  .itemBottomRow {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .itemActions {
+    justify-content: flex-end;
   }
   
   .findPartBtn {
-    padding: 10px 14px;
-    font-size: 0.8125rem;
+    width: auto;
+    justify-content: center;
   }
   
-  .editPartInline {
-    margin: 0;
-    padding: 10px 14px;
-  }
-  
-  .viewLinkBtn {
-    width: 36px;
-    height: 36px;
-  }
-  
-  /* Status summary spacing */
-  .statusSummary {
-    gap: var(--space-3, 12px);
-    padding: var(--space-2, 8px) 0 var(--space-3, 12px);
-  }
-  
-  .statusCount {
-    font-size: 0.8125rem;
+  .readyToInstallCtaSubtitle {
+    display: none;
   }
 }

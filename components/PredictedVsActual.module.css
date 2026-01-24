@@ -3,9 +3,9 @@
    Feedback loop comparison component
    
    Brand Colors:
-   - Teal (#10b981): Positive outcomes
-   - Blue (#3b82f6): Baseline/predicted
-   - Amber (#f59e0b): Warnings/negative gaps
+   - Teal (var(--color-accent-teal, #10b981)): Positive outcomes
+   - Blue (var(--color-accent-blue, #3b82f6)): Baseline/predicted
+   - Amber (var(--color-accent-amber, #f59e0b)): Warnings/negative gaps
    =========================================== */
 
 .comparisonCard {
@@ -304,7 +304,7 @@
    RESPONSIVE - Mobile
    =========================================== */
 
-@media (max-width: 600px) {
+@media (min-width: 601px) {
   .comparisonCard {
     padding: 16px;
   }

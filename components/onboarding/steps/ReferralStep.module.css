@@ -172,7 +172,7 @@
 /* ==========================================================
    MOBILE - 3 columns with better touch targets
    ========================================================== */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .header {
     padding: 24px 20px 20px;
   }
@@ -216,7 +216,7 @@
 }
 
 /* Small phones */
-@media (max-width: 380px) {
+@media (min-width: 381px) {
   .optionGrid {
     gap: 8px;
     padding: 0 12px;

@@ -30,6 +30,12 @@
   transform: scale(0.98);
 }
 
+/* Focus state for keyboard navigation (WCAG 2.1 AA) */
+.askALButton:focus-visible {
+  outline: 2px solid var(--brand-lime, #d4ff00);
+  outline-offset: 2px;
+}
+
 /* Sparkle Icon */
 .sparkleIcon {
   flex-shrink: 0;
@@ -40,12 +46,12 @@
   white-space: nowrap;
 }
 
-/* Variant: Icon only (default) */
+/* Variant: Icon only (default) - 44px touch target with smaller visual icon */
 .variantIcon {
-  padding: 4px;
+  padding: 10px;
   border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 44px;
+  height: 44px;
 }
 
 /* Variant: Compact (icon + "Ask") */
@@ -62,9 +68,10 @@
 }
 
 /* Variant: Header - Lime CTA for card headers (Brand compliant)
-   CANONICAL DEFINITION - All Ask AL buttons should match these exact values */
+   CANONICAL DEFINITION - All Ask AL buttons should match these exact values
+   MUST MATCH: app/(app)/garage/my-specs/page.module.css .askAlBtn */
 .variantHeader {
-  /* Fixed dimensions for consistency */
+  /* Fixed dimensions for consistency - compact pill appearance */
   min-height: 28px;
   padding: 0 12px;
   
@@ -74,7 +81,7 @@
   border-radius: 14px;
   color: var(--brand-bg-primary, #0d1b2a);
   
-  /* Typography - use fixed px for consistency */
+  /* Typography - use token for consistency */
   font-size: var(--text-xs);
   font-weight: 700;
   text-transform: uppercase;
@@ -83,6 +90,7 @@
   
   /* Layout */
   gap: 4px;
+  flex-shrink: 0;
 }
 
 .variantHeader:hover {
@@ -119,22 +127,22 @@
 }
 
 .askALInline:hover {
-  color: #c49a3a;
+  color: var(--color-accent-amber, #c49a3a);
   text-decoration: underline;
 }
 
 
-/* Mobile touch target adjustments */
-@media (max-width: 480px) {
+/* Mobile touch target adjustments - Enforce 44px minimum for icon variants */
+@media (min-width: 481px) {
   .askALButton {
-    min-width: 32px;
-    min-height: 32px;
+    min-width: 44px;
+    min-height: 44px;
   }
   
   .variantIcon {
-    width: 28px;
-    height: 28px;
-    padding: 4px;
+    width: 44px;
+    height: 44px;
+    padding: 10px;
   }
   
   .variantIcon .alIcon {
@@ -142,7 +150,7 @@
     height: 18px;
   }
   
-  /* Header variant maintains consistent size on mobile */
+  /* Header variant keeps compact appearance - touch target via parent padding */
   .variantHeader {
     min-height: 28px;
     min-width: auto;

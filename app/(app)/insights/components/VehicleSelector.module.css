@@ -54,5 +54,5 @@
 }
 
 .active .name {
-  color: #ffffff;
+  color: var(--color-text-primary, #ffffff);
 }

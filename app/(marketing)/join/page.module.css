@@ -4,7 +4,8 @@
 
 .page {
   min-height: 100vh;
-  background: var(--color-gray-50);
+  /* Transparent to show body gradient */
+  background: transparent;
 }
 
 /* --------------------------------------------------------------------------
@@ -202,6 +203,13 @@
   }
 }
 
+/* Billing Toggle Wrapper */
+.billingToggleWrapper {
+  margin-top: var(--space-lg);
+  display: flex;
+  justify-content: center;
+}
+
 .tiersGrid {
   display: grid;
   gap: var(--space-lg);
@@ -329,6 +337,30 @@
   opacity: 0.7;
 }
 
+/* Savings Badge - Annual Pricing */
+.savingsBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  margin-left: var(--space-xs);
+  font-size: var(--font-size-xs);
+  font-weight: 600;
+  color: var(--color-success-600, #059669);
+  background-color: var(--color-success-50, #ecfdf5);
+  border-radius: var(--radius-full);
+}
+
+/* Per-Month Price - For Annual Plans */
+.perMonthPrice {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  margin-bottom: var(--space-sm);
+}
+
+.perMonthPrice span {
+  font-weight: 500;
+}
+
 .tierTagline {
   font-size: var(--font-size-sm);
   color: var(--color-gray-600);
@@ -397,6 +429,14 @@
 .tierCta:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+}
+
+/* Subscription disclosure wrapper */
+.disclosureWrapper {
+  margin-top: var(--space-xl);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* --------------------------------------------------------------------------
@@ -743,11 +783,11 @@
 }
 
 .tierHeaderCollector .tierHeaderPrice {
-  color: #93c5fd;
+  color: var(--color-accent-blue-light, #93c5fd);
 }
 
 .tierHeaderTuner .tierHeaderPrice {
-  color: #c4b5fd;
+  color: var(--color-info-light, #c4b5fd);
 }
 
 /* Category rows */
@@ -844,8 +884,8 @@
   justify-content: center;
   width: 24px;
   height: 24px;
-  background: #dcfce7;
-  color: #16a34a;
+  background: var(--color-success-light, #dcfce7);
+  color: var(--color-success, #16a34a);
   border-radius: 50%;
 }
 
@@ -882,7 +922,7 @@
 }
 
 /* Mobile responsiveness for feature table */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .tableHeader {
     grid-template-columns: 2fr 1fr 1fr 1fr;
     font-size: var(--font-size-xs);

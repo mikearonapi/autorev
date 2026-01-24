@@ -10,7 +10,8 @@
   padding-top: calc(12px + env(safe-area-inset-top, 0));
   position: relative;
   background: transparent;
-  z-index: 100;
+  /* Must be higher than GarageVehicleSelector (z-index: 9000) so dropdown appears on top */
+  z-index: 10000;
 }
 
 /* Back Button - Left positioned */
@@ -119,12 +120,13 @@
   left: 50%;
   transform: translateX(-50%);
   min-width: 240px;
-  background: rgba(20, 30, 45, 0.98);
+  /* Solid background to ensure content doesn't show through */
+  background: rgb(20, 30, 45);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
   padding: 6px;
   box-shadow: 
-    0 8px 32px rgba(0, 0, 0, 0.4),
+    0 8px 32px rgba(0, 0, 0, 0.5),
     0 0 0 1px rgba(255, 255, 255, 0.05) inset;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
@@ -218,7 +220,7 @@
 }
 
 /* Mobile Responsive */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .header {
     padding: 10px 12px;
     padding-top: calc(10px + env(safe-area-inset-top, 0));

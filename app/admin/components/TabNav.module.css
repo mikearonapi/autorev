@@ -63,7 +63,7 @@
 }
 
 /* Responsive */
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .nav {
     padding: 0 16px;
     overflow-x: auto;

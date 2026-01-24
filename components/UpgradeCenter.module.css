@@ -47,7 +47,7 @@
   aspect-ratio: 16/10;
   border-radius: 16px;
   overflow: hidden;
-  background: linear-gradient(135deg, #142536 0%, #0d1b2a 100%);
+  background: linear-gradient(135deg, #142536 0%, var(--color-bg-base, #0d1b2a) 100%);
   box-shadow: 
     0 8px 32px rgba(0, 0, 0, 0.5),
     0 0 0 1px rgba(255, 255, 255, 0.05) inset;
@@ -179,30 +179,30 @@
    =========================================== */
 
 .modeToggleSection {
-  padding: 0 24px 24px;
+  padding: 0 16px 16px;
   max-width: 1400px;
-  margin: 12px auto 0;
+  margin: 8px auto 0;
   width: 100%;
 }
 
 .modeToggleFullWidth {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 8px;
   background: rgba(0, 0, 0, 0.3);
-  padding: 8px;
-  border-radius: 16px;
+  padding: 6px;
+  border-radius: 14px;
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .modeToggleBtn {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 16px 20px;
+  gap: 12px;
+  padding: 12px 16px;
   background: transparent;
   border: 2px solid transparent;
-  border-radius: 12px;
+  border-radius: 10px;
   color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
   transition: all 0.25s ease;
@@ -667,7 +667,7 @@
    =========================================== */
 
 .buildRecommendationsSection {
-  padding: 0 20px 16px;
+  padding: 0 16px 12px;
   max-width: 100%;
   width: 100%;
 }
@@ -676,19 +676,19 @@
 .buildRecommendationsCard {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
-  padding: 16px;
+  border-radius: 10px;
+  padding: 12px 14px;
 }
 
 /* Section titles use TEAL per brand guidelines - LARGER than body content */
+/* Inherits font-family, text-transform from global .text-display */
 .buildRecommendationsHeader {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   font-size: 0.875rem;
   font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--brand-teal);
 }
@@ -703,7 +703,7 @@
 
 .buildRecommendationsGrid {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 
 .buildRecBtn {
@@ -711,7 +711,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 12px 24px;
+  padding: 10px 16px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
@@ -721,7 +721,7 @@
   cursor: pointer;
   transition: all 0.15s ease;
   flex: 1;
-  min-width: 80px;
+  min-width: 70px;
 }
 
 .buildRecBtn:hover {
@@ -744,7 +744,7 @@
 
 /* Custom Build - Second Row */
 .buildRecommendationsCustomRow {
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .buildRecBtnCustomFull {
@@ -752,7 +752,7 @@
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 12px 16px;
+  padding: 10px 14px;
   background: rgba(255, 255, 255, 0.02);
   border: 1px dashed rgba(255, 255, 255, 0.15);
   border-radius: 8px;
@@ -809,7 +809,7 @@
 .sidebarFull {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   width: 100%;
 }
 
@@ -843,8 +843,8 @@
 .workspace {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 0 20px 24px;
+  gap: 12px;
+  padding: 0 16px 20px;
   flex: 1;
   min-height: 0;
   max-width: 100%;
@@ -861,32 +861,32 @@
 .sidebar {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
   width: 100%;
 }
 
 .sidebarCard {
   background: rgba(255, 255, 255, 0.02);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
+  border-radius: 10px;
   overflow: hidden;
 }
 
 .sidebarCardHeader {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px 16px;
+  gap: 8px;
+  padding: 12px 14px;
   background: rgba(255, 255, 255, 0.02);
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
   color: var(--brand-teal);
 }
 
 /* Section titles use TEAL per brand guidelines - LARGER than body content */
+/* Inherits font-family, text-transform from global .text-display */
 .sidebarCardTitle {
   font-size: 0.875rem;
   font-weight: 700;
-  text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--brand-teal);
 }
@@ -942,9 +942,9 @@
 .sidebarCardHeaderCollapsible {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   width: 100%;
-  padding: 14px 16px;
+  padding: 12px 14px;
   background: rgba(255, 255, 255, 0.02);
   border: none;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
@@ -977,7 +977,7 @@
 }
 
 .sidebarCardContent {
-  padding: 12px;
+  padding: 10px 12px;
 }
 
 /* ===========================================
@@ -1045,7 +1045,7 @@
 }
 
 .advancedSelect option {
-  background: #132638;
+  background: var(--color-bg-base, #132638);
   color: var(--brand-text-primary);
 }
 
@@ -2137,14 +2137,14 @@
 .goalLabel {
   font-size: var(--text-xs);
   font-weight: 600;
-  color: #10b981;
+  color: var(--color-accent-teal, #10b981);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 /* Recommended badge for goal-aligned categories */
 .recommendedBadge {
-  color: #10b981;
+  color: var(--color-accent-teal, #10b981);
   font-size: var(--text-2xs);
   margin-left: -4px;
 }
@@ -2182,7 +2182,7 @@
   width: 100%;
   max-width: 420px;
   max-height: 70vh;
-  background: #122333;
+  background: var(--color-bg-base, #122333);
   border: 1px solid var(--cat-color, rgba(255, 255, 255, 0.12));
   border-radius: 12px;
   display: flex;
@@ -2929,7 +2929,7 @@
 .saveModal {
   width: 100%;
   max-width: 420px;
-  background: linear-gradient(180deg, #162a3d 0%, #0d1b2a 100%);
+  background: linear-gradient(180deg, #162a3d 0%, var(--color-bg-base, #0d1b2a) 100%);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   overflow: hidden;
@@ -3129,7 +3129,7 @@
 }
 
 .garageVehicleSelect option {
-  background: #132638;
+  background: var(--color-bg-base, #132638);
   color: var(--brand-text-primary);
   padding: 12px;
 }
@@ -3169,7 +3169,7 @@
   background: rgba(34, 211, 238, 0.15);
   border: 1px solid rgba(34, 211, 238, 0.4);
   border-radius: 8px;
-  color: #22d3ee;
+  color: var(--color-accent-teal-light, #22d3ee);
   font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
@@ -3447,7 +3447,7 @@
 }
 
 .confirmBtn:hover:not(:disabled) {
-  background: #bfe600;
+  background: var(--color-accent-lime-dark, #bfe600);
   box-shadow: 0 8px 20px rgba(212, 255, 0, 0.35);
   transform: translateY(-1px);
 }
@@ -3473,7 +3473,7 @@
 }
 
 /* Mobile adjustments for modal */
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .modalOverlay {
     padding: 16px;
     padding-top: 100px; /* Clear beta banner + header */
@@ -3930,7 +3930,7 @@
   margin: 0 0 10px 0;
   font-size: var(--text-body);
   font-weight: 600;
-  color: #34c759;
+  color: var(--color-success, #34c759);
 }
 
 .lapTimeInfoPanel p {
@@ -3954,7 +3954,7 @@
   padding: 10px 12px;
   margin: 0;
   font-weight: 500;
-  color: #ffcc00;
+  color: var(--color-accent-amber, #ffcc00);
 }
 
 /* Driver Skill Selector */
@@ -3998,12 +3998,12 @@
 .skillBtnActive {
   background: rgba(var(--brand-success-rgb), 0.15);
   border-color: rgba(var(--brand-success-rgb), 0.4);
-  color: #34c759;
+  color: var(--color-success, #34c759);
 }
 
 /* Lap Time Good Improvement */
 .lapTimeGood {
-  color: #34c759 !important;
+  color: var(--color-success, #34c759) !important;
 }
 
 /* Lap Time Breakdown */
@@ -4035,13 +4035,13 @@
 }
 
 .lapTimeRealized {
-  color: #34c759;
+  color: var(--color-success, #34c759);
   font-weight: 600;
   font-family: 'SF Mono', 'Monaco', monospace;
 }
 
 .lapTimeUnrealized {
-  color: #ff9500;
+  color: var(--color-accent-amber, #ff9500);
   font-family: 'SF Mono', 'Monaco', monospace;
 }
 
@@ -4087,7 +4087,7 @@
 .lapTimeCategoryValue {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: #34c759;
+  color: var(--color-success, #34c759);
   font-family: 'SF Mono', 'Monaco', monospace;
 }
 
@@ -4164,7 +4164,7 @@
 .trackTimeBtnActive {
   background: rgba(var(--brand-success-rgb), 0.12);
   border-color: rgba(var(--brand-success-rgb), 0.3);
-  color: #34c759;
+  color: var(--color-success, #34c759);
 }
 
 /* Log Time Form */
@@ -4302,14 +4302,14 @@
   font-size: var(--text-h4);
   font-weight: 600;
   font-family: 'SF Mono', 'Monaco', monospace;
-  color: #34c759;
+  color: var(--color-success, #34c759);
 }
 
 .logTimeSaveBtn {
   width: 100%;
   margin-top: 16px;
   padding: 12px;
-  background: linear-gradient(135deg, #34c759, #30b350);
+  background: linear-gradient(135deg, var(--color-success, #34c759), #30b350);
   border: none;
   border-radius: 10px;
   color: var(--brand-text-primary);
@@ -4359,7 +4359,7 @@
   background: rgba(175, 82, 222, 0.15);
   border: 1px solid rgba(175, 82, 222, 0.3);
   border-radius: 8px;
-  color: #af52de;
+  color: var(--color-info, #af52de);
   font-size: var(--text-xs);
   font-weight: 500;
   cursor: pointer;
@@ -4417,7 +4417,7 @@
   font-size: var(--text-h4);
   font-weight: 700;
   font-family: 'SF Mono', 'Monaco', monospace;
-  color: #34c759;
+  color: var(--color-success, #34c759);
 }
 
 .trackHistoryItemMeta {
@@ -4432,12 +4432,12 @@
   padding: 2px 6px;
   background: rgba(255, 149, 0, 0.15);
   border-radius: 4px;
-  color: #ff9500;
+  color: var(--color-accent-amber, #ff9500);
   text-transform: capitalize;
 }
 
 .trackHistoryImprovement {
-  color: #34c759;
+  color: var(--color-success, #34c759);
   font-weight: 600;
 }
 
@@ -4466,7 +4466,7 @@
   margin-bottom: 12px;
   font-size: var(--text-body);
   font-weight: 600;
-  color: #af52de;
+  color: var(--color-info, #af52de);
 }
 
 .trackAnalysisSection {
@@ -4497,19 +4497,19 @@
 }
 
 .trackAnalysisprogress {
-  border-left: 3px solid #34c759;
+  border-left: 3px solid var(--color-success, #34c759);
 }
 
 .trackAnalysisregression {
-  border-left: 3px solid #ff3b30;
+  border-left: 3px solid var(--color-error, #ff3b30);
 }
 
 .trackAnalysispattern {
-  border-left: 3px solid #ff9500;
+  border-left: 3px solid var(--color-accent-amber, #ff9500);
 }
 
 .trackAnalysisconsistency {
-  border-left: 3px solid #5ac8fa;
+  border-left: 3px solid var(--color-accent-teal-light, #5ac8fa);
 }
 
 .trackAnalysisRec {
@@ -4539,7 +4539,7 @@
   background: rgba(var(--brand-success-rgb), 0.1);
   border-radius: 6px;
   font-size: var(--text-xs);
-  color: #34c759;
+  color: var(--color-success, #34c759);
 }
 
 /* ===========================================
@@ -4624,7 +4624,7 @@
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 2px solid #fff;
+  border: 2px solid var(--color-text-primary, #ffffff);
   transform: translate(-50%, -50%);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   transition: left 0.3s ease;
@@ -4957,7 +4957,7 @@
    RESPONSIVE
    =========================================== */
 
-@media (max-width: 1200px) {
+@media (min-width: 1201px) {
   .heroContent {
     grid-template-columns: 1fr;
     gap: 24px;
@@ -4974,7 +4974,7 @@
   }
 }
 
-@media (max-width: 968px) {
+@media (min-width: 969px) {
   .heroSection {
     padding: 16px;
   }
@@ -5032,10 +5032,10 @@
   }
 }
 
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   /* CRITICAL: Prevent horizontal overflow on mobile */
   .upgradeCenter {
-    max-width: 100vw;
+    max-width: 100%;
     overflow-x: hidden;
     box-sizing: border-box;
   }
@@ -6327,7 +6327,7 @@
 }
 
 /* Mobile Responsive - Tuning Insights */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .tuningInsightsSection {
     padding: 16px 12px;
   }
@@ -6664,4 +6664,200 @@
 
 .leftPanel, .rightPanel {
   display: none;
+}
+
+/* ===========================================
+   WHOOP-INSPIRED POLISH (Standardized to Site Theme)
+   =========================================== */
+
+/* 1. Recommendation Section - Standard Light Tile */
+.recommendationSection {
+  padding: 16px 24px;
+  background: transparent;
+  border: none;
+}
+
+.recommendationBannerFull {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 20px 24px;
+  box-shadow: none;
+}
+
+.recommendationHeaderFull {
+  margin-bottom: 12px;
+}
+
+.recommendationTitleFull {
+  font-size: 0.75rem;
+  letter-spacing: 1.2px;
+  color: rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+}
+
+.focusTagFull {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  padding: 4px 10px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  border-radius: 100px;
+  margin-bottom: 12px;
+  display: inline-block;
+}
+
+.recommendationTextFull {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.9);
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+/* Insights Grid in Recommendation */
+.insightsGridFull {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.insightsCardFull, 
+.watchOutsCardFull {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  padding: 16px;
+  width: 100%;
+}
+
+.insightsCardListFull {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.insightsCardListFull li {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+}
+
+.modBullet {
+  display: none; /* Hide bullet points in horizontal layout */
+}
+
+.modName {
+  font-weight: 500;
+}
+
+.modGainFull {
+  margin-left: 8px;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+/* Watch Outs - keep vertical list but style nicely */
+.watchOutsCardListFull {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.watchOutsCardListFull li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.4;
+}
+
+.watchBullet {
+  color: #f59e0b; /* Warning amber */
+  font-size: 1.2em;
+  line-height: 1;
+  margin-top: -2px;
+}
+
+/* 2. Mode Toggle - Standard Light Tile */
+.modeToggleSection {
+  padding: 0 24px;
+  margin-top: 24px; /* Increased from 16px */
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 24px; /* Added spacing below */
+}
+
+.modeToggleFullWidth {
+  background: rgba(255, 255, 255, 0.04);
+  padding: 6px;
+  border-radius: 100px; /* Pill shape */
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  gap: 0;
+}
+
+.modeToggleBtn {
+  border-radius: 100px;
+  padding: 10px 24px;
+  justify-content: center;
+  gap: 10px; /* Tighter gap for simpler button */
+  background: transparent;
+  border: none;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.modeToggleBtn:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.modeToggleBtnActive {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.modeToggleBtnActive .modeToggleBtnTitle {
+  color: #fff;
+}
+
+/* Hide description on standard view for cleaner look, show on hover? No, keep simple */
+.modeToggleBtnDesc {
+  display: none; 
+}
+
+/* 3. Build Recommendations - Standard Light Tile */
+.buildRecommendationsSection {
+  padding: 0 24px 32px; /* Increased bottom padding */
+  margin-top: 8px; /* Added some top spacing */
+}
+
+.buildRecommendationsHeader {
+  margin-bottom: 16px; /* Increased from 12px */
+  padding-left: 4px;
+}
+
+.buildRecommendationsGrid {
+  gap: 16px; /* Increased from 12px */
+}
+
+.buildRecommendationsCustomRow {
+  margin-top: 16px; /* Increased from 8px */
 }

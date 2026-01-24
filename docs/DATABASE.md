@@ -324,9 +324,9 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | Status | **62 rows** |
 |--------|----------|
 | **Purpose** | User preferences, subscription tier, Stripe billing, and onboarding data |
-| **Columns** | 44 |
+| **Columns** | 45 |
 | **Key Fields** | `id` (auth.users FK), `display_name`, `avatar_url`, `subscription_tier`, `preferred_units`, `email_notifications` |
-| **Stripe Fields** | `stripe_customer_id`, `stripe_subscription_id`, `stripe_subscription_status`, `subscription_started_at`, `subscription_ends_at`, `al_credits_purchased` |
+| **Stripe Fields** | `stripe_customer_id`, `stripe_subscription_id`, `stripe_subscription_status`, `subscription_started_at`, `subscription_ends_at`, `cancel_at_period_end`, `al_credits_purchased` |
 | **Onboarding Fields** | `referral_source`, `referral_source_other`, `user_intent`, `onboarding_completed_at`, `onboarding_step`, `email_opt_in_features`, `email_opt_in_events` |
 | **Email Fields** | `last_email_sent_at`, `email_bounce_count`, `email_unsubscribed_at`, `referral_code` |
 | **Location Fields** | `location_zip`, `location_city`, `location_state`, `location_updated_at` |
@@ -341,12 +341,16 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Used By** | My Garage favorites |
 
 ### `user_projects` — Build projects
+
+> **Data Model**: See `docs/SOURCE_OF_TRUTH.md` → "Build & Vehicle Data Model" for relationship with `user_vehicles` and `cars`.
+
 | Status | **13 rows** |
 |--------|----------|
 | **Purpose** | User's saved build projects |
 | **Columns** | 15 |
 | **Key Fields** | `user_id`, `car_slug`, `car_id`, `project_name`, `selected_upgrades`, `total_hp_gain`, `total_cost_low`, `total_cost_high` |
-| **Used By** | Tuning Shop builds (Tuner tier) |
+| **Performance Snapshots** | `stock_hp`, `final_hp`, `stock_zero_to_sixty`, `final_zero_to_sixty`, etc. - stored at save time for consistent community display |
+| **Used By** | Tuning Shop builds (Tuner tier), Community builds page |
 
 ### `user_feedback` — User feedback
 | Status | **43 rows** |
@@ -359,6 +363,9 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Used By** | FeedbackWidget, FeedbackCorner, internal admin page, ErrorBoundary |
 
 ### `user_vehicles` — Owned vehicles
+
+> **Data Model**: See `docs/SOURCE_OF_TRUTH.md` → "Build & Vehicle Data Model" for how vehicles, builds, and stock data work together.
+
 | Status | **34 rows** |
 |--------|----------|
 | **Purpose** | User's owned vehicles with VIN and installed modifications |

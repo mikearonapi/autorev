@@ -22,7 +22,7 @@
   /* Add padding to offset the negative top */
   padding-top: calc(env(safe-area-inset-top, 50px) + 50px);
   /* Navy background */
-  background: #0d1b2a;
+  background: var(--color-bg-base, #0d1b2a);
   box-sizing: border-box;
   /* Prevent horizontal overflow on Android */
   overflow-x: hidden;
@@ -492,7 +492,7 @@
   justify-content: center;
   gap: 8px;
   padding: 12px 32px;
-  background: #d4ff00;
+  background: var(--color-accent-lime, #d4ff00);
   border: none;
   border-radius: 100px;
   font-family: 'Oswald', var(--font-display), system-ui, sans-serif;
@@ -500,7 +500,7 @@
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  color: #0d1b2a;
+  color: var(--color-bg-base, #0d1b2a);
   cursor: pointer;
   transition: all 0.25s ease;
   min-height: 44px;
@@ -610,7 +610,7 @@
    MOBILE: FULL SCREEN - Cross-device compatible
    Tested for: iOS Safari, Chrome, Android Chrome, Samsung Browser
    ========================================================== */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .overlay {
     /* Full screen on mobile - extend into safe areas */
     position: fixed;
@@ -623,7 +623,7 @@
     min-height: calc(100vh + env(safe-area-inset-top, 50px) + 50px);
     min-height: calc(100dvh + env(safe-area-inset-top, 50px) + 50px);
     display: block;
-    background: #0d1b2a;
+    background: var(--color-bg-base, #0d1b2a);
     padding: 0;
     margin: 0;
     overflow: hidden;
@@ -644,7 +644,7 @@
     border: none;
     display: flex;
     flex-direction: column;
-    background: #0d1b2a;
+    background: var(--color-bg-base, #0d1b2a);
     /* Safe area padding for home indicator */
     padding-bottom: env(safe-area-inset-bottom, 0);
   }

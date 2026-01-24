@@ -85,11 +85,16 @@ export default function PersonalizeTooltip({ userId, currentPreferences, onClose
     }
   };
 
+  // Optimistic UI: Close immediately, save in background
   const handleSave = async () => {
     if (isSaving) return;
     
     setIsSaving(true);
     
+    // Optimistic: call onSaved immediately to close/update parent
+    onSaved();
+    
+    // Save in background
     try {
       const response = await fetch(`/api/users/${userId}/preferences`, {
         method: 'POST',
@@ -103,11 +108,10 @@ export default function PersonalizeTooltip({ userId, currentPreferences, onClose
       if (!response.ok) {
         throw new Error('Failed to save preferences');
       }
-      
-      onSaved();
     } catch (err) {
       console.error('Save preferences error:', err);
-      setIsSaving(false);
+      // Note: Tooltip is already closed, error is logged for debugging
+      // Parent may want to show a toast notification
     }
   };
 

@@ -78,7 +78,7 @@
 }
 
 .alertItem.critical { border-color: var(--brand-error); background: rgba(var(--brand-error-rgb), 0.1); }
-.alertItem.high { border-color: #f97316; background: rgba(249, 115, 22, 0.08); }
+.alertItem.high { border-color: var(--color-accent-amber, #f97316); background: rgba(249, 115, 22, 0.08); }
 .alertItem.medium { border-color: var(--brand-warning); background: rgba(var(--brand-warning-rgb), 0.08); }
 .alertItem.low { border-color: var(--brand-blue); background: rgba(var(--brand-blue-rgb), 0.08); }
 
@@ -196,7 +196,7 @@
 }
 
 .severityBadge.blocking { background: rgba(var(--brand-error-rgb), 0.2); color: var(--brand-error); }
-.severityBadge.major { background: rgba(249, 115, 22, 0.2); color: #f97316; }
+.severityBadge.major { background: rgba(249, 115, 22, 0.2); color: var(--color-accent-amber, #f97316); }
 .severityBadge.minor { background: rgba(var(--brand-warning-rgb), 0.2); color: var(--brand-warning); }
 .severityBadge.unknown { background: rgba(100, 116, 139, 0.2); color: var(--brand-text-tertiary); }
 

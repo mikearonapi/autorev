@@ -53,7 +53,7 @@ export default function LandingHero({
 
   const trackCta = (ctaLabel, destination) => {
     try {
-      trackEvent('landing_page_cta_click', {
+      trackEvent('Landing Page CTA Clicked', {
         landing_page: pageId,
         cta: ctaLabel,
         destination,

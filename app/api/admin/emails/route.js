@@ -9,7 +9,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { getEmailAnalytics, sendTemplateEmail, processEmailQueue } from '@/lib/email';
+import { getEmailAnalytics, sendTemplateEmail, processEmailQueue } from '@/lib/emailService';
 import { createClient } from '@supabase/supabase-js';
 import { isAdminEmail } from '@/lib/adminAccess';
 

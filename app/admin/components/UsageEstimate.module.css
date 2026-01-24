@@ -321,7 +321,7 @@
 }
 
 /* Responsive */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .summary {
     flex-direction: column;
     gap: 10px;

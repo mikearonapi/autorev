@@ -289,7 +289,7 @@
 /* ============================================
    Responsive
    ============================================ */
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .upgradeCard {
     padding: 1.5rem;
     margin: 0.75rem;

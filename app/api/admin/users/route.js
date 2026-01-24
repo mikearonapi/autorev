@@ -9,6 +9,7 @@ import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { isAdminEmail } from '@/lib/adminAccess';
 import { getTotalUsersCount, getUserTierBreakdown } from '@/lib/adminMetricsService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Force dynamic - never cache this route
 export const dynamic = 'force-dynamic';
@@ -17,7 +18,7 @@ export const revalidate = 0;
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-export async function GET(request) {
+async function handleGet(request) {
   try {
     // Validate environment
     if (!supabaseUrl || !supabaseServiceKey) {
@@ -297,3 +298,5 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Internal server error', details: err.message }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'admin/users', feature: 'admin' });

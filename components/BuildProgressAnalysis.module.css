@@ -333,7 +333,7 @@
 }
 
 /* Mobile */
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .buildProgress {
     padding: 16px;
   }

@@ -26,7 +26,7 @@
   border-color: var(--color-gray-300);
 }
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .card:hover {
     transform: translateY(-2px);
   }
@@ -77,78 +77,78 @@
 
 /* Event type color schemes */
 .type-cars-and-coffee {
-  background: linear-gradient(135deg, #6F4E37 0%, #8B6B4E 100%);
+  background: linear-gradient(135deg, var(--color-accent-amber, #6f4e37) 0%, #8B6B4E 100%);
   color: var(--brand-text-primary);
 }
-.type-cars-and-coffee .typeIcon { color: #6F4E37; }
+.type-cars-and-coffee .typeIcon { color: var(--color-accent-amber, #6f4e37); }
 
 .type-track-day {
-  background: linear-gradient(135deg, #E53935 0%, #C62828 100%);
+  background: linear-gradient(135deg, var(--color-error, #e53935) 0%, #C62828 100%);
   color: var(--brand-text-primary);
 }
-.type-track-day .typeIcon { color: #E53935; }
+.type-track-day .typeIcon { color: var(--color-error, #e53935); }
 
 .type-autocross {
-  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+  background: linear-gradient(135deg, var(--color-accent-amber, #ff9800) 0%, #F57C00 100%);
   color: var(--brand-text-primary);
 }
-.type-autocross .typeIcon { color: #FF9800; }
+.type-autocross .typeIcon { color: var(--color-accent-amber, #ff9800); }
 
 .type-car-show {
-  background: linear-gradient(135deg, #7B1FA2 0%, #6A1B9A 100%);
+  background: linear-gradient(135deg, var(--color-info, #7b1fa2) 0%, #6A1B9A 100%);
   color: var(--brand-text-primary);
 }
-.type-car-show .typeIcon { color: #7B1FA2; }
+.type-car-show .typeIcon { color: var(--color-info, #7b1fa2); }
 
 .type-club-meetup {
-  background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
+  background: linear-gradient(135deg, var(--color-accent-blue, #1976d2) 0%, #1565C0 100%);
   color: var(--brand-text-primary);
 }
-.type-club-meetup .typeIcon { color: #1976D2; }
+.type-club-meetup .typeIcon { color: var(--color-accent-blue, #1976d2); }
 
 .type-cruise {
-  background: linear-gradient(135deg, #00897B 0%, #00796B 100%);
+  background: linear-gradient(135deg, var(--color-accent-teal, #00897b) 0%, #00796B 100%);
   color: var(--brand-text-primary);
 }
-.type-cruise .typeIcon { color: #00897B; }
+.type-cruise .typeIcon { color: var(--color-accent-teal, #00897b); }
 
 .type-auction {
-  background: linear-gradient(135deg, #5D4037 0%, #4E342E 100%);
+  background: linear-gradient(135deg, var(--color-accent-amber, #5d4037) 0%, #4E342E 100%);
   color: var(--brand-text-primary);
 }
-.type-auction .typeIcon { color: #5D4037; }
+.type-auction .typeIcon { color: var(--color-accent-amber, #5d4037); }
 
 .type-professional-race {
-  background: linear-gradient(135deg, #FFD700 0%, #FFA000 100%);
+  background: linear-gradient(135deg, var(--color-accent-amber, #ffd700) 0%, #FFA000 100%);
   color: var(--brand-bg-primary);
 }
-.type-professional-race .typeIcon { color: #FFD700; }
+.type-professional-race .typeIcon { color: var(--color-accent-amber, #ffd700); }
 
 .type-industry {
-  background: linear-gradient(135deg, #455A64 0%, #37474F 100%);
+  background: linear-gradient(135deg, var(--color-text-muted, #455a64) 0%, #37474F 100%);
   color: var(--brand-text-primary);
 }
-.type-industry .typeIcon { color: #455A64; }
+.type-industry .typeIcon { color: var(--color-text-muted, #455a64); }
 
 .type-time-attack {
-  background: linear-gradient(135deg, #D32F2F 0%, #B71C1C 100%);
+  background: linear-gradient(135deg, var(--color-error, #d32f2f) 0%, #B71C1C 100%);
   color: var(--brand-text-primary);
 }
-.type-time-attack .typeIcon { color: #D32F2F; }
+.type-time-attack .typeIcon { color: var(--color-error, #d32f2f); }
 
 .type-club-racing {
-  background: linear-gradient(135deg, #2E7D32 0%, #1B5E20 100%);
+  background: linear-gradient(135deg, var(--color-success, #2e7d32) 0%, #1B5E20 100%);
   color: var(--brand-text-primary);
 }
-.type-club-racing .typeIcon { color: #2E7D32; }
+.type-club-racing .typeIcon { color: var(--color-success, #2e7d32); }
 
 .type-other,
 .type-default {
-  background: linear-gradient(135deg, #607D8B 0%, #546E7A 100%);
+  background: linear-gradient(135deg, var(--color-text-tertiary, #607d8b) 0%, #546E7A 100%);
   color: var(--brand-text-primary);
 }
 .type-other .typeIcon,
-.type-default .typeIcon { color: #607D8B; }
+.type-default .typeIcon { color: var(--color-text-tertiary, #607d8b); }
 
 /* Header Badges Container */
 .headerBadges {
@@ -483,7 +483,7 @@
 /* ============================================
    Mobile Responsive
    ============================================ */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .typeHeader {
     padding: 3px 6px;
     min-height: 24px;

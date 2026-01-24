@@ -19,7 +19,7 @@ function UnsubscribeForm() {
     }
   }, [searchParams]);
 
-  const handleSubmit = async (e) => {
+  const handleUnsubscribeSubmit = async (e) => {
     e.preventDefault();
     if (!email) return;
 
@@ -60,7 +60,7 @@ function UnsubscribeForm() {
           )}
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form onSubmit={handleUnsubscribeSubmit} className={styles.form}>
           <p className={styles.description}>
             Choose which emails you'd like to unsubscribe from.
           </p>
@@ -69,6 +69,8 @@ function UnsubscribeForm() {
             <label htmlFor="email">Email Address</label>
             <input
               type="email"
+              inputMode="email"
+              autoComplete="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}

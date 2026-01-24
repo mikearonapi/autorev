@@ -38,7 +38,7 @@
   padding: 2px 6px;
   border-radius: 4px;
   background: linear-gradient(135deg, rgba(var(--brand-purple-rgb), 0.2), rgba(var(--brand-blue-rgb), 0.2));
-  color: #a78bfa;
+  color: var(--color-info, #a78bfa);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -276,7 +276,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .insightCard {
     padding: 10px;
   }

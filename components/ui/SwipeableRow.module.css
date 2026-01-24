@@ -1,0 +1,107 @@
+/* SwipeableRow Component Styles */
+
+.container {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-bg-primary);
+}
+
+/* Action containers */
+.actionsLeft,
+.actionsRight {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  display: flex;
+  align-items: stretch;
+}
+
+.actionsLeft {
+  left: 0;
+  transform: translateX(-100%);
+}
+
+.actionsRight {
+  right: 0;
+  transform: translateX(100%);
+}
+
+/* Individual action button */
+.action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-1);
+  padding: var(--space-2);
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  transition: background-color 0.15s ease, transform 0.15s ease;
+  min-height: 44px; /* Touch target */
+}
+
+.action:active {
+  transform: scale(0.95);
+}
+
+/* Action variants */
+.action.default {
+  background: var(--color-bg-elevated);
+  color: var(--color-text-primary);
+}
+
+.action.primary {
+  background: var(--color-accent-lime);
+  color: var(--color-bg-primary);
+}
+
+.action.danger {
+  background: var(--color-semantic-error);
+  color: white;
+}
+
+.action.success {
+  background: var(--color-accent-teal);
+  color: white;
+}
+
+/* Action icon */
+.actionIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.actionIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Action label */
+.actionLabel {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* Main content */
+.content {
+  position: relative;
+  background: var(--color-bg-primary);
+  will-change: transform;
+  touch-action: pan-y; /* Allow vertical scroll but handle horizontal */
+}
+
+/* Hide on desktop - swipe is mobile-only */
+@media (min-width: 768px) {
+  .actionsLeft,
+  .actionsRight {
+    display: none;
+  }
+  
+  .content {
+    transform: none !important;
+  }
+}

@@ -5,7 +5,8 @@
 
 .page {
   min-height: 100dvh;
-  background: var(--brand-bg-primary);
+  /* Transparent to show body gradient */
+  background: transparent;
   color: var(--brand-text-primary);
   padding-bottom: var(--page-bottom-padding);
 }
@@ -411,10 +412,68 @@
 }
 
 /* ===========================================
+   CONTINUE TO PARTS CTA
+   =========================================== */
+
+.continueCtaContainer {
+  padding: var(--space-4, 16px);
+  padding-bottom: calc(var(--space-4, 16px) + 60px); /* Space for bottom tab bar */
+}
+
+.continueCta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4, 16px);
+  padding: var(--space-4, 16px);
+  
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.08));
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-lg, 12px);
+  
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.continueCta:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.12));
+  border-color: rgba(16, 185, 129, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
+}
+
+.ctaContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 4px);
+}
+
+.ctaTitle {
+  font-size: var(--text-body, 16px);
+  font-weight: 600;
+  color: var(--color-text-primary, #fff);
+}
+
+.ctaAction {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  
+  background: var(--color-accent-teal, #10b981);
+  border-radius: var(--radius-md, 8px);
+  
+  font-size: var(--text-sm, 14px);
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  white-space: nowrap;
+}
+
+/* ===========================================
    MOBILE ADJUSTMENTS
    =========================================== */
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .vehicleHeader {
     padding: 16px;
   }

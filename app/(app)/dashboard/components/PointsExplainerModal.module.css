@@ -173,6 +173,102 @@
   font-weight: 700;
 }
 
+/* Referral action - clickable row */
+.actionItemReferral {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2, 8px);
+  padding: 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.actionItemReferral:last-child {
+  border-bottom: none;
+}
+
+.referralButton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px 12px;
+  margin: 4px 0;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: inherit;
+}
+
+.referralButton:hover:not(:disabled) {
+  background: rgba(245, 158, 11, 0.2);
+  border-color: rgba(245, 158, 11, 0.5);
+  transform: translateY(-1px);
+}
+
+.referralButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.referralButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.referralButtonCopied {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.referralButtonCopied:hover:not(:disabled) {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.5);
+}
+
+.referralButtonContent {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+}
+
+.referralIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+
+.referralButtonCopied .referralIcon {
+  color: #10b981;
+}
+
+.referralLabel {
+  font-size: var(--text-sm);
+  color: var(--color-text-primary, #ffffff);
+  font-weight: 500;
+}
+
+.referralHint {
+  font-size: var(--text-xs);
+  color: #10b981;
+  line-height: 1.4;
+  padding: 0 4px;
+  animation: fadeSlideIn 0.2s ease-out;
+}
+
+@keyframes fadeSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Footer */
 .footer {
   padding: var(--space-3, 12px) var(--space-4, 16px);
@@ -189,7 +285,7 @@
   border-radius: 10px;
   font-size: var(--text-sm);
   font-weight: 700;
-  color: #0a1628;
+  color: var(--color-bg-base, #0a1628);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   cursor: pointer;
@@ -197,7 +293,7 @@
 }
 
 .gotItButton:hover {
-  background: #bfe600;
+  background: var(--color-accent-lime-dark, #bfe600);
   transform: translateY(-1px);
 }
 

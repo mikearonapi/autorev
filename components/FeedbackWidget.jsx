@@ -19,6 +19,14 @@ import { useAuth } from './providers/AuthProvider';
 import styles from './FeedbackWidget.module.css';
 import html2canvas from 'html2canvas';
 
+// Feedback category colors - matching design system tokens
+const FEEDBACK_COLORS = {
+  error: '#ef4444',    // var(--color-error) - Bugs, blocking issues
+  success: '#10b981',  // var(--color-accent-teal) - Features, positive
+  warning: '#f59e0b',  // var(--color-warning) - Data issues, major
+  neutral: '#6b7280',  // General, minor
+};
+
 // ============================================================================
 // FEEDBACK CONTEXT - For programmatic control from other components
 // ============================================================================
@@ -107,16 +115,16 @@ import { Icons } from '@/components/ui/Icons';
 // ============================================================================
 
 const categories = [
-  { id: 'bug', label: 'Bug Report', icon: Icons.bug, color: '#ef4444', description: 'Something is broken' },
-  { id: 'feature', label: 'Feature Request', icon: Icons.lightbulb, color: '#10b981', description: 'I have an idea' },
-  { id: 'data', label: 'Data Issue', icon: Icons.database, color: '#f59e0b', description: 'Wrong or missing data' },
+  { id: 'bug', label: 'Bug Report', icon: Icons.bug, color: FEEDBACK_COLORS.error, description: 'Something is broken' },
+  { id: 'feature', label: 'Feature Request', icon: Icons.lightbulb, color: FEEDBACK_COLORS.success, description: 'I have an idea' },
+  { id: 'data', label: 'Data Issue', icon: Icons.database, color: FEEDBACK_COLORS.warning, description: 'Wrong or missing data' },
   { id: 'general', label: 'General', icon: Icons.message, color: '#6b7280', description: 'Other feedback' },
   { id: 'praise', label: 'Praise', icon: Icons.heart, color: '#ec4899', description: 'Something I love' },
 ];
 
 const severities = [
-  { id: 'blocking', label: 'Blocking', description: "Can't use the feature at all", color: '#ef4444' },
-  { id: 'major', label: 'Major', description: 'Significant impact on usage', color: '#f59e0b' },
+  { id: 'blocking', label: 'Blocking', description: "Can't use the feature at all", color: FEEDBACK_COLORS.error },
+  { id: 'major', label: 'Major', description: 'Significant impact on usage', color: FEEDBACK_COLORS.warning },
   { id: 'minor', label: 'Minor', description: 'Annoying but workable', color: '#6b7280' },
 ];
 
@@ -378,7 +386,7 @@ export default function FeedbackWidget({
   };
 
   // Handle form submission
-  const handleSubmit = async (e) => {
+  const handleFeedbackSubmit = async (e) => {
     e.preventDefault();
     
     if (!category) {
@@ -552,7 +560,7 @@ export default function FeedbackWidget({
                 </div>
 
                 {/* Form Section */}
-                <form onSubmit={handleSubmit} className={styles.form}>
+                <form onSubmit={handleFeedbackSubmit} className={styles.form}>
                   {/* Contextual Hint */}
                   {(customHint || contextConfig.hint) && (
                     <p className={styles.contextHint}>
@@ -711,6 +719,8 @@ export default function FeedbackWidget({
                   <input
                     id="feedback-email"
                     type="email"
+                    inputMode="email"
+                    autoComplete="email"
                     className={styles.input}
                     placeholder={user?.email || 'your@email.com'}
                     value={email}

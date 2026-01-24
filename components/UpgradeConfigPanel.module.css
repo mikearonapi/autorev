@@ -354,7 +354,7 @@
 }
 
 /* Mobile responsive adjustments */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .configPanel {
     margin-left: 20px;
     padding: 10px 12px;

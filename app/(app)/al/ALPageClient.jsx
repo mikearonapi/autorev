@@ -37,6 +37,8 @@ import FeedbackDimensionsModal from '@/components/FeedbackDimensionsModal';
 import { useUserConversations, useUserConversation } from '@/hooks/useUserData';
 import ALSourcesList from '@/components/ALSourcesList';
 import { parseALResponseWithCitations, collectSourcesFromToolResults } from '@/lib/alCitationParser';
+import PullToRefresh from '@/components/ui/PullToRefresh';
+import SwipeableRow from '@/components/ui/SwipeableRow';
 
 // Simple markdown formatter for AL responses
 const FormattedMessage = ({ content }) => {
@@ -205,14 +207,6 @@ const copyToClipboard = async (text) => {
   }
 };
 
-// Suggested prompts for new users - no emojis, clean design
-const SUGGESTED_PROMPTS = [
-  { text: "What mods should I do first?" },
-  { text: "Compare two cars for me" },
-  { text: "Help me diagnose an issue" },
-  { text: "What's the best oil for my car?" },
-];
-
 // Helper to get source type from tool name
 const getSourceTypeFromTool = (toolName) => {
   const typeMap = {
@@ -319,7 +313,6 @@ export default function ALPageClient() {
   const [showHistory, setShowHistory] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState(null);
   const [selectedConversationId, setSelectedConversationId] = useState(null); // For loading a conversation
-  const [showSuggestions, setShowSuggestions] = useState(true);
   
   // Daily usage counter state (for "X queries today" display)
   const [dailyUsage, setDailyUsage] = useState({
@@ -460,16 +453,6 @@ export default function ALPageClient() {
     fetchDailyUsage();
   }, [isAuthenticated, user?.id]);
   
-  // Auto-hide suggestions after 3 seconds
-  useEffect(() => {
-    if (messages.length === 0 && showSuggestions) {
-      const timer = setTimeout(() => {
-        setShowSuggestions(false);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [messages.length, showSuggestions]);
-  
   // Handle loaded conversation data from React Query
   useEffect(() => {
     if (selectedConversationData?.messages) {
@@ -497,6 +480,10 @@ export default function ALPageClient() {
     setAttachments([]);
     setPendingPrompt(null);
     setLastUserMessage(null);
+    // Reset textarea height
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto';
+    }
     inputRef.current?.focus();
   }, []);
   
@@ -715,6 +702,10 @@ export default function ALPageClient() {
     const userMessage = messageText.trim();
     const messageAttachments = [...attachments]; // Capture current attachments
     setInput('');
+    // Reset textarea height after sending
+    if (inputRef.current) {
+      inputRef.current.style.height = 'auto';
+    }
     setError(null);
     setStreamingContent('');
     setAttachments([]); // Clear attachments after sending
@@ -1115,55 +1106,68 @@ export default function ALPageClient() {
             )}
           </div>
           
-          <div className={styles.conversationsList}>
-            {conversationsLoading || isSearchingHistory ? (
-              <div className={styles.loadingConversations}>Loading...</div>
-            ) : displayedConversations.length === 0 ? (
-              <div className={styles.noConversations}>
-                {searchResults !== null ? (
-                  <>
-                    <p>No matching conversations</p>
-                    <p className={styles.noConversationsHint}>Try different keywords</p>
-                  </>
-                ) : (
-                  <>
-                    <p>No conversations yet</p>
-                    <p className={styles.noConversationsHint}>Start chatting with AL!</p>
-                  </>
-                )}
-              </div>
-            ) : (
-              displayedConversations.map((conv) => (
-                <div
-                  key={conv.id}
-                  className={`${styles.conversationItem} ${conv.id === currentConversationId ? styles.conversationItemActive : ''}`}
-                >
-                  <button
-                    className={styles.conversationContent}
-                    onClick={() => loadConversation(conv.id)}
-                  >
-                    <span className={styles.conversationTitle}>{conv.title || 'New conversation'}</span>
-                    {conv.preview && (
-                      <span className={styles.conversationPreview}>{conv.preview}</span>
-                    )}
-                  </button>
-                  <div className={styles.conversationMeta}>
-                    <span className={styles.conversationDate}>{formatDate(conv.created_at)}</span>
-                    <button
-                      className={styles.deleteConversationBtn}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setDeleteConfirm({ conversationId: conv.id, title: conv.title });
-                      }}
-                      title="Delete conversation"
-                    >
-                      <LocalIcons.trash size={14} />
-                    </button>
-                  </div>
+          <PullToRefresh onRefresh={refetchConversations}>
+            <div className={styles.conversationsList}>
+              {conversationsLoading || isSearchingHistory ? (
+                <div className={styles.loadingConversations}>Loading...</div>
+              ) : displayedConversations.length === 0 ? (
+                <div className={styles.noConversations}>
+                  {searchResults !== null ? (
+                    <>
+                      <p>No matching conversations</p>
+                      <p className={styles.noConversationsHint}>Try different keywords</p>
+                    </>
+                  ) : (
+                    <>
+                      <p>No conversations yet</p>
+                      <p className={styles.noConversationsHint}>Start chatting with AL!</p>
+                    </>
+                  )}
                 </div>
-              ))
-            )}
-          </div>
+              ) : (
+                displayedConversations.map((conv) => (
+                  <SwipeableRow
+                    key={conv.id}
+                    rightActions={[
+                      {
+                        icon: <LocalIcons.trash size={18} />,
+                        label: 'Delete',
+                        onClick: () => setDeleteConfirm({ conversationId: conv.id, title: conv.title }),
+                        variant: 'danger',
+                      },
+                    ]}
+                  >
+                    <div
+                      className={`${styles.conversationItem} ${conv.id === currentConversationId ? styles.conversationItemActive : ''}`}
+                    >
+                      <button
+                        className={styles.conversationContent}
+                        onClick={() => loadConversation(conv.id)}
+                      >
+                        <span className={styles.conversationTitle}>{conv.title || 'New conversation'}</span>
+                        {conv.preview && (
+                          <span className={styles.conversationPreview}>{conv.preview}</span>
+                        )}
+                      </button>
+                      <div className={styles.conversationMeta}>
+                        <span className={styles.conversationDate}>{formatDate(conv.created_at)}</span>
+                        <button
+                          className={styles.deleteConversationBtn}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setDeleteConfirm({ conversationId: conv.id, title: conv.title });
+                          }}
+                          title="Delete conversation"
+                        >
+                          <LocalIcons.trash size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  </SwipeableRow>
+                ))
+              )}
+            </div>
+          </PullToRefresh>
         </div>
         
         {/* Delete confirmation modal */}
@@ -1273,7 +1277,7 @@ export default function ALPageClient() {
       {/* Messages Area */}
       <div className={styles.messagesArea}>
         {messages.length === 0 && !streamingContent ? (
-          // Empty state with suggestions OR pending prompt
+          // Empty state OR pending prompt
           <div className={styles.emptyState}>
             {pendingPrompt ? (
               // Pending prompt confirmation card
@@ -1316,18 +1320,6 @@ export default function ALPageClient() {
                 <p className={styles.emptySubtitle}>
                   {selectedCar ? `Ask me anything about your ${selectedCar.name}` : 'Ask me anything about cars'}
                 </p>
-                
-                <div className={`${styles.suggestions} ${!showSuggestions ? styles.suggestionsHidden : ''}`}>
-                  {SUGGESTED_PROMPTS.map((prompt, i) => (
-                    <button
-                      key={i}
-                      className={styles.suggestionBtn}
-                      onClick={() => sendMessage(prompt.text)}
-                    >
-                      {prompt.text}
-                    </button>
-                  ))}
-                </div>
               </div>
             )}
           </div>
@@ -1592,7 +1584,13 @@ export default function ALPageClient() {
           <textarea
             ref={inputRef}
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => {
+              setInput(e.target.value);
+              // Auto-resize textarea
+              const textarea = e.target;
+              textarea.style.height = 'auto';
+              textarea.style.height = `${Math.min(textarea.scrollHeight, 150)}px`;
+            }}
             onKeyDown={(e) => {
               // Cmd/Ctrl + Enter or just Enter (without shift) to send
               if (e.key === 'Enter' && !e.shiftKey) {
@@ -1607,6 +1605,8 @@ export default function ALPageClient() {
                   stopGeneration();
                 } else if (input) {
                   setInput('');
+                  // Reset textarea height
+                  e.target.style.height = 'auto';
                 }
               }
               // Up arrow to edit last message (when input is empty)

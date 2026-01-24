@@ -414,7 +414,7 @@
 }
 
 .diyAssessment[data-feasibility="partial-diy"] .diyAssessmentIcon {
-  color: #f1c40f;
+  color: var(--color-accent-amber, #f1c40f);
 }
 
 .diyAssessment[data-feasibility="shop-recommended"],
@@ -718,7 +718,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  color: #f1c40f;
+  color: var(--color-accent-amber, #f1c40f);
   font-weight: 600;
   font-size: var(--font-size-sm);
   margin-bottom: var(--space-sm);
@@ -737,7 +737,7 @@
   content: '•';
   position: absolute;
   left: 0;
-  color: #f1c40f;
+  color: var(--color-accent-amber, #f1c40f);
 }
 
 .warningItem[data-severity="critical"] {

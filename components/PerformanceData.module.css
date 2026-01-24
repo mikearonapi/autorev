@@ -98,7 +98,7 @@
 }
 
 .errorState svg {
-  color: #dc3545;
+  color: var(--color-error, #dc3545);
   flex-shrink: 0;
 }
 
@@ -340,7 +340,7 @@
 /* ============================================
    Responsive
    ============================================ */
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .dynoGrid {
     grid-template-columns: 1fr;
   }

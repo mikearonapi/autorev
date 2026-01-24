@@ -86,7 +86,7 @@ function saveLocalVehicles(vehicles) {
  * @property {string} updatedAt - Last modified
  * @property {string[]} [installedModifications] - Array of upgrade keys installed on this vehicle
  * @property {string} [activeBuildId] - FK to user_projects if mods came from a build
- * @property {number} [totalHpGain] - Cached total HP gain from mods
+ * @property {number} [totalHpGain] - @deprecated STALE! Use useVehiclePerformance(vehicle, car) hook instead
  * @property {string} [modifiedAt] - When modifications were last updated
  * @property {boolean} isModified - Computed: whether vehicle has any mods
  */
@@ -146,7 +146,13 @@ function transformVehicle(row) {
     // Modification fields
     installedModifications: installedMods,
     activeBuildId: row.active_build_id,
-    totalHpGain: row.total_hp_gain || 0,
+    // @deprecated - DO NOT USE totalHpGain for display! This value is stale.
+    // Always calculate HP dynamically using useVehiclePerformance hook:
+    //   import { useVehiclePerformance } from '@/hooks/useVehiclePerformance';
+    //   const { hpGain, finalHp } = useVehiclePerformance(vehicle, car);
+    // See docs/SOURCE_OF_TRUTH.md Rule 4 and "Performance Calculations" section.
+    totalHpGain: row.total_hp_gain || 0, // DEPRECATED - use useVehiclePerformance hook
+    _cachedHpGain: row.total_hp_gain || 0, // Internal alias
     modifiedAt: row.modified_at,
     isModified: Array.isArray(installedMods) && installedMods.length > 0,
     // Custom specs (user-specific modification details)
@@ -550,7 +556,9 @@ export function OwnedVehiclesProvider({ children }) {
         // Modification fields
         installed_modifications: updates.installedModifications,
         active_build_id: updates.activeBuildId,
-        total_hp_gain: updates.totalHpGain,
+        // Note: total_hp_gain is stored for historical/audit purposes only.
+        // Display should always calculate from installed_modifications.
+        total_hp_gain: updates._cachedHpGain ?? updates.totalHpGain,
         modified_at: updates.modifiedAt,
       };
 
@@ -626,7 +634,7 @@ export function OwnedVehiclesProvider({ children }) {
   /**
    * Apply modifications to a vehicle
    * @param {string} vehicleId 
-   * @param {Object} modifications - { upgrades: string[], totalHpGain: number, buildId?: string }
+   * @param {Object} modifications - { upgrades: string[], totalHpGain: number (for DB storage only), buildId?: string }
    */
   const applyModifications = useCallback(async (vehicleId, modifications) => {
     if (!isAuthenticated || !user?.id) {
@@ -637,7 +645,8 @@ export function OwnedVehiclesProvider({ children }) {
       const updatedVehicle = {
         ...vehicle,
         installedModifications: modifications.upgrades || [],
-        totalHpGain: modifications.totalHpGain || 0,
+        totalHpGain: modifications.totalHpGain || 0, // DEPRECATED - use useVehiclePerformance
+        _cachedHpGain: modifications.totalHpGain || 0,
         activeBuildId: modifications.buildId || null,
         modifiedAt: new Date().toISOString(),
         isModified: (modifications.upgrades?.length || 0) > 0,
@@ -673,7 +682,8 @@ export function OwnedVehiclesProvider({ children }) {
       const updatedVehicle = {
         ...vehicle,
         installedModifications: [],
-        totalHpGain: 0,
+        totalHpGain: 0, // DEPRECATED - use useVehiclePerformance
+        _cachedHpGain: 0,
         activeBuildId: null,
         modifiedAt: new Date().toISOString(),
         isModified: false,
@@ -912,6 +922,15 @@ export function OwnedVehiclesProvider({ children }) {
     return state.vehicles.filter(v => v.matchedCarSlug === carSlug);
   }, [state.vehicles]);
 
+  /**
+   * Refresh/refetch vehicles from the server
+   * Useful for pull-to-refresh functionality
+   */
+  const refresh = useCallback(async () => {
+    if (!user?.id) return;
+    await fetchVehicles(user.id);
+  }, [user?.id, fetchVehicles]);
+
   const value = {
     vehicles: state.vehicles,
     count: state.vehicles.length,
@@ -937,6 +956,8 @@ export function OwnedVehiclesProvider({ children }) {
     // Helpers
     getVehicleById,
     getVehiclesByCarSlug,
+    // Refresh
+    refresh,
   };
 
   return (

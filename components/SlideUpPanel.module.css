@@ -291,7 +291,7 @@
 }
 
 /* Small phones */
-@media (max-width: 374px) {
+@media (min-width: 375px) {
   .header {
     padding: 0 var(--space-md, 16px);
     padding-bottom: var(--space-sm, 12px);

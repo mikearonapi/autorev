@@ -6,6 +6,10 @@
  * - Payment succeeded (for AL credit packs)
  * - Checkout completed (for donations)
  * 
+ * Features:
+ * - Idempotency: Events are tracked in processed_webhook_events table
+ * - Duplicate detection: Prevents reprocessing of already-handled events
+ * 
  * @route POST /api/webhooks/stripe
  */
 
@@ -21,6 +25,7 @@ import {
 import { notifyPayment } from '@/lib/discord';
 import { logServerError } from '@/lib/serverErrorLogger';
 import { sendSubscribeEvent, sendPurchaseEvent } from '@/lib/metaConversionsApi';
+import { sendPaymentFailedEmail, sendTrialEndingEmail } from '@/lib/emailService';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -30,6 +35,56 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
+
+// =============================================================================
+// IDEMPOTENCY HELPERS
+// =============================================================================
+
+/**
+ * Check if event has already been processed
+ * @param {string} eventId - Stripe event ID
+ * @returns {Promise<boolean>} - true if already processed
+ */
+async function isEventProcessed(eventId) {
+  const { data, error } = await supabase
+    .from('processed_webhook_events')
+    .select('id')
+    .eq('event_id', eventId)
+    .single();
+  
+  if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
+    console.error('[Stripe Webhook] Error checking event status:', error);
+  }
+  
+  return !!data;
+}
+
+/**
+ * Mark event as processed
+ * @param {string} eventId - Stripe event ID
+ * @param {string} eventType - Event type (e.g., 'checkout.session.completed')
+ * @param {Object} [payload] - Optional event payload for debugging
+ */
+async function markEventProcessed(eventId, eventType, payload = null) {
+  const { error } = await supabase
+    .from('processed_webhook_events')
+    .insert({
+      event_id: eventId,
+      event_type: eventType,
+      provider: 'stripe',
+      // Only store minimal payload data in production for privacy
+      payload: process.env.NODE_ENV === 'development' ? payload : null,
+    });
+  
+  if (error) {
+    // Log but don't throw - duplicate insert (race condition) is acceptable
+    if (error.code === '23505') { // Unique violation
+      console.log('[Stripe Webhook] Event already recorded (race condition):', eventId);
+    } else {
+      console.error('[Stripe Webhook] Error recording event:', error);
+    }
+  }
+}
 
 /**
  * Verify Stripe webhook signature
@@ -47,6 +102,147 @@ async function verifyWebhookSignature(request) {
   } catch (err) {
     console.error('[Stripe Webhook] Signature verification failed:', err.message);
     throw new Error(`Webhook signature verification failed: ${err.message}`);
+  }
+}
+
+// =============================================================================
+// NEW SCHEMA HELPERS (Dual-Write)
+// Write to both legacy user_profiles columns AND new normalized tables
+// =============================================================================
+
+/**
+ * Upsert customer record in new customers table
+ * @param {string} userId - Supabase user ID
+ * @param {string} stripeCustomerId - Stripe customer ID
+ */
+async function upsertCustomer(userId, stripeCustomerId) {
+  const { error } = await supabase
+    .from('customers')
+    .upsert({
+      id: userId,
+      stripe_customer_id: stripeCustomerId,
+      updated_at: new Date().toISOString(),
+    }, {
+      onConflict: 'id',
+    });
+
+  if (error) {
+    console.error('[Stripe Webhook] Error upserting customer:', error);
+    // Non-fatal - continue with legacy system
+  } else {
+    console.log('[Stripe Webhook] Customer synced to new table:', userId);
+  }
+}
+
+/**
+ * Upsert subscription record in new subscriptions table
+ * @param {Object} subscription - Stripe subscription object
+ * @param {string} userId - Supabase user ID
+ */
+async function upsertSubscription(subscription, userId) {
+  if (!userId) {
+    console.warn('[Stripe Webhook] Cannot upsert subscription - no userId');
+    return;
+  }
+
+  const priceId = subscription.items?.data?.[0]?.price?.id;
+  
+  const subscriptionData = {
+    id: subscription.id,
+    user_id: userId,
+    status: subscription.status,
+    price_id: priceId || null,
+    quantity: subscription.items?.data?.[0]?.quantity || 1,
+    cancel_at_period_end: subscription.cancel_at_period_end || false,
+    cancel_at: subscription.cancel_at 
+      ? new Date(subscription.cancel_at * 1000).toISOString() 
+      : null,
+    canceled_at: subscription.canceled_at 
+      ? new Date(subscription.canceled_at * 1000).toISOString() 
+      : null,
+    current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+    current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+    trial_start: subscription.trial_start 
+      ? new Date(subscription.trial_start * 1000).toISOString() 
+      : null,
+    trial_end: subscription.trial_end 
+      ? new Date(subscription.trial_end * 1000).toISOString() 
+      : null,
+    ended_at: subscription.ended_at 
+      ? new Date(subscription.ended_at * 1000).toISOString() 
+      : null,
+    metadata: subscription.metadata || {},
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await supabase
+    .from('subscriptions')
+    .upsert(subscriptionData, {
+      onConflict: 'id',
+    });
+
+  if (error) {
+    console.error('[Stripe Webhook] Error upserting subscription:', error);
+    // Non-fatal - continue with legacy system
+  } else {
+    console.log('[Stripe Webhook] Subscription synced to new table:', subscription.id);
+  }
+}
+
+/**
+ * Record trial start in trial_history table
+ * @param {Object} subscription - Stripe subscription object
+ * @param {string} userId - Supabase user ID
+ */
+async function recordTrialStart(subscription, userId) {
+  if (!subscription.trial_start || !userId) return;
+
+  const productId = subscription.items?.data?.[0]?.price?.product;
+  if (!productId) return;
+
+  const { error } = await supabase
+    .from('trial_history')
+    .upsert({
+      user_id: userId,
+      product_id: productId,
+      subscription_id: subscription.id,
+      trial_started_at: new Date(subscription.trial_start * 1000).toISOString(),
+      converted_to_paid: false,
+    }, {
+      onConflict: 'user_id,product_id',
+    });
+
+  if (error && error.code !== '23505') { // Ignore unique violations
+    console.error('[Stripe Webhook] Error recording trial start:', error);
+  } else {
+    console.log('[Stripe Webhook] Trial start recorded for user:', userId);
+  }
+}
+
+/**
+ * Mark trial as converted in trial_history table
+ * @param {Object} subscription - Stripe subscription object
+ * @param {string} userId - Supabase user ID
+ */
+async function markTrialConverted(subscription, userId) {
+  if (!userId) return;
+
+  const productId = subscription.items?.data?.[0]?.price?.product;
+  if (!productId) return;
+
+  const { error } = await supabase
+    .from('trial_history')
+    .update({
+      converted_to_paid: true,
+      trial_ended_at: new Date().toISOString(),
+    })
+    .eq('user_id', userId)
+    .eq('product_id', productId);
+
+  if (error) {
+    console.error('[Stripe Webhook] Error marking trial converted:', error);
+  } else {
+    console.log('[Stripe Webhook] Trial marked as converted for user:', userId);
   }
 }
 
@@ -115,7 +311,9 @@ async function handleSubscriptionChange(subscription, isNew = false) {
   // Get user for Discord notification
   const user = await getUserByStripeCustomerId(customerId);
 
-  // Update user profile
+  // =========================================================================
+  // LEGACY: Update user_profiles (existing behavior)
+  // =========================================================================
   const { error } = await supabase
     .from('user_profiles')
     .update({
@@ -126,6 +324,7 @@ async function handleSubscriptionChange(subscription, isNew = false) {
       subscription_ends_at: subscription.current_period_end 
         ? new Date(subscription.current_period_end * 1000).toISOString() 
         : null,
+      cancel_at_period_end: subscription.cancel_at_period_end || false,
       updated_at: new Date().toISOString(),
     })
     .eq('stripe_customer_id', customerId);
@@ -133,6 +332,35 @@ async function handleSubscriptionChange(subscription, isNew = false) {
   if (error) {
     console.error('[Stripe Webhook] Error updating subscription:', error);
     throw error;
+  }
+
+  // =========================================================================
+  // NEW SCHEMA: Dual-write to new normalized tables
+  // =========================================================================
+  if (user?.id) {
+    // Sync subscription to new subscriptions table
+    await upsertSubscription(subscription, user.id);
+    
+    // Record trial start for new subscriptions with trials
+    if (isNew && subscription.status === 'trialing') {
+      await recordTrialStart(subscription, user.id);
+    }
+    
+    // Check if this is a trial conversion (was trialing, now active)
+    if (subscription.status === 'active' && !isNew) {
+      // Check if there was a previous trial
+      const { data: trialRecord } = await supabase
+        .from('trial_history')
+        .select('id, converted_to_paid')
+        .eq('user_id', user.id)
+        .eq('subscription_id', subscription.id)
+        .eq('converted_to_paid', false)
+        .maybeSingle();
+      
+      if (trialRecord) {
+        await markTrialConverted(subscription, user.id);
+      }
+    }
   }
 
   // Notify Discord for new subscriptions (upgrades)
@@ -175,13 +403,20 @@ async function handleSubscriptionCanceled(subscription) {
     subscriptionId: subscription.id,
   });
 
-  // Reset to free tier
+  // Get user for new schema updates
+  const user = await getUserByStripeCustomerId(customerId);
+
+  // =========================================================================
+  // LEGACY: Reset to free tier in user_profiles
+  // =========================================================================
   const { error } = await supabase
     .from('user_profiles')
     .update({
       subscription_tier: 'free',
       stripe_subscription_status: 'canceled',
-      subscription_ends_at: new Date(subscription.ended_at * 1000).toISOString(),
+      subscription_ends_at: subscription.ended_at 
+        ? new Date(subscription.ended_at * 1000).toISOString()
+        : new Date().toISOString(),
       updated_at: new Date().toISOString(),
     })
     .eq('stripe_customer_id', customerId);
@@ -189,6 +424,13 @@ async function handleSubscriptionCanceled(subscription) {
   if (error) {
     console.error('[Stripe Webhook] Error canceling subscription:', error);
     throw error;
+  }
+
+  // =========================================================================
+  // NEW SCHEMA: Update subscriptions table
+  // =========================================================================
+  if (user?.id) {
+    await upsertSubscription(subscription, user.id);
   }
 }
 
@@ -216,14 +458,20 @@ async function handleCheckoutCompleted(session) {
     user = await getUserByEmail(customerEmail);
     
     if (user) {
-      // Link Stripe customer ID to user profile
+      // Link Stripe customer ID to user profile (LEGACY)
       await supabase
         .from('user_profiles')
         .update({ stripe_customer_id: customerId })
         .eq('id', user.id);
       
+      // NEW SCHEMA: Also create customer record in new customers table
+      await upsertCustomer(user.id, customerId);
+      
       console.log('[Stripe Webhook] Linked Stripe customer to user:', user.id);
     }
+  } else if (user) {
+    // Existing customer - ensure new customers table is in sync
+    await upsertCustomer(user.id, customerId);
   }
 
   if (!user) {
@@ -343,6 +591,188 @@ async function handleInvoicePaid(invoice) {
   }).catch(err => console.error('[Stripe Webhook] Discord notification failed:', err));
 }
 
+/**
+ * Handle payment failed (dunning flow)
+ * Sends email notification to user to update payment method
+ */
+async function handlePaymentFailed(invoice) {
+  const customerId = invoice.customer;
+  const subscriptionId = invoice.subscription;
+  const amountDue = invoice.amount_due;
+  const nextPaymentAttempt = invoice.next_payment_attempt;
+
+  console.log('[Stripe Webhook] Payment failed:', {
+    customerId,
+    subscriptionId,
+    amountDue,
+    nextPaymentAttempt,
+    invoiceId: invoice.id,
+  });
+
+  // Get user for email notification
+  const user = await getUserByStripeCustomerId(customerId);
+  
+  if (!user) {
+    console.error('[Stripe Webhook] Could not find user for payment failed notification:', customerId);
+    return;
+  }
+
+  // Get user email from auth
+  const { data: authUser, error: authError } = await supabase.auth.admin.getUserById(user.id);
+  
+  if (authError || !authUser?.user?.email) {
+    console.error('[Stripe Webhook] Could not get email for payment failed:', user.id);
+    return;
+  }
+
+  // Get user's current tier
+  const { data: profile } = await supabase
+    .from('user_profiles')
+    .select('subscription_tier, display_name')
+    .eq('id', user.id)
+    .single();
+
+  // Format next retry date if available
+  let nextRetryDate = null;
+  if (nextPaymentAttempt) {
+    nextRetryDate = new Date(nextPaymentAttempt * 1000).toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+    });
+  }
+
+  // Send dunning email
+  const emailResult = await sendPaymentFailedEmail({
+    userId: user.id,
+    email: authUser.user.email,
+    userName: profile?.display_name || authUser.user.user_metadata?.full_name,
+    amountCents: amountDue,
+    tier: profile?.subscription_tier || 'tuner',
+    nextRetryDate,
+  });
+
+  if (emailResult.success) {
+    console.log('[Stripe Webhook] Payment failed email sent to:', authUser.user.email);
+    
+    // Log to email_logs for tracking
+    await supabase.from('email_logs').insert({
+      user_id: user.id,
+      template_slug: 'payment_failed',
+      to_email: authUser.user.email,
+      sent_at: new Date().toISOString(),
+      metadata: { 
+        invoice_id: invoice.id,
+        amount_cents: amountDue,
+        next_retry: nextRetryDate,
+      },
+    }).catch(() => {}); // Don't fail if logging fails
+  } else {
+    console.error('[Stripe Webhook] Failed to send payment failed email:', emailResult.error);
+  }
+
+  // Notify Discord
+  notifyPayment({
+    type: 'payment_failed',
+    amount: amountDue,
+    customerId,
+    userId: user.id,
+  }).catch(err => console.error('[Stripe Webhook] Discord notification failed:', err));
+}
+
+/**
+ * Handle trial ending notification (3 days before trial ends)
+ * Supplements the cron job for more reliable delivery
+ */
+async function handleTrialEnding(subscription) {
+  const customerId = subscription.customer;
+  const trialEnd = subscription.trial_end;
+
+  console.log('[Stripe Webhook] Trial will end:', {
+    customerId,
+    trialEnd: trialEnd ? new Date(trialEnd * 1000).toISOString() : null,
+    subscriptionId: subscription.id,
+  });
+
+  // Get user for email notification
+  const user = await getUserByStripeCustomerId(customerId);
+  
+  if (!user) {
+    console.error('[Stripe Webhook] Could not find user for trial ending notification:', customerId);
+    return;
+  }
+
+  // Get user email from auth
+  const { data: authUser, error: authError } = await supabase.auth.admin.getUserById(user.id);
+  
+  if (authError || !authUser?.user?.email) {
+    console.error('[Stripe Webhook] Could not get email for trial ending:', user.id);
+    return;
+  }
+
+  // Get user's current tier
+  const { data: profile } = await supabase
+    .from('user_profiles')
+    .select('subscription_tier, display_name')
+    .eq('id', user.id)
+    .single();
+
+  // Calculate days remaining
+  const trialEndDate = new Date(trialEnd * 1000);
+  const now = new Date();
+  const daysRemaining = Math.ceil((trialEndDate - now) / (1000 * 60 * 60 * 24));
+
+  // Check if we've already sent this reminder via webhook
+  const reminderKey = `trial_webhook_${daysRemaining}d`;
+  const { data: existingLog } = await supabase
+    .from('email_logs')
+    .select('id')
+    .eq('user_id', user.id)
+    .eq('template_slug', reminderKey)
+    .gte('sent_at', new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString())
+    .maybeSingle();
+
+  if (existingLog) {
+    console.log('[Stripe Webhook] Trial ending email already sent today:', user.id);
+    return;
+  }
+
+  // Format trial end date
+  const trialEndFormatted = trialEndDate.toLocaleDateString('en-US', {
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  // Send trial ending email
+  const emailResult = await sendTrialEndingEmail({
+    userId: user.id,
+    email: authUser.user.email,
+    userName: profile?.display_name || authUser.user.user_metadata?.full_name,
+    daysRemaining,
+    trialEndDate: trialEndFormatted,
+    tier: profile?.subscription_tier || 'tuner',
+  });
+
+  if (emailResult.success) {
+    console.log('[Stripe Webhook] Trial ending email sent to:', authUser.user.email);
+    
+    // Log to email_logs for tracking
+    await supabase.from('email_logs').insert({
+      user_id: user.id,
+      template_slug: reminderKey,
+      to_email: authUser.user.email,
+      sent_at: new Date().toISOString(),
+      metadata: { 
+        days_remaining: daysRemaining,
+        source: 'webhook',
+      },
+    }).catch(() => {}); // Don't fail if logging fails
+  } else {
+    console.error('[Stripe Webhook] Failed to send trial ending email:', emailResult.error);
+  }
+}
+
 // =============================================================================
 // MAIN HANDLER
 // =============================================================================
@@ -364,7 +794,17 @@ export async function POST(request) {
     return NextResponse.json({ error: err.message }, { status: 400 });
   }
 
-  console.log('[Stripe Webhook] Event received:', event.type);
+  console.log('[Stripe Webhook] Event received:', event.type, event.id);
+
+  // =============================================================================
+  // IDEMPOTENCY CHECK
+  // Prevent duplicate processing of the same event (Stripe may retry)
+  // =============================================================================
+  const alreadyProcessed = await isEventProcessed(event.id);
+  if (alreadyProcessed) {
+    console.log('[Stripe Webhook] Event already processed, skipping:', event.id);
+    return NextResponse.json({ received: true, duplicate: true });
+  }
 
   try {
     switch (event.type) {
@@ -389,13 +829,22 @@ export async function POST(request) {
         break;
 
       case 'invoice.payment_failed':
-        console.warn('[Stripe Webhook] Payment failed:', event.data.object.id);
-        // Could send email notification here
+        await handlePaymentFailed(event.data.object);
+        break;
+
+      case 'customer.subscription.trial_will_end':
+        await handleTrialEnding(event.data.object);
         break;
 
       default:
         console.log('[Stripe Webhook] Unhandled event type:', event.type);
     }
+
+    // Mark event as processed AFTER successful handling
+    await markEventProcessed(event.id, event.type, {
+      objectId: event.data.object?.id,
+      customerId: event.data.object?.customer,
+    });
 
     return NextResponse.json({ received: true });
   } catch (err) {
@@ -409,8 +858,10 @@ export async function POST(request) {
       errorType: 'webhook_handler_failed',
       severity: 'blocking',
       eventType: event?.type,
+      eventId: event?.id,
     });
     
+    // Don't mark as processed on error - allow retry
     return NextResponse.json({ error: 'Webhook handler failed' }, { status: 500 });
   }
 }

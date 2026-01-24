@@ -56,7 +56,7 @@
 .goalPill:hover {
   background: rgba(16, 185, 129, 0.1);
   border-color: rgba(16, 185, 129, 0.3);
-  color: #10b981;
+  color: var(--color-accent-teal, #10b981);
 }
 
 .goalPillIcon {
@@ -86,12 +86,12 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  color: #10b981;
+  color: var(--color-accent-teal, #10b981);
 }
 
 .progressText {
   font-size: 11px;
-  color: #94a3b8;
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 /* Actions */
@@ -112,22 +112,22 @@
 
 .tierfull {
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  color: var(--color-accent-teal, #10b981);
 }
 
 .tiergood {
   background: rgba(59, 130, 246, 0.15);
-  color: #3b82f6;
+  color: var(--color-accent-blue, #3b82f6);
 }
 
 .tierbasic {
   background: rgba(148, 163, 184, 0.15);
-  color: #94a3b8;
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 .tierlimited {
   background: rgba(245, 158, 11, 0.1);
-  color: #f59e0b;
+  color: var(--color-warning, #f59e0b);
 }
 
 .changeBtn {
@@ -143,7 +143,7 @@
 }
 
 .changeBtn:hover {
-  color: #d4ff00;
+  color: var(--color-accent-lime, #d4ff00);
   background: rgba(212, 255, 0, 0.08);
 }
 
@@ -154,7 +154,7 @@
   right: 14px;
   z-index: 100;
   min-width: 220px;
-  background: #1b263b;
+  background: var(--color-bg-elevated, #1b263b);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
@@ -210,13 +210,13 @@
 }
 
 .checkmark {
-  color: #10b981;
+  color: var(--color-accent-teal, #10b981);
   font-size: 14px;
   font-weight: 600;
 }
 
 /* Mobile responsive */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .banner {
     flex-direction: column;
     align-items: flex-start;

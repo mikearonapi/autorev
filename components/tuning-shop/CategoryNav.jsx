@@ -17,6 +17,7 @@
 
 import { useRef, useCallback, useEffect } from 'react';
 import styles from './CategoryNav.module.css';
+import { Icons } from '@/components/ui/Icons';
 
 // Category icons (inline SVGs for performance)
 const categoryIcons = {
@@ -200,6 +201,8 @@ const categoryNames = {
  * @property {Object<string, number>} [selectedCounts] - Map of category -> selected count
  * @property {boolean} [disabled] - Disable all navigation
  * @property {boolean} [showAll] - Show "All" option
+ * @property {string} [variant] - 'tabs' | 'list' (default: 'tabs')
+ * @property {string[]} [recommendedCategories] - Categories to highlight as recommended
  */
 
 /**
@@ -213,13 +216,15 @@ export default function CategoryNav({
   selectedCounts = {},
   disabled = false,
   showAll = false,
+  variant = 'tabs',
+  recommendedCategories = [],
 }) {
   const scrollRef = useRef(null);
   const activeRef = useRef(null);
 
   // Scroll active item into view
   useEffect(() => {
-    if (activeRef.current && scrollRef.current) {
+    if (activeRef.current && scrollRef.current && variant === 'tabs') {
       const container = scrollRef.current;
       const activeEl = activeRef.current;
       
@@ -239,7 +244,7 @@ export default function CategoryNav({
         });
       }
     }
-  }, [activeCategory]);
+  }, [activeCategory, variant]);
 
   const handleCategoryClick = useCallback((category) => {
     if (disabled) return;
@@ -256,6 +261,45 @@ export default function CategoryNav({
     return categoryNames[category] || category;
   };
 
+  // Render List Variant (Whoop-style)
+  if (variant === 'list') {
+    return (
+      <nav className={styles.listContainer} aria-label="Upgrade categories">
+        {categories.map(category => {
+          const isActive = activeCategory === category;
+          const count = selectedCounts[category] || 0;
+          const isRecommended = recommendedCategories.includes(category);
+          
+          return (
+            <button
+              key={category}
+              className={`${styles.listRow} ${isActive ? styles.listRowActive : ''}`}
+              onClick={() => handleCategoryClick(category)}
+              disabled={disabled}
+            >
+              <div className={styles.listRowIcon}>
+                {getIcon(category)}
+              </div>
+              <div className={styles.listRowContent}>
+                <span className={styles.listRowName}>
+                  {getName(category)}
+                  {isRecommended && <span style={{ marginLeft: '6px', color: '#fbbf24' }}>★</span>}
+                </span>
+                {count > 0 && <span className={styles.listRowSubtext}>{count} upgrades selected</span>}
+              </div>
+              {count > 0 ? (
+                <span className={styles.listRowBadge}>{count}</span>
+              ) : (
+                <Icons.chevronRight size={18} className={styles.listRowChevron} />
+              )}
+            </button>
+          );
+        })}
+      </nav>
+    );
+  }
+
+  // Render Default Tabs Variant
   return (
     <nav className={styles.container} role="tablist" aria-label="Upgrade categories">
       <div className={styles.scroll} ref={scrollRef}>
@@ -378,15 +422,3 @@ export function CategoryNavVertical({
     </nav>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-

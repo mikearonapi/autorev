@@ -124,8 +124,16 @@ export async function GET(request) {
         hasData: false,
         message: 'No Web Vitals data yet. Set up Speed Insights Drain in Vercel.',
         setup: {
-          url: 'https://vercel.com/[team]/[project]/settings/drains',
+          instructions: [
+            '1. Go to Vercel Dashboard > Project > Settings > Drains',
+            '2. Click "Add Drain" and select "Speed Insights"',
+            '3. Set webhook URL to the endpoint below',
+            '4. Copy the generated secret',
+            '5. Add VERCEL_SPEED_INSIGHTS_SECRET to your env vars',
+            '6. Redeploy to apply the env var',
+          ],
           webhookUrl: `${process.env.NEXT_PUBLIC_SITE_URL || 'https://autorev.app'}/api/webhooks/speed-insights`,
+          vercelDashboard: 'https://vercel.com/autorev/autorev/settings/drains',
           docs: 'https://vercel.com/docs/drains/reference/speed-insights',
         },
         metrics: {},

@@ -16,6 +16,7 @@
 
 import React, { useState } from 'react';
 import GapAnalysis from './GapAnalysis';
+import { formatDateSimple } from '@/lib/dateUtils';
 import styles from './PredictedVsActual.module.css';
 
 // Icons
@@ -196,7 +197,7 @@ export default function PredictedVsActual({
       {hasActual && lastLogged && (
         <div className={styles.footer}>
           <span className={styles.lastLogged}>
-            Last logged: {new Date(lastLogged).toLocaleDateString()}
+            Last logged: {formatDateSimple(lastLogged)}
           </span>
         </div>
       )}

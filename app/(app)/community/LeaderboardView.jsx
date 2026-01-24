@@ -15,75 +15,41 @@ import styles from './LeaderboardView.module.css';
  * monthly (current month) and all-time leaderboards.
  */
 
-// Medal icons for top 3 with distinct designs
-const MedalIcon = ({ place }) => {
-  const config = {
-    1: { 
-      primary: '#FFD700', 
-      secondary: '#FFA500', 
-      ribbon: '#DC2626',
-      shine: '#FFFACD'
-    },
-    2: { 
-      primary: '#C0C0C0', 
-      secondary: '#A8A8A8', 
-      ribbon: '#3B82F6',
-      shine: '#E8E8E8'
-    },
-    3: { 
-      primary: '#CD7F32', 
-      secondary: '#8B4513', 
-      ribbon: '#059669',
-      shine: '#DEB887'
-    },
+// Simple, premium rank indicators for top 3
+const RankBadge = ({ rank }) => {
+  const styles = {
+    1: { color: '#FFD700', border: '1px solid #FFD700' }, // Gold
+    2: { color: '#C0C0C0', border: '1px solid #C0C0C0' }, // Silver
+    3: { color: '#CD7F32', border: '1px solid #CD7F32' }, // Bronze
   };
-  
-  const c = config[place];
-  
+
+  const style = styles[rank];
+
+  if (!style) {
+    return <span className="text-gray-400 font-mono text-sm">#{rank}</span>;
+  }
+
   return (
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-      {/* Ribbon */}
-      <path 
-        d="M8 2L10 8H14L16 2" 
-        fill={c.ribbon}
-        opacity="0.9"
-      />
-      <path 
-        d="M9 2L10.5 6H13.5L15 2" 
-        fill={c.ribbon}
-        opacity="0.7"
-      />
-      {/* Medal circle with gradient effect */}
-      <circle cx="12" cy="14" r="8" fill={c.secondary} />
-      <circle cx="12" cy="14" r="7" fill={c.primary} />
-      <circle cx="12" cy="14" r="5.5" fill={c.secondary} opacity="0.3" />
-      {/* Inner detail */}
-      <circle cx="12" cy="14" r="4" fill="none" stroke={c.secondary} strokeWidth="0.75" />
-      {/* Place number */}
-      <text 
-        x="12" 
-        y="17" 
-        textAnchor="middle" 
-        fontSize="7" 
-        fontWeight="bold" 
-        fill={c.secondary}
-        style={{ fontFamily: 'var(--font-mono)' }}
-      >
-        {place}
-      </text>
-      {/* Shine highlight */}
-      <ellipse cx="9.5" cy="11.5" rx="2" ry="1.5" fill={c.shine} opacity="0.4" />
-    </svg>
+    <div 
+      style={{
+        width: '24px',
+        height: '24px',
+        borderRadius: '50%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '12px',
+        fontWeight: 'bold',
+        fontFamily: 'var(--font-mono)',
+        ...style
+      }}
+    >
+      {rank}
+    </div>
   );
 };
 
-const CrownIcon = ({ size = 18 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="#FFD700" stroke="#FFD700" strokeWidth="1.5">
-    <path d="M2 4l3 12h14l3-12-6 7-4-7-4 7-6-7z"/>
-    <path d="M2 16h20"/>
-    <path d="M4 20h16"/>
-  </svg>
-);
+// CrownIcon removed for cleaner UI
 
 const FireIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -157,6 +123,12 @@ export default function LeaderboardView() {
     return points.toLocaleString();
   };
 
+  // Get first name only for privacy
+  const getFirstName = (displayName) => {
+    if (!displayName) return 'User';
+    return displayName.split(' ')[0];
+  };
+
   if (isLoading) {
     return (
       <div className={styles.loadingContainer}>
@@ -181,18 +153,16 @@ export default function LeaderboardView() {
     <div className={styles.container}>
       {/* Header */}
       <div className={styles.header}>
-        {/* Info button - top left */}
-        <button 
-          className={styles.infoButtonCircle}
-          onClick={() => setShowPointsModal(true)}
-          aria-label="How to earn points"
-        >
-          <InfoIcon />
-        </button>
-
         <h2 className={styles.title}>
-          <CrownIcon />
           {period === 'monthly' ? 'Monthly' : 'All-Time'} Leaderboard
+          {/* Info button - inline with title */}
+          <button 
+            className={styles.infoButtonInline}
+            onClick={() => setShowPointsModal(true)}
+            aria-label="How to earn points"
+          >
+            <InfoIcon />
+          </button>
         </h2>
         <div className={styles.headerControls}>
           <p className={styles.subtitle}>{periodLabel}</p>
@@ -264,7 +234,7 @@ export default function LeaderboardView() {
                 {/* Rank */}
                 <div className={styles.rankContainer}>
                   {isTopThree ? (
-                    <MedalIcon place={entry.rank} />
+                    <RankBadge rank={entry.rank} />
                   ) : (
                     <span className={styles.rank}>#{entry.rank}</span>
                   )}
@@ -285,27 +255,16 @@ export default function LeaderboardView() {
                       {entry.displayName?.charAt(0)?.toUpperCase() || '?'}
                     </span>
                   )}
-                  {entry.rank === 1 && (
-                    <div className={styles.crownBadge}>
-                      <CrownIcon size={14} />
-                    </div>
-                  )}
                 </div>
 
                 {/* User Info */}
                 <div className={styles.userInfo}>
                   <div className={styles.nameRow}>
-                    <span className={styles.displayName}>{entry.displayName}</span>
+                    <span className={styles.displayName}>{getFirstName(entry.displayName)}</span>
                     {isCurrentUser && <span className={styles.youBadge}>You</span>}
                   </div>
                   {entry.selectedTitle && TITLES[entry.selectedTitle] && (
-                    <span 
-                      className={styles.titleBadge}
-                      style={{ 
-                        color: TITLES[entry.selectedTitle].color,
-                        background: `${TITLES[entry.selectedTitle].color}15`,
-                      }}
-                    >
+                    <span className={styles.titleBadge}>
                       {TITLES[entry.selectedTitle].display}
                     </span>
                   )}

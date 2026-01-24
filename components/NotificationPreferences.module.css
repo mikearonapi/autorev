@@ -1,0 +1,342 @@
+/* NotificationPreferences Component Styles */
+
+.container {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.header {
+  margin-bottom: 24px;
+}
+
+.title {
+  margin: 0 0 8px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text-primary, #1e293b);
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 14px;
+  color: var(--color-text-secondary, #64748b);
+}
+
+/* Section */
+.section {
+  padding: 24px 0;
+  border-bottom: 1px solid var(--color-border, #e2e8f0);
+}
+
+.section:last-of-type {
+  border-bottom: none;
+}
+
+.sectionTitle {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary, #1e293b);
+}
+
+.sectionDescription {
+  margin: 0 0 16px 0;
+  font-size: 14px;
+  color: var(--color-text-secondary, #64748b);
+}
+
+/* Toggle Row */
+.toggleRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 0;
+}
+
+.toggleInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.toggleLabel {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary, #1e293b);
+}
+
+.toggleDescription {
+  display: block;
+  font-size: 13px;
+  color: var(--color-text-secondary, #64748b);
+  margin-top: 2px;
+}
+
+/* Toggle Switch */
+.toggle {
+  position: relative;
+  width: 44px;
+  height: 24px;
+  padding: 0;
+  background-color: var(--color-surface-alt, #e2e8f0);
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  flex-shrink: 0;
+}
+
+.toggle:hover:not(.toggleDisabled) {
+  background-color: var(--color-border, #cbd5e1);
+}
+
+.toggle:focus-visible {
+  outline: 2px solid var(--color-primary, #3b82f6);
+  outline-offset: 2px;
+}
+
+.toggleChecked {
+  background-color: var(--color-primary, #3b82f6);
+}
+
+.toggleChecked:hover:not(.toggleDisabled) {
+  background-color: var(--color-primary-dark, #2563eb);
+}
+
+.toggleDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: transform 0.2s;
+}
+
+.toggleChecked .toggleThumb {
+  transform: translateX(20px);
+}
+
+/* Category Grid */
+.categoryGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.categoryHeader {
+  display: grid;
+  grid-template-columns: 1fr 60px 60px;
+  gap: 16px;
+  padding: 8px 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-tertiary, #94a3b8);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--color-border-light, #f1f5f9);
+}
+
+.categoryHeader span:nth-child(2),
+.categoryHeader span:nth-child(3) {
+  text-align: center;
+}
+
+.categoryRow {
+  display: grid;
+  grid-template-columns: 1fr 60px 60px;
+  gap: 16px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--color-border-light, #f1f5f9);
+}
+
+.categoryRow:last-child {
+  border-bottom: none;
+}
+
+.categoryRow .toggle {
+  justify-self: center;
+}
+
+.categoryInfo {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.categoryIcon {
+  font-size: 20px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.categoryLabel {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text-primary, #1e293b);
+}
+
+.categoryDescription {
+  display: block;
+  font-size: 12px;
+  color: var(--color-text-secondary, #64748b);
+  margin-top: 2px;
+}
+
+/* Quiet Hours Config */
+.quietHoursConfig {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-top: 16px;
+  padding: 16px;
+  background-color: var(--color-surface-alt, #f8fafc);
+  border-radius: var(--radius-md, 8px);
+}
+
+.timeInputGroup,
+.timezoneGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.timeLabel {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #64748b);
+}
+
+.timeInput,
+.timezoneSelect {
+  padding: 8px 12px;
+  font-size: 14px;
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: var(--radius-sm, 6px);
+  background-color: var(--color-surface, #ffffff);
+  color: var(--color-text-primary, #1e293b);
+}
+
+.timeInput:focus,
+.timezoneSelect:focus {
+  outline: none;
+  border-color: var(--color-primary, #3b82f6);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}
+
+.timezoneSelect {
+  min-width: 160px;
+}
+
+.quietHoursConfig .toggleRow {
+  width: 100%;
+  margin-top: 8px;
+}
+
+/* Loading & Error States */
+.loading {
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--color-text-secondary, #64748b);
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 48px 24px;
+  text-align: center;
+  color: var(--color-error, #ef4444);
+}
+
+.retryButton {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-primary, #3b82f6);
+  background: transparent;
+  border: 1px solid var(--color-primary, #3b82f6);
+  border-radius: var(--radius-sm, 6px);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.retryButton:hover {
+  background-color: var(--color-primary-light, #eff6ff);
+}
+
+/* Saving Indicator */
+.savingIndicator {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  background-color: var(--color-text-primary, #1e293b);
+  border-radius: var(--radius-md, 8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+.errorMessage {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: white;
+  background-color: var(--color-error, #ef4444);
+  border-radius: var(--radius-md, 8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+/* Mobile Responsive */
+@media (max-width: 640px) {
+  .categoryHeader {
+    display: none;
+  }
+
+  .categoryRow {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding: 16px 0;
+  }
+
+  .categoryRow .toggle:nth-child(2),
+  .categoryRow .toggle:nth-child(3) {
+    display: none;
+  }
+
+  .categoryInfo {
+    width: 100%;
+  }
+
+  .quietHoursConfig {
+    flex-direction: column;
+  }
+
+  .timeInputGroup,
+  .timezoneGroup {
+    width: 100%;
+  }
+
+  .timeInput,
+  .timezoneSelect {
+    width: 100%;
+  }
+}

@@ -38,7 +38,7 @@
 
 .primaryLabel {
   background: var(--color-accent-lime, #d4ff00);
-  color: #0a1628;
+  color: var(--color-bg-base, #0a1628);
   padding: 4px 10px;
   border-radius: 100px;
   font-size: var(--text-2xs);
@@ -132,13 +132,13 @@
   border-radius: 10px;
   font-size: var(--text-sm);
   font-weight: 700;
-  color: #0a1628;
+  color: var(--color-bg-base, #0a1628);
   text-decoration: none;
   transition: all 0.2s ease;
 }
 
 .addBtn:hover {
-  background: #c3ea00;
+  background: var(--color-accent-lime, #c3ea00);
   box-shadow: 0 4px 20px rgba(212, 255, 0, 0.3);
 }
 
@@ -248,7 +248,7 @@
 }
 
 /* Mobile */
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .nextUpgrade {
     padding: 16px;
   }

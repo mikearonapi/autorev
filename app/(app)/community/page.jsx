@@ -510,39 +510,48 @@ export default function CommunityPage() {
                     </span>
                   )}
                 </div>
-                  <h2 className={styles.buildTitle}>{currentBuild.title}</h2>
+                  <div className={styles.buildTitleRow}>
+                    <h2 className={styles.buildTitle}>{currentBuild.title}</h2>
+                    {currentBuild.buildStatus === 'complete' && (
+                      <span className={styles.statusBadge} data-status="complete">Build Complete</span>
+                    )}
+                    {currentBuild.buildStatus === 'in_progress' && (
+                      <span className={styles.statusBadge} data-status="progress">In Progress</span>
+                    )}
+                  </div>
                   <span className={styles.carName}>{currentBuild.car_name}</span>
                 </div>
                 <ChevronIcon />
               </div>
               
-              {/* Stats Row - Show if any performance data is available */}
-              {(currentBuild.build_data?.final_hp || currentBuild.car_specs?.hp || 
-                currentBuild.car_specs?.torque || currentBuild.car_specs?.zero_to_sixty ||
-                currentBuild.car_specs?.top_speed) && (
+              {/* Stats Row - SOURCE OF TRUTH: Use computedPerformance when available */}
+              {(currentBuild.computedPerformance?.upgraded?.hp || currentBuild.build_data?.final_hp || 
+                currentBuild.car_specs?.hp || currentBuild.car_specs?.torque || 
+                currentBuild.car_specs?.zero_to_sixty || currentBuild.car_specs?.top_speed) && (
                 <div className={styles.statsRow}>
-                  {(currentBuild.build_data?.final_hp || currentBuild.car_specs?.hp) && (
+                  {(currentBuild.computedPerformance?.upgraded?.hp || currentBuild.build_data?.final_hp || currentBuild.car_specs?.hp) && (
                     <div className={styles.stat}>
                       <span className={styles.statValue}>
-                        {currentBuild.build_data?.final_hp || currentBuild.car_specs?.hp}
+                        {/* SOURCE OF TRUTH: Prefer computedPerformance over stored values */}
+                        {Math.round(currentBuild.computedPerformance?.upgraded?.hp || currentBuild.build_data?.final_hp || currentBuild.car_specs?.hp)}
                       </span>
                       <span className={styles.statLabel}>HP</span>
                     </div>
                   )}
                   
-                  {(currentBuild.build_data?.final_torque || currentBuild.car_specs?.torque) && (
+                  {(currentBuild.computedPerformance?.upgraded?.torque || currentBuild.build_data?.final_torque || currentBuild.car_specs?.torque) && (
                     <div className={styles.stat}>
                       <span className={styles.statValue}>
-                        {currentBuild.build_data?.final_torque || currentBuild.car_specs?.torque}
+                        {Math.round(currentBuild.computedPerformance?.upgraded?.torque || currentBuild.build_data?.final_torque || currentBuild.car_specs?.torque)}
                       </span>
                       <span className={styles.statLabel}>LB-FT</span>
                     </div>
                   )}
                   
-                  {(currentBuild.build_data?.final_zero_to_sixty || currentBuild.car_specs?.zero_to_sixty) && (
+                  {(currentBuild.computedPerformance?.upgraded?.zeroToSixty || currentBuild.build_data?.final_zero_to_sixty || currentBuild.car_specs?.zero_to_sixty) && (
                     <div className={styles.stat}>
                       <span className={styles.statValue}>
-                        {currentBuild.build_data?.final_zero_to_sixty || currentBuild.car_specs?.zero_to_sixty}
+                        {(currentBuild.computedPerformance?.upgraded?.zeroToSixty || currentBuild.build_data?.final_zero_to_sixty || currentBuild.car_specs?.zero_to_sixty)?.toFixed?.(1) || currentBuild.computedPerformance?.upgraded?.zeroToSixty || currentBuild.build_data?.final_zero_to_sixty || currentBuild.car_specs?.zero_to_sixty}
                         <span className={styles.statSuffix}>s</span>
                       </span>
                       <span className={styles.statLabel}>0-60</span>

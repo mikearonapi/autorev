@@ -10,7 +10,7 @@
 
 import { ALEvaluationRunner, runSpotCheck, runFullEvaluation } from '../lib/alEvaluationRunner.js';
 import { getRandomEvalCases, getEvalCasesByCategory, getAllEvalCases } from '../lib/alEvaluations.js';
-import { sendEvalFailureAlert, sendEvalSuccessAlert } from '../lib/discordAlerts.js';
+import { sendEvalFailureAlert, sendEvalSuccessAlert } from '../lib/discord.js';
 
 const args = process.argv.slice(2);
 const options = {};

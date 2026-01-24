@@ -235,6 +235,7 @@ export function CostInputForm({ onSubmit, onCancel, glAccounts = [], editEntry =
             <label>Amount ($)</label>
             <input
               type="number"
+              inputMode="decimal"
               name="amount"
               value={formData.amount}
               onChange={handleChange}

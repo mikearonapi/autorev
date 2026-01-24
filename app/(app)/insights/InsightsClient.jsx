@@ -1,157 +1,465 @@
 'use client';
 
 /**
- * InsightsClient Component
+ * InsightsClient Component - Build Insights Dashboard
  * 
- * Personalized insights dashboard for car enthusiasts focused on:
- * - Build Progress - How are your projects coming along?
- * - Performance Gains - What have you achieved?
- * - What's Next - Recommended mods, services, actions
- * - Known Issues - What to watch out for
+ * PURPOSE: Provide a unified view of build progress across Power, Handling, and Reliability.
  * 
- * Design: Clean, actionable, mobile-first
- * Target audience: Enthusiasts who modify, track, and care about their cars
+ * WHAT WE SHOW:
+ * - PERFORMANCE: Next recommended mod, bottleneck analysis, Stage recommendations
+ * - RELIABILITY: Platform-specific issues relevant to modding (e.g., "B58 needs cooling at Stage 2")
+ * - COMMUNITY: Build comparisons, standing among similar vehicles
+ * - OPPORTUNITY: Deals, events, new content (future)
+ * 
+ * WHAT WE DO NOT SHOW:
+ * - Generic maintenance reminders (oil changes, tire rotations)
+ * - Registration/inspection due dates
+ * - "Log maintenance" actions (feature removed)
+ * - Anything that doesn't serve the modification market
+ * 
+ * Target audience: Enthusiasts who modify their vehicles for performance.
  */
 
-import { useState, useEffect, useCallback, useRef, useLayoutEffect } from 'react';
+import { useState, useEffect, useCallback, useRef, useLayoutEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { useAuth } from '@/components/providers/AuthProvider';
 import Link from 'next/link';
 import Image from 'next/image';
 import LoadingSpinner from '@/components/LoadingSpinner';
-import BuildProgressCard from './components/BuildProgressCard';
-import VehicleHealthCard from './components/VehicleHealthCard';
-import ActionCard from './components/ActionCard';
-import InsightCard from './components/InsightCard';
+import BuildProgressRings from './components/BuildProgressRings';
+import KnownIssuesAlert from '@/components/KnownIssuesAlert';
+// Analysis components migrated from Data page
+import BuildProgressAnalysis from '@/components/BuildProgressAnalysis';
+import BuildValueAnalysis from '@/components/BuildValueAnalysis';
+import NextUpgradeRecommendation from '@/components/NextUpgradeRecommendation';
+import PlatformInsights from '@/components/PlatformInsights';
+import { 
+  calculateAllModificationGains, 
+  calculateMaxPotential, 
+  calculateHandlingScore, 
+  calculateReliabilityScore 
+} from '@/lib/performanceCalculator';
+import { useTuningProfile } from '@/hooks/useTuningProfile';
 import styles from './page.module.css';
 
-// Icons
+// --- ICONS ---
 const UserIcon = ({ size = 20 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="8" r="4"/>
-    <path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/>
-  </svg>
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>
 );
-
-const AlertIcon = ({ size = 18 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-    <line x1="12" y1="9" x2="12" y2="13"/>
-    <line x1="12" y1="17" x2="12.01" y2="17"/>
-  </svg>
-);
-
-const RocketIcon = ({ size = 18 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/>
-    <path d="m12 15-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/>
-    <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/>
-    <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>
-  </svg>
-);
-
-const CarIcon = ({ size = 18 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/>
-    <circle cx="6.5" cy="16.5" r="2.5"/>
-    <circle cx="16.5" cy="16.5" r="2.5"/>
-  </svg>
-);
-
-const WrenchIcon = ({ size = 18 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
-  </svg>
-);
-
-const CheckCircleIcon = ({ size = 32 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-    <polyline points="22 4 12 14.01 9 11.01"/>
-  </svg>
-);
-
-const ChevronDownIcon = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="6 9 12 15 18 9"/>
-  </svg>
-);
-
-const ChevronRightIcon = ({ size = 14 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="9 18 15 12 9 6"/>
-  </svg>
-);
-
 const GarageIcon = ({ size = 18 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M2 20v-8l10-6 10 6v8"/>
-    <path d="M4 20v-4a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v4"/>
-    <path d="M4 20h16"/>
-  </svg>
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 20v-8l10-6 10 6v8"/><path d="M4 20v-4a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v4"/><path d="M4 20h16"/></svg>
+);
+const CarIcon = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 16H9m10 0h3v-3.15a1 1 0 0 0-.84-.99L16 11l-2.7-3.6a1 1 0 0 0-.8-.4H5.24a2 2 0 0 0-1.8 1.1l-.8 1.63A6 6 0 0 0 2 12.42V16h2"/><circle cx="6.5" cy="16.5" r="2.5"/><circle cx="16.5" cy="16.5" r="2.5"/></svg>
+);
+const CheckIcon = ({ size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+);
+const CheckCircleIcon = ({ size = 32 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+);
+const ChevronDownIcon = ({ size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+);
+const ChevronRightIcon = ({ size = 14 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+);
+const BoltIcon = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+);
+// ShieldIcon removed - no longer used (MAINTENANCE type removed for mod-focused app)
+const ChartIcon = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+);
+const AlertTriangleIcon = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+);
+const SparklesIcon = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5L12 3z"/><path d="M5 19l.5 1.5L7 21l-1.5.5L5 23l-.5-1.5L3 21l1.5-.5L5 19z"/><path d="M19 10l.5 1.5L21 12l-1.5.5-.5 1.5-.5-1.5L17 12l1.5-.5.5-1.5z"/></svg>
+);
+const ThumbsUpIcon = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/></svg>
+);
+const ThumbsDownIcon = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
+);
+const WrenchIcon = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
 );
 
-const CheckIcon = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12"/>
-  </svg>
-);
+// --- COMPONENT: INSIGHT CARD (Unified) ---
+// Types: PERFORMANCE (upgrades/power), RELIABILITY (platform issues), COMMUNITY (builds/social), OPPORTUNITY (deals/events)
+const SmartInsightCard = ({ type, title, body, subtext, action, onFeedback, id }) => {
+  const [feedback, setFeedback] = useState(null);
+
+  const getIcon = () => {
+    switch(type) {
+      case 'PERFORMANCE': return <BoltIcon className="text-emerald-400" />;
+      case 'RELIABILITY': return <AlertTriangleIcon className="text-amber-400" />;
+      case 'COMMUNITY': return <ChartIcon className="text-blue-400" />;
+      case 'OPPORTUNITY': return <SparklesIcon className="text-purple-400" />;
+      default: return <BoltIcon />;
+    }
+  };
+
+  const getAccentColor = () => {
+    switch(type) {
+      case 'PERFORMANCE': return 'var(--color-accent-teal)';
+      case 'RELIABILITY': return 'var(--color-accent-amber)';
+      case 'COMMUNITY': return '#3b82f6';
+      case 'OPPORTUNITY': return '#a855f7'; // Purple for opportunities/deals
+      default: return 'var(--color-text-primary)';
+    }
+  };
+
+  return (
+    <div className={styles.smartCard}>
+      <div className={styles.cardHeader}>
+        <div className={styles.cardIconWrapper} style={{ color: getAccentColor(), background: `${getAccentColor()}15` }}>
+          {getIcon()}
+        </div>
+        <span className={styles.cardType} style={{ color: getAccentColor() }}>{type}</span>
+        <div className={styles.cardActions}>
+          <button 
+            className={`${styles.feedbackBtn} ${feedback === 'up' ? styles.activeUp : ''}`}
+            onClick={() => { setFeedback('up'); onFeedback(type, id, 'useful'); }}
+          >
+            <ThumbsUpIcon size={14} />
+          </button>
+          <button 
+            className={`${styles.feedbackBtn} ${feedback === 'down' ? styles.activeDown : ''}`}
+            onClick={() => { setFeedback('down'); onFeedback(type, id, 'not_useful'); }}
+          >
+            <ThumbsDownIcon size={14} />
+          </button>
+        </div>
+      </div>
+      
+      <div className={styles.cardBody}>
+        <h3 className={styles.cardTitle}>{title}</h3>
+        <p className={styles.cardText}>{body}</p>
+        {subtext && <div className={styles.cardSubtext}>{subtext}</div>}
+      </div>
+
+      {action && (
+        <Link href={action.href} className={styles.cardActionLink}>
+          {action.label} <ChevronRightIcon />
+        </Link>
+      )}
+    </div>
+  );
+};
 
 export default function InsightsClient() {
   const { user, profile, loading: authLoading } = useAuth();
   const [insightsData, setInsightsData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedVehicleId, setSelectedVehicleId] = useState('all'); // 'all' or vehicle id
+  const [selectedVehicleId, setSelectedVehicleId] = useState(null); // Initialize as null, will set to first vehicle on load
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const [mounted, setMounted] = useState(false);
   const wrapperRef = useRef(null);
   const buttonRef = useRef(null);
   
-  const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
+  // Known issues state - fetched separately for full details
+  const [knownIssues, setKnownIssues] = useState([]);
+  const [issuesLoading, setIssuesLoading] = useState(false);
+  
+  // Build progress data for the rings visualization
+  // Initial state uses baseline values (50% handling = stock, 100% reliability = stock)
+  const [feedItems, setFeedItems] = useState([]);
+  const [buildStats, setBuildStats] = useState({
+    power: { current: 0, max: 100, percent: 0 },
+    handling: { current: 50, max: 100, percent: 50 }, // Stock baseline
+    reliability: { current: 100, max: 100, percent: 100, warnings: [], status: 'stock' },
+    totalHp: 0,
+    stockHp: 0,
+    hpGain: 0,
+    mods: 0,
+  });
 
-  // Track mount state for portal
+  const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
+  const firstName = profile?.display_name?.split(' ')[0] || user?.email?.split('@')[0] || 'there';
+
+  const vehicles = insightsData?.vehicles || [];
+  const insights = insightsData?.insights || {};
+  const summary = insightsData?.summary || {};
+
+  // Filter Data Helpers
+  const selectedVehicle = selectedVehicleId !== 'all' 
+    ? vehicles.find(v => v.id === selectedVehicleId)
+    : null;
+    
+  const rawBuildProgress = selectedVehicle
+    ? (insights.buildProgress || []).filter(b => b.vehicleId === selectedVehicleId)
+    : insights.buildProgress || [];
+
+  // Summary Metrics
+  const displaySummary = selectedVehicle ? {
+    totalHpGain: rawBuildProgress.find(b => b.vehicleId === selectedVehicle.id)?.currentHpGain || 0,
+    totalMods: (selectedVehicle.installed_modifications || []).length,
+  } : {
+    totalHpGain: summary.totalHpGain || 0,
+    totalMods: summary.totalMods || 0,
+  };
+
+  // ==========================================================================
+  // PERFORMANCE CALCULATION HELPER
+  // SOURCE OF TRUTH: lib/performanceCalculator - ALWAYS calculate dynamically
+  // ==========================================================================
+  
+  /**
+   * Normalize installed_modifications to array of string keys
+   * Handles both array of strings and array of objects { name, upgrade_key }
+   */
+  const normalizeModKeys = useCallback((mods) => {
+    if (!mods || !Array.isArray(mods)) return [];
+    return mods.map(mod => {
+      if (typeof mod === 'string') return mod;
+      if (typeof mod === 'object' && mod !== null) {
+        return mod.upgrade_key || mod.key || mod.id || null;
+      }
+      return null;
+    }).filter(Boolean);
+  }, []);
+  
+  const calculateVehiclePerformance = useCallback((vehicle) => {
+    if (!vehicle) {
+      return { 
+        stockHp: 0, 
+        hpGain: 0, 
+        totalHp: 0, 
+        mods: 0,
+        power: { current: 0, max: 100, percent: 0 },
+        handling: { current: 0, max: 100, percent: 50 }, // Stock baseline
+        reliability: { current: 100, max: 100, percent: 100, warnings: [], status: 'stock' },
+      };
+    }
+    
+    // Normalize mods to array of string keys
+    const rawMods = vehicle.installed_modifications || [];
+    const installedMods = normalizeModKeys(rawMods);
+    const matchedCar = vehicle.matched_car || null;
+    const stockHp = matchedCar?.hp || 0;
+    const modCount = installedMods.length;
+    
+    // SOURCE OF TRUTH: Calculate HP gain dynamically using performanceCalculator
+    // Never use stored values like total_hp_gain (they become stale)
+    let hpGain = 0;
+    if (modCount > 0 && matchedCar) {
+      const gains = calculateAllModificationGains(installedMods, matchedCar);
+      hpGain = gains.hpGain || 0;
+    }
+    
+    // Calculate max potential for the vehicle
+    const maxPotential = matchedCar ? calculateMaxPotential(matchedCar) : { maxHpGain: 200, maxTorqueGain: 200 };
+    
+    // Calculate power progress (HP gain vs max potential)
+    const powerPercent = maxPotential.maxHpGain > 0 
+      ? Math.round((hpGain / maxPotential.maxHpGain) * 100)
+      : 0;
+    const power = {
+      current: hpGain,
+      max: maxPotential.maxHpGain,
+      percent: Math.min(powerPercent, 100),
+    };
+    
+    // Calculate handling score - uses normalized mod keys
+    const handling = calculateHandlingScore(installedMods);
+    
+    // Calculate reliability score - uses normalized mod keys and HP gain percentage
+    const hpGainPercent = stockHp > 0 ? hpGain / stockHp : 0;
+    const reliability = calculateReliabilityScore(installedMods, hpGainPercent);
+    
+    return {
+      stockHp,
+      hpGain,
+      totalHp: stockHp + hpGain,
+      mods: modCount,
+      power,
+      handling,
+      reliability,
+    };
+  }, [normalizeModKeys]);
+
+  // ==========================================================================
+  // INSIGHTS GENERATOR - Mod-focused, using real calculations
+  // ==========================================================================
+  // IMPORTANT: This feed should only show insights that ADD NEW INFORMATION
+  // not already displayed in the dedicated sections above:
+  // - BuildProgressRings shows: HP, Power %, Handling %, Reliability %
+  // - BuildProgressAnalysis shows: Stage progression, what's next in current stage
+  // - BuildValueAnalysis shows: Cost efficiency, investment breakdown
+  // - NextUpgradeRecommendation shows: Recommended mods to add
+  // - KnownIssuesAlert shows: Platform-specific reliability issues
+  // - PlatformInsights shows: Strengths, weaknesses, community tips
+  // 
+  // The SmartFeed should ONLY include:
+  // - COMMUNITY insights (social comparisons - unique value)
+  // - PERFORMANCE insights about build BALANCE (not just HP numbers)
+  // - Any truly unique insights not covered by dedicated sections
+  // ==========================================================================
+  const generateSmartFeed = useCallback((vehicleId) => {
+    let items = [];
+    // Default stats use baseline values (50% handling = stock, 100% reliability = stock)
+    let stats = {
+      power: { current: 0, max: 100, percent: 0 },
+      handling: { current: 50, max: 100, percent: 50 }, // Stock baseline
+      reliability: { current: 100, max: 100, percent: 100, warnings: [], status: 'stock' },
+      totalHp: 0,
+      stockHp: 0,
+      hpGain: 0,
+      mods: 0,
+    };
+
+    const currentVehicle = vehicleId !== 'all' ? vehicles.find(v => v.id === vehicleId) : null;
+    
+    // --- ALL VEHICLES SUMMARY ---
+    if (vehicleId === 'all') {
+      // Calculate totals across all vehicles using SOURCE OF TRUTH
+      let totalHpGain = 0;
+      let totalMods = 0;
+      let totalStockHp = 0;
+      
+      vehicles.forEach(v => {
+        const perf = calculateVehiclePerformance(v);
+        totalHpGain += perf.hpGain;
+        totalMods += perf.mods;
+        totalStockHp += perf.stockHp;
+      });
+      
+      // For "all vehicles" view, show aggregate stats
+      stats = {
+        power: { current: totalHpGain, max: Math.round(totalStockHp * 0.5), percent: totalStockHp > 0 ? Math.min(100, Math.round((totalHpGain / (totalStockHp * 0.5)) * 100)) : 0 },
+        handling: { current: 0, max: 100, percent: 0 },
+        reliability: { current: 100, max: 100, percent: 100, warnings: [], status: 'stock' },
+        totalHp: totalStockHp + totalHpGain,
+        stockHp: totalStockHp,
+        hpGain: totalHpGain,
+        mods: totalMods,
+      };
+
+      // For "all vehicles", just show a prompt to select a specific vehicle
+      if (vehicles.length > 1) {
+        const perfVehicle = vehicles.find(v => ['Audi', 'BMW', 'Porsche', 'Mercedes-Benz'].includes(v.make)) || vehicles[0];
+        if (perfVehicle) {
+          items.push({
+            id: 'select-vehicle',
+            type: 'PERFORMANCE',
+            title: 'Select a Vehicle',
+            body: `Select your ${perfVehicle.year} ${perfVehicle.make} ${perfVehicle.model} to see personalized insights, stage progression, and upgrade recommendations.`,
+            action: { label: 'View Build', href: `/garage?vehicle=${perfVehicle.id}` }
+          });
+        }
+      }
+    } 
+    // --- SPECIFIC VEHICLE ---
+    else if (currentVehicle) {
+      // Calculate REAL performance using SOURCE OF TRUTH
+      const perf = calculateVehiclePerformance(currentVehicle);
+      const { stockHp, hpGain, totalHp, mods: modCount, power, handling, reliability } = perf;
+      
+      stats = {
+        power,
+        handling,
+        reliability,
+        totalHp,
+        stockHp,
+        hpGain,
+        mods: modCount,
+      };
+
+      // =================================================================
+      // FILTERED INSIGHTS - Only show what's NOT already in other sections
+      // =================================================================
+      
+      // REMOVED: Power % insights - already shown in BuildProgressRings hero
+      // REMOVED: HP numbers - already in rings + BuildValueAnalysis
+      // REMOVED: "What mod to add next" - covered by NextUpgradeRecommendation
+      // REMOVED: Reliability % and warnings - shown in rings + KnownIssuesAlert
+
+      // --- PERFORMANCE: Only show BUILD BALANCE insights (not HP numbers) ---
+      if (handling.percent <= 50 && power.percent > 30 && modCount > 1) {
+        // User has added power but not handling - this is ACTIONABLE BUILD ADVICE
+        // not just a repeat of percentages
+        items.push({
+          id: 'perf-balance',
+          type: 'PERFORMANCE',
+          title: `${power.percent}% Power Unlocked`,
+          body: `Your ${currentVehicle.model} is making ${totalHp} HP (+${hpGain}). A Stage 2 tune would push you closer to max potential.`,
+          action: { label: 'View Stage 2', href: '/garage/my-build?category=tune' }
+        });
+      }
+
+      // --- RELIABILITY: Only show ACTIONABLE warnings not in KnownIssuesAlert ---
+      // KnownIssuesAlert shows platform issues (timing chain, water pump, etc.)
+      // We only add reliability insights here if they're BUILD-SPECIFIC advice
+      if (reliability.warnings && reliability.warnings.length > 0 && reliability.status === 'at-risk') {
+        // Only show the first warning as a summary card
+        items.push({
+          id: 'rel-warning',
+          type: 'RELIABILITY',
+          title: 'Reliability Note',
+          body: reliability.warnings[0],
+          subtext: `Reliability: ${reliability.percent}%`,
+        });
+      }
+
+      // --- COMMUNITY: Always valuable - unique social context ---
+      items.push({
+        id: 'comm-1',
+        type: 'COMMUNITY',
+        title: modCount > 2 ? 'Active Builder' : 'Growing Build',
+        body: modCount > 2 
+          ? `Your ${currentVehicle.model} build is progressing well. See how other owners are building theirs.`
+          : `${modCount > 0 ? 'Good start!' : 'Stock build.'} See what mods are popular for the ${currentVehicle.model}.`,
+        action: { label: 'Compare Builds', href: '/community' }
+      });
+    }
+
+    return { items, stats };
+  }, [vehicles, calculateVehiclePerformance]);
+
+  // Generate feed when vehicle selection changes OR when vehicle data loads
+  // Must include vehicles in dependency to recalculate when data arrives
   useEffect(() => {
     setMounted(true);
-  }, []);
+    
+    // Don't generate feed until we have vehicle data and a selected vehicle
+    if (!selectedVehicleId || vehicles.length === 0) {
+      return;
+    }
+    
+    // Small delay for smooth transition when switching vehicles
+    const timeoutId = setTimeout(() => {
+      const data = generateSmartFeed(selectedVehicleId);
+      setFeedItems(data.items);
+      setBuildStats(data.stats);
+      setLoading(false);
+    }, 100);
+    
+    return () => clearTimeout(timeoutId);
+  }, [selectedVehicleId, vehicles, generateSmartFeed]);
 
-  // Calculate dropdown position when opening
+  // Dropdown Logic
   useLayoutEffect(() => {
     if (dropdownOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      setDropdownPosition({
-        top: rect.bottom + 6, // 6px gap below button
-        left: rect.left,
-        width: rect.width,
-      });
+      setDropdownPosition({ top: rect.bottom + 6, left: rect.left, width: rect.width });
     }
   }, [dropdownOpen]);
 
-  // Click outside handler - now also needs to check dropdown element
   useEffect(() => {
     if (!dropdownOpen) return;
-    
-    function handleClickOutside(event) {
-      // Check if click is outside both the wrapper and dropdown
-      const dropdownEl = document.getElementById('vehicle-selector-dropdown');
-      const isOutsideWrapper = wrapperRef.current && !wrapperRef.current.contains(event.target);
-      const isOutsideDropdown = !dropdownEl || !dropdownEl.contains(event.target);
-      
-      if (isOutsideWrapper && isOutsideDropdown) {
+    const handleClickOutside = (e) => {
+      const dropdown = document.getElementById('vehicle-selector-dropdown');
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target) && (!dropdown || !dropdown.contains(e.target))) {
         setDropdownOpen(false);
       }
-    }
-    
-    // Use timeout to avoid immediate trigger
-    const timeoutId = setTimeout(() => {
-      document.addEventListener('click', handleClickOutside);
-    }, 10);
-    
-    return () => {
-      clearTimeout(timeoutId);
-      document.removeEventListener('click', handleClickOutside);
     };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   }, [dropdownOpen]);
 
   // Fetch insights data
@@ -165,7 +473,6 @@ export default function InsightsClient() {
       setLoading(true);
       setError(null);
       
-      // Always fetch all vehicles first, then filter on frontend
       const url = `/api/users/${user.id}/insights`;
         
       const response = await fetch(url, {
@@ -177,7 +484,7 @@ export default function InsightsClient() {
       if (!response.ok) throw new Error(result.error || 'Failed to fetch insights');
       
       setInsightsData(result.data);
-      setLoading(false);
+      // Don't set loading false here, wait for feed generation
     } catch (err) {
       clearTimeout(timeoutId);
       if (err.name === 'AbortError') {
@@ -199,7 +506,131 @@ export default function InsightsClient() {
     fetchInsights();
   }, [user?.id, authLoading, fetchInsights]);
 
-  // Handle feedback
+  // Set default vehicle once data is loaded
+  useEffect(() => {
+    if (insightsData?.vehicles?.length > 0 && selectedVehicleId === null) {
+      setSelectedVehicleId(insightsData.vehicles[0].id);
+    } else if (insightsData?.vehicles?.length === 0) {
+      setLoading(false);
+    }
+  }, [insightsData, selectedVehicleId]);
+  
+  // Fetch known issues when vehicle selection changes
+  // Uses the full issues API for detailed data (symptoms, prevention, costs)
+  useEffect(() => {
+    const fetchIssues = async () => {
+      // Skip for "all vehicles" view or when no vehicle selected
+      if (!selectedVehicleId || selectedVehicleId === 'all') {
+        setKnownIssues([]);
+        return;
+      }
+      
+      const vehicle = vehicles.find(v => v.id === selectedVehicleId);
+      const carSlug = vehicle?.matched_car_slug;
+      
+      if (!carSlug) {
+        setKnownIssues([]);
+        return;
+      }
+      
+      setIssuesLoading(true);
+      try {
+        const response = await fetch(`/api/cars/${carSlug}/issues`);
+        if (response.ok) {
+          const data = await response.json();
+          setKnownIssues(data.issues || []);
+        } else {
+          setKnownIssues([]);
+        }
+      } catch (err) {
+        console.error('[InsightsClient] Error fetching known issues:', err);
+        setKnownIssues([]);
+      } finally {
+        setIssuesLoading(false);
+      }
+    };
+    
+    fetchIssues();
+  }, [selectedVehicleId, vehicles]);
+  
+  // Get selected vehicle's matched_car for tuning profile hook
+  const selectedVehicleMatchedCar = useMemo(() => {
+    if (!selectedVehicleId || selectedVehicleId === 'all') return null;
+    const vehicle = vehicles.find(v => v.id === selectedVehicleId);
+    if (!vehicle) return null;
+    // Create a minimal car object for the hook (needs id field)
+    return vehicle.matched_car || (vehicle.matched_car_id ? { id: vehicle.matched_car_id } : null);
+  }, [selectedVehicleId, vehicles]);
+  
+  // Fetch tuning profile using the hook (cached via React Query)
+  const { profile: tuningProfile } = useTuningProfile(selectedVehicleMatchedCar);
+
+  // ==========================================================================
+  // ANALYSIS COMPONENT DATA - Computed values for Build Analysis sections
+  // SOURCE OF TRUTH: performanceCalculator for all HP/performance calculations
+  // ==========================================================================
+  
+  // Get the selected vehicle's installed modifications as an array of keys
+  const installedUpgrades = useMemo(() => {
+    if (!selectedVehicleId || selectedVehicleId === 'all') return [];
+    const vehicle = vehicles.find(v => v.id === selectedVehicleId);
+    if (!vehicle) return [];
+    
+    const mods = vehicle.installed_modifications || [];
+    // Normalize to array of string keys
+    return mods.map(mod => {
+      if (typeof mod === 'string') return mod;
+      if (typeof mod === 'object' && mod !== null) {
+        return mod.upgrade_key || mod.key || mod.id || null;
+      }
+      return null;
+    }).filter(Boolean);
+  }, [selectedVehicleId, vehicles]);
+  
+  // Get stock HP and calculated HP for the selected vehicle
+  const vehiclePerformanceData = useMemo(() => {
+    if (!selectedVehicleId || selectedVehicleId === 'all') {
+      return { stockHp: 0, estimatedHp: 0, hpGain: 0 };
+    }
+    const vehicle = vehicles.find(v => v.id === selectedVehicleId);
+    if (!vehicle) {
+      return { stockHp: 0, estimatedHp: 0, hpGain: 0 };
+    }
+    
+    const matchedCar = vehicle.matched_car || null;
+    const stockHp = matchedCar?.hp || 0;
+    
+    // Calculate HP gain using performanceCalculator (SOURCE OF TRUTH)
+    let hpGain = 0;
+    if (installedUpgrades.length > 0 && matchedCar) {
+      const gains = calculateAllModificationGains(installedUpgrades, matchedCar);
+      hpGain = gains.hpGain || 0;
+    }
+    
+    return {
+      stockHp,
+      hpGain,
+      estimatedHp: stockHp + hpGain,
+    };
+  }, [selectedVehicleId, vehicles, installedUpgrades]);
+  
+  // Get car name and other metadata for display
+  const selectedVehicleDetails = useMemo(() => {
+    if (!selectedVehicleId || selectedVehicleId === 'all') return null;
+    const vehicle = vehicles.find(v => v.id === selectedVehicleId);
+    if (!vehicle) return null;
+    
+    return {
+      carName: `${vehicle.make} ${vehicle.model}`,
+      carSlug: vehicle.matched_car_slug,
+      aspiration: vehicle.matched_car?.aspiration || 'NA',
+      definingStrengths: vehicle.matched_car?.defining_strengths || [],
+      honestWeaknesses: vehicle.matched_car?.honest_weaknesses || [],
+      idealOwner: vehicle.matched_car?.ideal_owner,
+      notIdealFor: vehicle.matched_car?.not_ideal_for,
+    };
+  }, [selectedVehicleId, vehicles]);
+
   const handleFeedback = useCallback(async (insightType, insightKey, rating) => {
     if (!user?.id) return;
     
@@ -220,181 +651,37 @@ export default function InsightsClient() {
     }
   }, [user?.id, selectedVehicleId]);
 
-  // Not logged in
-  if (!authLoading && !user) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.emptyState}>
-          <h2 className={styles.emptyTitle}>Sign in to view your Insights</h2>
-          <p className={styles.emptyText}>Get personalized insights about your vehicles.</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Loading
-  if (loading || authLoading) {
-    return (
-      <LoadingSpinner 
-        variant="branded" 
-        text="Loading Insights" 
-        subtext="Analyzing your garage..."
-        fullPage 
-      />
-    );
-  }
-
-  // Error
-  if (error) {
-    return (
-      <div className={styles.page}>
-        <div className={styles.error}>
-          <p>{error}</p>
-          <button onClick={fetchInsights} className={styles.retryButton}>Try Again</button>
-        </div>
-      </div>
-    );
-  }
-
-  // Get first name for personalized greeting
-  const firstName = profile?.display_name?.split(' ')[0] || 
-                    user?.email?.split('@')[0] || 
-                    'there';
-
-  // Extract data
-  const vehicles = insightsData?.vehicles || [];
-  const insights = insightsData?.insights || {};
-  const summary = insightsData?.summary || {};
-  
-  // Filter data based on selection
-  const selectedVehicle = selectedVehicleId !== 'all' 
-    ? vehicles.find(v => v.id === selectedVehicleId)
-    : null;
-    
-  const actionItems = selectedVehicle
-    ? (insights.actionItems || []).filter(a => a.vehicleId === selectedVehicleId)
-    : insights.actionItems || [];
-    
-  const buildProgress = selectedVehicle
-    ? (insights.buildProgress || []).filter(b => b.vehicleId === selectedVehicleId)
-    : insights.buildProgress || [];
-    
-  const vehicleHealth = selectedVehicle
-    ? (insights.vehicleHealth || []).filter(v => v.id === selectedVehicleId)
-    : insights.vehicleHealth || [];
-    
-  const knownIssues = insights.knownIssues || [];
-  const recommendations = insights.recommendations || [];
-
-  // Calculate summary based on selection
-  // SOURCE OF TRUTH: HP gain comes from buildProgress (active build), not vehicle.total_hp_gain
-  const displaySummary = selectedVehicle ? {
-    // Get HP gain from buildProgress for this vehicle (computed from active build)
-    totalHpGain: buildProgress.find(b => b.vehicleId === selectedVehicle.id)?.currentHpGain || 0,
-    totalMods: (selectedVehicle.installed_modifications || []).length,
-    activeBuilds: buildProgress.filter(b => b.status === 'in_progress').length,
-    completeBuilds: buildProgress.filter(b => b.status === 'complete').length,
-  } : {
-    // For "All Vehicles", use the backend-computed summary (already using active builds)
-    totalHpGain: summary.totalHpGain || 0,
-    totalMods: summary.totalMods || 0,
-    activeBuilds: buildProgress.filter(b => b.status === 'in_progress').length,
-    completeBuilds: buildProgress.filter(b => b.status === 'complete').length,
-  };
-
-  // No vehicles - show empty state
-  if (vehicles.length === 0) {
-    return (
-      <div className={styles.page}>
-        <header className={styles.pageHeader}>
-          <div className={styles.headerLeft}>
-            <h1 className={styles.pageTitle}>{firstName}&apos;s Insights</h1>
-          </div>
-          <div className={styles.headerRight}>
-            <Link href="/dashboard" className={styles.profileLink} aria-label="Dashboard">
-              {avatarUrl ? (
-                <Image
-                  src={avatarUrl}
-                  alt=""
-                  width={36}
-                  height={36}
-                  className={styles.profileAvatar}
-                  style={{ objectFit: 'cover' }}
-                />
-              ) : (
-                <UserIcon size={20} />
-              )}
-            </Link>
-          </div>
-        </header>
-        
-        <div className={styles.emptyState}>
-          <CheckCircleIcon size={48} />
-          <h2 className={styles.emptyTitle}>Ready to track your garage</h2>
-          <p className={styles.emptyText}>
-            Once you add vehicles to your garage, you&apos;ll see personalized insights here — build progress, recommended mods, maintenance reminders, and more.
-          </p>
-          <Link href="/garage" className={styles.emptyLink}>
-            Go to Garage <ChevronRightIcon />
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
-  // Get selected vehicle name for display
   const getSelectedLabel = () => {
     if (selectedVehicleId === 'all') return 'All Vehicles';
     const v = vehicles.find(v => v.id === selectedVehicleId);
-    return v ? (v.nickname || `${v.year} ${v.make} ${v.model}`) : 'All Vehicles';
+    return v ? `${v.year} ${v.make} ${v.model}` : 'All Vehicles';
   };
+
+  if (!authLoading && !user) return <div className={styles.page}><div className={styles.emptyState}><h2>Sign in to view Insights</h2></div></div>;
+  if (loading && !feedItems.length) return <LoadingSpinner variant="branded" text="Analyzing Build" subtext="Generating AI insights..." fullPage />;
 
   return (
     <div className={styles.page}>
-      {/* Page Header */}
       <header className={styles.pageHeader}>
         <div className={styles.headerLeft}>
-          <h1 className={styles.pageTitle}>{firstName}&apos;s Insights</h1>
+          <h1 className={styles.pageTitle}>{firstName}&apos;s Build Insights</h1>
         </div>
         <div className={styles.headerRight}>
-          <Link href="/dashboard" className={styles.profileLink} aria-label="Dashboard">
-            {avatarUrl ? (
-              <Image
-                src={avatarUrl}
-                alt=""
-                width={36}
-                height={36}
-                className={styles.profileAvatar}
-                style={{ objectFit: 'cover' }}
-              />
-            ) : (
-              <UserIcon size={20} />
-            )}
+          <Link href="/dashboard" className={styles.profileLink}>
+            {avatarUrl ? <Image src={avatarUrl} alt="" width={36} height={36} className={styles.profileAvatar} /> : <UserIcon size={20} />}
           </Link>
         </div>
       </header>
 
       {/* Vehicle Selector */}
       <section className={styles.vehicleSelector} ref={wrapperRef}>
-        <button 
-          ref={buttonRef}
-          type="button"
-          className={styles.selectorButton}
-          onClick={() => setDropdownOpen(!dropdownOpen)}
-          aria-expanded={dropdownOpen}
-          aria-haspopup="listbox"
-        >
+        <button ref={buttonRef} type="button" className={styles.selectorButton} onClick={() => setDropdownOpen(!dropdownOpen)}>
           <div className={styles.selectorLeft}>
             <GarageIcon size={18} className={styles.selectorIcon} />
-            <div>
-              <span className={styles.selectorLabel}>Viewing</span>
-              <span className={styles.selectorValue}>{getSelectedLabel()}</span>
-            </div>
+            <span className={styles.selectorValue}>{getSelectedLabel()}</span>
           </div>
           <ChevronDownIcon size={16} className={`${styles.selectorChevron} ${dropdownOpen ? styles.open : ''}`} />
         </button>
-        
-        {/* Dropdown rendered via portal for reliable positioning */}
         {dropdownOpen && mounted && createPortal(
           <div 
             id="vehicle-selector-dropdown"
@@ -407,20 +694,6 @@ export default function InsightsClient() {
               width: dropdownPosition.width,
             }}
           >
-            <button
-              type="button"
-              role="option"
-              aria-selected={selectedVehicleId === 'all'}
-              className={`${styles.selectorOption} ${selectedVehicleId === 'all' ? styles.active : ''}`}
-              onClick={() => { setSelectedVehicleId('all'); setDropdownOpen(false); }}
-            >
-              {selectedVehicleId === 'all' ? (
-                <CheckIcon size={16} className={styles.selectorOptionIcon} />
-              ) : (
-                <GarageIcon size={16} className={styles.selectorOptionIcon} />
-              )}
-              <span className={styles.selectorOptionText}>All Vehicles ({vehicles.length})</span>
-            </button>
             {vehicles.map(v => (
               <button
                 type="button"
@@ -445,153 +718,122 @@ export default function InsightsClient() {
         )}
       </section>
 
-      {/* Summary Card */}
+      {/* Hero Section - Build Progress Rings */}
       <section className={styles.summarySection}>
-        <div className={styles.summaryCard}>
-          <div className={styles.summaryStats}>
-            <div className={styles.summaryStat}>
-              <span className={`${styles.summaryStatValue} ${displaySummary.totalHpGain > 0 ? styles.gain : ''}`}>
-                {displaySummary.totalHpGain > 0 ? `+${displaySummary.totalHpGain}` : '—'}
-              </span>
-              <span className={styles.summaryStatLabel}>HP Gained</span>
-            </div>
-            <div className={styles.summaryStat}>
-              <span className={styles.summaryStatValue}>{displaySummary.totalMods}</span>
-              <span className={styles.summaryStatLabel}>Mods Installed</span>
-            </div>
-            <div className={styles.summaryStat}>
-              <span className={styles.summaryStatValue}>
-                {displaySummary.completeBuilds > 0 
-                  ? displaySummary.completeBuilds 
-                  : displaySummary.activeBuilds > 0 
-                    ? displaySummary.activeBuilds 
-                    : '—'}
-              </span>
-              <span className={styles.summaryStatLabel}>
-                {displaySummary.completeBuilds > 0 
-                  ? 'Builds Complete' 
-                  : displaySummary.activeBuilds > 0 
-                    ? 'In Progress' 
-                    : 'Builds'}
-              </span>
-            </div>
-          </div>
-        </div>
+        <BuildProgressRings 
+          power={buildStats.power}
+          handling={buildStats.handling}
+          reliability={buildStats.reliability}
+          stockHp={buildStats.stockHp}
+          totalHp={buildStats.totalHp}
+        />
       </section>
 
-      {/* Action Needed Section */}
-      {actionItems.length > 0 && (
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <WrenchIcon size={18} className={styles.sectionIcon} />
-            <h2 className={styles.sectionTitle}>Action Needed</h2>
-            <span className={styles.sectionCount}>{actionItems.length}</span>
-          </div>
-          <div className={styles.actionsList}>
-            {actionItems.slice(0, 4).map((action) => (
-              <ActionCard key={action.id} action={action} />
-            ))}
-          </div>
+      {/* ============================================
+          BUILD ANALYSIS SECTIONS
+          Migrated from Data page Analysis tab
+          ============================================ */}
+      
+      {/* Build Progress Analysis - Stage 1/2/3 progression */}
+      {selectedVehicleId && selectedVehicleId !== 'all' && tuningProfile?.stage_progressions && (
+        <section className={styles.analysisSection}>
+          <BuildProgressAnalysis
+            stageProgressions={tuningProfile.stage_progressions}
+            installedUpgrades={installedUpgrades}
+            stockHp={vehiclePerformanceData.stockHp}
+            currentHp={vehiclePerformanceData.estimatedHp}
+            carName={selectedVehicleDetails?.carName}
+            carSlug={selectedVehicleDetails?.carSlug}
+          />
+        </section>
+      )}
+      
+      {/* Build Value Analysis - Cost efficiency and ROI */}
+      {selectedVehicleId && selectedVehicleId !== 'all' && installedUpgrades.length > 0 && (
+        <section className={styles.analysisSection}>
+          <BuildValueAnalysis
+            installedUpgrades={installedUpgrades}
+            stockHp={vehiclePerformanceData.stockHp}
+            currentHp={vehiclePerformanceData.estimatedHp}
+            carName={selectedVehicleDetails?.carName}
+          />
+        </section>
+      )}
+      
+      {/* Recommended Next Upgrades */}
+      {selectedVehicleId && selectedVehicleId !== 'all' && (
+        <section className={styles.analysisSection}>
+          <NextUpgradeRecommendation
+            installedUpgrades={installedUpgrades}
+            aspiration={selectedVehicleDetails?.aspiration || 'NA'}
+            currentHp={vehiclePerformanceData.estimatedHp}
+            carSlug={selectedVehicleDetails?.carSlug}
+            vehicleId={selectedVehicleId}
+          />
+        </section>
+      )}
+      
+      {/* Known Issues - Critical issues to watch for this specific vehicle */}
+      {/* MOVED UP: Issues are more actionable than general platform knowledge */}
+      {selectedVehicleId && selectedVehicleId !== 'all' && !issuesLoading && (knownIssues.length > 0 || !issuesLoading) && (
+        <section className={styles.knownIssuesSection}>
+          <KnownIssuesAlert
+            issues={knownIssues}
+            vehicleYear={selectedVehicle?.year}
+            carName={selectedVehicle ? `${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}` : ''}
+          />
         </section>
       )}
 
-      {/* Build Progress Section */}
-      {buildProgress.length > 0 && (
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <RocketIcon size={18} className={styles.sectionIcon} />
-            <h2 className={styles.sectionTitle}>Build Progress</h2>
-          </div>
-          <div className={styles.buildsList}>
-            {buildProgress.slice(0, 3).map((build) => (
-              <BuildProgressCard key={build.id} build={build} />
-            ))}
-          </div>
-        </section>
+      {/* Platform Insights - Strengths, Weaknesses, Community Tips */}
+      {/* Now includes "Ask AL" button - PlatformRecommendationCard was REMOVED as redundant */}
+      {selectedVehicleId && selectedVehicleId !== 'all' && (
+        (selectedVehicleDetails?.definingStrengths?.length > 0 || 
+         selectedVehicleDetails?.honestWeaknesses?.length > 0 ||
+         tuningProfile?.platform_insights) && (
+          <section className={styles.analysisSection}>
+            <PlatformInsights
+              definingStrengths={selectedVehicleDetails?.definingStrengths || []}
+              honestWeaknesses={selectedVehicleDetails?.honestWeaknesses || []}
+              platformInsights={tuningProfile?.platform_insights || {}}
+              idealOwner={selectedVehicleDetails?.idealOwner}
+              notIdealFor={selectedVehicleDetails?.notIdealFor}
+              carName={selectedVehicleDetails?.carName}
+              onAskAL={() => {
+                const vehicle = vehicles.find(v => v.id === selectedVehicleId);
+                if (vehicle) {
+                  window.location.href = `/al?context=platform-insights&vehicle=${vehicle.id}`;
+                }
+              }}
+            />
+          </section>
+        )
       )}
 
-      {/* Your Vehicles Section (only show when viewing "All") */}
-      {selectedVehicleId === 'all' && vehicleHealth.length > 0 && (
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <CarIcon size={18} className={styles.sectionIcon} />
-            <h2 className={styles.sectionTitle}>Your Vehicles</h2>
-            <Link href="/garage" className={styles.sectionLink}>
-              View All <ChevronRightIcon />
-            </Link>
+      {/* Smart Feed - Filtered to avoid redundancy with sections above */}
+      {/* Only show insights that ADD NEW INFORMATION not already displayed */}
+      {feedItems.length > 0 && (
+        <div className={styles.feedContainer}>
+          <div className={styles.feedHeader}>
+            <h3 className={styles.feedTitle}>Additional Insights</h3>
+            <span className={styles.feedCount}>{feedItems.length}</span>
           </div>
-          <div className={styles.vehiclesList}>
-            {vehicleHealth.slice(0, 4).map((vehicle) => (
-              <VehicleHealthCard key={vehicle.id} vehicle={vehicle} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Watch Out Section - Known Issues */}
-      {knownIssues.length > 0 && (
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <AlertIcon size={18} className={styles.sectionIcon} />
-            <h2 className={styles.sectionTitle}>Watch Out</h2>
-            <span className={styles.sectionCount}>{knownIssues.length}</span>
-          </div>
-          <div className={styles.issuesList}>
-            {knownIssues.slice(0, 3).map((issue, index) => (
-              <InsightCard
-                key={`issue-${issue.id || index}`}
-                type="known_issue"
-                insightKey={issue.id || `issue-${index}`}
-                title={issue.title}
-                description={issue.description}
-                severity={issue.severity}
-                carId={selectedVehicleId !== 'all' ? selectedVehicleId : null}
+          
+          <div className={styles.feedList}>
+            {feedItems.map(item => (
+              <SmartInsightCard 
+                key={item.id}
+                id={item.id}
+                type={item.type}
+                title={item.title}
+                body={item.body}
+                subtext={item.subtext}
+                action={item.action}
                 onFeedback={handleFeedback}
               />
             ))}
           </div>
-        </section>
-      )}
-
-      {/* Recommendations Section */}
-      {recommendations.length > 0 && selectedVehicleId !== 'all' && (
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <RocketIcon size={18} className={styles.sectionIcon} />
-            <h2 className={styles.sectionTitle}>Recommended Upgrades</h2>
-          </div>
-          <div className={styles.issuesList}>
-            {recommendations.slice(0, 3).map((rec, index) => (
-              <InsightCard
-                key={`rec-${rec.id || index}`}
-                type="recommendation"
-                insightKey={rec.id || `rec-${index}`}
-                title={rec.title}
-                description={rec.description}
-                severity="info"
-                link={rec.link}
-                onFeedback={handleFeedback}
-              />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* All Clear Message (when no action items and no builds) */}
-      {actionItems.length === 0 && buildProgress.length === 0 && knownIssues.length === 0 && (
-        <section className={styles.allClearSection}>
-          <div className={styles.allClearContent}>
-            <CheckCircleIcon size={36} />
-            <div>
-              <h3 className={styles.allClearTitle}>All caught up!</h3>
-              <p className={styles.allClearText}>
-                {selectedVehicleId === 'all' 
-                  ? 'No urgent actions needed. Start a build to track your progress!'
-                  : 'No issues or tasks for this vehicle.'}
-              </p>
-            </div>
-          </div>
-        </section>
+        </div>
       )}
     </div>
   );

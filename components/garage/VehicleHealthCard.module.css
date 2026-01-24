@@ -183,7 +183,7 @@
   border-radius: 10px;
   border: 1px solid rgba(16, 185, 129, 0.45);
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.16), rgba(16, 185, 129, 0.08));
-  color: #f6e7c7;
+  color: var(--color-accent-amber-light, #f6e7c7);
   font-weight: 700;
   cursor: pointer;
   min-width: 120px;
@@ -263,7 +263,7 @@
   gap: 8px;
 }
 
-@media (max-width: 400px) {
+@media (min-width: 401px) {
   .twoCol {
     grid-template-columns: 1fr;
   }
@@ -355,7 +355,7 @@
   opacity: 0.8;
 }
 
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .card {
     padding: 14px;
     gap: 14px;

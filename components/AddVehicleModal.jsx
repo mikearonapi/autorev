@@ -15,7 +15,7 @@
 import { useState, useMemo, useEffect } from 'react';
 import styles from './AddVehicleModal.module.css';
 import { fetchCars } from '@/lib/carsClient';
-import { calculateWeightedScore } from '@/lib/scoring';
+import { calculateWeightedScore, ENTHUSIAST_WEIGHTS } from '@/lib/scoring';
 import { Icons } from '@/components/ui/Icons';
 
 export default function AddVehicleModal({ isOpen, onClose, onAdd, existingVehicles = [] }) {
@@ -31,18 +31,8 @@ export default function AddVehicleModal({ isOpen, onClose, onAdd, existingVehicl
     fetchCars().then(setAllCars).catch(console.error);
   }, []);
 
-  // Default weights for scoring (balanced enthusiast preferences)
-  const defaultWeights = {
-    powerAccel: 1.5,
-    gripCornering: 1.5,
-    braking: 1.2,
-    trackPace: 1.5,
-    drivability: 1.0,
-    reliabilityHeat: 1.0,
-    soundEmotion: 1.2,
-  };
-
   // Filter and sort cars based on search (from database)
+  // Uses ENTHUSIAST_WEIGHTS from lib/scoring.js for consistent scoring across the app
   const filteredCars = useMemo(() => {
     let results = allCars;
     
@@ -61,7 +51,7 @@ export default function AddVehicleModal({ isOpen, onClose, onAdd, existingVehicl
     return results
       .map(car => ({
         car,
-        score: calculateWeightedScore(car, defaultWeights)
+        score: calculateWeightedScore(car, ENTHUSIAST_WEIGHTS)
       }))
       .sort((a, b) => b.score - a.score)
       .map(item => item.car)

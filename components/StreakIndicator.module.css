@@ -1,0 +1,250 @@
+/* StreakIndicator Component Styles */
+
+.container {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.compact {
+  flex-direction: row;
+  align-items: center;
+}
+
+/* Streak Badge */
+.streakBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.1));
+  border: 1px solid rgba(251, 191, 36, 0.3);
+  border-radius: var(--radius-full, 9999px);
+  cursor: default;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.streakBadge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
+}
+
+.compact .streakBadge {
+  padding: 4px 8px;
+}
+
+.icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.compact .icon {
+  font-size: 14px;
+}
+
+.iconPulse {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+.count {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--color-text-primary, #1e293b);
+}
+
+.compact .count {
+  font-size: 14px;
+}
+
+.label {
+  font-size: 13px;
+  color: var(--color-text-secondary, #64748b);
+}
+
+/* No Streak State */
+.noStreak {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--color-surface-alt, #f8fafc);
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: var(--radius-full, 9999px);
+  color: var(--color-text-tertiary, #94a3b8);
+  font-size: 13px;
+}
+
+/* At Risk State */
+.atRisk .streakBadge {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(251, 191, 36, 0.15));
+  border-color: rgba(239, 68, 68, 0.4);
+  animation: atRiskPulse 2s ease-in-out infinite;
+}
+
+@keyframes atRiskPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+  }
+}
+
+.atRiskBanner {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: var(--radius-sm, 6px);
+  font-size: 12px;
+  color: var(--color-error, #ef4444);
+}
+
+.atRiskIcon {
+  font-size: 12px;
+}
+
+.atRiskText {
+  font-weight: 500;
+}
+
+/* Tooltip */
+.tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 280px;
+  padding: 16px;
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+}
+
+.tooltipHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.tooltipIcon {
+  font-size: 32px;
+}
+
+.tooltipTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary, #1e293b);
+}
+
+.tooltipMessage {
+  font-size: 13px;
+  color: var(--color-text-secondary, #64748b);
+  margin-top: 2px;
+}
+
+.tooltipStats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-border-light, #f1f5f9);
+}
+
+.tooltipStat {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statLabel {
+  font-size: 13px;
+  color: var(--color-text-secondary, #64748b);
+}
+
+.statValue {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-text-primary, #1e293b);
+}
+
+.frozenBadge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: rgba(59, 130, 246, 0.1);
+  border-radius: var(--radius-sm, 6px);
+  font-size: 13px;
+  color: var(--color-primary, #3b82f6);
+}
+
+.atRiskTooltip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: rgba(239, 68, 68, 0.1);
+  border-radius: var(--radius-sm, 6px);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--color-error, #ef4444);
+}
+
+/* Progress Bar */
+.progressContainer {
+  margin-top: 8px;
+}
+
+.progressBar {
+  height: 6px;
+  background: var(--color-surface-alt, #f1f5f9);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-accent-amber-light, #fbbf24), var(--color-accent-amber, #f59e0b));
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.progressLabels {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font-size: 11px;
+  color: var(--color-text-tertiary, #94a3b8);
+}
+
+/* Mobile */
+@media (max-width: 640px) {
+  .tooltip {
+    position: fixed;
+    top: auto;
+    bottom: 80px;
+    left: 16px;
+    right: 16px;
+    transform: none;
+    width: auto;
+  }
+}

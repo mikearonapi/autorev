@@ -140,7 +140,7 @@ export default function VehicleHealthCard({
 
   const healthStatus = useMemo(() => computeHealth(baseline || {}, maintenanceSpecs), [baseline, maintenanceSpecs]);
 
-  const handleChange = (key, value) => {
+  const handleHealthFieldChange = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
     setSuccess('');
     setError('');
@@ -264,7 +264,7 @@ export default function VehicleHealthCard({
               inputMode="numeric"
               min={0}
               value={form.mileage}
-              onChange={(e) => handleChange('mileage', e.target.value === '' ? '' : Number(e.target.value))}
+              onChange={(e) => handleHealthFieldChange('mileage', e.target.value === '' ? '' : Number(e.target.value))}
               placeholder="Enter mileage"
             />
           </div>
@@ -276,7 +276,7 @@ export default function VehicleHealthCard({
             <button
               className={`${styles.smallButton} ${styles.secondary}`}
               type="button"
-              onClick={() => handleChange('last_started_at', formatDateInput(new Date().toISOString()))}
+              onClick={() => handleHealthFieldChange('last_started_at', formatDateInput(new Date().toISOString()))}
             >
               Today
             </button>
@@ -285,7 +285,7 @@ export default function VehicleHealthCard({
             className={styles.input}
             type="date"
             value={form.last_started_at}
-            onChange={(e) => handleChange('last_started_at', e.target.value)}
+            onChange={(e) => handleHealthFieldChange('last_started_at', e.target.value)}
           />
         </div>
 
@@ -296,7 +296,7 @@ export default function VehicleHealthCard({
           <select
             className={styles.select}
             value={form.battery_status}
-            onChange={(e) => handleChange('battery_status', e.target.value)}
+            onChange={(e) => handleHealthFieldChange('battery_status', e.target.value)}
           >
             {BATTERY_OPTIONS.map((opt) => (
               <option key={opt} value={opt}>{opt}</option>
@@ -327,7 +327,7 @@ export default function VehicleHealthCard({
                 className={styles.input}
                 type="date"
                 value={form.last_oil_change_date}
-                onChange={(e) => handleChange('last_oil_change_date', e.target.value)}
+                onChange={(e) => handleHealthFieldChange('last_oil_change_date', e.target.value)}
               />
               <input
                 className={styles.input}
@@ -336,7 +336,7 @@ export default function VehicleHealthCard({
                 min={0}
                 placeholder="Mileage"
                 value={form.last_oil_change_mileage}
-                onChange={(e) => handleChange('last_oil_change_mileage', e.target.value === '' ? '' : Number(e.target.value))}
+                onChange={(e) => handleHealthFieldChange('last_oil_change_mileage', e.target.value === '' ? '' : Number(e.target.value))}
               />
             </div>
             {baseline?.next_oil_due_mileage && (
@@ -353,7 +353,7 @@ export default function VehicleHealthCard({
                 className={styles.input}
                 type="date"
                 value={form.tire_installed_date}
-                onChange={(e) => handleChange('tire_installed_date', e.target.value)}
+                onChange={(e) => handleHealthFieldChange('tire_installed_date', e.target.value)}
               />
               <input
                 className={styles.input}
@@ -364,7 +364,7 @@ export default function VehicleHealthCard({
                 step="1"
                 placeholder="Tread (32nds)"
                 value={form.tire_tread_32nds}
-                onChange={(e) => handleChange('tire_tread_32nds', e.target.value === '' ? '' : Number(e.target.value))}
+                onChange={(e) => handleHealthFieldChange('tire_tread_32nds', e.target.value === '' ? '' : Number(e.target.value))}
               />
             </div>
           </div>
@@ -375,7 +375,7 @@ export default function VehicleHealthCard({
               className={styles.input}
               type="date"
               value={form.registration_due_date}
-              onChange={(e) => handleChange('registration_due_date', e.target.value)}
+              onChange={(e) => handleHealthFieldChange('registration_due_date', e.target.value)}
             />
           </div>
 
@@ -385,7 +385,7 @@ export default function VehicleHealthCard({
               className={styles.input}
               type="date"
               value={form.inspection_due_date}
-              onChange={(e) => handleChange('inspection_due_date', e.target.value)}
+              onChange={(e) => handleHealthFieldChange('inspection_due_date', e.target.value)}
             />
           </div>
         </div>

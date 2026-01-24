@@ -249,7 +249,7 @@
 }
 
 /* Mobile responsiveness */
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .healthSection {
     flex-direction: column;
     align-items: stretch;

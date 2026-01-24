@@ -22,6 +22,7 @@ import { getUpgradeByKey, getCanonicalCategories, getCanonicalCategoryKey } from
 import { validateUpgradeSelection, getSystemImpactOverview, SEVERITY } from '@/lib/dependencyChecker.js';
 import { getToolsForBuild, calculateBuildComplexity, difficultyLevels, toolCategories } from '@/data/upgradeTools.js';
 import { Icons } from '@/components/ui/Icons';
+import { formatEventDate } from '@/lib/dateUtils';
 import styles from './BuildDetailView.module.css';
 
 /**
@@ -38,7 +39,7 @@ function BuildSummaryCard({ build, car, complexity }) {
         <div className={styles.summaryHeader}>
           <h2 className={styles.buildName}>{build?.name || 'Untitled Build'}</h2>
           <span className={styles.buildDate}>
-            Saved {build?.createdAt ? new Date(build.createdAt).toLocaleDateString() : '—'}
+            Saved {build?.createdAt ? formatEventDate(build.createdAt) : '—'}
           </span>
         </div>
         <p className={styles.carName}>{car.name}</p>

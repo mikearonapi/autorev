@@ -7,15 +7,15 @@
   --card-bg: rgba(255, 255, 255, 0.03);
   --card-hover: rgba(255, 255, 255, 0.05);
   --border-subtle: rgba(255, 255, 255, 0.08);
-  --text-primary: #f8fafc;
+  --text-primary: var(--color-bg-muted, #f8fafc);
   --text-secondary: var(--brand-text-secondary);
   --text-muted: var(--brand-text-tertiary);
   --accent-blue: var(--brand-blue);
   --accent-purple: var(--brand-purple-accent);
-  --accent-cyan: #06b6d4;
-  --positive: #22c55e;
+  --accent-cyan: var(--color-accent-teal, #06b6d4);
+  --positive: var(--color-success, #22c55e);
   --warning: var(--brand-warning);
-  --negative: #ef4444;
+  --negative: var(--color-error, #ef4444);
   
   display: flex;
   flex-direction: column;
@@ -72,13 +72,13 @@
   gap: 0.75rem;
 }
 
-@media (max-width: 900px) {
+@media (min-width: 901px) {
   .statsGrid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 500px) {
+@media (min-width: 501px) {
   .statsGrid {
     grid-template-columns: 1fr;
   }
@@ -402,7 +402,7 @@
   gap: 1rem;
 }
 
-@media (max-width: 800px) {
+@media (min-width: 801px) {
   .techGrid {
     grid-template-columns: 1fr;
   }

@@ -4,13 +4,13 @@
  * Performance Comparison - Professional Design
  * 
  * Matches the Tuning Shop's Performance Metrics component style.
- * Shows stock vs modified metrics using STORED values from user_projects.
- * 
- * ARCHITECTURE: No calculation here - just display stored values.
- * Calculations happen only in the build flow (UpgradeCenter/PerformanceHub).
+ * Shows stock vs modified metrics using the SINGLE SOURCE OF TRUTH calculator
+ * (`lib/performanceCalculator`). Stored final_* fields can become stale as the
+ * model improves, so we compute from (car specs + selected upgrades).
  */
 
 import styles from './PerformanceComparison.module.css';
+import { getPerformanceProfile } from '@/lib/performanceCalculator';
 
 // SVG Icons matching the Tuning Shop style
 const Icons = {
@@ -154,19 +154,36 @@ export default function PerformanceComparison({
   buildData = {},
   totalCost = 0,
 }) {
-  // Use STORED values from buildData (user_projects table)
-  // These are the exact values the user saw when they saved their build
-  const stockHp = buildData?.stock_hp || carData.hp || 0;
-  const finalHp = buildData?.final_hp || stockHp;
+  // Normalize car shape (DB uses snake_case, calculator expects camelCase)
+  const normalizedCar = {
+    ...carData,
+    zeroToSixty: carData.zeroToSixty ?? carData.zero_to_sixty,
+    braking60To0: carData.braking60To0 ?? carData.braking_60_0,
+    lateralG: carData.lateralG ?? carData.lateral_g,
+    quarterMile: carData.quarterMile ?? carData.quarter_mile,
+    curbWeight: carData.curbWeight ?? carData.curb_weight,
+  };
+
+  // Normalize selected upgrades -> array of keys
+  const rawSelected = buildData?.selected_upgrades ?? buildData?.selectedUpgrades ?? buildData?.upgrades ?? [];
+  const rawKeys = Array.isArray(rawSelected) ? rawSelected : (rawSelected?.upgrades || []);
+  const upgradeKeys = (rawKeys || []).map(u => (typeof u === 'string' ? u : u?.key)).filter(Boolean);
+
+  const profile = normalizedCar?.hp
+    ? getPerformanceProfile(normalizedCar, upgradeKeys)
+    : null;
+
+  const stockHp = profile?.stockMetrics?.hp ?? buildData?.stock_hp ?? carData.hp ?? 0;
+  const finalHp = profile?.upgradedMetrics?.hp ?? buildData?.final_hp ?? stockHp;
   
-  const stockZeroToSixty = buildData?.stock_zero_to_sixty || carData.zero_to_sixty || null;
-  const finalZeroToSixty = buildData?.final_zero_to_sixty || stockZeroToSixty;
+  const stockZeroToSixty = profile?.stockMetrics?.zeroToSixty ?? buildData?.stock_zero_to_sixty ?? carData.zero_to_sixty ?? null;
+  const finalZeroToSixty = profile?.upgradedMetrics?.zeroToSixty ?? buildData?.final_zero_to_sixty ?? stockZeroToSixty;
   
-  const stockBraking = buildData?.stock_braking_60_0 || carData.braking_60_0 || null;
-  const finalBraking = buildData?.final_braking_60_0 || stockBraking;
+  const stockBraking = profile?.stockMetrics?.braking60To0 ?? buildData?.stock_braking_60_0 ?? carData.braking_60_0 ?? null;
+  const finalBraking = profile?.upgradedMetrics?.braking60To0 ?? buildData?.final_braking_60_0 ?? stockBraking;
   
-  const stockLateralG = buildData?.stock_lateral_g || carData.lateral_g || null;
-  const finalLateralG = buildData?.final_lateral_g || stockLateralG;
+  const stockLateralG = profile?.stockMetrics?.lateralG ?? buildData?.stock_lateral_g ?? carData.lateral_g ?? null;
+  const finalLateralG = profile?.upgradedMetrics?.lateralG ?? buildData?.final_lateral_g ?? stockLateralG;
   
   // Don't render if no meaningful data
   if (!stockHp) {

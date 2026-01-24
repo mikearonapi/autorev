@@ -1,0 +1,135 @@
+/* ==========================================================================
+   AutoRev Focus Utilities
+   Standardized focus states for accessibility
+   
+   WCAG 2.1 AA requires:
+   - Visible focus indicator
+   - 3:1 contrast ratio for focus indicator
+   - No removal of focus indicator
+   
+   Usage:
+   - Apply .focusRing to buttons, links, and interactive elements
+   - Apply .focusInput to form inputs
+   - Apply .focusRingLight on dark backgrounds where lime doesn't contrast well
+   ========================================================================== */
+
+/* ==========================================================================
+   STANDARD FOCUS RING
+   Use on buttons, links, cards (clickable), and other interactive elements
+   ========================================================================== */
+
+.focusRing:focus {
+  outline: none;
+}
+
+.focusRing:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   FOCUS RING FOR LIGHT BACKGROUNDS
+   Use when the lime color doesn't provide enough contrast
+   ========================================================================== */
+
+.focusRingLight:focus {
+  outline: none;
+}
+
+.focusRingLight:focus-visible {
+  outline: 2px solid var(--color-accent-blue, #3b82f6);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   FOCUS RING WITH INSET
+   Use when the element has overflow:hidden or rounded corners
+   ========================================================================== */
+
+.focusRingInset:focus {
+  outline: none;
+}
+
+.focusRingInset:focus-visible {
+  box-shadow: inset 0 0 0 2px var(--color-accent-lime, #d4ff00);
+}
+
+/* ==========================================================================
+   INPUT FOCUS STATES
+   Use on form inputs, textareas, and selects
+   ========================================================================== */
+
+.focusInput:focus {
+  outline: none;
+}
+
+.focusInput:focus-visible {
+  outline: none;
+  border-color: var(--color-accent-lime, #d4ff00);
+  box-shadow: 0 0 0 3px rgba(212, 255, 0, 0.2);
+}
+
+/* Error state with focus */
+.focusInput.error:focus-visible,
+.focusInput[aria-invalid="true"]:focus-visible {
+  border-color: var(--color-error, #ef4444);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+/* ==========================================================================
+   FOCUS WITHIN (for groups/wrappers)
+   Use on containers that contain focusable elements
+   ========================================================================== */
+
+.focusWithin:focus-within {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   SKIP FOCUS (for decorative/programmatic focus)
+   Use when focus should not be visible (e.g., after click)
+   Note: Use sparingly - most elements should have visible focus
+   ========================================================================== */
+
+.focusHidden:focus {
+  outline: none;
+}
+
+.focusHidden:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   GLOBAL FOCUS RESET
+   Apply to :root or body to ensure consistent focus behavior
+   ========================================================================== */
+
+/* Remove default focus outline (we apply our own) */
+:focus {
+  outline: none;
+}
+
+/* Always show focus for keyboard users */
+:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
+}
+
+/* Form elements get special treatment */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  border-color: var(--color-accent-lime, #d4ff00);
+  box-shadow: 0 0 0 3px rgba(212, 255, 0, 0.2);
+}
+
+/* Error states */
+input[aria-invalid="true"]:focus-visible,
+textarea[aria-invalid="true"]:focus-visible,
+select[aria-invalid="true"]:focus-visible {
+  border-color: var(--color-error, #ef4444);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}

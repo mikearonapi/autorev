@@ -12,6 +12,7 @@ import PremiumGate from '@/components/PremiumGate';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useAIChat } from '@/components/AIChatContext';
 import { useUserGarage, useUserSavedEvents } from '@/hooks/useUserData';
+import PullToRefresh from '@/components/ui/PullToRefresh';
 
 // Sparkle icon for Ask AL buttons
 const SparkleIcon = ({ size = 16 }) => (
@@ -69,6 +70,7 @@ function EventsContent() {
   const [eventTypes, setEventTypes] = useState([]);
   const [showPastEvents, setShowPastEvents] = useState(false);
   const [groupRecurring, setGroupRecurring] = useState(true); // Group recurring events by default
+  const [refreshKey, setRefreshKey] = useState(0); // For pull-to-refresh
   
   // React Query hooks for user data
   const { data: garageData } = useUserGarage(user?.id);
@@ -233,7 +235,14 @@ function EventsContent() {
 
     const timer = setTimeout(fetchEvents, 300);
     return () => clearTimeout(timer);
-  }, [filters, page, garageBrands, showPastEvents, groupRecurring]);
+  }, [filters, page, garageBrands, showPastEvents, groupRecurring, refreshKey]);
+
+  // Pull-to-refresh handler
+  const handleRefresh = useCallback(async () => {
+    setRefreshKey(k => k + 1);
+    // Wait for the useEffect to run with a small delay
+    await new Promise(resolve => setTimeout(resolve, 500));
+  }, []);
 
   // Handle filter changes
   const handleFilterChange = (newFilters) => {
@@ -351,8 +360,9 @@ function EventsContent() {
       </section>
 
       {/* Main Content */}
-      <main className={styles.mainContent}>
-        <div className={styles.mainContainer}>
+      <PullToRefresh onRefresh={handleRefresh}>
+        <main className={styles.mainContent}>
+          <div className={styles.mainContainer}>
           {loading ? (
             <div className={styles.loadingState}>
               <div className={styles.spinner} />
@@ -471,8 +481,9 @@ function EventsContent() {
               )}
             </>
           )}
-        </div>
-      </main>
+          </div>
+        </main>
+      </PullToRefresh>
     </div>
   );
 }

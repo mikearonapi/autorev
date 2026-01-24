@@ -104,7 +104,7 @@ export default function SaveEventButton({
    */
   const lastTapRef = useRef(0);
   
-  const handleClick = useCallback(async (e) => {
+  const handleSaveEventClick = useCallback(async (e) => {
     // Prevent default browser behavior
     if (e) {
       e.preventDefault();
@@ -173,8 +173,8 @@ export default function SaveEventButton({
         <div className={styles.tooltipWrapper}>
           <button 
             className={`${styles.actionBtn} ${isSaved ? styles.activeFavorite : ''} ${isLoading ? styles.loading : ''} ${variant === 'with-label' ? styles.withLabel : ''} ${size === 'small' ? styles.smallBtn : ''}`}
-            onClick={handleClick}
-            onTouchEnd={handleClick}
+            onClick={handleSaveEventClick}
+            onTouchEnd={handleSaveEventClick}
             disabled={isLoading}
             aria-label={isSaved ? 'Unsave Event' : 'Save Event'}
             type="button"

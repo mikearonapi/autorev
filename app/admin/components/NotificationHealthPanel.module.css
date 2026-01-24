@@ -1,0 +1,201 @@
+/* NotificationHealthPanel Styles */
+
+.panel {
+  background: var(--color-surface, #ffffff);
+  border: 1px solid var(--color-border, #e2e8f0);
+  border-radius: var(--radius-lg, 12px);
+  padding: 20px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text-primary, #1e293b);
+}
+
+.statusBadge {
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+  border-radius: var(--radius-full, 9999px);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Metrics Grid */
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .metricsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  background: var(--color-surface-alt, #f8fafc);
+  border-radius: var(--radius-md, 8px);
+}
+
+.metricValue {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--color-text-primary, #1e293b);
+}
+
+.metricLabel {
+  font-size: 12px;
+  color: var(--color-text-secondary, #64748b);
+  margin-top: 4px;
+}
+
+.metricPeriod {
+  font-size: 11px;
+  color: var(--color-text-tertiary, #94a3b8);
+  margin-top: 2px;
+}
+
+.metricStatus {
+  font-size: 11px;
+  font-weight: 500;
+  margin-top: 4px;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm, 4px);
+  display: inline-block;
+  width: fit-content;
+}
+
+.metricStatus.good {
+  color: var(--color-accent-teal, #059669);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.metricStatus.bad {
+  color: var(--color-error, #dc2626);
+  background: rgba(239, 68, 68, 0.1);
+}
+
+/* Sections */
+.section {
+  margin-bottom: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border-light, #f1f5f9);
+}
+
+.sectionTitle {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary, #1e293b);
+}
+
+/* Interaction Bar */
+.interactionBar {
+  display: flex;
+  height: 24px;
+  border-radius: var(--radius-sm, 6px);
+  overflow: hidden;
+  background: var(--color-surface-alt, #f1f5f9);
+}
+
+.interactionSegment {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.interactionLegend {
+  display: flex;
+  gap: 16px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--color-text-secondary, #64748b);
+}
+
+.legendDot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 4px;
+}
+
+/* Fatigued Users */
+.fatiguedList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fatiguedUser {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(239, 68, 68, 0.05);
+  border-radius: var(--radius-sm, 6px);
+}
+
+.fatiguedUserId {
+  font-size: 13px;
+  font-family: monospace;
+  color: var(--color-text-primary, #1e293b);
+}
+
+.fatiguedCount {
+  font-size: 12px;
+  color: var(--color-error, #ef4444);
+  font-weight: 500;
+}
+
+.moreUsers {
+  font-size: 12px;
+  color: var(--color-text-tertiary, #94a3b8);
+  text-align: center;
+  padding: 8px;
+}
+
+/* Recommendations */
+.recommendations {
+  padding: 12px;
+  background: rgba(245, 158, 11, 0.1);
+  border-radius: var(--radius-md, 8px);
+}
+
+.recommendationList {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+  color: var(--color-text-secondary, #64748b);
+}
+
+.recommendationList li {
+  margin-bottom: 4px;
+}
+
+/* Loading & Error */
+.loading,
+.error {
+  padding: 40px;
+  text-align: center;
+  color: var(--color-text-secondary, #64748b);
+}
+
+.error {
+  color: var(--color-error, #ef4444);
+}

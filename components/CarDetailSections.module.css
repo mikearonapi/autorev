@@ -71,7 +71,7 @@
 }
 
 .errorState svg {
-  color: #dc3545;
+  color: var(--color-error, #dc3545);
   flex-shrink: 0;
 }
 
@@ -448,7 +448,7 @@
 }
 
 /* Responsive - CF-010: Mobile grid collapse patterns */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .efficiencyGrid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -475,7 +475,7 @@
 }
 
 /* Very small screens (375px) - single column for efficiency */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .efficiencyGrid {
     grid-template-columns: 1fr;
   }

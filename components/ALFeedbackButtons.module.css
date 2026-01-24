@@ -1,0 +1,145 @@
+/**
+ * AL Feedback Buttons Styles
+ */
+
+.container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-2) 0;
+  font-size: var(--font-size-sm);
+}
+
+.compact {
+  gap: var(--space-2);
+  padding: var(--space-1) 0;
+}
+
+.label {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-xs);
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.feedbackButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-bg-secondary);
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.compact .feedbackButton {
+  width: 28px;
+  height: 28px;
+}
+
+.feedbackButton:hover:not(:disabled) {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-border-hover);
+}
+
+.feedbackButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.feedbackButton.thumbsUp:hover:not(:disabled),
+.feedbackButton.thumbsUp.active {
+  color: var(--color-success);
+  border-color: var(--color-success);
+  background: rgba(var(--color-success-rgb), 0.1);
+}
+
+.feedbackButton.thumbsDown:hover:not(:disabled),
+.feedbackButton.thumbsDown.active {
+  color: var(--color-danger);
+  border-color: var(--color-danger);
+  background: rgba(var(--color-danger-rgb), 0.1);
+}
+
+/* Category Picker */
+.categoryPicker {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  background: var(--color-bg-secondary);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+}
+
+.categoryPrompt {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.categoryOptions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.categoryButton {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--font-size-xs);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: var(--color-bg-primary);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.categoryButton:hover:not(:disabled) {
+  background: var(--color-bg-tertiary);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+.categoryButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.skipButton {
+  color: var(--color-text-muted);
+}
+
+.skipButton:hover:not(:disabled) {
+  color: var(--color-text-secondary);
+  border-color: var(--color-border-hover);
+}
+
+/* Thank You State */
+.thankYou {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-success);
+  font-size: var(--font-size-xs);
+}
+
+/* Mobile Adjustments */
+@media (max-width: 640px) {
+  .categoryOptions {
+    max-width: 100%;
+  }
+  
+  .categoryButton {
+    flex-shrink: 0;
+  }
+}

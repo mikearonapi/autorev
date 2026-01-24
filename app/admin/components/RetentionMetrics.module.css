@@ -196,7 +196,7 @@
 }
 
 /* Responsive */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .ringsRow {
     flex-wrap: wrap;
   }

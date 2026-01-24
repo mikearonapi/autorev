@@ -55,7 +55,7 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .option {
     padding: 5px 10px;
     font-size: 11px;

@@ -1,0 +1,121 @@
+/**
+ * Error Page Styles
+ */
+
+.errorContainer {
+  min-height: calc(100vh - 200px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.errorContent {
+  text-align: center;
+  max-width: 500px;
+}
+
+.errorIcon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.5rem;
+  border-radius: 50%;
+  background-color: rgba(239, 68, 68, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-error, #ef4444);
+}
+
+.errorTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0 0 0.75rem;
+}
+
+.errorMessage {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--color-text-secondary, #94a3b8);
+  margin: 0 0 2rem;
+}
+
+.errorDetails {
+  margin-bottom: 2rem;
+  text-align: left;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.errorDetails summary {
+  color: var(--color-text-secondary, #94a3b8);
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+.errorStack {
+  color: var(--color-error, #ef4444);
+  font-size: 0.75rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.errorActions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.retryButton {
+  background-color: var(--color-accent-lime, #d4ff00);
+  color: var(--color-bg-base, #0d1b2a);
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  min-height: 44px;
+}
+
+.retryButton:hover {
+  background-color: var(--color-accent-lime-dark, #bfe600);
+}
+
+.retryButton:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
+}
+
+.homeButton {
+  background-color: transparent;
+  color: var(--color-text-primary, #ffffff);
+  border: 1px solid var(--color-border, #334155);
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: border-color 0.2s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+}
+
+.homeButton:hover {
+  border-color: var(--color-border-hover, #475569);
+}
+
+.homeButton:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
+}

@@ -40,7 +40,8 @@ export function getPendingALPrompt() {
   return null;
 }
 
-// Sparkle icon for the button
+// Sparkle icon for the button - 5-pointed star matching brand guidelines
+// MUST MATCH: app/(app)/garage/my-specs/page.jsx LocalIcons.sparkle
 const SparkleIcon = ({ size = 16, className = '' }) => (
   <svg 
     width={size} 
@@ -49,7 +50,7 @@ const SparkleIcon = ({ size = 16, className = '' }) => (
     fill="currentColor"
     className={className}
   >
-    <path d="M12 0L14.59 9.41L24 12L14.59 14.59L12 24L9.41 14.59L0 12L9.41 9.41L12 0Z" />
+    <path d="M12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2Z" />
   </svg>
 );
 
@@ -77,7 +78,7 @@ export default function AskALButton({
 }) {
   const router = useRouter();
   
-  const handleClick = (e) => {
+  const handleAskALClick = (e) => {
     e.stopPropagation(); // Prevent triggering parent click handlers
     
     // Build the prompt
@@ -111,7 +112,7 @@ export default function AskALButton({
   return (
     <button
       className={`${styles.askALButton} ${variantClass} ${className}`}
-      onClick={handleClick}
+      onClick={handleAskALClick}
       title={`Ask AL about ${category}`}
       aria-label={`Ask AL about ${category}`}
     >
@@ -139,7 +140,7 @@ export function AskALInline({
 }) {
   const router = useRouter();
   
-  const handleClick = (e) => {
+  const handleAskALInlineClick = (e) => {
     e.stopPropagation();
     const fullPrompt = prompt || `Tell me about ${category}${carName ? ` for my ${carName}` : ''}`;
     
@@ -157,7 +158,7 @@ export function AskALInline({
   return (
     <button
       className={`${styles.askALInline} ${className}`}
-      onClick={handleClick}
+      onClick={handleAskALInlineClick}
       title={`Ask AL about ${category}`}
     >
       <SparkleIcon size={10} className={styles.sparkleIcon} />

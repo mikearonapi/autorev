@@ -4,6 +4,7 @@ import { useState } from 'react';
 import styles from './ReferralPanel.module.css';
 import { useReferralData, useSendReferralInvite, useResendReferralInvite } from '@/hooks/useUserData';
 import { platform } from '@/lib/platform';
+import { formatEventDate } from '@/lib/dateUtils';
 
 /**
  * ReferralPanel Component
@@ -129,13 +130,6 @@ export default function ReferralPanel({ userId }) {
     const percentage = Math.min(100, Math.round((progress / range) * 100));
     
     return { current, next: nextMilestone, percentage, achieved: achieved.map(k => MILESTONES.find(m => m.key === k)) };
-  };
-
-  // Format date
-  const formatDate = (dateStr) => {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };
 
   // Mask email for privacy
@@ -325,7 +319,7 @@ export default function ReferralPanel({ userId }) {
               <div key={referral.id} className={styles.referralItem}>
                 <div className={styles.referralInfo}>
                   <span className={styles.referralEmail}>{maskEmail(referral.email)}</span>
-                  <span className={styles.referralDate}>Invited {formatDate(referral.created_at)}</span>
+                  <span className={styles.referralDate}>Invited {formatEventDate(referral.created_at)}</span>
                 </div>
                 <div className={styles.referralActions}>
                   {referral.status === 'pending' ? (
@@ -366,6 +360,8 @@ export default function ReferralPanel({ userId }) {
             <form onSubmit={handleSendInvite} className={styles.inviteForm}>
               <input
                 type="email"
+                inputMode="email"
+                autoComplete="email"
                 placeholder="friend@email.com"
                 value={friendEmail}
                 onChange={(e) => setFriendEmail(e.target.value)}

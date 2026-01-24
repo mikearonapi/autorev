@@ -21,6 +21,7 @@ import {
   getTierFromPriceId,
   getCreditPackFromPriceId,
 } from '@/lib/stripe';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Stripe client - only initialize if key exists
 const stripe = process.env.STRIPE_SECRET_KEY 
@@ -147,7 +148,7 @@ function categorizePayments(paymentIntents, charges) {
   return categories;
 }
 
-export async function GET(request) {
+async function handleGet(request) {
   const { searchParams } = new URL(request.url);
   const range = searchParams.get('range') || 'month';
 
@@ -455,3 +456,4 @@ export async function GET(request) {
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'admin/stripe', feature: 'admin' });

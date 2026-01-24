@@ -217,7 +217,7 @@
   justify-content: center;
   width: 24px;
   height: 24px;
-  background: #dcfce7;
+  background: var(--color-success-light, #dcfce7);
   color: var(--brand-success-dark);
   border-radius: 50%;
 }
@@ -255,7 +255,7 @@
 }
 
 /* Mobile responsiveness for feature table */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .tableHeader {
     grid-template-columns: 2fr 1fr 1fr 1fr;
     font-size: var(--font-size-xs);

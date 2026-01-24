@@ -1,33 +1,37 @@
-/* InsightCard - Individual insight with feedback */
+/* InsightCard - WHOOP-inspired premium design */
 
 .card {
-  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  border-radius: 14px;
   overflow: hidden;
-  transition: all 0.15s ease;
+  transition: all 0.2s ease;
+  /* Premium inner highlight */
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
 }
 
 .card:hover {
   background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .cardContent {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  padding: 14px;
+  gap: 12px;
+  padding: 16px;
   text-decoration: none;
   color: inherit;
 }
 
 .severityDot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
   flex-shrink: 0;
-  margin-top: 5px;
+  margin-top: 4px;
+  /* Add subtle glow based on severity */
+  box-shadow: 0 0 8px currentColor;
 }
 
 .textContent {
@@ -36,18 +40,18 @@
 }
 
 .title {
-  font-size: var(--text-sm);
+  font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
-  margin: 0 0 4px 0;
-  line-height: 1.3;
+  margin: 0 0 6px 0;
+  line-height: 1.35;
 }
 
 .description {
-  font-size: var(--text-xs);
+  font-size: 0.825rem;
   color: var(--color-text-secondary, #94a3b8);
   margin: 0;
-  line-height: 1.4;
+  line-height: 1.5;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
@@ -56,50 +60,51 @@
 
 .dueInfo {
   display: inline-block;
-  margin-top: 6px;
-  padding: 2px 8px;
-  background: rgba(245, 158, 11, 0.15);
-  border-radius: 4px;
-  font-size: var(--text-xs);
-  font-weight: 500;
-  color: #f59e0b;
+  margin-top: 8px;
+  padding: 4px 10px;
+  background: rgba(245, 158, 11, 0.12);
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--color-accent-amber, #f59e0b);
 }
 
 .chevron {
   color: var(--color-text-tertiary, #64748b);
   flex-shrink: 0;
-  margin-top: 2px;
+  margin-top: 4px;
+  opacity: 0.6;
 }
 
-/* Feedback Bar */
+/* Feedback Bar - More subtle */
 .feedbackBar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 14px;
-  background: rgba(0, 0, 0, 0.2);
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  padding: 10px 16px;
+  background: rgba(0, 0, 0, 0.15);
+  border-top: 1px solid rgba(255, 255, 255, 0.03);
 }
 
 .feedbackLabel {
-  font-size: var(--text-xs);
+  font-size: 0.75rem;
   color: var(--color-text-tertiary, #64748b);
 }
 
 .feedbackButtons {
   display: flex;
-  gap: 6px;
+  gap: 8px;
 }
 
 .feedbackBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 28px;
+  width: 36px;
+  height: 32px;
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
   color: var(--color-text-tertiary, #64748b);
   cursor: pointer;
   transition: all 0.15s ease;
@@ -111,18 +116,18 @@
 }
 
 .feedbackBtn.active {
-  background: rgba(16, 185, 129, 0.15);
-  border-color: rgba(16, 185, 129, 0.3);
+  background: rgba(16, 185, 129, 0.12);
+  border-color: rgba(16, 185, 129, 0.2);
   color: var(--color-accent-teal, #10b981);
 }
 
 .feedbackBtn.down.active {
-  background: rgba(239, 68, 68, 0.15);
-  border-color: rgba(239, 68, 68, 0.3);
-  color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.2);
+  color: var(--color-error, #ef4444);
 }
 
 .feedbackBtn:disabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }

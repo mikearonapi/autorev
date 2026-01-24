@@ -12,7 +12,7 @@ import {
   detectUpgradeConflicts, 
   TUNE_HIERARCHY,
   STAGE_TUNE_INCLUDED_MODS,
-} from '@/lib/upgradeCalculator.js';
+} from '@/lib/performanceCalculator';
 
 /**
  * Check if an upgrade conflicts with currently selected upgrades

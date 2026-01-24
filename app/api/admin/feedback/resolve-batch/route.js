@@ -22,7 +22,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { isAdminEmail } from '@/lib/adminAccess';
-import { sendFeedbackResponseEmail } from '@/lib/email';
+import { sendFeedbackResponseEmail } from '@/lib/emailService';
 
 export const dynamic = 'force-dynamic';
 

@@ -2,7 +2,7 @@
 
 .container {
   min-height: 100vh;
-  background: linear-gradient(180deg, #0d1b2a 0%, #0a1628 100%);
+  background: linear-gradient(180deg, var(--color-bg-base, #0d1b2a) 0%, var(--color-bg-base, #0a1628) 100%);
   display: flex;
   flex-direction: column;
 }
@@ -40,7 +40,7 @@
   border-radius: 20px;
   font-size: 12px;
   font-weight: 600;
-  color: #10b981;
+  color: var(--color-accent-teal, #10b981);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -62,13 +62,13 @@
 .title {
   font-size: 28px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-text-primary, #ffffff);
   margin: 0 0 8px;
 }
 
 .meta {
   font-size: 14px;
-  color: #94a3b8;
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 /* Messages */
@@ -108,15 +108,15 @@
 }
 
 .userMessage .messageContent {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-  color: #ffffff;
+  background: linear-gradient(135deg, var(--color-accent-teal, #10b981) 0%, var(--color-accent-teal, #059669) 100%);
+  color: var(--color-text-primary, #ffffff);
   border-bottom-right-radius: 6px;
 }
 
 .assistantMessage .messageContent {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  color: #f1f5f9;
+  color: var(--color-bg-muted, #f1f5f9);
   border-bottom-left-radius: 6px;
 }
 
@@ -130,7 +130,7 @@
 .messageHeading {
   font-size: 16px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--color-text-primary, #ffffff);
   margin: 8px 0 4px;
 }
 
@@ -159,7 +159,7 @@
 
 .cta p {
   font-size: 16px;
-  color: #94a3b8;
+  color: var(--color-text-secondary, #94a3b8);
   margin: 0 0 16px;
 }
 
@@ -168,11 +168,11 @@
   align-items: center;
   justify-content: center;
   padding: 14px 32px;
-  background: #d4ff00;
+  background: var(--color-accent-lime, #d4ff00);
   border-radius: 100px;
   font-size: 15px;
   font-weight: 700;
-  color: #0a1628;
+  color: var(--color-bg-base, #0a1628);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   text-decoration: none;
@@ -180,7 +180,7 @@
 }
 
 .ctaBtn:hover {
-  background: #bfe600;
+  background: var(--color-accent-lime-dark, #bfe600);
   transform: scale(1.02);
 }
 
@@ -197,13 +197,13 @@
 
 .errorState h1 {
   font-size: 24px;
-  color: #ffffff;
+  color: var(--color-text-primary, #ffffff);
   margin: 0 0 12px;
 }
 
 .errorState p {
   font-size: 15px;
-  color: #94a3b8;
+  color: var(--color-text-secondary, #94a3b8);
   margin: 0 0 24px;
 }
 
@@ -213,7 +213,7 @@
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 10px;
-  color: #ffffff;
+  color: var(--color-text-primary, #ffffff);
   font-weight: 600;
   text-decoration: none;
   transition: all 0.2s ease;
@@ -232,12 +232,12 @@
 
 .footer p {
   font-size: 13px;
-  color: #64748b;
+  color: var(--color-text-tertiary, #64748b);
   margin: 0;
 }
 
 .footer a {
-  color: #10b981;
+  color: var(--color-accent-teal, #10b981);
   text-decoration: none;
 }
 
@@ -246,7 +246,7 @@
 }
 
 /* Mobile */
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .header {
     padding: 14px 16px;
   }

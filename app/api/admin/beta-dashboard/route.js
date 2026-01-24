@@ -9,10 +9,11 @@
 
 import { createServerSupabaseClient } from '@/lib/supabaseServer';
 import { NextResponse } from 'next/server';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET(request) {
+async function handleGet(request) {
   try {
     const supabase = await createServerSupabaseClient();
     
@@ -241,3 +242,4 @@ export async function GET(request) {
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'admin/beta-dashboard', feature: 'admin' });

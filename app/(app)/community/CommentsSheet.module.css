@@ -309,7 +309,7 @@
 
 .menuDropdown .deleteBtn:hover {
   background: rgba(239, 68, 68, 0.15);
-  color: #ef4444;
+  color: var(--color-error, #ef4444);
 }
 
 /* Delete Confirmation */
@@ -359,13 +359,13 @@
 }
 
 .confirmBtns .confirmDelete {
-  background: #ef4444;
+  background: var(--color-error, #ef4444);
   border: none;
   color: white;
 }
 
 .confirmBtns .confirmDelete:hover {
-  background: #dc2626;
+  background: var(--color-error, #dc2626);
 }
 
 /* Edit Mode */
@@ -421,7 +421,7 @@
 }
 
 .editActions .saveBtn:hover:not(:disabled) {
-  background: #059669;
+  background: var(--color-accent-teal, #059669);
 }
 
 .editActions .saveBtn:disabled {
@@ -446,7 +446,7 @@
   border-radius: 4px;
   font-size: 0.6875rem;
   font-weight: 600;
-  color: #f59e0b;
+  color: var(--color-accent-amber, #f59e0b);
 }
 
 /* ==========================================================================
@@ -509,13 +509,13 @@
 
 .submitError span {
   font-size: 0.8125rem;
-  color: #ef4444;
+  color: var(--color-error, #ef4444);
 }
 
 .submitError button {
   background: none;
   border: none;
-  color: #ef4444;
+  color: var(--color-error, #ef4444);
   font-size: 1.25rem;
   cursor: pointer;
   padding: 0 4px;
@@ -602,7 +602,7 @@
 }
 
 .sendBtn:not(:disabled):hover {
-  background: #059669;
+  background: var(--color-accent-teal, #059669);
   transform: scale(1.05);
 }
 

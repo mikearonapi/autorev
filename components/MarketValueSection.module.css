@@ -52,7 +52,7 @@
 
 .trendStable {
   background: rgba(107, 114, 128, 0.15);
-  color: #9ca3af;
+  color: var(--color-text-secondary, #9ca3af);
 }
 
 /* Loading/Empty States */
@@ -101,7 +101,7 @@
 }
 
 .errorState svg {
-  color: #dc3545;
+  color: var(--color-error, #dc3545);
   flex-shrink: 0;
 }
 
@@ -300,7 +300,7 @@
 }
 
 /* Responsive */
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .sourcesGrid {
     grid-template-columns: 1fr;
   }

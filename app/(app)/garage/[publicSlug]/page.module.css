@@ -2,8 +2,8 @@
 
 .page {
   min-height: 100vh;
-  /* Solid background for consistent app feel */
-  background: var(--brand-bg-primary);
+  /* Transparent to show body gradient */
+  background: transparent;
   padding-bottom: var(--page-bottom-padding);
 }
 
@@ -311,7 +311,7 @@
 }
 
 /* Mobile Responsive */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .header {
     padding: 3rem 1.5rem 2rem;
   }

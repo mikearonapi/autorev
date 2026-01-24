@@ -1,0 +1,138 @@
+---
+description: Database schema, relationships, and data integrity rules
+globs: ["**/api/**", "**/lib/**Service.js", "**/lib/**Client.js", "**/*.sql", "**/supabase/**"]
+alwaysApply: false
+---
+
+# DATABASE RULES
+
+## Source of Truth
+
+**BEFORE any database work, read:**
+1. `docs/SOURCE_OF_TRUTH.md` — **Cardinal Rule #1**: Always use `car_id` for database queries
+2. `docs/DATABASE.md` — Canonical schema, relationships, naming conventions
+
+The SOURCE_OF_TRUTH doc contains the "Database Anti-Patterns" section with specific bugs to avoid.
+
+## Critical Pattern: car_id Resolution
+
+```javascript
+// ✅ CORRECT: Resolve slug once, use car_id everywhere
+import { resolveCarId } from '@/lib/carResolver';
+
+const carId = await resolveCarId(carSlug);
+if (!carId) return { error: 'Car not found' };
+
+const { data } = await supabase
+  .from('car_issues')
+  .select('*')
+  .eq('car_id', carId); // Use car_id
+```
+
+```javascript
+// ❌ WRONG: Direct car_slug query
+const { data } = await supabase
+  .from('car_issues')
+  .select('*')
+  .eq('car_slug', carSlug); // Don't do this
+
+// ❌ WRONG: OR clause (destroys index performance)
+.or(`car_id.eq.${carId},car_slug.eq.${carSlug}`)
+```
+
+**NEVER:**
+- Use `car_slug` for database queries (always resolve to `car_id` first)
+- Create new junction tables without checking existing ones
+- Assume table structure - verify against `docs/DATABASE.md`
+
+## Source of Truth Matrix
+
+| Data Type | ✅ Use This Table | ❌ NOT These |
+|-----------|-------------------|--------------|
+| Known Issues | `car_issues` | `vehicle_known_issues` (deprecated) |
+| Upgrade Recommendations | `car_tuning_profiles.upgrades_by_objective` | `cars.upgrade_recommendations` |
+| Track Mods | `car_tuning_profiles.upgrades_by_objective` | `cars.popular_track_mods` |
+| Maintenance Specs | `vehicle_maintenance_specs` | - |
+| Service Intervals | `vehicle_service_intervals` | - |
+| Dyno Runs | `car_dyno_runs` | - |
+| Lap Times | `car_track_lap_times` | - |
+| Car Base Data | `cars` | - |
+| Car Variants | `car_variants` | - |
+| Tuning Data | `car_tuning_profiles` | - |
+| Parts | `parts` + `part_fitments` | - |
+| YouTube Videos | `youtube_videos` + `youtube_video_car_links` | - |
+
+## RPC Functions to Use
+
+Always prefer these optimized RPCs over raw queries:
+
+| Need | Use This RPC |
+|------|--------------|
+| Full car context for AL | `get_car_ai_context_v2(car_slug)` |
+| Tuning/parts data | `get_car_tuning_context(car_slug)` |
+| Maintenance summary | `get_car_maintenance_summary(car_slug)` |
+
+## Before Writing Any Query
+
+1. Check `docs/DATABASE.md` for table structure
+2. Verify foreign key relationships
+3. Check for existing similar queries in the codebase
+4. Use existing query patterns and utilities
+
+## Data Integrity Rules
+
+- Always use transactions for multi-table operations
+- Always handle null cases explicitly
+- Always validate foreign keys exist before insert
+- Never hard delete - use soft delete patterns if they exist
+
+## Empty Tables Warning
+
+Some tables are intentionally empty (planned features). Do NOT:
+- Assume empty tables are unused
+- Remove or repurpose empty tables
+- Treat empty tables as errors
+
+## Database Naming Conventions
+
+**All PostgreSQL entities use snake_case:**
+
+| Entity | Convention | Example | Anti-Pattern |
+|--------|------------|---------|--------------|
+| Tables | snake_case, plural | `car_issues` | `carIssues`, `CarIssue` |
+| Columns | snake_case | `created_at` | `createdAt`, `CreatedAt` |
+| Indexes | `idx_table_column` | `idx_cars_slug` | `carsSlugIndex` |
+| Functions | snake_case | `get_car_ai_context_v2` | `getCarAiContext` |
+| Foreign keys | `table_id` | `car_id`, `user_id` | `carId`, `car` |
+
+```sql
+-- ✅ CORRECT: snake_case everywhere
+CREATE TABLE car_tuning_profiles (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  car_id UUID REFERENCES cars(id),
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- ❌ WRONG: Mixed case conventions
+CREATE TABLE carTuningProfiles (
+  id UUID PRIMARY KEY,
+  carId UUID,
+  createdAt TIMESTAMPTZ
+);
+```
+
+## Before Creating a New Table
+
+**STOP and check:**
+1. Does a table already exist for this data? (Check `docs/DATABASE.md`)
+2. Can an existing table be extended with a new column?
+3. Is there a JSONB column in an existing table that could store this?
+
+**If you must create a new table:**
+- Use **snake_case** for table and column names
+- Include `car_id UUID REFERENCES cars(id)` if it relates to cars
+- Include `user_id UUID REFERENCES auth.users(id)` if it relates to users
+- Add `created_at TIMESTAMPTZ DEFAULT NOW()`
+- Add `updated_at TIMESTAMPTZ DEFAULT NOW()`
+- Create indexes on `car_id` and/or `user_id` with naming `idx_table_column`
+- Update `docs/DATABASE.md` with the new table

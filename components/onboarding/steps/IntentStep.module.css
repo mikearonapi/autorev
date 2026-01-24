@@ -146,7 +146,7 @@
 }
 
 /* Mobile adjustments */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .container {
     padding: var(--space-md);
   }
@@ -187,7 +187,7 @@
 }
 
 /* Small phones */
-@media (max-width: 380px) {
+@media (min-width: 381px) {
   .optionCard {
     padding: var(--space-sm);
   }

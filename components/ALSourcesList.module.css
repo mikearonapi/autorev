@@ -1,56 +1,52 @@
 /* ===========================================
    AL Sources List Component Styles
    
-   Perplexity-style sources display below AL responses.
-   Uses light theme to match AL page.
+   Minimal sources display below AL responses.
    =========================================== */
 
 .sourcesContainer {
-  margin-top: 24px;
-  padding: 14px 16px;
-  background: rgba(13, 27, 42, 0.03);
-  border: 1px solid rgba(13, 27, 42, 0.08);
-  border-radius: 12px;
-  /* Add visual separator from response text */
-  border-top: 2px solid rgba(13, 27, 42, 0.06);
+  margin-top: 16px;
+  padding: 0;
+  background: transparent;
+  border: none;
 }
 
 .sourcesHeader {
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: var(--text-xs);
-  font-weight: 600;
-  color: #64748b;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-tertiary, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 10px;
 }
 
 .sourcesHeader svg {
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .sourceCount {
   font-weight: 400;
-  color: #94a3b8;
+  color: var(--color-text-tertiary, #64748b);
 }
 
 .sourcesList {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   gap: 6px;
 }
 
 .sourceItem {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  padding: 8px 10px;
-  background: rgba(255, 255, 255, 0.6);
-  border: 1px solid rgba(13, 27, 42, 0.06);
+  padding: 6px 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border: none;
   border-radius: 8px;
-  font-size: var(--text-sm);
-  color: #475569;
+  font-size: 12px;
+  color: var(--color-text-tertiary, #64748b);
   transition: all 0.15s ease;
 }
 
@@ -60,90 +56,68 @@
 }
 
 .sourceItemLink:hover {
-  background: rgba(255, 255, 255, 0.9);
-  border-color: rgba(16, 185, 129, 0.2);
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .sourceItemLink:hover .sourceLabel {
-  color: #10b981;
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 .sourceContent {
   display: flex;
   align-items: center;
   gap: 6px;
-  flex: 1;
   min-width: 0;
 }
 
 .sourceNumber {
   font-family: 'JetBrains Mono', 'SF Mono', monospace;
-  font-size: var(--text-xs);
-  font-weight: 600;
-  color: #10b981;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-text-tertiary, #64748b);
   flex-shrink: 0;
 }
 
 .sourceIcon {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #64748b;
-  flex-shrink: 0;
+  display: none;
 }
 
 .sourceLabel {
-  font-weight: 500;
-  color: #334155;
+  font-weight: 400;
+  color: var(--color-text-tertiary, #64748b);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  transition: color 0.15s ease;
 }
 
 .sourceDomain,
 .sourceDetail {
-  font-size: var(--text-xs);
-  color: #94a3b8;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  flex-shrink: 1;
+  display: none;
 }
 
 .externalIcon {
-  flex-shrink: 0;
-  margin-left: auto;
-  color: #94a3b8;
-  opacity: 0;
-  transition: opacity 0.15s ease;
-}
-
-.sourceItemLink:hover .externalIcon {
-  opacity: 1;
+  display: none;
 }
 
 .expandButton {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  width: 100%;
-  margin-top: 8px;
-  padding: 8px;
+  gap: 4px;
+  padding: 6px 10px;
   background: transparent;
-  border: 1px dashed rgba(13, 27, 42, 0.12);
+  border: none;
   border-radius: 8px;
-  font-size: var(--text-xs);
-  font-weight: 500;
-  color: #64748b;
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--color-text-tertiary, #64748b);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .expandButton:hover {
-  background: rgba(13, 27, 42, 0.04);
-  color: #475569;
-  border-color: rgba(13, 27, 42, 0.2);
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 /* Citation Badge - inline superscript */
@@ -153,12 +127,12 @@
   justify-content: center;
   padding: 1px 4px;
   margin: 0 1px;
-  background: rgba(16, 185, 129, 0.1);
-  color: #10b981;
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-text-tertiary, #64748b);
   font-family: 'JetBrains Mono', 'SF Mono', monospace;
-  font-size: var(--text-2xs);
-  font-weight: 600;
-  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 500;
+  border-radius: 3px;
   cursor: pointer;
   text-decoration: none;
   transition: all 0.15s ease;
@@ -166,26 +140,20 @@
 }
 
 .citationBadge:hover {
-  background: rgba(16, 185, 129, 0.2);
-  transform: scale(1.05);
+  background: rgba(255, 255, 255, 0.1);
 }
 
-/* Mobile responsiveness */
+/* Mobile */
 @media (max-width: 480px) {
   .sourcesContainer {
-    padding: 10px;
     margin-top: 12px;
   }
   
   .sourceItem {
-    padding: 6px 8px;
-  }
-  
-  .sourceDomain {
-    display: none;
+    padding: 5px 8px;
   }
   
   .sourceLabel {
-    font-size: var(--text-xs);
+    font-size: 11px;
   }
 }

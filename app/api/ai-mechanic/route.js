@@ -17,8 +17,10 @@
 
 import { NextResponse } from 'next/server';
 import { errors } from '@/lib/apiErrors';
+import { rateLimit } from '@/lib/rateLimit';
 import { buildAIContext, formatContextForAI } from '@/lib/aiMechanicService';
 import { executeToolCall } from '@/lib/alTools';
+import { executeWithCircuitBreaker, isAnthropicHealthy, getAnthropicStats } from '@/lib/aiCircuitBreaker';
 import { 
   AL_TOOLS, 
   buildALSystemPrompt,
@@ -28,6 +30,8 @@ import {
   formatCentsAsDollars,
   calculateTokenCost,
   selectPromptVariant,
+  selectModelForQuery,
+  MODEL_TIERS,
 } from '@/lib/alConfig';
 import { 
   getUserBalance, 
@@ -143,6 +147,24 @@ function buildMessageContentWithAttachments(text, attachments = []) {
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
 const INTERNAL_EVAL_KEY = process.env.INTERNAL_EVAL_KEY;
+
+// Model tiering feature flag - set to true to enable dynamic model selection
+// When enabled, simple queries use Haiku (cheaper), complex queries stay on Sonnet
+const ENABLE_MODEL_TIERING = process.env.ENABLE_MODEL_TIERING === 'true';
+
+/**
+ * Get the appropriate model for a query based on complexity
+ * @param {string} query - User's query
+ * @param {string[]} domains - Detected domains
+ * @returns {string} Model identifier
+ */
+function getModelForQuery(query, domains = []) {
+  if (!ENABLE_MODEL_TIERING) {
+    return ANTHROPIC_MODEL;
+  }
+  const tier = selectModelForQuery(query, domains);
+  return tier.model;
+}
 
 // =============================================================================
 // STREAMING HELPERS
@@ -473,13 +495,23 @@ async function* streamClaudeResponse({ systemPrompt, messages, tools, maxTokens,
   // Get API configuration with optional Helicone observability
   const { apiUrl, headers } = getAnthropicConfig(observability);
   
+  // Use array format for system prompt to enable Anthropic prompt caching
+  // Cache control on system prompt can reduce costs by ~90% for repeated prompts
+  const systemWithCache = [
+    {
+      type: 'text',
+      text: systemPrompt,
+      cache_control: { type: 'ephemeral' }, // Cached for 5 minutes
+    },
+  ];
+
   const response = await fetch(apiUrl, {
     method: 'POST',
     headers,
     body: JSON.stringify({
       model: ANTHROPIC_MODEL,
       max_tokens: maxTokens,
-      system: systemPrompt,
+      system: systemWithCache,
       messages,
       tools: tools?.length > 0 ? tools : undefined,
       stream: true,
@@ -838,6 +870,10 @@ export async function POST(request) {
       isDemo: true,
     });
   }
+
+  // Rate limit: 10 requests per minute (AI is expensive)
+  const rateLimited = rateLimit(request, 'ai');
+  if (rateLimited) return rateLimited;
 
   try {
     const correlationId = request.headers.get('x-correlation-id') || crypto.randomUUID();
@@ -1447,25 +1483,45 @@ async function callClaudeWithTools({ systemPrompt, messages, tools, maxTokens, o
   // Get API configuration with optional Helicone observability
   const { apiUrl, headers } = getAnthropicConfig(observability);
   
-  const response = await fetch(apiUrl, {
-    method: 'POST',
-    headers,
-    body: JSON.stringify({
-      model: ANTHROPIC_MODEL,
-      max_tokens: maxTokens,
-      system: systemPrompt,
-      messages,
-      tools: tools.length > 0 ? tools : undefined,
-    }),
-  });
+  // Wrap the API call with circuit breaker for resilience
+  const result = await executeWithCircuitBreaker(
+    async () => {
+      // Use array format for system prompt to enable Anthropic prompt caching
+      const systemWithCache = [
+        {
+          type: 'text',
+          text: systemPrompt,
+          cache_control: { type: 'ephemeral' },
+        },
+      ];
 
-  if (!response.ok) {
-    const error = await response.json();
-    console.error('[AL] Claude API error:', error);
-    throw new Error('Failed to get AI response');
-  }
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          model: ANTHROPIC_MODEL,
+          max_tokens: maxTokens,
+          system: systemWithCache,
+          messages,
+          tools: tools.length > 0 ? tools : undefined,
+        }),
+      });
 
-  return await response.json();
+      if (!response.ok) {
+        const error = await response.json();
+        console.error('[AL] Claude API error:', error);
+        throw new Error(`Claude API error: ${response.status} - ${error?.error?.message || 'Unknown error'}`);
+      }
+
+      return await response.json();
+    },
+    {
+      provider: 'anthropic',
+      throwOnOpen: true,
+    }
+  );
+
+  return result.result;
 }
 
 /**

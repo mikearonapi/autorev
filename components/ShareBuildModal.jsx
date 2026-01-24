@@ -25,6 +25,8 @@ export default function ShareBuildModal({
   carName,
   userId,
   existingImages = [], // Images already uploaded in UpgradeCenter
+  linkedCommunityPost = null, // Existing community post data if already shared
+  onShareChange,
 }) {
   const [step, setStep] = useState('details'); // Start directly at 'details' step
   const [title, setTitle] = useState('');
@@ -34,15 +36,22 @@ export default function ShareBuildModal({
   const [shareUrl, setShareUrl] = useState('');
   const [copySuccess, setCopySuccess] = useState(false);
 
-  // Set default title based on build/vehicle
+  // Determine if this is an edit of existing post
+  const isEditing = !!linkedCommunityPost;
+
+  // Set default title based on existing post, build, or vehicle
   useEffect(() => {
-    if (build) {
+    if (linkedCommunityPost) {
+      // If already shared, use the existing community post title/description
+      setTitle(linkedCommunityPost.title || '');
+      setDescription(linkedCommunityPost.description || '');
+    } else if (build) {
       setTitle(build.build_name || `${carName} Build`);
       setDescription(build.notes || '');
     } else if (vehicle) {
       setTitle(vehicle.nickname || `${vehicle.year} ${vehicle.make} ${vehicle.model}`);
     }
-  }, [build, vehicle, carName]);
+  }, [linkedCommunityPost, build, vehicle, carName]);
 
   // Reset step when modal opens
   useEffect(() => {
@@ -52,7 +61,7 @@ export default function ShareBuildModal({
     }
   }, [isOpen]);
 
-  const handleSubmit = async () => {
+  const handleShareSubmit = async () => {
     if (!title.trim()) {
       setError('Please enter a title');
       return;
@@ -62,21 +71,37 @@ export default function ShareBuildModal({
     setError(null);
 
     try {
-      const response = await fetch('/api/community/posts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          postType: build ? 'build' : 'vehicle',
-          title: title.trim(),
-          description: description.trim(),
-          vehicleId: vehicle?.id,
-          buildId: build?.id,
-          carSlug,
-          carName,
-          // Use existing images from the build (uploaded in UpgradeCenter)
-          imageIds: existingImages.map(img => img.id),
-        }),
-      });
+      let response;
+      
+      if (isEditing && linkedCommunityPost?.id) {
+        // Update existing post
+        response = await fetch('/api/community/posts', {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            postId: linkedCommunityPost.id,
+            title: title.trim(),
+            description: description.trim(),
+          }),
+        });
+      } else {
+        // Create new post
+        response = await fetch('/api/community/posts', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            postType: build ? 'build' : 'vehicle',
+            title: title.trim(),
+            description: description.trim(),
+            vehicleId: vehicle?.id,
+            buildId: build?.id,
+            carSlug,
+            carName,
+            // Use existing images from the build (uploaded in UpgradeCenter)
+            imageIds: existingImages.map(img => img.id),
+          }),
+        });
+      }
 
       if (!response.ok) {
         const data = await response.json();
@@ -84,8 +109,18 @@ export default function ShareBuildModal({
       }
 
       const data = await response.json();
-      setShareUrl(data.shareUrl);
+      
+      // For updates, construct the share URL from existing slug
+      const url = isEditing 
+        ? `${window.location.origin}/community/builds/${linkedCommunityPost.slug}`
+        : data.shareUrl;
+      setShareUrl(url);
       setStep('success');
+      
+      // Notify parent of successful share/update
+      if (onShareChange) {
+        onShareChange(true, { title: title.trim(), description: description.trim() });
+      }
 
     } catch (err) {
       console.error('[ShareBuildModal] Error:', err);
@@ -135,11 +170,19 @@ export default function ShareBuildModal({
   // Get hero image from existing images
   const heroImage = existingImages.find(img => img.is_primary) || existingImages[0];
 
+  // Determine modal title based on state
+  const getModalTitle = () => {
+    if (step === 'success') {
+      return isEditing ? '✓ Updated!' : '🎉 Shared!';
+    }
+    return isEditing ? 'Edit Community Post' : 'Share Your Build';
+  };
+
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title={step === 'success' ? '🎉 Shared!' : 'Share Your Build'}
+      title={getModalTitle()}
       size="md"
       className={styles.modal}
     >
@@ -176,18 +219,6 @@ export default function ShareBuildModal({
                     </span>
                   </div>
                 )}
-                
-                {/* Build Stats */}
-                {build && (
-                  <div className={styles.buildStatsOverlay}>
-                    <span className={styles.buildStatBadge}>
-                      <strong>+{build.total_hp_gain || 0}</strong> HP
-                    </span>
-                    <span className={styles.buildStatBadge}>
-                      ${(build.total_cost_low || 0).toLocaleString()}
-                    </span>
-                  </div>
-                )}
               </div>
 
               <div className={styles.formGroup}>
@@ -199,6 +230,7 @@ export default function ShareBuildModal({
                   placeholder="My Porsche GT4 Track Build"
                   className={styles.input}
                   maxLength={100}
+                  autoComplete="off"
                   autoFocus
                 />
               </div>
@@ -210,10 +242,9 @@ export default function ShareBuildModal({
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Tell the community about your build - mods, goals, track results..."
                   className={styles.textarea}
-                  rows={3}
-                  maxLength={500}
+                  rows={4}
                 />
-                <span className={styles.charCount}>{description.length}/500</span>
+                <span className={styles.charCount}>{description.length} characters</span>
               </div>
 
               {error && <div className={styles.error}>{error}</div>}
@@ -224,10 +255,13 @@ export default function ShareBuildModal({
                 </button>
                 <button 
                   className={styles.primaryBtn}
-                  onClick={handleSubmit}
+                  onClick={handleShareSubmit}
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? 'Sharing...' : 'Share to Community'}
+                  {isSubmitting 
+                    ? (isEditing ? 'Updating...' : 'Sharing...') 
+                    : (isEditing ? 'Update Post' : 'Share to Community')
+                  }
                 </button>
               </div>
             </>
@@ -241,8 +275,13 @@ export default function ShareBuildModal({
                     <polyline points="20 6 9 17 4 12"/>
                   </svg>
                 </div>
-                <h3 className={styles.successTitle}>Build Shared!</h3>
-                <p className={styles.successText}>Your build is now live on the Community page</p>
+                <h3 className={styles.successTitle}>{isEditing ? 'Post Updated!' : 'Build Shared!'}</h3>
+                <p className={styles.successText}>
+                  {isEditing 
+                    ? 'Your changes are now live on the Community page'
+                    : 'Your build is now live on the Community page'
+                  }
+                </p>
                 
                 <div className={styles.shareUrlSection}>
                   <label className={styles.shareUrlLabel}>Share Link</label>

@@ -8,6 +8,7 @@
   margin: 0 auto;
   padding: 2rem;
   min-height: 100vh;
+  background: transparent;
 }
 
 .header {
@@ -446,7 +447,7 @@
 }
 
 .feedbackScreenshot:hover {
-  color: #d97706;
+  color: var(--color-accent-amber, #d97706);
 }
 
 /* Screenshot Preview in Feedback Card */
@@ -545,7 +546,7 @@
 }
 
 /* Responsive */
-@media (max-width: 1024px) {
+@media (min-width: 1025px) {
   .container {
     padding: 1.5rem;
   }
@@ -555,7 +556,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .container {
     padding: 1rem;
   }
@@ -602,7 +603,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .summaryGrid {
     grid-template-columns: 1fr;
   }

@@ -54,25 +54,25 @@
 .badge.youtube {
   background: rgba(239, 68, 68, 0.08);
   border-color: rgba(239, 68, 68, 0.15);
-  color: #f87171;
+  color: var(--color-error, #f87171);
 }
 
 .badge.dyno {
   background: rgba(59, 130, 246, 0.08);
   border-color: rgba(59, 130, 246, 0.15);
-  color: #60a5fa;
+  color: var(--color-accent-blue-light, #60a5fa);
 }
 
 .badge.issues {
   background: rgba(148, 163, 184, 0.08);
   border-color: rgba(148, 163, 184, 0.15);
-  color: #94a3b8;
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 .badge.parts {
   background: rgba(16, 185, 129, 0.08);
   border-color: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  color: var(--color-accent-teal, #10b981);
 }
 
 /* Sections */
@@ -114,7 +114,7 @@
 }
 
 .strengthBullet {
-  color: #10b981;
+  color: var(--color-accent-teal, #10b981);
   font-weight: 600;
   flex-shrink: 0;
 }
@@ -140,7 +140,7 @@
   height: 20px;
   border-radius: 50%;
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  color: var(--color-accent-teal, #10b981);
   font-size: 11px;
   font-weight: 700;
   flex-shrink: 0;
@@ -237,7 +237,7 @@
 }
 
 /* Mobile responsive */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .card {
     padding: 12px;
   }

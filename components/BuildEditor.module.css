@@ -468,7 +468,7 @@
    RESPONSIVE
    ============================================================================ */
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .modeToggle {
     flex-wrap: wrap;
   }

@@ -8,7 +8,7 @@
    -------------------------------------------------------------------------- */
 .container {
   min-height: 100vh;
-  background: var(--color-gray-50);
+  background: transparent;
   padding-bottom: var(--page-bottom-padding);
 }
 
@@ -254,8 +254,8 @@
   letter-spacing: 0.04em;
 }
 
-.tierPremium { background: var(--tier-premium-bg); color: #c4b5fd; }
-.tierUpper { background: var(--tier-upper-bg); color: #93c5fd; }
+.tierPremium { background: var(--tier-premium-bg); color: var(--color-info-light, #c4b5fd); }
+.tierUpper { background: var(--tier-upper-bg); color: var(--color-accent-blue-light, #93c5fd); }
 .tierMid { background: var(--tier-mid-bg); color: #6ee7b7; }
 .tierEntry { background: var(--tier-entry-bg); color: #fcd34d; }
 
@@ -2087,7 +2087,7 @@
 /* --------------------------------------------------------------------------
    Responsive - Tablet
    -------------------------------------------------------------------------- */
-@media (max-width: 1023px) {
+@media (min-width: 1024px) {
   /* Stack layout with content first, image second */
   .heroContent {
     order: 1;
@@ -2116,7 +2116,7 @@
   }
 }
 
-@media (max-width: 900px) {
+@media (min-width: 901px) {
   .specBar {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -2168,7 +2168,7 @@
 /* --------------------------------------------------------------------------
    Responsive - Mobile
    -------------------------------------------------------------------------- */
-@media (max-width: 600px) {
+@media (min-width: 601px) {
   .heroSection {
     /* Account for fixed header + beta banner */
     padding: calc(var(--header-plus-banner-mobile) + 1rem) 1rem 1.25rem;
@@ -2637,7 +2637,7 @@
 /* --------------------------------------------------------------------------
    Very small screens
    -------------------------------------------------------------------------- */
-@media (max-width: 400px) {
+@media (min-width: 401px) {
   .heroTitle {
     font-size: 1.4rem;
   }
@@ -2677,7 +2677,7 @@
   }
 }
 
-@media (max-width: 360px) {
+@media (min-width: 361px) {
   .tabButton {
     padding: 0.65rem 0.75rem;
     font-size: 0.7rem;
@@ -2827,7 +2827,7 @@
   margin-bottom: 0.75rem;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .skeletonTitle {
     width: 200px;
     height: 32px;

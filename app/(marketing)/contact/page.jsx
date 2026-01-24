@@ -30,12 +30,12 @@ export default function Contact() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
 
-  const handleChange = (e) => {
+  const handleContactFormChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitError(null);
@@ -175,7 +175,7 @@ export default function Contact() {
                   </div>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} className={styles.form}>
+                <form onSubmit={handleContactSubmit} className={styles.form}>
                   <div className={styles.formHeader}>
                     <h2 className={styles.formTitle}>Send Us a Message</h2>
                     <p className={styles.formDescription}>
@@ -193,21 +193,24 @@ export default function Contact() {
                         className={styles.input}
                         placeholder="Your name"
                         value={formData.name}
-                        onChange={handleChange}
+                        onChange={handleContactFormChange}
                         required
+                        autoComplete="name"
                       />
                     </div>
                     <div className={styles.formGroup}>
                       <label htmlFor="email" className={styles.label}>Email *</label>
                       <input
                         type="email"
+                        inputMode="email"
                         id="email"
                         name="email"
                         className={styles.input}
                         placeholder="your@email.com"
                         value={formData.email}
-                        onChange={handleChange}
+                        onChange={handleContactFormChange}
                         required
+                        autoComplete="email"
                       />
                     </div>
                   </div>
@@ -222,7 +225,7 @@ export default function Contact() {
                             name="interest"
                             value={item.id}
                             checked={formData.interest === item.id}
-                            onChange={handleChange}
+                            onChange={handleContactFormChange}
                             className={styles.radio}
                           />
                           <span className={styles.interestLabel}>{item.label}</span>
@@ -240,7 +243,7 @@ export default function Contact() {
                       className={styles.input}
                       placeholder="e.g., 2019 Mustang GT, considering a Cayman..."
                       value={formData.car}
-                      onChange={handleChange}
+                      onChange={handleContactFormChange}
                     />
                   </div>
 
@@ -253,13 +256,13 @@ export default function Contact() {
                       placeholder="Tell us what you're looking for..."
                       rows="5"
                       value={formData.message}
-                      onChange={handleChange}
+                      onChange={handleContactFormChange}
                       required
                     />
                   </div>
 
                   {submitError && (
-                    <div className={styles.errorMessage}>
+                    <div className={styles.errorMessage} role="alert" aria-live="assertive">
                       {submitError}
                     </div>
                   )}

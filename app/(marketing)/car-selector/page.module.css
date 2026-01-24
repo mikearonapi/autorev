@@ -1,7 +1,8 @@
 /* Car Selector Page - Mobile First with Compact Copy */
 
 .page {
-  background: var(--color-gray-50);
+  /* Transparent to show body gradient */
+  background: transparent;
 }
 
 .container {

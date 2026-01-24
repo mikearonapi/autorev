@@ -70,7 +70,8 @@
 /* Logo text styling - matches marketing page */
 .logo {
   font-family: var(--font-oswald, 'Oswald'), sans-serif;
-  font-size: clamp(48px, 12vw, 72px);
+  /* Mobile-first: smaller font on small screens */
+  font-size: clamp(40px, 14vw, 56px);
   font-weight: 700;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -105,9 +106,9 @@
   }
 }
 
-/* Ensure proper rendering on all devices */
-@media screen and (max-width: 480px) {
+/* Desktop: larger logo font */
+@media screen and (min-width: 481px) {
   .logo {
-    font-size: clamp(40px, 14vw, 56px);
+    font-size: clamp(48px, 12vw, 72px);
   }
 }

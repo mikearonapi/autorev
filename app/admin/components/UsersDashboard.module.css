@@ -7,15 +7,15 @@
   --card-bg: rgba(255, 255, 255, 0.03);
   --card-hover: rgba(255, 255, 255, 0.05);
   --border-subtle: rgba(255, 255, 255, 0.08);
-  --text-primary: #f8fafc;
+  --text-primary: var(--color-bg-muted, #f8fafc);
   --text-secondary: var(--brand-text-secondary);
   --text-muted: var(--brand-text-tertiary);
   --accent-blue: var(--brand-blue);
   --accent-purple: var(--brand-purple-accent);
-  --accent-cyan: #06b6d4;
-  --positive: #22c55e;
+  --accent-cyan: var(--color-accent-teal, #06b6d4);
+  --positive: var(--color-success, #22c55e);
   --warning: var(--brand-warning);
-  --negative: #ef4444;
+  --negative: var(--color-error, #ef4444);
   
   display: flex;
   flex-direction: column;
@@ -397,7 +397,7 @@
   padding: 1.25rem;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .expandedContent {
     grid-template-columns: 1fr;
   }
@@ -538,7 +538,7 @@
 }
 
 /* Mobile optimizations */
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .table th:nth-child(5),
   .table td:nth-child(5),
   .table th:nth-child(6),

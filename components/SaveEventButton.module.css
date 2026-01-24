@@ -188,7 +188,7 @@
    CF-001: Touch target compliance - maintain 44px minimum
    =========================================== */
 
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .actionBtn {
     width: 44px;
     height: 44px;

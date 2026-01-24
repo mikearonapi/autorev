@@ -11,6 +11,13 @@
 import React, { useMemo } from 'react';
 import styles from './BuildValueAnalysis.module.css';
 
+// Efficiency rating colors - matching design system tokens
+const EFFICIENCY_COLORS = {
+  good: '#10b981',     // var(--color-accent-teal) - Good/Excellent
+  warning: '#f59e0b',  // var(--color-warning) - Average/Below Average
+  danger: '#ef4444',   // var(--color-error) - Diminishing Returns
+};
+
 // Icons
 const TrendingUpIcon = ({ size = 16 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -195,11 +202,11 @@ export default function BuildValueAnalysis({
       efficiencyNote = 'Typical cost-per-HP for this build level';
     } else if (dollarsPerHp < 120) {
       efficiencyRating = 'Below Average';
-      efficiencyColor = '#f59e0b';
+      efficiencyColor = EFFICIENCY_COLORS.warning;
       efficiencyNote = 'Consider higher-impact mods for better value';
     } else {
       efficiencyRating = 'Diminishing Returns';
-      efficiencyColor = '#ef4444';
+      efficiencyColor = EFFICIENCY_COLORS.danger;
       efficiencyNote = 'High cost per HP—common for advanced builds';
     }
 

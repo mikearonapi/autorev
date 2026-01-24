@@ -7,13 +7,13 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.85); /* Darker backdrop for immersion */
+  backdrop-filter: blur(8px);
   z-index: 1100;
   display: flex;
-  align-items: center;
+  align-items: flex-end; /* Mobile: slide up from bottom */
   justify-content: center;
-  padding: 1rem;
+  padding: 0; /* Full width on mobile */
   animation: fadeIn 0.2s ease-out;
 }
 
@@ -25,58 +25,62 @@
 /* Panel */
 .panel {
   background: var(--surface-elevated, var(--brand-bg-card-dark));
-  border-radius: 16px;
-  max-width: 640px;
   width: 100%;
-  max-height: calc(100vh - 2rem);
-  overflow-y: auto;
+  height: 100%; /* Full screen on mobile */
+  max-width: none;
+  max-height: none;
+  border-radius: 0;
   position: relative;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  animation: slideUp 0.3s ease-out;
+  box-shadow: none;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1); /* Smooth iOS-like curve */
   display: flex;
   flex-direction: column;
+  
+  /* Account for safe areas and PWA nav */
+  padding-top: env(safe-area-inset-top, 0px);
+  /* Extra padding at bottom to clear PWA menu */
+  padding-bottom: calc(100px + env(safe-area-inset-bottom, 20px)); 
 }
 
 @keyframes slideUp {
   from {
-    opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(100%);
   }
   to {
-    opacity: 1;
     transform: translateY(0);
   }
 }
 
-/* Mobile: Full screen panel */
-@media (max-width: 480px) {
+/* Desktop: Centered Card */
+@media (min-width: 768px) {
   .overlay {
-    padding: 0;
-    background: var(--surface-elevated, var(--brand-bg-card-dark));
-    align-items: stretch;
+    padding: 2rem;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(4px);
   }
   
   .panel {
     width: 100%;
-    height: 100%;
-    max-width: none;
-    max-height: none;
-    border-radius: 0;
-    animation: mobileSlideUp 0.3s ease-out;
-    overflow-y: auto;
-    /* Account for safe areas */
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    max-width: 640px;
+    height: auto;
+    max-height: 85vh;
+    border-radius: 16px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    animation: desktopFadeIn 0.3s ease-out;
+    padding-top: 0;
+    padding-bottom: 0; /* Reset extra padding */
+    overflow: hidden; /* For border radius */
   }
   
-  @keyframes mobileSlideUp {
+  @keyframes desktopFadeIn {
     from {
       opacity: 0;
-      transform: translateY(100%);
+      transform: scale(0.98) translateY(10px);
     }
     to {
       opacity: 1;
-      transform: translateY(0);
+      transform: scale(1) translateY(0);
     }
   }
 }
@@ -84,116 +88,54 @@
 /* Close Button */
 .closeBtn {
   position: absolute;
-  top: 1rem;
+  top: max(1rem, env(safe-area-inset-top, 1rem)); /* Respect safe area */
   right: 1rem;
   background: rgba(255, 255, 255, 0.1);
   border: none;
   border-radius: 50%;
-  width: 44px;
+  width: 44px; /* Apple standard touch target */
   height: 44px;
-  min-width: 44px;
-  min-height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   color: var(--text-secondary, #a0a0b0);
   transition: all 0.2s ease;
-  z-index: 10;
+  z-index: 20;
+  backdrop-filter: blur(4px);
 }
 
 .closeBtn:hover {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.2);
   color: var(--text-primary, var(--brand-text-primary));
+  transform: scale(1.05);
 }
 
-/* Mobile: Ensure close button is easily tappable and in safe area */
-@media (max-width: 480px) {
+/* Desktop Close Button Adjustment */
+@media (min-width: 768px) {
   .closeBtn {
-    /* Position below safe area inset */
-    top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
-    right: 0.75rem;
-    width: 44px;
-    height: 44px;
-    background: rgba(255, 255, 255, 0.12);
+    top: 1rem;
+    right: 1rem;
+    background: rgba(255, 255, 255, 0.06);
   }
 }
 
 /* Header */
 .header {
-  padding: 1.25rem 1.25rem 1rem;
+  padding: 1.5rem 1.25rem 1rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   flex-shrink: 0;
+  background: var(--surface-elevated, var(--brand-bg-card-dark));
+  position: relative;
+  z-index: 10;
 }
 
-.title {
-  font-size: 1.35rem;
-  font-weight: 700;
-  color: var(--text-primary, var(--brand-text-primary));
-  margin: 0 0 0.625rem;
-  padding-right: 3.5rem;
-  line-height: 1.3;
-}
-
-.metaRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
-  margin-bottom: 0.625rem;
-}
-
-.metaItem {
-  display: flex;
-  align-items: center;
-  gap: 0.3rem;
-  font-size: 0.8125rem;
-  color: var(--text-secondary, #a0a0b0);
-}
-
-.metaItem svg {
-  color: var(--accent-secondary, #00d4ff);
-}
-
-.tierBadge {
-  display: inline-block;
-  padding: 0.2rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-secondary, #a0a0b0);
-}
-
-/* Mobile Header */
-@media (max-width: 480px) {
+@media (min-width: 768px) {
   .header {
-    padding: 1rem;
-    /* No extra top padding needed since overlay has padding-top for fixed header */
-  }
-  
-  .title {
-    font-size: 1.2rem;
-    margin-bottom: 0.5rem;
-    padding-right: 3rem;
-  }
-  
-  .metaRow {
-    gap: 0.625rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  .metaItem {
-    font-size: 0.75rem;
-    gap: 0.25rem;
-  }
-  
-  .tierBadge {
-    font-size: 0.65rem;
-    padding: 0.175rem 0.4rem;
+    padding: 1.5rem 1.5rem 1rem;
   }
 }
+
 
 .tierBadge.streetSport {
   background: rgba(var(--brand-success-rgb), 0.2);
@@ -207,7 +149,7 @@
 
 .tierBadge.timeAttack {
   background: rgba(168, 85, 247, 0.2);
-  color: #c084fc;
+  color: var(--color-info, #c084fc);
 }
 
 .tierBadge.ultimatePower {
@@ -221,6 +163,15 @@
   flex: 1;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  
+  /* Hide scrollbar for cleaner mobile look */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.body::-webkit-scrollbar {
+  width: 0;
+  display: none;
 }
 
 /* Sections */
@@ -252,7 +203,7 @@
 }
 
 /* Mobile Body */
-@media (max-width: 480px) {
+@media (min-width: 768px) {
   .body {
     padding: 1rem;
     padding-bottom: 1.5rem; /* Extra space at bottom for scrolling comfort */
@@ -311,7 +262,7 @@
 }
 
 /* Mobile Gains */
-@media (max-width: 480px) {
+@media (min-width: 768px) {
   .gainsGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 0.5rem;
@@ -342,7 +293,7 @@
   gap: 0.75rem;
 }
 
-@media (max-width: 480px) {
+@media (min-width: 768px) {
   .prosConsGrid {
     grid-template-columns: 1fr;
     gap: 0.5rem;
@@ -402,7 +353,7 @@
 }
 
 /* Mobile Pros/Cons */
-@media (max-width: 480px) {
+@media (min-width: 768px) {
   .prosColumn,
   .consColumn {
     padding: 0.625rem;
@@ -468,7 +419,7 @@
 }
 
 /* Mobile Tags */
-@media (max-width: 480px) {
+@media (min-width: 768px) {
   .tagList {
     gap: 0.35rem;
   }
@@ -559,7 +510,7 @@
 }
 
 /* Mobile Dependencies, Considerations, Brands, Footer */
-@media (max-width: 480px) {
+@media (min-width: 768px) {
   .dependencyGroup {
     margin-bottom: 0.5rem;
   }
@@ -623,8 +574,8 @@
 .chainStep:nth-child(3) { border-left-color: var(--brand-warning); }
 .chainStep:nth-child(4) { border-left-color: var(--brand-error); }
 .chainStep:nth-child(5) { border-left-color: var(--brand-purple-accent); }
-.chainStep:nth-child(6) { border-left-color: #ec4899; }
-.chainStep:nth-child(7) { border-left-color: #06b6d4; }
+.chainStep:nth-child(6) { border-left-color: var(--color-accent-pink, #ec4899); }
+.chainStep:nth-child(7) { border-left-color: var(--color-accent-teal, #06b6d4); }
 
 .chainStepHeader {
   display: flex;
@@ -701,7 +652,7 @@
 }
 
 /* Mobile Chain Effects */
-@media (max-width: 480px) {
+@media (min-width: 768px) {
   .scenarioDesc {
     font-size: 0.75rem;
     margin-bottom: 0.625rem !important;
@@ -775,15 +726,5 @@
 }
 
 /* Mobile: Hide scrollbar for cleaner look */
-@media (max-width: 480px) {
-  .body::-webkit-scrollbar {
-    width: 0;
-    display: none;
-  }
-  
-  .body {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-}
+/* Removed - scrollbar hiding is now default for all sizes in .body */
 

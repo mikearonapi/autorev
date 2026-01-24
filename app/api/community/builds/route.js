@@ -20,6 +20,7 @@ import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { rankFeed, buildUserContext, getLearnedPreferences } from '@/lib/feedAlgorithm';
 import { getBearerToken, createAuthenticatedClient, createServerSupabaseClient } from '@/lib/supabaseServer';
 import { errors } from '@/lib/apiErrors';
+import { calculateAllModificationGains } from '@/lib/performanceCalculator';
 
 // Mark route as dynamic since it uses request.url
 export const dynamic = 'force-dynamic';
@@ -149,21 +150,23 @@ async function handleGet(request) {
     builds = builds.filter(b => b.is_featured);
   }
 
-  // Enrich builds with car data and build data
+  // Enrich builds with car data and computed performance
   const enrichedBuilds = await Promise.all(
     builds.map(async (build) => {
       try {
         // Fetch car specs (stock values) for the stats display
+        let carData = null;
         if (build.car_slug) {
-          const { data: carData, error: carError } = await supabaseAdmin
+          const { data: fetchedCarData, error: carError } = await supabaseAdmin
             .from('cars')
-            .select('image_hero_url, hp, torque, zero_to_sixty, top_speed, name')
+            .select('image_hero_url, hp, torque, engine, zero_to_sixty, top_speed, name, braking_60_0, lateral_g, quarter_mile, curb_weight')
             .eq('slug', build.car_slug)
             .single();
           
           if (carError) {
             console.error(`[CommunityBuilds] Car fetch error for ${build.car_slug}:`, carError);
-          } else if (carData) {
+          } else if (fetchedCarData) {
+            carData = fetchedCarData;
             if (!build.images || build.images.length === 0) {
               build.car_image_url = carData.image_hero_url;
             }
@@ -181,10 +184,10 @@ async function handleGet(request) {
         }
         
         // Fetch user's build data with modified performance metrics
-        // IMPORTANT: Merge with existing build_data instead of replacing it
+        // IMPORTANT: Use user_vehicle_id for DIRECT link to vehicle (SOURCE OF TRUTH)
         const { data: postData } = await supabaseAdmin
           .from('community_posts')
-          .select('user_build_id')
+          .select('user_build_id, user_id, user_vehicle_id')
           .eq('id', build.id)
           .single();
         
@@ -201,7 +204,8 @@ async function handleGet(request) {
               stock_braking_60_0,
               final_lateral_g,
               stock_lateral_g,
-              objective
+              objective,
+              selected_upgrades
             `)
             .eq('id', postData.user_build_id)
             .single();
@@ -214,6 +218,111 @@ async function handleGet(request) {
             };
             build.build_objective = projectData.objective;
           }
+        }
+        
+        // =======================================================================
+        // COMPUTED PERFORMANCE (SOURCE OF TRUTH)
+        // 
+        // Use installed_modifications from the linked vehicle as PRIMARY source.
+        // This matches what the Garage page shows and ensures live sync.
+        // 
+        // Fallback to selected_upgrades only if no vehicle is linked.
+        // =======================================================================
+        // ARCHITECTURE: Use PRE-CALCULATED values from user_vehicles
+        // The garage calculates performance when mods are installed and stores
+        // total_hp_gain in user_vehicles. We just READ that value here.
+        // =======================================================================
+        if (carData) {
+          const isOwnBuild = userId && postData?.user_id === userId;
+          
+          // Get vehicle data with pre-calculated performance
+          let vehicleData = null;
+          if (postData?.user_vehicle_id) {
+            const { data: vehicle } = await supabaseAdmin
+              .from('user_vehicles')
+              .select('installed_modifications, total_hp_gain')
+              .eq('id', postData.user_vehicle_id)
+              .single();
+            vehicleData = vehicle;
+          }
+          
+          const installedMods = vehicleData?.installed_modifications || [];
+          
+          // Get planned mods from build project (for status comparison only)
+          let plannedMods = [];
+          if (build.build_data?.selected_upgrades) {
+            const rawSelected = build.build_data.selected_upgrades;
+            const rawKeys = Array.isArray(rawSelected)
+              ? rawSelected
+              : (rawSelected?.upgrades || []);
+            plannedMods = (rawKeys || [])
+              .map((u) => (typeof u === 'string' ? u : u?.key))
+              .filter(Boolean);
+          }
+          
+          // Calculate build status by comparing planned vs installed
+          let buildStatus = null;
+          if (plannedMods.length > 0) {
+            const installedCount = plannedMods.filter(mod => installedMods.includes(mod)).length;
+            if (installedMods.length > 0 && installedCount >= plannedMods.length) {
+              buildStatus = 'complete';
+            } else if (installedCount > 0) {
+              buildStatus = 'in_progress';
+            } else if (installedMods.length > 0) {
+              buildStatus = 'in_progress';
+            } else {
+              buildStatus = 'planned';
+            }
+          } else if (installedMods.length > 0) {
+            buildStatus = 'complete';
+          }
+          
+          // Calculate HP using the SAME calculator the garage uses
+          // This ensures consistency across the app
+          const normalizedCar = {
+            ...carData,
+            zeroToSixty: carData.zero_to_sixty,
+            braking60To0: carData.braking_60_0,
+            lateralG: carData.lateral_g,
+            quarterMile: carData.quarter_mile,
+            curbWeight: carData.curb_weight,
+          };
+          
+          const modGains = installedMods.length > 0 
+            ? calculateAllModificationGains(installedMods, normalizedCar)
+            : { hpGain: 0, torqueGain: 0, zeroToSixtyImprovement: 0 };
+          
+          const stockHp = carData.hp || 0;
+          const stockTorque = carData.torque || 0;
+          const hpGain = modGains.hpGain || 0;
+          const torqueGain = modGains.torqueGain || 0;
+          const zeroToSixtyImprovement = modGains.zeroToSixtyImprovement || 0;
+          
+          build.computedPerformance = {
+            stock: {
+              hp: stockHp,
+              torque: stockTorque,
+              zeroToSixty: carData.zero_to_sixty,
+              braking60To0: carData.braking_60_0,
+              lateralG: carData.lateral_g,
+            },
+            upgraded: {
+              hp: stockHp + hpGain,
+              torque: stockTorque + torqueGain,
+              zeroToSixty: carData.zero_to_sixty 
+                ? Math.max(2.0, carData.zero_to_sixty - zeroToSixtyImprovement) 
+                : null,
+              braking60To0: carData.braking_60_0,
+              lateralG: carData.lateral_g,
+            },
+            hpGain,
+            torqueGain,
+            upgradeKeys: installedMods,
+            installedMods,
+            plannedMods,
+            isCurrentUserBuild: isOwnBuild,
+          };
+          build.buildStatus = buildStatus;
         }
         
       } catch (err) {

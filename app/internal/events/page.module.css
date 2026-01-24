@@ -2,7 +2,8 @@
   max-width: 1100px;
   margin: 0 auto;
   padding: 28px 18px 60px;
-  color: #e5e7eb;
+  background: transparent;
+  color: var(--color-border-subtle, #e5e7eb);
 }
 
 .header h1 {
@@ -12,7 +13,7 @@
 
 .header p {
   margin: 0 0 18px;
-  color: #a1a1aa;
+  color: var(--color-text-muted, #a1a1aa);
   line-height: 1.35;
   max-width: 760px;
 }
@@ -28,7 +29,7 @@
 
 .authSection label {
   font-size: 13px;
-  color: #a1a1aa;
+  color: var(--color-text-muted, #a1a1aa);
   display: block;
   margin-bottom: 4px;
 }
@@ -38,7 +39,7 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   padding: 10px 14px;
-  color: #f3f4f6;
+  color: var(--color-bg-muted, #f3f4f6);
   font-size: 14px;
   width: 240px;
 }
@@ -55,7 +56,7 @@
 }
 
 .authSection button:hover:not(:disabled) {
-  background: #2563eb;
+  background: var(--color-accent-blue, #2563eb);
 }
 
 .authSection button:disabled {
@@ -88,13 +89,13 @@
 
 .statLabel {
   font-size: 12px;
-  color: #a1a1aa;
+  color: var(--color-text-muted, #a1a1aa);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .statPending .statNumber {
-  color: #fbbf24;
+  color: var(--color-accent-amber-light, #fbbf24);
 }
 
 .statApproved .statNumber {
@@ -117,7 +118,7 @@
 .tab {
   background: transparent;
   border: none;
-  color: #9ca3af;
+  color: var(--color-text-secondary, #9ca3af);
   padding: 10px 16px;
   font-size: 14px;
   font-weight: 500;
@@ -128,7 +129,7 @@
 
 .tab:hover {
   background: rgba(255, 255, 255, 0.05);
-  color: #e5e7eb;
+  color: var(--color-border-subtle, #e5e7eb);
 }
 
 .tabActive {
@@ -147,7 +148,7 @@
 .error {
   background: rgba(var(--brand-error-rgb), 0.15);
   border: 1px solid rgba(var(--brand-error-rgb), 0.3);
-  color: #fca5a5;
+  color: var(--color-error-light, #fca5a5);
 }
 
 .success {
@@ -166,7 +167,7 @@
 .emptyState {
   text-align: center;
   padding: 40px;
-  color: #6b7280;
+  color: var(--color-text-tertiary, #6b7280);
 }
 
 /* Submission Card */
@@ -188,7 +189,7 @@
 .submissionName {
   font-size: 17px;
   font-weight: 600;
-  color: #f3f4f6;
+  color: var(--color-bg-muted, #f3f4f6);
   margin: 0;
 }
 
@@ -203,7 +204,7 @@
 
 .status_pending {
   background: rgba(var(--brand-warning-rgb), 0.2);
-  color: #fbbf24;
+  color: var(--color-accent-amber-light, #fbbf24);
 }
 
 .status_approved {
@@ -222,13 +223,13 @@
   flex-wrap: wrap;
   gap: 16px;
   font-size: 13px;
-  color: #a1a1aa;
+  color: var(--color-text-muted, #a1a1aa);
   margin-bottom: 10px;
 }
 
 .submissionDescription {
   font-size: 14px;
-  color: #cbd5e1;
+  color: var(--color-border-default, #cbd5e1);
   line-height: 1.5;
   margin: 0 0 12px;
   background: rgba(0, 0, 0, 0.2);
@@ -248,7 +249,7 @@
 
 .submissionInfo {
   font-size: 12px;
-  color: #6b7280;
+  color: var(--color-text-tertiary, #6b7280);
   display: flex;
   gap: 12px;
 }
@@ -283,7 +284,7 @@
 }
 
 .approveBtn:hover {
-  background: #047857;
+  background: var(--color-accent-teal, #047857);
 }
 
 .rejectBtn {
@@ -331,7 +332,7 @@
 }
 
 .modal {
-  background: #1f2937;
+  background: var(--color-bg-elevated, #1f2937);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
   padding: 24px;
@@ -344,13 +345,13 @@
 .modalTitle {
   font-size: 20px;
   font-weight: 700;
-  color: #f3f4f6;
+  color: var(--color-bg-muted, #f3f4f6);
   margin: 0 0 8px;
 }
 
 .modalSubtitle {
   font-size: 14px;
-  color: #9ca3af;
+  color: var(--color-text-secondary, #9ca3af);
   margin: 0 0 20px;
 }
 
@@ -369,7 +370,7 @@
 
 .formGroup label {
   font-size: 13px;
-  color: #a1a1aa;
+  color: var(--color-text-muted, #a1a1aa);
 }
 
 .formGroup input,
@@ -379,7 +380,7 @@
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   padding: 10px 12px;
-  color: #f3f4f6;
+  color: var(--color-bg-muted, #f3f4f6);
   font-size: 14px;
 }
 
@@ -394,7 +395,7 @@
   gap: 12px;
 }
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .formRow {
     grid-template-columns: 1fr;
   }
@@ -405,7 +406,7 @@
   align-items: center;
   gap: 8px;
   font-size: 14px;
-  color: #e5e7eb;
+  color: var(--color-border-subtle, #e5e7eb);
   cursor: pointer;
 }
 
@@ -423,7 +424,7 @@
 
 .cancelBtn {
   background: rgba(255, 255, 255, 0.08);
-  color: #e5e7eb;
+  color: var(--color-border-subtle, #e5e7eb);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 8px;
   padding: 10px 18px;
@@ -448,7 +449,7 @@
 }
 
 .confirmBtn:hover:not(:disabled) {
-  background: #047857;
+  background: var(--color-accent-teal, #047857);
 }
 
 .confirmBtn:disabled,
@@ -469,7 +470,7 @@
 }
 
 .rejectConfirmBtn:hover:not(:disabled) {
-  background: #b91c1c;
+  background: var(--color-error, #b91c1c);
 }
 
 .rejectConfirmBtn:disabled {

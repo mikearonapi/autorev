@@ -131,7 +131,7 @@
 .error {
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.2);
-  color: #ef4444;
+  color: var(--color-error, #ef4444);
   padding: 8px 12px;
   margin: 6px;
   border-radius: 6px;
@@ -271,7 +271,7 @@
   border-radius: 50%;
   background: rgba(239, 68, 68, 0.1);
   border: none;
-  color: #ef4444;
+  color: var(--color-error, #ef4444);
   cursor: pointer;
   display: flex;
   align-items: center;

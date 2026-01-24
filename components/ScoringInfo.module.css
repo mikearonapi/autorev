@@ -578,7 +578,7 @@
 }
 
 /* Responsive */
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .fullContainer {
     padding: var(--space-4);
   }

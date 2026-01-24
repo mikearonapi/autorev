@@ -31,6 +31,41 @@
 @import '../styles/tokens/index.css';
 
 /* --------------------------------------------------------------------------
+   Utility CSS Imports
+   -------------------------------------------------------------------------- */
+@import '../styles/utilities/focus.css';
+@import '../styles/utilities/breakpoints.css';
+
+/* --------------------------------------------------------------------------
+   Skip Link - Global Fallback (WCAG 2.4.1)
+   --------------------------------------------------------------------------
+   CRITICAL: This ensures the skip link is ALWAYS hidden on initial render,
+   even if CSS modules fail to load (prevents FOUC on iOS Safari).
+   Uses attribute selector to target the link regardless of class hash.
+   -------------------------------------------------------------------------- */
+a[href="#main-content"] {
+  position: absolute;
+  top: -100%;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10000;
+  background: var(--color-accent-lime, #d4ff00);
+  color: var(--color-text-inverted, #000);
+  padding: 12px 24px;
+  font-weight: 600;
+  font-size: 14px;
+  text-decoration: none;
+  border-radius: 0 0 8px 8px;
+  transition: top 0.2s ease;
+}
+
+a[href="#main-content"]:focus {
+  top: 0;
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
+}
+
+/* --------------------------------------------------------------------------
    CSS Custom Properties (Theme Tokens)
    Build-Focused Premium Dark Theme (January 2026)
    Inspired by GRAVL/FIXD - Clean, premium, performance-focused
@@ -48,34 +83,34 @@
      ======================================================================= */
   
   /* Background Colors - Deep navy for premium automotive feel */
-  --brand-bg-primary: #0d1b2a;
-  --brand-bg-secondary: #1b263b;
+  --brand-bg-primary: var(--color-bg-base, #0d1b2a);
+  --brand-bg-secondary: var(--color-bg-elevated, #1b263b);
   --brand-bg-card: rgba(255, 255, 255, 0.04);
   --brand-bg-card-hover: rgba(255, 255, 255, 0.08);
   
   /* Text Colors - Optimized for dark backgrounds with better contrast */
-  --brand-text-primary: #ffffff;
-  --brand-text-secondary: #94a3b8;    /* Slate-400: Better readability */
-  --brand-text-tertiary: #64748b;     /* Slate-500: Subtle text */
-  --brand-text-muted: #475569;        /* Slate-600: Very subtle */
+  --brand-text-primary: var(--color-text-primary, #ffffff);
+  --brand-text-secondary: var(--color-text-secondary, #94a3b8);    /* Slate-400: Better readability */
+  --brand-text-tertiary: var(--color-text-tertiary, #64748b);     /* Slate-500: Subtle text */
+  --brand-text-muted: var(--color-text-muted, #475569);        /* Slate-600: Very subtle */
   
   /* Accent Colors - THE CORE 4 (Each has ONE specific purpose)
      See docs/BRAND_GUIDELINES.md for usage rules */
-  --brand-lime: #d4ff00;          /* USER ACTIONS: CTAs, buttons, focus states */
-  --brand-lime-dark: #bfe600;
-  --brand-teal: #10b981;          /* POSITIVE DATA: Gains, improvements, active states */
-  --brand-teal-light: #34d399;
-  --brand-teal-dark: #059669;
-  --brand-blue: #3b82f6;          /* BASELINE: Stock values, original data */
-  --brand-blue-light: #60a5fa;
-  --brand-blue-dark: #1d4ed8;
-  --brand-amber: #f59e0b;         /* WARNINGS ONLY: Caution, alerts (use sparingly) */
-  --brand-amber-light: #fbbf24;
+  --brand-lime: var(--color-accent-lime, #d4ff00);          /* USER ACTIONS: CTAs, buttons, focus states */
+  --brand-lime-dark: var(--color-accent-lime-dark, #bfe600);
+  --brand-teal: var(--color-accent-teal, #10b981);          /* POSITIVE DATA: Gains, improvements, active states */
+  --brand-teal-light: var(--color-accent-teal-light, #34d399);
+  --brand-teal-dark: var(--color-accent-teal, #059669);
+  --brand-blue: var(--color-accent-blue, #3b82f6);          /* BASELINE: Stock values, original data */
+  --brand-blue-light: var(--color-accent-blue-light, #60a5fa);
+  --brand-blue-dark: var(--color-accent-blue, #1d4ed8);
+  --brand-amber: var(--color-accent-amber, #f59e0b);         /* WARNINGS ONLY: Caution, alerts (use sparingly) */
+  --brand-amber-light: var(--color-accent-amber-light, #fbbf24);
   
   /* DEPRECATED: Gold removed from palette - use amber for warnings, muted white for labels */
-  --brand-gold: #f59e0b;          /* Maps to amber - DO NOT USE DIRECTLY */
-  --brand-gold-light: #fbbf24;
-  --brand-gold-hover: #fbbf24;
+  --brand-gold: var(--color-accent-amber, #f59e0b);          /* Maps to amber - DO NOT USE DIRECTLY */
+  --brand-gold-light: var(--color-accent-amber-light, #fbbf24);
+  --brand-gold-hover: var(--color-accent-amber-light, #fbbf24);
   
   /* RGB Components - For use with rgba(var(--brand-X-rgb), opacity) */
   --brand-lime-rgb: 212, 255, 0;
@@ -92,15 +127,15 @@
   --brand-gold-rgb: 245, 158, 11;  /* Maps to amber */
   
   /* Additional brand colors needed for migration */
-  --brand-bg-primary-dark: #0a1628;
-  --brand-bg-card-dark: #1a1a2e;
-  --brand-border-subtle: #1a1a1a;
-  --brand-border-default: #252525;
-  --brand-error-light: #f87171;
-  --brand-error-dark: #dc2626;
-  --brand-warning: #f59e0b;
-  --brand-purple-accent: #8b5cf6;
-  --brand-primary-dark: #1a4d6e;
+  --brand-bg-primary-dark: var(--color-bg-base, #0a1628);
+  --brand-bg-card-dark: var(--color-bg-elevated, #1a1a2e);
+  --brand-border-subtle: var(--color-bg-base, #1a1a1a);
+  --brand-border-default: var(--color-bg-base, #252525);
+  --brand-error-light: var(--color-error, #f87171);
+  --brand-error-dark: var(--color-error, #dc2626);
+  --brand-warning: var(--color-accent-amber, #f59e0b);
+  --brand-purple-accent: var(--color-info, #8b5cf6);
+  --brand-primary-dark: var(--color-accent-blue, #1a4d6e);
   
   /* Chart & Visualization Colors */
   --brand-chart-outline: rgba(255, 255, 255, 0.15);
@@ -110,11 +145,11 @@
   --brand-chart-modified: var(--brand-teal);
   
   /* Semantic Colors */
-  --brand-success: #22c55e;
-  --brand-success-light: #4ade80;
-  --brand-success-dark: #16a34a;
-  --brand-error: #ef4444;
-  --brand-info: #3b82f6;
+  --brand-success: var(--color-success, #22c55e);
+  --brand-success-light: var(--color-success-light, #4ade80);
+  --brand-success-dark: var(--color-success, #16a34a);
+  --brand-error: var(--color-error, #ef4444);
+  --brand-info: var(--color-accent-blue, #3b82f6);
   
   /* =======================================================================
      LEGACY ALIASES (Backwards Compatibility)
@@ -126,15 +161,15 @@
   --background-primary: var(--brand-bg-primary);
   --bg-secondary: var(--brand-bg-secondary);
   --bg-card: var(--brand-bg-card);
-  --bg-card-hover: #1c1c1c;
-  --bg-elevated: #1f1f1f;
-  --bg-input: #0d0d0d;
+  --bg-card-hover: var(--color-bg-base, #1c1c1c);
+  --bg-elevated: var(--color-bg-base, #1f1f1f);
+  --bg-input: var(--color-bg-base, #0d0d0d);
   
   /* GRAVL Theme Colors (Aliases) */
-  --gravl-navy: #0a1628;
-  --gravl-navy-light: #0f1f35;
-  --gravl-lime: #d4ff00;
-  --gravl-lime-dark: #bfe600;
+  --gravl-navy: var(--color-bg-base, #0a1628);
+  --gravl-navy-light: var(--color-bg-base, #0f1f35);
+  --gravl-lime: var(--color-accent-lime, #d4ff00);
+  --gravl-lime-dark: var(--color-accent-lime-dark, #bfe600);
   
   /* Accent Colors - Using Brand System (LEGACY ALIASES) */
   --accent-primary: var(--brand-lime);        /* Primary CTAs now use lime */
@@ -145,115 +180,115 @@
   --accent-secondary-muted: rgba(var(--brand-teal-rgb), 0.15);
   
   /* Improvement/Gain Color - Teal for positive changes */
-  --color-improvement: #10b981;
-  --color-improvement-light: #34d399;
+  --color-improvement: var(--color-accent-teal, #10b981);
+  --color-improvement-light: var(--color-accent-teal-light, #34d399);
   --color-improvement-muted: rgba(16, 185, 129, 0.15);
   
   /* Baseline/Stock Color - Blue for original values */
-  --color-baseline: #3b82f6;
-  --color-baseline-light: #60a5fa;
+  --color-baseline: var(--color-accent-blue, #3b82f6);
+  --color-baseline-light: var(--color-accent-blue-light, #60a5fa);
   --color-baseline-muted: rgba(var(--brand-blue-rgb), 0.15);
   
   /* Brand Colors - Updated January 2026 */
-  --sn-primary: #1a4d6e;
-  --sn-primary-light: #2a6d94;
-  --sn-primary-dark: #0f3347;
+  --sn-primary: var(--color-accent-blue, #1a4d6e);
+  --sn-primary-light: var(--color-accent-blue, #2a6d94);
+  --sn-primary-dark: var(--color-accent-blue, #0f3347);
   --sn-accent: var(--brand-lime);  /* Primary accent is now lime */
   --sn-accent-light: var(--brand-lime-dark);
-  --sn-accent-dark: #a8cc00;
+  --sn-accent-dark: var(--color-accent-lime-dark, #a8cc00);
   
   /* DEPRECATED: Premium gold badge color - migrate to purple tier colors */
-  --sn-gold: #7c3aed;             /* Now maps to premium purple */
-  --sn-gold-light: #8b5cf6;
-  --sn-gold-dark: #6d28d9;
+  --sn-gold: var(--color-info, #7c3aed);             /* Now maps to premium purple */
+  --sn-gold-light: var(--color-info, #8b5cf6);
+  --sn-gold-dark: var(--color-info, #6d28d9);
   
   /* Text Colors - Using Brand System */
-  --text-primary: #ffffff;
-  --text-secondary: #94a3b8;
-  --text-tertiary: #64748b;
-  --text-muted: #475569;
-  --text-emphasis: #d4ff00;     /* For emphasized headlines */
-  --text-improvement: #10b981;  /* For improvement/gain values */
-  --text-baseline: #3b82f6;     /* For stock/baseline values */
+  --text-primary: var(--color-text-primary, #ffffff);
+  --text-secondary: var(--color-text-secondary, #94a3b8);
+  --text-tertiary: var(--color-text-tertiary, #64748b);
+  --text-muted: var(--color-text-muted, #475569);
+  --text-emphasis: var(--color-accent-lime, #d4ff00);     /* For emphasized headlines */
+  --text-improvement: var(--color-accent-teal, #10b981);  /* For improvement/gain values */
+  --text-baseline: var(--color-accent-blue, #3b82f6);     /* For stock/baseline values */
   
   /* Border Colors - Subtle definition */
-  --border-subtle: #1a1a1a;
-  --border-default: #252525;
-  --border-hover: #333333;
+  --border-subtle: var(--color-bg-base, #1a1a1a);
+  --border-default: var(--color-bg-base, #252525);
+  --border-hover: var(--color-text-muted, #333333);
   --border-focus: var(--brand-lime);  /* Focus states use lime (action intent) */
   
   /* Neutral Palette (legacy support) */
-  --color-white: #ffffff;
-  --color-gray-50: #fafafa;
-  --color-gray-100: #f5f5f5;
-  --color-gray-200: #e5e5e5;
-  --color-gray-300: #d4d4d4;
-  --color-gray-400: #94a3b8;
-  --color-gray-500: #64748b;
-  --color-gray-600: #444444;
-  --color-gray-700: #333333;
-  --color-gray-800: #1a1a1a;
-  --color-gray-900: #0a0a0a;
+  --color-white: var(--color-text-primary, #ffffff);
+  --color-gray-50: var(--color-bg-muted, #fafafa);
+  --color-gray-100: var(--color-bg-muted, #f5f5f5);
+  --color-gray-200: var(--color-border-subtle, #e5e5e5);
+  --color-gray-300: var(--color-border-default, #d4d4d4);
+  --color-gray-400: var(--color-text-secondary, #94a3b8);
+  --color-gray-500: var(--color-text-tertiary, #64748b);
+  --color-gray-600: var(--color-text-muted, #444444);
+  --color-gray-700: var(--color-text-muted, #333333);
+  --color-gray-800: var(--color-bg-base, #1a1a1a);
+  --color-gray-900: var(--color-bg-base, #0a0a0a);
   
   /* Semantic Colors - Brighter for dark theme */
-  --color-success: #22c55e;
+  --color-success: var(--color-success, #22c55e);
   --color-success-light: rgba(var(--brand-success-rgb), 0.15);
-  --color-info: #3b82f6;
+  --color-info: var(--color-accent-blue, #3b82f6);
   --color-info-light: rgba(var(--brand-blue-rgb), 0.15);
-  --color-warning: #f59e0b;
+  --color-warning: var(--color-accent-amber, #f59e0b);
   --color-warning-light: rgba(var(--brand-warning-rgb), 0.15);
-  --color-error: #ef4444;
+  --color-error: var(--color-error, #ef4444);
   --color-error-light: rgba(var(--brand-error-rgb), 0.15);
   
   /* Score Colors (for advisory/performance ratings) */
-  --score-excellent: #15803d;
+  --score-excellent: var(--color-success, #15803d);
   --score-excellent-bg: rgba(21, 128, 61, 0.1);
-  --score-good: #1d4ed8;
+  --score-good: var(--color-accent-blue, #1d4ed8);
   --score-good-bg: rgba(29, 78, 216, 0.1);
-  --score-average: #b45309;
+  --score-average: var(--color-accent-amber, #b45309);
   --score-average-bg: rgba(180, 83, 9, 0.1);
-  --score-poor: #b91c1c;
+  --score-poor: var(--color-error, #b91c1c);
   --score-poor-bg: rgba(185, 28, 28, 0.1);
   
   /* Tier Colors */
-  --tier-premium: #7c3aed;
+  --tier-premium: var(--color-info, #7c3aed);
   --tier-premium-bg: rgba(124, 58, 237, 0.08);
-  --tier-upper: #2563eb;
+  --tier-upper: var(--color-accent-blue, #2563eb);
   --tier-upper-bg: rgba(37, 99, 235, 0.08);
-  --tier-mid: #059669;
+  --tier-mid: var(--color-accent-teal, #059669);
   --tier-mid-bg: rgba(5, 150, 105, 0.08);
-  --tier-entry: #d97706;
+  --tier-entry: var(--color-accent-amber, #d97706);
   --tier-entry-bg: rgba(217, 119, 6, 0.08);
   
   /* Recommendation Card Accents */
-  --rec-top: #059669;
-  --rec-sound: #d97706;
-  --rec-track: #2563eb;
-  --rec-value: #7c3aed;
-  --rec-reliable: #0891b2;
-  --rec-aftermarket: #db2777;
+  --rec-top: var(--color-accent-teal, #059669);
+  --rec-sound: var(--color-accent-amber, #d97706);
+  --rec-track: var(--color-accent-blue, #2563eb);
+  --rec-value: var(--color-info, #7c3aed);
+  --rec-reliable: var(--color-accent-teal, #0891b2);
+  --rec-aftermarket: var(--color-accent-pink, #db2777);
   
   /* Performance HUB Category Colors */
-  --perf-power: #ef4444;
-  --perf-grip: #3498db;
-  --perf-braking: #e67e22;
-  --perf-track: #9b59b6;
-  --perf-comfort: #1abc9c;
-  --perf-reliability: #27ae60;
-  --perf-sound: #f39c12;
+  --perf-power: var(--color-error, #ef4444);
+  --perf-grip: var(--color-accent-blue, #3498db);
+  --perf-braking: var(--color-accent-amber, #e67e22);
+  --perf-track: var(--color-info, #9b59b6);
+  --perf-comfort: var(--color-accent-teal, #1abc9c);
+  --perf-reliability: var(--color-success, #27ae60);
+  --perf-sound: var(--color-accent-amber, #f39c12);
   
   /* =======================================================================
      MOBILE-FIRST SPACING SCALE
-     GRAVL-inspired: More generous spacing for premium feel
+     Premium Polish (Jan 2026): Slightly more generous for luxury feel
      ======================================================================= */
-  --space-xs: 8px;     /* Was 4px - GRAVL uses more breathing room */
-  --space-sm: 12px;    /* Was 8px */
-  --space-md: 16px;    /* Was 12px */
-  --space-lg: 24px;    /* Was 16px */
-  --space-xl: 32px;    /* Was 24px */
-  --space-2xl: 48px;   /* Was 32px */
-  --space-3xl: 64px;   /* Was 48px */
-  --space-4xl: 96px;   /* Was 64px */
+  --space-xs: 8px;
+  --space-sm: 14px;    /* Increased from 12px */
+  --space-md: 18px;    /* Increased from 16px */
+  --space-lg: 26px;    /* Increased from 24px */
+  --space-xl: 36px;    /* Increased from 32px */
+  --space-2xl: 52px;   /* Increased from 48px */
+  --space-3xl: 72px;   /* Increased from 64px */
+  --space-4xl: 104px;  /* Increased from 96px */
   
   /* =======================================================================
      FLUID TYPOGRAPHY (Mobile-First with Clamp)
@@ -396,11 +431,12 @@ html {
      
      This is a multi-layered approach to prevent any horizontal overflow:
      1. width: 100% - Base constraint
-     2. max-width: 100vw - Viewport constraint (includes scrollbar on desktop)
+     2. max-width: 100% - Use 100% instead of 100vw to avoid iOS Safari bug
+        where 100vw includes scrollbar width even when no scrollbar exists
      3. overflow-x: clip - Most aggressive overflow clipping
      ======================================================================= */
   width: 100%;
-  max-width: 100vw;
+  max-width: 100%;
   overflow-x: clip;
   
   /* Allow vertical scroll + pinch zoom, prevent horizontal pan that triggers zoom */
@@ -437,8 +473,22 @@ body {
   font-size: var(--font-size-base);
   line-height: var(--line-height-normal);
   /* Build Pivot: Dark theme by default */
-  color: var(--text-primary);
-  background: var(--bg-primary);
+  color: var(--text-primary, #ffffff);
+  
+  /* =======================================================================
+     PREMIUM GRADIENT BACKGROUND (Jan 2026)
+     Subtle gradient: lighter navy at top, deeper navy at bottom
+     Creates depth and polish without being obvious
+     ======================================================================= */
+  background: linear-gradient(
+    180deg,
+    var(--color-bg-light, #152535) 0%,
+    var(--color-bg-base, #0d1b2a) 35%,
+    var(--color-bg-base, #0d1b2a) 65%,
+    var(--color-bg-deep, #060d14) 100%
+  );
+  background-color: #0d1b2a; /* Fallback for older browsers */
+  background-attachment: fixed; /* Gradient stays fixed while content scrolls */
   min-height: 100vh;
   min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
   
@@ -960,7 +1010,7 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
 /* Accent Button - TEAL (For positive/success actions) */
 .btn-accent {
   background: var(--brand-teal);
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   padding: 12px 24px;
   font-size: var(--font-size-base);
   font-weight: 600;
@@ -1141,12 +1191,17 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
   padding: var(--space-md);
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  transition: all 0.25s ease;
+  /* Premium: subtle inner highlight at top edge */
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
 }
 
 .card:hover {
   background: var(--bg-card-hover);
   border-color: var(--border-default);
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
+    0 8px 24px rgba(0, 0, 0, 0.2);
 }
 
 @media (min-width: 768px) {
@@ -1399,7 +1454,7 @@ section:not(:first-child) {
   font-size: 24px;  /* Mobile-optimized: increased from 22px */
   font-weight: 800;
   line-height: 1;
-  background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.85) 100%);
+  background: linear-gradient(180deg, var(--color-text-primary, #ffffff) 0%, rgba(255, 255, 255, 0.85) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1488,12 +1543,63 @@ section:not(:first-child) {
 }
 
 /* ==========================================================================
+   PREMIUM POLISH: FROSTED GLASS / BLUR EFFECTS (Jan 2026)
+   iOS-like blur for overlays, modals, and elevated surfaces
+   ========================================================================== */
+
+/* Frosted glass backdrop - use on modals and overlays */
+.backdrop-blur {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+.backdrop-blur-sm {
+  backdrop-filter: blur(8px) saturate(150%);
+  -webkit-backdrop-filter: blur(8px) saturate(150%);
+}
+
+.backdrop-blur-lg {
+  backdrop-filter: blur(32px) saturate(200%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%);
+}
+
+/* Premium overlay - navy tinted with blur */
+.overlay-premium {
+  background: var(--color-bg-overlay, rgba(10, 21, 32, 0.85));
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+/* Elevated surface with subtle inner glow */
+.surface-elevated {
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.04));
+  box-shadow: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
+    0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+/* Premium card with soft glow on hover */
+.card-premium {
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.05));
+  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.04));
+  border-radius: var(--radius-lg);
+  transition: all 0.3s ease;
+}
+
+.card-premium:hover {
+  background: var(--color-bg-card-hover, rgba(255, 255, 255, 0.09));
+  border-color: var(--color-border-default, rgba(255, 255, 255, 0.07));
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* ==========================================================================
    ONBOARDING ACTIVE STATE
    When onboarding is open, create a full-screen navy backdrop
    and hide all other content for an immersive experience
    ========================================================================== */
 body.onboarding-active {
-  background: #0d1b2a !important;
+  background: var(--color-bg-base, #0d1b2a) !important;
 }
 
 /* Hide all direct children except the onboarding overlay */

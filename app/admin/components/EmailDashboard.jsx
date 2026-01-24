@@ -59,7 +59,7 @@ const Icons = {
   ),
 };
 
-// Email templates - these match the templates defined in lib/email.js
+// Email templates - these match the templates defined in lib/emailService.js
 // Status: 'active' = fully implemented with trigger, 'draft' = template exists but not triggered
 const EMAIL_TEMPLATES_CONFIG = [
   {
@@ -114,7 +114,7 @@ const EMAIL_TEMPLATES_CONFIG = [
   },
 ];
 
-// Email automation definitions - these match the triggers in lib/email.js
+// Email automation definitions - these match the triggers in lib/emailService.js
 const EMAIL_AUTOMATIONS = [
   {
     id: 'welcome',

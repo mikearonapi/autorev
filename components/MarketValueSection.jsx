@@ -14,6 +14,7 @@ import PremiumGate, { usePremiumAccess } from './PremiumGate';
 import styles from './MarketValueSection.module.css';
 import { Icons } from '@/components/ui/Icons';
 import { useCarMarketValue, useCarPriceByYear } from '@/hooks/useCarData';
+import { formatMonthYear } from '@/lib/dateUtils';
 
 /**
  * Format price as currency
@@ -243,16 +244,12 @@ export default function MarketValueSection({ carSlug, carName }) {
               Price History
             </h5>
             <div className={styles.historyList}>
-              {priceHistory.slice(-6).map((point, idx) => {
-                const date = new Date(point.recorded_at);
-                const formattedDate = date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
-                return (
+              {priceHistory.slice(-6).map((point, idx) => (
                   <div key={idx} className={styles.historyPoint}>
-                    <span className={styles.historyDate}>{formattedDate}</span>
+                    <span className={styles.historyDate}>{formatMonthYear(point.recorded_at)}</span>
                     <span className={styles.historyPrice}>{formatPrice(point.avg_price)}</span>
                   </div>
-                );
-              })}
+                ))}
             </div>
           </div>
         )}

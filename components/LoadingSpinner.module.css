@@ -76,7 +76,7 @@
 .ring:nth-child(2) {
   width: 75%;
   height: 75%;
-  border-right-color: #0d9668; /* Darker teal for depth */
+  border-right-color: var(--color-accent-teal, #0d9668); /* Darker teal for depth */
   animation-delay: 0.15s;
 }
 

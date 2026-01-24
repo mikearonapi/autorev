@@ -11,8 +11,8 @@
 .page {
   min-height: 100vh;
   min-height: 100dvh;
-  /* Solid background for consistent app feel */
-  background: var(--brand-bg-primary);
+  /* Transparent to show body gradient */
+  background: transparent;
   /* Bottom padding for tab bar - uses standardized token */
   padding-bottom: var(--page-bottom-padding);
 }

@@ -3,7 +3,7 @@
    Shows where HP gains come from as percentages
    
    Design: Donut chart with legend showing category breakdown
-   Teal (#10b981): Primary accent color
+   Teal (var(--color-accent-teal, #10b981)): Primary accent color
    =========================================== */
 
 .powerBreakdown {
@@ -208,7 +208,7 @@
    RESPONSIVE - Mobile
    =========================================== */
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .powerBreakdown {
     padding: 16px;
   }
@@ -248,7 +248,7 @@
   }
 }
 
-@media (max-width: 360px) {
+@media (min-width: 361px) {
   .legendRight {
     gap: 8px;
   }

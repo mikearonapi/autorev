@@ -8,7 +8,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { queueEmail } from '@/lib/email';
+import { queueEmail } from '@/lib/emailService';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseAdmin = createClient(

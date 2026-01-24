@@ -127,7 +127,7 @@
   margin-bottom: 1.5rem;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .costCards {
     grid-template-columns: 1fr;
   }

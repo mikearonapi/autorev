@@ -45,7 +45,7 @@
 }
 
 /* Responsive: Smaller screens tighten spacing */
-@media (max-width: 374px) {
+@media (min-width: 375px) {
   .wrapper {
     gap: var(--space-1, 4px);
   }
@@ -68,7 +68,7 @@
 }
 
 .streakBadge svg {
-  color: #f59e0b;
+  color: var(--color-accent-amber, #f59e0b);
   flex-shrink: 0;
 }
 
@@ -121,7 +121,7 @@
 }
 
 /* Responsive: Smaller text on narrow screens */
-@media (max-width: 374px) {
+@media (min-width: 375px) {
   .pointsStatValue {
     font-size: var(--text-xs);
   }

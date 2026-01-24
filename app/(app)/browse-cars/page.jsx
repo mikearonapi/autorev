@@ -20,28 +20,14 @@ import { usePrefetchCar } from '@/components/PrefetchCarLink';
 import { useAIChat } from '@/components/AIChatContext';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { Icons } from '@/components/ui/Icons';
+import { 
+  filterAndSortCars, 
+  getUniqueMakes, 
+  getUniqueVehicleTypes 
+} from '@/lib/filterUtils';
 
 // Hero image - Curated collection of diverse sports cars (same as Explore car catalog section)
 const heroImageUrl = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/selector/hero.webp';
-
-// Get unique makes from car data
-function getUniqueMakes(carList) {
-  const makes = new Set();
-  carList.forEach(car => {
-    const make = car.brand || car.name?.split(' ')[0];
-    if (make) makes.add(make);
-  });
-  return Array.from(makes).sort();
-}
-
-// Get unique vehicle types (body style: Sports Car, Sports Sedan, Wagon, etc.)
-function getUniqueVehicleTypes(carList) {
-  const types = new Set();
-  carList.forEach(car => {
-    if (car.vehicleType) types.add(car.vehicleType);
-  });
-  return Array.from(types).sort();
-}
 
 function CarCatalogContent() {
   const searchParams = useSearchParams();
@@ -158,68 +144,18 @@ function CarCatalogContent() {
   const vehicleTypes = useMemo(() => getUniqueVehicleTypes(cars), [cars]);
   const tiers = Object.keys(tierConfig);
 
-  // Filter and sort cars
+  // Filter and sort cars using centralized utility (lib/filterUtils.js)
   const filteredCars = useMemo(() => {
-    let result = [...cars];
-
-    // Search filter
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(car => 
-        car.name?.toLowerCase().includes(query) ||
-        car.brand?.toLowerCase().includes(query) ||
-        car.vehicleType?.toLowerCase().includes(query)
-      );
-    }
-
-    // Make filter
-    if (selectedMake !== 'all') {
-      result = result.filter(car => {
-        const carMake = car.brand || car.name?.split(' ')[0];
-        return carMake?.toLowerCase() === selectedMake.toLowerCase();
-      });
-    }
-
-    // Tier filter
-    if (selectedTier !== 'all') {
-      result = result.filter(car => car.tier === selectedTier);
-    }
-
-    // Vehicle type filter (body style: Sports Car, Sports Sedan, Wagon, etc.)
-    if (selectedVehicleType !== 'all') {
-      result = result.filter(car => car.vehicleType === selectedVehicleType);
-    }
-
-    // Sort
-    switch (sortBy) {
-      case 'name':
-        result.sort((a, b) => a.name.localeCompare(b.name));
-        break;
-      case 'hp-high':
-        result.sort((a, b) => (b.hp || 0) - (a.hp || 0));
-        break;
-      case 'hp-low':
-        result.sort((a, b) => (a.hp || 0) - (b.hp || 0));
-        break;
-      case 'price-high':
-        result.sort((a, b) => {
-          const aPrice = parseInt(a.priceRange?.replace(/\D/g, '')) || 0;
-          const bPrice = parseInt(b.priceRange?.replace(/\D/g, '')) || 0;
-          return bPrice - aPrice;
-        });
-        break;
-      case 'price-low':
-        result.sort((a, b) => {
-          const aPrice = parseInt(a.priceRange?.replace(/\D/g, '')) || 0;
-          const bPrice = parseInt(b.priceRange?.replace(/\D/g, '')) || 0;
-          return aPrice - bPrice;
-        });
-        break;
-      default:
-        break;
-    }
-
-    return result;
+    return filterAndSortCars(
+      cars,
+      {
+        search: searchQuery,
+        make: selectedMake,
+        tier: selectedTier,
+        vehicleType: selectedVehicleType,
+      },
+      sortBy
+    );
   }, [cars, searchQuery, selectedMake, selectedTier, selectedVehicleType, sortBy]);
 
   return (

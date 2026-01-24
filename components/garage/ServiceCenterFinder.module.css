@@ -53,6 +53,43 @@
   flex: 1;
 }
 
+/* Override LocationAutocomplete dark theme for better readability */
+.locationInput :global(.inputWrapper),
+.locationInput > div > div:first-child {
+  background: #ffffff !important;
+  border-color: var(--color-accent-teal, #10b981) !important;
+}
+
+.locationInput :global(.inputWrapper:focus-within),
+.locationInput > div > div:first-child:focus-within {
+  border-color: var(--color-accent-teal, #10b981) !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25) !important;
+}
+
+.locationInput :global(.input),
+.locationInput input {
+  color: #1a1a1a !important;
+  background: transparent !important;
+}
+
+.locationInput :global(.input)::placeholder,
+.locationInput input::placeholder {
+  color: #666 !important;
+}
+
+.locationInput :global(.searchIcon) {
+  color: var(--color-accent-teal, #10b981) !important;
+}
+
+.locationInput :global(.clearBtn) {
+  color: #666 !important;
+}
+
+.locationInput :global(.clearBtn:hover) {
+  color: #1a1a1a !important;
+  background: rgba(0, 0, 0, 0.05) !important;
+}
+
 .searchBtn {
   display: inline-flex;
   align-items: center;
@@ -65,7 +102,7 @@
   
   font-size: var(--text-body, 14px);
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   white-space: nowrap;
   
   cursor: pointer;
@@ -73,7 +110,7 @@
 }
 
 .searchBtn:hover:not(:disabled) {
-  background: #0ea472;
+  background: var(--color-accent-teal, #0ea472);
 }
 
 .searchBtn:disabled {
@@ -85,7 +122,7 @@
   width: 16px;
   height: 16px;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #fff;
+  border-top-color: var(--color-text-primary, #ffffff);
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }
@@ -186,7 +223,7 @@
 .ratingPill.active {
   background: var(--color-accent-teal, #10b981);
   border-color: var(--color-accent-teal, #10b981);
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
 }
 
 .resultCount {
@@ -261,8 +298,9 @@
 }
 
 .errorState {
-  color: var(--color-warning, #f59e0b);
-  background: rgba(245, 158, 11, 0.08);
+  color: #d97706;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
   border-radius: var(--radius-md, 8px);
   padding: var(--space-4, 16px);
   flex-direction: row;
@@ -301,7 +339,7 @@
    RESPONSIVE
    ========================================================================== */
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .searchRow {
     flex-direction: column;
   }

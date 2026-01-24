@@ -6,6 +6,7 @@ import styles from './GarageEventsSection.module.css';
 import PremiumGate from '@/components/PremiumGate';
 import { EventTypeIcon, TrackEventBadgeIcon, CategoryIcons } from '@/components/icons/EventIcons';
 import { useEvents } from '@/hooks/useEventsData';
+import { getMonthAbbrev, getDayOfMonth, formatEventDateShort } from '@/lib/dateUtils';
 
 /**
  * GarageEventsSection - Shows upcoming events for user's owned vehicles or favorites
@@ -19,20 +20,13 @@ import { useEvents } from '@/hooks/useEventsData';
 function CompactEventCard({ event }) {
   if (!event) return null;
   
-  const date = new Date(event.start_date + 'T00:00:00');
-  const formattedDate = date.toLocaleDateString('en-US', { 
-    weekday: 'short', 
-    month: 'short', 
-    day: 'numeric' 
-  });
+  const formattedDate = formatEventDateShort(event.start_date);
   
   return (
     <Link href={`/events/${event.slug}`} className={styles.compactCard}>
       <div className={styles.dateBadge}>
-        <span className={styles.dateDay}>{date.getDate()}</span>
-        <span className={styles.dateMonth}>
-          {date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}
-        </span>
+        <span className={styles.dateDay}>{getDayOfMonth(event.start_date)}</span>
+        <span className={styles.dateMonth}>{getMonthAbbrev(event.start_date)}</span>
       </div>
       <div className={styles.eventInfo}>
         <span className={styles.eventType}>

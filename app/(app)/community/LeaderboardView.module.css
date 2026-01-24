@@ -31,20 +31,21 @@
 .header {
   position: relative;
   text-align: center;
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-6);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .title {
   font-family: var(--font-display);
-  font-size: 1.5rem;
-  font-weight: 700;
+  font-size: 1.25rem;
+  font-weight: 600;
   color: var(--color-text-primary);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
   margin: 0;
-  text-transform: uppercase;
   letter-spacing: 0.02em;
 }
 
@@ -57,7 +58,7 @@
 }
 
 .subtitle {
-  font-size: 0.875rem;
+  font-size: 0.8125rem;
   color: var(--color-text-secondary);
   margin: 0;
 }
@@ -74,31 +75,28 @@
   display: flex;
   align-items: center;
   gap: var(--space-1);
-  padding: 6px 12px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: var(--radius-full);
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
   color: var(--color-text-primary);
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
-  min-height: 32px;
+  min-height: 28px;
 }
 
 .dropdownTrigger:hover {
-  background: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.25);
-}
-
-.dropdownTrigger:focus {
-  outline: none;
-  border-color: var(--color-accent-teal);
-  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .dropdownTrigger svg {
+  width: 12px;
+  height: 12px;
   transition: transform 0.2s ease;
+  opacity: 0.7;
 }
 
 .dropdownTrigger[aria-expanded="true"] svg {
@@ -139,7 +137,7 @@
 }
 
 .dropdownItem {
-  padding: 10px 14px;
+  padding: 8px 12px;
   font-size: 0.8125rem;
   font-weight: 500;
   color: var(--color-text-secondary);
@@ -149,13 +147,13 @@
 }
 
 .dropdownItem:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--color-text-primary);
 }
 
 .dropdownItem.active {
-  background: rgba(16, 185, 129, 0.15);
-  color: var(--color-accent-teal);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-primary);
 }
 
 /* ==========================================================================
@@ -165,35 +163,31 @@
 .currentUserBanner {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: var(--space-3);
+  justify-content: space-between;
   padding: var(--space-3) var(--space-4);
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  border-radius: var(--radius-lg);
+  background: var(--color-bg-elevated);
+  border-radius: var(--radius-md);
   margin-bottom: var(--space-4);
 }
 
 .yourRank {
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 500;
   color: var(--color-text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
 }
 
 .rankBadge {
   font-family: var(--font-mono);
-  font-size: 1.125rem;
-  font-weight: 800;
-  color: var(--color-accent-teal);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--color-text-primary);
 }
 
 .yourPoints {
   font-family: var(--font-mono);
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-text-primary);
+  color: var(--color-text-secondary);
 }
 
 /* ==========================================================================
@@ -203,37 +197,32 @@
 .list {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 0; /* Removing gap for table-like feel */
 }
 
 .entry {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: var(--radius-md);
-  transition: all 0.2s ease;
+  gap: var(--space-3);
+  padding: 12px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background 0.2s ease;
+}
+
+.entry:last-child {
+  border-bottom: none;
 }
 
 .entry:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.02);
 }
 
 .entry.topThree {
-  background: rgba(255, 215, 0, 0.05);
-  border-color: rgba(255, 215, 0, 0.15);
-}
-
-.entry.topThree:first-child {
-  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.05) 100%);
-  border-color: rgba(255, 215, 0, 0.25);
+  /* Removed gold gradients for cleaner look */
 }
 
 .entry.currentUser {
-  background: rgba(16, 185, 129, 0.1);
-  border-color: rgba(16, 185, 129, 0.3);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 /* ==========================================================================
@@ -241,7 +230,7 @@
    ========================================================================== */
 
 .rankContainer {
-  width: 28px;
+  width: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -250,9 +239,9 @@
 
 .rank {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--color-text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
 }
 
 /* ==========================================================================
@@ -261,49 +250,28 @@
 
 .avatar {
   position: relative;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-accent-teal) 0%, var(--color-accent-teal-light, #34d399) 100%);
+  background: var(--color-bg-elevated);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  overflow: visible;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .avatarImage {
   width: 100%;
   height: 100%;
-  border-radius: 50%;
   object-fit: cover;
 }
 
 .avatarFallback {
   font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--color-text-primary);
-}
-
-.crownBadge {
-  position: absolute;
-  top: -8px;
-  right: -4px;
-  width: 18px;
-  height: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  animation: crownBounce 2s ease-in-out infinite;
-}
-
-@keyframes crownBounce {
-  0%, 100% {
-    transform: translateY(0) rotate(-10deg);
-  }
-  50% {
-    transform: translateY(-2px) rotate(10deg);
-  }
+  font-weight: 600;
+  color: var(--color-text-secondary);
 }
 
 /* ==========================================================================
@@ -315,7 +283,7 @@
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
 }
 
 .nameRow {
@@ -325,8 +293,8 @@
 }
 
 .displayName {
-  font-size: 0.8125rem;
-  font-weight: 600;
+  font-size: 0.9375rem;
+  font-weight: 500;
   color: var(--color-text-primary);
   white-space: nowrap;
   overflow: hidden;
@@ -334,27 +302,26 @@
 }
 
 .youBadge {
-  padding: 1px 5px;
-  background: var(--color-accent-teal);
-  color: white;
-  font-size: 0.5625rem;
-  font-weight: 700;
+  padding: 2px 6px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-secondary);
+  font-size: 0.625rem;
+  font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   flex-shrink: 0;
 }
 
 .titleBadge {
   display: inline-flex;
   align-self: flex-start;
-  padding: 1px 5px;
-  font-size: 0.5rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  border-radius: 3px;
-  border: 1px solid currentColor;
+  padding: 0;
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary);
+  font-weight: 400;
+  text-transform: none;
+  border: none;
 }
 
 /* ==========================================================================
@@ -366,25 +333,18 @@
   flex-direction: column;
   align-items: flex-end;
   flex-shrink: 0;
+  min-width: 60px;
 }
 
 .points {
   font-family: var(--font-mono);
-  font-size: 1rem;
-  font-weight: 800;
-  background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.85) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1.1;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
 }
 
 .pointsLabel {
-  font-size: 0.5625rem;
-  font-weight: 600;
-  color: var(--color-accent-teal);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  display: none; /* Hide 'pts' label for cleaner look */
 }
 
 /* ==========================================================================
@@ -421,35 +381,39 @@
 }
 
 /* ==========================================================================
-   INFO BUTTON (Circular, top-left)
+   INFO BUTTON (Inline with title)
    ========================================================================== */
 
-.infoButtonCircle {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: flex;
+.infoButtonInline {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 24px;
+  height: 24px;
+  padding: 0;
   background: transparent;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 50%;
   color: var(--color-text-tertiary);
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
+  margin-left: var(--space-1);
 }
 
-.infoButtonCircle:hover {
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.2);
-  color: var(--color-text-secondary);
+.infoButtonInline:hover {
+  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
-.infoButtonCircle svg {
-  width: 18px;
-  height: 18px;
+.infoButtonInline:active {
+  transform: scale(0.95);
+}
+
+.infoButtonInline svg {
+  width: 14px;
+  height: 14px;
 }
 
 /* ==========================================================================
@@ -464,18 +428,18 @@
   }
 
   .title {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
   }
 
   .entry {
-    padding: 12px 16px;
+    padding: 16px 12px;
   }
 
   .displayName {
-    font-size: 0.875rem;
+    font-size: 1rem;
   }
 
   .points {
-    font-size: 1.125rem;
+    font-size: 1rem;
   }
 }

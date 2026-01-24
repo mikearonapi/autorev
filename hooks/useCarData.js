@@ -12,7 +12,7 @@
  * @module hooks/useCarData
  */
 
-import { useQuery, useQueries } from '@tanstack/react-query';
+import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/lib/apiClient';
 
 // =============================================================================
@@ -225,6 +225,33 @@ export function useCarsList(options = {}) {
     queryKey: carKeys.lists(),
     queryFn: fetchCarsList,
     staleTime: CACHE_TIMES.FAST, // 5 min - car list updates when new cars are added
+    ...options,
+  });
+}
+
+/**
+ * Fetch a single car by slug from API
+ */
+async function fetchCarBySlug(slug) {
+  const data = await fetcher(`/api/cars/${slug}`);
+  return data.car || data || null;
+}
+
+/**
+ * Hook to fetch a single car by slug
+ * Useful as fallback when the full car list isn't available
+ * 
+ * @param {string} slug - Car slug
+ * @param {Object} options - React Query options
+ * @example
+ * const { data: car, isLoading } = useCarBySlug('audi-rs5-sportback');
+ */
+export function useCarBySlug(slug, options = {}) {
+  return useQuery({
+    queryKey: carKeys.detail(slug),
+    queryFn: () => fetchCarBySlug(slug),
+    enabled: !!slug,
+    staleTime: CACHE_TIMES.STANDARD, // 10 min
     ...options,
   });
 }
@@ -520,7 +547,6 @@ export function useCarEnrichedBundle(slug, options = {}) {
  * <Link onMouseEnter={() => prefetch('porsche-911-gt3')} />
  */
 export function usePrefetchCarData() {
-  const { useQueryClient } = require('@tanstack/react-query');
   const queryClient = useQueryClient();
 
   return (slug) => {

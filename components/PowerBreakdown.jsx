@@ -10,16 +10,17 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import { calculateSmartHpGain } from '@/lib/upgradeCalculator';
+import { calculateSmartHpGain } from '@/lib/performanceCalculator';
 import { getUpgradeByKey } from '@/lib/upgrades';
 import AskALButton from './AskALButton';
 import styles from './PowerBreakdown.module.css';
 
 // Color palette for donut segments (high contrast, distinct colors)
+// Segment colors - matching design system tokens
 const SEGMENT_COLORS = [
-  '#10b981', // Teal (primary - largest segment)
-  '#f59e0b', // Amber/Orange
-  '#3b82f6', // Blue
+  '#10b981', // var(--color-accent-teal) - Teal (primary - largest segment)
+  '#f59e0b', // var(--color-warning) - Amber/Orange
+  '#3b82f6', // var(--color-accent-blue) - Blue
   '#ec4899', // Pink
   '#8b5cf6', // Purple
   '#14b8a6', // Cyan

@@ -1,13 +1,14 @@
 /**
- * Insights Page
+ * Insights Page - Daily Briefing for Modification Enthusiasts
  * 
- * Personalized vehicle insights showing:
- * - Known issues for user's garage vehicles
- * - Maintenance due/upcoming
- * - Upgrade suggestions based on user preferences
- * - Value trends
+ * Personalized, mod-focused insights showing:
+ * - Performance recommendations (next mod, bottlenecks)
+ * - Platform-specific reliability concerns (relevant to modding)
+ * - Community standing (how your build compares)
+ * - Build progress toward goals
  * 
- * Design matches Dashboard layout for consistency.
+ * NOT for: Generic maintenance reminders, oil changes, registrations.
+ * Target audience: Car modification enthusiasts who want to build their cars.
  */
 
 import { Suspense } from 'react';
@@ -16,7 +17,7 @@ import styles from './page.module.css';
 
 export const metadata = {
   title: 'Insights | AutoRev',
-  description: 'Personalized insights for your garage vehicles - known issues, maintenance, upgrades, and more.',
+  description: 'Your daily briefing for vehicle modifications - performance recommendations, platform insights, and build progress.',
 };
 
 export default function InsightsPage() {

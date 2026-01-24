@@ -6,7 +6,8 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-lg);
-  background: var(--brand-bg-primary, #0d1b2a);
+  /* Transparent to show body gradient */
+  background: transparent;
 }
 
 .card {
@@ -20,7 +21,7 @@
   text-align: center;
 }
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .card {
     padding: var(--space-xl);
   }
@@ -93,7 +94,7 @@
   background: rgba(239, 68, 68, 0.15);
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: var(--radius-md);
-  color: #f87171;
+  color: var(--color-error, #f87171);
   font-size: var(--font-size-sm);
   margin-bottom: var(--space-lg);
   text-align: left;
@@ -160,7 +161,7 @@
 }
 
 .inputWrapper input.inputError {
-  border-color: #ef4444;
+  border-color: var(--color-error, #ef4444);
 }
 
 .togglePassword {
@@ -186,7 +187,7 @@
 /* Field Error */
 .fieldError {
   font-size: var(--font-size-xs);
-  color: #f87171;
+  color: var(--color-error, #f87171);
   margin-top: 2px;
 }
 

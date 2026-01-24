@@ -15,13 +15,15 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './page.module.css';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { MyGarageSubNav, VehicleInfoBar, HpGainStat } from '@/components/garage';
+import { MyGarageSubNav, GarageVehicleSelector } from '@/components/garage';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
+import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
-import { useCarsList } from '@/hooks/useCarData';
+import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
-import { getPerformanceProfile } from '@/lib/performance.js';
+import ShareBuildButton from '@/components/ShareBuildButton';
+import { getPerformanceProfile } from '@/lib/performanceCalculator';
 import { useAIChat } from '@/components/AIChatContext';
 import { Icons } from '@/components/ui/Icons';
 
@@ -142,44 +144,59 @@ function MyPerformanceContent() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const authModal = useAuthModal();
   const { builds, isLoading: buildsLoading, getBuildById } = useSavedBuilds();
+  const { vehicles } = useOwnedVehicles();
   const { openChatWithPrompt } = useAIChat();
   
   // Use cached cars data from React Query hook
   const { data: allCars = [], isLoading: carsLoading } = useCarsList();
   
-  // Get user's hero image for this car
-  const { heroImageUrl } = useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
-  
   // Get URL params
   const buildIdParam = searchParams.get('build');
   const carSlugParam = searchParams.get('car');
   
-  // Load build or car from URL params
+  // Fallback: fetch single car if not in list
+  const { data: fallbackCar, isLoading: fallbackLoading } = useCarBySlug(carSlugParam, {
+    enabled: !!carSlugParam && allCars.length === 0 && !carsLoading,
+  });
+  
+  // Get user's hero image for this car
+  const { heroImageUrl } = useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
+  
+  // Load build or car from URL params (with fallback support)
   useEffect(() => {
-    if (allCars.length === 0) return;
-    
-    if (buildIdParam && !buildsLoading) {
-      const build = builds.find(b => b.id === buildIdParam);
-      if (build) {
-        const car = allCars.find(c => c.slug === build.carSlug);
+    if (allCars.length > 0) {
+      if (buildIdParam && !buildsLoading) {
+        const build = builds.find(b => b.id === buildIdParam);
+        if (build) {
+          const car = allCars.find(c => c.slug === build.carSlug);
+          if (car) {
+            setSelectedCar(car);
+            setCurrentBuildId(build.id);
+          }
+        }
+      } else if (carSlugParam) {
+        const car = allCars.find(c => c.slug === carSlugParam);
         if (car) {
           setSelectedCar(car);
-          setCurrentBuildId(build.id);
         }
       }
-    } else if (carSlugParam) {
-      const car = allCars.find(c => c.slug === carSlugParam);
-      if (car) {
-        setSelectedCar(car);
-      }
+    } else if (fallbackCar && carSlugParam) {
+      // Fallback: use directly fetched car when list is unavailable
+      setSelectedCar(fallbackCar);
     }
-  }, [buildIdParam, carSlugParam, builds, buildsLoading, allCars]);
+  }, [buildIdParam, carSlugParam, builds, buildsLoading, allCars, fallbackCar]);
   
   // Get current build data
   const currentBuild = useMemo(() => {
     if (!currentBuildId) return null;
     return builds.find(b => b.id === currentBuildId);
   }, [currentBuildId, builds]);
+
+  // Owned vehicle for this car (SOURCE OF TRUTH for installed mods)
+  const userVehicle = useMemo(() => {
+    if (!selectedCar?.slug || !Array.isArray(vehicles)) return null;
+    return vehicles.find(v => v.matchedCarSlug === selectedCar.slug) || null;
+  }, [vehicles, selectedCar?.slug]);
   
   // Get selected upgrades from build
   // IMPORTANT: Normalize to string keys - getPerformanceProfile expects ['intake', 'stage1-tune', ...]
@@ -190,9 +207,20 @@ function MyPerformanceContent() {
     // Normalize: if upgrades are objects, extract keys; if strings, use directly
     return currentBuild.upgrades.map(u => typeof u === 'string' ? u : u.key).filter(Boolean);
   }, [currentBuild]);
+
+  // SOURCE OF TRUTH:
+  // - For OWNED vehicles, calculate from vehicle.installedModifications (what's actually installed)
+  // - Only fall back to build upgrades when there is no owned vehicle record / no installed mods
+  const calculationModules = useMemo(() => {
+    const installed = userVehicle?.installedModifications || [];
+    return installed.length > 0 ? installed : effectiveModules;
+  }, [userVehicle?.installedModifications, effectiveModules]);
   
-  // Calculate BASIC performance profile (used as baseline)
-  const basicProfile = useMemo(() => {
+  // SOURCE OF TRUTH: Calculate performance profile dynamically
+  // getPerformanceProfile internally uses calculateSmartHpGain for consistent HP calculations
+  // Never use stored values (currentBuild?.totalHpGain) - they can become stale
+  // See docs/SOURCE_OF_TRUTH.md Rule 8
+  const profile = useMemo(() => {
     if (!selectedCar) {
       return {
         stockMetrics: { hp: 0, zeroToSixty: 0, braking60To0: 0, lateralG: 0 },
@@ -202,35 +230,12 @@ function MyPerformanceContent() {
         selectedUpgrades: [],
       };
     }
-    return getPerformanceProfile(selectedCar, effectiveModules);
-  }, [selectedCar, effectiveModules]);
+    return getPerformanceProfile(selectedCar, calculationModules);
+  }, [selectedCar, calculationModules]);
   
-  // Use SAVED HP values from the build (includes advanced calculations if used)
-  // This ensures Performance page shows the same values as when the build was saved
-  const profile = useMemo(() => {
-    const stockHp = selectedCar?.hp || basicProfile.stockMetrics.hp || 0;
-    
-    // If build has saved finalHp and totalHpGain, use those (more accurate)
-    if (currentBuild?.finalHp && currentBuild?.totalHpGain !== undefined) {
-      return {
-        ...basicProfile,
-        stockMetrics: {
-          ...basicProfile.stockMetrics,
-          hp: stockHp,
-        },
-        upgradedMetrics: {
-          ...basicProfile.upgradedMetrics,
-          hp: currentBuild.finalHp,
-        },
-      };
-    }
-    
-    return basicProfile;
-  }, [currentBuild, selectedCar, basicProfile]);
-  
-  // Use saved HP gain if available, otherwise calculate
-  const hpGain = currentBuild?.totalHpGain ?? (profile.upgradedMetrics.hp - profile.stockMetrics.hp);
-  const showUpgrade = effectiveModules.length > 0 || hpGain > 0;
+  // HP gain is ALWAYS calculated dynamically - never use stored values
+  const hpGain = profile.upgradedMetrics.hp - profile.stockMetrics.hp;
+  const showUpgrade = calculationModules.length > 0 || hpGain > 0;
   
   const handleBack = () => {
     router.push('/garage');
@@ -241,7 +246,7 @@ function MyPerformanceContent() {
     if (!selectedCar) return;
     
     const carName = selectedCar.name;
-    const upgradeCount = effectiveModules.length;
+    const upgradeCount = calculationModules.length;
     const hasUpgrades = upgradeCount > 0 || hpGain > 0;
     
     // Detailed prompts sent to AL
@@ -274,7 +279,7 @@ function MyPerformanceContent() {
       upgradeCount,
       hpGain,
     }, displayMessage);
-  }, [selectedCar, effectiveModules, hpGain, openChatWithPrompt]);
+  }, [selectedCar, calculationModules, hpGain, openChatWithPrompt]);
   
   // Loading state
   const isLoading = authLoading || buildsLoading || carsLoading;
@@ -313,14 +318,21 @@ function MyPerformanceContent() {
         carSlug={selectedCar.slug}
         buildId={currentBuildId}
         onBack={handleBack}
+        rightAction={
+          isAuthenticated && currentBuildId && (
+            <ShareBuildButton
+              build={currentBuild}
+              vehicle={userVehicle}
+              car={selectedCar}
+              existingImages={currentBuild?.uploadedImages || []}
+            />
+          )
+        }
       />
       
-      {/* Vehicle Info Bar */}
-      <VehicleInfoBar
-        car={selectedCar}
-        buildName={currentBuild?.name}
-        stat={<HpGainStat hpGain={hpGain} totalHp={currentBuild?.finalHp || profile.upgradedMetrics.hp} />}
-        heroImageUrl={heroImageUrl}
+      <GarageVehicleSelector 
+        selectedCarSlug={selectedCar.slug}
+        buildId={currentBuildId}
       />
       
       {/* Performance Content - EXACT same layout as UpgradeCenter */}
@@ -407,6 +419,24 @@ function MyPerformanceContent() {
           </section>
         )}
       </div>
+      
+      {/* Continue to Parts CTA - shown when upgrades are configured */}
+      {showUpgrade && (
+        <div className={styles.continueCtaContainer}>
+          <Link 
+            href={currentBuildId ? `/garage/my-parts?build=${currentBuildId}` : `/garage/my-parts?car=${selectedCar.slug}`}
+            className={styles.continueCta}
+          >
+            <div className={styles.ctaContent}>
+              <span className={styles.ctaTitle}>Ready to source parts?</span>
+            </div>
+            <div className={styles.ctaAction}>
+              <span>Continue to Parts</span>
+              <Icons.chevronRight size={18} />
+            </div>
+          </Link>
+        </div>
+      )}
       
       <AuthModal {...authModal.props} />
     </div>

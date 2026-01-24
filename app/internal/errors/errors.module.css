@@ -326,7 +326,7 @@
 }
 
 .bulkReviewButton:hover:not(:disabled) {
-  background: #d97706;
+  background: var(--color-accent-amber, #d97706);
 }
 
 .bulkResolveButton:disabled,
@@ -610,7 +610,7 @@
 }
 
 /* Responsive */
-@media (max-width: 1024px) {
+@media (min-width: 1025px) {
   .container {
     padding: 1.5rem;
   }
@@ -624,7 +624,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .container {
     padding: 1rem;
   }
@@ -669,7 +669,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .statsGrid {
     grid-template-columns: 1fr;
   }

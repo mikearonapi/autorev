@@ -149,11 +149,12 @@ function ConfettiEffect() {
 }
 
 // Confetti colors (brand colors + festive)
+// Confetti colors - matching design system tokens
 const CONFETTI_COLORS = [
-  '#d4ff00', // lime
-  '#10b981', // teal
-  '#3b82f6', // blue
-  '#f59e0b', // amber
+  '#d4ff00', // var(--color-accent-lime)
+  '#10b981', // var(--color-accent-teal)
+  '#3b82f6', // var(--color-accent-blue)
+  '#f59e0b', // var(--color-warning)
   '#ec4899', // pink
   '#8b5cf6', // purple
   '#22d3ee', // cyan

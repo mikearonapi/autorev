@@ -147,6 +147,50 @@ export async function middleware(request) {
     return NextResponse.redirect(url);
   }
 
+  // =========================================================================
+  // CONTENT SECURITY POLICY (Enforcing Mode)
+  // 
+  // This CSP actively blocks content that violates the policy.
+  // Last updated: January 2026 (promoted from report-only after monitoring)
+  // 
+  // If you encounter CSP violations:
+  // 1. Check browser console for blocked resources
+  // 2. Add the trusted domain to the appropriate directive below
+  // 3. Test thoroughly before deploying
+  // =========================================================================
+  const cspDirectives = [
+    // Default to self
+    "default-src 'self'",
+    // Scripts: self, inline (for React), eval (for dev), plus trusted domains
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://va.vercel-scripts.com https://www.googletagmanager.com https://www.google-analytics.com https://*.posthog.com",
+    // Styles: self and inline (for CSS-in-JS and dynamic styles)
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+    // Images: self, data URIs, blob, plus trusted image hosts
+    "img-src 'self' data: blob: https://*.supabase.co https://*.blob.vercel-storage.com https://*.googleusercontent.com https://images.unsplash.com https://i.ytimg.com https://www.google-analytics.com",
+    // Fonts: self and Google Fonts
+    "font-src 'self' https://fonts.gstatic.com data:",
+    // Connect: API calls to self and external services
+    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.stripe.com https://api.anthropic.com https://api.openai.com https://va.vercel-scripts.com https://www.google-analytics.com https://*.vercel-insights.com https://*.posthog.com https://*.sentry.io",
+    // Frames: Stripe checkout, YouTube embeds
+    "frame-src 'self' https://js.stripe.com https://www.youtube.com https://youtube.com",
+    // Object: none (no Flash/plugins)
+    "object-src 'none'",
+    // Base URI: self only
+    "base-uri 'self'",
+    // Form action: self only
+    "form-action 'self'",
+    // Frame ancestors: none (clickjacking protection, duplicates X-Frame-Options)
+    "frame-ancestors 'none'",
+    // Upgrade insecure requests
+    "upgrade-insecure-requests",
+  ].join('; ');
+
+  // CSP is now in enforcing mode - violations will be blocked
+  // Only apply CSP in production to avoid issues with dev server HMR
+  if (process.env.NODE_ENV === 'production') {
+    supabaseResponse.headers.set('Content-Security-Policy', cspDirectives);
+  }
+
   return supabaseResponse;
 }
 

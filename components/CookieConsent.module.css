@@ -1,0 +1,227 @@
+/**
+ * Cookie Consent Banner Styles
+ */
+
+.overlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  padding: 16px;
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+
+.banner {
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: var(--color-bg-elevated, #1a2332);
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.header {
+  margin-bottom: 16px;
+}
+
+.title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0 0 8px;
+}
+
+.description {
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-text-secondary, #94a3b8);
+  margin: 0;
+}
+
+/* Cookie options */
+.details {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px 0;
+  border-top: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
+  border-bottom: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
+  margin-bottom: 16px;
+}
+
+.cookieOption {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+}
+
+.cookieOption:has(input:disabled) {
+  cursor: default;
+}
+
+.optionInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.optionName {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-primary, #ffffff);
+}
+
+.optionDescription {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary, #64748b);
+  line-height: 1.4;
+}
+
+.checkbox {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  accent-color: var(--color-accent-lime, #d4ff00);
+  cursor: pointer;
+}
+
+.checkbox:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.mainActions {
+  display: flex;
+  gap: 8px;
+}
+
+.manageButton {
+  background: transparent;
+  border: none;
+  color: var(--color-text-secondary, #94a3b8);
+  font-size: 0.875rem;
+  padding: 8px 12px;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.manageButton:hover {
+  color: var(--color-text-primary, #ffffff);
+}
+
+.manageButton:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.rejectButton,
+.acceptButton {
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 44px; /* Touch target */
+}
+
+.rejectButton {
+  background-color: transparent;
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.2));
+  color: var(--color-text-primary, #ffffff);
+}
+
+.rejectButton:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.acceptButton {
+  background-color: var(--color-accent-lime, #d4ff00);
+  color: var(--color-bg-base, #0d1b2a);
+}
+
+.acceptButton:hover {
+  background-color: var(--color-accent-lime-dark, #bfe600);
+}
+
+.rejectButton:focus-visible,
+.acceptButton:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
+}
+
+/* Footer */
+.footer {
+  margin-top: 12px;
+  text-align: center;
+}
+
+.privacyLink {
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary, #64748b);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.privacyLink:hover {
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.privacyLink:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Responsive */
+@media (min-width: 481px) {
+  .banner {
+    border-radius: 12px 12px 0 0;
+    margin-bottom: -16px;
+  }
+  
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .manageButton {
+    order: 2;
+    text-align: center;
+  }
+  
+  .mainActions {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .rejectButton,
+  .acceptButton {
+    width: 100%;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .rejectButton,
+  .acceptButton {
+    transition: none;
+  }
+}

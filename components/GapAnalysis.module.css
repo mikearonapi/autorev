@@ -3,9 +3,9 @@
    Feedback loop component showing predicted vs actual gaps
    
    Brand Colors:
-   - Teal (#10b981): Positive/exceeding
-   - Blue (#3b82f6): Neutral/on-target
-   - Amber (#f59e0b): Warnings/underperforming
+   - Teal (var(--color-accent-teal, #10b981)): Positive/exceeding
+   - Blue (var(--color-accent-blue, #3b82f6)): Neutral/on-target
+   - Amber (var(--color-accent-amber, #f59e0b)): Warnings/underperforming
    =========================================== */
 
 .gapAnalysis {
@@ -206,7 +206,7 @@
    RESPONSIVE - Mobile
    =========================================== */
 
-@media (max-width: 600px) {
+@media (min-width: 601px) {
   .gapAnalysis {
     padding: 16px;
   }

@@ -184,9 +184,9 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
 
         {/* Step Content - Fixed height container */}
         <div className={`${styles.content} ${isAnimating ? (slideDirection === 'next' ? styles.slideOutLeft : styles.slideOutRight) : styles.slideIn}`}>
-          {/* Icon - centered with solid navy background */}
+          {/* Icon - centered */}
           {step.icon && (
-            <div className={styles.iconWrapper} style={{ background: '#0d1b2a' }}>
+            <div className={styles.iconWrapper}>
               {step.icon}
             </div>
           )}

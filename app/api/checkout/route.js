@@ -17,9 +17,13 @@ import {
   AL_CREDIT_PACKS,
   DONATION_PRESETS,
   DONATION_PRODUCT_ID,
+  getPriceIdForTier,
+  getTierPricing,
 } from '@/lib/stripe';
 import { logServerError } from '@/lib/serverErrorLogger';
 import { errors } from '@/lib/apiErrors';
+import { rateLimit } from '@/lib/rateLimit';
+import { checkTrialEligibility } from '@/lib/fraudPreventionService';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 
@@ -57,6 +61,10 @@ async function getOrCreateStripeCustomer(supabase, user) {
 }
 
 export async function POST(request) {
+  // Rate limit: 5 requests per minute for checkout
+  const rateLimited = rateLimit(request, 'checkout');
+  if (rateLimited) return rateLimited;
+
   try {
     // Support both cookie and Bearer token auth
     const bearerToken = getBearerToken(request);
@@ -81,7 +89,7 @@ export async function POST(request) {
     }
 
     const body = await request.json();
-    const { type, tier, pack, amount, donationAmount } = body;
+    const { type, tier, pack, amount, donationAmount, interval = 'month' } = body;
 
     // Get or create Stripe customer
     const customerId = await getOrCreateStripeCustomer(supabase, user);
@@ -98,40 +106,182 @@ export async function POST(request) {
     };
 
     // ==========================================================================
-    // SUBSCRIPTION CHECKOUT
+    // SUBSCRIPTION CHECKOUT / UPGRADE
     // ==========================================================================
     if (type === 'subscription') {
       const tierConfig = SUBSCRIPTION_TIERS[tier];
       
-      if (!tierConfig || !tierConfig.priceId) {
+      if (!tierConfig) {
         return NextResponse.json(
           { error: 'Invalid subscription tier' },
           { status: 400 }
         );
       }
 
+      // Get the correct price ID based on interval (month or year)
+      const billingInterval = interval === 'year' ? 'year' : 'month';
+      const priceId = getPriceIdForTier(tier, billingInterval);
+      
+      if (!priceId) {
+        return NextResponse.json(
+          { error: `No ${billingInterval}ly pricing available for this tier` },
+          { status: 400 }
+        );
+      }
+
+      // Get pricing details for metadata
+      const pricingDetails = getTierPricing(tier, billingInterval);
+
+      // Check if user has an existing active subscription
+      const { data: profile } = await supabase
+        .from('user_profiles')
+        .select('stripe_subscription_id, stripe_subscription_status, subscription_tier')
+        .eq('id', user.id)
+        .single();
+
+      const hasActiveSubscription = profile?.stripe_subscription_id && 
+        ['active', 'trialing'].includes(profile?.stripe_subscription_status);
+
+      // ==========================================================================
+      // UPGRADE EXISTING SUBSCRIPTION (with proration)
+      // ==========================================================================
+      if (hasActiveSubscription) {
+        try {
+          // Get the current subscription from Stripe
+          const currentSubscription = await stripe.subscriptions.retrieve(
+            profile.stripe_subscription_id
+          );
+
+          // Get the subscription item ID (first item)
+          const subscriptionItemId = currentSubscription.items.data[0]?.id;
+          
+          if (!subscriptionItemId) {
+            throw new Error('No subscription item found');
+          }
+
+          // Check if this is actually an upgrade (not same tier or downgrade)
+          const TIER_LEVELS = { free: 0, collector: 1, tuner: 2 };
+          const currentLevel = TIER_LEVELS[profile.subscription_tier] || 0;
+          const targetLevel = TIER_LEVELS[tier] || 0;
+
+          if (targetLevel <= currentLevel) {
+            return NextResponse.json(
+              { 
+                error: 'To downgrade or manage your subscription, please use the customer portal.',
+                redirectToPortal: true,
+              },
+              { status: 400 }
+            );
+          }
+
+          // Update the subscription with proration
+          const updatedSubscription = await stripe.subscriptions.update(
+            profile.stripe_subscription_id,
+            {
+              items: [{
+                id: subscriptionItemId,
+                price: priceId,
+              }],
+              // 'create_prorations' - Credit/debit applied to next invoice
+              // 'always_invoice' - Invoice immediately
+              // 'none' - No proration
+              proration_behavior: 'create_prorations',
+              metadata: {
+                autorev_user_id: user.id,
+                tier,
+                interval: billingInterval,
+                upgrade_from: profile.subscription_tier,
+              },
+            }
+          );
+
+          console.log('[Checkout] Subscription upgraded:', {
+            userId: user.id,
+            from: profile.subscription_tier,
+            to: tier,
+            subscriptionId: updatedSubscription.id,
+          });
+
+          // Return success with upgrade details instead of redirect URL
+          return NextResponse.json({
+            success: true,
+            type: 'upgrade',
+            message: `Successfully upgraded to ${tier}. Proration will be applied on your next invoice.`,
+            subscription: {
+              id: updatedSubscription.id,
+              status: updatedSubscription.status,
+              tier,
+            },
+          });
+        } catch (stripeError) {
+          console.error('[Checkout] Error upgrading subscription:', stripeError);
+          
+          // If upgrade fails, fall back to checkout session
+          // This handles edge cases like subscription in bad state
+        }
+      }
+
+      // ==========================================================================
+      // NEW SUBSCRIPTION (no existing subscription or upgrade failed)
+      // ==========================================================================
+      // Configure trial period (default 7 days, configurable via env var)
+      const trialDays = parseInt(process.env.STRIPE_TRIAL_DAYS || '7', 10);
+
+      // Check trial eligibility (fraud prevention)
+      const productId = tierConfig.productId;
+      if (productId && trialDays > 0) {
+        // Get request info for fraud prevention
+        const deviceFingerprint = body.deviceFingerprint;
+        const ipAddress = request.headers.get('x-forwarded-for')?.split(',')[0] || 
+                          request.headers.get('x-real-ip');
+
+        const eligibility = await checkTrialEligibility(
+          user.id,
+          productId,
+          {
+            deviceFingerprint,
+            email: user.email,
+            ipAddress,
+          }
+        );
+
+        if (!eligibility.eligible) {
+          console.log('[Checkout] Trial not eligible:', eligibility.reason, eligibility.flags);
+          // Still allow checkout, but without trial
+          // User will be charged immediately
+        }
+      }
+
       sessionConfig = {
         ...sessionConfig,
         mode: 'subscription',
         line_items: [{
-          price: tierConfig.priceId,
+          price: priceId,
           quantity: 1,
         }],
         subscription_data: {
+          // Only apply trial if user doesn't have an existing subscription
+          ...(hasActiveSubscription ? {} : { trial_period_days: trialDays }),
+          trial_settings: {
+            end_behavior: {
+              // 'pause' keeps subscription but blocks access until payment
+              // 'cancel' ends subscription immediately
+              // 'create_invoice' bills immediately (no grace period)
+              missing_payment_method: 'pause',
+            },
+          },
           metadata: {
             autorev_user_id: user.id,
             tier,
+            interval: billingInterval,
           },
         },
         // Allow users to manage their subscription
         billing_address_collection: 'auto',
-        // Trial period (uncomment to enable)
-        // subscription_data: {
-        //   trial_period_days: 7,
-        // },
       };
 
       sessionConfig.metadata.tier = tier;
+      sessionConfig.metadata.interval = billingInterval;
     }
 
     // ==========================================================================

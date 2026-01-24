@@ -144,27 +144,36 @@ export default function ALPreferencesPanel({
     });
   }, []);
 
-  // Save preferences
+  // Save preferences - optimistic UI pattern
+  // Immediately updates parent and closes, then saves in background
   const handleSave = useCallback(async () => {
     setError(null);
     
+    // Store previous preferences for potential rollback
+    const previousPreferences = { ...preferences };
+    
+    // Optimistic: Immediately notify parent and close
+    if (onPreferencesChange) {
+      onPreferencesChange(preferences);
+    }
+    setHasChanges(false);
+    
+    // Close panel immediately (don't wait for API)
+    if (onClose) {
+      onClose();
+    }
+    
+    // Save in background
     try {
       await updatePreferencesMutation.mutateAsync(preferences);
-      
-      setHasChanges(false);
-      
-      // Notify parent
-      if (onPreferencesChange) {
-        onPreferencesChange(preferences);
-      }
-      
-      // Auto-close after save
-      if (onClose) {
-        setTimeout(() => onClose(), 300);
-      }
     } catch (err) {
       console.error('Failed to save AL preferences:', err);
-      setError('Failed to save preferences. Please try again.');
+      // Revert parent to previous preferences on error
+      if (onPreferencesChange) {
+        onPreferencesChange(previousPreferences);
+      }
+      // Note: Panel is already closed, so we can't show inline error
+      // The mutation error will be caught by React Query and can be displayed elsewhere
     }
   }, [preferences, onPreferencesChange, onClose, updatePreferencesMutation]);
 
@@ -262,7 +271,7 @@ export default function ALPreferencesPanel({
                       </button>
                     ) : (
                       <span className={styles.tierBadge}>
-                        {toggle.tier === 'collector' ? 'Collector+' : 'Tuner+'}
+                        {toggle.tier === 'collector' ? 'Enthusiast+' : 'Tuner+'}
                       </span>
                     )}
                   </div>

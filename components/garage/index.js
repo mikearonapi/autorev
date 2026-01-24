@@ -23,6 +23,9 @@ export { default as VehicleHealthCard } from './VehicleHealthCard';
 // Sub-navigation for garage pages
 export { default as MyGarageSubNav } from './MyGarageSubNav';
 
+// Vehicle selector (matches Insights page design)
+export { default as GarageVehicleSelector } from './GarageVehicleSelector';
+
 // Vehicle info bar (below navigation, at top of content)
 export { 
   default as VehicleInfoBar,

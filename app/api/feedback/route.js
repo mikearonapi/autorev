@@ -3,6 +3,8 @@ import { notifyFeedback } from '@/lib/discord';
 import { notifyAggregatedError } from '@/lib/discord';
 import { resolveCarId } from '@/lib/carResolver';
 import { errors } from '@/lib/apiErrors';
+import { rateLimit } from '@/lib/rateLimit';
+import { feedbackSchema, validateWithSchema, validationErrorResponse } from '@/lib/schemas';
 
 /**
  * Feedback API - Handles TWO separate concerns:
@@ -15,8 +17,19 @@ import { errors } from '@/lib/apiErrors';
  *    - NOT stored in user_feedback (clean separation)
  */
 export async function POST(request) {
+  // Rate limit: 5 requests per minute for form submissions
+  const rateLimited = rateLimit(request, 'form');
+  if (rateLimited) return rateLimited;
+
   try {
     const body = await request.json();
+    
+    // Validate input with Zod schema
+    const validation = validateWithSchema(feedbackSchema, body);
+    if (!validation.success) {
+      return validationErrorResponse(validation.errors);
+    }
+    
     const {
       feedback_type,
       category,
@@ -42,7 +55,7 @@ export async function POST(request) {
       // Screenshot fields
       screenshot_url,
       screenshot_metadata,
-    } = body;
+    } = validation.data;
 
     const normalizedMessage = message || body?.errorMetadata?.errorMessage;
     const categoryToInsert = category || body?.category || null;

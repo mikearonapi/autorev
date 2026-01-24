@@ -363,7 +363,7 @@
 }
 
 /* Mobile Responsive */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .dropzone {
     padding: 1.5rem 1rem;
   }

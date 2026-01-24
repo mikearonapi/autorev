@@ -1,0 +1,190 @@
+/* WeeklyPointsSummary.module.css - Simplified points hero card */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4, 16px);
+  padding: var(--space-5, 20px) var(--space-4, 16px);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-xl, 16px);
+  width: 100%;
+}
+
+/* Main row - info, hero points, streak */
+.mainRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: var(--space-3, 12px);
+}
+
+/* Info button */
+.infoButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  color: var(--color-text-tertiary, #64748b);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.infoButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.infoButton:active {
+  transform: scale(0.95);
+}
+
+/* Hero section - big points number */
+.heroSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  flex: 1;
+}
+
+.heroValue {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--text-display, 48px);
+  font-weight: 800;
+  color: var(--color-text-primary, #ffffff);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.heroLabel {
+  font-size: var(--text-xs, 12px);
+  font-weight: 500;
+  color: var(--color-text-tertiary, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Streak badge */
+.streakBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  border-radius: var(--radius-full, 9999px);
+  flex-shrink: 0;
+}
+
+.streakBadge svg {
+  color: var(--color-accent-amber, #f59e0b);
+  flex-shrink: 0;
+}
+
+.streakCount {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--text-sm, 14px);
+  font-weight: 700;
+  color: var(--color-text-primary, #ffffff);
+  line-height: 1;
+}
+
+.streakUnit {
+  font-size: var(--text-2xs, 10px);
+  font-weight: 500;
+  color: var(--color-text-tertiary, #64748b);
+  text-transform: lowercase;
+}
+
+.streakPlaceholder {
+  width: 32px;
+  flex-shrink: 0;
+}
+
+/* Stats row - weekly/monthly/lifetime */
+.statsRow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3, 12px);
+}
+
+.stat {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.statValue {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: var(--text-body, 16px);
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+}
+
+.statLabel {
+  font-size: var(--text-xs, 12px);
+  font-weight: 500;
+  color: var(--color-text-tertiary, #64748b);
+}
+
+.statDivider {
+  color: var(--color-text-tertiary, #64748b);
+  font-size: var(--text-body, 16px);
+  opacity: 0.5;
+}
+
+/* Category legend */
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-4, 16px);
+  flex-wrap: wrap;
+  padding-top: var(--space-2, 8px);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  width: 100%;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legendDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.legendLabel {
+  font-size: var(--text-xs, 12px);
+  font-weight: 500;
+  color: var(--color-text-secondary, #94a3b8);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Responsive adjustments */
+@media (max-width: 374px) {
+  .heroValue {
+    font-size: 40px;
+  }
+  
+  .statsRow {
+    gap: var(--space-2, 8px);
+  }
+  
+  .legend {
+    gap: var(--space-3, 12px);
+  }
+}

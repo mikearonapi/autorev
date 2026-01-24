@@ -103,7 +103,7 @@
   letter-spacing: 0.5px;
 }
 
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .header {
     padding: var(--space-md);
   }
@@ -252,7 +252,7 @@
 }
 
 /* Mobile: 1 column */
-@media (max-width: 479px) {
+@media (min-width: 480px) {
   .prioritiesGrid {
     grid-template-columns: 1fr;
     gap: 6px;
@@ -833,7 +833,7 @@
   font-size: var(--text-xs);
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .recommendationsGrid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -845,7 +845,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .recommendationsGrid {
     gap: 6px;
   }
@@ -992,7 +992,7 @@
   color: var(--tier-entry);
 }
 
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .exploreCategoryBtn {
     padding: 5px 10px;
     font-size: var(--text-2xs);
@@ -1336,7 +1336,7 @@
   font-weight: 600;
   padding: 2px 6px;
   border-radius: 3px;
-  background: linear-gradient(135deg, #047857 0%, #059669 100%);
+  background: linear-gradient(135deg, var(--color-accent-teal, #047857) 0%, var(--color-accent-teal, #059669) 100%);
   color: white;
   letter-spacing: 0.3px;
   text-transform: uppercase;
@@ -1578,7 +1578,7 @@
 /* --------------------------------------------------------------------------
    Mobile Cards View - Touch-Optimized
    -------------------------------------------------------------------------- */
-@media (max-width: 900px) {
+@media (min-width: 901px) {
   .section {
     margin-bottom: var(--space-lg);
   }
@@ -1747,7 +1747,7 @@
 }
 
 /* Extra small mobile */
-@media (max-width: 374px) {
+@media (min-width: 375px) {
   .tableRow {
     padding: var(--space-sm);
   }
@@ -1960,7 +1960,7 @@
   align-items: center;
   gap: 0.375rem;
   padding: 0.5rem 1rem;
-  background: linear-gradient(135deg, #047857 0%, #059669 100%);
+  background: linear-gradient(135deg, var(--color-accent-teal, #047857) 0%, var(--color-accent-teal, #059669) 100%);
   color: white;
   border-radius: 8px;
   font-size: 0.8rem;
@@ -1970,7 +1970,7 @@
 }
 
 .expertLinkButton:hover {
-  background: linear-gradient(135deg, #059669 0%, var(--brand-teal) 100%);
+  background: linear-gradient(135deg, var(--color-accent-teal, #059669) 0%, var(--brand-teal) 100%);
   transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(4, 120, 87, 0.3);
 }
@@ -1985,7 +1985,7 @@
   align-items: center;
 }
 
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .expandedActions {
     flex-direction: column;
     align-items: stretch;

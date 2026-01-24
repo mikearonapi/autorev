@@ -19,17 +19,17 @@ import styles from './PerformanceHub.module.css';
 import ScoringInfo from './ScoringInfo';
 import UpgradeDetailModal from './UpgradeDetailModal';
 import {
-  getPerformanceProfile,
-  getScoreComparison,
   getAvailableUpgrades,
   calculateTotalCost,
   getUpgradeSummary,
   performanceCategories,
 } from '@/lib/performance.js';
 import { 
+  getPerformanceProfile,
+  getScoreComparison,
   calculateSmartHpGain, 
   getConflictSummary,
-} from '@/lib/upgradeCalculator.js';
+} from '@/lib/performanceCalculator';
 import { getUpgradeByKey } from '@/lib/upgrades.js';
 import { useAppConfig } from '@/lib/hooks/useAppConfig.js';
 import { 

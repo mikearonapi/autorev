@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import styles from './EventCard.module.css';
 import SaveEventButton from './SaveEventButton';
+import { getMonthAbbrev, getDayOfMonth, getWeekdayAbbrev } from '@/lib/dateUtils';
 
 // Skeleton component for loading state
 export function EventCardSkeleton() {
@@ -181,11 +182,10 @@ export default function EventCard({
   const location = venue_name || `${city}, ${state}`;
   const cost = is_free ? 'Free' : cost_text || '';
   
-  // Parse date for display
-  const eventDate = new Date(start_date + 'T00:00:00');
-  const dateMonth = eventDate.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
-  const dateDay = eventDate.getDate();
-  const dateWeekday = eventDate.toLocaleDateString('en-US', { weekday: 'short' });
+  // Parse date for display using centralized dateUtils
+  const dateMonth = getMonthAbbrev(start_date);
+  const dateDay = getDayOfMonth(start_date);
+  const dateWeekday = getWeekdayAbbrev(start_date);
 
   // Get first brand affinity if any
   const brandAffinity = car_affinities?.find(a => a.brand);

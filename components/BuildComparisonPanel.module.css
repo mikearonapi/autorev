@@ -212,7 +212,7 @@
 }
 
 /* Responsive */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .hpBlock {
     flex-direction: column;
     gap: var(--space-1, 4px);

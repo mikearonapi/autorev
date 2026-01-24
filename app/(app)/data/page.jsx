@@ -15,7 +15,8 @@
  *    - Future: OBD2 data, telemetry uploads, acceleration runs
  */
 
-import { useState, useMemo, useEffect, useRef, useCallback, Suspense } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback, Suspense, useLayoutEffect } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -24,27 +25,19 @@ import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { useCarsList } from '@/hooks/useCarData';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
-import VehicleSelectModal from '@/components/VehicleSelectModal';
 import VirtualDynoChart from '@/components/VirtualDynoChart';
 import LapTimeEstimator from '@/components/LapTimeEstimator';
 import CalculatedPerformance from '@/components/CalculatedPerformance';
 import PowerBreakdown from '@/components/PowerBreakdown';
-import PowerLimitsAdvisory from '@/components/PowerLimitsAdvisory';
-import HandlingBalanceIndicator from '@/components/HandlingBalanceIndicator';
-import AeroBalanceChart from '@/components/AeroBalanceChart';
 import DynoLogModal from '@/components/DynoLogModal';
 import TrackTimeLogModal from '@/components/TrackTimeLogModal';
-// New Analysis Components
-import BuildProgressAnalysis from '@/components/BuildProgressAnalysis';
-import KnownIssuesAlert from '@/components/KnownIssuesAlert';
-import BuildValueAnalysis from '@/components/BuildValueAnalysis';
-import PlatformInsights from '@/components/PlatformInsights';
-import NextUpgradeRecommendation from '@/components/NextUpgradeRecommendation';
-import { useTuningProfile } from '@/hooks/useTuningProfile';
+// NOTE: Analysis components (BuildProgressAnalysis, BuildValueAnalysis, PlatformInsights, 
+// NextUpgradeRecommendation) moved to Insights page (Jan 2026)
 import { useCarImages } from '@/hooks/useCarImages';
 import { useUserTrackTimes, useAddTrackTime, useDynoResults } from '@/hooks/useUserData';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import OnboardingPopup, { dataOnboardingSteps } from '@/components/OnboardingPopup';
+import { calculateAllModificationGains } from '@/lib/performanceCalculator';
 import styles from './page.module.css';
 
 // Icons
@@ -98,11 +91,17 @@ const GaugeIcon = () => (
   </svg>
 );
 
+const CheckIcon = ({ size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="20 6 9 17 4 12"/>
+  </svg>
+);
+
 // Data filter categories - focused on what's available now
+// NOTE: Analysis tab moved to Insights page (Jan 2026)
 const DATA_CATEGORIES = [
-  { id: 'power', label: 'Power' },          // Virtual Dyno, Calculated Performance, Power Breakdown
+  { id: 'power', label: 'Dyno' },           // Virtual Dyno, Calculated Performance, Power Breakdown
   { id: 'track', label: 'Track' },          // Lap Time Estimator, Track Sessions
-  { id: 'analysis', label: 'Analysis' },    // Power Limits, Handling, Aero
 ];
 
 function DataPageContent() {
@@ -129,9 +128,11 @@ function DataPageContent() {
   
   const [activeFilter, setActiveFilter] = useState(filterFromUrl || 'power');
   const [showVehicleDropdown, setShowVehicleDropdown] = useState(false);
-  const [selectedCar, setSelectedCar] = useState(null);
+  // NOTE: selectedCar state removed - tuning profile now fetched on Insights page
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
+  const [mounted, setMounted] = useState(false);
   const dropdownRef = useRef(null);
-  const modalRef = useRef(null);
+  const buttonRef = useRef(null);
   
   // Dyno logging state
   const [showDynoModal, setShowDynoModal] = useState(false);
@@ -227,33 +228,52 @@ function DataPageContent() {
     setShowVehicleDropdown(false);
   }, [router]);
   
-  // Close dropdown when clicking/tapping outside
-  // Uses both mousedown and touchstart for mobile compatibility
-  // NOTE: Must check both dropdownRef AND modalRef since modal is portalled to body
+  // Mark as mounted for portal rendering
   useEffect(() => {
-    function handleClickOutside(event) {
-      const isInsideDropdown = dropdownRef.current && dropdownRef.current.contains(event.target);
-      const isInsideModal = modalRef.current && modalRef.current.contains(event.target);
-      
-      // Only close if click is outside BOTH the dropdown trigger AND the modal
-      if (!isInsideDropdown && !isInsideModal) {
+    setMounted(true);
+  }, []);
+  
+  // Position dropdown below button
+  useLayoutEffect(() => {
+    if (showVehicleDropdown && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownPosition({ 
+        top: rect.bottom + 6, 
+        left: rect.left, 
+        width: rect.width 
+      });
+    }
+  }, [showVehicleDropdown]);
+  
+  // Close dropdown when clicking/tapping outside
+  useEffect(() => {
+    if (!showVehicleDropdown) return;
+    
+    const handleClickOutside = (e) => {
+      const dropdown = document.getElementById('data-vehicle-selector-dropdown');
+      if (
+        dropdownRef.current && 
+        !dropdownRef.current.contains(e.target) && 
+        (!dropdown || !dropdown.contains(e.target))
+      ) {
         setShowVehicleDropdown(false);
       }
-    }
+    };
     
-    if (showVehicleDropdown) {
-      // Use timeout to prevent immediate close on the same click that opened it
-      const timeoutId = setTimeout(() => {
-        document.addEventListener('mousedown', handleClickOutside);
-        document.addEventListener('touchstart', handleClickOutside, { passive: true });
-      }, 10);
-      
-      return () => {
-        clearTimeout(timeoutId);
-        document.removeEventListener('mousedown', handleClickOutside);
-        document.removeEventListener('touchstart', handleClickOutside);
-      };
-    }
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [showVehicleDropdown]);
+  
+  // Close on escape key
+  useEffect(() => {
+    if (!showVehicleDropdown) return;
+    
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') setShowVehicleDropdown(false);
+    };
+    
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
   }, [showVehicleDropdown]);
   
   // Get selected vehicle data - derived from selectedVehicleId
@@ -263,15 +283,6 @@ function DataPageContent() {
     // userVehicles already has matchedCar, matchedCarResolved attached
     return userVehicles.find(v => v.id === selectedVehicleId) || null;
   }, [userVehicles, selectedVehicleId]);
-  
-  // Update selectedCar when vehicle changes (for useTuningProfile)
-  useEffect(() => {
-    if (selectedVehicle?.matchedCar) {
-      setSelectedCar(selectedVehicle.matchedCar);
-    } else {
-      setSelectedCar(null);
-    }
-  }, [selectedVehicle]);
   
   // Handle action=log param to auto-open track time modal
   // This runs when the page loads with ?action=log&filter=track
@@ -296,42 +307,6 @@ function DataPageContent() {
       return () => clearTimeout(timer);
     }
   }, [actionFromUrl, filterFromUrl, actionProcessed, selectedVehicle, isAuthenticated, router]);
-  
-  // Fetch tuning profile for the selected car (includes power_limits, stage_progressions, platform_insights)
-  const { profile: tuningProfile, loading: tuningProfileLoading } = useTuningProfile(selectedCar);
-  
-  // State for known issues (fetched for Analysis tab)
-  const [knownIssues, setKnownIssues] = useState([]);
-  const [issuesLoading, setIssuesLoading] = useState(false);
-  
-  // Fetch known issues when vehicle changes
-  useEffect(() => {
-    const fetchIssues = async () => {
-      if (!selectedVehicle?.matchedCarSlug || !selectedVehicle?.matchedCar?.id) {
-        setKnownIssues([]);
-        return;
-      }
-      
-      setIssuesLoading(true);
-      try {
-        // Fetch from our API endpoint
-        const response = await fetch(`/api/cars/${selectedVehicle.matchedCarSlug}/issues`);
-        if (response.ok) {
-          const data = await response.json();
-          setKnownIssues(data.issues || []);
-        } else {
-          setKnownIssues([]);
-        }
-      } catch (err) {
-        console.error('[DataPage] Error fetching known issues:', err);
-        setKnownIssues([]);
-      } finally {
-        setIssuesLoading(false);
-      }
-    };
-    
-    fetchIssues();
-  }, [selectedVehicle?.matchedCarSlug, selectedVehicle?.matchedCar?.id]);
   
   // Get user's hero image for the selected vehicle's matched car
   const { heroImageUrl: userHeroImageUrl } = useCarImages(
@@ -445,12 +420,10 @@ function DataPageContent() {
     };
   }, [selectedVehicle, getBuildsByCarSlug, builds]);
   
-  // Get HP values directly from build data (already calculated and stored)
+  // Get HP values - calculate dynamically using performanceCalculator as SOURCE OF TRUTH
   // NOTE: When matchedCarNotFound is true, stockHp may be null - use 0 to avoid NaN
   // The UI should display an error state in this case
   const stockHp = vehicleBuildData?.stockHp ?? selectedVehicle?.matchedCar?.hp ?? 300;
-  const hpGain = vehicleBuildData?.totalHpGain || 0;
-  const estimatedHp = vehicleBuildData?.finalHp ?? (stockHp + hpGain);
   
   // Flag for UI to show warning when car baseline data couldn't be resolved
   const hasDataIssue = vehicleBuildData?.matchedCarNotFound === true;
@@ -465,6 +438,24 @@ function DataPageContent() {
   const installedUpgrades = useMemo(() => {
     return vehicleBuildData?.selectedUpgrades?.upgrades || [];
   }, [vehicleBuildData]);
+  
+  // Calculate ALL gains using performanceCalculator as the SINGLE SOURCE OF TRUTH
+  // SOURCE OF TRUTH: lib/performanceCalculator/hpCalculator.js::calculateAllModificationGains
+  // NOTE: Must be after installedUpgrades is defined
+  const stockTorque = selectedVehicle?.matchedCar?.torque || Math.round(stockHp * 0.85);
+  const modificationGains = useMemo(() => {
+    const modKeys = installedUpgrades.map(u => typeof u === 'string' ? u : u?.key).filter(Boolean);
+    return calculateAllModificationGains(modKeys, selectedVehicle?.matchedCar);
+  }, [installedUpgrades, selectedVehicle?.matchedCar]);
+  
+  // HP gain - use dynamically calculated value from performanceCalculator (not stored value)
+  // This ensures consistency: both HP and torque come from the same source of truth
+  const hpGain = modificationGains.hpGain || 0;
+  const estimatedHp = stockHp + hpGain;
+  
+  // Torque gain
+  const torqueGain = modificationGains.torqueGain || 0;
+  const estimatedTorque = stockTorque + torqueGain;
   
   // Detect upgrade categories for experience score calculations
   const upgradeCategories = useMemo(() => {
@@ -517,13 +508,9 @@ function DataPageContent() {
         installedUpgradeKeys: installedUpgrades.map(u => typeof u === 'string' ? u : u?.key),
         upgradeCategories,
       });
-      console.log('Tuning Profile:', tuningProfile ? {
-        hasStageProgressions: !!tuningProfile.stage_progressions,
-        stagesCount: tuningProfile.stage_progressions?.length || 0,
-      } : 'No tuning profile');
       console.groupEnd();
     }
-  }, [selectedVehicle, vehicleBuildData, stockHp, hpGain, estimatedHp, installedUpgrades, upgradeCategories, tuningProfile, allCars]);
+  }, [selectedVehicle, vehicleBuildData, stockHp, hpGain, estimatedHp, installedUpgrades, upgradeCategories, allCars]);
   
   // Note: Dyno results are now fetched via useDynoResults hook above
   
@@ -684,68 +671,105 @@ function DataPageContent() {
   
   return (
     <div className={styles.container}>
-      {/* Header with Vehicle Selector */}
+      {/* Header with Tab Bar */}
       <header className={styles.header}>
-        <div className={styles.headerRow}>
+        <div className={styles.headerLeft}>
           <h1 className={styles.title}>{firstName}&apos;s Data</h1>
-          
-          {/* Vehicle Selector - inline with title */}
-          <div className={styles.vehicleSelectorWrapper} ref={dropdownRef}>
-            <button 
-              className={styles.vehicleSelectorBtn}
-              onClick={() => setShowVehicleDropdown(prev => !prev)}
-              aria-expanded={showVehicleDropdown}
-              aria-haspopup="listbox"
-            >
-              <span className={styles.vehicleSelectorName}>
-                {selectedVehicle 
-                  ? `${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`
-                  : 'Select vehicle'
-                }
-              </span>
-              <svg 
-                width="14" 
-                height="14" 
-                viewBox="0 0 24 24" 
-                fill="none" 
-                stroke="currentColor" 
-                strokeWidth="2.5"
-                className={`${styles.chevron} ${showVehicleDropdown ? styles.chevronOpen : ''}`}
-              >
-                <polyline points="6 9 12 15 18 9"/>
-              </svg>
-            </button>
-          </div>
         </div>
-        <p className={styles.subtitle}>
-          <span className={styles.tabHint}><strong>Power</strong> for HP/TQ estimates</span>
-          <span className={styles.tabHintSeparator}>•</span>
-          <span className={styles.tabHint}><strong>Track</strong> for lap times</span>
-          <span className={styles.tabHintSeparator}>•</span>
-          <span className={styles.tabHint}><strong>Analysis</strong> for build insights</span>
-        </p>
-      </header>
-      
-      {/* Filter Pills - Center aligned menu */}
-      <section className={styles.filterSection}>
-        <div className={styles.filterBar}>
+        <div className={styles.tabBar}>
           {DATA_CATEGORIES.map(cat => (
             <button
               key={cat.id}
-              className={`${styles.filterPill} ${activeFilter === cat.id ? styles.filterActive : ''}`}
+              className={`${styles.tab} ${activeFilter === cat.id ? styles.tabActive : ''}`}
               onClick={() => setActiveFilter(cat.id)}
             >
               {cat.label}
             </button>
           ))}
         </div>
+      </header>
+      
+      {/* Vehicle Selector - Full width bar matching garage pages */}
+      <section className={styles.vehicleSelector} ref={dropdownRef}>
+        <button 
+          ref={buttonRef}
+          type="button"
+          className={styles.selectorButton}
+          onClick={() => setShowVehicleDropdown(prev => !prev)}
+          aria-expanded={showVehicleDropdown}
+          aria-haspopup="listbox"
+        >
+          <div className={styles.selectorLeft}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.selectorIcon}>
+              <path d="M2 20v-8l10-6 10 6v8"/>
+              <path d="M4 20v-4a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v4"/>
+              <path d="M4 20h16"/>
+            </svg>
+            <span className={styles.selectorValue}>
+              {selectedVehicle 
+                ? (selectedVehicle.nickname || `${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`)
+                : 'Select Vehicle'
+              }
+            </span>
+          </div>
+          <svg 
+            width="16" 
+            height="16" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            stroke="currentColor" 
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className={`${styles.selectorChevron} ${showVehicleDropdown ? styles.selectorChevronOpen : ''}`}
+          >
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+        
+        {/* Inline Dropdown Portal - matches garage page style */}
+        {showVehicleDropdown && mounted && createPortal(
+          <div 
+            id="data-vehicle-selector-dropdown"
+            className={styles.selectorDropdownPortal} 
+            role="listbox"
+            style={{
+              position: 'fixed',
+              top: dropdownPosition.top,
+              left: dropdownPosition.left,
+              width: dropdownPosition.width,
+            }}
+          >
+            {userVehicles.map(vehicle => (
+              <button
+                type="button"
+                role="option"
+                aria-selected={selectedVehicleId === vehicle.id}
+                key={vehicle.id}
+                className={`${styles.selectorOption} ${selectedVehicleId === vehicle.id ? styles.selectorOptionActive : ''}`}
+                onClick={() => handleSelectVehicle(vehicle.id)}
+              >
+                {selectedVehicleId === vehicle.id ? (
+                  <CheckIcon size={16} />
+                ) : (
+                  <CarIcon size={16} />
+                )}
+                <span className={styles.selectorOptionText}>
+                  {vehicle.nickname || `${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                </span>
+              </button>
+            ))}
+          </div>,
+          document.body
+        )}
       </section>
+      
       
       {/* How Estimates Work - Single explanation for the whole page */}
       {selectedVehicle && !buildsLoading && (
         <div className={styles.estimateExplainer}>
           <span className={styles.estimateExplainerIcon}>ⓘ</span>
-          <span>
+          <span className={styles.estimateExplainerText}>
             All figures are <strong>estimates</strong> for <em>relative comparison</em>—actual results vary with tune quality and conditions.
           </span>
         </div>
@@ -764,10 +788,10 @@ function DataPageContent() {
               {/* Virtual Dyno */}
               <div className={styles.dataCard}>
                 <VirtualDynoChart
-                  stockHp={selectedVehicle.matchedCar?.hp || 300}
+                  stockHp={stockHp}
                   estimatedHp={estimatedHp}
-                  stockTorque={selectedVehicle.matchedCar?.torque || (selectedVehicle.matchedCar?.hp || 300) * 0.85}
-                  estimatedTq={estimatedHp * 0.88}
+                  stockTorque={stockTorque}
+                  estimatedTq={estimatedTorque}
                   peakRpm={selectedVehicle.matchedCar?.peak_hp_rpm || 6500}
                   carName={`${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`}
                   carSlug={selectedVehicle.matchedCarSlug}
@@ -778,7 +802,7 @@ function DataPageContent() {
               
               {/* Calculated Performance - All metrics + experience scores */}
               <CalculatedPerformance
-                stockHp={selectedVehicle.matchedCar?.hp || 300}
+                stockHp={stockHp}
                 estimatedHp={estimatedHp}
                 weight={selectedVehicle.matchedCar?.curbWeight || selectedVehicle.matchedCar?.weight || 3500}
                 drivetrain={selectedVehicle.matchedCar?.drivetrain || 'RWD'}
@@ -934,7 +958,7 @@ function DataPageContent() {
               {/* Lap Time Estimator - Predictions only */}
               <div className={styles.dataCard}>
                 <LapTimeEstimator
-                  stockHp={selectedVehicle.matchedCar?.hp || 300}
+                  stockHp={stockHp}
                   estimatedHp={estimatedHp}
                   weight={selectedVehicle.matchedCar?.curb_weight || selectedVehicle.matchedCar?.weight || 3500}
                   drivetrain={selectedVehicle.matchedCar?.drivetrain || 'RWD'}
@@ -1037,128 +1061,11 @@ function DataPageContent() {
         </section>
       )}
       
-      {/* ANALYSIS TAB - Comprehensive Build & Platform Analysis */}
-      {activeFilter === 'analysis' && selectedVehicle && (
-        <section className={styles.syntheticDataSection}>
-          {buildsLoading || issuesLoading ? (
-            <div className={styles.loadingCard}>
-              <div className={styles.spinner} />
-              <span>Analyzing your build...</span>
-            </div>
-          ) : (
-            <>
-              {/* Build Progress - Where you are in Stage 1/2/3 */}
-              {tuningProfile?.stage_progressions && (
-                <div className={styles.dataCard}>
-                  <BuildProgressAnalysis
-                    stageProgressions={tuningProfile.stage_progressions}
-                    installedUpgrades={installedUpgrades}
-                    stockHp={stockHp}
-                    currentHp={estimatedHp}
-                  />
-                </div>
-              )}
-              
-              {/* Known Issues - Critical issues to watch for */}
-              {(knownIssues.length > 0 || !issuesLoading) && (
-                <div className={styles.dataCard}>
-                  <KnownIssuesAlert
-                    issues={knownIssues}
-                    vehicleYear={selectedVehicle.year}
-                    carName={`${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`}
-                  />
-                </div>
-              )}
-              
-              {/* Build Value Analysis - Cost efficiency and ROI */}
-              {installedUpgrades.length > 0 && (
-                <div className={styles.dataCard}>
-                  <BuildValueAnalysis
-                    installedUpgrades={installedUpgrades}
-                    stockHp={stockHp}
-                    currentHp={estimatedHp}
-                    carName={`${selectedVehicle.make} ${selectedVehicle.model}`}
-                    buildCostLow={vehicleBuildData?.totalCostLow}
-                    buildCostHigh={vehicleBuildData?.totalCostHigh}
-                  />
-                </div>
-              )}
-              
-              {/* Next Upgrade Recommendations */}
-              <div className={styles.dataCard}>
-                <NextUpgradeRecommendation
-                  installedUpgrades={installedUpgrades}
-                  aspiration={selectedVehicle.matchedCar?.aspiration || 'NA'}
-                  currentHp={estimatedHp}
-                  carSlug={selectedVehicle.matchedCarSlug}
-                  vehicleId={selectedVehicle.id}
-                />
-              </div>
-              
-              {/* Platform Insights - Strengths, Weaknesses, Tips */}
-              {(selectedVehicle.matchedCar?.definingStrengths?.length > 0 || 
-                selectedVehicle.matchedCar?.honestWeaknesses?.length > 0 ||
-                tuningProfile?.platform_insights) && (
-                <div className={styles.dataCard}>
-                  <PlatformInsights
-                    definingStrengths={selectedVehicle.matchedCar?.definingStrengths || []}
-                    honestWeaknesses={selectedVehicle.matchedCar?.honestWeaknesses || []}
-                    platformInsights={tuningProfile?.platform_insights || {}}
-                    idealOwner={selectedVehicle.matchedCar?.idealOwner}
-                    notIdealFor={selectedVehicle.matchedCar?.notIdealFor}
-                    carName={`${selectedVehicle.make} ${selectedVehicle.model}`}
-                  />
-                </div>
-              )}
-              
-              {/* Component Limits */}
-              {tuningProfile?.power_limits && (
-                <div className={styles.dataCard}>
-                  <PowerLimitsAdvisory
-                    powerLimits={tuningProfile.power_limits}
-                    currentHp={estimatedHp}
-                  />
-                </div>
-              )}
-              
-              {/* Handling Balance */}
-              <div className={styles.dataCard}>
-                <HandlingBalanceIndicator
-                  suspensionSetup={vehicleBuildData?.specs?.suspension}
-                  aeroSetup={vehicleBuildData?.specs?.aero}
-                  tireCompound={tireCompound}
-                  drivetrain={selectedVehicle.matchedCar?.drivetrain || 'RWD'}
-                />
-              </div>
-              
-              {/* Aero at Speed */}
-              <div className={styles.dataCard}>
-                <AeroBalanceChart
-                  aeroSetup={vehicleBuildData?.specs?.aero}
-                  weight={selectedVehicle.matchedCar?.curb_weight || selectedVehicle.matchedCar?.weight || 3500}
-                />
-              </div>
-            </>
-          )}
-        </section>
-      )}
-      
       <AuthModal 
         isOpen={authModal.isOpen} 
         onClose={authModal.close}
         defaultMode={authModal.defaultMode}
       />
-      
-      {/* Vehicle Selection Modal */}
-      {showVehicleDropdown && (
-        <VehicleSelectModal 
-          ref={modalRef}
-          vehicles={userVehicles}
-          selectedId={selectedVehicleId}
-          onSelect={handleSelectVehicle}
-          onClose={() => setShowVehicleDropdown(false)}
-        />
-      )}
       
       {/* Dyno Log Modal */}
       <DynoLogModal

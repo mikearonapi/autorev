@@ -304,6 +304,52 @@ export function StripeDashboard({ token, range = 'month', loading: parentLoading
         </div>
       </section>
 
+      {/* Business Health Metrics */}
+      <section className={styles.section}>
+        <h4 className={styles.sectionTitle}>Business Health</h4>
+        <div className={styles.kpiGrid}>
+          <KPICard
+            label="LTV"
+            value={formatCurrency(data?.metrics?.ltv || 0)}
+            interpretation="Customer Lifetime Value (ARPU / Churn)"
+            sparklineColor="#10b981"
+            icon={<TrendingUpIcon />}
+            loading={isLoading}
+            compact
+          />
+          
+          <KPICard
+            label="ARPU"
+            value={formatCurrency(data?.metrics?.arpu || 0)}
+            interpretation="Average Revenue Per User (monthly)"
+            sparklineColor="#6366f1"
+            icon={<DollarIcon />}
+            loading={isLoading}
+            compact
+          />
+          
+          <KPICard
+            label="Churn Rate"
+            value={`${data?.subscriptions?.churnRate || data?.metrics?.churnRate || 0}%`}
+            interpretation="Monthly subscription cancellation rate"
+            sparklineColor={parseFloat(data?.subscriptions?.churnRate || 0) > 5 ? '#ef4444' : '#22c55e'}
+            icon={<UsersIcon />}
+            loading={isLoading}
+            compact
+          />
+          
+          <KPICard
+            label="Trial Conversion"
+            value={`${data?.metrics?.trialConversionRate || 0}%`}
+            interpretation={`${data?.metrics?.trialConversions || 0} of ${data?.metrics?.totalTrials || 0} trials converted`}
+            sparklineColor="#8b5cf6"
+            icon={<TrendingUpIcon />}
+            loading={isLoading}
+            compact
+          />
+        </div>
+      </section>
+
       {/* Subscriptions Section */}
       <section className={styles.section}>
         <h4 className={styles.sectionTitle}>Subscriptions</h4>

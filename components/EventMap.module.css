@@ -333,7 +333,7 @@
 }
 
 /* Mobile Responsive */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .mapWrapper {
     flex-direction: column;
   }

@@ -64,30 +64,30 @@ const EyeIcon = ({ size = 14 }) => (
 const SEVERITY_CONFIG = {
   critical: {
     label: 'Critical',
-    color: '#ef4444',
-    bgColor: 'rgba(239, 68, 68, 0.15)',
-    borderColor: 'rgba(239, 68, 68, 0.3)',
+    color: '#ef4444', // var(--color-error)
+    bgColor: 'rgba(239, 68, 68, 0.08)', // Reduced opacity for premium feel
+    borderColor: 'rgba(239, 68, 68, 0.2)',
     priority: 0,
   },
   high: {
     label: 'High',
-    color: '#f59e0b',
-    bgColor: 'rgba(245, 158, 11, 0.12)',
-    borderColor: 'rgba(245, 158, 11, 0.25)',
+    color: '#f59e0b', // var(--color-warning)
+    bgColor: 'rgba(245, 158, 11, 0.08)', // Reduced opacity
+    borderColor: 'rgba(245, 158, 11, 0.2)',
     priority: 1,
   },
   medium: {
     label: 'Medium',
-    color: '#3b82f6',
-    bgColor: 'rgba(59, 130, 246, 0.1)',
-    borderColor: 'rgba(59, 130, 246, 0.2)',
+    color: '#3b82f6', // var(--color-accent-blue)
+    bgColor: 'rgba(59, 130, 246, 0.06)', // Reduced opacity
+    borderColor: 'rgba(59, 130, 246, 0.15)',
     priority: 2,
   },
   low: {
     label: 'Low',
     color: '#6b7280',
-    bgColor: 'rgba(107, 114, 128, 0.1)',
-    borderColor: 'rgba(107, 114, 128, 0.2)',
+    bgColor: 'rgba(107, 114, 128, 0.05)',
+    borderColor: 'rgba(107, 114, 128, 0.15)',
     priority: 3,
   },
 };

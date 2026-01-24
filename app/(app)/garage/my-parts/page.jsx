@@ -20,14 +20,17 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './page.module.css';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { MyGarageSubNav, VehicleInfoBar, PartsCountStat } from '@/components/garage';
+import { MyGarageSubNav, GarageVehicleSelector } from '@/components/garage';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
+import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
-import { useCarsList } from '@/hooks/useCarData';
+import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
+import ShareBuildButton from '@/components/ShareBuildButton';
 import PartsSelector from '@/components/tuning-shop/PartsSelector';
-import { getPerformanceProfile, calculateTotalCost } from '@/lib/performance.js';
+import { getPerformanceProfile } from '@/lib/performanceCalculator';
+import { calculateTotalCost } from '@/lib/performance.js';
 import { Icons } from '@/components/ui/Icons';
 import EmptyState from '@/components/ui/EmptyState';
 
@@ -77,59 +80,76 @@ function MyPartsContent() {
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const authModal = useAuthModal();
   const { builds, isLoading: buildsLoading, updateBuild } = useSavedBuilds();
+  const { vehicles } = useOwnedVehicles();
   
   // Use cached cars data from React Query hook
   const { data: allCars = [], isLoading: carsLoading } = useCarsList();
-  
-  // Get user's hero image for this car
-  const { heroImageUrl } = useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
   
   // Get URL params
   const buildIdParam = searchParams.get('build');
   const carSlugParam = searchParams.get('car');
   const actionParam = searchParams.get('action');
   
-  // Load build or car from URL params
+  // Fallback: fetch single car if not in list
+  const { data: fallbackCar, isLoading: fallbackLoading } = useCarBySlug(carSlugParam, {
+    enabled: !!carSlugParam && allCars.length === 0 && !carsLoading,
+  });
+  
+  // Get user's hero image for this car
+  const { heroImageUrl } = useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
+  
+  // Load build or car from URL params (with fallback support)
   useEffect(() => {
-    if (allCars.length === 0) return;
-    
-    if (buildIdParam && !buildsLoading) {
-      const build = builds.find(b => b.id === buildIdParam);
-      if (build) {
-        const car = allCars.find(c => c.slug === build.carSlug);
+    if (allCars.length > 0) {
+      if (buildIdParam && !buildsLoading) {
+        const build = builds.find(b => b.id === buildIdParam);
+        if (build) {
+          const car = allCars.find(c => c.slug === build.carSlug);
+          if (car) {
+            setSelectedCar(car);
+            setCurrentBuildId(build.id);
+            // Load saved parts from build
+            const partsToLoad = build.parts || build.selectedParts || [];
+            console.log('[MyParts] Loading parts from build:', {
+              buildId: build.id,
+              partsCount: partsToLoad.length,
+              partsWithStatus: partsToLoad.filter(p => p.status).map(p => ({ upgradeKey: p.upgradeKey, status: p.status })),
+            });
+            setSelectedParts(partsToLoad);
+          }
+        }
+      } else if (carSlugParam) {
+        const car = allCars.find(c => c.slug === carSlugParam);
         if (car) {
           setSelectedCar(car);
-          setCurrentBuildId(build.id);
-          // Load saved parts from build
-          const partsToLoad = build.parts || build.selectedParts || [];
-          console.log('[MyParts] Loading parts from build:', {
-            buildId: build.id,
-            partsCount: partsToLoad.length,
-            partsWithStatus: partsToLoad.filter(p => p.status).map(p => ({ upgradeKey: p.upgradeKey, status: p.status })),
-          });
-          setSelectedParts(partsToLoad);
+          // Find the most recent build for this car
+          const carBuilds = builds.filter(b => b.carSlug === carSlugParam);
+          if (carBuilds.length > 0) {
+            const latestBuild = carBuilds[carBuilds.length - 1];
+            setCurrentBuildId(latestBuild.id);
+            const partsToLoad = latestBuild.parts || latestBuild.selectedParts || [];
+            console.log('[MyParts] Loading parts from latest build:', {
+              buildId: latestBuild.id,
+              partsCount: partsToLoad.length,
+              partsWithStatus: partsToLoad.filter(p => p.status).map(p => ({ upgradeKey: p.upgradeKey, status: p.status })),
+            });
+            setSelectedParts(partsToLoad);
+          }
         }
       }
-    } else if (carSlugParam) {
-      const car = allCars.find(c => c.slug === carSlugParam);
-      if (car) {
-        setSelectedCar(car);
-        // Find the most recent build for this car
-        const carBuilds = builds.filter(b => b.carSlug === carSlugParam);
-        if (carBuilds.length > 0) {
-          const latestBuild = carBuilds[carBuilds.length - 1];
-          setCurrentBuildId(latestBuild.id);
-          const partsToLoad = latestBuild.parts || latestBuild.selectedParts || [];
-          console.log('[MyParts] Loading parts from latest build:', {
-            buildId: latestBuild.id,
-            partsCount: partsToLoad.length,
-            partsWithStatus: partsToLoad.filter(p => p.status).map(p => ({ upgradeKey: p.upgradeKey, status: p.status })),
-          });
-          setSelectedParts(partsToLoad);
-        }
+    } else if (fallbackCar && carSlugParam) {
+      // Fallback: use directly fetched car when list is unavailable
+      setSelectedCar(fallbackCar);
+      // Find builds for this car
+      const carBuilds = builds.filter(b => b.carSlug === carSlugParam);
+      if (carBuilds.length > 0) {
+        const latestBuild = carBuilds[carBuilds.length - 1];
+        setCurrentBuildId(latestBuild.id);
+        const partsToLoad = latestBuild.parts || latestBuild.selectedParts || [];
+        setSelectedParts(partsToLoad);
       }
     }
-  }, [buildIdParam, carSlugParam, builds, buildsLoading, allCars]);
+  }, [buildIdParam, carSlugParam, builds, buildsLoading, allCars, fallbackCar]);
   
   // Get current build data
   const currentBuild = useMemo(() => {
@@ -213,26 +233,10 @@ function MyPartsContent() {
     router.push('/garage');
   };
   
-  // Loading state
-  const isLoading = authLoading || buildsLoading || carsLoading;
-  
-  if (isLoading) {
-    return (
-      <div className={styles.page}>
-        <LoadingSpinner 
-          variant="branded" 
-          text="Loading Parts" 
-          subtext="Fetching your parts list..."
-          fullPage 
-        />
-      </div>
-    );
-  }
-  
-  // Calculate parts specified count
+  // Calculate parts specified count (must be before loading return for hooks rules)
   const partsSpecifiedCount = selectedParts.filter(p => p.brandName || p.partName).length;
   
-  // Calculate cost summary for parts page header
+  // Calculate cost summary for parts page header (must be before loading return for hooks rules)
   const costSummary = useMemo(() => {
     const specifiedParts = selectedParts.filter(p => p.actualPrice && !isNaN(parseFloat(p.actualPrice)));
     const specifiedTotal = specifiedParts.reduce((sum, p) => sum + parseFloat(p.actualPrice), 0);
@@ -252,6 +256,22 @@ function MyPartsContent() {
       unspecifiedCount: effectiveModules.length - specifiedParts.length,
     };
   }, [selectedParts, totalCost, effectiveModules.length]);
+  
+  // Loading state
+  const isLoading = authLoading || buildsLoading || carsLoading;
+  
+  if (isLoading) {
+    return (
+      <div className={styles.page}>
+        <LoadingSpinner 
+          variant="branded" 
+          text="Loading Parts" 
+          subtext="Fetching your parts list..."
+          fullPage 
+        />
+      </div>
+    );
+  }
   
   // No car selected
   if (!selectedCar) {
@@ -274,14 +294,21 @@ function MyPartsContent() {
         carSlug={selectedCar.slug}
         buildId={currentBuildId}
         onBack={handleBack}
+        rightAction={
+          isAuthenticated && currentBuildId && (
+            <ShareBuildButton
+              build={currentBuild}
+              vehicle={vehicles?.find(v => v.matchedCarSlug === selectedCar?.slug)}
+              car={selectedCar}
+              existingImages={currentBuild?.uploadedImages || []}
+            />
+          )
+        }
       />
       
-      {/* Vehicle Info Bar */}
-      <VehicleInfoBar
-        car={selectedCar}
-        buildName={currentBuild?.name}
-        stat={effectiveModules.length > 0 ? <PartsCountStat count={partsSpecifiedCount} total={effectiveModules.length} /> : null}
-        heroImageUrl={heroImageUrl}
+      <GarageVehicleSelector 
+        selectedCarSlug={selectedCar.slug}
+        buildId={currentBuildId}
       />
       
       {/* Cost Summary Header - shows when there are upgrades */}
@@ -343,6 +370,24 @@ function MyPartsContent() {
           />
         )}
       </div>
+      
+      {/* Continue to Install CTA - shown when parts are selected */}
+      {effectiveModules.length > 0 && (
+        <div className={styles.continueCtaContainer}>
+          <Link 
+            href={currentBuildId ? `/garage/my-install?build=${currentBuildId}` : `/garage/my-install?car=${selectedCar.slug}`}
+            className={styles.continueCta}
+          >
+            <div className={styles.ctaContent}>
+              <span className={styles.ctaTitle}>Ready to install?</span>
+            </div>
+            <div className={styles.ctaAction}>
+              <span>Continue to Install</span>
+              <Icons.chevronRight size={18} />
+            </div>
+          </Link>
+        </div>
+      )}
       
       <AuthModal {...authModal.props} />
     </div>

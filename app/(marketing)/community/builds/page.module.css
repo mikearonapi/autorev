@@ -2,7 +2,8 @@
 
 .page {
   min-height: 100vh;
-  background: linear-gradient(180deg, #0d0d12 0%, #0a0a0f 100%);
+  /* Transparent to show body gradient */
+  background: transparent;
 }
 
 /* ============================================
@@ -109,7 +110,7 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #e94560, #ff6b6b);
+  background: linear-gradient(135deg, var(--color-error, #e94560), var(--color-error, #ff6b6b));
   color: var(--brand-text-primary);
   font-size: 0.875rem;
   font-weight: 600;
@@ -269,8 +270,8 @@
   top: 8px;
   left: 8px;
   padding: 0.1875rem 0.5rem;
-  background: linear-gradient(135deg, #f59e0b, #fbbf24);
-  color: #000;
+  background: linear-gradient(135deg, var(--color-accent-amber, #f59e0b), var(--color-accent-amber-light, #fbbf24));
+  color: var(--color-bg-base, #000000);
   font-size: 0.5625rem;
   font-weight: 700;
   text-transform: uppercase;
@@ -424,7 +425,7 @@
   justify-content: center;
   gap: 0.5rem;
   padding: 0.875rem 2rem;
-  background: linear-gradient(135deg, #e94560, #ff6b6b);
+  background: linear-gradient(135deg, var(--color-error, #e94560), var(--color-error, #ff6b6b));
   color: var(--brand-text-primary);
   font-size: 0.9375rem;
   font-weight: 600;
@@ -441,7 +442,7 @@
 /* ============================================
    MOBILE RESPONSIVE
    ============================================ */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .hero {
     min-height: 280px;
     /* Preserve dynamic banner offset on mobile + extra breathing room */
@@ -569,7 +570,7 @@
 }
 
 /* Small phones */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .hero {
     min-height: 300px;
     /* Preserve dynamic banner offset on small phones + extra breathing room */
@@ -624,7 +625,7 @@
 }
 
 /* Very small phones (iPhone SE, etc.) */
-@media (max-width: 360px) {
+@media (min-width: 361px) {
   .heroTitle {
     font-size: 1.375rem;
   }

@@ -2,7 +2,8 @@
 
 .page {
   min-height: 100vh;
-  background: var(--bg-primary, #0a0a0f);
+  /* Transparent to show body gradient */
+  background: transparent;
 }
 
 /* Hero Section */
@@ -94,7 +95,7 @@
   position: absolute;
   top: 12px;
   right: 12px;
-  background: linear-gradient(135deg, #e94560, #ff6b6b);
+  background: linear-gradient(135deg, var(--color-error, #e94560), var(--color-error, #ff6b6b));
   color: white;
   font-size: 0.75rem;
   font-weight: 600;
@@ -281,7 +282,7 @@
 }
 
 .scoreBarFill.scoreWinner {
-  background: linear-gradient(90deg, #e94560, #ff6b6b);
+  background: linear-gradient(90deg, var(--color-error, #e94560), var(--color-error, #ff6b6b));
 }
 
 .scoreValue {
@@ -442,7 +443,7 @@
 .winnerCta {
   display: inline-block;
   padding: 0.75rem 1.5rem;
-  background: linear-gradient(135deg, #e94560, #ff6b6b);
+  background: linear-gradient(135deg, var(--color-error, #e94560), var(--color-error, #ff6b6b));
   color: white;
   font-size: 0.9375rem;
   font-weight: 600;
@@ -504,7 +505,7 @@
 }
 
 /* Mobile Responsive */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .hero {
     padding: 4rem 1.5rem 2.5rem;
   }

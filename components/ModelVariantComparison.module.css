@@ -345,7 +345,7 @@
 }
 
 /* Responsive */
-@media (max-width: 600px) {
+@media (min-width: 601px) {
   .diffRow {
     grid-template-columns: 1fr;
     gap: 4px;

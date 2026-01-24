@@ -2,32 +2,35 @@ import { Resend } from 'resend';
 import { errors } from '@/lib/apiErrors';
 import { notifyContact } from '@/lib/discord';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { rateLimit } from '@/lib/rateLimit';
+import { contactSchema, validateWithSchema, validationErrorResponse } from '@/lib/schemas';
 
 const CONTACT_EMAIL = 'contact@autorev.app';
 
 async function handlePost(request) {
+  // Rate limit: 5 requests per minute for form submissions
+  const rateLimited = rateLimit(request, 'form');
+  if (rateLimited) return rateLimited;
+
   const body = await request.json();
-    const { name, email, interest, car, message } = body;
+  
+  // Validate input with Zod schema
+  const validation = validateWithSchema(contactSchema, body);
+  if (!validation.success) {
+    return validationErrorResponse(validation.errors);
+  }
+  
+  const { name, email, subject, message, website } = validation.data;
+  const { interest, car } = body; // Keep original fields for backwards compat
 
-    // Initialize Resend at runtime (not build time)
-    const resend = new Resend(process.env.RESEND_API_KEY);
+  // Honeypot check - if website field is filled, it's a bot
+  if (website) {
+    // Silently fail for bots
+    return Response.json({ success: true, data: { id: 'blocked' } });
+  }
 
-    // Validate required fields
-    if (!name || !email || !message) {
-      return Response.json(
-        { success: false, error: 'Name, email, and message are required' },
-        { status: 400 }
-      );
-    }
-
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return Response.json(
-        { success: false, error: 'Invalid email format' },
-        { status: 400 }
-      );
-    }
+  // Initialize Resend at runtime (not build time)
+  const resend = new Resend(process.env.RESEND_API_KEY);
 
     // Format interest for display
     const interestLabels = {

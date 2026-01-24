@@ -13,8 +13,20 @@ import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react'
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './UpgradeCenter.module.css';
-import {
+
+// Upgrade category colors - matching design system tokens
+const UPGRADE_COLORS = {
+  engine: '#f59e0b',   // var(--color-warning) - Engine internals
+  turbo: '#ef4444',    // var(--color-error) - Turbo upgrades (high impact)
+  fuel: '#10b981',     // var(--color-accent-teal) - Fuel system
+  ecu: '#3b82f6',      // var(--color-accent-blue) - ECU tuning
+};
+import { 
   getPerformanceProfile,
+  calculateReliabilityScore,
+  calculateHandlingScore,
+} from '@/lib/performanceCalculator';
+import {
   getAvailableUpgrades,
   calculateTotalCost,
 } from '@/lib/performance.js';
@@ -22,7 +34,6 @@ import { getPlatformDownpipeGain } from '@/data/upgradePackages.js';
 import { getUpgradeByKey } from '@/lib/upgrades.js';
 import { useTierConfig } from '@/lib/hooks/useAppConfig.js';
 import { 
-  getRecommendationSummary, 
   getFocusLabel 
 } from '@/lib/carRecommendations.js';
 import { 
@@ -34,12 +45,7 @@ import {
   resolveConflicts,
   getConflictingUpgrades,
 } from '@/data/upgradeConflicts.js';
-import {
-  getRecommendationsForCar,
-  getTierRecommendations,
-  getPlatformNotes,
-  getKnownIssues,
-} from '@/data/carUpgradeRecommendations.js';
+// carUpgradeRecommendations imports removed - recommendations moved to Insights page
 import CarImage from './CarImage';
 import UpgradeDetailModal from './UpgradeDetailModal';
 import { useSavedBuilds } from './providers/SavedBuildsProvider';
@@ -50,9 +56,7 @@ import {
   // Unused imports after hiding Vehicle-Specific Tuning section:
   // getFormattedStages, getFormattedPlatforms, getFormattedPowerLimits, 
   // getFormattedBrands, getDataQualityInfo, getTotalUpgradeCount,
-  getUpgradesByObjective,
-  getPlatformInsights,
-  hasObjectiveData
+  // getUpgradesByObjective, getPlatformInsights, hasObjectiveData - moved to Insights page
 } from '@/hooks/useTuningProfile';
 // Import shared upgrade category definitions (single source of truth)
 import { 
@@ -78,6 +82,8 @@ import UpgradeConfigPanel, {
   getDefaultConfig 
 } from './UpgradeConfigPanel';
 import DynamicBuildConfig from './DynamicBuildConfig';
+// BuildDashboard removed per product decision to focus on upgrade selection flow
+// import BuildDashboard from './tuning-shop/BuildDashboard';
 import { Icons } from '@/components/ui/Icons';
 
 // Add swap alias to Icons (not in shared library)
@@ -127,194 +133,6 @@ const UPGRADE_CATEGORIES = SHARED_UPGRADE_CATEGORIES.map(cat => ({
 }));
 
 
-/**
- * Generate detailed AI recommendation based on car characteristics and database data
- * Returns an object with title and detailed content
- * 
- * Data source priority:
- * 1. car_tuning_profiles (via tuningProfile param) - SOURCE OF TRUTH
- * 2. cars.upgradeRecommendations - DEPRECATED as of 2026-01-15
- * 3. data/carUpgradeRecommendations.js - DEPRECATED (legacy fallback)
- */
-function generateDetailedRecommendation(car, stockMetrics, selectedPackage, tuningProfile = null) {
-  // Defensive: handle missing car gracefully
-  if (!car || !car.slug) {
-    return {
-      primaryText: 'Select a car to see upgrade recommendations.',
-      focusArea: null,
-      topMods: [],
-      watchOuts: [],
-      hasDetailedData: false,
-    };
-  }
-  
-  const carSlug = car.slug;
-  
-  // Priority 1: Use car_tuning_profiles data (source of truth)
-  if (tuningProfile) {
-    const platformInsightsData = getPlatformInsights(tuningProfile);
-    const strengths = platformInsightsData.strengths || [];
-    const weaknesses = platformInsightsData.weaknesses || [];
-    
-    // Build primary recommendation from tuning profile
-    let primaryRecommendation = '';
-    if (tuningProfile.tuning_community_notes) {
-      primaryRecommendation = tuningProfile.tuning_community_notes;
-    } else if (strengths.length > 0) {
-      primaryRecommendation = `This ${car.name.split(' ').slice(-2).join(' ')} platform excels at ${strengths[0].toLowerCase()}. ${strengths.length > 1 ? `It also features ${strengths[1].toLowerCase()}.` : ''}`;
-    } else {
-      primaryRecommendation = generateFallbackRecommendation(car, stockMetrics);
-    }
-    
-    // Determine focus area and extract top 3 mods from upgrades_by_objective
-    let focusArea = null;
-    let topMods = [];
-    if (hasObjectiveData(tuningProfile)) {
-      const objectives = getUpgradesByObjective(tuningProfile);
-      // Find the objective with the most upgrades
-      const objectiveCounts = Object.entries(objectives)
-        .map(([key, upgrades]) => ({ key, count: upgrades?.length || 0 }))
-        .filter(o => o.count > 0)
-        .sort((a, b) => b.count - a.count);
-      
-      if (objectiveCounts.length > 0) {
-        const focusLabels = {
-          power: 'Power & Engine',
-          handling: 'Chassis & Handling',
-          braking: 'Braking',
-          cooling: 'Heat Management',
-          sound: 'Sound & Exhaust',
-          aero: 'Aerodynamics',
-        };
-        focusArea = focusLabels[objectiveCounts[0].key] || objectiveCounts[0].key;
-      }
-      
-      // Extract top 3 mods across all objectives (prioritizing power mods)
-      const allMods = [];
-      // Prioritize power mods first as they're typically most popular
-      const priorityOrder = ['power', 'handling', 'braking', 'sound', 'cooling', 'aero'];
-      for (const objective of priorityOrder) {
-        const mods = objectives[objective] || [];
-        for (const mod of mods) {
-          const modName = mod.mod || mod.name || mod;
-          const modGain = mod.gain || mod.note || '';
-          if (modName && typeof modName === 'string') {
-            allMods.push({ mod: modName, gain: modGain, category: objective });
-          }
-        }
-      }
-      topMods = allMods.slice(0, 3);
-    }
-    
-    return {
-      primaryText: primaryRecommendation,
-      focusArea,
-      topMods,
-      watchOuts: weaknesses.slice(0, 2),
-      hasDetailedData: true,
-      source: 'car_tuning_profiles',
-    };
-  }
-  
-  // Fallback: Legacy data sources (used when car_tuning_profiles not available)
-  // NOTE: These static file sources are DEPRECATED as of 2026-01-15
-  // cars.upgrade_recommendations column has been REMOVED from the database
-  const carRecs = getRecommendationsForCar(carSlug);
-  const platformNotes = getPlatformNotes(carSlug);
-  const knownIssues = getKnownIssues(carSlug);
-  
-  // Determine the tier to get narrative from
-  let tierKey = selectedPackage;
-  if (tierKey === 'stock' || tierKey === 'custom') {
-    tierKey = carRecs?.defaultTier || 'streetSport';
-  }
-  const tierRecs = getTierRecommendations(carSlug, tierKey);
-  
-  // Build detailed recommendation
-  let primaryRecommendation = '';
-  let watchOuts = [];
-  let topMods = [];
-  
-  // Use tier-specific narrative from static carUpgradeRecommendations (legacy fallback)
-  if (tierRecs?.narrative) {
-    primaryRecommendation = tierRecs.narrative;
-  }
-  // Generate from car specs if no narrative available
-  else {
-    primaryRecommendation = generateFallbackRecommendation(car, stockMetrics);
-  }
-  
-  // Extract top mods from tier recommendations if available
-  if (tierRecs?.mods && Array.isArray(tierRecs.mods)) {
-    topMods = tierRecs.mods.slice(0, 3).map(mod => ({
-      mod: typeof mod === 'string' ? mod : (mod.name || mod.mod || ''),
-      gain: mod.gain || mod.note || '',
-      category: 'power',
-    }));
-  }
-  
-  // Gather watch-outs / known issues from static data
-  if (knownIssues?.length > 0) {
-    watchOuts = knownIssues.slice(0, 1);
-  }
-  
-  // Get focus area from tier recommendations if available
-  let focusArea = null;
-  if (tierRecs?.primaryFocus) {
-    const focusLabels = {
-      cooling: 'Heat Management',
-      handling: 'Chassis & Handling',
-      braking: 'Braking',
-      power: 'Power & Engine',
-      sound: 'Sound & Exhaust',
-    };
-    focusArea = focusLabels[tierRecs.primaryFocus] || tierRecs.primaryFocus;
-  }
-  
-  return {
-    primaryText: primaryRecommendation,
-    focusArea,
-    topMods,
-    watchOuts,
-    hasDetailedData: !!carRecs,
-    source: 'static_file',
-  };
-}
-
-/**
- * Fallback recommendation generator when no specific data exists
- */
-function generateFallbackRecommendation(car, stockMetrics) {
-  const hp = car.hp || stockMetrics?.hp || 300;
-  const zeroToSixty = stockMetrics?.zeroToSixty || car.zeroToSixty || 5.0;
-  const lateralG = stockMetrics?.lateralG || car.lateralG || 0.9;
-  const braking = stockMetrics?.braking60To0 || car.braking60To0 || 110;
-  const hasTurbo = car.engine?.toLowerCase().includes('turbo') || car.engine?.toLowerCase().includes('twin') || false;
-  
-  // Determine primary focus based on weakest area
-  if (hp < 300 && !hasTurbo) {
-    return `The ${car.name.split(' ').slice(-2).join(' ')} responds well to intake, exhaust, and ECU tuning. These bolt-on modifications can add meaningful power while maintaining reliability. Consider forced induction for significant gains.`;
-  }
-  
-  if (lateralG < 0.9) {
-    return `This platform has room for handling improvements. Focus on suspension upgrades, high-performance tires, and alignment optimization to unlock its cornering potential.`;
-  }
-  
-  if (braking > 115) {
-    return `Braking performance is the primary area for improvement. Upgraded brake pads, high-temp brake fluid, and potentially a big brake kit will significantly reduce stopping distances.`;
-  }
-  
-  if (hp >= 450) {
-    return `With ${hp}hp on tap, this platform has excellent power. Focus on chassis upgrades - coilovers, sway bars, and tires - to fully utilize that power through corners.`;
-  }
-  
-  if (zeroToSixty <= 4.5) {
-    return `Already quick off the line, this platform benefits most from handling and braking upgrades. Suspension work and better tires will make the most of its straight-line performance.`;
-  }
-  
-  return `A balanced approach works best for this platform. Start with basic bolt-ons (intake, exhaust, tune) then progress to suspension and brakes based on your driving goals.`;
-}
-
 /* VirtualDynoChart extracted to components/VirtualDynoChart.jsx */
 
 /**
@@ -335,7 +153,7 @@ function PowerBreakdown({ stockHp, specs, estimate }) {
       engineGain += Math.round(stockHp * ((specs.engine.displacement / 2.0) - 1));
     }
     if (engineGain > 0) {
-      breakdown.push({ label: 'Engine Internals', gain: engineGain, color: '#f59e0b' });
+      breakdown.push({ label: 'Engine Internals', gain: engineGain, color: UPGRADE_COLORS.engine });
       runningTotal += engineGain;
     }
   }
@@ -354,7 +172,7 @@ function PowerBreakdown({ stockHp, specs, estimate }) {
   if (specs.turbo?.type !== 'stock') {
     const turboGain = Math.round((estimate?.whp || runningTotal) - runningTotal - (specs.fuel?.type === 'e85' ? stockHp * 0.15 : 0));
     if (turboGain > 0) {
-      breakdown.push({ label: 'Turbo Upgrade', gain: turboGain, color: '#ef4444' });
+      breakdown.push({ label: 'Turbo Upgrade', gain: turboGain, color: UPGRADE_COLORS.turbo });
       runningTotal += turboGain;
     }
   }
@@ -362,18 +180,18 @@ function PowerBreakdown({ stockHp, specs, estimate }) {
   // Fuel
   if (specs.fuel?.type === 'e85') {
     const fuelGain = Math.round(stockHp * 0.15);
-    breakdown.push({ label: 'E85 Fuel', gain: fuelGain, color: '#10b981' });
+    breakdown.push({ label: 'E85 Fuel', gain: fuelGain, color: UPGRADE_COLORS.fuel });
     runningTotal += fuelGain;
   } else if (specs.fuel?.type === 'e50' || specs.fuel?.type === 'e30') {
     const fuelGain = Math.round(stockHp * (specs.fuel.type === 'e50' ? 0.10 : 0.06));
-    breakdown.push({ label: `${specs.fuel.type.toUpperCase()} Fuel`, gain: fuelGain, color: '#10b981' });
+    breakdown.push({ label: `${specs.fuel.type.toUpperCase()} Fuel`, gain: fuelGain, color: UPGRADE_COLORS.fuel });
     runningTotal += fuelGain;
   }
   
   // ECU
   if (specs.ecu?.type !== 'stock') {
     const ecuGain = Math.round(stockHp * 0.03);
-    breakdown.push({ label: 'ECU Tuning', gain: ecuGain, color: '#3b82f6' });
+    breakdown.push({ label: 'ECU Tuning', gain: ecuGain, color: UPGRADE_COLORS.ecu });
   }
   
   const totalGain = (estimate?.hp || estimate?.whp || runningTotal) - stockHp;
@@ -1391,6 +1209,11 @@ export default function UpgradeCenter({
   const isCustomMode = selectedPackage === 'custom';
   
   // Calculate physics-based HP estimate for advanced mode
+  // NOTE: This is a STANDALONE ADVANCED CALCULATOR separate from lib/performanceCalculator.
+  // It handles highly specialized inputs (turbo inducer size, boost pressure ratios, 
+  // methanol percentages, nitrous shot size, environmental corrections, turbo flow maps)
+  // that are beyond the scope of the standard upgrade module system.
+  // The standard lib/performanceCalculator handles upgrade keys like "stage2-tune", "intercooler", etc.
   const advancedHpEstimate = useMemo(() => {
     if (tunerMode !== 'advanced') return null;
     
@@ -1790,11 +1613,6 @@ export default function UpgradeCenter({
     return calculateTunability(car);
   }, [car]);
   
-  const detailedRecommendation = useMemo(() => {
-    // Pass tuningProfile as the preferred data source (car_tuning_profiles is source of truth)
-    return generateDetailedRecommendation(car, profile.stockMetrics, selectedPackage, tuningProfile);
-  }, [car, profile.stockMetrics, selectedPackage, tuningProfile]);
-  
   const upgradesByCategory = useMemo(() => {
     const result = {};
     UPGRADE_CATEGORIES.forEach(cat => {
@@ -1836,29 +1654,66 @@ export default function UpgradeCenter({
     return sortedKeys.map(key => availableCats.find(c => c.key === key)).filter(Boolean);
   }, [upgradesByCategory, goal]);
   
+  // Construct build summary object - Single Source of Truth
+  const buildSummary = useMemo(() => {
+    const upgradesArray = profile.selectedUpgrades.map(key => {
+      const upgrade = getUpgradeByKey(key);
+      return {
+        key,
+        name: upgrade?.name || key,
+        hpGain: upgrade?.hp || 0,
+        cost: upgrade?.costLow || 0,
+        category: upgrade?.category || 'other',
+      };
+    });
+    
+    return {
+      totalHpGain: effectiveHpGain, 
+      totalTqGain: 0, 
+      totalCost: totalCost.low || 0,
+      upgradeCount: profile.selectedUpgrades.length,
+      selectedUpgrades: upgradesArray,
+    };
+  }, [effectiveHpGain, totalCost.low, profile.selectedUpgrades]);
+
+  // Calculate reliability and handling scores using performanceCalculator (SOURCE OF TRUTH)
+  const reliabilityData = useMemo(() => {
+    const hpGainPercent = (car?.hp && effectiveHpGain > 0) 
+      ? effectiveHpGain / car.hp 
+      : 0;
+    return calculateReliabilityScore(effectiveModules, hpGainPercent);
+  }, [effectiveModules, effectiveHpGain, car?.hp]);
+
+  const handlingData = useMemo(() => {
+    return calculateHandlingScore(effectiveModules);
+  }, [effectiveModules]);
+
+  // Performance metrics for BuildDashboard - MUST match Performance Metrics page exactly
+  // Uses profile.upgradedMetrics directly (SOURCE OF TRUTH from calculateUpgradedMetrics)
+  // NOT effectiveHpGain/effectiveFinalHp which differ in advanced mode
+  const dashboardMetrics = useMemo(() => ({
+    stockHp: profile.stockMetrics.hp,
+    finalHp: profile.upgradedMetrics.hp,
+    hpGain: profile.upgradedMetrics.hp - profile.stockMetrics.hp,
+    stockZeroToSixty: profile.stockMetrics.zeroToSixty,
+    finalZeroToSixty: profile.upgradedMetrics.zeroToSixty,
+    reliabilityScore: reliabilityData.percent,
+    handlingScore: handlingData.percent,
+  }), [
+    profile.stockMetrics.hp,
+    profile.stockMetrics.zeroToSixty,
+    profile.upgradedMetrics.hp,
+    profile.upgradedMetrics.zeroToSixty,
+    reliabilityData.percent,
+    handlingData.percent,
+  ]);
+
   // Notify parent of build summary changes
   useEffect(() => {
     if (onBuildSummaryUpdate) {
-      const upgradesArray = profile.selectedUpgrades.map(key => {
-        const upgrade = getUpgradeByKey(key);
-        return {
-          key,
-          name: upgrade?.name || key,
-          hpGain: upgrade?.hp || 0,
-          cost: upgrade?.costLow || 0,
-          category: upgrade?.category || 'other',
-        };
-      });
-      
-      onBuildSummaryUpdate({
-        totalHpGain: effectiveHpGain, // Use single source of truth
-        totalTqGain: 0, // Could be calculated if available
-        totalCost: totalCost.low || 0,
-        upgradeCount: profile.selectedUpgrades.length,
-        selectedUpgrades: upgradesArray,
-      });
+      onBuildSummaryUpdate(buildSummary);
     }
-  }, [onBuildSummaryUpdate, effectiveHpGain, totalCost.low, profile.selectedUpgrades]);
+  }, [onBuildSummaryUpdate, buildSummary]);
   
   // Listen for save/clear/share events from header buttons and BuildSummaryBar
   useEffect(() => {
@@ -2276,69 +2131,6 @@ export default function UpgradeCenter({
   return (
     <div className={styles.upgradeCenter}>
       {/* ═══════════════════════════════════════════════════════════════════════
-          AUTOREV RECOMMENDATION - FIRST on page, always visible
-          Car-specific insights, popular mods, and watch-outs
-          ═══════════════════════════════════════════════════════════════════════ */}
-      <div className={styles.recommendationSection}>
-        <div className={styles.recommendationBannerFull}>
-          <div className={styles.recommendationHeaderFull}>
-            <span className={styles.recommendationTitleFull}>AUTOREV RECOMMENDATION</span>
-            <button 
-              className={styles.askAlBtn}
-              onClick={() => askALAboutBuild('recommendation')}
-              title="Ask AL for upgrade recommendations"
-            >
-              <Icons.sparkle size={12} />
-              Ask AL
-            </button>
-          </div>
-          {detailedRecommendation.focusArea && (
-            <span className={styles.focusTagFull}>Focus: {detailedRecommendation.focusArea}</span>
-          )}
-          <p className={styles.recommendationTextFull}>{detailedRecommendation.primaryText}</p>
-          
-          {/* Popular Mods & Watch Outs - Side by side cards */}
-          {(detailedRecommendation.topMods?.length > 0 || detailedRecommendation.watchOuts?.length > 0) && (
-            <div className={styles.insightsGridFull}>
-              {detailedRecommendation.topMods?.length > 0 && (
-                <div className={styles.insightsCardFull}>
-                  <div className={styles.insightsCardHeaderFull}>
-                    <Icons.bolt size={16} />
-                    <span>POPULAR MODS</span>
-                  </div>
-                  <ul className={styles.insightsCardListFull}>
-                    {detailedRecommendation.topMods.map((mod, idx) => (
-                      <li key={idx}>
-                        <span className={styles.modBullet}>•</span>
-                        <span className={styles.modName}>{mod.mod}</span>
-                        {mod.gain && <span className={styles.modGainFull}>{mod.gain}</span>}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {detailedRecommendation.watchOuts?.length > 0 && (
-                <div className={styles.watchOutsCardFull}>
-                  <div className={styles.watchOutsCardHeaderFull}>
-                    <Icons.alertTriangle size={16} />
-                    <span>WATCH OUT</span>
-                  </div>
-                  <ul className={styles.watchOutsCardListFull}>
-                    {detailedRecommendation.watchOuts.map((watchOut, idx) => (
-                      <li key={idx}>
-                        <span className={styles.watchBullet}>•</span>
-                        <span>{watchOut}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </div>
-      
-      {/* ═══════════════════════════════════════════════════════════════════════
           MODE TOGGLE - Basic vs Advanced tuning experience
           ═══════════════════════════════════════════════════════════════════════ */}
       <div className={styles.modeToggleSection}>
@@ -2348,20 +2140,14 @@ export default function UpgradeCenter({
             onClick={() => setTunerMode('basic')}
           >
             <Icons.settings size={18} />
-            <div className={styles.modeToggleBtnContent}>
-              <span className={styles.modeToggleBtnTitle}>Basic Tuning</span>
-              <span className={styles.modeToggleBtnDesc}>Presets & category-based upgrades</span>
-            </div>
+            <span className={styles.modeToggleBtnTitle}>Basic Tuning</span>
           </button>
           <button
             className={`${styles.modeToggleBtn} ${tunerMode === 'advanced' ? styles.modeToggleBtnActive : ''}`}
             onClick={() => setTunerMode('advanced')}
           >
             <Icons.brain size={18} />
-            <div className={styles.modeToggleBtnContent}>
-              <span className={styles.modeToggleBtnTitle}>Advanced Tuning</span>
-              <span className={styles.modeToggleBtnDesc}>Physics-based with virtual dyno</span>
-            </div>
+            <span className={styles.modeToggleBtnTitle}>Advanced</span>
           </button>
         </div>
       </div>
@@ -2372,7 +2158,7 @@ export default function UpgradeCenter({
       {tunerMode === 'basic' && (
         <div className={styles.buildRecommendationsSection}>
           <div className={styles.buildRecommendationsCard}>
-            <div className={styles.buildRecommendationsHeader}>
+            <div className={`${styles.buildRecommendationsHeader} text-display`}>
               <Icons.settings size={16} />
               <span>BUILD RECOMMENDATIONS</span>
               <button 
@@ -2429,7 +2215,7 @@ export default function UpgradeCenter({
             <div className={styles.sidebarCard}>
               <div className={styles.sidebarCardHeader}>
                 <Icons.bolt size={16} />
-                <span className={styles.sidebarCardTitle}>Add Upgrades</span>
+                <span className={`${styles.sidebarCardTitle} text-display`}>Add Upgrades</span>
                 <button 
                   className={styles.askAlBtn}
                   onClick={() => askALAboutBuild('upgrades')}
@@ -2447,30 +2233,16 @@ export default function UpgradeCenter({
                   </div>
                 )}
                 <div className={styles.categoryList}>
-                  {sortedCategories.map(cat => {
-                    const Icon = cat.icon;
-                    const count = selectedByCategory[cat.key] || 0;
-                    const isPrimaryForGoal = goal && isCategoryPrimaryForGoal(cat.key, goal);
-                    
-                    return (
-                      <button
-                        key={cat.key}
-                        className={`${styles.catBtn} ${activeCategory === cat.key ? styles.catBtnActive : ''} ${isPrimaryForGoal ? styles.catBtnRecommended : ''}`}
-                        onClick={() => setActiveCategory(cat.key)}
-                        style={{ '--cat-color': cat.color }}
-                      >
-                        <Icon size={16} />
-                        <span>{cat.label}</span>
-                        {isPrimaryForGoal && (
-                          <span className={styles.recommendedBadge} title={`Recommended for ${goalInfo?.label}`}>★</span>
-                        )}
-                        {count > 0 && (
-                          <span className={styles.catBadge}>{count}</span>
-                        )}
-                        <Icons.chevronRight size={14} className={styles.catArrow} />
-                      </button>
-                    );
-                  })}
+                  <CategoryNav
+                    categories={sortedCategories.map(c => c.key)}
+                    activeCategory={activeCategory}
+                    onCategoryChange={setActiveCategory}
+                    selectedCounts={selectedByCategory}
+                    variant="list"
+                    recommendedCategories={sortedCategories
+                      .filter(c => goal && isCategoryPrimaryForGoal(c.key, goal))
+                      .map(c => c.key)}
+                  />
                 </div>
               </div>
             </div>
@@ -2481,7 +2253,7 @@ export default function UpgradeCenter({
             <div className={styles.sidebarCard}>
               <div className={styles.sidebarCardHeader}>
                 <Icons.settings size={16} />
-                <span className={styles.sidebarCardTitle}>Configure Upgrades</span>
+                <span className={`${styles.sidebarCardTitle} text-display`}>Configure Upgrades</span>
                 <button 
                   className={styles.askAlBtn}
                   onClick={() => askALAboutBuild('configure')}
@@ -2511,7 +2283,7 @@ export default function UpgradeCenter({
             <div className={styles.sidebarCard}>
               <div className={styles.sidebarCardHeader}>
                 <Icons.bolt size={16} />
-                <span className={styles.sidebarCardTitle}>Upgrade Categories</span>
+                <span className={`${styles.sidebarCardTitle} text-display`}>Upgrade Categories</span>
                 <button 
                   className={styles.askAlBtn}
                   onClick={() => askALAboutBuild('upgrades')}
@@ -2529,30 +2301,16 @@ export default function UpgradeCenter({
                   </div>
                 )}
                 <div className={styles.categoryList}>
-                  {sortedCategories.map(cat => {
-                    const Icon = cat.icon;
-                    const count = selectedByCategory[cat.key] || 0;
-                    const isPrimaryForGoal = goal && isCategoryPrimaryForGoal(cat.key, goal);
-                    
-                    return (
-                      <button
-                        key={cat.key}
-                        className={`${styles.catBtn} ${activeCategory === cat.key ? styles.catBtnActive : ''} ${isPrimaryForGoal ? styles.catBtnRecommended : ''}`}
-                        onClick={() => setActiveCategory(cat.key)}
-                        style={{ '--cat-color': cat.color }}
-                      >
-                        <Icon size={16} />
-                        <span>{cat.label}</span>
-                        {isPrimaryForGoal && (
-                          <span className={styles.recommendedBadge} title={`Recommended for ${goalInfo?.label}`}>★</span>
-                        )}
-                        {count > 0 && (
-                          <span className={styles.catBadge}>{count}</span>
-                        )}
-                        <Icons.chevronRight size={14} className={styles.catArrow} />
-                      </button>
-                    );
-                  })}
+                  <CategoryNav
+                    categories={sortedCategories.map(c => c.key)}
+                    activeCategory={activeCategory}
+                    onCategoryChange={setActiveCategory}
+                    selectedCounts={selectedByCategory}
+                    variant="list"
+                    recommendedCategories={sortedCategories
+                      .filter(c => goal && isCategoryPrimaryForGoal(c.key, goal))
+                      .map(c => c.key)}
+                  />
                 </div>
               </div>
             </div>
@@ -2580,7 +2338,7 @@ export default function UpgradeCenter({
                 onClick={() => setAdvancedTuningExpanded(!advancedTuningExpanded)}
               >
                 <Icons.brain size={16} />
-                <span className={styles.sidebarCardTitle}>Advanced Tuning</span>
+                <span className={`${styles.sidebarCardTitle} text-display`}>Advanced Tuning</span>
                 <span className={styles.advancedTuningHint}>Engine builds, turbo sizing, fuel...</span>
                 <Icons.chevronRight 
                   size={14} 

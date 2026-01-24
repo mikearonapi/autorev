@@ -363,7 +363,7 @@
 }
 
 /* Responsive adjustments */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .container {
     padding: 1.5rem;
   }

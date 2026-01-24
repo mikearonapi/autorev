@@ -73,7 +73,7 @@
 
 .closeBtn:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
 }
 
 /* ============================================
@@ -101,14 +101,14 @@
 
 .iconNegative {
   background: rgba(239, 68, 68, 0.1);
-  color: #ef4444;
+  color: var(--color-error, #ef4444);
 }
 
 .title {
   font-family: var(--font-display, 'Oswald', sans-serif);
   font-size: var(--text-h3);
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   text-align: center;
   margin: 0 0 8px;
 }
@@ -152,7 +152,7 @@
 .tag:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.15);
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
 }
 
 .tag:disabled {
@@ -192,7 +192,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   font-size: max(16px, var(--text-body)); /* Prevents iOS zoom */
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   resize: none;
   font-family: inherit;
   transition: border-color 0.2s ease;
@@ -281,7 +281,7 @@
   display: block;
   font-size: var(--text-body);
   font-weight: 500;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   margin-bottom: 2px;
 }
 
@@ -312,7 +312,7 @@
 }
 
 .starBtn:hover:not(:disabled) {
-  color: #f59e0b;
+  color: var(--color-warning, #f59e0b);
   transform: scale(1.1);
 }
 
@@ -321,7 +321,7 @@
 }
 
 .starFilled {
-  color: #f59e0b;
+  color: var(--color-warning, #f59e0b);
 }
 
 /* ============================================
@@ -348,7 +348,7 @@
 
 .skipBtn:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
 }
 
 .skipBtn:disabled {
@@ -364,13 +364,13 @@
   border-radius: 12px;
   font-size: var(--text-body);
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .submitBtn:hover:not(:disabled) {
-  background: #0d9668;
+  background: var(--color-accent-teal, #0d9668);
 }
 
 .submitBtn:disabled {
@@ -382,7 +382,7 @@
    RESPONSIVE
    ============================================ */
 
-@media (max-width: 479px) {
+@media (min-width: 480px) {
   .modal {
     margin: 10px;
     max-width: calc(100% - 20px);
@@ -427,7 +427,7 @@
   }
 }
 
-@media (max-width: 374px) {
+@media (min-width: 375px) {
   .content {
     padding: 20px 14px 16px;
   }

@@ -16,8 +16,8 @@
   align-items: center;
   gap: 8px;
   padding: 10px 20px;
-  background: linear-gradient(135deg, #eab308, #ca8a04);
-  color: #000;
+  background: linear-gradient(135deg, var(--color-accent-amber, #eab308), #ca8a04);
+  color: var(--color-bg-base, #000000);
   border: none;
   border-radius: 8px;
   font-size: 14px;
@@ -27,7 +27,7 @@
 }
 
 .editBtn:hover:not(:disabled) {
-  background: linear-gradient(135deg, #fbbf24, #eab308);
+  background: linear-gradient(135deg, var(--color-accent-amber-light, #fbbf24), #eab308);
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(var(--brand-warning-rgb), 0.4);
 }
@@ -50,17 +50,17 @@
   border-radius: 20px;
   font-size: 12px;
   font-weight: 500;
-  color: #eab308;
+  color: var(--color-accent-amber, #eab308);
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .ownerBadge svg {
-  color: #eab308;
+  color: var(--color-accent-amber, #eab308);
 }
 
 /* Responsive */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .ownerActions {
     flex-direction: column;
     gap: 10px;

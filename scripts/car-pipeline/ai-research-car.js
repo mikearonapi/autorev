@@ -82,7 +82,7 @@ if (missingEnvVars.length > 0) {
 const { createClient } = await import('@supabase/supabase-js');
 const { default: Anthropic } = await import('@anthropic-ai/sdk');
 const { trackBackendAiUsage, AI_PURPOSES, AI_SOURCES } = await import('../../lib/backendAiLogger.js');
-const { sendFeedbackResponseEmail } = await import('../../lib/email.js');
+const { sendFeedbackResponseEmail } = await import('../../lib/emailService.js');
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 const anthropic = new Anthropic({ apiKey: ANTHROPIC_API_KEY });

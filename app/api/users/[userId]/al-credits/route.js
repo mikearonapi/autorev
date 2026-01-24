@@ -3,9 +3,12 @@
  * 
  * GET /api/users/[userId]/al-credits
  * Returns the user's current AL balance and usage info (token-based)
+ * 
+ * Auth: User must be authenticated and can only access their own credits
  */
 
 import { NextResponse } from 'next/server';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { errors } from '@/lib/apiErrors';
 import { getUserBalance, getDailyUsage } from '@/lib/alUsageService';
 import { formatCentsAsDollars, formatCentsCompact } from '@/lib/alConfig';
@@ -15,10 +18,30 @@ async function handleGet(request, { params }) {
   const { userId } = await params;
   
   if (!userId) {
-    return NextResponse.json(
-      { error: 'User ID is required' },
-      { status: 400 }
-    );
+    return errors.missingField('userId');
+  }
+
+  // Get authenticated user
+  const bearerToken = getBearerToken(request);
+  const supabase = bearerToken 
+    ? createAuthenticatedClient(bearerToken) 
+    : await createServerSupabaseClient();
+
+  if (!supabase) {
+    return errors.serviceUnavailable('Authentication service');
+  }
+
+  const { data: { user }, error: authError } = bearerToken
+    ? await supabase.auth.getUser(bearerToken)
+    : await supabase.auth.getUser();
+  
+  if (authError || !user) {
+    return errors.unauthorized();
+  }
+  
+  // Verify the authenticated user matches the userId param
+  if (user.id !== userId) {
+    return errors.forbidden('Not authorized to view this user\'s AL credits');
   }
 
   // Fetch both balance and daily usage in parallel

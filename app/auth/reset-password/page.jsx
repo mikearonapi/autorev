@@ -96,7 +96,7 @@ function ResetPasswordContent() {
   const strengthColors = ['#dc2626', '#f59e0b', '#eab308', '#22c55e'];
   const strengthLabels = ['Weak', 'Fair', 'Good', 'Strong'];
 
-  const handleSubmit = async (e) => {
+  const handlePasswordResetSubmit = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -202,13 +202,13 @@ function ResetPasswordContent() {
         </p>
 
         {error && (
-          <div className={styles.error}>
+          <div className={styles.error} id="reset-error" role="alert" aria-live="assertive">
             <Icons.alertCircle size={16} />
             <span>{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form onSubmit={handlePasswordResetSubmit} className={styles.form}>
           <div className={styles.inputGroup}>
             <label htmlFor="password">New Password</label>
             <div className={styles.inputWrapper}>
@@ -221,6 +221,8 @@ function ResetPasswordContent() {
                 disabled={isSubmitting}
                 autoComplete="new-password"
                 autoFocus
+                aria-describedby={error ? 'reset-error' : undefined}
+                aria-invalid={error ? 'true' : undefined}
               />
               <button
                 type="button"

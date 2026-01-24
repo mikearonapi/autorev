@@ -12,6 +12,7 @@ import { isAdminEmail } from '@/lib/adminAccess';
 import { prefetchForRoute } from '@/lib/prefetch';
 import { UI_IMAGES } from '@/lib/images';
 import { APP_ROUTES, isAppRoute } from '@/lib/appRoutes';
+import NotificationCenter from './NotificationCenter';
 
 // Brand suffix rotation: Revival → Revelation → Revolution
 const brandSuffixes = ['ival', 'elation', 'olution'];
@@ -320,8 +321,12 @@ export default function Header() {
           {/* Right Side Actions */}
           <div className={styles.headerActions}>
             {isAuthenticated ? (
-              <div 
-                className={styles.profileDropdownContainer}
+              <>
+                {/* Notification Center - Only for authenticated users */}
+                <NotificationCenter />
+                
+                <div 
+                  className={styles.profileDropdownContainer}
                 onMouseEnter={() => setShowProfileDropdown(true)}
                 onMouseLeave={() => setShowProfileDropdown(false)}
               >
@@ -384,6 +389,7 @@ export default function Header() {
                   </button>
                 </div>
               </div>
+              </>
             ) : (
               <>
                 <button 

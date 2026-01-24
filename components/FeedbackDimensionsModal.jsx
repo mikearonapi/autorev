@@ -137,7 +137,7 @@ export default function FeedbackDimensionsModal({
     setDimensionRatings((prev) => ({ ...prev, [dimensionId]: rating }));
   };
 
-  const handleSubmit = async () => {
+  const handleFeedbackDimensionsSubmit = async () => {
     setIsSubmitting(true);
     
     try {
@@ -283,7 +283,7 @@ export default function FeedbackDimensionsModal({
             <button
               type="button"
               className={styles.submitBtn}
-              onClick={handleSubmit}
+              onClick={handleFeedbackDimensionsSubmit}
               disabled={isSubmitting || (selectedTags.length === 0 && !feedbackText.trim())}
             >
               {isSubmitting ? 'Submitting...' : 'Submit Feedback'}

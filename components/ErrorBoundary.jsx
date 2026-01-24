@@ -6,6 +6,8 @@
  * Catches JavaScript errors anywhere in child component tree, logs them,
  * and displays a fallback UI instead of crashing the entire app.
  * 
+ * Integrates with Sentry for production error monitoring.
+ * 
  * Usage:
  * <ErrorBoundary fallback={<CustomFallback />}>
  *   <ComponentThatMightError />
@@ -13,6 +15,7 @@
  */
 
 import React, { Component } from 'react';
+import * as Sentry from '@sentry/nextjs';
 import styles from './ErrorBoundary.module.css';
 import { ErrorLogger } from '@/lib/errorLogger';
 
@@ -110,7 +113,15 @@ export default class ErrorBoundary extends Component {
       component: this.props.name || 'Unknown',
     });
 
-    // Call optional onError callback for external logging (e.g., Sentry)
+    // Report to Sentry with component context
+    Sentry.withScope((scope) => {
+      scope.setTag('component', this.props.name || 'Unknown');
+      scope.setTag('featureContext', this.props.featureContext || 'unknown');
+      scope.setExtra('componentStack', errorInfo?.componentStack);
+      Sentry.captureException(error);
+    });
+
+    // Call optional onError callback for additional logging
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     }

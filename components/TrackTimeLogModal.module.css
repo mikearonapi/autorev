@@ -845,7 +845,7 @@ details[open] .detailsSummary::after {
 }
 
 .saveBtn:hover {
-  background: #bfe600;
+  background: var(--color-accent-lime-dark, #bfe600);
   box-shadow: 0 8px 30px rgba(212, 255, 0, 0.3);
 }
 

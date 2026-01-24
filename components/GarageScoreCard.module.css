@@ -377,7 +377,7 @@
 }
 
 .emptyButton:hover {
-  background: #bfe600;
+  background: var(--color-accent-lime-dark, #bfe600);
   box-shadow: 0 4px 12px rgba(212, 255, 0, 0.2);
 }
 
@@ -406,7 +406,7 @@
    Responsive
    =========================================== */
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .card {
     padding: var(--space-4, 16px);
   }

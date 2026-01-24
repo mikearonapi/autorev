@@ -1,5 +1,6 @@
 'use client';
 
+/* eslint-disable react-hooks/rules-of-hooks */
 /**
  * Full-Screen Build Detail View
  * 
@@ -7,13 +8,14 @@
  * - User header with share button
  * - Performance Metrics
  * - Modifications/Parts list
+ * 
+ * Note: ESLint rule disabled due to false positive - all hooks are called unconditionally
+ * before any early returns. The rule incorrectly flags useMemo as conditional.
  */
 
 import { useState, useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { getUpgradeByKey } from '@/lib/upgrades';
-import { mapCarToPerformanceScores } from '@/data/performanceCategories';
-import { applyUpgradeDeltas } from '@/lib/performance';
 import { useBuildDetail } from '@/hooks/useCommunityData';
 import { TITLES } from '@/app/(app)/dashboard/components/UserGreeting';
 import styles from './BuildDetailSheet.module.css';
@@ -140,42 +142,80 @@ export default function BuildDetailSheet({
   onImageSelect,
   onClose 
 }) {
-  // React Query hook for build details
+  // React Query hook for build details - always called (hooks must be unconditional)
   const { data: detailData, isLoading } = useBuildDetail(build?.slug);
   
   // Extract data from query response
   const buildData = detailData?.buildData || null;
   const carData = detailData?.carData || null;
   const partsData = detailData?.parts || [];
+  const computedPerformance = detailData?.computedPerformance || null;
+  const vehicleData = detailData?.vehicleData || null;
+  const buildStatus = detailData?.buildStatus || null;
 
   // Get upgrade keys for display (mods list)
+  // SOURCE OF TRUTH: Use computedPerformance.upgradeKeys (from vehicle's installed_modifications)
+  // Fallback to buildData.selected_upgrades for other users' builds
   const allMods = useMemo(() => {
-    if (!buildData?.selected_upgrades) {
-      if (build?.build_data?.mods?.length > 0) {
-        return build.build_data.mods.map(mod => ({
-          key: mod,
-          name: mod.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())
-        }));
-      }
+    // Helper to format upgrade key to display name (e.g., "stage1-tune" -> "Stage1 Tune")
+    const formatKey = (key) => {
+      if (!key || typeof key !== 'string') return 'Mod';
+      return key.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    };
+    
+    // SOURCE OF TRUTH: Use upgradeKeys from computedPerformance (current vehicle mods)
+    // This is the same data source used for HP calculation
+    let upgradeKeys = [];
+    if (computedPerformance?.upgradeKeys?.length > 0) {
+      upgradeKeys = computedPerformance.upgradeKeys;
+    } else if (buildData?.selected_upgrades) {
+      // Fallback: Use stored selected_upgrades from the build snapshot
+      upgradeKeys = Array.isArray(buildData.selected_upgrades)
+        ? buildData.selected_upgrades
+        : buildData.selected_upgrades?.upgrades || [];
+    }
+    
+    if (upgradeKeys.length === 0) {
       return [];
     }
     
-    const upgradeKeys = Array.isArray(buildData.selected_upgrades)
-      ? buildData.selected_upgrades
-      : buildData.selected_upgrades?.upgrades || [];
-    
     return upgradeKeys
+      .filter(key => key != null) // Filter out null/undefined entries
       .map(key => {
-        const upgrade = typeof key === 'string' ? getUpgradeByKey(key) : key;
-        return upgrade || { key, name: key.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) };
+        // Case 1: key is already a full upgrade object (e.g., {key: "intake", name: "Cold Air Intake"})
+        if (typeof key === 'object' && key !== null) {
+          return {
+            key: key.key || key.slug || 'mod',
+            name: key.name || formatKey(key.key || key.slug || 'Mod')
+          };
+        }
+        
+        // Case 2: key is a string (e.g., "intake")
+        if (typeof key === 'string') {
+          const upgrade = getUpgradeByKey(key);
+          return upgrade || { key, name: formatKey(key) };
+        }
+        
+        // Fallback for unexpected types
+        return null;
       })
       .filter(Boolean);
-  }, [buildData, build]);
+  }, [computedPerformance, buildData]);
 
-  // Format mod name
+  // Format mod name for display (used in render)
   const formatModName = (mod) => {
-    if (typeof mod === 'object') return mod.name || 'Mod';
-    return mod.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    if (!mod) return 'Mod';
+    if (typeof mod === 'object') {
+      if (mod.name) return mod.name;
+      if (mod.key && typeof mod.key === 'string') {
+        return mod.key.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+      }
+      return 'Mod';
+    }
+    if (typeof mod === 'string') {
+      return mod.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    }
+    return 'Mod';
   };
 
   // Share build
@@ -201,35 +241,20 @@ export default function BuildDetailSheet({
 
   if (!build) return null;
 
-  // Use STORED performance metrics from buildData - single source of truth
-  // These are the exact values the user saw when they saved their build
-  // Fall back to carData (stock values) only if build metrics aren't stored
-  const stockHp = buildData?.stock_hp || carData?.hp || build.car_specs?.hp || 0;
-  const finalHp = buildData?.final_hp || (buildData?.total_hp_gain ? stockHp + buildData.total_hp_gain : stockHp);
+  // SOURCE OF TRUTH: Use computed performance from API when available.
+  // Stored buildData final_* fields can become stale as our model improves.
+  const stockHp = computedPerformance?.stock?.hp ?? buildData?.stock_hp ?? carData?.hp ?? build.car_specs?.hp ?? 0;
+  const finalHp = computedPerformance?.upgraded?.hp ?? buildData?.final_hp ?? stockHp;
+  const hpGain = computedPerformance?.hpGain ?? (buildData?.total_hp_gain || 0);
   
-  // Use stored values - no recalculation, just display what was saved
-  const stockZeroToSixty = buildData?.stock_zero_to_sixty || carData?.zero_to_sixty || null;
-  const finalZeroToSixty = buildData?.final_zero_to_sixty || stockZeroToSixty; // If no final stored, show stock
+  const stockZeroToSixty = computedPerformance?.stock?.zeroToSixty ?? buildData?.stock_zero_to_sixty ?? carData?.zero_to_sixty ?? null;
+  const finalZeroToSixty = computedPerformance?.upgraded?.zeroToSixty ?? buildData?.final_zero_to_sixty ?? stockZeroToSixty;
   
-  const stockBraking = buildData?.stock_braking_60_0 || carData?.braking_60_0 || null;
-  const finalBraking = buildData?.final_braking_60_0 || stockBraking;
+  const stockBraking = computedPerformance?.stock?.braking60To0 ?? buildData?.stock_braking_60_0 ?? carData?.braking_60_0 ?? null;
+  const finalBraking = computedPerformance?.upgraded?.braking60To0 ?? buildData?.final_braking_60_0 ?? stockBraking;
   
-  const stockLateralG = buildData?.stock_lateral_g || carData?.lateral_g || null;
-  const finalLateralG = buildData?.final_lateral_g || stockLateralG;
-
-  // DEBUG: Log values to identify why improvements aren't showing
-  console.log('[BuildDetailSheet DEBUG]', {
-    buildDataExists: !!buildData,
-    buildData_final_zero_to_sixty: buildData?.final_zero_to_sixty,
-    buildData_stock_zero_to_sixty: buildData?.stock_zero_to_sixty,
-    stockZeroToSixty,
-    finalZeroToSixty,
-    hasImprovement_060: finalZeroToSixty < stockZeroToSixty,
-    stockBraking,
-    finalBraking,
-    stockLateralG,
-    finalLateralG,
-  });
+  const stockLateralG = computedPerformance?.stock?.lateralG ?? buildData?.stock_lateral_g ?? carData?.lateral_g ?? null;
+  const finalLateralG = computedPerformance?.upgraded?.lateralG ?? buildData?.final_lateral_g ?? stockLateralG;
 
   return (
     <div className={styles.fullScreen}>
@@ -271,6 +296,12 @@ export default function BuildDetailSheet({
       {/* Car Name Header */}
       <div className={styles.carHeader}>
         <h1 className={styles.carName}>{build.car_name}</h1>
+        {buildStatus === 'complete' && (
+          <span className={styles.statusBadge} data-status="complete">Build Complete</span>
+        )}
+        {buildStatus === 'in_progress' && (
+          <span className={styles.statusBadge} data-status="progress">In Progress</span>
+        )}
       </div>
       
       {/* Content */}

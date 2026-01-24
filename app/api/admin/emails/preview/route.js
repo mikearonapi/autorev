@@ -13,7 +13,7 @@ import { NextResponse } from 'next/server';
 export const dynamic = 'force-dynamic';
 import { createClient } from '@supabase/supabase-js';
 import { isAdminEmail } from '@/lib/adminAccess';
-import { generateWelcomeEmailHtml, EMAIL_TEMPLATES } from '@/lib/email';
+import { generateWelcomeEmailHtml, EMAIL_TEMPLATES } from '@/lib/emailService';
 
 // For local dev, use localhost; for production, use the production URL
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://autorev.app';
@@ -51,7 +51,7 @@ function generateInactivity7dHtml(vars, baseUrl) {
   const userName = rawName.split(' ')[0];
   const alUrl = `${baseUrl}/al`;
   const year = new Date().getFullYear();
-  const carCount = vars.car_count || 192; // Updated: actual count ~192 cars
+  const carCount = vars.car_count || 310; // Updated 2026-01-22: actual count 310 cars
   
   return `
 <!DOCTYPE html>
@@ -470,7 +470,7 @@ function generateReferralInviteHtml(vars, baseUrl) {
   const referrerName = vars.referrer_name || 'Your friend';
   const bonusCredits = vars.bonus_credits || 200;
   const referralLink = vars.referral_link || baseUrl;
-  const carCount = vars.car_count || 192; // Updated: actual count ~192 cars
+  const carCount = vars.car_count || 310; // Updated 2026-01-22: actual count 310 cars
   const year = new Date().getFullYear();
   
   return `<!DOCTYPE html>
@@ -819,7 +819,7 @@ export async function GET(request) {
       friend_name: 'Jordan',
       credits_earned: 200,
       total_credits: 400,
-      car_count: carCount || 192,  // Updated: actual count ~192 cars
+      car_count: carCount || 310,  // Updated 2026-01-22: actual count 310 cars
       event_count: eventCount || 8000,  // Updated: actual count ~8,256 events
       // For referral-invite template
       referrer_name: 'Sarah',

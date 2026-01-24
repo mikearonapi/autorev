@@ -4,6 +4,7 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem;
+  background: transparent;
   font-family: var(--font-mono, 'SF Mono', 'Fira Code', monospace);
 }
 
@@ -418,7 +419,7 @@
 
 .retryButton {
   margin-top: 1rem;
-  background: #ef4444;
+  background: var(--color-error, #ef4444);
   color: white;
   border: none;
   border-radius: 6px;
@@ -441,7 +442,7 @@
 }
 
 .toast.error {
-  background: #ef4444;
+  background: var(--color-error, #ef4444);
 }
 
 @keyframes slideIn {
@@ -456,7 +457,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .container {
     padding: 1rem;
   }

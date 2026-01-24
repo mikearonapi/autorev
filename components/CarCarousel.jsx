@@ -14,17 +14,8 @@ import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCarsList } from '@/hooks/useCarData';
+import { getCarHeroImage } from '@/lib/images';
 import styles from './CarCarousel.module.css';
-
-// Blob base URL for car images
-const BLOB_BASE = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com';
-
-/**
- * Get car hero image URL
- */
-function getCarImageUrl(slug) {
-  return `${BLOB_BASE}/cars/${slug}/hero.webp`;
-}
 
 /**
  * Shuffle array using Fisher-Yates algorithm with a seeded random
@@ -163,7 +154,7 @@ function MarqueeRow({ cars, direction, isPausedRef, isMobile, rowIndex }) {
         >
           <div className={styles.imageWrapper}>
             <Image
-              src={getCarImageUrl(car.slug)}
+              src={getCarHeroImage(car) || '/images/placeholder-car.png'}
               alt={car.name}
               fill
               sizes="(max-width: 480px) 160px, (max-width: 768px) 200px, 240px"

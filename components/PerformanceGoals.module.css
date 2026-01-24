@@ -68,7 +68,7 @@
 }
 
 .addBtn:hover {
-  background: #bfe600;
+  background: var(--color-accent-lime-dark, #bfe600);
   box-shadow: 0 4px 16px rgba(212, 255, 0, 0.2);
 }
 
@@ -387,7 +387,7 @@
   gap: 12px;
 }
 
-@media (max-width: 479px) {
+@media (min-width: 480px) {
   .formRow {
     grid-template-columns: 1fr;
   }
@@ -489,7 +489,7 @@
 }
 
 .submitBtn:hover {
-  background: #0d9669;
+  background: var(--color-accent-teal, #0d9669);
 }
 
 /* Empty State - Compact, single CTA */
@@ -502,7 +502,7 @@
   padding: 16px 20px;
 }
 
-@media (max-width: 400px) {
+@media (min-width: 401px) {
   .emptyState {
     flex-direction: column;
     text-align: center;
@@ -540,6 +540,6 @@
 }
 
 .emptyAddBtn:hover {
-  background: #bfe600;
+  background: var(--color-accent-lime-dark, #bfe600);
   box-shadow: 0 4px 16px rgba(212, 255, 0, 0.2);
 }

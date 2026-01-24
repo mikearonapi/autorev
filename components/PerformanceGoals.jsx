@@ -17,6 +17,7 @@
  */
 
 import { useState, useCallback } from 'react';
+import { formatDateSimple } from '@/lib/dateUtils';
 import styles from './PerformanceGoals.module.css';
 
 // Icons
@@ -184,7 +185,7 @@ function GoalCard({ goal, onComplete, onDelete, onUpdate }) {
             {goal.deadline && (
               <span className={styles.goalDeadline}>
                 <ClockIcon />
-                {new Date(goal.deadline).toLocaleDateString()}
+                {formatDateSimple(goal.deadline)}
               </span>
             )}
           </div>
@@ -236,7 +237,7 @@ function GoalCard({ goal, onComplete, onDelete, onUpdate }) {
           <span>Goal Achieved!</span>
           {goal.completedAt && (
             <span className={styles.completedDate}>
-              {new Date(goal.completedAt).toLocaleDateString()}
+              {formatDateSimple(goal.completedAt)}
             </span>
           )}
         </div>
@@ -256,7 +257,7 @@ function AddGoalForm({ onAdd, onCancel, suggestions }) {
   
   const selectedType = GOAL_TYPES[goalType];
   
-  const handleSubmit = (e) => {
+  const handleGoalSubmit = (e) => {
     e.preventDefault();
     if (!title || !targetValue) return;
     
@@ -280,7 +281,7 @@ function AddGoalForm({ onAdd, onCancel, suggestions }) {
   };
   
   return (
-    <form onSubmit={handleSubmit} className={styles.addGoalForm}>
+    <form onSubmit={handleGoalSubmit} className={styles.addGoalForm}>
       <h4 className={styles.formTitle}>Set a New Goal</h4>
       
       {/* Suggestions */}
@@ -328,6 +329,7 @@ function AddGoalForm({ onAdd, onCancel, suggestions }) {
             onChange={(e) => setTitle(e.target.value)}
             placeholder={`e.g., Hit ${selectedType.placeholder}${selectedType.unit}`}
             className={styles.input}
+            autoComplete="off"
             required
           />
         </div>
@@ -338,11 +340,13 @@ function AddGoalForm({ onAdd, onCancel, suggestions }) {
             <div className={styles.inputWithSuffix}>
               <input
                 type="number"
+                inputMode="decimal"
                 step={goalType === 'laptime' ? '0.1' : '1'}
                 value={targetValue}
                 onChange={(e) => setTargetValue(e.target.value)}
                 placeholder={selectedType.placeholder}
                 className={styles.input}
+                autoComplete="off"
                 required
               />
               {selectedType.unit && (
@@ -358,6 +362,7 @@ function AddGoalForm({ onAdd, onCancel, suggestions }) {
               value={deadline}
               onChange={(e) => setDeadline(e.target.value)}
               className={styles.input}
+              autoComplete="off"
               min={new Date().toISOString().split('T')[0]}
             />
           </div>

@@ -54,14 +54,14 @@ export default function FeedbackCorner() {
     };
   }, []);
   
-  const handleClick = () => {
+  const handleFeedbackCornerClick = () => {
     openFeedback();
   };
   
   return (
     <button
       className={`${styles.feedbackCorner} ${isWiggling ? styles.wiggle : ''}`}
-      onClick={handleClick}
+      onClick={handleFeedbackCornerClick}
       aria-label="Give feedback"
     >
       <FeedbackIcon size={18} />

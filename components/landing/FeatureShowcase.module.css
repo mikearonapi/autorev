@@ -3,7 +3,7 @@
 .section {
   /* Tighter mobile padding */
   padding: var(--space-lg) 0;
-  background: linear-gradient(135deg, #07131b 0%, #0a0f14 60%, #070b10 100%);
+  background: linear-gradient(135deg, var(--color-bg-base, #07131b) 0%, #0a0f14 60%, #070b10 100%);
 }
 
 @media (min-width: 480px) {

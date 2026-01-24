@@ -19,6 +19,12 @@ import AskALButton from './AskALButton';
 import InfoTooltip from './ui/InfoTooltip';
 import styles from './VirtualDynoChart.module.css';
 
+// Chart colors - matching design system tokens
+const CHART_COLORS = {
+  hp: '#10b981',      // var(--color-accent-teal) - Horsepower curve
+  torque: '#3b82f6',  // var(--color-accent-blue) - Torque curve
+};
+
 /**
  * Turbo spool characteristics for curve shifting
  * Big turbos = more lag, torque peak shifts right
@@ -266,33 +272,12 @@ export default function VirtualDynoChart({
     ? `Explain my dyno curve (+${hpGain} HP)`
     : 'Explain my power curve';
 
-  // Get FI profile description for display
-  const getProfileDescription = () => {
-    if (!hasModifications) return null;
-    switch (fiProfile) {
-      case 'turbo-big-single':
-        return 'Big turbo: Spools late, massive top-end';
-      case 'turbo-upgraded':
-        return 'Upgraded turbo: More power, slight lag increase';
-      case 'turbo-twin':
-        return 'Twin turbo: Fast spool, big power';
-      case 'supercharged':
-        return 'Supercharged: Instant response';
-      case 'supercharged-centrifugal':
-        return 'Centrifugal SC: Builds with RPM';
-      default:
-        return null;
-    }
-  };
-  
-  const profileDescription = getProfileDescription();
-
   return (
     <div className={`${styles.virtualDyno} ${compact ? styles.compact : ''}`}>
       {/* Header */}
       <div className={styles.dynoHeader}>
         <div className={styles.dynoTitleSection}>
-          <span className={styles.dynoTitle}>Virtual Dyno</span>
+          <span className={`${styles.dynoTitle} text-display`}>Virtual Dyno</span>
           <span className={styles.dynoSubtitle}>
             {hasModifications 
               ? 'Estimated power curves based on your modifications'
@@ -317,33 +302,20 @@ export default function VirtualDynoChart({
         />
       </div>
       
-      {/* Profile description for turbo builds */}
-      {profileDescription && (
-        <div className={styles.dynoProfileNote}>
-          <span className={styles.dynoProfileIcon}>⚡</span>
-          <span>{profileDescription}</span>
-        </div>
-      )}
-      
       {/* Legend - HP and TQ */}
       <div className={styles.dynoLegend}>
         <span className={styles.dynoLegendItem}>
-          <span className={styles.dynoLegendLine} style={{ background: '#10b981' }} />
+          <span className={styles.dynoLegendLine} style={{ background: CHART_COLORS.hp }} />
           <InfoTooltip topicKey="hp" carName={carName} carSlug={carSlug}>
             <span>HP: {Math.round(displayHp)}</span>
           </InfoTooltip>
         </span>
         <span className={styles.dynoLegendItem}>
-          <span className={styles.dynoLegendLine} style={{ background: '#3b82f6', borderStyle: 'dashed' }} />
+          <span className={styles.dynoLegendLine} style={{ background: CHART_COLORS.torque, borderStyle: 'dashed' }} />
           <InfoTooltip topicKey="torque" carName={carName} carSlug={carSlug}>
             <span>TQ: {Math.round(displayTq)} lb-ft</span>
           </InfoTooltip>
         </span>
-        {hasModifications && hpGain > 0 && (
-          <span className={styles.dynoLegendGain}>
-            +{hpGain} HP / +{Math.round(tqGain)} TQ
-          </span>
-        )}
       </div>
 
       {/* Chart Area */}
@@ -370,12 +342,12 @@ export default function VirtualDynoChart({
           <svg className={styles.dynoCurveSvg} viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>
               <linearGradient id="hpGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#10b981" stopOpacity="0.25" />
-                <stop offset="100%" stopColor="#10b981" stopOpacity="0.02" />
+                <stop offset="0%" stopColor={CHART_COLORS.hp} stopOpacity="0.25" />
+                <stop offset="100%" stopColor={CHART_COLORS.hp} stopOpacity="0.02" />
               </linearGradient>
               <linearGradient id="tqGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#3b82f6" stopOpacity="0.15" />
-                <stop offset="100%" stopColor="#3b82f6" stopOpacity="0.02" />
+                <stop offset="0%" stopColor={CHART_COLORS.torque} stopOpacity="0.15" />
+                <stop offset="100%" stopColor={CHART_COLORS.torque} stopOpacity="0.02" />
               </linearGradient>
             </defs>
             {/* HP area fill */}
@@ -400,7 +372,7 @@ export default function VirtualDynoChart({
                 return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
               }).join(' ')}
               fill="none"
-              stroke="#3b82f6"
+              stroke={CHART_COLORS.torque}
               strokeWidth="1.5"
               strokeDasharray="6 3"
             />
@@ -415,7 +387,7 @@ export default function VirtualDynoChart({
                 return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
               }).join(' ')}
               fill="none"
-              stroke="#10b981"
+              stroke={CHART_COLORS.hp}
               strokeWidth="2"
             />
           </svg>

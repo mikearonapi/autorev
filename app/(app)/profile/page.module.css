@@ -5,7 +5,8 @@
 
 .page {
   min-height: 100dvh;
-  background: var(--color-bg-base, #0d1b2a);
+  /* Transparent to show body gradient */
+  background: transparent;
   padding: 0 16px var(--page-bottom-padding);
 }
 
@@ -60,7 +61,7 @@
   font-family: var(--font-display, 'Oswald', sans-serif);
   font-size: var(--text-stat-lg);
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   margin: 0 0 2px;
   white-space: nowrap;
   overflow: hidden;
@@ -123,7 +124,7 @@
 .closeBtn:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.15);
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
 }
 
 /* Thin Sign Out Button - above fuel card */
@@ -147,7 +148,7 @@
 .signOutThin:hover {
   background: rgba(239, 68, 68, 0.08);
   border-color: rgba(239, 68, 68, 0.25);
-  color: #ef4444;
+  color: var(--color-error, #ef4444);
 }
 
 .signOutThin svg {
@@ -202,7 +203,7 @@
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: var(--text-hero);
   font-weight: 700;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   line-height: 1;
 }
 
@@ -219,7 +220,7 @@
   border-radius: 100px;
   font-size: var(--text-xs);
   font-weight: 600;
-  color: #a78bfa;
+  color: var(--color-info, #a78bfa);
   text-transform: uppercase;
 }
 
@@ -233,7 +234,7 @@
 
 .fuelFill {
   height: 100%;
-  background: linear-gradient(90deg, #10b981, #34d399);
+  background: linear-gradient(90deg, var(--color-accent-teal, #10b981), var(--color-accent-teal-light, #34d399));
   border-radius: 6px;
   transition: width 0.4s ease;
 }
@@ -331,7 +332,7 @@
   border-radius: 8px;
   background: var(--color-accent-teal, #10b981);
   border: none;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -341,7 +342,7 @@
 }
 
 .copyBtn:hover {
-  background: #0d9668;
+  background: var(--color-accent-teal, #0d9668);
 }
 
 /* ============================================
@@ -403,7 +404,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   font-size: max(16px, var(--text-body));
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   transition: all 0.2s ease;
   box-sizing: border-box;
 }
@@ -434,7 +435,7 @@
   border-radius: 10px;
   font-size: var(--text-sm);
   font-weight: 600;
-  color: #0a1628;
+  color: var(--color-bg-base, #0a1628);
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
@@ -447,7 +448,7 @@
 }
 
 .inlineSaveBtn:hover:not(:disabled) {
-  background: #bfe600;
+  background: var(--color-accent-lime-dark, #bfe600);
 }
 
 .inlineSaveBtn:disabled {
@@ -478,7 +479,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   font-size: max(16px, var(--text-body));
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
 }
 
 .zipInput:focus {
@@ -507,7 +508,7 @@
   border-radius: 10px;
   font-size: var(--text-sm);
   font-weight: 600;
-  color: #0a1628;
+  color: var(--color-bg-base, #0a1628);
   cursor: pointer;
   transition: all 0.2s ease;
   white-space: nowrap;
@@ -520,7 +521,7 @@
 }
 
 .locationSaveBtn:hover:not(:disabled) {
-  background: #bfe600;
+  background: var(--color-accent-lime-dark, #bfe600);
 }
 
 .locationSaveBtn:disabled {
@@ -544,7 +545,7 @@
 
 .toggleRow span {
   font-size: var(--text-body);
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
 }
 
 .toggle {
@@ -575,7 +576,7 @@
   left: 3px;
   width: 20px;
   height: 20px;
-  background: #fff;
+  background: var(--color-text-primary, #ffffff);
   border-radius: 50%;
   transition: transform 0.25s ease;
   box-shadow: 0 1px 3px rgba(0,0,0,0.2);
@@ -631,7 +632,7 @@
   font-family: var(--font-display, 'Oswald', sans-serif);
   font-size: var(--text-hero);
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   margin: 0 0 4px;
 }
 
@@ -647,7 +648,7 @@
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: var(--text-stat-lg);
   font-weight: 700;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
 }
 
 .pricePeriod {
@@ -674,7 +675,7 @@
   border-radius: 6px;
   font-size: var(--text-2xs);
   font-weight: 700;
-  color: #a78bfa;
+  color: var(--color-info, #a78bfa);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -728,7 +729,7 @@
   right: -24px;
   transform: rotate(45deg);
   background: var(--color-accent-teal, #10b981);
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   font-size: 8px;
   font-weight: 700;
   text-transform: uppercase;
@@ -739,7 +740,7 @@
 .planName {
   font-size: var(--text-body);
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   margin-bottom: 2px;
 }
 
@@ -747,7 +748,7 @@
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: var(--text-body);
   font-weight: 700;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   margin-bottom: 10px;
 }
 
@@ -823,11 +824,11 @@
 
 .planBtnUpgrade {
   background: var(--color-accent-lime, #d4ff00);
-  color: #0a1628;
+  color: var(--color-bg-base, #0a1628);
 }
 
 .planBtnUpgrade:hover:not(:disabled) {
-  background: #bfe600;
+  background: var(--color-accent-lime-dark, #bfe600);
   transform: translateY(-1px);
 }
 
@@ -839,7 +840,7 @@
 
 .planBtnSwitch:hover:not(:disabled) {
   border-color: rgba(255, 255, 255, 0.4);
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
 }
 
 .planBtn:disabled {
@@ -909,7 +910,7 @@
   border-radius: 12px;
   font-size: var(--text-body);
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   cursor: pointer;
   margin-bottom: 10px;
   transition: all 0.2s ease;
@@ -966,7 +967,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   font-size: var(--text-sm);
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   cursor: pointer;
   margin-bottom: 8px;
   transition: all 0.2s ease;
@@ -983,7 +984,7 @@
   border: 1px solid rgba(239, 68, 68, 0.2);
   border-radius: 10px;
   font-size: var(--text-sm);
-  color: #ef4444;
+  color: var(--color-error, #ef4444);
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -1020,7 +1021,7 @@
   font-family: var(--font-display, 'Oswald', sans-serif);
   font-size: var(--text-h3);
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   margin: 0 0 8px;
 }
 
@@ -1049,12 +1050,12 @@
 .confirmBtn {
   flex: 1;
   padding: 12px;
-  background: #ef4444;
+  background: var(--color-error, #ef4444);
   border: none;
   border-radius: 10px;
   font-size: var(--text-body);
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   cursor: pointer;
 }
 
@@ -1070,7 +1071,7 @@
 }
 
 /* Standard mobile (375-479px) - tighter spacing */
-@media (max-width: 479px) {
+@media (min-width: 480px) {
   .zipInput {
     width: 64px;
   }
@@ -1082,7 +1083,7 @@
 }
 
 /* Medium mobile (375-479px) - plan cards side by side but compact */
-@media (max-width: 479px) {
+@media (min-width: 480px) {
   .planCard {
     padding: 12px 8px;
   }
@@ -1110,7 +1111,7 @@
 }
 
 /* Small mobile (under 375px) - stack elements */
-@media (max-width: 374px) {
+@media (min-width: 375px) {
   .header {
     gap: 10px;
   }

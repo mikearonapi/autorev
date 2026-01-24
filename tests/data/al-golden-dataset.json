@@ -1,0 +1,800 @@
+{
+  "version": "1.0.0",
+  "description": "Golden dataset for AL (AI Assistant) evaluation. Contains test cases across specs, troubleshooting, compatibility, and maintenance categories.",
+  "created_at": "2026-01-23",
+  "categories": ["specs", "troubleshooting", "compatibility", "maintenance", "builds", "general"],
+  "test_cases": [
+    {
+      "id": "specs-001",
+      "category": "specs",
+      "query": "What is the horsepower of the BMW M3 G80?",
+      "expected_answer_keywords": ["473", "503", "Competition", "S58", "twin-turbo"],
+      "expected_tools": ["getCarSpecs"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "specs-002",
+      "category": "specs",
+      "query": "How much torque does the Porsche 911 GT3 make?",
+      "expected_answer_keywords": ["346", "347", "lb-ft", "Nm", "naturally aspirated"],
+      "expected_tools": ["getCarSpecs"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "specs-003",
+      "category": "specs",
+      "query": "What engine does the Audi RS5 use?",
+      "expected_answer_keywords": ["2.9L", "twin-turbo", "V6", "TFSI", "EA839"],
+      "expected_tools": ["getCarSpecs"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "specs-004",
+      "category": "specs",
+      "query": "Compare the 0-60 times of the BMW M4 and Mercedes C63 AMG",
+      "expected_answer_keywords": ["3.8", "3.9", "4.0", "seconds", "comparable", "AWD", "RWD"],
+      "expected_tools": ["getCarSpecs", "compareCars"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "specs-005",
+      "category": "specs",
+      "query": "What's the redline on a Honda Civic Type R FK8?",
+      "expected_answer_keywords": ["7000", "RPM", "VTEC", "K20C1"],
+      "expected_tools": ["getCarSpecs"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "specs-006",
+      "category": "specs",
+      "query": "How much does a Nissan GT-R R35 weigh?",
+      "expected_answer_keywords": ["3800", "3900", "lbs", "curb weight", "AWD"],
+      "expected_tools": ["getCarSpecs"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "specs-007",
+      "category": "specs",
+      "query": "What transmission options are available for the Ford Mustang GT?",
+      "expected_answer_keywords": ["10-speed", "6-speed", "manual", "automatic", "MT82", "10R80"],
+      "expected_tools": ["getCarSpecs"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "specs-008",
+      "category": "specs",
+      "query": "What's the fuel economy of the Toyota GR Supra?",
+      "expected_answer_keywords": ["MPG", "25", "22", "city", "highway"],
+      "expected_tools": ["getCarSpecs"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "specs-009",
+      "category": "specs",
+      "query": "How much cargo space does the Audi RS6 Avant have?",
+      "expected_answer_keywords": ["cubic feet", "liters", "wagon", "practical"],
+      "expected_tools": ["getCarSpecs"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "specs-010",
+      "category": "specs",
+      "query": "What differential does the BMW M2 use?",
+      "expected_answer_keywords": ["differential", "Active M", "electronic", "LSD"],
+      "expected_tools": ["getCarSpecs"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "troubleshooting-001",
+      "category": "troubleshooting",
+      "query": "My BMW N54 engine has a rough idle, what could be wrong?",
+      "expected_answer_keywords": ["injector", "HPFP", "vacuum leak", "carbon buildup", "coil pack"],
+      "expected_tools": ["searchKnowledge", "getKnownIssues"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "troubleshooting-002",
+      "category": "troubleshooting",
+      "query": "Why does my Volkswagen Golf R have a check engine light and misfires?",
+      "expected_answer_keywords": ["coil pack", "spark plug", "carbon buildup", "intake manifold"],
+      "expected_tools": ["searchKnowledge", "getKnownIssues"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "troubleshooting-003",
+      "category": "troubleshooting",
+      "query": "The Porsche Cayman I'm looking at has an IMS bearing - should I be worried?",
+      "expected_answer_keywords": ["IMS", "bearing", "996", "987", "failure", "upgrade", "LN Engineering"],
+      "expected_tools": ["searchKnowledge", "getKnownIssues"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "troubleshooting-004",
+      "category": "troubleshooting",
+      "query": "My Audi S4 B8.5 has an oil consumption problem, is this common?",
+      "expected_answer_keywords": ["oil consumption", "piston rings", "3.0T", "supercharged", "quart"],
+      "expected_tools": ["searchKnowledge", "getKnownIssues"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "troubleshooting-005",
+      "category": "troubleshooting",
+      "query": "Why is my Mercedes C63 AMG making a clunking noise from the rear?",
+      "expected_answer_keywords": ["differential", "mount", "bushings", "subframe"],
+      "expected_tools": ["searchKnowledge", "getKnownIssues"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "troubleshooting-006",
+      "category": "troubleshooting",
+      "query": "My Subaru WRX STI has a loud exhaust leak, where should I look?",
+      "expected_answer_keywords": ["header", "uppipe", "gasket", "turbo", "downpipe", "donut"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "troubleshooting-007",
+      "category": "troubleshooting",
+      "query": "The clutch on my Ford Focus RS feels weak, what's going on?",
+      "expected_answer_keywords": ["slave cylinder", "DMF", "dual mass flywheel", "hydraulic"],
+      "expected_tools": ["searchKnowledge", "getKnownIssues"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "troubleshooting-008",
+      "category": "troubleshooting",
+      "query": "My Nissan 370Z has a grinding noise when turning, what could it be?",
+      "expected_answer_keywords": ["CSC", "concentric slave cylinder", "bearing", "steering rack"],
+      "expected_tools": ["searchKnowledge", "getKnownIssues"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "troubleshooting-009",
+      "category": "troubleshooting",
+      "query": "What causes rod knock in an EJ257 engine?",
+      "expected_answer_keywords": ["bearing", "oil starvation", "ringland", "spun bearing", "turbo"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "troubleshooting-010",
+      "category": "troubleshooting",
+      "query": "My BMW E90 335i is limp mode after hard acceleration",
+      "expected_answer_keywords": ["boost leak", "wastegate", "N54", "HPFP", "fuel", "turbo"],
+      "expected_tools": ["searchKnowledge", "getKnownIssues"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "compatibility-001",
+      "category": "compatibility",
+      "query": "Will BMW F30 wheels fit on my F80 M3?",
+      "expected_answer_keywords": ["bolt pattern", "5x120", "offset", "clearance", "hub"],
+      "expected_tools": ["searchKnowledge", "checkPartCompatibility"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "compatibility-002",
+      "category": "compatibility",
+      "query": "Can I use a Garrett GTX3582R turbo on my Evo X?",
+      "expected_answer_keywords": ["manifold", "downpipe", "4B11T", "supporting mods", "fuel system"],
+      "expected_tools": ["searchKnowledge", "checkPartCompatibility"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "compatibility-003",
+      "category": "compatibility",
+      "query": "Is the K04 turbo a direct replacement for the K03 on my GTI?",
+      "expected_answer_keywords": ["bolt-on", "software", "tune", "EA888", "intercooler"],
+      "expected_tools": ["searchKnowledge", "checkPartCompatibility"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "compatibility-004",
+      "category": "compatibility",
+      "query": "What coilovers fit the Subaru BRZ and Toyota 86?",
+      "expected_answer_keywords": ["platform", "shared", "86", "FR-S", "GR86", "ZN6", "ZC6"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "compatibility-005",
+      "category": "compatibility",
+      "query": "Can I put an S54 engine in my E36 M3?",
+      "expected_answer_keywords": ["swap", "subframe", "wiring", "DME", "driveshaft"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "compatibility-006",
+      "category": "compatibility",
+      "query": "Will a Cobb Accessport from a 2018 WRX work on a 2021 model?",
+      "expected_answer_keywords": ["unmarry", "license", "generation", "FA20"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "compatibility-007",
+      "category": "compatibility",
+      "query": "Can I run E85 on my stock Mustang GT?",
+      "expected_answer_keywords": ["flex fuel", "sensor", "injectors", "fuel pump", "tune"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "compatibility-008",
+      "category": "compatibility",
+      "query": "What brake pads work with the Brembo BBK on my Evo?",
+      "expected_answer_keywords": ["compound", "Hawk", "EBC", "Stoptech", "bedding"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "compatibility-009",
+      "category": "compatibility",
+      "query": "Is the MK7 GTI intercooler compatible with the MK7 Golf R?",
+      "expected_answer_keywords": ["IS38", "IS20", "intercooler", "upgrade", "core size"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "compatibility-010",
+      "category": "compatibility",
+      "query": "Can I install a cold air intake without a tune on my N55?",
+      "expected_answer_keywords": ["MAF", "safe", "adaptation", "no tune", "bolt-on"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "maintenance-001",
+      "category": "maintenance",
+      "query": "How often should I change the oil in my BMW M3?",
+      "expected_answer_keywords": ["5000", "7500", "miles", "synthetic", "10W-60", "0W-40"],
+      "expected_tools": ["getMaintenanceSchedule"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "maintenance-002",
+      "category": "maintenance",
+      "query": "When should I replace the spark plugs on my Audi RS3?",
+      "expected_answer_keywords": ["20000", "30000", "miles", "NGK", "gap"],
+      "expected_tools": ["getMaintenanceSchedule"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "maintenance-003",
+      "category": "maintenance",
+      "query": "What's the transmission fluid change interval for a PDK Porsche?",
+      "expected_answer_keywords": ["40000", "60000", "miles", "lifetime", "dealer"],
+      "expected_tools": ["getMaintenanceSchedule"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "maintenance-004",
+      "category": "maintenance",
+      "query": "Does the Honda S2000 have a timing belt or chain?",
+      "expected_answer_keywords": ["chain", "F20C", "F22C", "no replacement"],
+      "expected_tools": ["getMaintenanceSchedule", "searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "maintenance-005",
+      "category": "maintenance",
+      "query": "How often should the differential fluid be changed in a Mustang GT?",
+      "expected_answer_keywords": ["30000", "50000", "miles", "limited slip", "friction modifier"],
+      "expected_tools": ["getMaintenanceSchedule"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "maintenance-006",
+      "category": "maintenance",
+      "query": "What's the brake fluid change interval for track use?",
+      "expected_answer_keywords": ["annual", "6 months", "DOT 4", "boiling point", "moisture"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "maintenance-007",
+      "category": "maintenance",
+      "query": "When should I replace the water pump on my VW GTI?",
+      "expected_answer_keywords": ["60000", "80000", "thermostat", "coolant", "EA888"],
+      "expected_tools": ["getMaintenanceSchedule"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "maintenance-008",
+      "category": "maintenance",
+      "query": "How do I know when my brake pads need replacing?",
+      "expected_answer_keywords": ["mm", "thickness", "wear indicator", "squealing", "3mm"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "maintenance-009",
+      "category": "maintenance",
+      "query": "Should I walnut blast my N54 intake valves?",
+      "expected_answer_keywords": ["carbon buildup", "direct injection", "30000", "miles", "cleaning"],
+      "expected_tools": ["searchKnowledge", "getMaintenanceSchedule"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "maintenance-010",
+      "category": "maintenance",
+      "query": "What coolant should I use in my Porsche 911?",
+      "expected_answer_keywords": ["G13", "OAT", "silicate-free", "pink", "purple"],
+      "expected_tools": ["getMaintenanceSchedule", "searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "builds-001",
+      "category": "builds",
+      "query": "What mods should I do first on my WRX for more power?",
+      "expected_answer_keywords": ["tune", "intake", "downpipe", "intercooler", "accessport"],
+      "expected_tools": ["getModificationArticle", "searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "builds-002",
+      "category": "builds",
+      "query": "How much horsepower can I get from a bolt-on BMW N55?",
+      "expected_answer_keywords": ["350", "400", "HP", "downpipe", "tune", "intake"],
+      "expected_tools": ["searchKnowledge", "calculatePerformanceGain"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "builds-003",
+      "category": "builds",
+      "query": "What's a good Stage 2 setup for a Golf R?",
+      "expected_answer_keywords": ["downpipe", "intercooler", "intake", "tune", "400", "HP"],
+      "expected_tools": ["searchKnowledge", "getBuildGuideArticle"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "builds-004",
+      "category": "builds",
+      "query": "Should I supercharge or turbo my naturally aspirated car?",
+      "expected_answer_keywords": ["linear", "boost", "lag", "complexity", "cost"],
+      "expected_tools": ["searchKnowledge", "getModificationArticle"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "builds-005",
+      "category": "builds",
+      "query": "What supporting mods do I need for a big turbo Evo X?",
+      "expected_answer_keywords": ["fuel pump", "injectors", "FMIC", "clutch", "connecting rods"],
+      "expected_tools": ["searchKnowledge", "getBuildGuideArticle"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "builds-006",
+      "category": "builds",
+      "query": "How do I improve the handling of my Mustang GT?",
+      "expected_answer_keywords": ["coilovers", "sway bars", "subframe", "bushings", "alignment"],
+      "expected_tools": ["searchKnowledge", "getModificationArticle"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "builds-007",
+      "category": "builds",
+      "query": "What's the best exhaust for my 370Z?",
+      "expected_answer_keywords": ["catback", "Tomei", "Motordyne", "sound", "drone"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "builds-008",
+      "category": "builds",
+      "query": "Can I make 600hp on a stock Supra block?",
+      "expected_answer_keywords": ["B58", "safe", "limit", "connecting rods", "tune"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "builds-009",
+      "category": "builds",
+      "query": "What's the power potential of the EJ257?",
+      "expected_answer_keywords": ["400", "500", "rods", "pistons", "closed deck", "limit"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "builds-010",
+      "category": "builds",
+      "query": "Should I get a flex fuel kit for my Focus ST?",
+      "expected_answer_keywords": ["E85", "power", "octane", "sensor", "tune", "pump"],
+      "expected_tools": ["searchKnowledge", "getModificationArticle"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "general-001",
+      "category": "general",
+      "query": "What's the best sports car under $50,000?",
+      "expected_answer_keywords": ["Supra", "M2", "Corvette", "Mustang", "Cayman"],
+      "expected_tools": ["searchCars"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "general-002",
+      "category": "general",
+      "query": "Is the BMW M3 reliable?",
+      "expected_answer_keywords": ["reliability", "maintenance", "cost", "issues"],
+      "expected_tools": ["searchKnowledge", "getKnownIssues"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "general-003",
+      "category": "general",
+      "query": "What's a good first sports car?",
+      "expected_answer_keywords": ["Miata", "BRZ", "86", "Mustang", "affordable", "insurance"],
+      "expected_tools": ["searchCars", "searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "general-004",
+      "category": "general",
+      "query": "How does the Porsche 911 compare to the Corvette?",
+      "expected_answer_keywords": ["engine", "layout", "handling", "price", "character"],
+      "expected_tools": ["compareCars", "getCarSpecs"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "general-005",
+      "category": "general",
+      "query": "What should I look for when buying a used WRX STI?",
+      "expected_answer_keywords": ["mods", "history", "ringland", "service records", "compression"],
+      "expected_tools": ["searchKnowledge", "getKnownIssues"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "general-006",
+      "category": "general",
+      "query": "Which is faster, the M4 or C63?",
+      "expected_answer_keywords": ["0-60", "quarter mile", "track", "power"],
+      "expected_tools": ["compareCars", "getCarSpecs"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "general-007",
+      "category": "general",
+      "query": "What are the best tires for a track day?",
+      "expected_answer_keywords": ["Michelin", "PS4S", "RE-71R", "200tw", "NT01"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "general-008",
+      "category": "general",
+      "query": "Is it worth buying a salvage title sports car?",
+      "expected_answer_keywords": ["insurance", "resale", "inspection", "frame damage"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "general-009",
+      "category": "general",
+      "query": "What's the difference between a limited slip and open differential?",
+      "expected_answer_keywords": ["traction", "torque transfer", "corner", "one wheel peel"],
+      "expected_tools": ["searchKnowledge", "getModificationArticle"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "general-010",
+      "category": "general",
+      "query": "How do I break in a new engine properly?",
+      "expected_answer_keywords": ["miles", "vary RPM", "avoid", "oil change", "synthetic"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "specs-011",
+      "category": "specs",
+      "query": "What suspension does the Mazda MX-5 ND use?",
+      "expected_answer_keywords": ["double wishbone", "multilink", "front", "rear"],
+      "expected_tools": ["getCarSpecs"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "specs-012",
+      "category": "specs",
+      "query": "How many seats does the BMW M2 have?",
+      "expected_answer_keywords": ["4", "2+2", "rear", "small"],
+      "expected_tools": ["getCarSpecs"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "specs-013",
+      "category": "specs",
+      "query": "What's the compression ratio of the Toyota 2JZ-GTE?",
+      "expected_answer_keywords": ["8.5:1", "compression", "boost", "turbo"],
+      "expected_tools": ["getCarSpecs", "searchKnowledge"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "specs-014",
+      "category": "specs",
+      "query": "Does the Civic Type R have a limited slip differential?",
+      "expected_answer_keywords": ["yes", "LSD", "helical", "front-wheel drive"],
+      "expected_tools": ["getCarSpecs"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "specs-015",
+      "category": "specs",
+      "query": "What's the wheelbase of the new Z car?",
+      "expected_answer_keywords": ["100.4", "inches", "370Z", "shorter"],
+      "expected_tools": ["getCarSpecs"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "troubleshooting-011",
+      "category": "troubleshooting",
+      "query": "My Miata's soft top leaks, how do I fix it?",
+      "expected_answer_keywords": ["seal", "weatherstrip", "window", "zipper", "adjustment"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "troubleshooting-012",
+      "category": "troubleshooting",
+      "query": "Why does my turbo whistle loudly when I let off the gas?",
+      "expected_answer_keywords": ["compressor surge", "blow off valve", "BOV", "flutter"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "troubleshooting-013",
+      "category": "troubleshooting",
+      "query": "My BRZ makes a noise at cold startup, is this normal?",
+      "expected_answer_keywords": ["valve spring", "recall", "Toyota", "normal", "ticking"],
+      "expected_tools": ["searchKnowledge", "getKnownIssues"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "troubleshooting-014",
+      "category": "troubleshooting",
+      "query": "The steering on my E46 M3 feels loose, what should I check?",
+      "expected_answer_keywords": ["RTAB", "bushings", "tie rod", "rack", "subframe"],
+      "expected_tools": ["searchKnowledge", "getKnownIssues"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "troubleshooting-015",
+      "category": "troubleshooting",
+      "query": "My Focus RS is overheating, what could cause this?",
+      "expected_answer_keywords": ["head gasket", "coolant", "thermostat", "fan"],
+      "expected_tools": ["searchKnowledge", "getKnownIssues"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "compatibility-011",
+      "category": "compatibility",
+      "query": "Can I use ND Miata wheels on an NC?",
+      "expected_answer_keywords": ["bolt pattern", "5x114.3", "hub", "offset"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "compatibility-012",
+      "category": "compatibility",
+      "query": "Will an S2000 transmission fit in my Civic Si?",
+      "expected_answer_keywords": ["swap", "adapter", "clutch", "flywheel", "shaft"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "hard"
+    },
+    {
+      "id": "compatibility-013",
+      "category": "compatibility",
+      "query": "Are WRX and STI brake calipers interchangeable?",
+      "expected_answer_keywords": ["Brembo", "2-pot", "4-pot", "upgrade", "bracket"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "compatibility-014",
+      "category": "compatibility",
+      "query": "Can I use BMW M Performance exhaust on my non-M car?",
+      "expected_answer_keywords": ["fitment", "hangers", "tips", "sound"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "compatibility-015",
+      "category": "compatibility",
+      "query": "What ECU tuning options are available for the Supra?",
+      "expected_answer_keywords": ["MHD", "Bootmod3", "JB4", "flash", "piggyback"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "maintenance-011",
+      "category": "maintenance",
+      "query": "How often should I rotate tires on my sports car?",
+      "expected_answer_keywords": ["5000", "7500", "miles", "staggered", "directional"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "maintenance-012",
+      "category": "maintenance",
+      "query": "What's the proper tire pressure for track driving?",
+      "expected_answer_keywords": ["hot", "cold", "PSI", "chalk", "wear"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "maintenance-013",
+      "category": "maintenance",
+      "query": "Should I use synthetic oil in my older car?",
+      "expected_answer_keywords": ["compatible", "leak", "gasket", "benefit"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "maintenance-014",
+      "category": "maintenance",
+      "query": "How do I properly store my car for winter?",
+      "expected_answer_keywords": ["battery tender", "fuel stabilizer", "tires", "cover"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "maintenance-015",
+      "category": "maintenance",
+      "query": "What's the correct torque spec for wheel lug nuts?",
+      "expected_answer_keywords": ["ft-lbs", "Nm", "pattern", "torque wrench", "spec"],
+      "expected_tools": ["searchKnowledge", "getMaintenanceSchedule"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "builds-011",
+      "category": "builds",
+      "query": "What's the cheapest way to add 50hp to my car?",
+      "expected_answer_keywords": ["tune", "intake", "exhaust", "bolt-on"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "builds-012",
+      "category": "builds",
+      "query": "Should I upgrade my brakes before adding power?",
+      "expected_answer_keywords": ["pads", "fluid", "cooling", "stock", "adequate"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "builds-013",
+      "category": "builds",
+      "query": "What lightweight wheels should I get for track use?",
+      "expected_answer_keywords": ["flow formed", "forged", "Enkei", "weight", "Apex"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "builds-014",
+      "category": "builds",
+      "query": "Is a short shifter worth it?",
+      "expected_answer_keywords": ["throw", "feel", "mechanical", "precision"],
+      "expected_tools": ["searchKnowledge", "getModificationArticle"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "builds-015",
+      "category": "builds",
+      "query": "What's the difference between Stage 1 and Stage 2 tunes?",
+      "expected_answer_keywords": ["hardware", "bolt-on", "downpipe", "power", "requirements"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "general-011",
+      "category": "general",
+      "query": "What does 'N/A' mean in car terms?",
+      "expected_answer_keywords": ["naturally aspirated", "no turbo", "supercharger", "atmospheric"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "general-012",
+      "category": "general",
+      "query": "Is AWD better than RWD for performance?",
+      "expected_answer_keywords": ["traction", "weight", "drift", "launch", "handling"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "general-013",
+      "category": "general",
+      "query": "What's the best time to buy a used sports car?",
+      "expected_answer_keywords": ["winter", "season", "depreciation", "market"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "general-014",
+      "category": "general",
+      "query": "How does launch control work?",
+      "expected_answer_keywords": ["RPM", "traction", "clutch", "computer", "optimal"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "general-015",
+      "category": "general",
+      "query": "What's the difference between HP and WHP?",
+      "expected_answer_keywords": ["crank", "wheel", "drivetrain loss", "dyno", "15%"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "specs-016",
+      "category": "specs",
+      "query": "How much does a Chevrolet Corvette C8 cost?",
+      "expected_answer_keywords": ["60000", "MSRP", "Stingray", "Z06"],
+      "expected_tools": ["getCarSpecs"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "specs-017",
+      "category": "specs",
+      "query": "What engine is in the GR Yaris?",
+      "expected_answer_keywords": ["G16E-GTS", "1.6L", "turbo", "3-cylinder", "268"],
+      "expected_tools": ["getCarSpecs"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "specs-018",
+      "category": "specs",
+      "query": "Does the Cayman GT4 have a flat-six or four-cylinder?",
+      "expected_answer_keywords": ["flat-six", "4.0L", "naturally aspirated", "GT3"],
+      "expected_tools": ["getCarSpecs"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "troubleshooting-016",
+      "category": "troubleshooting",
+      "query": "My car's battery keeps dying, what could be wrong?",
+      "expected_answer_keywords": ["parasitic draw", "alternator", "age", "connections"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "troubleshooting-017",
+      "category": "troubleshooting",
+      "query": "Why is my car pulling to one side when braking?",
+      "expected_answer_keywords": ["caliper", "seized", "alignment", "rotor", "uneven"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "medium"
+    },
+    {
+      "id": "builds-016",
+      "category": "builds",
+      "query": "What's the best cold air intake for my car?",
+      "expected_answer_keywords": ["K&N", "Injen", "AEM", "filter", "heat soak"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "builds-017",
+      "category": "builds",
+      "query": "How do I make my exhaust louder without a tune?",
+      "expected_answer_keywords": ["resonator delete", "muffler", "catback", "axle-back"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "general-016",
+      "category": "general",
+      "query": "What does it mean when a car is 'modded'?",
+      "expected_answer_keywords": ["modified", "aftermarket", "parts", "performance"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "easy"
+    },
+    {
+      "id": "general-017",
+      "category": "general",
+      "query": "Is it legal to straight pipe my car?",
+      "expected_answer_keywords": ["emissions", "state", "inspection", "catalytic converter"],
+      "expected_tools": ["searchKnowledge"],
+      "difficulty": "easy"
+    }
+  ]
+}

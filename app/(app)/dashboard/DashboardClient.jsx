@@ -11,7 +11,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/components/providers/AuthProvider';
-import ConcentricRings from './components/ConcentricRings';
+import WeeklyPointsSummary from './components/WeeklyPointsSummary';
 import WeeklyEngagement from './components/WeeklyEngagement';
 import LifetimeAchievements from './components/LifetimeAchievements';
 import ImprovementActions from './components/ImprovementActions';
@@ -174,19 +174,15 @@ export default function DashboardClient() {
         onTitleChange={handleTitleChange}
       />
 
-      {/* Activity Rings - Apple-style weekly summary */}
+      {/* Weekly Points Summary - Simplified hero card */}
       <section className={styles.ringsSection}>
-        <ConcentricRings
-          weeklyActivity={weeklyActivity}
-          currentStreak={streak?.currentStreak || 0}
-          longestStreak={streak?.longestStreak || 0}
-          garageScore={garageScore}
+        <WeeklyPointsSummary
           points={{
             weekly: points?.weekly || 0,
             monthly: points?.monthly || 0,
             lifetime: points?.lifetime || 0,
           }}
-          size={180}
+          currentStreak={streak?.currentStreak || 0}
           animated={true}
         />
       </section>

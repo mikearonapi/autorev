@@ -87,7 +87,7 @@
 }
 
 .tabActive:hover {
-  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  background: linear-gradient(135deg, var(--color-accent-blue, #2563eb), #7c3aed);
   color: white;
 }
 
@@ -113,7 +113,7 @@
   gap: 10px;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .analyticsGrid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -383,7 +383,7 @@
   border-radius: 3px;
   font-family: 'SF Mono', 'Fira Code', monospace;
   font-size: 10px;
-  color: #a5b4fc;
+  color: var(--color-accent-blue-light, #a5b4fc);
 }
 
 .templateActions {
@@ -619,7 +619,7 @@
 
 .select option {
   background: var(--brand-bg-card-dark);
-  color: #f8fafc;
+  color: var(--color-bg-muted, #f8fafc);
 }
 
 .input {
@@ -677,7 +677,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .header {
     padding: 12px;
   }

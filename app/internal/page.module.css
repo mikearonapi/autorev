@@ -2,7 +2,8 @@
   max-width: 1100px;
   margin: 0 auto;
   padding: 28px 18px 60px;
-  color: #e5e7eb;
+  background: transparent;
+  color: var(--color-border-subtle, #e5e7eb);
 }
 
 .header h1 {
@@ -12,7 +13,7 @@
 
 .header p {
   margin: 0 0 18px;
-  color: #a1a1aa;
+  color: var(--color-text-muted, #a1a1aa);
   line-height: 1.35;
   max-width: 760px;
 }
@@ -41,12 +42,12 @@
 
 .cardTitle {
   font-weight: 700;
-  color: #f3f4f6;
+  color: var(--color-bg-muted, #f3f4f6);
   margin-bottom: 6px;
 }
 
 .cardDesc {
-  color: #cbd5e1;
+  color: var(--color-border-default, #cbd5e1);
   line-height: 1.35;
   margin-bottom: 10px;
 }
@@ -54,10 +55,10 @@
 .cardHref {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
   font-size: 12px;
-  color: #93c5fd;
+  color: var(--color-accent-blue-light, #93c5fd);
 }
 
-@media (max-width: 780px) {
+@media (min-width: 781px) {
   .grid {
     grid-template-columns: 1fr;
   }

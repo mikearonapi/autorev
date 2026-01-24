@@ -1,0 +1,233 @@
+/**
+ * BillingToggle Styles
+ * 
+ * Uses CSS custom properties from the design system.
+ */
+
+/* =============================================================================
+   DEFAULT TOGGLE VARIANT
+   ============================================================================= */
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-3, 0.75rem);
+}
+
+.label {
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: 500;
+  color: var(--color-text-secondary, #6b7280);
+  cursor: pointer;
+  transition: color 0.2s ease;
+  user-select: none;
+}
+
+.label:hover {
+  color: var(--color-text-primary, #1f2937);
+}
+
+.labelActive {
+  color: var(--color-text-primary, #1f2937);
+  font-weight: 600;
+}
+
+/* Toggle Switch */
+.toggle {
+  position: relative;
+  width: 48px;
+  height: 26px;
+  cursor: pointer;
+  outline: none;
+}
+
+.toggle:focus-visible .toggleTrack {
+  box-shadow: 0 0 0 3px var(--color-brand-focus, rgba(26, 77, 110, 0.3));
+}
+
+.toggle.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.toggleTrack {
+  position: absolute;
+  inset: 0;
+  background-color: var(--color-bg-tertiary, #e5e7eb);
+  border-radius: 9999px;
+  transition: background-color 0.2s ease;
+}
+
+.toggleActive .toggleTrack {
+  background-color: var(--color-brand-primary, #1a4d6e);
+}
+
+.toggleThumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background-color: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s ease;
+}
+
+.toggleActive .toggleThumb {
+  transform: translateX(22px);
+}
+
+/* Savings Badge */
+.savingsBadge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: var(--space-2, 0.5rem);
+  padding: 2px 8px;
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: 600;
+  color: var(--color-success-text, #059669);
+  background-color: var(--color-success-bg, #d1fae5);
+  border-radius: 9999px;
+}
+
+/* =============================================================================
+   COMPACT VARIANT
+   ============================================================================= */
+
+.compactContainer {
+  display: inline-flex;
+  background-color: var(--color-bg-secondary, #f3f4f6);
+  border-radius: var(--radius-lg, 0.5rem);
+  padding: 4px;
+  gap: 4px;
+}
+
+.compactOption {
+  position: relative;
+  padding: 6px 12px;
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: 500;
+  color: var(--color-text-secondary, #6b7280);
+  background: transparent;
+  border: none;
+  border-radius: var(--radius-md, 0.375rem);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.compactOption:hover:not(:disabled) {
+  color: var(--color-text-primary, #1f2937);
+}
+
+.compactOption:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.compactActive {
+  color: var(--color-text-primary, #1f2937);
+  background-color: white;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.compactBadge {
+  margin-left: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-success-text, #059669);
+}
+
+/* =============================================================================
+   PILL VARIANT
+   ============================================================================= */
+
+.pillContainer {
+  display: inline-flex;
+  background-color: var(--color-bg-secondary, #f3f4f6);
+  border-radius: 9999px;
+  padding: 4px;
+}
+
+.pillOption {
+  display: flex;
+  align-items: center;
+  padding: 8px 16px;
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: 500;
+  color: var(--color-text-secondary, #6b7280);
+  background: transparent;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.pillOption:hover:not(:disabled) {
+  color: var(--color-text-primary, #1f2937);
+}
+
+.pillOption:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pillActive {
+  color: white;
+  background-color: var(--color-brand-primary, #1a4d6e);
+}
+
+.pillBadge {
+  margin-left: 6px;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--color-accent-gold, #D4AF37);
+  background-color: rgba(212, 175, 55, 0.15);
+  border-radius: 9999px;
+}
+
+.pillActive .pillBadge {
+  color: var(--color-accent-gold, #D4AF37);
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* =============================================================================
+   RESPONSIVE
+   ============================================================================= */
+
+@media (max-width: 480px) {
+  .container {
+    gap: var(--space-2, 0.5rem);
+  }
+  
+  .label {
+    font-size: var(--font-size-xs, 0.75rem);
+  }
+  
+  .toggle {
+    width: 40px;
+    height: 22px;
+  }
+  
+  .toggleThumb {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .toggleActive .toggleThumb {
+    transform: translateX(18px);
+  }
+  
+  .savingsBadge {
+    display: none;
+  }
+  
+  .pillOption {
+    padding: 6px 12px;
+    font-size: var(--font-size-xs, 0.75rem);
+  }
+}

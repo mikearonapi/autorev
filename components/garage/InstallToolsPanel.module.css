@@ -2,6 +2,7 @@
    InstallToolsPanel Component Styles
    
    Aggregated tools display for entire build.
+   Premium dark theme matching Insights page tiles.
    ========================================================================== */
 
 /* ==========================================================================
@@ -9,9 +10,12 @@
    ========================================================================== */
 
 .panel {
-  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
-  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.06));
-  border-radius: var(--radius-xl, 16px);
+  /* Premium Dark Theme - matches Insights smartCard */
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  /* Premium inner highlight */
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
   overflow: hidden;
 }
 
@@ -33,13 +37,17 @@
 }
 
 .header:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .headerLeft {
   display: flex;
   align-items: center;
   gap: var(--space-3, 12px);
+  color: var(--color-text-primary, #ffffff);
+}
+
+.headerLeft svg {
   color: var(--color-accent-lime, #d4ff00);
 }
 
@@ -52,12 +60,12 @@
   font-family: var(--font-display, 'Oswald', sans-serif);
   font-size: var(--text-lg, 18px);
   font-weight: 600;
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary, #ffffff);
 }
 
 .headerMeta {
   font-size: var(--text-sm, 14px);
-  color: var(--color-text-tertiary, #64748b);
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 .chevron {
@@ -89,8 +97,9 @@
   justify-content: flex-start;
   gap: var(--space-3, 12px);
   padding: var(--space-3, 12px);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.03);
   border-radius: var(--radius-lg, 12px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .complexityItem {
@@ -112,18 +121,19 @@
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: var(--text-body, 16px);
   font-weight: 600;
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary, #ffffff);
   text-transform: capitalize;
 }
 
+/* Colored values for dark theme */
 .complexityValue.difficultyeasy { color: var(--color-accent-teal, #10b981); }
 .complexityValue.difficultymoderate { color: var(--color-accent-blue, #3b82f6); }
-.complexityValue.difficultydifficult { color: var(--color-warning, #f59e0b); }
-.complexityValue.difficultyexpert { color: #ef4444; }
-.complexityValue.difficultyshop-only { color: #7c3aed; }
+.complexityValue.difficultydifficult { color: var(--color-accent-amber, #f59e0b); }
+.complexityValue.difficultyexpert { color: var(--color-error, #ef4444); }
+.complexityValue.difficultyshop-only { color: #a855f7; } /* Purple */
 
 .complexityValue.feasible { color: var(--color-accent-teal, #10b981); }
-.complexityValue.notFeasible { color: #ef4444; }
+.complexityValue.notFeasible { color: var(--color-error, #ef4444); }
 
 /* ==========================================================================
    SECTIONS
@@ -172,8 +182,9 @@
 
 .toolCard {
   padding: var(--space-3, 12px);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.03);
   border-radius: var(--radius-md, 8px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-left: 3px solid var(--color-accent-teal, #10b981);
 }
 
@@ -184,13 +195,13 @@
 .toolName {
   font-size: var(--text-body, 14px);
   font-weight: 600;
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary, #ffffff);
   margin-bottom: var(--space-1, 4px);
 }
 
 .toolDescription {
   font-size: var(--text-sm, 13px);
-  color: var(--color-text-tertiary, #64748b);
+  color: var(--color-text-secondary, #94a3b8);
   line-height: 1.4;
   margin-bottom: var(--space-2, 8px);
 }
@@ -219,7 +230,8 @@
 }
 
 .categoryItem {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-md, 8px);
   overflow: hidden;
 }
@@ -237,7 +249,7 @@
 }
 
 .categoryHeader:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .categoryIcon {
@@ -246,21 +258,21 @@
   justify-content: center;
   width: 28px;
   height: 28px;
-  background: color-mix(in srgb, var(--cat-color, #64748b) 15%, transparent);
+  background: rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-sm, 6px);
-  color: var(--cat-color, #64748b);
+  color: var(--color-text-tertiary, #64748b);
 }
 
 .categoryName {
   flex: 1;
   font-size: var(--text-body, 14px);
   font-weight: 500;
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary, #ffffff);
 }
 
 .categoryCount {
   padding: 2px 8px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-full, 9999px);
   font-size: var(--text-xs, 12px);
   font-weight: 600;
@@ -281,6 +293,8 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2, 8px);
+  background: rgba(255, 255, 255, 0.02);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .categoryTool {
@@ -288,18 +302,19 @@
   align-items: center;
   justify-content: space-between;
   padding: var(--space-2, 8px);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-sm, 6px);
 }
 
 .categoryToolName {
   font-size: var(--text-sm, 13px);
-  color: var(--color-text-secondary, #94a3b8);
+  color: var(--color-text-primary, #ffffff);
 }
 
 .categoryToolBadge {
   padding: 2px 6px;
-  background: rgba(16, 185, 129, 0.1);
+  background: rgba(16, 185, 129, 0.15);
   border-radius: var(--radius-sm, 4px);
   font-size: var(--text-xs, 10px);
   font-weight: 600;
@@ -308,7 +323,7 @@
 }
 
 .categoryToolBadge.recommended {
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(59, 130, 246, 0.15);
   color: var(--color-accent-blue, #3b82f6);
 }
 
@@ -316,7 +331,7 @@
    RESPONSIVE
    ========================================================================== */
 
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .toolsGrid {
     grid-template-columns: 1fr;
   }

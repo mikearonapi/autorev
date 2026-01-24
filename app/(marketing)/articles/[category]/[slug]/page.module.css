@@ -2,7 +2,8 @@
 
 .article {
   min-height: 100vh;
-  background: var(--bg-primary, #0a0a0f);
+  /* Transparent to show body gradient */
+  background: transparent;
   /* Account for fixed header (64px) + beta banner (44px) = 108px */
   padding-top: calc(var(--header-height-desktop, 64px) + var(--beta-banner-height, 44px));
 }
@@ -179,7 +180,7 @@
 .content blockquote {
   margin: 1.5rem 0;
   padding: 1rem 1.5rem;
-  border-left: 3px solid #e94560;
+  border-left: 3px solid var(--color-error, #e94560);
   background: rgba(255, 255, 255, 0.03);
   font-style: italic;
   color: rgba(255, 255, 255, 0.75);
@@ -268,7 +269,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #e94560, #ff6b8a);
+  background: linear-gradient(135deg, var(--color-error, #e94560), #ff6b8a);
   border-radius: 50%;
   font-size: 1.5rem;
   font-weight: 700;
@@ -392,7 +393,7 @@
 .ctaButton {
   display: inline-block;
   padding: 0.875rem 2rem;
-  background: linear-gradient(135deg, #e94560, #ff6b8a);
+  background: linear-gradient(135deg, var(--color-error, #e94560), #ff6b8a);
   border-radius: 8px;
   font-size: 1rem;
   font-weight: 600;
@@ -407,7 +408,7 @@
 }
 
 /* Mobile */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .article {
     /* Mobile: header (48px) + beta banner (40px) = 88px */
     padding-top: calc(var(--header-height-mobile, 48px) + var(--beta-banner-height-mobile, 40px));

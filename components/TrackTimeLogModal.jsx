@@ -260,7 +260,7 @@ export default function TrackTimeLogModal({
   };
 
   // Handle submit
-  const handleSubmit = async (e) => {
+  const handleLapTimeSubmit = async (e) => {
     if (e) e.preventDefault();
     
     if (!validate()) return;
@@ -313,7 +313,7 @@ export default function TrackTimeLogModal({
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close">×</button>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form onSubmit={handleLapTimeSubmit} className={styles.form}>
           {/* Prediction Comparison Banner */}
           {predictedTime && (
             <div className={styles.predictionBanner}>
@@ -601,7 +601,7 @@ export default function TrackTimeLogModal({
             type="button"
             className={styles.saveBtn}
             disabled={isSubmitting}
-            onClick={handleSubmit}
+            onClick={handleLapTimeSubmit}
           >
             {isSubmitting ? 'Saving...' : editingResult ? 'Update Time' : 'Log Time'}
           </button>

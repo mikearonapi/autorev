@@ -2,7 +2,8 @@
 
 .page {
   min-height: 100vh;
-  background: var(--bg-primary, #0a0a0f);
+  /* Transparent to show body gradient */
+  background: transparent;
   padding-top: 32px; /* Account for beta banner */
 }
 
@@ -340,7 +341,7 @@
 }
 
 /* Mobile */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .hero {
     padding: 3rem 1.5rem 2rem;
   }

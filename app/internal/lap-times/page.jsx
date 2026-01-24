@@ -172,7 +172,7 @@ export default function LapTimesPage() {
 
           <div className={styles.formGroup}>
             <label>Confidence (0..1)</label>
-            <input value={confidence} onChange={(e) => setConfidence(e.target.value)} placeholder="0.75" />
+            <input type="text" inputMode="decimal" value={confidence} onChange={(e) => setConfidence(e.target.value)} placeholder="0.75" />
           </div>
 
           <div className={styles.formGroupInline}>

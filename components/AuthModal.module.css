@@ -33,7 +33,7 @@
   animation: slideUp 0.25s ease;
 }
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .overlay {
     align-items: center;
     justify-content: center;
@@ -73,14 +73,14 @@
   background: transparent;
   border: none;
   border-radius: var(--radius-full);
-  color: var(--color-gray-400);
+  color: #94a3b8; /* Slate-400: Visible close button */
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .closeBtn:hover {
-  background: var(--color-gray-100);
-  color: var(--color-gray-600);
+  background: #f1f5f9; /* Slate-100: Subtle hover bg */
+  color: #475569; /* Slate-600: Darker on hover */
 }
 
 /* Back Button */
@@ -98,14 +98,14 @@
   background: transparent;
   border: none;
   border-radius: var(--radius-full);
-  color: var(--color-gray-400);
+  color: #94a3b8; /* Slate-400: Visible back button */
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .backBtn:hover {
-  background: var(--color-gray-100);
-  color: var(--color-gray-600);
+  background: #f1f5f9; /* Slate-100: Subtle hover bg */
+  color: #475569; /* Slate-600: Darker on hover */
 }
 
 /* Title */
@@ -113,20 +113,20 @@
   font-family: var(--font-body);
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--color-gray-900);
+  color: #1e293b; /* Slate-800: Strong contrast for headings on light background */
   text-align: center;
   margin: 0 0 var(--space-md);
 }
 
-/* Info Box */
+/* Info Box - Dark navy style */
 .infoBox {
   position: relative;
-  background: var(--color-gray-50);
-  border: 1px solid var(--color-gray-200);
+  background: #1e293b; /* Slate-800: Dark navy background */
+  border: 1px solid #334155; /* Slate-700: Subtle border */
   border-radius: var(--radius-md);
   padding: var(--space-sm) var(--space-md);
   font-size: var(--font-size-sm);
-  color: var(--color-gray-600);
+  color: #cbd5e1; /* Slate-300: High contrast text on dark bg (9:1 ratio) */
   line-height: 1.5;
   margin-bottom: var(--space-md);
 }
@@ -138,13 +138,15 @@
   background: none;
   border: none;
   font-size: var(--font-size-sm);
-  color: var(--sn-primary);
+  color: #60a5fa; /* Blue-400: Bright link color on dark bg */
   cursor: pointer;
   padding: 0;
+  font-weight: 500;
 }
 
 .forgotInline:hover {
   text-decoration: underline;
+  color: #93c5fd; /* Blue-300: Lighter on hover */
 }
 
 /* Error Box */
@@ -186,10 +188,10 @@
   height: 48px;
   padding: 0 var(--space-md);
   font-size: max(16px, var(--font-size-sm)); /* Prevents iOS Safari auto-zoom on focus */
-  border: 1px solid var(--color-gray-300);
+  border: 1px solid #cbd5e1; /* Slate-300: Visible border on white */
   border-radius: var(--radius-md);
-  background: var(--color-white);
-  color: var(--color-gray-800);
+  background: var(--color-white, #ffffff);
+  color: #1e293b; /* Slate-800: High contrast input text */
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 
@@ -200,7 +202,7 @@
 }
 
 .inputGroup input::placeholder {
-  color: var(--color-gray-400);
+  color: #94a3b8; /* Slate-400: Readable placeholder on white (4.5:1 contrast) */
 }
 
 .inputGroup input:disabled {
@@ -225,13 +227,13 @@
   background: none;
   border: none;
   font-size: var(--font-size-sm);
-  color: var(--color-gray-500);
+  color: #64748b; /* Slate-500: Readable show/hide button */
   cursor: pointer;
   padding: var(--space-xs) var(--space-sm);
 }
 
 .showBtn:hover {
-  color: var(--color-gray-700);
+  color: #1e293b; /* Slate-800: Strong hover state */
 }
 
 /* Field Error */
@@ -297,7 +299,7 @@
 .switchMode {
   text-align: center;
   font-size: var(--font-size-sm);
-  color: var(--color-gray-500);
+  color: #64748b; /* Slate-500: Secondary text with good contrast */
   margin: var(--space-md) 0 0;
 }
 
@@ -332,7 +334,7 @@
 
 .divider span {
   font-size: var(--font-size-xs);
-  color: var(--color-gray-400);
+  color: #64748b; /* Slate-500: Readable divider text */
   white-space: nowrap;
 }
 
@@ -388,7 +390,7 @@
 /* Coming Soon label */
 .comingSoon {
   font-size: 10px;
-  color: var(--color-gray-400);
+  color: #64748b; /* Slate-500: Readable label */
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -418,14 +420,14 @@
 
 .successView .subtitle {
   font-size: var(--font-size-sm);
-  color: var(--color-gray-600);
+  color: #475569; /* Slate-600: Good contrast for success message */
   margin: 0 0 var(--space-sm);
   line-height: 1.5;
 }
 
 .helpText {
   font-size: var(--font-size-sm);
-  color: var(--color-gray-400);
+  color: #64748b; /* Slate-500: Readable help text */
   margin-bottom: var(--space-lg);
 }
 

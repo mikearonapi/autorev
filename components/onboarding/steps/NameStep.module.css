@@ -59,7 +59,7 @@
 
 .input:focus {
   outline: none;
-  border-color: #10b981; /* Teal for input selection, not lime CTA */
+  border-color: var(--color-accent-teal, #10b981); /* Teal for input selection, not lime CTA */
   background: rgba(255, 255, 255, 0.08);
 }
 

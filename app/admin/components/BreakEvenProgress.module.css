@@ -166,7 +166,7 @@
 }
 
 /* Responsive */
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .content {
     flex-direction: column;
     gap: 16px;

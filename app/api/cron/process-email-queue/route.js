@@ -11,7 +11,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { processEmailQueue } from '@/lib/email';
+import { processEmailQueue } from '@/lib/emailService';
 
 // Verify cron secret to prevent unauthorized access
 const CRON_SECRET = process.env.CRON_SECRET;

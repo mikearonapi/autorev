@@ -227,6 +227,7 @@ return {
             createdAt: p.created_at,
             updatedAt: p.updated_at,
           })) : [],
+          // @deprecated - STALE value. Use useBuildPerformance(build, car) instead.
           totalHpGain: build.total_hp_gain || 0,
           totalCostLow: build.total_cost_low || 0,
           totalCostHigh: build.total_cost_high || 0,
@@ -366,6 +367,7 @@ return {
             createdAt: p.created_at,
             updatedAt: p.updated_at,
           })) : [],
+          // @deprecated - STALE value. Use useBuildPerformance(build, car) instead.
           totalHpGain: build.total_hp_gain || 0,
           totalCostLow: build.total_cost_low || 0,
           totalCostHigh: build.total_cost_high || 0,
@@ -537,6 +539,7 @@ useEffect(() => {
           tunerMode: data.selected_upgrades?.tunerMode || buildData?.tunerMode || 'basic',
           advancedSpecs: data.selected_upgrades?.advancedSpecs || buildData?.advancedSpecs || null,
           parts: Array.isArray(buildData?.selectedParts) ? buildData.selectedParts : [],
+          // @deprecated - STALE value. Use useBuildPerformance(build, car) instead.
           totalHpGain: data.total_hp_gain || 0,
           totalCostLow: data.total_cost_low || 0,
           totalCostHigh: data.total_cost_high || 0,
@@ -572,6 +575,7 @@ useEffect(() => {
       tunerMode: buildData.tunerMode || 'basic',
       advancedSpecs: buildData.advancedSpecs || null,
       parts: buildData.selectedParts || buildData.parts || [],
+      // @deprecated - STALE value. Use useBuildPerformance(build, car) instead.
       totalHpGain: buildData.totalHpGain || 0,
       totalCostLow: buildData.totalCostLow || 0,
       totalCostHigh: buildData.totalCostHigh || 0,
@@ -612,6 +616,7 @@ useEffect(() => {
               heroSource: data.selected_upgrades?.heroSource || updates?.heroSource || build.heroSource || 'stock',
               heroImageId: data.selected_upgrades?.heroImageId || updates?.heroImageId || build.heroImageId || null,
               parts: updates?.selectedParts ? updates.selectedParts : build.parts,
+              // @deprecated - STALE value. Use useBuildPerformance(build, car) instead.
               totalHpGain: data.total_hp_gain || 0,
               totalCostLow: data.total_cost_low || 0,
               totalCostHigh: data.total_cost_high || 0,

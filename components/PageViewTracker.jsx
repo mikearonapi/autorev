@@ -276,7 +276,7 @@ export default function PageViewTracker() {
   useEffect(() => {
     if (typeof window === 'undefined') return;
     
-    const handleClick = (e) => {
+    const handleTrackingClick = (e) => {
       clickCountRef.current++;
       lastActivityRef.current = Date.now();
       isActiveRef.current = true;
@@ -305,8 +305,8 @@ export default function PageViewTracker() {
       }
     };
     
-    document.addEventListener('click', handleClick);
-    return () => document.removeEventListener('click', handleClick);
+    document.addEventListener('click', handleTrackingClick);
+    return () => document.removeEventListener('click', handleTrackingClick);
   }, [pathname, user?.id]);
   
   // Track copy events

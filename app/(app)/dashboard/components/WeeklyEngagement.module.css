@@ -33,7 +33,7 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  color: #f59e0b;
+  color: var(--color-accent-amber, #f59e0b);
 }
 
 .streakCount {

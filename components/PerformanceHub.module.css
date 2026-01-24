@@ -123,15 +123,15 @@
 }
 
 .carHeroImage .tierBadge[data-tier="premium"] {
-  background: linear-gradient(135deg, #ffd700 0%, #ffaa00 100%);
+  background: linear-gradient(135deg, var(--color-accent-amber, #ffd700) 0%, #ffaa00 100%);
 }
 
 .carHeroImage .tierBadge[data-tier="upper-mid"] {
-  background: linear-gradient(135deg, #c0c0c0 0%, #a0a0a0 100%);
+  background: linear-gradient(135deg, var(--color-text-secondary, #c0c0c0) 0%, var(--color-text-muted, #a0a0a0) 100%);
 }
 
 .carHeroImage .tierBadge[data-tier="mid"] {
-  background: linear-gradient(135deg, #cd7f32 0%, #b06b28 100%);
+  background: linear-gradient(135deg, var(--color-accent-amber, #cd7f32) 0%, var(--color-accent-amber, #b06b28) 100%);
   color: var(--color-white);
 }
 
@@ -1027,7 +1027,7 @@
 }
 
 /* Responsive adjustments for header */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .hubHeader {
     padding: var(--space-sm) var(--space-md);
   }
@@ -2188,7 +2188,7 @@
   margin-bottom: var(--space-md);
 }
 
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .buildStatsRow {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -2329,7 +2329,7 @@
 }
 
 .buildActionBtnSecondary:hover {
-  background: #a16207;
+  background: var(--color-accent-amber, #a16207);
 }
 
 /* Synergy Box */
@@ -2730,7 +2730,7 @@
    Expert Track Insights
    ============================================================================ */
 .expertTrackInsights {
-  background: linear-gradient(135deg, #fef3c7 0%, #fef9c3 100%);
+  background: linear-gradient(135deg, var(--color-warning-light, #fef3c7) 0%, #fef9c3 100%);
   border: 1px solid var(--brand-warning);
   border-radius: var(--radius-md);
   padding: var(--space-md);
@@ -2743,7 +2743,7 @@
   gap: var(--space-sm);
   font-size: var(--font-size-sm);
   font-weight: 700;
-  color: #92400e;
+  color: var(--color-accent-amber, #92400e);
   margin: 0 0 var(--space-sm);
 }
 
@@ -2763,7 +2763,7 @@
 .expertInsightsLabel {
   font-size: var(--font-size-xs);
   font-weight: 600;
-  color: #78350f;
+  color: var(--color-accent-amber, #78350f);
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -2783,17 +2783,17 @@
 
 .expertInsightsTag.strength {
   background: rgba(var(--brand-success-rgb), 0.2);
-  color: #166534;
+  color: var(--color-success, #166534);
 }
 
 .expertInsightsTag.weakness {
   background: rgba(var(--brand-error-rgb), 0.15);
-  color: #991b1b;
+  color: var(--color-error, #991b1b);
 }
 
 .expertInsightsNote {
   font-size: var(--font-size-xs);
-  color: #92400e;
+  color: var(--color-accent-amber, #92400e);
   margin: var(--space-sm) 0 0;
 }
 
@@ -3149,7 +3149,7 @@
    ============================================================================ */
 
 /* Extra small mobile */
-@media (max-width: 374px) {
+@media (min-width: 375px) {
   .carPanel,
   .dashboardPanel {
     padding: var(--space-sm);
@@ -3192,7 +3192,7 @@
 }
 
 /* Small mobile */
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .specsGrid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -3288,7 +3288,7 @@
 }
 
 /* Tablet */
-@media (max-width: 1023px) {
+@media (min-width: 1024px) {
   .carName {
     font-size: var(--font-size-xl);
   }
@@ -3299,7 +3299,7 @@
 }
 
 /* Enhanced Mobile Support for New Components */
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   /* Title row mobile */
   .titleRow {
     gap: var(--space-sm);

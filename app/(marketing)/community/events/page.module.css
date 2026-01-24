@@ -2,7 +2,8 @@
 
 .page {
   min-height: 100vh;
-  background: var(--color-gray-50);
+  /* Transparent to show body gradient */
+  background: transparent;
 }
 
 /* Hero Section - Ultra-compact on mobile, standard on desktop */
@@ -391,7 +392,7 @@
   box-sizing: border-box;
 }
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .mainContent {
     padding: var(--space-md) var(--space-sm);
   }
@@ -432,7 +433,7 @@
   gap: var(--space-md);
 }
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .resultsBarToggles {
     gap: var(--space-sm);
     flex-wrap: wrap;
@@ -465,7 +466,7 @@
 }
 
 /* Mobile: Single column on very small screens */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .eventsGrid {
     grid-template-columns: 1fr;
     gap: var(--space-sm);

@@ -394,7 +394,7 @@ export function PWAInstallButton({ className }) {
 
   if (!shouldShowInstallPrompt) return null;
 
-  const handleClick = async () => {
+  const handleInstallClick = async () => {
     if (canPromptNatively) {
       setInstalling(true);
       await promptInstall();
@@ -408,7 +408,7 @@ export function PWAInstallButton({ className }) {
     <>
       <button 
         className={className}
-        onClick={handleClick}
+        onClick={handleInstallClick}
         disabled={installing}
       >
         <InstallIcon />

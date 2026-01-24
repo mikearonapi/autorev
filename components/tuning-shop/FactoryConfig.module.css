@@ -319,7 +319,7 @@
 }
 
 /* Responsive - Tablet */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .configGrid {
     gap: 12px;
   }
@@ -341,7 +341,7 @@
 }
 
 /* Responsive - Mobile */
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   /* Keep 2-column grid on mobile for compactness */
   .configGrid {
     grid-template-columns: repeat(2, 1fr);

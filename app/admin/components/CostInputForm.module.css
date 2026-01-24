@@ -31,7 +31,7 @@
 }
 
 .iconWrapper.editIcon {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: linear-gradient(135deg, var(--color-accent-amber, #f59e0b), var(--color-accent-amber, #d97706));
 }
 
 .title {
@@ -125,7 +125,7 @@
 .field select optgroup {
   font-weight: 600;
   color: var(--admin-accent-blue, var(--brand-blue));
-  background: #0f0f1a;
+  background: var(--color-bg-base, #0f0f1a);
 }
 
 .glHint {
@@ -196,7 +196,7 @@
 }
 
 .submitButton.editButton {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
+  background: linear-gradient(135deg, var(--color-accent-amber, #f59e0b), var(--color-accent-amber, #d97706));
 }
 
 .submitButton:hover:not(:disabled) {
@@ -210,7 +210,7 @@
 }
 
 /* Responsive */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .row {
     grid-template-columns: 1fr;
   }

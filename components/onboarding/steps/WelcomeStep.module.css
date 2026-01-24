@@ -42,11 +42,11 @@
 }
 
 .brandAuto {
-  color: #ffffff;
+  color: var(--color-text-primary, #ffffff);
 }
 
 .brandRev {
-  color: #d4ff00;
+  color: var(--color-accent-lime, #d4ff00);
 }
 
 /* Celebration Section */
@@ -82,7 +82,7 @@
 }
 
 .headlineAccent {
-  color: #d4ff00;
+  color: var(--color-accent-lime, #d4ff00);
 }
 
 /* Subheadline */
@@ -90,7 +90,7 @@
   font-family: 'Oswald', var(--font-display), system-ui, sans-serif;
   font-size: clamp(1.25rem, 5vw, 1.75rem);
   font-weight: 500;
-  color: #ffffff;
+  color: var(--color-text-primary, #ffffff);
   margin: 0;
   letter-spacing: 0.02em;
 }
@@ -108,7 +108,7 @@
 }
 
 /* Small phones */
-@media (max-width: 380px) {
+@media (min-width: 381px) {
   .container {
     padding: 24px 20px 0;
   }

@@ -110,8 +110,9 @@
 /* Driver Skill Selector */
 .skillSelector {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
   margin-bottom: 12px;
 }
 
@@ -124,12 +125,14 @@
 .skillBtns {
   display: flex;
   gap: 6px;
-  flex: 1;
+  width: 100%;
+  flex-wrap: nowrap;
 }
 
 .skillBtn {
   flex: 1;
-  padding: 8px 10px;
+  min-width: 0;
+  padding: 8px 6px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
@@ -138,6 +141,7 @@
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  white-space: nowrap;
 }
 
 .skillBtn:hover {
@@ -415,26 +419,28 @@
 .lapTimeBody {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 12px;
-  padding: 20px;
+  padding: 16px;
+  overflow: hidden;
 }
 
 .lapTimeComparison {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: 8px;
 }
 
 .lapTimeColumn {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   flex: 1;
+  min-width: 0;
 }
 
 .lapTimeLabel {
-  font-size: var(--text-xs);
+  font-size: var(--text-2xs);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -443,14 +449,14 @@
 
 .lapTimeStock {
   font-family: 'SF Mono', monospace;
-  font-size: var(--text-stat-hero);
+  font-size: var(--text-h3);
   font-weight: 700;
   color: rgba(255, 255, 255, 0.6);
 }
 
 .lapTimeMod {
   font-family: 'SF Mono', monospace;
-  font-size: var(--text-hero);
+  font-size: var(--text-stat-lg);
   font-weight: 700;
   color: var(--color-accent-teal);
 }
@@ -461,15 +467,17 @@
   align-items: center;
   gap: 4px;
   color: var(--color-accent-teal);
+  flex-shrink: 0;
 }
 
 .lapTimeImprovement {
-  font-size: var(--text-h4);
+  font-size: var(--text-xs);
   font-weight: 700;
   color: var(--color-accent-teal);
   background: rgba(16, 185, 129, 0.15);
-  padding: 4px 12px;
+  padding: 4px 8px;
   border-radius: 6px;
+  white-space: nowrap;
 }
 
 .lapTimeGood {
@@ -1061,123 +1069,51 @@
    RESPONSIVE - Mobile
    ========================================================================== */
 
-@media (max-width: 600px) {
+/* Desktop - larger lap times */
+@media (min-width: 601px) {
   .lapTimeEstimator {
-    padding: 16px;
-    border-radius: 14px;
+    padding: 20px;
+    border-radius: 16px;
   }
   
-  /* Title keeps same size on mobile for consistency with garage specs */
-  /* Header stays horizontal - Ask AL button aligned right */
-  
   .lapTimeHeader {
-    gap: 8px;
+    gap: 16px;
   }
   
   .lapTimeTitleRow {
-    gap: 6px;
+    gap: 10px;
   }
   
   .lapTimeTitleRow span {
     white-space: nowrap;
   }
   
-  .skillSelector {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  
-  .skillBtns {
-    width: 100%;
-  }
-  
   .skillBtn {
-    padding: 10px 8px;
-    font-size: var(--text-xs);
+    padding: 8px 12px;
   }
 
   .lapTimeBody {
-    padding: 14px;
+    padding: 20px;
+  }
+  
+  .lapTimeComparison {
+    gap: 16px;
+  }
+  
+  .lapTimeLabel {
+    font-size: var(--text-xs);
   }
   
   .lapTimeStock {
-    font-size: var(--text-h3);
+    font-size: var(--text-stat-hero);
   }
   
   .lapTimeMod {
-    font-size: var(--text-stat-lg);
+    font-size: var(--text-hero);
   }
   
   .lapTimeImprovement {
-    font-size: var(--text-xs);
-    padding: 3px 8px;
-  }
-
-  .lapTimeInfoPanel {
-    padding: 14px;
-    font-size: var(--text-xs);
-  }
-  
-  .lapTimeInfoPanel h4 {
-    font-size: var(--text-sm);
-  }
-  
-  .lapTimeInfoPanel ul {
-    padding-left: 14px;
-  }
-  
-  .lapTimeInfoHighlight {
-    font-size: var(--text-xs);
-    padding: 8px 10px;
-  }
-  
-  .lapTimeBreakdown {
-    padding: 10px 12px;
-  }
-  
-  .lapTimeBreakdownRow {
-    font-size: var(--text-xs);
-    padding: 5px 0;
-  }
-  
-  .lapTimeTip {
-    font-size: var(--text-xs);
-    padding: 8px 12px;
-  }
-  
-  .lapTimeCategoryBreakdown {
-    padding: 10px;
-  }
-  
-  .lapTimeCategoryGrid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 6px;
-  }
-  
-  .lapTimeCategoryItem {
-    padding: 6px;
-  }
-  
-  .lapTimeCategoryLabel {
-    font-size: 9px; /* Kept as sub-minimum decorative value */
-  }
-  
-  .lapTimeCategoryValue {
-    font-size: var(--text-xs);
-  }
-  
-  .lapTimeInsight {
-    font-size: var(--text-xs);
-    padding: 8px 12px;
-  }
-  
-  .trackTimeActions {
-    flex-direction: column;
-    gap: 6px;
-  }
-  
-  .trackTimeBtn {
-    padding: 12px;
+    font-size: var(--text-h4);
+    padding: 4px 12px;
   }
 }

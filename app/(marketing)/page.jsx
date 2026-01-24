@@ -7,6 +7,7 @@ import IPhoneFrame from '@/components/IPhoneFrame';
 import { SITE_DESIGN_IMAGES, UI_IMAGES } from '@/lib/images';
 import usePWAInstall from '@/hooks/usePWAInstall';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
+import { Icons } from '@/components/ui/Icons';
 import styles from './page.module.css';
 
 /**
@@ -91,8 +92,6 @@ const AL_SAMPLE_QUESTIONS = [
   "Can I run E85 with my current fuel system?",
   "What's the best mod order for a $5k budget?",
 ];
-
-import { Icons } from '@/components/ui/Icons';
 
 // Local aliases for icons used in this file
 const LocalIcons = {

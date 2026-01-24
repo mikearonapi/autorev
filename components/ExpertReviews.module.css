@@ -62,12 +62,12 @@
 
 .sentimentChip.up {
   background: rgba(var(--brand-success-rgb), 0.1);
-  color: #15803d;
+  color: var(--color-success, #15803d);
 }
 
 .sentimentChip.down {
   background: rgba(249, 115, 22, 0.1);
-  color: #c2410c;
+  color: var(--color-accent-amber, #c2410c);
 }
 
 .sentimentChip svg {
@@ -143,7 +143,7 @@
 
 .tag.strength {
   background: rgba(var(--brand-success-rgb), 0.08);
-  color: #15803d;
+  color: var(--color-success, #15803d);
   border-color: rgba(var(--brand-success-rgb), 0.2);
 }
 
@@ -195,7 +195,7 @@
   font-weight: 500;
   padding: 0.25rem 0.6rem;
   background: var(--brand-text-primary);
-  color: #2563eb;
+  color: var(--color-accent-blue, #2563eb);
   border: 1px solid rgba(var(--brand-blue-rgb), 0.2);
   border-radius: 4px;
   text-decoration: none;
@@ -203,8 +203,8 @@
 }
 
 .upgradeTag:hover {
-  border-color: #2563eb;
-  background: #eff6ff;
+  border-color: var(--color-accent-blue, #2563eb);
+  background: var(--color-accent-blue-light, #eff6ff);
 }
 
 /* Video Grid */
@@ -423,7 +423,7 @@
 }
 
 .watchLink:hover {
-  background: #fee2e2;
+  background: var(--color-error-light, #fee2e2);
   color: var(--brand-error); /* YouTube Red */
 }
 
@@ -510,7 +510,7 @@
 }
 
 .errorState svg {
-  color: #dc3545;
+  color: var(--color-error, #dc3545);
   flex-shrink: 0;
 }
 
@@ -536,7 +536,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .header {
     flex-direction: column;
     align-items: flex-start;

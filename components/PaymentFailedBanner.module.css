@@ -1,0 +1,148 @@
+/**
+ * Payment Failed Banner Styles
+ */
+
+.banner {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--color-error-light, #fef2f2);
+  border-bottom: 1px solid var(--color-error-light, #fecaca);
+  padding: 12px 16px;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 1280px;
+  margin: 0 auto;
+}
+
+.icon {
+  flex-shrink: 0;
+  color: var(--color-error, #dc2626);
+}
+
+.message {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.message strong {
+  color: var(--color-error, #991b1b);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.description {
+  color: var(--color-error, #b91c1c);
+  font-size: 0.8125rem;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.updateButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  background-color: var(--color-error, #dc2626);
+  color: var(--color-text-primary, #ffffff);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  min-height: 44px; /* Touch target accessibility */
+  transition: background-color 0.15s ease;
+}
+
+.updateButton:hover:not(:disabled) {
+  background-color: var(--color-error, #b91c1c);
+}
+
+.updateButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.updateButton:focus-visible {
+  outline: 2px solid var(--color-error, #dc2626);
+  outline-offset: 2px;
+}
+
+.dismissButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: var(--color-error, #991b1b);
+  cursor: pointer;
+  min-width: 44px; /* Touch target accessibility */
+  min-height: 44px; /* Touch target accessibility */
+}
+
+.dismissButton:hover {
+  background-color: rgba(220, 38, 38, 0.1);
+}
+
+.dismissButton:focus-visible {
+  outline: 2px solid var(--color-error, #dc2626);
+  outline-offset: 2px;
+}
+
+/* Mobile */
+@media (min-width: 641px) {
+  .content {
+    flex-wrap: wrap;
+  }
+  
+  .message {
+    width: calc(100% - 44px);
+  }
+  
+  .actions {
+    width: 100%;
+    justify-content: flex-end;
+    margin-top: 8px;
+  }
+  
+  .dismissButton {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+  }
+  
+  .banner {
+    position: relative;
+  }
+}
+
+/* Dark mode support */
+[data-theme="dark"] .banner {
+  background-color: rgba(220, 38, 38, 0.1);
+  border-color: rgba(220, 38, 38, 0.3);
+}
+
+[data-theme="dark"] .message strong {
+  color: var(--color-error-light, #fca5a5);
+}
+
+[data-theme="dark"] .description {
+  color: var(--color-error-light, #fecaca);
+}
+
+[data-theme="dark"] .dismissButton {
+  color: var(--color-error-light, #fca5a5);
+}

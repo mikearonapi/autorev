@@ -432,7 +432,7 @@
 }
 
 /* Mobile Responsive */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .heroOptions {
     gap: 0.5rem;
   }
@@ -476,7 +476,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   /* Prevent horizontal overflow on mobile */
   .gallery {
     max-width: 100%;

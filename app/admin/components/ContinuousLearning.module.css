@@ -28,7 +28,7 @@
   font-family: var(--font-display, 'Oswald', sans-serif);
   font-size: 20px;
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   margin: 0;
 }
 
@@ -48,7 +48,7 @@
 
 .refreshBtn:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
 }
 
 /* Loading/Error */
@@ -60,7 +60,7 @@
 }
 
 .error {
-  color: #ef4444;
+  color: var(--color-error, #ef4444);
 }
 
 /* KPI Grid */
@@ -71,13 +71,13 @@
   margin-bottom: 24px;
 }
 
-@media (max-width: 1200px) {
+@media (min-width: 1201px) {
   .kpiGrid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .kpiGrid {
     grid-template-columns: 1fr;
   }
@@ -121,7 +121,7 @@
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: 24px;
   font-weight: 700;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   line-height: 1.2;
 }
 
@@ -144,7 +144,7 @@
   margin-bottom: 20px;
 }
 
-@media (max-width: 900px) {
+@media (min-width: 901px) {
   .twoColumn {
     grid-template-columns: 1fr;
   }
@@ -169,7 +169,7 @@
   font-family: var(--font-display, 'Oswald', sans-serif);
   font-size: 15px;
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   margin: 0;
 }
 
@@ -183,13 +183,13 @@
   border-radius: 6px;
   font-size: 12px;
   font-weight: 500;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .runBtn:hover:not(:disabled) {
-  background: #0d9668;
+  background: var(--color-accent-teal, #0d9668);
 }
 
 .runBtn:disabled {
@@ -228,7 +228,7 @@
 .evalName {
   font-size: 13px;
   font-weight: 500;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -280,7 +280,7 @@
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: 13px;
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
 }
 
 .totalCases {
@@ -308,5 +308,5 @@
 }
 
 .infoFooter strong {
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
 }

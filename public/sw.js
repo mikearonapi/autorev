@@ -7,7 +7,7 @@
 // - Offline page fallback
 // - Separate caches by data type
 
-const CACHE_VERSION = 'v2';
+const CACHE_VERSION = 'v3';
 const STATIC_CACHE = `autorev-static-${CACHE_VERSION}`;
 const API_CACHE = `autorev-api-${CACHE_VERSION}`;
 const OFFLINE_URL = '/offline.html';

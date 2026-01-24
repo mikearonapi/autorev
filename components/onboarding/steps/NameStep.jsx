@@ -19,7 +19,7 @@ export default function NameStep({ className, formData, updateFormData }) {
     return () => clearTimeout(timer);
   }, []);
   
-  const handleChange = (e) => {
+  const handleNameChange = (e) => {
     const value = e.target.value;
     setName(value);
     updateFormData({ display_name: value });
@@ -38,7 +38,7 @@ export default function NameStep({ className, formData, updateFormData }) {
           className={styles.input}
           placeholder="Your name"
           value={name}
-          onChange={handleChange}
+          onChange={handleNameChange}
           maxLength={50}
           autoComplete="given-name"
         />

@@ -36,7 +36,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #8B5CF6;
+  color: var(--color-info, #8b5cf6);
   flex-shrink: 0;
 }
 
@@ -90,7 +90,7 @@
 
 .rangeButton.active {
   color: var(--brand-text-primary);
-  background: #8B5CF6;
+  background: var(--color-info, #8b5cf6);
 }
 
 /* Metric Selector */
@@ -148,12 +148,12 @@
 
 .growthBadge.positive {
   background: rgba(var(--brand-success-rgb), 0.15);
-  color: #22C55E;
+  color: var(--color-success, #22c55e);
 }
 
 .growthBadge.negative {
   background: rgba(var(--brand-error-rgb), 0.15);
-  color: #EF4444;
+  color: var(--color-error, #ef4444);
 }
 
 .neutralBadge {
@@ -340,7 +340,7 @@
 }
 
 .peakDay svg {
-  color: #22C55E;
+  color: var(--color-success, #22c55e);
 }
 
 .peakDay strong {
@@ -369,7 +369,7 @@
   width: 28px;
   height: 28px;
   border: 2px solid rgba(var(--brand-purple-rgb), 0.2);
-  border-top-color: #8B5CF6;
+  border-top-color: var(--color-info, #8b5cf6);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -407,7 +407,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .header {
     flex-direction: column;
     gap: 12px;
@@ -435,7 +435,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .kpiGrid {
     grid-template-columns: 1fr;
   }

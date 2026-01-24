@@ -421,7 +421,7 @@
 }
 
 /* Mobile */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .card {
     padding: 10px 12px;
   }

@@ -93,7 +93,7 @@
 
 .installButton {
   background: var(--color-accent-teal, #10b981);
-  color: #ffffff;
+  color: var(--color-text-primary, #ffffff);
   border: none;
   padding: var(--space-2, 8px) var(--space-4, 16px);
   border-radius: 100px;
@@ -108,7 +108,7 @@
 }
 
 .installButton:hover {
-  background: #0ea573;
+  background: var(--color-accent-teal, #0ea573);
   transform: scale(1.02);
 }
 
@@ -274,7 +274,7 @@
   width: 28px;
   height: 28px;
   background: var(--color-accent-teal, #10b981);
-  color: #ffffff;
+  color: var(--color-text-primary, #ffffff);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -404,7 +404,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+  color: var(--color-text-primary, #ffffff);
   flex-shrink: 0;
 }
 
@@ -434,7 +434,7 @@
 
 .inlineButton {
   background: var(--color-accent-teal, #10b981);
-  color: #ffffff;
+  color: var(--color-text-primary, #ffffff);
   border: none;
   padding: var(--space-2, 8px) var(--space-4, 16px);
   border-radius: 100px;
@@ -447,7 +447,7 @@
 }
 
 .inlineButton:hover {
-  background: #0ea573;
+  background: var(--color-accent-teal, #0ea573);
 }
 
 .inlineButton:disabled {

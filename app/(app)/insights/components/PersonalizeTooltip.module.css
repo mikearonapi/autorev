@@ -178,7 +178,7 @@
   height: 22px;
   background: var(--color-accent-teal, #10b981);
   border-radius: 50%;
-  color: #ffffff;
+  color: var(--color-text-primary, #ffffff);
 }
 
 .multiSelectHint {
@@ -223,13 +223,13 @@
   border-radius: 10px;
   font-size: var(--text-body);
   font-weight: 600;
-  color: #0a1628;
+  color: var(--color-bg-base, #0a1628);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .nextBtn:hover:not(:disabled) {
-  background: #bfe600;
+  background: var(--color-accent-lime-dark, #bfe600);
 }
 
 .nextBtn:disabled {
@@ -277,11 +277,11 @@
   border-radius: 10px;
   font-size: var(--text-body);
   font-weight: 600;
-  color: #0a1628;
+  color: var(--color-bg-base, #0a1628);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .doneBtn:hover {
-  background: #bfe600;
+  background: var(--color-accent-lime-dark, #bfe600);
 }

@@ -301,16 +301,16 @@
   background: rgba(212, 255, 0, 0.15);
   border: 1px solid rgba(212, 255, 0, 0.4);
   border-radius: 1rem;
-  color: #d4ff00;
+  color: var(--color-accent-lime, #d4ff00);
   font-size: 0.75rem;
   font-weight: 600;
   transition: all 0.2s ease;
 }
 
 .carOption:hover:not(:disabled) .addBadge {
-  background: #d4ff00;
-  border-color: #d4ff00;
-  color: #0a1628;
+  background: var(--color-accent-lime, #d4ff00);
+  border-color: var(--color-accent-lime, #d4ff00);
+  color: var(--color-bg-base, #0a1628);
 }
 
 .addingBadge {
@@ -321,7 +321,7 @@
   background: rgba(212, 255, 0, 0.1);
   border: 1px solid rgba(212, 255, 0, 0.3);
   border-radius: 1rem;
-  color: #d4ff00;
+  color: var(--color-accent-lime, #d4ff00);
   min-width: 52px;
 }
 
@@ -377,10 +377,10 @@
 /* LIME CTA for Done button - per brand guidelines */
 .doneButton {
   padding: 0.625rem 1.25rem;
-  background: #d4ff00;
+  background: var(--color-accent-lime, #d4ff00);
   border: none;
   border-radius: 0.5rem;
-  color: #0a1628;
+  color: var(--color-bg-base, #0a1628);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
@@ -388,7 +388,7 @@
 }
 
 .doneButton:hover {
-  background: #bfe600;
+  background: var(--color-accent-lime-dark, #bfe600);
   box-shadow: 0 4px 12px rgba(212, 255, 0, 0.3);
 }
 

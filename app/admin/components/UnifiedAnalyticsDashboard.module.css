@@ -5,15 +5,15 @@
   --card-bg: rgba(255, 255, 255, 0.03);
   --card-hover: rgba(255, 255, 255, 0.05);
   --card-border: rgba(255, 255, 255, 0.08);
-  --text-primary: #f8fafc;
+  --text-primary: var(--color-bg-muted, #f8fafc);
   --text-secondary: var(--brand-text-secondary);
   --text-muted: var(--brand-text-tertiary);
   --accent-blue: var(--brand-blue);
   --accent-purple: var(--brand-purple-accent);
-  --accent-cyan: #06b6d4;
-  --positive: #22c55e;
+  --accent-cyan: var(--color-accent-teal, #06b6d4);
+  --positive: var(--color-success, #22c55e);
   --warning: var(--brand-warning);
-  --negative: #ef4444;
+  --negative: var(--color-error, #ef4444);
   
   padding: 0;
   max-width: 100%;
@@ -274,7 +274,7 @@
   gap: 0.5rem;
 }
 
-@media (max-width: 400px) {
+@media (min-width: 401px) {
   .statsGrid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -328,7 +328,7 @@
   left: 50%;
   transform: translateX(-50%);
   padding: 0.625rem 0.875rem;
-  background: #1e293b;
+  background: var(--color-bg-elevated, #1e293b);
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--text-primary);
   border-radius: 8px;
@@ -352,7 +352,7 @@
   left: 50%;
   transform: translateX(-50%);
   border: 6px solid transparent;
-  border-top-color: #1e293b;
+  border-top-color: var(--color-bg-elevated, #1e293b);
 }
 
 .tooltipWrapper:hover .tooltip {
@@ -513,7 +513,7 @@
   gap: 0.5rem;
 }
 
-@media (max-width: 400px) {
+@media (min-width: 401px) {
   .lifecycleGrid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -772,7 +772,7 @@
 }
 
 /* Mobile touch targets */
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .navButton {
     min-height: 44px;
     min-width: 44px;

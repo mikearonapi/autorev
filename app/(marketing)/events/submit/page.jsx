@@ -171,7 +171,7 @@ export default function SubmitEventPage() {
     fetchTypes();
   }, []);
   
-  const handleChange = (e) => {
+  const handleEventFormChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
     
@@ -318,7 +318,7 @@ export default function SubmitEventPage() {
     }
   };
   
-  const handleSubmit = async (e) => {
+  const handleEventSubmit = async (e) => {
     e.preventDefault();
     
     if (!isAuthenticated) {
@@ -416,7 +416,7 @@ export default function SubmitEventPage() {
       
       {/* Form Container */}
       <div className={styles.formWrapper}>
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form onSubmit={handleEventSubmit} className={styles.form}>
           {submitError && (
             <div className={styles.errorBanner}>
               <Icons.alertTriangle size={18} />
@@ -434,7 +434,7 @@ export default function SubmitEventPage() {
               id="name"
               name="name"
               value={formData.name}
-              onChange={handleChange}
+              onChange={handleEventFormChange}
               placeholder="e.g., Malibu Cars & Coffee"
               className={`${styles.input} ${errors.name ? styles.inputError : ''}`}
               maxLength={200}
@@ -451,7 +451,7 @@ export default function SubmitEventPage() {
               id="eventTypeSlug"
               name="eventTypeSlug"
               value={formData.eventTypeSlug}
-              onChange={handleChange}
+              onChange={handleEventFormChange}
               className={`${styles.select} ${errors.eventTypeSlug ? styles.inputError : ''}`}
             >
               <option value="">Select Event Type</option>
@@ -473,10 +473,11 @@ export default function SubmitEventPage() {
               <Icons.link size={18} />
               <input
                 type="url"
+                inputMode="url"
                 id="sourceUrl"
                 name="sourceUrl"
                 value={formData.sourceUrl}
-                onChange={handleChange}
+                onChange={handleEventFormChange}
                 placeholder="https://example.com/event"
                 className={`${styles.input} ${styles.inputIconPadding} ${errors.sourceUrl ? styles.inputError : ''}`}
               />
@@ -498,7 +499,7 @@ export default function SubmitEventPage() {
                   id="startDate"
                   name="startDate"
                   value={formData.startDate}
-                  onChange={handleChange}
+                  onChange={handleEventFormChange}
                   min={getTodayDate()}
                   className={`${styles.input} ${styles.inputIconPadding} ${errors.startDate ? styles.inputError : ''}`}
                 />
@@ -517,7 +518,7 @@ export default function SubmitEventPage() {
                   id="endDate"
                   name="endDate"
                   value={formData.endDate}
-                  onChange={handleChange}
+                  onChange={handleEventFormChange}
                   min={formData.startDate || getTodayDate()}
                   className={`${styles.input} ${styles.inputIconPadding} ${errors.endDate ? styles.inputError : ''}`}
                 />
@@ -539,7 +540,7 @@ export default function SubmitEventPage() {
                 id="venueName"
                 name="venueName"
                 value={formData.venueName}
-                onChange={handleChange}
+                onChange={handleEventFormChange}
                 placeholder="e.g., Laguna Seca Raceway"
                 className={`${styles.input} ${styles.inputIconPadding}`}
                 maxLength={200}
@@ -558,7 +559,7 @@ export default function SubmitEventPage() {
                 id="city"
                 name="city"
                 value={formData.city}
-                onChange={handleChange}
+                onChange={handleEventFormChange}
                 placeholder="e.g., Monterey"
                 className={`${styles.input} ${errors.city ? styles.inputError : ''}`}
                 maxLength={100}
@@ -574,7 +575,7 @@ export default function SubmitEventPage() {
                 id="state"
                 name="state"
                 value={formData.state}
-                onChange={handleChange}
+                onChange={handleEventFormChange}
                 className={`${styles.select} ${errors.state ? styles.inputError : ''}`}
               >
                 {US_STATES.map(state => (
@@ -596,7 +597,7 @@ export default function SubmitEventPage() {
               id="description"
               name="description"
               value={formData.description}
-              onChange={handleChange}
+              onChange={handleEventFormChange}
               placeholder="Tell us about this event..."
               className={`${styles.textarea} ${errors.description ? styles.inputError : ''}`}
               rows={4}

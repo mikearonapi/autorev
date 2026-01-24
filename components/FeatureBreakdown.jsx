@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { UI_IMAGES } from '@/lib/images';
 import styles from './FeatureBreakdown.module.css';
 import { Icons } from '@/components/ui/Icons';
+import { CAR_COUNT_DISPLAY } from '@/lib/marketingStats';
 
 const AlIcon = ({ size = 18 }) => (
   <Image
@@ -17,9 +18,8 @@ const AlIcon = ({ size = 18 }) => (
   />
 );
 
-// Car count for display
-// NOTE: Update this when car database grows significantly (current: ~192 cars)
-const CAR_COUNT = '190+';
+// Use shared constant from lib/marketingStats.js
+const CAR_COUNT = CAR_COUNT_DISPLAY;
 
 // Detailed feature breakdown - audited 2024-12-15 for 100% accuracy
 const featureCategories = [

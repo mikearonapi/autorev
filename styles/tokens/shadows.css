@@ -91,4 +91,27 @@
   
   --shadow-inset-sm: inset 0 1px 2px rgba(0, 0, 0, 0.2);
   --shadow-inset-md: inset 0 2px 4px rgba(0, 0, 0, 0.25);
+  
+  /* =======================================================================
+     PREMIUM POLISH (Jan 2026)
+     Inner highlight for elevated surfaces - creates depth
+     ======================================================================= */
+  
+  /* Inner top highlight - subtle light edge */
+  --shadow-inner-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+  --shadow-inner-highlight-subtle: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
+  
+  /* Premium card - combines inner highlight with outer shadow */
+  --shadow-card-premium: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.03),
+    0 4px 20px rgba(0, 0, 0, 0.2);
+  
+  --shadow-card-premium-hover: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.05),
+    0 8px 32px rgba(0, 0, 0, 0.3);
+  
+  /* Premium modal shadow */
+  --shadow-modal-premium: 
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
+    0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }

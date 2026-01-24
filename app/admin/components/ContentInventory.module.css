@@ -165,7 +165,7 @@
 }
 
 /* Responsive */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .grid {
     grid-template-columns: repeat(2, 1fr);
   }

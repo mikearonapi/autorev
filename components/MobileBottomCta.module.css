@@ -97,7 +97,7 @@
 }
 
 /* Extra small mobile */
-@media (max-width: 374px) {
+@media (min-width: 375px) {
   .bar {
     padding: var(--space-xs);
     gap: var(--space-xs);

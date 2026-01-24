@@ -381,13 +381,13 @@
 }
 
 /* Responsive */
-@media (max-width: 900px) {
+@media (min-width: 901px) {
   .summaryStats {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .userInfo {
     width: 140px;
   }
@@ -406,7 +406,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .summaryStats {
     grid-template-columns: 1fr;
   }

@@ -6,7 +6,8 @@
 .container {
   position: fixed;
   inset: 0;
-  background: var(--color-bg-base);
+  /* Transparent to show body gradient */
+  background: transparent;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -176,6 +177,13 @@
   border-radius: 3px;
 }
 
+.buildTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
 .buildTitle {
   font-family: var(--font-display);
   font-size: 0.9375rem;
@@ -188,6 +196,30 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Build Status Badge - shows completion status */
+.statusBadge {
+  flex-shrink: 0;
+  font-size: 0.5625rem;
+  font-weight: 700;
+  padding: 2px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.statusBadge[data-status="complete"] {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-accent-teal);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.statusBadge[data-status="progress"] {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+  border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
 .carName {
@@ -223,7 +255,7 @@
   font-weight: 800;
   line-height: 1;
   letter-spacing: -0.02em;
-  background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.85) 100%);
+  background: linear-gradient(180deg, var(--color-text-primary, #ffffff) 0%, rgba(255, 255, 255, 0.85) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -493,7 +525,7 @@
 }
 
 .actionBtn.liked {
-  color: #ef4444;
+  color: var(--color-error, #ef4444);
 }
 
 .actionBtn.liked svg {

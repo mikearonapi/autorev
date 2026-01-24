@@ -1,0 +1,132 @@
+/**
+ * SubscriptionDisclosure Component Styles
+ * 
+ * Styles for App Store compliant subscription terms display.
+ * Uses design tokens for consistency with brand guidelines.
+ */
+
+/* Default full disclosure */
+.disclosure {
+  background-color: var(--bg-tertiary, #f8fafc);
+  border: 1px solid var(--border-subtle, #e2e8f0);
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.content {
+  color: var(--text-secondary, #64748b);
+}
+
+.terms {
+  margin: 0 0 12px 0;
+}
+
+.terms strong {
+  color: var(--text-primary, #1e293b);
+  font-weight: 600;
+}
+
+.management {
+  margin: 0 0 12px 0;
+}
+
+.trialNotice {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 0;
+  padding: 12px;
+  background-color: var(--bg-secondary, #f1f5f9);
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.icon {
+  flex-shrink: 0;
+}
+
+.legal {
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-subtle, #e2e8f0);
+  font-size: 12px;
+  color: var(--text-tertiary, #94a3b8);
+}
+
+.link {
+  color: var(--color-primary, #2563eb);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* Compact variant */
+.compact {
+  padding: 12px;
+  background-color: var(--bg-tertiary, #f8fafc);
+  border-radius: 6px;
+  text-align: center;
+}
+
+.compactText {
+  margin: 0 0 8px 0;
+  font-size: 12px;
+  color: var(--text-secondary, #64748b);
+  line-height: 1.5;
+}
+
+.compactLinks {
+  margin: 0;
+  font-size: 11px;
+  color: var(--text-tertiary, #94a3b8);
+}
+
+/* Minimal variant - single line */
+.minimal {
+  margin: 0;
+  font-size: 11px;
+  color: var(--text-tertiary, #94a3b8);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* Dark mode adjustments */
+@media (prefers-color-scheme: dark) {
+  .disclosure {
+    background-color: var(--bg-tertiary-dark, #1e293b);
+    border-color: var(--border-subtle-dark, #334155);
+  }
+
+  .trialNotice {
+    background-color: var(--bg-secondary-dark, #0f172a);
+  }
+
+  .legal {
+    border-color: var(--border-subtle-dark, #334155);
+  }
+
+  .compact {
+    background-color: var(--bg-tertiary-dark, #1e293b);
+  }
+}
+
+/* Mobile adjustments */
+@media (max-width: 640px) {
+  .disclosure {
+    padding: 14px;
+    font-size: 12px;
+  }
+
+  .trialNotice {
+    padding: 10px;
+    font-size: 11px;
+  }
+
+  .legal {
+    font-size: 11px;
+  }
+}

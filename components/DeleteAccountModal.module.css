@@ -73,7 +73,7 @@
 
 .closeBtn:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
 }
 
 /* ============================================
@@ -95,7 +95,7 @@
   display: flex;
   justify-content: center;
   margin-bottom: 16px;
-  color: #ef4444;
+  color: var(--color-error, #ef4444);
 }
 
 .processingIcon {
@@ -118,7 +118,7 @@
   font-family: var(--font-display, 'Oswald', sans-serif);
   font-size: var(--text-h2);
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   text-align: center;
   margin: 0 0 8px;
 }
@@ -127,7 +127,7 @@
   font-family: var(--font-display, 'Oswald', sans-serif);
   font-size: var(--text-h2);
   font-weight: 600;
-  color: #ef4444;
+  color: var(--color-error, #ef4444);
   text-align: center;
   margin: 0 0 16px;
 }
@@ -191,14 +191,14 @@
 }
 
 .reasonSelected .radioCircle {
-  background: #ef4444;
-  border-color: #ef4444;
-  color: #fff;
+  background: var(--color-error, #ef4444);
+  border-color: var(--color-error, #ef4444);
+  color: var(--color-text-primary, #ffffff);
 }
 
 .reasonLabel {
   font-size: var(--text-body);
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   flex: 1;
 }
 
@@ -222,7 +222,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   font-size: max(16px, var(--text-body)); /* Prevents iOS zoom */
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   resize: none;
   font-family: inherit;
   transition: border-color 0.2s ease;
@@ -261,7 +261,7 @@
 .warningTitle {
   font-size: var(--text-body);
   font-weight: 600;
-  color: #ef4444;
+  color: var(--color-error, #ef4444);
   margin: 0 0 12px;
 }
 
@@ -298,7 +298,7 @@
 .deleteText {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-weight: 700;
-  color: #ef4444;
+  color: var(--color-error, #ef4444);
   letter-spacing: 0.05em;
 }
 
@@ -311,7 +311,7 @@
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: max(16px, var(--text-h4)); /* Prevents iOS zoom */
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   text-align: center;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -321,7 +321,7 @@
 
 .confirmInput:focus {
   outline: none;
-  border-color: #ef4444;
+  border-color: var(--color-error, #ef4444);
   background: rgba(239, 68, 68, 0.08);
 }
 
@@ -335,7 +335,7 @@
 /* Error message */
 .error {
   font-size: var(--text-sm);
-  color: #ef4444;
+  color: var(--color-error, #ef4444);
   text-align: center;
   margin: 0 0 16px;
   padding: 10px 14px;
@@ -369,7 +369,7 @@
 .cancelBtn:hover,
 .backBtn:hover {
   background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
 }
 
 .nextBtn {
@@ -380,13 +380,13 @@
   border-radius: 12px;
   font-size: var(--text-body);
   font-weight: 600;
-  color: #0a1628;
+  color: var(--color-bg-base, #0a1628);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .nextBtn:hover:not(:disabled) {
-  background: #bfe600;
+  background: var(--color-accent-lime-dark, #bfe600);
 }
 
 .nextBtn:disabled {
@@ -397,18 +397,18 @@
 .deleteBtn {
   flex: 1;
   padding: 14px 20px;
-  background: #ef4444;
+  background: var(--color-error, #ef4444);
   border: none;
   border-radius: 12px;
   font-size: var(--text-body);
   font-weight: 600;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .deleteBtn:hover:not(:disabled) {
-  background: #dc2626;
+  background: var(--color-error-dark, #dc2626);
 }
 
 .deleteBtn:disabled {
@@ -420,7 +420,7 @@
    RESPONSIVE
    ============================================ */
 
-@media (max-width: 479px) {
+@media (min-width: 480px) {
   .modal {
     margin: 10px;
     max-width: calc(100% - 20px);
@@ -452,7 +452,7 @@
   }
 }
 
-@media (max-width: 374px) {
+@media (min-width: 375px) {
   .content {
     padding: 24px 16px 16px;
   }

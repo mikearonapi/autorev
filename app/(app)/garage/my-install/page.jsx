@@ -26,19 +26,20 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './page.module.css';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { MyGarageSubNav, VehicleInfoBar } from '@/components/garage';
+import { MyGarageSubNav, GarageVehicleSelector } from '@/components/garage';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
+import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
+import ShareBuildButton from '@/components/ShareBuildButton';
 import PremiumGate from '@/components/PremiumGate';
-import { useCarsList } from '@/hooks/useCarData';
+import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
 import { Icons } from '@/components/ui/Icons';
 import EmptyState from '@/components/ui/EmptyState';
 import { calculateBuildComplexity } from '@/data/upgradeTools';
 
 // Placeholder components - will be implemented in subsequent todos
-import InstallPathSelector from '@/components/garage/InstallPathSelector';
 import InstallChecklistItem from '@/components/garage/InstallChecklistItem';
 import InstallToolsPanel from '@/components/garage/InstallToolsPanel';
 import DIYVideoEmbed from '@/components/garage/DIYVideoEmbed';
@@ -84,8 +85,8 @@ function MyInstallContent() {
   const [selectedCar, setSelectedCar] = useState(null);
   const [currentBuildId, setCurrentBuildId] = useState(null);
   
-  // Path selection state (DIY or Service Center)
-  const [activePath, setActivePath] = useState(null); // 'diy' | 'service' | null
+  // Path selection state (DIY or Service Center) - defaults to DIY
+  const [activePath, setActivePath] = useState('diy'); // 'diy' | 'service'
   
   // Celebration modal state
   const [celebrationData, setCelebrationData] = useState(null);
@@ -98,42 +99,56 @@ function MyInstallContent() {
   const { isAuthenticated, user, isLoading: authLoading } = useAuth();
   const authModal = useAuthModal();
   const { builds, isLoading: buildsLoading, updateBuild } = useSavedBuilds();
+  const { vehicles } = useOwnedVehicles();
   
   // Use cached cars data from React Query hook
   const { data: allCars = [], isLoading: carsLoading } = useCarsList();
-  
-  // Get user's hero image for this car
-  const { heroImageUrl } = useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
   
   // Get URL params
   const buildIdParam = searchParams.get('build');
   const carSlugParam = searchParams.get('car');
   
-  // Load build or car from URL params
+  // Fallback: fetch single car if not in list
+  const { data: fallbackCar, isLoading: fallbackLoading } = useCarBySlug(carSlugParam, {
+    enabled: !!carSlugParam && allCars.length === 0 && !carsLoading,
+  });
+  
+  // Get user's hero image for this car
+  const { heroImageUrl } = useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
+  
+  // Load build or car from URL params (with fallback support)
   useEffect(() => {
-    if (allCars.length === 0) return;
-    
-    if (buildIdParam && !buildsLoading) {
-      const build = builds.find(b => b.id === buildIdParam);
-      if (build) {
-        const car = allCars.find(c => c.slug === build.carSlug);
+    if (allCars.length > 0) {
+      if (buildIdParam && !buildsLoading) {
+        const build = builds.find(b => b.id === buildIdParam);
+        if (build) {
+          const car = allCars.find(c => c.slug === build.carSlug);
+          if (car) {
+            setSelectedCar(car);
+            setCurrentBuildId(build.id);
+          }
+        }
+      } else if (carSlugParam) {
+        const car = allCars.find(c => c.slug === carSlugParam);
         if (car) {
           setSelectedCar(car);
-          setCurrentBuildId(build.id);
+          // Find most recent build for this car
+          const carBuild = builds.find(b => b.carSlug === carSlugParam);
+          if (carBuild) {
+            setCurrentBuildId(carBuild.id);
+          }
         }
       }
-    } else if (carSlugParam) {
-      const car = allCars.find(c => c.slug === carSlugParam);
-      if (car) {
-        setSelectedCar(car);
-        // Find most recent build for this car
-        const carBuild = builds.find(b => b.carSlug === carSlugParam);
-        if (carBuild) {
-          setCurrentBuildId(carBuild.id);
-        }
+    } else if (fallbackCar && carSlugParam) {
+      // Fallback: use directly fetched car when list is unavailable
+      setSelectedCar(fallbackCar);
+      // Find most recent build for this car
+      const carBuild = builds.find(b => b.carSlug === carSlugParam);
+      if (carBuild) {
+        setCurrentBuildId(carBuild.id);
       }
     }
-  }, [buildIdParam, carSlugParam, allCars, builds, buildsLoading]);
+  }, [buildIdParam, carSlugParam, allCars, builds, buildsLoading, fallbackCar]);
   
   // Get current build
   const currentBuild = useMemo(() => {
@@ -310,9 +325,8 @@ function MyInstallContent() {
           onBack={handleBack}
           carSlug={selectedCar.slug}
         />
-        <VehicleInfoBar 
-          car={selectedCar} 
-          userHeroImageUrl={heroImageUrl}
+        <GarageVehicleSelector 
+          selectedCarSlug={selectedCar.slug}
         />
         <NoBuildState carSlug={selectedCar.slug} carName={selectedCar.name} />
       </div>
@@ -325,11 +339,21 @@ function MyInstallContent() {
         onBack={handleBack}
         carSlug={selectedCar.slug}
         buildId={currentBuildId}
+        rightAction={
+          isAuthenticated && currentBuildId && (
+            <ShareBuildButton
+              build={currentBuild}
+              vehicle={vehicles?.find(v => v.matchedCarSlug === selectedCar?.slug)}
+              car={selectedCar}
+              existingImages={currentBuild?.uploadedImages || []}
+            />
+          )
+        }
       />
       
-      <VehicleInfoBar 
-        car={selectedCar} 
-        userHeroImageUrl={heroImageUrl}
+      <GarageVehicleSelector 
+        selectedCarSlug={selectedCar.slug}
+        buildId={currentBuildId}
       />
       
       {/* Premium Gate for Install Tracking */}
@@ -365,11 +389,23 @@ function MyInstallContent() {
             )}
           </div>
           
-          {/* Path Selector - DIY vs Service Center */}
-          <InstallPathSelector 
-            activePath={activePath}
-            onPathSelect={setActivePath}
-          />
+          {/* Path Selector - DIY vs Service Center (Tab Bar Toggle) */}
+          <div className={styles.tabBarContainer}>
+            <div className={styles.tabBar}>
+              <button
+                className={`${styles.tab} ${activePath === 'diy' ? styles.tabActive : ''}`}
+                onClick={() => setActivePath('diy')}
+              >
+                DIY
+              </button>
+              <button
+                className={`${styles.tab} ${activePath === 'service' ? styles.tabActive : ''}`}
+                onClick={() => setActivePath('service')}
+              >
+                Service Center
+              </button>
+            </div>
+          </div>
           
           {/* DIY Path Content */}
           {activePath === 'diy' && (
@@ -446,15 +482,26 @@ function MyInstallContent() {
             </div>
           )}
           
-          {/* No Path Selected - Prompt */}
-          {!activePath && (
-            <div className={styles.pathPrompt}>
-              <Icons.info size={24} />
-              <p>Select how you'd like to proceed with your installation.</p>
-            </div>
-          )}
         </div>
       </PremiumGate>
+      
+      {/* Continue to Photos CTA */}
+      {selectedCar && (
+        <div className={styles.continueCtaContainer}>
+          <Link 
+            href={currentBuildId ? `/garage/my-photos?build=${currentBuildId}` : `/garage/my-photos?car=${selectedCar.slug}`}
+            className={styles.continueCta}
+          >
+            <div className={styles.ctaContent}>
+              <span className={styles.ctaTitle}>Ready to share your build?</span>
+            </div>
+            <div className={styles.ctaAction}>
+              <span>Continue to Photos</span>
+              <Icons.chevronRight size={18} />
+            </div>
+          </Link>
+        </div>
+      )}
       
       {/* Celebration Modal */}
       {celebrationData && (

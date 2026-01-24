@@ -26,7 +26,7 @@
   width: 44px;
   height: 44px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #635BFF 0%, #8B7DFF 100%);
+  background: linear-gradient(135deg, var(--color-info, #635bff) 0%, var(--color-info, #8b7dff) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -99,7 +99,7 @@
   align-items: center;
   gap: 6px;
   padding: 6px 12px;
-  background: linear-gradient(135deg, #635BFF 0%, #8B7DFF 100%);
+  background: linear-gradient(135deg, var(--color-info, #635bff) 0%, var(--color-info, #8b7dff) 100%);
   border-radius: 6px;
   font-size: 12px;
   font-weight: 600;
@@ -136,13 +136,13 @@
   gap: 12px;
 }
 
-@media (max-width: 1024px) {
+@media (min-width: 1025px) {
   .kpiGrid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 600px) {
+@media (min-width: 601px) {
   .kpiGrid {
     grid-template-columns: 1fr;
   }
@@ -155,7 +155,7 @@
   gap: 16px;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .subscriptionsGrid {
     grid-template-columns: 1fr;
   }
@@ -252,7 +252,7 @@
   gap: 12px;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .breakdownGrid {
     grid-template-columns: 1fr;
   }
@@ -310,7 +310,7 @@
   gap: 12px;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .customersGrid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -463,7 +463,7 @@
   gap: 12px;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .chargesGrid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -531,7 +531,7 @@
   gap: 12px;
 }
 
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .disputesGrid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -769,7 +769,7 @@
 }
 
 .configSteps a {
-  color: #635BFF;
+  color: var(--color-info, #635bff);
   text-decoration: none;
   font-weight: 500;
 }
@@ -784,7 +784,7 @@
   border-radius: 4px;
   font-family: 'SF Mono', 'Fira Code', monospace;
   font-size: 11px;
-  color: #a5b4fc;
+  color: var(--color-accent-blue-light, #a5b4fc);
 }
 
 .configCode {
@@ -811,7 +811,7 @@
   align-items: center;
   gap: 8px;
   padding: 12px 24px;
-  background: linear-gradient(135deg, #635BFF 0%, #8B7DFF 100%);
+  background: linear-gradient(135deg, var(--color-info, #635bff) 0%, var(--color-info, #8b7dff) 100%);
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;

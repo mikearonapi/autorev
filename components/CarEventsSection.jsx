@@ -5,6 +5,7 @@ import Link from 'next/link';
 import styles from './CarEventsSection.module.css';
 import { EventTypeIcon, TrackEventBadgeIcon, CategoryIcons } from '@/components/icons/EventIcons';
 import { useEvents } from '@/hooks/useEventsData';
+import { getMonthAbbrev, getDayOfMonth } from '@/lib/dateUtils';
 
 /**
  * CarEventsSection - Shows upcoming events for a specific car on its detail page
@@ -19,15 +20,11 @@ import { useEvents } from '@/hooks/useEventsData';
 function CompactEventCard({ event }) {
   if (!event) return null;
   
-  const date = new Date(event.start_date + 'T00:00:00');
-  
   return (
     <Link href={`/events/${event.slug}`} className={styles.card}>
       <div className={styles.dateBadge}>
-        <span className={styles.dateDay}>{date.getDate()}</span>
-        <span className={styles.dateMonth}>
-          {date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase()}
-        </span>
+        <span className={styles.dateDay}>{getDayOfMonth(event.start_date)}</span>
+        <span className={styles.dateMonth}>{getMonthAbbrev(event.start_date)}</span>
       </div>
       <div className={styles.cardContent}>
         <div className={styles.eventType}>

@@ -59,7 +59,7 @@ async function handleGet(request) {
     if (buildId) {
       const { data, error } = await supabaseAdmin
         .from('community_posts')
-        .select('id, slug, title, is_published')
+        .select('id, slug, title, description, is_published, published_at')
         .eq('user_build_id', buildId)
         .maybeSingle();
       

@@ -218,7 +218,7 @@
 }
 
 /* Responsive */
-@media (max-width: 768px) {
+@media (min-width: 769px) {
   .card {
     padding: 12px 14px;
   }

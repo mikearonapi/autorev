@@ -1,0 +1,136 @@
+/* ==========================================================================
+   AutoRev Breakpoint Utilities
+   Standard responsive breakpoints for mobile-first CSS
+   
+   IMPORTANT: Always use min-width (mobile-first). Never use max-width.
+   
+   Usage in CSS modules:
+   - Write base styles for mobile (no media query)
+   - Add enhancements in larger breakpoints
+   
+   Standard Breakpoints:
+   - Base: 0-639px (mobile phones - default styles, no media query)
+   - sm:   640px+  (large phones, landscape)
+   - md:   768px+  (tablets)
+   - lg:   1024px+ (small laptops)
+   - xl:   1280px+ (desktops)
+   - 2xl:  1536px+ (large desktops)
+   ========================================================================== */
+
+:root {
+  /* Breakpoint values for reference */
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1536px;
+}
+
+/* ==========================================================================
+   RESPONSIVE VISIBILITY UTILITIES
+   ========================================================================== */
+
+/* Hide on mobile, show on tablet+ */
+.hideOnMobile {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .hideOnMobile {
+    display: block;
+  }
+}
+
+/* Show on mobile, hide on tablet+ */
+.showOnMobile {
+  display: block;
+}
+
+@media (min-width: 768px) {
+  .showOnMobile {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE GRID UTILITIES
+   ========================================================================== */
+
+/* Grid that goes from 1 column to 2 to 3 */
+.responsiveGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gap-md, 12px);
+}
+
+@media (min-width: 640px) {
+  .responsiveGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsiveGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Grid that goes from 1 column to 2 to 4 */
+.responsiveGrid4 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--gap-md, 12px);
+}
+
+@media (min-width: 640px) {
+  .responsiveGrid4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsiveGrid4 {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE FLEX UTILITIES
+   ========================================================================== */
+
+/* Stack on mobile, row on tablet+ */
+.responsiveFlex {
+  display: flex;
+  flex-direction: column;
+  gap: var(--gap-md, 12px);
+}
+
+@media (min-width: 768px) {
+  .responsiveFlex {
+    flex-direction: row;
+  }
+}
+
+/* ==========================================================================
+   RESPONSIVE PADDING UTILITIES
+   ========================================================================== */
+
+/* Page padding that scales with viewport */
+.responsivePadding {
+  padding-left: var(--space-4, 16px);
+  padding-right: var(--space-4, 16px);
+}
+
+@media (min-width: 768px) {
+  .responsivePadding {
+    padding-left: var(--space-6, 24px);
+    padding-right: var(--space-6, 24px);
+  }
+}
+
+@media (min-width: 1024px) {
+  .responsivePadding {
+    padding-left: var(--space-8, 32px);
+    padding-right: var(--space-8, 32px);
+  }
+}

@@ -66,7 +66,7 @@ export default function LandingAL({
 
   const handleCtaClick = () => {
     try {
-      trackEvent('landing_page_cta_click', {
+      trackEvent('Landing Page CTA Clicked', {
         landing_page: pageId,
         cta: 'Ask AL',
         destination: '/al',

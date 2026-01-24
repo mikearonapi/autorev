@@ -6,6 +6,7 @@ import styles from './EventCalendarView.module.css';
 import PremiumGate from './PremiumGate';
 import { EventTypeIcon, TrackEventBadgeIcon } from '@/components/icons/EventIcons';
 import { Icons } from '@/components/ui/Icons';
+import { formatEventDateFull, parseDate } from '@/lib/dateUtils';
 
 /**
  * Get days in a month
@@ -29,9 +30,10 @@ function formatDate(year, month, day) {
 }
 
 /**
- * Parse date string to components
+ * Parse date string to components (local version for calendar)
+ * Uses different return format than the imported parseDate
  */
-function parseDate(dateStr) {
+function parseDateLocal(dateStr) {
   const [year, month, day] = dateStr.split('-').map(Number);
   return { year, month: month - 1, day };
 }
@@ -272,11 +274,7 @@ export default function EventCalendarView({
           <div className={styles.eventPanel}>
             <div className={styles.panelHeader}>
               <h3 className={styles.panelTitle}>
-                {new Date(selectedDate + 'T00:00:00').toLocaleDateString('en-US', {
-                  weekday: 'long',
-                  month: 'long',
-                  day: 'numeric',
-                })}
+                {formatEventDateFull(selectedDate).replace(/, \d{4}$/, '')}
               </h3>
               <button
                 className={styles.panelClose}

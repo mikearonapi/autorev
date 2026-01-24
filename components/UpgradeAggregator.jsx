@@ -25,7 +25,7 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 import styles from './UpgradeAggregator.module.css';
 import { useCarSelection, useBuildSummary } from '@/components/providers/CarSelectionProvider';
-import { calculateSmartHpGain, formatHpDisplay, getConflictSummary } from '@/lib/upgradeCalculator.js';
+import { calculateSmartHpGain, formatHpDisplay, getConflictSummary } from '@/lib/performanceCalculator';
 import { Icons } from '@/components/ui/Icons';
 
 /**

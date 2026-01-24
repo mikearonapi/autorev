@@ -224,7 +224,7 @@ export default function DynoLogModal({
   };
 
   // Handle submit
-  const handleSubmit = async (e) => {
+  const handleDynoRunSubmit = async (e) => {
     if (e) e.preventDefault();
     
     if (!validate()) return;
@@ -277,7 +277,7 @@ export default function DynoLogModal({
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close">×</button>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.form}>
+        <form onSubmit={handleDynoRunSubmit} className={styles.form}>
           {/* Prediction Comparison Banner */}
           {predictedWhp && (
             <div className={styles.predictionBanner}>
@@ -305,6 +305,7 @@ export default function DynoLogModal({
                 <div className={styles.inputWithSuffix}>
                   <input
                     type="number"
+                    inputMode="numeric"
                     value={formData.whp}
                     onChange={(e) => setFormData(prev => ({ ...prev, whp: e.target.value }))}
                     className={`${styles.input} ${styles.largeInput}`}
@@ -321,6 +322,7 @@ export default function DynoLogModal({
                 <div className={styles.inputWithSuffix}>
                   <input
                     type="number"
+                    inputMode="numeric"
                     value={formData.wtq}
                     onChange={(e) => setFormData(prev => ({ ...prev, wtq: e.target.value }))}
                     className={`${styles.input} ${styles.largeInput}`}
@@ -337,6 +339,7 @@ export default function DynoLogModal({
                 <div className={styles.inputWithSuffix}>
                   <input
                     type="number"
+                    inputMode="decimal"
                     step="0.1"
                     value={formData.boostPsi}
                     onChange={(e) => setFormData(prev => ({ ...prev, boostPsi: e.target.value }))}
@@ -548,7 +551,7 @@ export default function DynoLogModal({
             type="button"
             className={styles.saveBtn}
             disabled={isSubmitting}
-            onClick={handleSubmit}
+            onClick={handleDynoRunSubmit}
           >
             {isSubmitting ? 'Saving...' : editingResult ? 'Update Result' : 'Log Result'}
           </button>

@@ -10,7 +10,8 @@
 
 .page {
   min-height: 100vh;
-  background: var(--color-bg-base, #0d1b2a);
+  /* Transparent to show body gradient */
+  background: transparent;
   padding-bottom: var(--page-bottom-padding);
 }
 
@@ -25,6 +26,9 @@
   padding: var(--space-4, 16px);
   max-width: 800px;
   margin: 0 auto;
+  /* Prevent horizontal overflow */
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 /* ==========================================================================
@@ -76,10 +80,14 @@
   gap: var(--space-2, 8px);
   margin-top: var(--space-3, 12px);
   padding: var(--space-3, 12px) var(--space-4, 16px);
-  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
-  border-radius: var(--radius-md, 8px);
+  /* Premium Dark Theme - matches Insights smartCard */
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
   font-size: var(--text-sm, 14px);
   color: var(--color-text-secondary, #94a3b8);
+  /* Premium inner highlight */
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
 }
 
 .timeEstimate svg {
@@ -88,7 +96,7 @@
 }
 
 .timeEstimate strong {
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary, #ffffff);
   font-weight: 600;
 }
 
@@ -96,10 +104,58 @@
   margin-left: auto;
   padding: var(--space-1, 4px) var(--space-2, 8px);
   background: rgba(245, 158, 11, 0.15);
-  color: var(--color-warning, #f59e0b);
+  color: var(--color-accent-amber, #f59e0b);
   font-size: var(--text-xs, 12px);
-  font-weight: 500;
+  font-weight: 600;
   border-radius: var(--radius-sm, 4px);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+/* ==========================================================================
+   TAB BAR - DIY vs Service Center toggle
+   Matches community/data page styling
+   ========================================================================== */
+
+.tabBarContainer {
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-4, 16px);
+}
+
+.tabBar {
+  display: flex;
+  gap: 6px;
+  padding: 3px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 18px;
+}
+
+.tab {
+  padding: 6px 16px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  background: transparent;
+  border: none;
+  border-radius: 15px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.tab.tabActive {
+  color: var(--color-text-primary, #fff);
+  background: var(--color-accent-teal, #10b981);
+}
+
+/* Responsive - Larger screens */
+@media (min-width: 768px) {
+  .tab {
+    padding: 8px 24px;
+    font-size: 0.875rem;
+  }
 }
 
 /* ==========================================================================
@@ -112,12 +168,18 @@
   flex-direction: column;
   gap: var(--space-6, 24px);
   margin-top: var(--space-6, 24px);
+  /* Prevent overflow */
+  max-width: 100%;
+  min-width: 0;
 }
 
 .partsList {
   display: flex;
   flex-direction: column;
   gap: var(--space-3, 12px);
+  /* Prevent overflow */
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .sectionTitle {
@@ -128,27 +190,7 @@
   font-family: var(--font-display, 'Oswald', sans-serif);
   font-size: var(--text-lg, 18px);
   font-weight: 600;
-  color: var(--color-text-primary, #fff);
-}
-
-/* ==========================================================================
-   PATH PROMPT (no path selected)
-   ========================================================================== */
-
-.pathPrompt {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-3, 12px);
-  padding: var(--space-8, 32px);
-  text-align: center;
-  color: var(--color-text-secondary, #94a3b8);
-}
-
-.pathPrompt p {
-  margin: 0;
-  font-size: var(--text-body, 16px);
+  color: var(--color-text-primary, #fff); /* Keep this white as it's on dark bg */
 }
 
 /* ==========================================================================
@@ -213,16 +255,20 @@
   gap: var(--space-3, 12px);
   padding: var(--space-3, 12px) var(--space-4, 16px);
   margin-top: var(--space-3, 12px);
+  /* Premium Dark Theme - matches Insights smartCard */
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-lg, 12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
   text-decoration: none;
   transition: all 0.2s ease;
+  /* Premium inner highlight */
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
 }
 
 .needsPartsNotice:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
 }
 
 .needsPartsNotice > svg:first-child {
@@ -245,13 +291,71 @@
 
 .needsPartsTitle {
   font-size: var(--text-sm, 14px);
-  font-weight: 500;
-  color: var(--color-text-secondary, #94a3b8);
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
 }
 
 .needsPartsSubtitle {
   font-size: var(--text-xs, 12px);
-  color: var(--color-text-tertiary, #64748b);
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+/* ==========================================================================
+   CONTINUE TO PHOTOS CTA
+   ========================================================================== */
+
+.continueCtaContainer {
+  padding: var(--space-4, 16px);
+  padding-bottom: calc(var(--space-4, 16px) + 60px); /* Space for bottom tab bar */
+}
+
+.continueCta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4, 16px);
+  padding: var(--space-4, 16px);
+  
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.08));
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: var(--radius-lg, 12px);
+  
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.continueCta:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.12));
+  border-color: rgba(16, 185, 129, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
+}
+
+.ctaContent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1, 4px);
+}
+
+.ctaTitle {
+  font-size: var(--text-body, 16px);
+  font-weight: 600;
+  color: var(--color-text-primary, #fff);
+}
+
+.ctaAction {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  padding: var(--space-2, 8px) var(--space-3, 12px);
+  
+  background: var(--color-accent-teal, #10b981);
+  border-radius: var(--radius-md, 8px);
+  
+  font-size: var(--text-sm, 14px);
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  white-space: nowrap;
 }
 
 /* ==========================================================================

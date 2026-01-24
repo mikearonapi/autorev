@@ -31,7 +31,7 @@ export default function LandingCTA({
 }) {
   const trackCta = (ctaLabel, destination, position) => {
     try {
-      trackEvent('landing_page_cta_click', {
+      trackEvent('Landing Page CTA Clicked', {
         landing_page: pageId,
         cta: ctaLabel,
         destination,

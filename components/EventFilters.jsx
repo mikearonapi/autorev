@@ -79,7 +79,7 @@ export default function EventFilters({
     return count;
   }, [filters]);
 
-  const handleChange = (key, value) => {
+  const handleFilterChange = (key, value) => {
     const newFilters = { ...filters, [key]: value };
     setFilters(newFilters);
     onFilterChange(newFilters);
@@ -109,7 +109,7 @@ export default function EventFilters({
 
   // Handle radius changes
   const handleRadiusChange = (newRadius) => {
-    handleChange('radius', parseInt(newRadius, 10));
+    handleFilterChange('radius', parseInt(newRadius, 10));
   };
 
   const handleClear = () => {
@@ -168,7 +168,7 @@ export default function EventFilters({
   const RegionSelect = ({ className }) => (
     <select 
       value={filters.region || ''} 
-      onChange={(e) => handleChange('region', e.target.value)}
+      onChange={(e) => handleFilterChange('region', e.target.value)}
       className={className || styles.filterSelect}
     >
       <option value="">All Regions</option>
@@ -193,7 +193,7 @@ export default function EventFilters({
           <input
             type="text"
             value={filters.query || ''}
-            onChange={(e) => handleChange('query', e.target.value)}
+            onChange={(e) => handleFilterChange('query', e.target.value)}
             placeholder="Search events..."
             className={styles.searchInput}
           />
@@ -228,7 +228,7 @@ export default function EventFilters({
           <input
             type="text"
             value={filters.query || ''}
-            onChange={(e) => handleChange('query', e.target.value)}
+            onChange={(e) => handleFilterChange('query', e.target.value)}
             placeholder="Search events..."
             className={styles.searchInput}
           />
@@ -257,7 +257,7 @@ export default function EventFilters({
           <input
             type="date"
             value={filters.start_date || ''}
-            onChange={(e) => handleChange('start_date', e.target.value)}
+            onChange={(e) => handleFilterChange('start_date', e.target.value)}
             className={styles.dateInput}
             placeholder="Start Date"
           />
@@ -265,7 +265,7 @@ export default function EventFilters({
           <input
             type="date"
             value={filters.end_date || ''}
-            onChange={(e) => handleChange('end_date', e.target.value)}
+            onChange={(e) => handleFilterChange('end_date', e.target.value)}
             className={styles.dateInput}
             placeholder="End Date"
           />
@@ -281,7 +281,7 @@ export default function EventFilters({
         <input
           type="checkbox"
           checked={filters.is_track_event || false}
-          onChange={(e) => handleChange('is_track_event', e.target.checked)}
+          onChange={(e) => handleFilterChange('is_track_event', e.target.checked)}
           className={styles.toggleCheckbox}
         />
         <span className={styles.toggleText}>Track Events Only</span>
@@ -291,7 +291,7 @@ export default function EventFilters({
         <input
           type="checkbox"
           checked={filters.is_free || false}
-          onChange={(e) => handleChange('is_free', e.target.checked)}
+          onChange={(e) => handleFilterChange('is_free', e.target.checked)}
           className={styles.toggleCheckbox}
         />
         <span className={styles.toggleText}>Free Events Only</span>
@@ -300,7 +300,7 @@ export default function EventFilters({
       {showCarFilters && isAuthenticated && (
         <PremiumGate feature="eventsForMyCars" fallback={null}>
           <button
-            onClick={() => handleChange('for_my_cars', !filters.for_my_cars)}
+            onClick={() => handleFilterChange('for_my_cars', !filters.for_my_cars)}
             className={`${styles.garageFilterBtn} ${filters.for_my_cars ? styles.garageFilterBtnActive : ''}`}
           >
             <Icons.garage />
@@ -350,14 +350,14 @@ export default function EventFilters({
           <EventCategoryPill 
             category={{ name: 'All Events', slug: '' }}
             isActive={!filters.type}
-            onClick={() => handleChange('type', '')}
+            onClick={() => handleFilterChange('type', '')}
           />
           {eventTypes.map(type => (
             <EventCategoryPill 
               key={type.slug || type.id}
               category={type}
               isActive={filters.type === type.slug}
-              onClick={() => handleChange('type', type.slug)}
+              onClick={() => handleFilterChange('type', type.slug)}
             />
           ))}
         </div>

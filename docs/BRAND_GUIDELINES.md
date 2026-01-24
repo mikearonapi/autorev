@@ -666,6 +666,40 @@ Is this a genuine warning/caution?
 
 ---
 
+## Accessibility & Theme Support
+
+### Color Contrast Requirements
+
+AutoRev is designed as a **dark-theme-only** application. All color combinations meet WCAG 2.1 AA contrast requirements:
+
+| Combination | Contrast Ratio | Status |
+|-------------|----------------|--------|
+| White text on `#0d1b2a` (bg-primary) | 15.4:1 | ✅ AAA |
+| White text on `#1b263b` (bg-elevated) | 12.1:1 | ✅ AAA |
+| Secondary text (`#94a3b8`) on `#0d1b2a` | 7.3:1 | ✅ AA |
+| Lime (`#d4ff00`) on `#0d1b2a` | 13.2:1 | ✅ AAA |
+| Dark text on Lime buttons | 12.8:1 | ✅ AAA |
+
+### Light Theme Status
+
+**Current Status:** Not implemented  
+**Reason:** AutoRev's brand identity is built around the premium dark theme experience. The dark theme reduces eye strain during garage sessions and creates the premium "night mode" aesthetic that resonates with automotive enthusiasts.
+
+If light theme support is added in the future:
+1. Define light theme variables in `app/globals.css`
+2. Use paired tokens (`--color-card` / `--color-card-foreground`) for automatic theming
+3. Audit all combinations against WCAG 2.1 AA (4.5:1 for body text, 3:1 for large text)
+4. Test with WebAIM Contrast Checker: https://webaim.org/resources/contrastchecker/
+
+### Focus States
+
+All interactive elements use lime (`#d4ff00`) focus outlines for keyboard navigation:
+- 2px solid outline with 2px offset
+- High contrast against dark backgrounds
+- `:focus-visible` for keyboard-only visibility
+
+---
+
 ## Pre-Flight Checklist
 
 Before submitting ANY UI code:

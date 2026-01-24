@@ -316,7 +316,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
           </div>
 
           {error && (
-            <div className={styles.errorBox}>
+            <div className={styles.errorBox} id="auth-error" role="alert" aria-live="assertive">
               <Icons.alertCircle size={16} />
               <span>{error}</span>
             </div>
@@ -326,12 +326,14 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
             <div className={styles.inputGroup}>
               <input
                 type="email"
+                inputMode="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
                 disabled={isSubmitting}
                 autoComplete="email"
                 ref={emailInputRef}
+                aria-describedby={error ? 'auth-error' : undefined}
               />
             </div>
 
@@ -360,7 +362,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
           </div>
 
           {error && (
-            <div className={styles.errorBox}>
+            <div className={styles.errorBox} id="auth-error" role="alert" aria-live="assertive">
               <Icons.alertCircle size={16} />
               <span>{error}</span>
             </div>
@@ -369,24 +371,15 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
           <form onSubmit={handleEmailSignUp} className={styles.form}>
             <div className={styles.inputGroup}>
               <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                placeholder="Name (optional)"
-                disabled={isSubmitting}
-                autoComplete="name"
-              />
-            </div>
-
-            <div className={styles.inputGroup}>
-              <input
                 type="email"
+                inputMode="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
                 disabled={isSubmitting}
                 autoComplete="email"
                 ref={emailInputRef}
+                aria-describedby={error ? 'auth-error' : undefined}
               />
             </div>
 
@@ -520,7 +513,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
         </div>
 
         {error && (
-          <div className={styles.errorBox}>
+          <div className={styles.errorBox} id="auth-error" role="alert" aria-live="assertive">
             <Icons.alertCircle size={16} />
             <span>{error}</span>
           </div>
@@ -530,12 +523,14 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
           <div className={styles.inputGroup}>
             <input
               type="email"
+              inputMode="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Email"
               disabled={isSubmitting}
               autoComplete="email"
               ref={emailInputRef}
+              aria-describedby={error ? 'auth-error' : undefined}
             />
           </div>
 

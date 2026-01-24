@@ -19,11 +19,11 @@
   --enc-text-secondary: var(--text-secondary, #a0a0a0);
   --enc-text-muted: var(--text-tertiary, #666666);
   --enc-primary: var(--brand-primary-dark);
-  --enc-primary-light: #2563eb;
+  --enc-primary-light: var(--color-accent-blue, #2563eb);
   --enc-accent: var(--brand-gold);
-  --enc-success: #22c55e;
+  --enc-success: var(--color-success, #22c55e);
   --enc-warning: var(--brand-warning);
-  --enc-danger: #ef4444;
+  --enc-danger: var(--color-error, #ef4444);
   --enc-radius: 8px;
   --enc-radius-sm: 4px;
   --enc-radius-lg: 12px;
@@ -39,7 +39,8 @@
 
 .page {
   min-height: 100vh;
-  background: var(--enc-bg);
+  /* Transparent to show body gradient */
+  background: transparent;
 }
 
 .layout {
@@ -59,7 +60,7 @@
    ============================================================================= */
 
 .pageBanner {
-  background: linear-gradient(135deg, #1a4d6e 0%, #0d2d42 100%);
+  background: linear-gradient(135deg, var(--color-accent-blue, #1a4d6e) 0%, #0d2d42 100%);
   /* Account for fixed header + beta banner */
   padding-top: calc(var(--header-plus-banner-mobile, 88px) + 0.75rem);
   padding-bottom: 0.75rem;
@@ -987,17 +988,17 @@
 }
 
 .gainItem {
-  background: linear-gradient(135deg, #ecfdf5, #d1fae5);
+  background: linear-gradient(135deg, var(--color-success-light, #ecfdf5), #d1fae5);
   padding: 1rem;
   border-radius: var(--enc-radius);
   text-align: center;
-  border: 1px solid #a7f3d0;
+  border: 1px solid var(--color-success-light, #a7f3d0);
 }
 
 .gainLabel {
   display: block;
   font-size: 0.75rem;
-  color: #065f46;
+  color: var(--color-success, #065f46);
   margin-bottom: 0.25rem;
 }
 
@@ -1005,7 +1006,7 @@
   display: block;
   font-size: 1.125rem;
   font-weight: 700;
-  color: #047857;
+  color: var(--color-accent-teal, #047857);
 }
 
 .gainNote {
@@ -1024,7 +1025,7 @@
   gap: 1rem;
 }
 
-@media (max-width: 600px) {
+@media (min-width: 601px) {
   .sectionProsCons {
     grid-template-columns: 1fr;
   }
@@ -1036,13 +1037,13 @@
 }
 
 .prosColumn {
-  background: #f0fdf4;
-  border: 1px solid #bbf7d0;
+  background: var(--color-success-light, #f0fdf4);
+  border: 1px solid var(--color-success-light, #bbf7d0);
 }
 
 .consColumn {
-  background: #fef2f2;
-  border: 1px solid #fecaca;
+  background: var(--color-error-light, #fef2f2);
+  border: 1px solid var(--color-error-light, #fecaca);
 }
 
 .prosTitle, .consTitle {
@@ -1055,11 +1056,11 @@
 }
 
 .prosTitle {
-  color: #166534;
+  color: var(--color-success, #166534);
 }
 
 .consTitle {
-  color: #991b1b;
+  color: var(--color-error, #991b1b);
 }
 
 .prosColumn ul, .consColumn ul {
@@ -1070,11 +1071,11 @@
 }
 
 .prosColumn li {
-  color: #15803d;
+  color: var(--color-success, #15803d);
 }
 
 .consColumn li {
-  color: #b91c1c;
+  color: var(--color-error, #b91c1c);
 }
 
 /* Tags Section */
@@ -1265,32 +1266,32 @@
 }
 
 .relREQUIRES {
-  background: #fef2f2;
+  background: var(--color-error-light, #fef2f2);
   color: var(--brand-error-dark);
 }
 
 .relSTRESSES {
-  background: #fffbeb;
-  color: #d97706;
+  background: var(--color-warning-light, #fffbeb);
+  color: var(--color-accent-amber, #d97706);
 }
 
 .relINVALIDATES {
-  background: #fef3c7;
-  color: #b45309;
+  background: var(--color-warning-light, #fef3c7);
+  color: var(--color-accent-amber, #b45309);
 }
 
 .relPAIRS_WELL {
-  background: #f0fdf4;
-  color: #16a34a;
+  background: var(--color-success-light, #f0fdf4);
+  color: var(--color-success, #16a34a);
 }
 
 .relCOMPROMISES {
-  background: #fef2f2;
+  background: var(--color-error-light, #fef2f2);
   color: var(--brand-error-dark);
 }
 
 .relIMPROVES {
-  background: #ecfdf5;
+  background: var(--color-success-light, #ecfdf5);
   color: var(--brand-teal-dark);
 }
 
@@ -1438,10 +1439,10 @@
   margin: 0;
   padding: 0.75rem 1rem;
   padding-left: 2.5rem;
-  background: #fffbeb;
+  background: var(--color-warning-light, #fffbeb);
   font-size: 0.8125rem;
-  color: #92400e;
-  border-top: 1px solid #fef3c7;
+  color: var(--color-accent-amber, #92400e);
+  border-top: 1px solid var(--color-warning-light, #fef3c7);
 }
 
 .stageConsiderations li {
@@ -2206,7 +2207,7 @@
    RESPONSIVE ADJUSTMENTS - Mobile-first optimizations
    ============================================================================= */
 
-@media (max-width: 640px) {
+@media (min-width: 641px) {
   .articleHeader {
     flex-direction: row;
     gap: 0.75rem;

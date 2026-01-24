@@ -201,7 +201,7 @@
   gap: 1rem;
 }
 
-@media (max-width: 600px) {
+@media (min-width: 601px) {
   .frontRearGrid {
     grid-template-columns: 1fr;
   }
@@ -278,7 +278,7 @@
 }
 
 /* Mobile responsiveness */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .container {
     padding: 1rem;
   }

@@ -17,7 +17,7 @@ import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import { notifySignup } from '@/lib/discord';
-import { sendWelcomeEmail } from '@/lib/email';
+import { sendWelcomeEmail } from '@/lib/emailService';
 import { processReferralSignup } from '@/lib/referralService';
 import { sendLeadEvent } from '@/lib/metaConversionsApi';
 

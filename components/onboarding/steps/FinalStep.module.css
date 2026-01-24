@@ -136,7 +136,7 @@
 }
 
 /* Mobile adjustments */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .container {
     padding: var(--space-xl);
   }
@@ -163,7 +163,7 @@
 }
 
 /* Small phones */
-@media (max-width: 380px) {
+@media (min-width: 381px) {
   .brandTitle {
     font-size: var(--text-h1);
   }

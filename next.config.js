@@ -1,3 +1,5 @@
+import { withSentryConfig } from '@sentry/nextjs';
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   // Enable React strict mode for better development experience
@@ -14,8 +16,9 @@ const nextConfig = {
       'openai',
       '@anthropic-ai/sdk',
     ],
-    // Enable CSS optimization for reduced render-blocking
-    optimizeCss: true,
+    // CSS optimization disabled - requires 'critters' package
+    // TODO: Run `npm install critters` to re-enable
+    // optimizeCss: true,
   },
   
   // Compiler optimizations
@@ -29,7 +32,20 @@ const nextConfig = {
   // Webpack configuration for better chunking
   webpack: (config, { isServer }) => {
     if (!isServer) {
-      // Split large vendor chunks
+      // =============================================================================
+      // PERFORMANCE BUDGETS
+      // Warn when assets exceed size limits (helps catch bundle bloat)
+      // =============================================================================
+      config.performance = {
+        maxAssetSize: 250000,      // 250KB per asset
+        maxEntrypointSize: 300000, // 300KB per entrypoint (slightly higher for app shell)
+        hints: 'warning',          // 'warning' | 'error' | false
+      };
+      
+      // =============================================================================
+      // CHUNK SPLITTING
+      // Split large vendor chunks for better caching
+      // =============================================================================
       config.optimization.splitChunks = {
         ...config.optimization.splitChunks,
         cacheGroups: {
@@ -156,8 +172,71 @@ const nextConfig = {
       },
     ];
   },
+
+  // Security headers for all routes
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          // Prevent MIME type sniffing
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          // Prevent clickjacking
+          { key: 'X-Frame-Options', value: 'DENY' },
+          // XSS protection (legacy browsers)
+          { key: 'X-XSS-Protection', value: '1; mode=block' },
+          // Control referrer information
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          // Restrict browser features
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
+          // Force HTTPS (Vercel handles this, but explicit is good)
+          { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+        ],
+      },
+    ];
+  },
 };
 
-export default nextConfig;
+// Sentry configuration options
+const sentryWebpackPluginOptions = {
+  // For all available options, see:
+  // https://github.com/getsentry/sentry-webpack-plugin#options
 
+  // Organization and project (set via env vars or Sentry wizard)
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
 
+  // Auth token for uploading source maps
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+
+  // Only print logs for uploading source maps in CI
+  silent: !process.env.CI,
+
+  // Upload larger set of source maps for more readable stack traces
+  widenClientFileUpload: true,
+
+  // Route browser requests to Sentry through a Next.js rewrite to circumvent ad-blockers
+  // This can increase your server load as well as your hosting bill.
+  // Note: Check that the configured route will not match with your Next.js middleware
+  tunnelRoute: '/monitoring',
+
+  // Hides source maps from generated client bundles
+  hideSourceMaps: true,
+
+  // Automatically tree-shake Sentry logger statements to reduce bundle size
+  disableLogger: true,
+
+  // Automatically instrument App Router for performance monitoring
+  autoInstrumentAppDirectory: true,
+
+  // Enables automatic instrumentation of Vercel Cron Monitors
+  // See https://docs.sentry.io/platforms/javascript/guides/nextjs/configuration/build/
+  automaticVercelMonitors: true,
+};
+
+// Wrap with Sentry if DSN is configured
+const finalConfig = process.env.NEXT_PUBLIC_SENTRY_DSN
+  ? withSentryConfig(nextConfig, sentryWebpackPluginOptions)
+  : nextConfig;
+
+export default finalConfig;

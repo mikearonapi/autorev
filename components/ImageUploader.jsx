@@ -235,7 +235,7 @@ export default function ImageUploader({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploads, maxFiles, disabled]);
 
-  const handleChange = (e) => {
+  const handleImageChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
       handleFiles(e.target.files);
     }
@@ -300,7 +300,7 @@ export default function ImageUploader({
           type="file"
           accept={ALLOWED_TYPES.join(',')}
           multiple
-          onChange={handleChange}
+          onChange={handleImageChange}
           className={styles.fileInput}
           disabled={disabled}
         />

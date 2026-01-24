@@ -290,7 +290,7 @@
 }
 
 .toggleOn:hover {
-  background: #0ea574;
+  background: var(--color-accent-teal, #0ea574);
 }
 
 .toggleKnob {
@@ -327,7 +327,7 @@
 .error {
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.2);
-  color: #ef4444;
+  color: var(--color-error, #ef4444);
   padding: 10px 12px;
   border-radius: 6px;
   font-size: var(--text-xs);
@@ -374,7 +374,7 @@
 }
 
 .saveButton:hover {
-  background: #0ea574;
+  background: var(--color-accent-teal, #0ea574);
 }
 
 .saveButtonDisabled {
@@ -387,7 +387,7 @@
 }
 
 /* Mobile optimization - already compact by default */
-@media (max-width: 360px) {
+@media (min-width: 361px) {
   .panel {
     max-width: 100%;
     border-radius: 10px;

@@ -23,6 +23,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import usePWAInstall from '@/hooks/usePWAInstall';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import DeleteAccountModal from '@/components/DeleteAccountModal';
+import NotificationPreferences from '@/components/NotificationPreferences';
 import { useUserCredits, useClearUserData, useZipLookup, useSaveLocation, useBillingPortal } from '@/hooks/useUserData';
 
 // Compact Icons
@@ -139,12 +140,26 @@ export default function SettingsPage() {
   }, [profile, user]);
 
 
+  // Optimistic UI: Show success immediately, save in background
   const handleSave = async () => {
     if (!displayName.trim()) return;
-    setIsSaving(true);
-    const { error } = await updateProfile({ display_name: displayName.trim() });
-    setIsSaving(false);
-    if (!error) { setSaveSuccess(true); setTimeout(() => setSaveSuccess(false), 2000); }
+    
+    const previousName = profile?.display_name || '';
+    const trimmedName = displayName.trim();
+    
+    // Optimistic: show success immediately
+    setSaveSuccess(true);
+    setTimeout(() => setSaveSuccess(false), 2000);
+    
+    // Save in background
+    const { error } = await updateProfile({ display_name: trimmedName });
+    
+    if (error) {
+      // Revert on error
+      setDisplayName(previousName);
+      setSaveSuccess(false);
+      console.error('[Settings] Failed to save display name:', error);
+    }
   };
 
   const handleZipLookup = async (zip) => {
@@ -158,11 +173,23 @@ export default function SettingsPage() {
     finally { setIsLookingUpZip(false); }
   };
 
+  // Optimistic UI: Location is already displayed, just save in background
   const handleSaveLocation = async () => {
     if (!/^\d{5}$/.test(locationZip)) return;
+    
+    const previousZip = profile?.location_zip || '';
+    const previousCity = profile?.location_city || '';
+    const previousState = profile?.location_state || '';
+    
     try {
       await saveLocationMutation.mutateAsync({ zip: locationZip });
-    } catch (e) { console.error(e); }
+    } catch (e) {
+      // Revert on error
+      setLocationZip(previousZip);
+      setLocationCity(previousCity);
+      setLocationState(previousState);
+      console.error('[Settings] Failed to save location:', e);
+    }
   };
 
   const handleCopyReferral = () => {
@@ -309,7 +336,7 @@ export default function SettingsPage() {
           <p className={styles.sectionHint}>For local event recommendations</p>
           <div className={styles.locationRow}>
             <div className={styles.locationInputs}>
-              <input type="text" value={locationZip} onChange={e => handleZipLookup(e.target.value.replace(/\D/g,'').slice(0,5))} placeholder="ZIP" maxLength={5} className={styles.zipInput} />
+              <input type="text" inputMode="numeric" autoComplete="postal-code" value={locationZip} onChange={e => handleZipLookup(e.target.value.replace(/\D/g,'').slice(0,5))} placeholder="ZIP" maxLength={5} className={styles.zipInput} />
               <input type="text" value={isLookingUpZip ? '...' : (locationCity && locationState ? `${locationCity}, ${locationState}` : '')} disabled placeholder="City, State" className={styles.cityInput} />
             </div>
             <button onClick={handleSaveLocation} disabled={!/^\d{5}$/.test(locationZip)} className={styles.locationSaveBtn}>Save</button>
@@ -402,6 +429,12 @@ export default function SettingsPage() {
               Manage billing {Icon.external}
             </button>
           )}
+        </section>
+
+        {/* Notifications */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Notifications</h2>
+          <NotificationPreferences />
         </section>
 
         {/* Data & Privacy */}

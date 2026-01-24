@@ -3,7 +3,8 @@
 .page {
   min-height: 100vh;
   min-height: 100dvh;
-  background: var(--color-bg-base, #0d1b2a);
+  /* Transparent to show body gradient */
+  background: transparent;
   /* Offset for global nav - matches homepage */
   margin-top: calc(-1 * var(--content-offset-mobile, 88px));
 }
@@ -324,7 +325,7 @@
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.3);
   border-radius: var(--radius-md);
-  color: #ef4444;
+  color: var(--color-error, #ef4444);
   font-size: var(--font-size-sm);
   margin-bottom: var(--space-md);
   text-align: center;

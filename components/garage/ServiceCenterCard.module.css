@@ -8,17 +8,20 @@
   gap: var(--space-3, 12px);
   padding: var(--space-4, 16px);
   
-  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
-  border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.06));
+  /* Light Theme Tile */
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   border-radius: var(--radius-lg, 12px);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
   
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .card:hover {
-  background: var(--color-bg-card-hover, rgba(255, 255, 255, 0.08));
-  border-color: rgba(255, 255, 255, 0.12);
+  background: #f8fafc;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
 }
 
 /* ==========================================================================
@@ -43,26 +46,27 @@
   font-family: var(--font-body, 'Inter', sans-serif);
   font-size: var(--text-body, 16px);
   font-weight: 600;
-  color: var(--color-text-primary, #fff);
+  color: #0f172a;
   line-height: 1.3;
 }
 
 .distance {
   flex-shrink: 0;
   padding: 2px 8px;
-  background: rgba(16, 185, 129, 0.1);
+  background: #ecfdf5;
+  border: 1px solid #6ee7b7;
   border-radius: var(--radius-full, 9999px);
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: var(--text-xs, 11px);
   font-weight: 600;
-  color: var(--color-accent-teal, #10b981);
+  color: #059669;
   white-space: nowrap;
 }
 
 .address {
   margin: 0;
   font-size: var(--text-sm, 14px);
-  color: var(--color-text-secondary, #94a3b8);
+  color: #64748b;
   line-height: 1.4;
 }
 
@@ -90,23 +94,23 @@
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: var(--text-sm, 14px);
   font-weight: 600;
-  color: var(--color-text-primary, #fff);
+  color: #0f172a;
 }
 
 .reviewCount {
   font-size: var(--text-sm, 13px);
-  color: var(--color-text-tertiary, #64748b);
+  color: #94a3b8;
 }
 
 .reviewLink {
   font-size: var(--text-sm, 13px);
-  color: var(--color-accent-blue, #3b82f6);
+  color: #2563eb;
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
 .reviewLink:hover {
-  color: #60a5fa;
+  color: #1d4ed8;
   text-decoration: underline;
 }
 
@@ -118,18 +122,18 @@
   display: inline-flex;
   align-self: flex-start;
   padding: 2px 8px;
-  background: rgba(255, 255, 255, 0.06);
+  background: #f1f5f9;
   border-radius: var(--radius-sm, 4px);
   font-size: var(--text-xs, 11px);
   font-weight: 500;
-  color: var(--color-text-tertiary, #64748b);
+  color: #64748b;
 }
 
 /* Highlighted badge for performance/tuning shops */
 .performanceBadge {
-  background: rgba(212, 255, 0, 0.15);
-  color: var(--color-accent-lime, #d4ff00);
-  border: 1px solid rgba(212, 255, 0, 0.25);
+  background: #f7fee7; /* very light lime/green */
+  color: #65a30d; /* darker lime */
+  border: 1px solid #d9f99d;
 }
 
 /* ==========================================================================
@@ -141,7 +145,7 @@
   align-items: center;
   gap: var(--space-2, 8px);
   padding-top: var(--space-2, 8px);
-  border-top: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.06));
+  border-top: 1px solid #e2e8f0;
 }
 
 .actionBtn {
@@ -150,13 +154,13 @@
   gap: var(--space-1, 4px);
   padding: var(--space-2, 8px) var(--space-3, 12px);
   
-  background: rgba(255, 255, 255, 0.06);
-  border: none;
+  background: #f1f5f9;
+  border: 1px solid transparent;
   border-radius: var(--radius-md, 8px);
   
   font-size: var(--text-sm, 13px);
   font-weight: 500;
-  color: var(--color-text-secondary, #94a3b8);
+  color: #64748b;
   text-decoration: none;
   
   cursor: pointer;
@@ -164,25 +168,25 @@
 }
 
 .actionBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--color-text-primary, #fff);
+  background: #e2e8f0;
+  color: #0f172a;
 }
 
 .directionsBtn {
   background: var(--color-accent-teal, #10b981);
-  color: #fff;
+  color: #ffffff;
 }
 
 .directionsBtn:hover {
-  background: #0ea472;
-  color: #fff;
+  background: #059669;
+  color: #ffffff;
 }
 
 /* ==========================================================================
    RESPONSIVE
    ========================================================================== */
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .card {
     padding: var(--space-3, 12px);
   }

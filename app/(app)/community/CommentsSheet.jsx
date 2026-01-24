@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { usePostComments, useAddComment, useUpdateComment, useDeleteComment } from '@/hooks/useCommunityData';
+import SwipeableRow from '@/components/ui/SwipeableRow';
 import styles from './CommentsSheet.module.css';
 
 /**
@@ -111,7 +112,7 @@ export default function CommentsSheet({ postId, postTitle, commentCount = 0, onC
   }, []);
 
   // Submit new comment
-  const handleSubmit = async (e) => {
+  const handleCommentSubmit = async (e) => {
     e.preventDefault();
     
     if (!user) {
@@ -269,11 +270,11 @@ export default function CommentsSheet({ postId, postTitle, commentCount = 0, onC
             </div>
           ) : (
             <div className={styles.commentsList}>
-              {comments.map((comment) => (
-                <div 
-                  key={comment.id} 
-                  className={`${styles.comment} ${comment.isPending ? styles.pending : ''}`}
-                >
+              {comments.map((comment) => {
+                const commentContent = (
+                  <div 
+                    className={`${styles.comment} ${comment.isPending ? styles.pending : ''}`}
+                  >
                   <div className={styles.commentAvatar}>
                     {comment.user?.avatarUrl ? (
                       <Image 
@@ -371,7 +372,33 @@ export default function CommentsSheet({ postId, postTitle, commentCount = 0, onC
                     )}
                   </div>
                 </div>
-              ))}
+                );
+                
+                // Wrap own comments with swipe actions for delete
+                return comment.isOwn ? (
+                  <SwipeableRow
+                    key={comment.id}
+                    rightActions={[
+                      {
+                        icon: <EditIcon />,
+                        label: 'Edit',
+                        onClick: () => startEditing(comment),
+                        variant: 'default',
+                      },
+                      {
+                        icon: <TrashIcon />,
+                        label: 'Delete',
+                        onClick: () => setDeleteConfirmId(comment.id),
+                        variant: 'danger',
+                      },
+                    ]}
+                  >
+                    {commentContent}
+                  </SwipeableRow>
+                ) : (
+                  <div key={comment.id}>{commentContent}</div>
+                );
+              })}
               <div ref={commentsEndRef} />
             </div>
           )}
@@ -392,7 +419,7 @@ export default function CommentsSheet({ postId, postTitle, commentCount = 0, onC
         </div>
         
         {/* Comment Input */}
-        <form className={styles.inputContainer} onSubmit={handleSubmit}>
+        <form className={styles.inputContainer} onSubmit={handleCommentSubmit}>
           {submitError && (
             <div className={styles.submitError}>
               <span>{submitError}</span>

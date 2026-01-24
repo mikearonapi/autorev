@@ -29,8 +29,8 @@
 .popup {
   position: relative;
   width: 100%;
-  max-width: 380px;
-  height: 480px;
+  max-width: 360px;
+  height: 460px;
   max-height: 90vh;
   overflow: hidden;
   background: var(--color-white);
@@ -149,16 +149,17 @@
   }
 }
 
-/* Icon Wrapper - centered */
+/* Icon Wrapper - subtle teal accent */
 .iconWrapper {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 56px;
-  height: 56px;
+  width: 52px;
+  height: 52px;
   border-radius: var(--radius-lg);
-  color: var(--color-white);
-  margin-bottom: var(--space-lg);
+  background: #e6f7f3;
+  color: #10b981;
+  margin-bottom: var(--space-md);
   flex-shrink: 0;
 }
 
@@ -188,39 +189,34 @@
   align-items: flex-start;
   justify-content: center;
   width: 100%;
-  min-height: 100px;
-  margin-top: var(--space-md);
+  min-height: 90px;
+  margin-top: var(--space-sm);
 }
 
-/* Feature List - more compact */
+/* Feature List - clean, no background card */
 .featureList {
   list-style: none;
   margin: 0;
-  padding: var(--space-sm) var(--space-md);
+  padding: 0;
   text-align: left;
-  background: var(--color-gray-50);
-  border-radius: var(--radius-md);
   width: 100%;
-  max-width: 300px;
+  max-width: 280px;
 }
 
 .featureItem {
   display: flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: 6px 0;
+  padding: 4px 0;
   font-size: var(--font-size-xs);
-  color: var(--color-gray-700);
-}
-
-.featureItem:not(:last-child) {
-  border-bottom: 1px solid var(--color-gray-200);
+  color: var(--color-gray-600);
 }
 
 .featureIcon {
   flex-shrink: 0;
-  font-weight: 700;
-  font-size: var(--font-size-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Dot Navigation - inside footer */
@@ -248,7 +244,7 @@
 
 .dotActive {
   width: 20px;
-  background: #10b981; /* Teal for non-CTA indicators */
+  background: var(--color-accent-teal, #10b981); /* Teal for non-CTA indicators */
 }
 
 /* Footer - compact with dots, buttons, checkbox */
@@ -258,8 +254,8 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-sm) var(--space-lg) var(--space-md);
-  border-top: 1px solid var(--color-gray-100);
-  background: var(--color-gray-50);
+  border-top: 1px solid var(--color-gray-200);
+  background: #ffffff;
   border-radius: 0 0 var(--radius-xl) var(--radius-xl);
 }
 
@@ -361,7 +357,7 @@
 @media (min-width: 768px) {
   .popup {
     max-width: 420px;
-    height: 520px;
+    height: 500px;
   }
 
   .content {
@@ -369,8 +365,8 @@
   }
 
   .iconWrapper {
-    width: 64px;
-    height: 64px;
+    width: 56px;
+    height: 56px;
   }
 
   .title {

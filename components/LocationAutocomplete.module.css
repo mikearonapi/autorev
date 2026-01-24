@@ -10,7 +10,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  background: #fffbeb;
+  background: var(--color-warning-light, #fffbeb);
   border: 2px solid var(--sn-gold, var(--brand-teal));
   border-radius: var(--radius-md, 8px);
   transition: border-color 0.2s, box-shadow 0.2s;

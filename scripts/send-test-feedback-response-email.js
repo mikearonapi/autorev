@@ -2,7 +2,7 @@
 /**
  * Send test feedback response emails
  * 
- * Uses the canonical feedback-response email template from lib/email.js
+ * Uses the canonical feedback-response email template from lib/emailService.js
  * This ensures test emails match what users actually receive.
  * 
  * Usage: 
@@ -16,7 +16,7 @@ import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 
-// Load env vars (required for lib/email.js which uses Supabase and Resend)
+// Load env vars (required for lib/emailService.js which uses Supabase and Resend)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 dotenv.config({ path: join(__dirname, '..', '.env.local') });
@@ -26,7 +26,7 @@ dotenv.config({ path: join(__dirname, '..', '.env.local') });
  * This function fetches car image from database automatically
  */
 async function getEmailFunction() {
-  const { sendFeedbackResponseEmail } = await import('../lib/email.js');
+  const { sendFeedbackResponseEmail } = await import('../lib/emailService.js');
   return { sendFeedbackResponseEmail };
 }
 
@@ -136,7 +136,7 @@ if (!process.env.RESEND_API_KEY) {
 
 console.log('🚀 AutoRev Feedback Response Email Sender');
 console.log('==========================================');
-console.log('📧 Using sendFeedbackResponseEmail from lib/email.js');
+console.log('📧 Using sendFeedbackResponseEmail from lib/emailService.js');
 console.log('📷 Car hero images fetched automatically from database');
 
 await sendTestFeedbackEmail(options.email, options);

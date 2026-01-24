@@ -3,10 +3,10 @@
    Vehicle-centric data viewing with synthetic and logged data
    
    Brand Colors:
-   - Lime (#d4ff00): CTAs, user actions
-   - Teal (#10b981): Improvements, active states, positive data
-   - Blue (#3b82f6): Baseline/stock data
-   - Amber (#f59e0b): Warnings only (sparingly)
+   - Lime (var(--color-accent-lime, #d4ff00)): CTAs, user actions
+   - Teal (var(--color-accent-teal, #10b981)): Improvements, active states, positive data
+   - Blue (var(--color-accent-blue, #3b82f6)): Baseline/stock data
+   - Amber (var(--color-accent-amber, #f59e0b)): Warnings only (sparingly)
    ========================================================================== */
 
 .container {
@@ -15,7 +15,8 @@
   padding: 0 16px;
   /* Bottom padding for tab bar - uses standardized token */
   padding-bottom: var(--page-bottom-padding);
-  background: var(--color-bg-base, #0d1b2a);
+  /* Transparent to show body gradient */
+  background: transparent;
   color: var(--color-text-primary, #ffffff);
   display: flex;
   flex-direction: column;
@@ -27,7 +28,7 @@
 }
 
 /* Mobile: Tighter horizontal padding */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .container {
     padding: 0 12px;
     padding-bottom: var(--page-bottom-padding);
@@ -41,120 +42,166 @@
   }
 }
 
-/* Header - Brand typography */
+/* Header - Brand typography with tab bar */
 .header {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  padding: 16px 0 4px;
-}
-
-/* Mobile: Tighter header */
-@media (max-width: 767px) {
-  .header {
-    padding: 12px 0 4px;
-  }
-}
-
-.headerRow {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  padding: 16px 0 8px;
+}
+
+.headerLeft {
+  flex-shrink: 0;
 }
 
 .title {
   font-family: var(--font-display, 'Oswald', sans-serif);
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: var(--color-text-primary, #ffffff);
   margin: 0;
   letter-spacing: -0.02em;
   text-transform: uppercase;
-  flex-shrink: 0;
 }
 
-.subtitle {
-  font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: 0.75rem;
-  color: var(--color-text-tertiary, #64748b);
-  margin: 2px 0 0;
-  line-height: 1.4;
-}
-
-.tabHint {
-  color: var(--color-text-tertiary, #64748b);
-}
-
-.tabHint strong {
-  color: var(--color-text-secondary, #94a3b8);
-  font-weight: 600;
-}
-
-.tabHintSeparator {
-  color: var(--color-text-muted, #475569);
-  margin: 0 3px;
-}
-
-@media (max-width: 360px) {
-  .subtitle {
-    font-size: 0.6875rem;
+/* Responsive - Larger screens */
+@media (min-width: 768px) {
+  .header {
+    padding: 12px 0 8px;
+  }
+  
+  .title {
+    font-size: 2rem;
   }
 }
 
 /* ==========================================================================
-   VEHICLE SELECTOR - Compact inline dropdown in header
+   VEHICLE SELECTOR - Full width bar matching garage pages
    ========================================================================== */
 
-.vehicleSelectorWrapper {
+.vehicleSelector {
+  padding: 8px 0 16px;
   position: relative;
-  flex-shrink: 0;
+  z-index: 9000;
 }
 
-.vehicleSelectorBtn {
+.selectorButton {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 0;
-  background: transparent;
-  border: none;
+  justify-content: space-between;
+  width: 100%;
+  padding: 14px 18px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 14px;
   cursor: pointer;
   transition: all 0.2s ease;
+  /* Premium: subtle inner highlight */
+  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
 }
 
-.vehicleSelectorBtn:hover .vehicleSelectorName {
-  color: var(--color-text-primary, #ffffff);
+.selectorButton:hover,
+.selectorButton:focus {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.1);
+  outline: none;
 }
 
-.vehicleSelectorBtn:hover .chevron {
-  color: var(--color-text-primary, #ffffff);
+.selectorLeft {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.vehicleSelectorName {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--color-text-secondary, #94a3b8);
-  white-space: nowrap;
-  transition: color 0.2s ease;
-}
-
-@media (max-width: 380px) {
-  .vehicleSelectorName {
-    font-size: 0.8125rem;
-  }
-}
-
-.chevron {
-  color: var(--color-text-tertiary, #64748b);
+.selectorIcon {
+  width: 20px;
+  height: 20px;
+  color: var(--color-accent-teal, #10b981);
   flex-shrink: 0;
-  transition: transform 0.2s ease, color 0.2s ease;
 }
 
-.chevronOpen {
+.selectorValue {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+}
+
+.selectorChevron {
+  width: 18px;
+  height: 18px;
+  color: var(--color-text-tertiary, #64748b);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.selectorChevronOpen {
   transform: rotate(180deg);
 }
 
-/* Vehicle Dropdown */
+/* Dropdown Portal - Frosted glass matching garage pages */
+.selectorDropdownPortal {
+  background: rgba(27, 38, 59, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  overflow: hidden;
+  z-index: 999999;
+  animation: slideDown 0.15s ease;
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.selectorOption {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 18px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.selectorOption:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.selectorOptionActive {
+  background: rgba(16, 185, 129, 0.12);
+}
+
+.selectorOption svg {
+  width: 18px;
+  height: 18px;
+  color: var(--color-text-tertiary, #64748b);
+  flex-shrink: 0;
+}
+
+.selectorOptionActive svg {
+  color: var(--color-accent-teal, #10b981);
+}
+
+.selectorOptionText {
+  font-size: 0.95rem;
+  color: var(--color-text-primary, #ffffff);
+}
+
+.selectorOptionActive .selectorOptionText {
+  color: var(--color-accent-teal, #10b981);
+  font-weight: 600;
+}
+
+/* Legacy Vehicle Dropdown - keeping for potential future use */
 .vehicleDropdown {
   position: absolute;
   top: calc(100% + 8px);
@@ -286,64 +333,44 @@
 }
 
 /* ==========================================================================
-   FILTER BAR - Horizontal scroll pills
-   Active state uses TEAL (per brand guidelines for active selections)
+   TAB BAR - Pill-style toggle matching community page
+   Positioned in header, aligned right
    ========================================================================== */
 
-.filterSection {
-  margin-top: 12px;
-  margin-bottom: 8px;
-}
-
-.filterBar {
+.tabBar {
   display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin: 0;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-  padding-bottom: 4px;
-}
-
-.filterBar::-webkit-scrollbar {
-  display: none;
-}
-
-.filterPill {
+  gap: 6px;
+  padding: 3px;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 18px;
   flex-shrink: 0;
-  padding: 10px 18px;
-  min-height: 44px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 100px;
-  color: var(--color-text-secondary, #94a3b8);
-  font-size: 0.875rem;
-  font-weight: 500;
+}
+
+.tab {
+  padding: 6px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.6);
+  background: transparent;
+  border: none;
+  border-radius: 15px;
   cursor: pointer;
   transition: all 0.2s ease;
-  white-space: nowrap;
 }
 
-.filterPill:hover {
-  border-color: rgba(255, 255, 255, 0.15);
-  color: var(--color-text-primary, #ffffff);
-  background: rgba(255, 255, 255, 0.08);
+.tab.tabActive {
+  color: var(--color-text-primary);
+  background: var(--color-accent-teal);
 }
 
-/* Active filter uses TEAL - per brand guidelines for active states */
-.filterActive {
-  background: var(--color-accent-teal, #10b981);
-  border-color: var(--color-accent-teal, #10b981);
-  color: var(--color-text-primary, #ffffff);
-  font-weight: 600;
-}
-
-.filterActive:hover {
-  background: var(--color-accent-teal-light, #34d399);
-  border-color: var(--color-accent-teal-light, #34d399);
-  color: var(--color-text-primary, #ffffff);
+/* Responsive - Larger screens */
+@media (min-width: 768px) {
+  .tab {
+    padding: 8px 24px;
+    font-size: 0.8125rem;
+  }
 }
 
 /* ==========================================================================
@@ -372,6 +399,11 @@
   margin-top: 1px;
 }
 
+.estimateExplainerText {
+  flex: 1;
+  min-width: 0;
+}
+
 .estimateExplainer strong {
   color: var(--color-text-secondary, #94a3b8);
 }
@@ -381,7 +413,7 @@
   font-style: normal;
 }
 
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .estimateExplainer {
     padding: 10px 12px;
     font-size: 0.6875rem;
@@ -673,7 +705,7 @@
 }
 
 .feedbackLink:hover {
-  color: #bfe600;
+  color: var(--color-accent-lime-dark, #bfe600);
   text-decoration: underline;
 }
 
@@ -846,7 +878,7 @@
   }
 }
 
-@media (max-width: 400px) {
+@media (min-width: 401px) {
   .futureIdeasGrid {
     grid-template-columns: 1fr;
   }
@@ -1045,7 +1077,7 @@
 }
 
 .logDataCta:hover {
-  background: #bfe600;
+  background: var(--color-accent-lime-dark, #bfe600);
   box-shadow: 0 4px 20px rgba(212, 255, 0, 0.25);
   transform: translateY(-1px);
 }
@@ -1297,7 +1329,7 @@
 }
 
 /* Mobile adjustments for results lists */
-@media (max-width: 480px) {
+@media (min-width: 481px) {
   .dynoResultMain,
   .trackTimeMain {
     flex-direction: column;

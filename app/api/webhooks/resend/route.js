@@ -12,7 +12,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { handleResendWebhook } from '@/lib/email';
+import { handleResendWebhook } from '@/lib/emailService';
 import crypto from 'crypto';
 import { logServerError } from '@/lib/serverErrorLogger';
 

@@ -19,7 +19,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
-import { sendReferralInviteEmail } from '@/lib/email';
+import { sendReferralInviteEmail } from '@/lib/emailService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { errors } from '@/lib/apiErrors';
 

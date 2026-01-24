@@ -21,27 +21,18 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import ErrorBoundary from '@/components/ErrorBoundary';
-import { MyGarageSubNav, VehicleInfoBar } from '@/components/garage';
+import { MyGarageSubNav, GarageVehicleSelector } from '@/components/garage';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import ImageUploader from '@/components/ImageUploader';
 import BuildMediaGallery from '@/components/BuildMediaGallery';
+import ShareBuildButton from '@/components/ShareBuildButton';
 import { useCarImages } from '@/hooks/useCarImages';
-import { useCarsList } from '@/hooks/useCarData';
+import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { Icons } from '@/components/ui/Icons';
 import EmptyState from '@/components/ui/EmptyState';
-
-// Stat component for VehicleInfoBar
-function PhotoCountStat({ count }) {
-  return (
-    <div className={styles.statBadge}>
-      <span className={styles.statValue}>{count}</span>
-      <span className={styles.statLabel}>{count === 1 ? 'Photo' : 'Photos'}</span>
-    </div>
-  );
-}
 
 function MyPhotosContent() {
   const searchParams = useSearchParams();
@@ -62,6 +53,15 @@ function MyPhotosContent() {
   // Check for action=upload query param
   const actionParam = searchParams.get('action');
   
+  // Get URL params
+  const buildIdParam = searchParams.get('build');
+  const carSlugParam = searchParams.get('car');
+  
+  // Fallback: fetch single car if not in list
+  const { data: fallbackCar, isLoading: fallbackLoading } = useCarBySlug(carSlugParam, {
+    enabled: !!carSlugParam && allCars.length === 0 && !carsLoading,
+  });
+  
   // Get images for this car
   const { 
     images: carImages,
@@ -71,32 +71,32 @@ function MyPhotosContent() {
     clearHeroImage: clearCarHeroImage
   } = useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
 
-  // Get URL params
-  const buildIdParam = searchParams.get('build');
-  const carSlugParam = searchParams.get('car');
-
-  // Handle URL params - load build or car
+  // Handle URL params - load build or car (with fallback support)
   useEffect(() => {
-    if (allCars.length === 0) return;
-
-    if (buildIdParam) {
-      if (buildsLoading) return;
-      const build = builds.find(b => b.id === buildIdParam);
-      if (build) {
-        const car = allCars.find(c => c.slug === build.carSlug);
+    if (allCars.length > 0) {
+      if (buildIdParam) {
+        if (buildsLoading) return;
+        const build = builds.find(b => b.id === buildIdParam);
+        if (build) {
+          const car = allCars.find(c => c.slug === build.carSlug);
+          if (car) {
+            setSelectedCar(car);
+            setCurrentBuildId(buildIdParam);
+          }
+        }
+      } else if (carSlugParam) {
+        const car = allCars.find(c => c.slug === carSlugParam);
         if (car) {
           setSelectedCar(car);
-          setCurrentBuildId(buildIdParam);
+          setCurrentBuildId(null);
         }
       }
-    } else if (carSlugParam) {
-      const car = allCars.find(c => c.slug === carSlugParam);
-      if (car) {
-        setSelectedCar(car);
-        setCurrentBuildId(null);
-      }
+    } else if (fallbackCar && carSlugParam) {
+      // Fallback: use directly fetched car when list is unavailable
+      setSelectedCar(fallbackCar);
+      setCurrentBuildId(null);
     }
-  }, [buildIdParam, carSlugParam, allCars, builds, buildsLoading]);
+  }, [buildIdParam, carSlugParam, allCars, builds, buildsLoading, fallbackCar]);
 
   // Find vehicle ID for this car
   useEffect(() => {
@@ -178,13 +178,21 @@ function MyPhotosContent() {
         carSlug={selectedCar.slug}
         buildId={currentBuildId}
         onBack={handleBack}
+        rightAction={
+          isAuthenticated && currentBuildId && (
+            <ShareBuildButton
+              build={currentBuild}
+              vehicle={vehicles?.find(v => v.matchedCarSlug === selectedCar?.slug)}
+              car={selectedCar}
+              existingImages={currentBuild?.uploadedImages || []}
+            />
+          )
+        }
       />
       
-      <VehicleInfoBar
-        car={selectedCar}
-        buildName={buildName}
-        stat={<PhotoCountStat count={carImages?.length || 0} />}
-        heroImageUrl={heroImageUrl}
+      <GarageVehicleSelector 
+        selectedCarSlug={selectedCar.slug}
+        buildId={currentBuildId}
       />
 
       <div className={styles.content}>

@@ -1,205 +1,189 @@
-/* ==========================================================================
-   EmptyState Component Styles
-   
-   Variants: default, inline, centered
-   Sizes: sm, md, lg (affects icon and text)
-   ========================================================================== */
+/**
+ * EmptyState Component Styles
+ */
 
-/* ==========================================================================
-   BASE STYLES
-   ========================================================================== */
-
-.emptyState {
+.container {
   display: flex;
-  align-items: flex-start;
-  gap: var(--space-3, 12px);
-  padding: var(--space-4, 16px);
-  color: var(--color-text-secondary, rgba(255, 255, 255, 0.6));
-}
-
-.icon {
-  flex-shrink: 0;
-  color: var(--color-text-tertiary, rgba(255, 255, 255, 0.4));
-}
-
-.content {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1, 4px);
-}
-
-.title {
-  margin: 0;
-  font-size: var(--text-body, 14px);
-  font-weight: 600;
-  color: var(--color-text-secondary, rgba(255, 255, 255, 0.6));
-  line-height: 1.4;
-}
-
-.description {
-  margin: 0;
-  font-size: var(--text-small, 13px);
-  color: var(--color-text-tertiary, rgba(255, 255, 255, 0.5));
-  line-height: 1.5;
-}
-
-.action {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1, 4px);
-  margin-top: var(--space-2, 8px);
-  padding: var(--space-2, 8px) var(--space-3, 12px);
-  
-  font-size: var(--text-small, 13px);
-  font-weight: 500;
-  color: var(--color-accent-teal, #10b981);
-  
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  border-radius: var(--radius-md, 8px);
-  
-  cursor: pointer;
-  transition: var(--transition-fast, 0.15s ease);
-  text-decoration: none;
-}
-
-.action:hover {
-  background: rgba(16, 185, 129, 0.15);
-  border-color: rgba(16, 185, 129, 0.3);
-}
-
-/* ==========================================================================
-   VARIANT: inline (compact for lists/tables)
-   ========================================================================== */
-
-.inline {
-  align-items: center;
-  padding: var(--space-3, 12px) 0;
-  gap: var(--space-2, 8px);
-}
-
-.inline .content {
-  flex-direction: row;
-  align-items: center;
-  gap: var(--space-2, 8px);
-}
-
-.inline .title {
-  font-size: var(--text-small, 13px);
-}
-
-.inline .description {
-  font-size: var(--text-xs, 12px);
-}
-
-/* ==========================================================================
-   VARIANT: centered (full-page/section empty states)
-   ========================================================================== */
-
-.centered {
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: var(--space-8, 32px) var(--space-4, 16px);
-  min-height: 200px;
+  padding: var(--space-8, 32px);
 }
 
-.centered .icon {
-  margin-bottom: var(--space-2, 8px);
+/* Variants */
+.default {
+  padding: var(--space-8, 32px);
 }
 
-.centered .content {
+.compact {
+  padding: var(--space-4, 16px) var(--space-6, 24px);
+}
+
+.large {
+  padding: var(--space-12, 48px) var(--space-8, 32px);
+}
+
+/* Icon */
+.icon {
+  display: flex;
   align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  margin-bottom: var(--space-4, 16px);
+  color: var(--color-text-tertiary, #64748b);
+  opacity: 0.6;
+}
+
+.compact .icon {
+  width: 56px;
+  height: 56px;
+  margin-bottom: var(--space-3, 12px);
+}
+
+.compact .icon svg {
+  width: 32px;
+  height: 32px;
+}
+
+.large .icon {
+  width: 96px;
+  height: 96px;
+  margin-bottom: var(--space-6, 24px);
+}
+
+.large .icon svg {
+  width: 64px;
+  height: 64px;
+}
+
+/* Title */
+.title {
+  margin: 0;
+  margin-bottom: var(--space-2, 8px);
+  font-size: var(--text-lg, 1.125rem);
+  font-weight: var(--font-semibold, 600);
+  color: var(--color-text-primary, #ffffff);
+  line-height: 1.4;
+}
+
+.compact .title {
+  font-size: var(--text-base, 1rem);
+  margin-bottom: var(--space-1, 4px);
+}
+
+.large .title {
+  font-size: var(--text-xl, 1.25rem);
+  margin-bottom: var(--space-3, 12px);
+}
+
+/* Description */
+.description {
+  margin: 0;
+  margin-bottom: var(--space-4, 16px);
+  font-size: var(--text-sm, 0.875rem);
+  color: var(--color-text-secondary, #94a3b8);
+  line-height: 1.5;
   max-width: 320px;
 }
 
-.centered .title {
-  font-size: var(--text-h3, 18px);
-  color: var(--color-text-primary, rgba(255, 255, 255, 0.8));
+.compact .description {
+  font-size: var(--text-xs, 0.75rem);
+  margin-bottom: var(--space-3, 12px);
+  max-width: 280px;
 }
 
-.centered .description {
-  font-size: var(--text-body, 14px);
+.large .description {
+  font-size: var(--text-base, 1rem);
+  margin-bottom: var(--space-6, 24px);
+  max-width: 400px;
 }
 
-/* ==========================================================================
-   SIZE VARIANTS
-   ========================================================================== */
-
-/* Small */
-.size-sm .icon svg {
-  width: 16px;
-  height: 16px;
+/* Actions */
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3, 12px);
+  justify-content: center;
 }
 
-.size-sm .title {
-  font-size: var(--text-small, 13px);
+/* Primary Action (Button/Link) */
+.primaryAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: var(--space-3, 12px) var(--space-5, 20px);
+  background-color: var(--color-accent-lime, #d4ff00);
+  color: var(--color-bg-base, #0d1b2a);
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: var(--font-medium, 500);
+  text-decoration: none;
+  border: none;
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+  transition: background-color 0.15s ease, transform 0.15s ease;
 }
 
-.size-sm .description {
-  font-size: var(--text-xs, 12px);
+.primaryAction:hover {
+  background-color: var(--color-accent-lime-dark, #bfe600);
+  transform: translateY(-1px);
 }
 
-/* Medium (default) */
-.size-md .icon svg {
-  width: 24px;
-  height: 24px;
+.primaryAction:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
 }
 
-/* Large */
-.size-lg .icon svg {
-  width: 48px;
-  height: 48px;
+.primaryAction:active {
+  transform: translateY(0);
 }
 
-.size-lg .title {
-  font-size: var(--text-h2, 24px);
-  font-family: var(--font-display, 'Oswald', sans-serif);
+/* Secondary Action */
+.secondaryAction {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: var(--space-3, 12px) var(--space-5, 20px);
+  background-color: transparent;
+  color: var(--color-text-primary, #ffffff);
+  font-size: var(--text-sm, 0.875rem);
+  font-weight: var(--font-medium, 500);
+  text-decoration: none;
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.15));
+  border-radius: var(--radius-md, 8px);
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
 }
 
-.size-lg .description {
-  font-size: var(--text-body, 16px);
+.secondaryAction:hover {
+  background-color: var(--color-bg-surface-hover, rgba(255, 255, 255, 0.08));
+  border-color: var(--color-border-hover, rgba(255, 255, 255, 0.25));
 }
 
-/* ==========================================================================
-   ANIMATION FOR LOADING STATE
-   ========================================================================== */
-
-.emptyState .icon svg {
-  /* Spinner animation if icon has animation class */
+.secondaryAction:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
 }
 
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+/* Compact variant adjustments */
+.compact .primaryAction,
+.compact .secondaryAction {
+  min-height: 44px; /* Touch target accessibility */
+  padding: var(--space-2, 8px) var(--space-4, 16px);
+  font-size: var(--text-xs, 0.75rem);
 }
 
-/* Apply spin animation to spinner icons */
-.icon :global(.spinner) {
-  animation: spin 1s linear infinite;
-}
-
-/* ==========================================================================
-   RESPONSIVE ADJUSTMENTS
-   ========================================================================== */
-
-@media (max-width: 640px) {
-  .centered {
-    padding: var(--space-6, 24px) var(--space-4, 16px);
-    min-height: 160px;
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .primaryAction,
+  .secondaryAction {
+    transition: none;
   }
   
-  .centered .title {
-    font-size: var(--text-h4, 16px);
-  }
-  
-  .size-lg .icon svg {
-    width: 36px;
-    height: 36px;
+  .primaryAction:hover {
+    transform: none;
   }
 }

@@ -12,18 +12,50 @@ import styles from './page.module.css';
 import { IS_BETA } from '@/lib/tierAccess';
 import { useCheckout } from '@/hooks/useCheckout';
 import { Icons } from '@/components/ui/Icons';
+import { CAR_COUNT_DISPLAY } from '@/lib/marketingStats';
+import SubscriptionDisclosure from '@/components/SubscriptionDisclosure';
+import BillingToggle from '@/components/BillingToggle';
+import { SUBSCRIPTION_TIERS, getTierPricing, formatPrice } from '@/lib/stripe';
 
-// Car count for display
-// NOTE: Update this when car database grows significantly (current: ~192 cars)
-const CAR_COUNT = '190+';
+// Use shared constant from lib/marketingStats.js
+const CAR_COUNT = CAR_COUNT_DISPLAY;
 
-// Membership tiers - clean & accurate
-const tiers = [
+/**
+ * Get tier display info based on billing interval
+ * @param {string} tierId - Tier ID
+ * @param {'month'|'year'} interval - Billing interval
+ * @returns {Object} Pricing display info
+ */
+function getTierDisplayPricing(tierId, interval) {
+  if (tierId === 'free') {
+    return { price: 'Free', priceNote: 'Forever', perMonth: null };
+  }
+  
+  const pricing = getTierPricing(tierId, interval);
+  if (!pricing) return { price: 'Free', priceNote: 'During Beta', perMonth: null };
+  
+  if (interval === 'year') {
+    return {
+      price: pricing.formattedPrice,
+      priceNote: '/year',
+      perMonth: pricing.perMonthLabel,
+      savingsPercent: pricing.savingsPercent,
+    };
+  }
+  
+  return {
+    price: pricing.formattedPrice,
+    priceNote: '/month',
+    perMonth: null,
+    savingsPercent: 0,
+  };
+}
+
+// Membership tiers - base configuration (prices added dynamically)
+const baseTiers = [
   {
     id: 'free',
     name: 'Free',
-    price: 'Free',
-    priceNote: 'Forever',
     tagline: 'Research any sports car',
     icon: Icons.car,
     color: '#059669',
@@ -39,9 +71,6 @@ const tiers = [
   {
     id: 'collector',
     name: 'Enthusiast',
-    price: 'Free',
-    priceNote: 'During Beta',
-    futurePrice: '$4.99/mo',
     tagline: 'Own & maintain your car',
     icon: Icons.garage,
     color: '#2563eb',
@@ -51,15 +80,12 @@ const tiers = [
       'Maintenance schedules & recalls',
     ],
     al: { chats: '~75/mo', label: 'Reviews, reliability & maintenance' },
-    cta: 'Join Free',
+    cta: 'Start Free Trial',
     recommended: true,
   },
   {
     id: 'tuner',
     name: 'Tuner',
-    price: 'Free',
-    priceNote: 'During Beta',
-    futurePrice: '$9.99/mo',
     tagline: 'Build & modify your car',
     icon: Icons.wrench,
     color: '#7c3aed',
@@ -69,7 +95,7 @@ const tiers = [
       'Build cost calculator',
     ],
     al: { chats: '~150/mo', label: 'Build advice & parts search' },
-    cta: 'Join Free',
+    cta: 'Start Free Trial',
     recommended: false,
   },
 ];
@@ -104,6 +130,9 @@ export default function JoinPage() {
   const authModal = useAuthModal();
   const { checkoutSubscription, isLoading: checkoutLoading } = useCheckout();
   
+  // Billing interval state (monthly or annual)
+  const [billingInterval, setBillingInterval] = useState('year'); // Default to annual (better value)
+  
   // Animated REV text state
   const [suffixIndex, setSuffixIndex] = useState(0);
   const [suffixVisible, setSuffixVisible] = useState(true);
@@ -120,6 +149,34 @@ export default function JoinPage() {
     return () => clearInterval(interval);
   }, []);
 
+  // Build tiers with dynamic pricing based on interval
+  const tiers = baseTiers.map(tier => {
+    if (IS_BETA) {
+      // During beta, show "Free" with future pricing
+      const futurePricing = getTierDisplayPricing(tier.id, 'month');
+      return {
+        ...tier,
+        price: 'Free',
+        priceNote: tier.id === 'free' ? 'Forever' : 'During Beta',
+        futurePrice: tier.id !== 'free' ? futurePricing.price + futurePricing.priceNote : null,
+        cta: user ? 'Access Your Garage' : 'Join Free',
+      };
+    }
+    
+    // After beta, show actual pricing
+    const pricing = getTierDisplayPricing(tier.id, billingInterval);
+    return {
+      ...tier,
+      price: pricing.price,
+      priceNote: pricing.priceNote,
+      perMonth: pricing.perMonth,
+      savingsPercent: pricing.savingsPercent,
+      cta: tier.id === 'free' 
+        ? (user ? 'Access Your Garage' : 'Join Free')
+        : (user ? 'Upgrade Now' : tier.cta),
+    };
+  });
+
   const handleJoin = async (tierId = 'free') => {
     // If user is already logged in
     if (user) {
@@ -128,21 +185,20 @@ export default function JoinPage() {
         window.location.href = '/dashboard';
         return;
       }
-      // For paid tiers after beta, go to checkout
-      await checkoutSubscription(tierId);
+      // For paid tiers after beta, go to checkout with interval
+      await checkoutSubscription(tierId, billingInterval);
       return;
     }
     
-    // Not logged in - store selected tier and open auth modal
-    // During beta, all tiers are free so just do normal signup flow
-    // After beta, paid tiers will redirect to checkout after auth
+    // Not logged in - store selected tier and interval, open auth modal
     localStorage.setItem('autorev_selected_tier', tierId);
     
-    // For paid tiers after beta, also store checkout intent
+    // For paid tiers after beta, also store checkout intent with interval
     if (!IS_BETA && tierId !== 'free') {
       localStorage.setItem('autorev_checkout_intent', JSON.stringify({ 
         type: 'subscription', 
-        tier: tierId 
+        tier: tierId,
+        interval: billingInterval,
       }));
     }
     
@@ -191,7 +247,22 @@ export default function JoinPage() {
         <div className={styles.container}>
           <div className={styles.tiersHeader}>
             <h2>Choose Your Path</h2>
-            <p>All tiers are free during our beta. Help us shape the future of AutoRev.</p>
+            {IS_BETA ? (
+              <p>All tiers are free during our beta. Help us shape the future of AutoRev.</p>
+            ) : (
+              <p>Start with a 7-day free trial. Cancel anytime.</p>
+            )}
+            
+            {/* Billing Toggle - only show when not in beta */}
+            {!IS_BETA && (
+              <div className={styles.billingToggleWrapper}>
+                <BillingToggle
+                  interval={billingInterval}
+                  onChange={setBillingInterval}
+                  savingsPercent={50}
+                />
+              </div>
+            )}
           </div>
 
           <div className={styles.tiersGrid}>
@@ -213,7 +284,15 @@ export default function JoinPage() {
                   <div className={styles.tierPricing}>
                     <span className={styles.tierPrice}>{tier.price}</span>
                     <span className={styles.tierPriceNote}>{tier.priceNote}</span>
+                    {tier.savingsPercent > 0 && (
+                      <span className={styles.savingsBadge}>Save {tier.savingsPercent}%</span>
+                    )}
                   </div>
+                  {tier.perMonth && (
+                    <div className={styles.perMonthPrice}>
+                      <span>{tier.perMonth} billed annually</span>
+                    </div>
+                  )}
                   {tier.futurePrice && (
                     <div className={styles.futurePrice}>
                       <span>After beta: {tier.futurePrice}</span>
@@ -257,6 +336,18 @@ export default function JoinPage() {
               </div>
             ))}
           </div>
+          
+          {/* Subscription terms disclosure - shown after beta */}
+          {!IS_BETA && (
+            <div className={styles.disclosureWrapper}>
+              <SubscriptionDisclosure 
+                variant="compact" 
+                hasTrial={true}
+                trialDays={7}
+                billingInterval={billingInterval}
+              />
+            </div>
+          )}
         </div>
       </section>
 
