@@ -40,7 +40,61 @@ import {
   calculateReliabilityScore 
 } from '@/lib/performanceCalculator';
 import { useTuningProfile } from '@/hooks/useTuningProfile';
+import { useUserInsights } from '@/hooks/useUserData';
+import { useCarBySlug } from '@/hooks/useCarData';
 import styles from './page.module.css';
+
+// ==========================================================================
+// INSIGHTS FILTER CONFIGURATION
+// Each section that can be toggled on/off by the user
+// ==========================================================================
+const INSIGHT_SECTIONS = {
+  buildProgress: { label: 'Build Progress', description: 'Power, handling, reliability rings' },
+  drivingCharacter: { label: 'Driving Character', description: 'Engine feel, steering, sound' },
+  stageAnalysis: { label: 'Stage Analysis', description: 'Stage 1/2/3 progression' },
+  valueAnalysis: { label: 'Value Analysis', description: 'Cost efficiency & ROI' },
+  nextUpgrade: { label: 'Next Upgrade', description: 'Recommended mods' },
+  knownIssues: { label: 'Known Issues', description: 'Platform reliability alerts' },
+  platformInsights: { label: 'Platform Insights', description: 'Strengths & weaknesses' },
+  additionalInsights: { label: 'Additional Insights', description: 'Community & build tips' },
+};
+
+const STORAGE_KEY = 'autorev-insights-filters';
+
+// Get default filters (all enabled)
+const getDefaultFilters = () => {
+  const defaults = {};
+  Object.keys(INSIGHT_SECTIONS).forEach(key => {
+    defaults[key] = true;
+  });
+  return defaults;
+};
+
+// Load filters from localStorage
+const loadFilters = () => {
+  if (typeof window === 'undefined') return getDefaultFilters();
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      // Merge with defaults in case new sections are added
+      return { ...getDefaultFilters(), ...parsed };
+    }
+  } catch (e) {
+    console.error('[InsightsClient] Error loading filters:', e);
+  }
+  return getDefaultFilters();
+};
+
+// Save filters to localStorage
+const saveFilters = (filters) => {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(filters));
+  } catch (e) {
+    console.error('[InsightsClient] Error saving filters:', e);
+  }
+};
 
 // --- ICONS ---
 const UserIcon = ({ size = 20 }) => (
@@ -86,6 +140,79 @@ const ThumbsDownIcon = ({ size = 18 }) => (
 const WrenchIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
 );
+const FilterIcon = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+);
+const XIcon = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+);
+
+// --- COMPONENT: FILTER PANEL ---
+const FilterPanel = ({ isOpen, onClose, filters, onToggle, onReset }) => {
+  const panelRef = useRef(null);
+  
+  // Close on outside click
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleClickOutside = (e) => {
+      if (panelRef.current && !panelRef.current.contains(e.target)) {
+        onClose();
+      }
+    };
+    // Delay to prevent immediate close
+    const timeoutId = setTimeout(() => {
+      document.addEventListener('click', handleClickOutside);
+    }, 100);
+    return () => {
+      clearTimeout(timeoutId);
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isOpen, onClose]);
+  
+  // Count how many are hidden
+  const hiddenCount = Object.values(filters).filter(v => !v).length;
+  
+  if (!isOpen) return null;
+  
+  return (
+    <div className={styles.filterPanel} ref={panelRef}>
+      <div className={styles.filterPanelHeader}>
+        <h3 className={styles.filterPanelTitle}>Show/Hide Sections</h3>
+        <button className={styles.filterPanelClose} onClick={onClose} aria-label="Close">
+          <XIcon size={18} />
+        </button>
+      </div>
+      
+      <div className={styles.filterPanelBody}>
+        {Object.entries(INSIGHT_SECTIONS).map(([key, { label, description }]) => (
+          <label key={key} className={styles.filterOption}>
+            <div className={styles.filterOptionInfo}>
+              <span className={styles.filterOptionLabel}>{label}</span>
+              <span className={styles.filterOptionDesc}>{description}</span>
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={filters[key]}
+              className={`${styles.filterToggle} ${filters[key] ? styles.filterToggleOn : ''}`}
+              onClick={() => onToggle(key)}
+            >
+              <span className={styles.filterToggleThumb} />
+            </button>
+          </label>
+        ))}
+      </div>
+      
+      {hiddenCount > 0 && (
+        <div className={styles.filterPanelFooter}>
+          <button className={styles.filterResetBtn} onClick={onReset}>
+            Show All Sections
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
 
 // --- COMPONENT: INSIGHT CARD (Unified) ---
 // Types: PERFORMANCE (upgrades/power), RELIABILITY (platform issues), COMMUNITY (builds/social), OPPORTUNITY (deals/events)
@@ -152,15 +279,65 @@ const SmartInsightCard = ({ type, title, body, subtext, action, onFeedback, id }
 
 export default function InsightsClient() {
   const { user, profile, loading: authLoading } = useAuth();
-  const [insightsData, setInsightsData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  
+  // ==========================================================================
+  // REACT QUERY - Primary data fetching with automatic caching & refetching
+  // Replaces manual fetch + useState for better performance and UX
+  // Benefits:
+  // - Shows cached data instantly while fetching fresh data in background
+  // - Automatic retry on failure
+  // - Window focus refetch (handles bfcache automatically)
+  // - Request deduplication
+  // ==========================================================================
+  const { 
+    data: insightsData, 
+    isLoading: insightsLoading, 
+    error: insightsError,
+    refetch: refetchInsights,
+  } = useUserInsights(user?.id, {
+    enabled: !authLoading && !!user?.id,
+  });
+  
+  // Derive loading and error states
+  const loading = authLoading || insightsLoading;
+  const error = insightsError?.message || null;
+  
   const [selectedVehicleId, setSelectedVehicleId] = useState(null); // Initialize as null, will set to first vehicle on load
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
   const [mounted, setMounted] = useState(false);
   const wrapperRef = useRef(null);
   const buttonRef = useRef(null);
+  
+  // Filter state - which sections to show/hide
+  const [sectionFilters, setSectionFilters] = useState(getDefaultFilters);
+  const [filterPanelOpen, setFilterPanelOpen] = useState(false);
+  
+  // Load saved filters on mount
+  useEffect(() => {
+    setSectionFilters(loadFilters());
+  }, []);
+  
+  // Handle filter toggle
+  const handleFilterToggle = useCallback((key) => {
+    setSectionFilters(prev => {
+      const updated = { ...prev, [key]: !prev[key] };
+      saveFilters(updated);
+      return updated;
+    });
+  }, []);
+  
+  // Reset all filters to show all sections
+  const handleFilterReset = useCallback(() => {
+    const defaults = getDefaultFilters();
+    setSectionFilters(defaults);
+    saveFilters(defaults);
+  }, []);
+  
+  // Count hidden sections for badge
+  const hiddenSectionCount = useMemo(() => {
+    return Object.values(sectionFilters).filter(v => !v).length;
+  }, [sectionFilters]);
   
   // Known issues state - fetched separately for full details
   const [knownIssues, setKnownIssues] = useState([]);
@@ -421,25 +598,24 @@ export default function InsightsClient() {
     return { items, stats };
   }, [vehicles, calculateVehiclePerformance]);
 
+  // Set mounted flag once on mount
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+  
   // Generate feed when vehicle selection changes OR when vehicle data loads
   // Must include vehicles in dependency to recalculate when data arrives
   useEffect(() => {
-    setMounted(true);
-    
     // Don't generate feed until we have vehicle data and a selected vehicle
     if (!selectedVehicleId || vehicles.length === 0) {
       return;
     }
     
-    // Small delay for smooth transition when switching vehicles
-    const timeoutId = setTimeout(() => {
-      const data = generateSmartFeed(selectedVehicleId);
-      setFeedItems(data.items);
-      setBuildStats(data.stats);
-      setLoading(false);
-    }, 100);
-    
-    return () => clearTimeout(timeoutId);
+    // Generate feed synchronously - no setTimeout needed
+    // This runs immediately when data is ready, avoiding race conditions
+    const data = generateSmartFeed(selectedVehicleId);
+    setFeedItems(data.items);
+    setBuildStats(data.stats);
   }, [selectedVehicleId, vehicles, generateSmartFeed]);
 
   // Dropdown Logic
@@ -462,56 +638,19 @@ export default function InsightsClient() {
     return () => document.removeEventListener('click', handleClickOutside);
   }, [dropdownOpen]);
 
-  // Fetch insights data
-  const fetchInsights = useCallback(async () => {
-    if (!user?.id) return;
-    
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 15000);
-    
-    try {
-      setLoading(true);
-      setError(null);
-      
-      const url = `/api/users/${user.id}/insights`;
-        
-      const response = await fetch(url, {
-        signal: controller.signal,
-      });
-      clearTimeout(timeoutId);
-      
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Failed to fetch insights');
-      
-      setInsightsData(result.data);
-      // Don't set loading false here, wait for feed generation
-    } catch (err) {
-      clearTimeout(timeoutId);
-      if (err.name === 'AbortError') {
-        setError('Loading took too long. Please try again.');
-      } else {
-        console.error('Insights fetch error:', err);
-        setError(err.message);
-      }
-      setLoading(false);
-    }
-  }, [user?.id]);
-
-  useEffect(() => {
-    if (authLoading) return;
-    if (!user?.id) {
-      setLoading(false);
-      return;
-    }
-    fetchInsights();
-  }, [user?.id, authLoading, fetchInsights]);
+  // ==========================================================================
+  // React Query handles data fetching automatically with:
+  // - Caching: Shows cached data instantly while fetching fresh data
+  // - Window focus refetch: Automatically refetches when user returns to tab
+  // - Deduplication: Multiple components won't trigger duplicate requests
+  // - Retry: Automatic retry on failure
+  // - bfcache handling: refetchOnWindowFocus handles browser back/forward cache
+  // ==========================================================================
 
   // Set default vehicle once data is loaded
   useEffect(() => {
     if (insightsData?.vehicles?.length > 0 && selectedVehicleId === null) {
       setSelectedVehicleId(insightsData.vehicles[0].id);
-    } else if (insightsData?.vehicles?.length === 0) {
-      setLoading(false);
     }
   }, [insightsData, selectedVehicleId]);
   
@@ -630,6 +769,11 @@ export default function InsightsClient() {
       notIdealFor: vehicle.matched_car?.not_ideal_for,
     };
   }, [selectedVehicleId, vehicles]);
+  
+  // Fetch full car details for driving character fields (engine feel, steering, sound)
+  const { data: fullCarData } = useCarBySlug(selectedVehicleDetails?.carSlug, {
+    enabled: !!selectedVehicleDetails?.carSlug,
+  });
 
   const handleFeedback = useCallback(async (insightType, insightKey, rating) => {
     if (!user?.id) return;
@@ -657,8 +801,26 @@ export default function InsightsClient() {
     return v ? `${v.year} ${v.make} ${v.model}` : 'All Vehicles';
   };
 
+  // Not authenticated
   if (!authLoading && !user) return <div className={styles.page}><div className={styles.emptyState}><h2>Sign in to view Insights</h2></div></div>;
+  
+  // Loading state (show spinner only if no cached data)
   if (loading && !feedItems.length) return <LoadingSpinner variant="branded" text="Analyzing Build" subtext="Generating AI insights..." fullPage />;
+  
+  // Error state with retry
+  if (error && !insightsData) {
+    return (
+      <div className={styles.page}>
+        <div className={styles.emptyState}>
+          <h2>Unable to Load Insights</h2>
+          <p>{error}</p>
+          <button onClick={() => refetchInsights()} className={styles.retryButton}>
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.page}>
@@ -667,6 +829,25 @@ export default function InsightsClient() {
           <h1 className={styles.pageTitle}>{firstName}&apos;s Build Insights</h1>
         </div>
         <div className={styles.headerRight}>
+          <div className={styles.filterButtonWrapper}>
+            <button 
+              className={`${styles.filterButton} ${hiddenSectionCount > 0 ? styles.filterButtonActive : ''}`}
+              onClick={() => setFilterPanelOpen(prev => !prev)}
+              aria-label="Filter sections"
+            >
+              <FilterIcon size={18} />
+              {hiddenSectionCount > 0 && (
+                <span className={styles.filterBadge}>{hiddenSectionCount}</span>
+              )}
+            </button>
+            <FilterPanel
+              isOpen={filterPanelOpen}
+              onClose={() => setFilterPanelOpen(false)}
+              filters={sectionFilters}
+              onToggle={handleFilterToggle}
+              onReset={handleFilterReset}
+            />
+          </div>
           <Link href="/dashboard" className={styles.profileLink}>
             {avatarUrl ? <Image src={avatarUrl} alt="" width={36} height={36} className={styles.profileAvatar} /> : <UserIcon size={20} />}
           </Link>
@@ -719,15 +900,53 @@ export default function InsightsClient() {
       </section>
 
       {/* Hero Section - Build Progress Rings */}
-      <section className={styles.summarySection}>
-        <BuildProgressRings 
-          power={buildStats.power}
-          handling={buildStats.handling}
-          reliability={buildStats.reliability}
-          stockHp={buildStats.stockHp}
-          totalHp={buildStats.totalHp}
-        />
-      </section>
+      {sectionFilters.buildProgress && (
+        <section className={styles.summarySection}>
+          <BuildProgressRings 
+            power={buildStats.power}
+            handling={buildStats.handling}
+            reliability={buildStats.reliability}
+            stockHp={buildStats.stockHp}
+            totalHp={buildStats.totalHp}
+          />
+        </section>
+      )}
+
+      {/* Driving Character - Engine feel, steering, sound */}
+      {sectionFilters.drivingCharacter && selectedVehicleId && selectedVehicleId !== 'all' && fullCarData && 
+       (fullCarData.engineCharacter || fullCarData.steeringFeel || fullCarData.soundSignature) && (
+        <section className={styles.drivingCharacterSection}>
+          <div className={styles.drivingCharacterCard}>
+            <h3 className={styles.drivingCharacterTitle}>Driving Character</h3>
+            <div className={styles.drivingCharacterItems}>
+              {fullCarData.engineCharacter && (
+                <div className={styles.drivingCharacterItem}>
+                  <span className={styles.drivingCharacterLabel}>Engine Feel</span>
+                  <p className={styles.drivingCharacterText}>{fullCarData.engineCharacter}</p>
+                </div>
+              )}
+              {fullCarData.transmissionFeel && (
+                <div className={styles.drivingCharacterItem}>
+                  <span className={styles.drivingCharacterLabel}>Transmission</span>
+                  <p className={styles.drivingCharacterText}>{fullCarData.transmissionFeel}</p>
+                </div>
+              )}
+              {fullCarData.steeringFeel && (
+                <div className={styles.drivingCharacterItem}>
+                  <span className={styles.drivingCharacterLabel}>Steering</span>
+                  <p className={styles.drivingCharacterText}>{fullCarData.steeringFeel}</p>
+                </div>
+              )}
+              {fullCarData.soundSignature && (
+                <div className={styles.drivingCharacterItem}>
+                  <span className={styles.drivingCharacterLabel}>Sound</span>
+                  <p className={styles.drivingCharacterText}>{fullCarData.soundSignature}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ============================================
           BUILD ANALYSIS SECTIONS
@@ -735,7 +954,7 @@ export default function InsightsClient() {
           ============================================ */}
       
       {/* Build Progress Analysis - Stage 1/2/3 progression */}
-      {selectedVehicleId && selectedVehicleId !== 'all' && tuningProfile?.stage_progressions && (
+      {sectionFilters.stageAnalysis && selectedVehicleId && selectedVehicleId !== 'all' && tuningProfile?.stage_progressions && (
         <section className={styles.analysisSection}>
           <BuildProgressAnalysis
             stageProgressions={tuningProfile.stage_progressions}
@@ -744,24 +963,26 @@ export default function InsightsClient() {
             currentHp={vehiclePerformanceData.estimatedHp}
             carName={selectedVehicleDetails?.carName}
             carSlug={selectedVehicleDetails?.carSlug}
+            onFeedback={handleFeedback}
           />
         </section>
       )}
       
       {/* Build Value Analysis - Cost efficiency and ROI */}
-      {selectedVehicleId && selectedVehicleId !== 'all' && installedUpgrades.length > 0 && (
+      {sectionFilters.valueAnalysis && selectedVehicleId && selectedVehicleId !== 'all' && installedUpgrades.length > 0 && (
         <section className={styles.analysisSection}>
           <BuildValueAnalysis
             installedUpgrades={installedUpgrades}
             stockHp={vehiclePerformanceData.stockHp}
             currentHp={vehiclePerformanceData.estimatedHp}
             carName={selectedVehicleDetails?.carName}
+            onFeedback={handleFeedback}
           />
         </section>
       )}
       
       {/* Recommended Next Upgrades */}
-      {selectedVehicleId && selectedVehicleId !== 'all' && (
+      {sectionFilters.nextUpgrade && selectedVehicleId && selectedVehicleId !== 'all' && (
         <section className={styles.analysisSection}>
           <NextUpgradeRecommendation
             installedUpgrades={installedUpgrades}
@@ -769,25 +990,27 @@ export default function InsightsClient() {
             currentHp={vehiclePerformanceData.estimatedHp}
             carSlug={selectedVehicleDetails?.carSlug}
             vehicleId={selectedVehicleId}
+            onFeedback={handleFeedback}
           />
         </section>
       )}
       
       {/* Known Issues - Critical issues to watch for this specific vehicle */}
       {/* MOVED UP: Issues are more actionable than general platform knowledge */}
-      {selectedVehicleId && selectedVehicleId !== 'all' && !issuesLoading && (knownIssues.length > 0 || !issuesLoading) && (
+      {sectionFilters.knownIssues && selectedVehicleId && selectedVehicleId !== 'all' && !issuesLoading && (knownIssues.length > 0 || !issuesLoading) && (
         <section className={styles.knownIssuesSection}>
           <KnownIssuesAlert
             issues={knownIssues}
             vehicleYear={selectedVehicle?.year}
             carName={selectedVehicle ? `${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}` : ''}
+            onFeedback={handleFeedback}
           />
         </section>
       )}
 
       {/* Platform Insights - Strengths, Weaknesses, Community Tips */}
       {/* Now includes "Ask AL" button - PlatformRecommendationCard was REMOVED as redundant */}
-      {selectedVehicleId && selectedVehicleId !== 'all' && (
+      {sectionFilters.platformInsights && selectedVehicleId && selectedVehicleId !== 'all' && (
         (selectedVehicleDetails?.definingStrengths?.length > 0 || 
          selectedVehicleDetails?.honestWeaknesses?.length > 0 ||
          tuningProfile?.platform_insights) && (
@@ -805,6 +1028,7 @@ export default function InsightsClient() {
                   window.location.href = `/al?context=platform-insights&vehicle=${vehicle.id}`;
                 }
               }}
+              onFeedback={handleFeedback}
             />
           </section>
         )
@@ -812,7 +1036,7 @@ export default function InsightsClient() {
 
       {/* Smart Feed - Filtered to avoid redundancy with sections above */}
       {/* Only show insights that ADD NEW INFORMATION not already displayed */}
-      {feedItems.length > 0 && (
+      {sectionFilters.additionalInsights && feedItems.length > 0 && (
         <div className={styles.feedContainer}>
           <div className={styles.feedHeader}>
             <h3 className={styles.feedTitle}>Additional Insights</h3>

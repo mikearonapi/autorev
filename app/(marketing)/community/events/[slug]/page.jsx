@@ -8,9 +8,12 @@ import styles from './page.module.css';
 import EventCard from '@/components/EventCard';
 import SaveEventButton from '@/components/SaveEventButton';
 import AddToCalendarButton from '@/components/AddToCalendarButton';
+import EventRSVPButton from '@/components/EventRSVPButton';
+import EventAttendeesPreview, { EventAttendeesList } from '@/components/EventAttendeesPreview';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { EventTypeIcon, TrackEventBadgeIcon, FeaturedBadgeIcon } from '@/components/icons/EventIcons';
 import { useUserSavedEvents } from '@/hooks/useUserData';
+import { useEventAttendees } from '@/hooks/useEventsData';
 
 /**
  * Format date for display
@@ -244,7 +247,7 @@ export default function CommunityEventDetailPage() {
         <div className={styles.errorState}>
           <h2>Event Not Found</h2>
           <p>{error || 'The event you\'re looking for doesn\'t exist or has expired.'}</p>
-          <Link href="/community/events" className={styles.backBtn}>
+          <Link href="/community" className={styles.backBtn}>
             <Icons.arrowLeft size={16} />
             Back to Events
           </Link>
@@ -293,12 +296,12 @@ export default function CommunityEventDetailPage() {
 
   return (
     <div className={styles.page} data-no-main-offset>
-      {/* Back Link */}
-      <div className={styles.backLinkContainer}>
-        <Link href="/community/events" className={styles.backLink}>
-          <Icons.arrowLeft size={16} />
-          Back to Events
+      {/* Title Bar - Fixed at top */}
+      <div className={styles.titleBar}>
+        <Link href="/community" className={styles.backButton} aria-label="Back to Events">
+          <Icons.arrowLeft size={20} />
         </Link>
+        <h1 className={styles.title}>{name}</h1>
       </div>
 
       {/* Hero Image */}
@@ -342,10 +345,12 @@ export default function CommunityEventDetailPage() {
               )}
             </div>
             
-            <h1 className={styles.title}>{name}</h1>
-            
             {/* Action Buttons */}
             <div className={styles.headerActions}>
+              <EventRSVPButton
+                eventSlug={slug}
+                eventName={name}
+              />
               <SaveEventButton
                 eventId={event.id}
                 eventSlug={slug}
@@ -362,6 +367,13 @@ export default function CommunityEventDetailPage() {
                 <span>Share</span>
               </button>
             </div>
+            
+            {/* Attendees Preview - Who's Going */}
+            <EventAttendeesPreview 
+              eventSlug={slug} 
+              variant="expanded"
+              maxAvatars={8}
+            />
           </header>
 
           {/* Date & Time */}
@@ -484,7 +496,7 @@ export default function CommunityEventDetailPage() {
               </div>
               {brandAffinities.length > 0 && (
                 <Link 
-                  href={`/community/events?brand=${encodeURIComponent(brandAffinities[0].brand)}`}
+                  href="/community"
                   className={styles.findMoreLink}
                 >
                   Find more {brandAffinities[0].brand} events →
@@ -506,6 +518,19 @@ export default function CommunityEventDetailPage() {
 
         {/* Sidebar */}
         <aside className={styles.sidebar}>
+          {/* RSVP Card */}
+          <div className={styles.rsvpCard}>
+            <h3>Going to this event?</h3>
+            <p className={styles.rsvpCardDesc}>
+              Let others know you're attending and connect with fellow enthusiasts at the event.
+            </p>
+            <EventRSVPButton
+              eventSlug={slug}
+              eventName={name}
+              variant="full-width"
+            />
+          </div>
+          
           {/* CTA Card */}
           <div className={styles.ctaCard}>
             <h3>Interested in this event?</h3>

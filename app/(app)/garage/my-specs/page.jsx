@@ -29,8 +29,9 @@ import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import EmptyState from '@/components/ui/EmptyState';
 import { Icons } from '@/components/ui/Icons';
-import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
+import { useCarsList, useCarBySlug, useCarMaintenance } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
+import { useTuningProfile, getFormattedPowerLimits } from '@/hooks/useTuningProfile';
 import { calculateAllModificationGains } from '@/lib/performanceCalculator';
 
 import styles from './page.module.css';
@@ -111,6 +112,29 @@ function MySpecsContent() {
     enabled: !!selectedCar?.slug,
   });
 
+  // Fetch full car details for driving character fields (not in list view)
+  const { data: fullCarData } = useCarBySlug(selectedCar?.slug, {
+    enabled: !!selectedCar?.slug,
+  });
+
+  // Fetch maintenance specs (fluids, tires, etc.)
+  const { data: maintenanceData } = useCarMaintenance(selectedCar?.slug, {
+    enabled: !!selectedCar?.slug,
+  });
+
+  // Fetch tuning profile data
+  const { profile: tuningProfile, hasProfile: hasTuningProfile } = useTuningProfile(selectedCar);
+
+  // Merge full car data with selected car for driving character fields
+  const carWithDetails = useMemo(() => {
+    if (!selectedCar) return null;
+    return {
+      ...selectedCar,
+      // Override with full data if available (has driving character fields)
+      ...(fullCarData || {}),
+    };
+  }, [selectedCar, fullCarData]);
+
   // Find the user's vehicle for this car (to get specs_confirmed status and vehicle ID)
   const userVehicle = vehicles?.find((v) => v.matchedCarSlug === selectedCar?.slug);
 
@@ -182,6 +206,11 @@ function MySpecsContent() {
         chassis: `Tell me about the chassis and body of my ${carName}. How does the weight distribution affect handling? What makes the platform special?`,
         ownership: `What should I know about owning a ${carName}? What are typical maintenance costs, common issues to watch for, and ownership tips from experienced owners?`,
         ratings: `Explain the AutoRev ratings for my ${carName}. Why does it score the way it does for driver fun, track capability, sound, reliability, and value?`,
+        drivingCharacter: `Describe the driving character of my ${carName}. What's the engine like? How does the steering and transmission feel? What's the exhaust note like?`,
+        track: `What's the track capability of my ${carName}? Is it track-ready from the factory? What would I need to do to prepare it for track days?`,
+        fluids: `What are the maintenance fluid specs for my ${carName}? Oil type, coolant, brake fluid - what should I use and how often should I change them?`,
+        wheels: `What are the tire and wheel specs for my ${carName}? What's the OEM tire size, and what upgrade options work well?`,
+        tuning: `What's the tuning potential for my ${carName}? What power can I realistically make, and what are the limitations of the stock components?`,
       };
 
       // Short, clear questions shown to user in the confirmation card
@@ -191,6 +220,11 @@ function MySpecsContent() {
         chassis: `How does the ${carName}'s weight and chassis affect handling?`,
         ownership: `What are the real costs and common issues with owning a ${carName}?`,
         ratings: `Why does the ${carName} score the way it does in AutoRev ratings?`,
+        drivingCharacter: `What's it like to drive a ${carName}? Engine feel, steering, sound?`,
+        track: `Is the ${carName} track-capable? What prep is needed?`,
+        fluids: `What fluids does my ${carName} need? Oil, coolant, brake fluid specs?`,
+        wheels: `What are the tire and wheel specs for my ${carName}?`,
+        tuning: `What's the tuning potential for my ${carName}?`,
       };
 
       const prompt = prompts[section] || `Tell me more about ${section} for my ${carName}`;
@@ -464,40 +498,210 @@ function MySpecsContent() {
             </div>
           </div>
 
-          {/* Ownership */}
-          <div className={styles.specCard}>
-            <div className={styles.cardHeader}>
-              <h3 className={styles.cardTitle}>Ownership</h3>
-              <button
-                className={styles.askAlBtn}
-                onClick={() => askALAboutSection('ownership')}
-                title="Ask AL about ownership"
-              >
-                <LocalIcons.sparkle size={12} />
-                Ask AL
-              </button>
+          {/* Track Capability */}
+          {(carWithDetails?.trackReadiness || carWithDetails?.chassisDynamics) && (
+            <div className={styles.specCard}>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>Track Capability</h3>
+                <button
+                  className={styles.askAlBtn}
+                  onClick={() => askALAboutSection('track')}
+                  title="Ask AL about track capability"
+                >
+                  <LocalIcons.sparkle size={12} />
+                  Ask AL
+                </button>
+              </div>
+              <div className={styles.specItems}>
+                {carWithDetails?.trackReadiness && (
+                  <div className={styles.specItemDescription}>
+                    <span className={styles.specLabel}>Track Ready</span>
+                    <span className={styles.specDescription}>{carWithDetails.trackReadiness}</span>
+                  </div>
+                )}
+                {carWithDetails?.chassisDynamics && (
+                  <div className={styles.specItemDescription}>
+                    <span className={styles.specLabel}>Chassis</span>
+                    <span className={styles.specDescription}>{carWithDetails.chassisDynamics}</span>
+                  </div>
+                )}
+                {carWithDetails?.communityStrength && (
+                  <div className={styles.specItemDescription}>
+                    <span className={styles.specLabel}>Community</span>
+                    <span className={styles.specDescription}>{carWithDetails.communityStrength}</span>
+                  </div>
+                )}
+              </div>
             </div>
-            <div className={styles.specItems}>
-              {selectedCar.priceRange && (
-                <div className={styles.specItem}>
-                  <span>Price Range</span>
-                  <span>{selectedCar.priceRange}</span>
-                </div>
-              )}
-              {selectedCar.dailyUsabilityTag && (
-                <div className={styles.specItem}>
-                  <span>Daily Use</span>
-                  <span>{selectedCar.dailyUsabilityTag}</span>
-                </div>
-              )}
-              {selectedCar.fuelEconomyCombined && (
-                <div className={styles.specItem}>
-                  <span>MPG Combined</span>
-                  <span>{selectedCar.fuelEconomyCombined}</span>
-                </div>
-              )}
+          )}
+
+          {/* Fluids & Maintenance - NEW */}
+          {maintenanceData?.data?.specs && (
+            <div className={styles.specCard}>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>Fluids & Maintenance</h3>
+                <button
+                  className={styles.askAlBtn}
+                  onClick={() => askALAboutSection('fluids')}
+                  title="Ask AL about fluids"
+                >
+                  <LocalIcons.sparkle size={12} />
+                  Ask AL
+                </button>
+              </div>
+              <div className={styles.specItems}>
+                {maintenanceData.data.specs.oil_viscosity && (
+                  <div className={styles.specItem}>
+                    <span>Oil Type</span>
+                    <span>{maintenanceData.data.specs.oil_viscosity}</span>
+                  </div>
+                )}
+                {maintenanceData.data.specs.oil_capacity_liters && (
+                  <div className={styles.specItem}>
+                    <span>Oil Capacity</span>
+                    <span>{maintenanceData.data.specs.oil_capacity_liters}L</span>
+                  </div>
+                )}
+                {maintenanceData.data.specs.coolant_type && (
+                  <div className={styles.specItem}>
+                    <span>Coolant</span>
+                    <span>{maintenanceData.data.specs.coolant_type}</span>
+                  </div>
+                )}
+                {maintenanceData.data.specs.brake_fluid_type && (
+                  <div className={styles.specItem}>
+                    <span>Brake Fluid</span>
+                    <span>{maintenanceData.data.specs.brake_fluid_type}</span>
+                  </div>
+                )}
+                {maintenanceData.data.specs.spark_plug_type && (
+                  <div className={styles.specItem}>
+                    <span>Spark Plugs</span>
+                    <span>{maintenanceData.data.specs.spark_plug_type}</span>
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Wheels & Tires - NEW */}
+          {maintenanceData?.data?.specs && (maintenanceData.data.specs.tire_size_front || maintenanceData.data.specs.wheel_bolt_pattern) && (
+            <div className={styles.specCard}>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>Wheels & Tires</h3>
+                <button
+                  className={styles.askAlBtn}
+                  onClick={() => askALAboutSection('wheels')}
+                  title="Ask AL about wheels & tires"
+                >
+                  <LocalIcons.sparkle size={12} />
+                  Ask AL
+                </button>
+              </div>
+              <div className={styles.specItems}>
+                {maintenanceData.data.specs.tire_size_front && (
+                  <div className={styles.specItem}>
+                    <span>Front Tires</span>
+                    <span>{maintenanceData.data.specs.tire_size_front}</span>
+                  </div>
+                )}
+                {maintenanceData.data.specs.tire_size_rear && maintenanceData.data.specs.tire_size_rear !== maintenanceData.data.specs.tire_size_front && (
+                  <div className={styles.specItem}>
+                    <span>Rear Tires</span>
+                    <span>{maintenanceData.data.specs.tire_size_rear}</span>
+                  </div>
+                )}
+                {maintenanceData.data.specs.tire_pressure_front_psi && (
+                  <div className={styles.specItem}>
+                    <span>Tire Pressure (F)</span>
+                    <span>{maintenanceData.data.specs.tire_pressure_front_psi} PSI</span>
+                  </div>
+                )}
+                {maintenanceData.data.specs.tire_pressure_rear_psi && (
+                  <div className={styles.specItem}>
+                    <span>Tire Pressure (R)</span>
+                    <span>{maintenanceData.data.specs.tire_pressure_rear_psi} PSI</span>
+                  </div>
+                )}
+                {maintenanceData.data.specs.wheel_bolt_pattern && (
+                  <div className={styles.specItem}>
+                    <span>Bolt Pattern</span>
+                    <span>{maintenanceData.data.specs.wheel_bolt_pattern}</span>
+                  </div>
+                )}
+                {maintenanceData.data.specs.wheel_center_bore_mm && (
+                  <div className={styles.specItem}>
+                    <span>Center Bore</span>
+                    <span>{maintenanceData.data.specs.wheel_center_bore_mm}mm</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Tuning Potential - NEW */}
+          {hasTuningProfile && tuningProfile && (
+            <div className={styles.specCard}>
+              <div className={styles.cardHeader}>
+                <h3 className={styles.cardTitle}>Tuning Potential</h3>
+                <button
+                  className={styles.askAlBtn}
+                  onClick={() => askALAboutSection('tuning')}
+                  title="Ask AL about tuning"
+                >
+                  <LocalIcons.sparkle size={12} />
+                  Ask AL
+                </button>
+              </div>
+              <div className={styles.specItems}>
+                {tuningProfile.tuning_focus && (
+                  <div className={styles.specItem}>
+                    <span>Focus</span>
+                    <span style={{ textTransform: 'capitalize' }}>{tuningProfile.tuning_focus}</span>
+                  </div>
+                )}
+                {tuningProfile.engine_family && (
+                  <div className={styles.specItem}>
+                    <span>Engine Family</span>
+                    <span>{tuningProfile.engine_family}</span>
+                  </div>
+                )}
+                {tuningProfile.stock_whp && (
+                  <div className={styles.specItem}>
+                    <span>Stock WHP</span>
+                    <span>{tuningProfile.stock_whp} WHP</span>
+                  </div>
+                )}
+                {tuningProfile.power_limits && (() => {
+                  const limits = getFormattedPowerLimits(tuningProfile);
+                  const stockTurbo = limits.find(l => l.key.toLowerCase().includes('turbo'));
+                  const stockInternals = limits.find(l => l.key.toLowerCase().includes('internals'));
+                  return (
+                    <>
+                      {stockTurbo && (
+                        <div className={styles.specItem}>
+                          <span>{stockTurbo.name}</span>
+                          <span>{stockTurbo.value}</span>
+                        </div>
+                      )}
+                      {stockInternals && (
+                        <div className={styles.specItem}>
+                          <span>{stockInternals.name}</span>
+                          <span>{stockInternals.value}</span>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
+                {tuningProfile.data_quality_tier && (
+                  <div className={styles.specItem}>
+                    <span>Data Quality</span>
+                    <span style={{ textTransform: 'capitalize' }}>{tuningProfile.data_quality_tier}</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* AutoRev Ratings */}

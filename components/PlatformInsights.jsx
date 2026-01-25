@@ -9,6 +9,7 @@
  */
 
 import React, { useState, useMemo } from 'react';
+import InsightFeedback from './ui/InsightFeedback';
 import styles from './PlatformInsights.module.css';
 
 // Icons
@@ -85,6 +86,7 @@ export default function PlatformInsights({
   notIdealFor,
   carName,
   onAskAL,
+  onFeedback,
 }) {
   const [activeTab, setActiveTab] = useState('strengths');
   const [expandedItem, setExpandedItem] = useState(null);
@@ -126,7 +128,16 @@ export default function PlatformInsights({
       <div className={styles.platformInsights}>
         <div className={styles.header}>
           <SparklesIcon size={18} />
-          <span>Platform Insights</span>
+          <span className={styles.headerTitle}>Platform Insights</span>
+          {onFeedback && (
+            <InsightFeedback 
+              insightType="platform-insights"
+              insightKey="platform-insights-empty"
+              insightTitle="Platform Insights (Empty)"
+              onFeedback={onFeedback}
+              variant="inline"
+            />
+          )}
         </div>
         <div className={styles.noData}>
           <p>Detailed platform insights not yet available for this vehicle</p>
@@ -152,13 +163,22 @@ export default function PlatformInsights({
     <div className={styles.platformInsights}>
       <div className={styles.header}>
         <SparklesIcon size={18} />
-        <span>Platform Insights</span>
+        <span className={styles.headerTitle}>Platform Insights</span>
         {carName && <span className={styles.carLabel}>{carName}</span>}
         {onAskAL && (
           <button className={styles.askAlBtn} onClick={onAskAL}>
             <AskALIcon size={12} />
             Ask AL
           </button>
+        )}
+        {onFeedback && (
+          <InsightFeedback 
+            insightType="platform-insights"
+            insightKey={`platform-${activeTab}`}
+            insightTitle={`Platform Insights (${activeTab})`}
+            onFeedback={onFeedback}
+            variant="inline"
+          />
         )}
       </div>
 

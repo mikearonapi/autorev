@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import BuildDetailSheet from './BuildDetailSheet';
 import CommentsSheet from './CommentsSheet';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -13,6 +14,7 @@ import { useFeedTracking } from '@/hooks/useFeedTracking';
 import { useCommunityBuilds, useToggleLike } from '@/hooks/useCommunityData';
 import { TITLES } from '@/app/(app)/dashboard/components/UserGreeting';
 import LeaderboardView from './LeaderboardView';
+import EventsView from './EventsView';
 import styles from './page.module.css';
 
 /**
@@ -89,6 +91,7 @@ const PLACEHOLDER_IMAGE = '/images/placeholder-car.jpg';
 
 export default function CommunityPage() {
   const { user } = useAuth();
+  const { showPointsEarned } = usePointsNotification();
   
   const [activeTab, setActiveTab] = useState('builds');
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -364,6 +367,10 @@ export default function CommunityPage() {
         liked: result.liked,
         count: result.likeCount,
       }));
+      // Show points notification for new likes only
+      if (result.liked && !currentState.liked) {
+        showPointsEarned(5, 'Build liked');
+      }
     } catch (err) {
       if (err.status === 401) {
         // User not logged in - revert optimistic update
@@ -374,7 +381,7 @@ export default function CommunityPage() {
     } finally {
       setIsLikeProcessing(false);
     }
-  }, [user, likedItems, builds, isLikeProcessing, currentIndex, trackLike, toggleLikeMutation]);
+  }, [user, likedItems, builds, isLikeProcessing, currentIndex, trackLike, toggleLikeMutation, showPointsEarned]);
   
   // Share
   const shareBuild = useCallback(async (build) => {
@@ -429,6 +436,22 @@ export default function CommunityPage() {
     return { liked: false, count: build?.like_count || 0 };
   };
 
+  // Events tab
+  if (activeTab === 'events') {
+    return (
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <div className={styles.tabBar}>
+            <button className={`${styles.tab} ${activeTab === 'builds' ? styles.tabActive : ''}`} onClick={() => setActiveTab('builds')}>Builds</button>
+            <button className={`${styles.tab} ${activeTab === 'events' ? styles.tabActive : ''}`} onClick={() => setActiveTab('events')}>Events</button>
+            <button className={`${styles.tab} ${activeTab === 'leaderboard' ? styles.tabActive : ''}`} onClick={() => setActiveTab('leaderboard')}>Leaderboard</button>
+          </div>
+        </div>
+        <EventsView />
+      </div>
+    );
+  }
+
   // Leaderboard tab
   if (activeTab === 'leaderboard') {
     return (
@@ -436,6 +459,7 @@ export default function CommunityPage() {
         <div className={styles.header}>
           <div className={styles.tabBar}>
             <button className={`${styles.tab} ${activeTab === 'builds' ? styles.tabActive : ''}`} onClick={() => setActiveTab('builds')}>Builds</button>
+            <button className={`${styles.tab} ${activeTab === 'events' ? styles.tabActive : ''}`} onClick={() => setActiveTab('events')}>Events</button>
             <button className={`${styles.tab} ${activeTab === 'leaderboard' ? styles.tabActive : ''}`} onClick={() => setActiveTab('leaderboard')}>Leaderboard</button>
           </div>
         </div>
@@ -451,6 +475,7 @@ export default function CommunityPage() {
       <div className={styles.header}>
         <div className={styles.tabBar}>
           <button className={`${styles.tab} ${activeTab === 'builds' ? styles.tabActive : ''}`} onClick={() => setActiveTab('builds')}>Builds</button>
+          <button className={`${styles.tab} ${activeTab === 'events' ? styles.tabActive : ''}`} onClick={() => setActiveTab('events')}>Events</button>
           <button className={`${styles.tab} ${activeTab === 'leaderboard' ? styles.tabActive : ''}`} onClick={() => setActiveTab('leaderboard')}>Leaderboard</button>
         </div>
       </div>

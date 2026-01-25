@@ -250,3 +250,118 @@ export function useTracks(options = {}) {
     ...options,
   });
 }
+
+// =============================================================================
+// EVENT RSVP HOOKS
+// =============================================================================
+
+/**
+ * Query key factory for RSVP data
+ */
+export const rsvpKeys = {
+  all: ['eventRsvp'],
+  rsvp: (eventSlug) => [...rsvpKeys.all, 'status', eventSlug],
+  attendees: (eventSlug, filters) => [...rsvpKeys.all, 'attendees', eventSlug, filters],
+};
+
+/**
+ * Hook to get user's RSVP status for an event
+ * @param {string} eventSlug - Event slug
+ * @param {object} options - React Query options
+ */
+export function useEventRsvp(eventSlug, options = {}) {
+  return useQuery({
+    queryKey: rsvpKeys.rsvp(eventSlug),
+    queryFn: async () => {
+      const data = await apiClient.get(`/api/events/${eventSlug}/rsvp`);
+      return data;
+    },
+    staleTime: CACHE_TIMES.FAST,
+    enabled: !!eventSlug,
+    ...options,
+  });
+}
+
+/**
+ * Hook to get event attendees
+ * @param {string} eventSlug - Event slug
+ * @param {object} filters - Filter options { status?: 'going' | 'interested', limit?: number }
+ * @param {object} options - React Query options
+ */
+export function useEventAttendees(eventSlug, filters = {}, options = {}) {
+  return useQuery({
+    queryKey: rsvpKeys.attendees(eventSlug, filters),
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (filters.status) params.append('status', filters.status);
+      if (filters.limit) params.append('limit', filters.limit.toString());
+      
+      const data = await apiClient.get(`/api/events/${eventSlug}/attendees?${params.toString()}`);
+      return data;
+    },
+    staleTime: CACHE_TIMES.FAST,
+    enabled: !!eventSlug,
+    ...options,
+  });
+}
+
+/**
+ * Hook to set/update RSVP for an event
+ */
+export function useSetEventRsvp() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ eventSlug, status, visibility = 'public', notes, headers = {} }) => {
+      const res = await fetch(`/api/events/${eventSlug}/rsvp`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', ...headers },
+        body: JSON.stringify({ status, visibility, notes }),
+      });
+      if (!res.ok) {
+        const error = new Error('Failed to set RSVP');
+        error.status = res.status;
+        throw error;
+      }
+      return res.json();
+    },
+    onSuccess: (data, { eventSlug }) => {
+      // Invalidate RSVP status cache
+      queryClient.invalidateQueries({ queryKey: rsvpKeys.rsvp(eventSlug) });
+      // Invalidate attendees cache
+      queryClient.invalidateQueries({ queryKey: rsvpKeys.attendees(eventSlug, {}) });
+      // Update event detail if cached
+      queryClient.invalidateQueries({ queryKey: eventsKeys.detail(eventSlug) });
+    },
+  });
+}
+
+/**
+ * Hook to remove RSVP from an event
+ */
+export function useRemoveEventRsvp() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ eventSlug, headers = {} }) => {
+      const res = await fetch(`/api/events/${eventSlug}/rsvp`, {
+        method: 'DELETE',
+        headers,
+      });
+      if (!res.ok) {
+        const error = new Error('Failed to remove RSVP');
+        error.status = res.status;
+        throw error;
+      }
+      return res.json();
+    },
+    onSuccess: (data, { eventSlug }) => {
+      // Invalidate RSVP status cache
+      queryClient.invalidateQueries({ queryKey: rsvpKeys.rsvp(eventSlug) });
+      // Invalidate attendees cache
+      queryClient.invalidateQueries({ queryKey: rsvpKeys.attendees(eventSlug, {}) });
+      // Update event detail if cached
+      queryClient.invalidateQueries({ queryKey: eventsKeys.detail(eventSlug) });
+    },
+  });
+}

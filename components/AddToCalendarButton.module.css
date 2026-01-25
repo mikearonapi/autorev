@@ -1,28 +1,32 @@
-/* AddToCalendarButton - Icon-Only Calendar Add Button */
+/* ==========================================================================
+   AddToCalendarButton - Dark Theme Styling
+   Brand-consistent calendar add button with dropdown menu
+   ========================================================================== */
 
 .container {
   position: relative;
   display: inline-block;
 }
 
-/* Icon-only button style */
+/* Icon-only button style - Dark theme */
 .iconButton {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 44px;
   height: 44px;
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-300);
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.07));
   border-radius: var(--radius-md);
-  color: var(--sn-primary);
+  color: var(--color-text-secondary, #94a3b8);
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
 .iconButton:hover {
-  background: var(--color-gray-50);
-  border-color: var(--sn-primary);
+  background: var(--color-bg-card-hover, rgba(255, 255, 255, 0.08));
+  border-color: var(--color-accent-blue, #3b82f6);
+  color: var(--color-accent-blue, #3b82f6);
   transform: scale(1.05);
 }
 
@@ -31,20 +35,21 @@
 }
 
 .iconButton.open {
-  background: var(--sn-primary-light);
-  border-color: var(--sn-primary);
+  background: var(--color-accent-blue-muted, rgba(59, 130, 246, 0.15));
+  border-color: var(--color-accent-blue, #3b82f6);
+  color: var(--color-accent-blue, #3b82f6);
 }
 
-/* Dropdown */
+/* Dropdown - Dark theme */
 .dropdown {
   position: absolute;
   top: calc(100% + var(--space-xs));
   left: 0;
-  min-width: 200px;
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-lg);
+  min-width: 220px;
+  background: var(--color-bg-elevated, #1b263b);
+  border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.07));
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   z-index: 1000;
   overflow: hidden;
   animation: fadeIn 0.15s ease-out;
@@ -63,12 +68,12 @@
 
 /* Section labels in dropdown */
 .sectionLabel {
-  padding: var(--space-xs) var(--space-md);
+  padding: var(--space-sm) var(--space-md);
   font-size: var(--font-size-xs);
   font-weight: 600;
-  color: var(--color-gray-500);
+  color: var(--color-text-tertiary, #64748b);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
 }
 
 .option {
@@ -79,17 +84,18 @@
   padding: var(--space-sm) var(--space-md);
   background: none;
   border: none;
-  color: var(--color-gray-700);
+  color: var(--color-text-secondary, #94a3b8);
   font-family: var(--font-body);
   font-size: var(--font-size-sm);
   text-align: left;
   cursor: pointer;
-  transition: background var(--transition-fast);
+  transition: all var(--transition-fast);
+  min-height: 44px;
 }
 
 .option:hover {
-  background: var(--color-gray-50);
-  color: var(--sn-primary);
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  color: var(--color-text-primary, #ffffff);
 }
 
 .option svg {
@@ -98,11 +104,11 @@
 
 /* Universal option (download .ics) */
 .universalOption {
-  background: var(--color-gray-50);
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
 }
 
 .universalOption:hover {
-  background: var(--sn-primary-light);
+  background: var(--color-bg-card-hover, rgba(255, 255, 255, 0.08));
 }
 
 .optionContent {
@@ -113,25 +119,28 @@
 
 .optionHint {
   font-size: var(--font-size-xs);
-  color: var(--color-gray-500);
+  color: var(--color-text-tertiary, #64748b);
 }
 
 .option:hover .optionHint {
-  color: var(--sn-primary);
-  opacity: 0.8;
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 .divider {
   height: 1px;
-  background: var(--color-gray-200);
+  background: var(--color-border-subtle, rgba(255, 255, 255, 0.04));
   margin: var(--space-xs) 0;
 }
 
-/* Modal styles */
+/* ==========================================================================
+   Modal - Dark theme upgrade prompt
+   ========================================================================== */
+
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -142,13 +151,14 @@
 
 .modalContent {
   position: relative;
-  background: var(--color-white);
-  border-radius: var(--radius-lg);
+  background: var(--color-bg-elevated, #1b263b);
+  border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.07));
+  border-radius: var(--radius-xl);
   padding: var(--space-xl);
   max-width: 400px;
   width: 100%;
   text-align: center;
-  box-shadow: var(--shadow-xl);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
 }
 
 .modalClose {
@@ -160,18 +170,18 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-gray-100);
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
   border: none;
   border-radius: var(--radius-full);
-  color: var(--color-gray-500);
+  color: var(--color-text-tertiary, #64748b);
   font-size: 20px;
   cursor: pointer;
   transition: all var(--transition-fast);
 }
 
 .modalClose:hover {
-  background: var(--color-gray-200);
-  color: var(--color-gray-700);
+  background: var(--color-bg-card-hover, rgba(255, 255, 255, 0.08));
+  color: var(--color-text-primary, #ffffff);
 }
 
 .modalIcon {
@@ -181,22 +191,24 @@
   width: 64px;
   height: 64px;
   margin: 0 auto var(--space-md);
-  background: var(--sn-primary-light);
+  background: var(--color-accent-blue-muted, rgba(59, 130, 246, 0.15));
   border-radius: var(--radius-full);
-  color: var(--sn-primary);
+  color: var(--color-accent-blue, #3b82f6);
 }
 
 .modalTitle {
   font-family: var(--font-display);
   font-size: var(--font-size-xl);
   font-weight: 600;
-  color: var(--color-gray-900);
+  color: var(--color-text-primary, #ffffff);
   margin: 0 0 var(--space-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .modalDescription {
   font-size: var(--font-size-sm);
-  color: var(--color-gray-600);
+  color: var(--color-text-secondary, #94a3b8);
   line-height: 1.6;
   margin: 0 0 var(--space-lg);
 }
@@ -212,29 +224,33 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-md) var(--space-lg);
-  background: var(--tier-color, var(--sn-primary));
-  color: var(--color-white);
-  font-weight: 600;
-  border-radius: var(--radius-md);
+  background: var(--color-accent-lime, #d4ff00);
+  color: var(--color-bg-base, #0d1b2a);
+  font-weight: 700;
+  border-radius: var(--radius-full);
   text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
   transition: all var(--transition-fast);
+  min-height: 48px;
 }
 
 .upgradeBtn:hover {
-  filter: brightness(1.1);
-  transform: translateY(-1px);
+  background: var(--color-accent-lime-dark, #bfe600);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(212, 255, 0, 0.3);
 }
 
 .dismissBtn {
   padding: var(--space-sm) var(--space-md);
   background: none;
   border: none;
-  color: var(--color-gray-500);
+  color: var(--color-text-tertiary, #64748b);
   font-size: var(--font-size-sm);
   cursor: pointer;
   transition: color var(--transition-fast);
 }
 
 .dismissBtn:hover {
-  color: var(--color-gray-700);
+  color: var(--color-text-secondary, #94a3b8);
 }

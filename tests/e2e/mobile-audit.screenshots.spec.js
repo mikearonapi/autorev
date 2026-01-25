@@ -239,7 +239,7 @@ function normalizeRoutes(routes, dynamicSamples) {
   out.add('/');
   out.add('/browse-cars');
   out.add('/tuning-shop');
-  out.add('/community/events');
+  out.add('/community');
   out.add('/encyclopedia');
   out.add('/al');
 

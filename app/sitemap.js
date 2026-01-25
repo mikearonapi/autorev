@@ -108,12 +108,6 @@ export default async function sitemap() {
       changeFrequency: 'daily',
       priority: 0.85,
     },
-    {
-      url: `${SITE_URL}/community/events`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.85,
-    },
     
     // Legal/Utility pages
     {

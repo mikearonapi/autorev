@@ -104,14 +104,15 @@ export async function middleware(request) {
   // ROUTE PROTECTION - Redirect unauthenticated users to homepage
   // 
   // IMPORTANT: Some paths have PUBLIC sub-routes for SEO:
-  // - /community/builds and /community/events are PUBLIC (SEO content)
+  // - /community/builds is PUBLIC (SEO content)
+  // - /community/events/[slug] is PUBLIC (individual event pages)
   // - /community (base) is PRIVATE (user's feed)
   // =========================================================================
   
   // Paths that are PUBLIC - do not protect these for SEO crawlability
   const publicPaths = [
     '/community/builds',      // Public build gallery - SEO content
-    '/community/events',      // Public events listing - SEO content
+    '/community/events/',     // Individual event pages - SEO content (note: trailing slash)
   ];
   
   // Check if this is a public path FIRST
@@ -126,7 +127,7 @@ export async function middleware(request) {
   const protectedPaths = [
     '/garage',
     '/data',
-    '/community',      // Base /community is protected (user feed), but /community/builds and /community/events are public
+    '/community',      // Base /community is protected (user feed), but /community/builds and /community/events/[slug] are public
     '/al',
     '/profile',
     '/build',

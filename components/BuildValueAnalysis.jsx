@@ -9,6 +9,7 @@
  */
 
 import React, { useMemo } from 'react';
+import InsightFeedback from './ui/InsightFeedback';
 import styles from './BuildValueAnalysis.module.css';
 
 // Efficiency rating colors - matching design system tokens
@@ -156,6 +157,7 @@ export default function BuildValueAnalysis({
   carName,
   buildCostLow,
   buildCostHigh,
+  onFeedback,
 }) {
   const analysis = useMemo(() => {
     const upgrades = installedUpgrades
@@ -266,7 +268,16 @@ export default function BuildValueAnalysis({
       <div className={styles.buildValue}>
         <div className={styles.header}>
           <TrendingUpIcon size={18} />
-          <span>Build Value Analysis</span>
+          <span className={styles.headerTitle}>Build Value Analysis</span>
+          {onFeedback && (
+            <InsightFeedback 
+              insightType="value-analysis"
+              insightKey="value-analysis-empty"
+              insightTitle="Build Value Analysis (Empty)"
+              onFeedback={onFeedback}
+              variant="inline"
+            />
+          )}
         </div>
         <div className={styles.noData}>
           <p>Add modifications to see cost-per-HP analysis</p>
@@ -285,7 +296,16 @@ export default function BuildValueAnalysis({
     <div className={styles.buildValue}>
       <div className={styles.header}>
         <TrendingUpIcon size={18} />
-        <span>Build Value Analysis</span>
+        <span className={styles.headerTitle}>Build Value Analysis</span>
+        {onFeedback && (
+          <InsightFeedback 
+            insightType="value-analysis"
+            insightKey="value-analysis"
+            insightTitle="Build Value Analysis"
+            onFeedback={onFeedback}
+            variant="inline"
+          />
+        )}
       </div>
 
       {/* Main Stats */}

@@ -32,6 +32,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import OnboardingPopup, { garageOnboardingSteps } from '@/components/OnboardingPopup';
 import PremiumGate, { usePremiumAccess } from '@/components/PremiumGate';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import { useFavorites } from '@/components/providers/FavoritesProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
@@ -3696,6 +3697,7 @@ function GarageContent() {
     sessionExpired,
     authError,
   } = useAuth();
+  const { showPointsEarned } = usePointsNotification();
   const authModal = useAuthModal();
 
   // Get user's first name for personalized title
@@ -4026,6 +4028,9 @@ function GarageContent() {
       console.error('Failed to add vehicle: No data or error returned');
       throw new Error('Failed to save vehicle. Please try signing in again.');
     }
+    
+    // Show points notification for adding vehicle
+    showPointsEarned(10, 'Vehicle added');
   };
 
   // Handle "Analyze All Vehicles" button - opens AL with comprehensive context

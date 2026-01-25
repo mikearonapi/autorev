@@ -28,6 +28,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { MyGarageSubNav, GarageVehicleSelector } from '@/components/garage';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
@@ -97,6 +98,7 @@ function MyInstallContent() {
   const [showToolsFor, setShowToolsFor] = useState(null);
   
   const { isAuthenticated, user, isLoading: authLoading } = useAuth();
+  const { showPointsEarned } = usePointsNotification();
   const authModal = useAuthModal();
   const { builds, isLoading: buildsLoading, updateBuild } = useSavedBuilds();
   const { vehicles } = useOwnedVehicles();
@@ -282,6 +284,9 @@ function MyInstallContent() {
       // Use selectedParts key (matches PartsSelector/Parts page format)
       await updateBuild(currentBuild.id, { selectedParts: updatedParts });
       
+      // Show points notification
+      showPointsEarned(50, 'Upgrade installed');
+      
       // Show celebration
       setCelebrationData({
         partName: part.name,
@@ -291,7 +296,7 @@ function MyInstallContent() {
     } catch (err) {
       console.error('Failed to mark part as installed:', err);
     }
-  }, [currentBuild, buildParts, installProgress, updateBuild, user?.id]);
+  }, [currentBuild, buildParts, installProgress, updateBuild, user?.id, showPointsEarned]);
   
   // Handle back button
   const handleBack = useCallback(() => {

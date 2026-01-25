@@ -1,0 +1,55 @@
+/**
+ * ProgressRing Component Styles
+ */
+
+.container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.svg {
+  transform: rotate(0deg);
+}
+
+.backgroundCircle {
+  transition: stroke 0.3s ease;
+}
+
+.progressCircle {
+  transition: stroke-dashoffset 0.3s ease, stroke 0.3s ease;
+}
+
+.centerContent {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 10%;
+}
+
+.percentage {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: clamp(1.25rem, 25%, 2rem);
+  font-weight: 700;
+  color: var(--color-text-primary, #ffffff);
+  line-height: 1;
+}
+
+.label {
+  font-size: var(--text-xs);
+  font-weight: 500;
+  color: var(--color-text-secondary, #94a3b8);
+  margin-top: 2px;
+  line-height: 1.2;
+}
+
+.subLabel {
+  font-size: var(--text-2xs);
+  color: var(--color-text-tertiary, #64748b);
+  margin-top: 2px;
+}

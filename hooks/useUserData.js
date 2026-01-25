@@ -709,6 +709,36 @@ export function useResendReferralInvite() {
 }
 
 // =============================================================================
+// INSIGHTS HOOKS
+// =============================================================================
+
+/**
+ * Hook to fetch user's build insights
+ * Returns vehicles with matched car data, insights, and summary stats
+ * @param {string} userId - User ID
+ * @param {object} options - React Query options
+ */
+export function useUserInsights(userId, options = {}) {
+  return useQuery({
+    queryKey: [...userKeys.all, userId, 'insights'],
+    queryFn: async () => {
+      const res = await fetch(`/api/users/${userId}/insights`);
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || 'Failed to fetch insights');
+      }
+      const data = await res.json();
+      return data.data; // API returns { data: { vehicles, insights, summary } }
+    },
+    staleTime: CACHE_TIMES.FAST, // 30 seconds - insights should feel fresh
+    gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
+    refetchOnWindowFocus: true, // Refetch when user returns to tab (handles bfcache)
+    enabled: !!userId,
+    ...options,
+  });
+}
+
+// =============================================================================
 // LOCATION AND BILLING HOOKS
 // =============================================================================
 

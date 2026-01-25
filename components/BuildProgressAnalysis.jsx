@@ -10,6 +10,7 @@
 
 import React, { useMemo } from 'react';
 import InfoTooltip from './ui/InfoTooltip';
+import InsightFeedback from './ui/InsightFeedback';
 import styles from './BuildProgressAnalysis.module.css';
 
 // Icons
@@ -112,7 +113,7 @@ const modMatchesComponent = (modKey, component) => {
   return false;
 };
 
-export default function BuildProgressAnalysis({ stageProgressions, installedUpgrades, stockHp, currentHp, carName = null, carSlug = null }) {
+export default function BuildProgressAnalysis({ stageProgressions, installedUpgrades, stockHp, currentHp, carName = null, carSlug = null, onFeedback }) {
   // Analyze build progress across all stages
   const analysis = useMemo(() => {
     if (!stageProgressions || stageProgressions.length === 0) {
@@ -202,7 +203,16 @@ export default function BuildProgressAnalysis({ stageProgressions, installedUpgr
       <div className={styles.buildProgress}>
         <div className={styles.header}>
           <RocketIcon size={18} />
-          <span>Build Progression</span>
+          <span className={styles.headerTitle}>Build Progression</span>
+          {onFeedback && (
+            <InsightFeedback 
+              insightType="build-progress"
+              insightKey="build-progress-empty"
+              insightTitle="Build Progression (Empty)"
+              onFeedback={onFeedback}
+              variant="inline"
+            />
+          )}
         </div>
         <div className={styles.noData}>
           <p>Stage progression data not available for this platform</p>
@@ -218,10 +228,19 @@ export default function BuildProgressAnalysis({ stageProgressions, installedUpgr
       <div className={styles.header}>
         <RocketIcon size={18} />
         <InfoTooltip topicKey="stageProgression" carName={carName} carSlug={carSlug}>
-          <span>Build Progression</span>
+          <span className={styles.headerTitle}>Build Progression</span>
         </InfoTooltip>
         {allComplete && (
           <span className={styles.maxedBadge}>Maxed Out!</span>
+        )}
+        {onFeedback && (
+          <InsightFeedback 
+            insightType="build-progress"
+            insightKey="build-progress"
+            insightTitle="Build Progression"
+            onFeedback={onFeedback}
+            variant="inline"
+          />
         )}
       </div>
 

@@ -1,0 +1,74 @@
+/* InsightFeedback - Thumbs up/down feedback buttons */
+
+.feedbackContainer {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.feedbackBtn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--color-text-tertiary, #64748b);
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.feedbackBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-text-secondary, #94a3b8);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.feedbackBtn:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.feedbackBtn.activeUp {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: var(--color-accent-teal, #10b981);
+}
+
+.feedbackBtn.activeDown {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: var(--color-error, #ef4444);
+}
+
+/* Compact variant - smaller buttons */
+.compact .feedbackBtn {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+}
+
+.compact {
+  gap: 4px;
+}
+
+/* Inline variant - minimal styling for use in headers */
+.inline {
+  gap: 4px;
+  margin-left: auto;
+}
+
+.inline .feedbackBtn {
+  width: 26px;
+  height: 26px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.inline .feedbackBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+}

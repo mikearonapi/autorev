@@ -19,11 +19,11 @@ export const INSIGHT_QUESTIONS = [
     multiSelect: true,
     dbField: 'driving_focus',
     options: [
-      { value: 'power', label: 'Power & acceleration', emoji: '⚡' },
-      { value: 'handling', label: 'Handling & cornering', emoji: '🏎️' },
-      { value: 'daily', label: 'Daily comfort & reliability', emoji: '🛣️' },
-      { value: 'track', label: 'Track performance', emoji: '🏁' },
-      { value: 'show', label: 'Show & aesthetics', emoji: '✨' },
+      { value: 'power', label: 'Power & acceleration' },
+      { value: 'handling', label: 'Handling & cornering' },
+      { value: 'daily', label: 'Daily comfort & reliability' },
+      { value: 'track', label: 'Track performance' },
+      { value: 'show', label: 'Show & aesthetics' },
     ],
   },
   {
@@ -33,9 +33,9 @@ export const INSIGHT_QUESTIONS = [
     multiSelect: false,
     dbField: 'work_preference',
     options: [
-      { value: 'diy', label: 'I do everything myself', emoji: '🔧' },
-      { value: 'shop', label: 'I take it to a shop', emoji: '🏪' },
-      { value: 'mixed', label: 'Mix of both', emoji: '⚖️' },
+      { value: 'diy', label: 'I do everything myself' },
+      { value: 'shop', label: 'I take it to a shop' },
+      { value: 'mixed', label: 'Mix of both' },
     ],
   },
   {
@@ -45,9 +45,9 @@ export const INSIGHT_QUESTIONS = [
     multiSelect: false,
     dbField: 'budget_comfort',
     options: [
-      { value: 'budget', label: 'Budget-friendly options', emoji: '💰' },
-      { value: 'moderate', label: 'Mid-range is fine', emoji: '💵' },
-      { value: 'no_limit', label: "Sky's the limit", emoji: '💎' },
+      { value: 'budget', label: 'Budget-friendly options' },
+      { value: 'moderate', label: 'Mid-range is fine' },
+      { value: 'no_limit', label: "Sky's the limit" },
     ],
   },
   {
@@ -57,9 +57,9 @@ export const INSIGHT_QUESTIONS = [
     multiSelect: false,
     dbField: 'mod_experience',
     options: [
-      { value: 'beginner', label: "I'm new to modding", emoji: '🌱' },
-      { value: 'intermediate', label: "I've done some mods", emoji: '🛠️' },
-      { value: 'expert', label: "I'm an experienced builder", emoji: '🏆' },
+      { value: 'beginner', label: "I'm new to modding" },
+      { value: 'intermediate', label: "I've done some mods" },
+      { value: 'expert', label: "I'm an experienced builder" },
     ],
   },
   {
@@ -69,11 +69,11 @@ export const INSIGHT_QUESTIONS = [
     multiSelect: true,
     dbField: 'primary_goals',
     options: [
-      { value: 'more_power', label: 'More power', emoji: '💪' },
-      { value: 'better_handling', label: 'Better handling', emoji: '🎯' },
-      { value: 'reliability', label: 'Improved reliability', emoji: '🔒' },
-      { value: 'sound', label: 'Better sound', emoji: '🔊' },
-      { value: 'aesthetics', label: 'Aesthetics & looks', emoji: '👁️' },
+      { value: 'more_power', label: 'More power' },
+      { value: 'better_handling', label: 'Better handling' },
+      { value: 'reliability', label: 'Improved reliability' },
+      { value: 'sound', label: 'Better sound' },
+      { value: 'aesthetics', label: 'Aesthetics & looks' },
     ],
   },
   {
@@ -83,10 +83,10 @@ export const INSIGHT_QUESTIONS = [
     multiSelect: false,
     dbField: 'track_frequency',
     options: [
-      { value: 'never', label: 'Never or rarely', emoji: '🏠' },
-      { value: 'occasionally', label: 'A few times a year', emoji: '📅' },
-      { value: 'regularly', label: 'Monthly or more', emoji: '🗓️' },
-      { value: 'competitive', label: 'Competitively', emoji: '🏆' },
+      { value: 'never', label: 'Never or rarely' },
+      { value: 'occasionally', label: 'A few times a year' },
+      { value: 'regularly', label: 'Monthly or more' },
+      { value: 'competitive', label: 'Competitively' },
     ],
   },
   {
@@ -96,9 +96,9 @@ export const INSIGHT_QUESTIONS = [
     multiSelect: false,
     dbField: 'detail_level',
     options: [
-      { value: 'quick_tips', label: 'Quick tips only', emoji: '⚡' },
-      { value: 'balanced', label: 'Balanced detail', emoji: '⚖️' },
-      { value: 'deep_dive', label: 'Full deep dives', emoji: '📚' },
+      { value: 'quick_tips', label: 'Quick tips only' },
+      { value: 'balanced', label: 'Balanced detail' },
+      { value: 'deep_dive', label: 'Full deep dives' },
     ],
   },
 ];

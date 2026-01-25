@@ -23,7 +23,6 @@ export default function robots() {
           '/',                      // Homepage
           '/community/builds',      // Public builds gallery
           '/community/builds/',     // Individual build pages
-          '/community/events',      // Public events listing
           '/community/events/',     // Individual event pages
           '/terms',                 // Legal
           '/privacy',               // Legal
@@ -49,48 +48,28 @@ export default function robots() {
       // Social media crawlers - allow public pages for previews
       {
         userAgent: 'facebookexternalhit',
-        allow: [
-          '/',
-          '/community/builds/',
-          '/community/events/',
-        ],
+        allow: ['/', '/community/builds/', '/community/events/'],
         disallow: ['/api/', '/internal/', '/auth/', '/admin/'],
       },
       {
         userAgent: 'Twitterbot',
-        allow: [
-          '/',
-          '/community/builds/',
-          '/community/events/',
-        ],
+        allow: ['/', '/community/builds/', '/community/events/'],
         disallow: ['/api/', '/internal/', '/auth/', '/admin/'],
       },
       {
         userAgent: 'LinkedInBot',
-        allow: [
-          '/',
-          '/community/builds/',
-          '/community/events/',
-        ],
+        allow: ['/', '/community/builds/', '/community/events/'],
         disallow: ['/api/', '/internal/', '/auth/', '/admin/'],
       },
       // Slack/Discord for link previews
       {
         userAgent: 'Slackbot-LinkExpanding',
-        allow: [
-          '/',
-          '/community/builds/',
-          '/community/events/',
-        ],
+        allow: ['/', '/community/builds/', '/community/events/'],
         disallow: ['/api/', '/internal/', '/auth/', '/admin/'],
       },
       {
         userAgent: 'Discordbot',
-        allow: [
-          '/',
-          '/community/builds/',
-          '/community/events/',
-        ],
+        allow: ['/', '/community/builds/', '/community/events/'],
         disallow: ['/api/', '/internal/', '/auth/', '/admin/'],
       },
     ],

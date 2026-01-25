@@ -1,4 +1,5 @@
 /* UserGreeting.module.css */
+
 /* AutoRev Callsign Picker */
 
 .container {
@@ -87,6 +88,7 @@
     opacity: 0;
     transform: translateY(-8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -146,9 +148,13 @@
    ============================================================================= */
 
 .callsignList {
-  max-height: 320px;
+  max-height: 50vh; /* Allow more scrolling - half viewport height */
+  min-height: 200px;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+
+  /* Smooth scroll on iOS */
+  overscroll-behavior: contain;
 }
 
 /* Unlocked callsign option */
@@ -275,42 +281,42 @@
    ============================================================================= */
 
 .titlePicker {
-  composes: callsignPicker;
+  composes: callsignpicker;
 }
 
 .titlePickerHeader {
-  composes: pickerHeader;
+  composes: pickerheader;
 }
 
 /* Note: Can't use composes on descendant selectors - create dedicated class */
 .titlePickerTitle {
-  composes: pickerTitle;
+  composes: pickertitle;
 }
 
 .titleList {
-  composes: callsignList;
+  composes: callsignlist;
 }
 
 .titleOption {
-  composes: callsignOption;
+  composes: callsignoption;
 }
 
 .titleOptionSelected {
-  composes: callsignOptionSelected;
+  composes: callsignoptionselected;
 }
 
 .titleName {
-  composes: callsignName;
+  composes: callsignname;
 }
 
 .titleDesc {
-  composes: callsignDesc;
+  composes: callsigndesc;
 }
 
 .titlePickerFooter {
-  composes: pickerFooter;
+  composes: pickerfooter;
 }
 
 .lockedCount {
-  composes: footerStats;
+  composes: footerstats;
 }

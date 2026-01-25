@@ -76,13 +76,23 @@ export default function ServiceCenterCard({
   const PERFORMANCE_KEYWORDS = [
     'performance', 'tuning', 'racing', 'custom', 'speed', 'motorsport',
     'dyno', 'turbo', 'exhaust', 'suspension', 'fabrication', 'fab',
-    'imports', 'euro', 'jdm', 'muscle', 'hot rod', 'supercharger',
+    'imports', 'euro', 'jdm', 'muscle', 'hot rod', 'forced induction',
     'boost', 'ecu', 'chip', 'tune', 'drift'
+  ];
+  
+  // EV charging stations that should NOT be labeled as performance shops
+  const EV_CHARGING_KEYWORDS = [
+    'supercharger', 'charging station', 'ev charging', 'chargepoint',
+    'electrify america', 'evgo', 'blink charging', 'tesla supercharger'
   ];
   
   // Check if shop is a performance shop based on name
   const isPerformanceShop = (name) => {
     const nameLower = name?.toLowerCase() || '';
+    // First check if it's an EV charging station (exclude these)
+    if (EV_CHARGING_KEYWORDS.some(kw => nameLower.includes(kw))) {
+      return false;
+    }
     return PERFORMANCE_KEYWORDS.some(kw => nameLower.includes(kw));
   };
   

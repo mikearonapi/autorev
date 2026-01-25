@@ -2,16 +2,16 @@
 .buildValue {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 14px;
+  padding: 14px 16px;
 }
 
 .header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  font-size: 15px;
+  gap: 8px;
+  margin-bottom: 14px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
 }
@@ -20,32 +20,36 @@
   color: var(--color-accent-teal, #10b981);
 }
 
+.headerTitle {
+  flex: 1;
+}
+
 /* Main Stats */
 .mainStats {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 20px;
+  gap: 10px;
+  margin-bottom: 14px;
 }
 
 .statCard {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 14px;
+  gap: 10px;
+  padding: 10px 12px;
   background: rgba(255, 255, 255, 0.04);
-  border-radius: 12px;
+  border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .statIcon {
-  width: 40px;
-  height: 40px;
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
+  border-radius: 8px;
   color: rgba(255, 255, 255, 0.6);
 }
 
@@ -87,16 +91,16 @@
 .efficiencyCard {
   background: rgba(16, 185, 129, 0.08);
   border: 1px solid rgba(16, 185, 129, 0.15);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 20px;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
 }
 
 .efficiencyHeader {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 14px;
+  margin-bottom: 10px;
 }
 
 .efficiencyHeader svg {
@@ -124,9 +128,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 24px;
-  padding: 16px 0;
-  margin-bottom: 12px;
+  gap: 20px;
+  padding: 10px 0;
+  margin-bottom: 8px;
 }
 
 .efficiencyMetric {
@@ -138,7 +142,7 @@
 
 .metricValue {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: 28px;
+  font-size: 24px;
   font-weight: 800;
   background: linear-gradient(180deg, var(--color-text-primary, #ffffff) 0%, rgba(255, 255, 255, 0.8) 100%);
   -webkit-background-clip: text;
@@ -167,22 +171,22 @@
 
 /* Category Breakdown */
 .categoryBreakdown {
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 .breakdownHeader {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .categories {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 .categoryRow {
@@ -234,24 +238,24 @@
 /* Insights */
 .insights {
   background: rgba(255, 255, 255, 0.03);
-  border-radius: 10px;
-  padding: 14px;
-  margin-bottom: 16px;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
 }
 
 .insightsHeader {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .insightsList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .insight {

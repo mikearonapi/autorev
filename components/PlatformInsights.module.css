@@ -2,16 +2,16 @@
 .platformInsights {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 14px;
+  padding: 14px 16px;
 }
 
 .header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  font-size: 15px;
+  gap: 8px;
+  margin-bottom: 14px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
 }
@@ -20,13 +20,16 @@
   color: var(--color-accent-lime, #d4ff00);
 }
 
+.headerTitle {
+  flex: 1;
+}
+
 .carLabel {
-  margin-left: auto;
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.4);
   background: rgba(255, 255, 255, 0.06);
-  padding: 4px 10px;
+  padding: 3px 8px;
   border-radius: 100px;
 }
 
@@ -65,21 +68,21 @@
 /* Tabs */
 .tabs {
   display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
+  gap: 6px;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .tab {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: 5px;
+  padding: 6px 12px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid transparent;
-  border-radius: 8px;
-  font-size: 12px;
+  border-radius: 6px;
+  font-size: 11px;
   font-weight: 500;
   color: rgba(255, 255, 255, 0.6);
   cursor: pointer;
@@ -114,13 +117,13 @@
 .insightsList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .insightCard {
   background: rgba(255, 255, 255, 0.03);
-  border-radius: 10px;
+  border-radius: 8px;
   overflow: hidden;
   transition: background 0.2s ease;
 }
@@ -141,8 +144,8 @@
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 14px;
+  gap: 8px;
+  padding: 10px 12px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -345,10 +348,10 @@
 
 /* Source Note */
 .sourceNote {
-  margin-top: 16px;
-  padding-top: 12px;
+  margin-top: 10px;
+  padding-top: 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
-  font-size: 11px;
+  font-size: 10px;
   color: rgba(255, 255, 255, 0.4);
   text-align: center;
 }

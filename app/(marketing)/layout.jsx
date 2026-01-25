@@ -2,7 +2,7 @@
  * Marketing Layout
  * 
  * Wrapper for public marketing pages with SEO metadata for the homepage.
- * Routes: /, /community/builds, /community/events, /terms, /privacy, /contact
+ * Routes: /, /community/builds, /community/events/[slug], /terms, /privacy, /contact
  */
 
 import SchemaOrg from '@/components/SchemaOrg';

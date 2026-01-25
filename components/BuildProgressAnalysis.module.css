@@ -2,22 +2,26 @@
 .buildProgress {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 14px;
+  padding: 14px 16px;
 }
 
 .header {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 20px;
-  font-size: var(--text-body);
+  gap: 8px;
+  margin-bottom: 14px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
 }
 
 .header svg {
   color: var(--color-accent-teal, #10b981);
+}
+
+.headerTitle {
+  flex: 1;
 }
 
 .maxedBadge {
@@ -38,8 +42,8 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 24px;
-  padding: 0 10px;
+  margin-bottom: 16px;
+  padding: 0 8px;
   position: relative;
 }
 
@@ -110,9 +114,9 @@
 .currentStageCard {
   background: rgba(16, 185, 129, 0.08);
   border: 1px solid rgba(16, 185, 129, 0.2);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 20px;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
 }
 
 .currentStageHeader {
@@ -148,11 +152,11 @@
 
 /* Progress Bar */
 .progressBar {
-  height: 6px;
+  height: 5px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 100px;
   overflow: hidden;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .progressFill {
@@ -166,8 +170,8 @@
 .componentsList {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: 6px;
+  margin-bottom: 12px;
 }
 
 .componentItem {

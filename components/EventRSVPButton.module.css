@@ -1,0 +1,258 @@
+/* ===========================================
+   EVENT RSVP BUTTON - Dark Theme
+   Modern, accessible RSVP component for community events
+   =========================================== */
+
+/* Container */
+.container {
+  position: relative;
+  display: inline-flex;
+}
+
+/* Variant: Full Width */
+.full-width {
+  width: 100%;
+}
+
+.full-width .rsvpBtn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Variant: Compact */
+.compact .rsvpBtn {
+  padding: 8px 12px;
+  font-size: var(--font-size-sm);
+}
+
+/* ===========================================
+   RSVP BUTTON - Dark Theme Styling
+   =========================================== */
+
+.rsvpBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.07));
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary, #94a3b8);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  white-space: nowrap;
+}
+
+.rsvpBtn:hover:not(:disabled) {
+  background: var(--color-bg-card-hover, rgba(255, 255, 255, 0.08));
+  border-color: var(--color-accent-teal, #10b981);
+  color: var(--color-text-primary, #ffffff);
+  transform: translateY(-1px);
+}
+
+.rsvpBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.rsvpBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Active State (has RSVP) */
+.rsvpBtn.active {
+  background: var(--color-accent-teal, #10b981);
+  border-color: var(--color-accent-teal, #10b981);
+  color: var(--color-text-primary, #ffffff);
+}
+
+.rsvpBtn.active:hover:not(:disabled) {
+  background: var(--color-accent-teal-light, #34d399);
+  border-color: var(--color-accent-teal-light, #34d399);
+}
+
+/* Going State - Teal accent (positive action) */
+.rsvpBtn.going {
+  background: var(--color-accent-teal, #10b981);
+  border-color: var(--color-accent-teal, #10b981);
+  color: var(--color-text-primary, #ffffff);
+}
+
+.rsvpBtn.going:hover:not(:disabled) {
+  background: var(--color-accent-teal-light, #34d399);
+  border-color: var(--color-accent-teal-light, #34d399);
+}
+
+/* Interested State - Blue accent (informational) */
+.rsvpBtn.interested {
+  background: var(--color-accent-blue, #3b82f6);
+  border-color: var(--color-accent-blue, #3b82f6);
+  color: var(--color-text-primary, #ffffff);
+}
+
+.rsvpBtn.interested:hover:not(:disabled) {
+  background: var(--color-accent-blue-light, #60a5fa);
+  border-color: var(--color-accent-blue-light, #60a5fa);
+}
+
+/* Label */
+.label {
+  font-family: var(--font-ui);
+}
+
+/* Spinner animation */
+.spinnerSvg {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* ===========================================
+   DROPDOWN MENU - Dark Theme
+   =========================================== */
+
+.menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  min-width: 220px;
+  background: var(--color-bg-elevated, #1b263b);
+  border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.07));
+  border-radius: var(--radius-lg);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  overflow: hidden;
+  animation: slideIn 0.15s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Menu Item */
+.menuItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  padding: 12px 16px;
+  background: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s ease;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.menuItem:hover {
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+}
+
+.menuItem svg {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.menuItemContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.menuItemLabel {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-primary, #ffffff);
+}
+
+.menuItemDesc {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-tertiary, #64748b);
+}
+
+/* Active menu item */
+.menuItemActive {
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+}
+
+.menuItemActive .menuItemLabel {
+  color: var(--color-accent-teal, #10b981);
+}
+
+.menuItemActive svg {
+  color: var(--color-accent-teal, #10b981);
+}
+
+/* Remove option */
+.menuItemRemove {
+  padding: 10px 16px;
+  justify-content: center;
+}
+
+.menuItemRemove .menuItemLabel {
+  color: var(--color-error, #ef4444);
+  font-weight: 400;
+}
+
+.menuItemRemove:hover {
+  background: var(--color-error-muted, rgba(239, 68, 68, 0.15));
+}
+
+/* Divider */
+.menuDivider {
+  height: 1px;
+  background: var(--color-border-subtle, rgba(255, 255, 255, 0.04));
+  margin: 4px 0;
+}
+
+/* ===========================================
+   MOBILE OPTIMIZATION
+   CF-001: Touch target compliance
+   =========================================== */
+
+@media (max-width: 767px) {
+  .rsvpBtn {
+    min-height: 44px;
+    padding: 12px 16px;
+  }
+  
+  .compact .rsvpBtn {
+    min-height: 36px;
+    padding: 8px 12px;
+  }
+  
+  .menu {
+    min-width: 240px;
+  }
+  
+  .menuItem {
+    padding: 14px 16px;
+    min-height: 48px;
+  }
+}
+
+/* Touch devices */
+@media (hover: none) and (pointer: coarse) {
+  .rsvpBtn:active:not(:disabled) {
+    transform: scale(0.97);
+  }
+  
+  .rsvpBtn:hover:not(:disabled) {
+    transform: none;
+  }
+}

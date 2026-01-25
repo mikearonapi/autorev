@@ -30,3 +30,6 @@ export {
 // Gesture components (mobile)
 export { default as PullToRefresh } from './PullToRefresh';
 export { default as SwipeableRow } from './SwipeableRow';
+
+// Feedback components
+export { default as InsightFeedback } from './InsightFeedback';

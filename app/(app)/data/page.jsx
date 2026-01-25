@@ -21,6 +21,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { useCarsList } from '@/hooks/useCarData';
@@ -108,6 +109,7 @@ function DataPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { user, isAuthenticated, isLoading: authLoading, isDataFetchReady, profile } = useAuth();
+  const { showPointsEarned } = usePointsNotification();
   const { vehicles, isLoading: vehiclesLoading, refreshVehicles } = useOwnedVehicles();
   
   // Get user's first name for personalized title
@@ -536,13 +538,19 @@ function DataPageContent() {
       
       // Refresh dyno results
       await refetchDynoResults();
+      
+      // Show points notification for new dyno logs (not edits)
+      if (!editingDynoResult) {
+        showPointsEarned(50, 'Dyno logged');
+      }
+      
       setShowDynoModal(false);
       setEditingDynoResult(null);
     } catch (err) {
       console.error('[DataPage] Error saving dyno result:', err);
       throw err; // Re-throw so modal can show error
     }
-  }, [selectedVehicleId, editingDynoResult, refetchDynoResults]);
+  }, [selectedVehicleId, editingDynoResult, refetchDynoResults, showPointsEarned]);
   
   // Get the latest dyno result for comparison
   const latestDynoResult = useMemo(() => {
@@ -575,13 +583,17 @@ function DataPageContent() {
       };
       
       await addTrackTime.mutateAsync({ userId: user.id, trackTime: payload });
+      
+      // Show points notification for new track times
+      showPointsEarned(50, 'Track time logged');
+      
       setShowTrackTimeModal(false);
       setEditingTrackTime(null);
     } catch (err) {
       console.error('[DataPage] Error saving track time:', err);
       throw err; // Re-throw so modal can show error
     }
-  }, [user?.id, selectedVehicle, estimatedHp, vehicleBuildData, addTrackTime]);
+  }, [user?.id, selectedVehicle, estimatedHp, vehicleBuildData, addTrackTime, showPointsEarned]);
   
   // Calculate predicted WHP (with ~15% drivetrain loss)
   const predictedWhp = useMemo(() => {

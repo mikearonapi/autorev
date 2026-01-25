@@ -318,7 +318,7 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 
 ---
 
-## User Data (15 tables)
+## User Data (17 tables)
 
 ### `user_profiles` — User settings
 | Status | **62 rows** |
@@ -446,6 +446,27 @@ The Encyclopedia uses a component-centric hierarchy stored in static JavaScript 
 | **Columns** | 19 |
 | **Key Fields** | `user_id`, `utm_source`, `utm_medium`, `utm_campaign`, `referrer`, `landing_page` |
 | **Used By** | Marketing analytics |
+
+### `user_questionnaire_responses` — Enthusiast Profile questionnaire answers
+| Status | **New** |
+|--------|---------|
+| **Purpose** | Stores unlimited questionnaire responses for deep user personalization |
+| **Columns** | 7 |
+| **Key Fields** | `user_id`, `question_id`, `question_category`, `answer` (JSONB), `answered_at`, `updated_at` |
+| **Categories** | core, driving_behavior, car_knowledge, track_performance, lifestyle, learning, community, financial |
+| **Answer Format** | Single: `{"value": "option"}`, Multi: `{"values": ["opt1", "opt2"]}` |
+| **Used By** | AL personalization, Settings page Enthusiast Profile, Dashboard prompt |
+
+### `user_profile_summary` — Derived user persona (computed)
+| Status | **New** |
+|--------|---------|
+| **Purpose** | Computed profile summary derived from questionnaire responses |
+| **Columns** | 11 |
+| **Key Fields** | `user_id`, `profile_completeness_pct`, `driving_persona`, `knowledge_level`, `engagement_style`, `interests[]`, `category_completion` (JSONB), `answered_count` |
+| **Personas** | track_enthusiast, spirited_driver, casual_enthusiast, weekend_warrior, garage_tinkerer |
+| **Knowledge Levels** | beginner, intermediate, expert |
+| **Updated By** | Trigger `trigger_update_profile_summary` on questionnaire insert/update |
+| **Used By** | AL system prompt personalization section, PersonaSummary component |
 
 ---
 

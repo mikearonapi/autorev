@@ -178,7 +178,10 @@ const POINTS_BY_CATEGORY = {
     label: 'AL',
     icon: Icons.al,
     color: '#a855f7',
-    actions: [{ label: 'Ask AL a question', points: 10, href: '/al' }],
+    actions: [
+      { label: 'Ask AL a question', points: 10, href: '/al' },
+      { label: 'Answer a profile question', points: 5, href: '/insights' },
+    ],
   },
 };
 

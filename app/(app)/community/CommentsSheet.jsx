@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { usePostComments, useAddComment, useUpdateComment, useDeleteComment } from '@/hooks/useCommunityData';
+import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import SwipeableRow from '@/components/ui/SwipeableRow';
 import styles from './CommentsSheet.module.css';
 
@@ -50,6 +51,7 @@ const TrashIcon = () => (
 
 export default function CommentsSheet({ postId, postTitle, commentCount = 0, onClose, onCommentAdded }) {
   const { user } = useAuth();
+  const { showPointsEarned } = usePointsNotification();
   const [newComment, setNewComment] = useState('');
   const [submitError, setSubmitError] = useState(null);
   
@@ -133,6 +135,7 @@ export default function CommentsSheet({ postId, postTitle, commentCount = 0, onC
     try {
       await addCommentMutation.mutateAsync({ postId, content });
       setNewComment('');
+      showPointsEarned(10, 'Comment posted');
       onCommentAdded?.();
       setTimeout(scrollToBottom, 100);
     } catch (err) {

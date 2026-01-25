@@ -32,6 +32,7 @@ import MetaPixel from '@/components/MetaPixel';
 import PageViewTracker from '@/components/PageViewTracker';
 import { AuthProvider } from '@/components/providers/AuthProvider';
 import { BannerProvider } from '@/components/providers/BannerProvider';
+import { PointsNotificationProvider } from '@/components/providers/PointsNotificationProvider';
 import { CarSelectionProvider } from '@/components/providers/CarSelectionProvider';
 import { CompareProvider } from '@/components/providers/CompareProvider';
 import { FavoritesProvider } from '@/components/providers/FavoritesProvider';
@@ -422,6 +423,7 @@ export default function RootLayout({ children }) {
                   <QueryProvider>
                     <LoadingProgressProvider>
                       <AuthProvider>
+                        <PointsNotificationProvider>
                         <PostHogProvider>
                           <AppConfigProvider>
                             <CarSelectionProvider>
@@ -463,6 +465,7 @@ export default function RootLayout({ children }) {
                             </CarSelectionProvider>
                           </AppConfigProvider>
                         </PostHogProvider>
+                        </PointsNotificationProvider>
                       </AuthProvider>
                     </LoadingProgressProvider>
                   </QueryProvider>

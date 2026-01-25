@@ -960,21 +960,43 @@ export async function POST(request) {
         const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
         if (supabaseServiceUrl && supabaseServiceKey) {
           const supabaseAdmin = createClient(supabaseServiceUrl, supabaseServiceKey);
-          // Fetch both AL preferences and personalization preferences in parallel
-          const [alPrefsResult, personalizationResult] = await Promise.all([
+          // Fetch AL preferences, legacy user_preferences, and new questionnaire data in parallel
+          const [alPrefsResult, legacyPrefsResult, questionnaireResult] = await Promise.all([
             supabaseAdmin
               .from('al_user_preferences')
               .select('*')
               .eq('user_id', userId)
               .single(),
+            // Legacy user_preferences table (for backwards compatibility)
             supabaseAdmin
               .from('user_preferences')
               .select('driving_focus, work_preference, budget_comfort, mod_experience, primary_goals, track_frequency, detail_level')
               .eq('user_id', userId)
               .single(),
+            // New questionnaire system - optimized RPC for AL context
+            supabaseAdmin.rpc('get_questionnaire_for_al', { p_user_id: userId }),
           ]);
+          
           userPreferences = alPrefsResult.data || null;
-          userPersonalization = personalizationResult.data || null;
+          
+          // Use new questionnaire data if available, fallback to legacy
+          const questionnaireData = questionnaireResult.data;
+          if (questionnaireData && questionnaireData.answered_count > 0) {
+            // New format with rich questionnaire responses
+            userPersonalization = {
+              responses: questionnaireData.responses || {},
+              summary: {
+                answered_count: questionnaireData.answered_count,
+                profile_completeness_pct: questionnaireData.profile_completeness_pct,
+                driving_persona: questionnaireData.driving_persona,
+                knowledge_level: questionnaireData.knowledge_level,
+                interests: questionnaireData.interests,
+              },
+            };
+          } else if (legacyPrefsResult.data) {
+            // Fallback to legacy user_preferences
+            userPersonalization = legacyPrefsResult.data;
+          }
         }
       } catch (prefsError) {
         // Non-fatal - continue with default preferences (all enabled)

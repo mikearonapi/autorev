@@ -70,7 +70,16 @@ async function handleGet(request, { params }) {
         daily_usability_tag,
         common_issues,
         defining_strengths,
-        honest_weaknesses
+        honest_weaknesses,
+        engine_character,
+        transmission_feel,
+        chassis_dynamics,
+        steering_feel,
+        sound_signature,
+        track_readiness,
+        community_strength,
+        diy_friendliness,
+        parts_availability
       `)
       .eq('slug', slug)
       .single();
@@ -128,6 +137,17 @@ async function handleGet(request, { params }) {
       commonIssues: car.common_issues,
       definingStrengths: car.defining_strengths,
       honestWeaknesses: car.honest_weaknesses,
+      // Driving Character fields
+      engineCharacter: car.engine_character,
+      transmissionFeel: car.transmission_feel,
+      chassisDynamics: car.chassis_dynamics,
+      steeringFeel: car.steering_feel,
+      soundSignature: car.sound_signature,
+      // Track & Tuning fields
+      trackReadiness: car.track_readiness,
+      communityStrength: car.community_strength,
+      diyFriendliness: car.diy_friendliness,
+      partsAvailability: car.parts_availability,
     };
 
     return NextResponse.json({ car: transformedCar });

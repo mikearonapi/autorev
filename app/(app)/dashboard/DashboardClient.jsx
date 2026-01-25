@@ -15,8 +15,10 @@ import Link from 'next/link';
 
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { FullscreenQuestionnaire } from '@/components/questionnaire';
+import { useProfileSummary } from '@/hooks/useQuestionnaire';
 
-import { GearIcon } from './components/DashboardIcons';
+import { GearIcon, MessageIcon } from './components/DashboardIcons';
 import ImprovementActions from './components/ImprovementActions';
 import LifetimeAchievements from './components/LifetimeAchievements';
 import UserGreeting from './components/UserGreeting';
@@ -29,6 +31,12 @@ export default function DashboardClient() {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showQuestionnaire, setShowQuestionnaire] = useState(false);
+
+  // Fetch questionnaire profile summary for the button
+  const { summary: questionnaireSummary } = useProfileSummary(user?.id, {
+    enabled: Boolean(user?.id) && !authLoading,
+  });
 
   const _avatarUrl =
     profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
@@ -181,6 +189,15 @@ export default function DashboardClient() {
         onTitleChange={handleTitleChange}
       />
 
+      {/* Fullscreen Questionnaire Modal */}
+      {showQuestionnaire && (
+        <FullscreenQuestionnaire
+          userId={user?.id}
+          onClose={() => setShowQuestionnaire(false)}
+          onComplete={() => setShowQuestionnaire(false)}
+        />
+      )}
+
       {/* Weekly Points Summary - Simplified hero card */}
       <section className={styles.ringsSection}>
         <WeeklyPointsSummary
@@ -193,6 +210,24 @@ export default function DashboardClient() {
           animated={true}
         />
       </section>
+
+      {/* Answer Questions Button - Opens immersive questionnaire */}
+      <button 
+        onClick={() => setShowQuestionnaire(true)} 
+        className={styles.questionnaireButton}
+      >
+        <span className={styles.questionnaireButtonIcon}><MessageIcon size={20} /></span>
+        <span className={styles.questionnaireButtonText}>
+          <span className={styles.questionnaireButtonTitle}>Answer some questions</span>
+          <span className={styles.questionnaireButtonHint}>
+            Help AL understand you better
+            {(questionnaireSummary?.profileCompletenessPct || 0) > 0 && (
+              <> · {questionnaireSummary.profileCompletenessPct}% complete</>
+            )}
+          </span>
+        </span>
+        <span className={styles.questionnaireButtonArrow}>→</span>
+      </button>
 
       {/* Weekly Activity - Swipeable weekly/monthly/yearly views */}
       <section className={styles.engagementSection}>

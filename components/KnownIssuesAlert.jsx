@@ -9,6 +9,7 @@
  */
 
 import React, { useMemo, useState } from 'react';
+import InsightFeedback from './ui/InsightFeedback';
 import styles from './KnownIssuesAlert.module.css';
 
 // Icons
@@ -107,7 +108,7 @@ const KIND_LABELS = {
   other: 'General',
 };
 
-export default function KnownIssuesAlert({ issues, vehicleYear, carName }) {
+export default function KnownIssuesAlert({ issues, vehicleYear, carName, onFeedback }) {
   const [expandedIssue, setExpandedIssue] = useState(null);
   const [showAll, setShowAll] = useState(false);
 
@@ -159,7 +160,16 @@ export default function KnownIssuesAlert({ issues, vehicleYear, carName }) {
       <div className={styles.knownIssues}>
         <div className={styles.header}>
           <ShieldIcon size={18} />
-          <span>Known Issues</span>
+          <span className={styles.headerTitle}>Known Issues</span>
+          {onFeedback && (
+            <InsightFeedback 
+              insightType="known-issues"
+              insightKey="known-issues-none"
+              insightTitle="Known Issues (None)"
+              onFeedback={onFeedback}
+              variant="inline"
+            />
+          )}
         </div>
         <div className={styles.noIssues}>
           <div className={styles.noIssuesIcon}>✓</div>
@@ -176,7 +186,7 @@ export default function KnownIssuesAlert({ issues, vehicleYear, carName }) {
     <div className={styles.knownIssues}>
       <div className={styles.header}>
         <AlertTriangleIcon size={18} />
-        <span>Known Issues</span>
+        <span className={styles.headerTitle}>Known Issues</span>
         <span className={styles.issueCount}>
           {criticalHighIssues.length > 0 && (
             <span className={styles.criticalCount}>
@@ -184,6 +194,15 @@ export default function KnownIssuesAlert({ issues, vehicleYear, carName }) {
             </span>
           )}
         </span>
+        {onFeedback && (
+          <InsightFeedback 
+            insightType="known-issues"
+            insightKey={`known-issues-${criticalHighIssues.length}`}
+            insightTitle={`Known Issues (${criticalHighIssues.length})`}
+            onFeedback={onFeedback}
+            variant="inline"
+          />
+        )}
       </div>
 
       {/* Summary Bar */}

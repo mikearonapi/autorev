@@ -53,41 +53,107 @@
   flex: 1;
 }
 
-/* Override LocationAutocomplete dark theme for better readability */
-.locationInput :global(.inputWrapper),
-.locationInput > div > div:first-child {
-  background: #ffffff !important;
-  border-color: var(--color-accent-teal, #10b981) !important;
+/* ==========================================================================
+   DARK THEME INPUT - Premium styling matching brand guidelines
+   ========================================================================== */
+
+/* Base input wrapper - subtle dark theme with proper override specificity */
+.locationInput :global(.inputWrapper) {
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-radius: var(--radius-md, 10px) !important;
+  transition: all 0.2s ease !important;
 }
 
-.locationInput :global(.inputWrapper:focus-within),
-.locationInput > div > div:first-child:focus-within {
+/* Focus state - teal accent */
+.locationInput :global(.inputWrapper:focus-within) {
+  background: rgba(255, 255, 255, 0.08) !important;
   border-color: var(--color-accent-teal, #10b981) !important;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25) !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
 }
 
-.locationInput :global(.input),
-.locationInput input {
-  color: #1a1a1a !important;
+/* Input text - white for readability */
+.locationInput :global(.input) {
+  color: var(--color-text-primary, #ffffff) !important;
   background: transparent !important;
+  font-size: 16px !important; /* Prevent iOS zoom */
+  font-weight: 500 !important;
+  letter-spacing: 0.01em !important;
 }
 
-.locationInput :global(.input)::placeholder,
-.locationInput input::placeholder {
-  color: #666 !important;
+/* Placeholder - muted but visible */
+.locationInput :global(.input)::placeholder {
+  color: var(--color-text-tertiary, #64748b) !important;
+  font-weight: 400 !important;
 }
 
+/* Search icon - subtle secondary color */
 .locationInput :global(.searchIcon) {
-  color: var(--color-accent-teal, #10b981) !important;
+  color: var(--color-text-tertiary, #64748b) !important;
 }
 
+/* Clear button */
 .locationInput :global(.clearBtn) {
-  color: #666 !important;
+  color: var(--color-text-tertiary, #64748b) !important;
 }
 
 .locationInput :global(.clearBtn:hover) {
-  color: #1a1a1a !important;
-  background: rgba(0, 0, 0, 0.05) !important;
+  color: var(--color-text-primary, #ffffff) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Loading spinner */
+.locationInput :global(.loadingSpinner) {
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  border-top-color: var(--color-accent-teal, #10b981) !important;
+}
+
+/* ==========================================================================
+   SUGGESTIONS DROPDOWN - Dark theme to match input
+   ========================================================================== */
+
+.locationInput :global(.suggestions) {
+  background: var(--brand-bg-elevated, #1b263b) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4), 0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+.locationInput :global(.suggestionItem) {
+  color: var(--color-text-primary, #ffffff) !important;
+}
+
+.locationInput :global(.suggestionItem:hover),
+.locationInput :global(.suggestionItem.highlighted) {
+  background: rgba(16, 185, 129, 0.15) !important;
+}
+
+.locationInput :global(.cityName) {
+  color: var(--color-text-primary, #ffffff) !important;
+}
+
+.locationInput :global(.stateText) {
+  color: var(--color-text-secondary, #94a3b8) !important;
+}
+
+.locationInput :global(.countyText) {
+  color: var(--color-text-tertiary, #64748b) !important;
+}
+
+.locationInput :global(.locationIcon) {
+  color: var(--color-text-tertiary, #64748b) !important;
+}
+
+.locationInput :global(.suggestionZip) {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: var(--color-text-secondary, #94a3b8) !important;
+}
+
+.locationInput :global(.attribution) {
+  border-top-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+.locationInput :global(.osmAttribution) {
+  color: var(--color-text-muted, #475569) !important;
 }
 
 .searchBtn {
@@ -298,9 +364,9 @@
 }
 
 .errorState {
-  color: #d97706;
-  background: #fffbeb;
-  border: 1px solid #fcd34d;
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px solid rgba(245, 158, 11, 0.2);
   border-radius: var(--radius-md, 8px);
   padding: var(--space-4, 16px);
   flex-direction: row;

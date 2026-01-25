@@ -72,6 +72,7 @@ const POINTS_BY_CATEGORY = {
     color: '#a855f7',
     actions: [
       { label: 'Ask AL a question', points: 10 },
+      { label: 'Answer a profile question', points: 5 },
     ],
   },
 };

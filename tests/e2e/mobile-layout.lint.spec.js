@@ -7,7 +7,7 @@ const VIEWPORTS = [
 ];
 
 // Key public routes where horizontal overflow / “zoomed” layouts are most painful.
-const ROUTES = ['/', '/browse-cars', '/tuning-shop', '/community/events', '/encyclopedia', '/al'];
+const ROUTES = ['/', '/browse-cars', '/tuning-shop', '/community', '/encyclopedia', '/al'];
 
 for (const vp of VIEWPORTS) {
   test.describe(`mobile layout lint (${vp.name})`, () => {

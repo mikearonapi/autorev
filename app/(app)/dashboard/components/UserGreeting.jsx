@@ -10,8 +10,8 @@
  * - COMMUNITY: Sharing, helping, brotherhood
  * - AL: Learning, data, AI assistance
  * 
- * Each category has 3 tiers with 3 callsigns each.
- * Users unlock callsigns by engaging with different parts of the app.
+ * All callsigns are unlocked for everyone - it's a fun personalization feature!
+ * Users can pick any callsign that matches their vibe.
  * 
  * Format: "Mike, known as [Callsign]"
  */
@@ -46,16 +46,69 @@ export const CATEGORIES = {
 
 // =============================================================================
 // CALLSIGN DEFINITIONS
-// Organized by category → tier → callsigns
-// Each tier has 3 callsigns, higher tiers are more prestigious
+// 
+// DESIGN PHILOSOPHY:
+// - Tier 0: Starter callsigns (unlocked for all new users - pick your vibe!)
+// - Tier 1: Easy unlocks (low barrier, encourages first engagement)
+// - Tier 2: Active user (regular engagement)
+// - Tier 3: Veteran (serious commitment)
+// - Tier 4: Legendary (cross-category mastery)
+//
+// HUMOR GUIDELINES:
+// - Car culture references (JDM, muscle, euro)
+// - Self-deprecating/relatable humor
+// - Community inside jokes
+// - Aspirational but not cringe
 // =============================================================================
 
 export const CALLSIGNS = {
   // =========================================================================
+  // STARTER CALLSIGNS (Tier 0) - Unlocked for everyone!
+  // Let new users pick a personality right away
+  // =========================================================================
+  
+  rookie: {
+    display: 'Rookie',
+    description: 'Fresh off the lot',
+    category: 'garage',
+    tier: 0,
+    color: '#94a3b8',
+    requirement: 'Default',
+    unlockCheck: () => true,
+  },
+  pit_lane_lurker: {
+    display: 'Pit Lane Lurker',
+    description: 'Just here for the vibes',
+    category: 'community',
+    tier: 0,
+    color: '#94a3b8',
+    requirement: 'Default',
+    unlockCheck: () => true,
+  },
+  curious_cat: {
+    display: 'Curious Cat',
+    description: 'Asking all the questions',
+    category: 'al',
+    tier: 0,
+    color: '#94a3b8',
+    requirement: 'Default',
+    unlockCheck: () => true,
+  },
+  stock_is_fine: {
+    display: 'Stock Is Fine',
+    description: '"I\'ll mod it eventually..."',
+    category: 'garage',
+    tier: 0,
+    color: '#64748b',
+    requirement: 'Default',
+    unlockCheck: () => true,
+  },
+  
+  // =========================================================================
   // GARAGE CATEGORY - Building, modding, hands-on work
   // =========================================================================
   
-  // Tier 1 - Getting Started
+  // Tier 1 - First Steps
   gear_head: {
     display: 'Gear Head',
     description: 'Has a ride in the garage',
@@ -65,23 +118,32 @@ export const CALLSIGNS = {
     requirement: 'Add 1 vehicle',
     unlockCheck: (stats) => stats.vehicles >= 1,
   },
+  window_shopper: {
+    display: 'Window Shopper',
+    description: '"Just looking" (for now)',
+    category: 'garage',
+    tier: 1,
+    color: '#3b82f6',
+    requirement: 'Browse 5 cars',
+    unlockCheck: (stats) => stats.carsViewed >= 5,
+  },
   sunday_driver: {
     display: 'Sunday Driver',
-    description: 'Taking it easy',
+    description: 'Taking the scenic route',
     category: 'garage',
     tier: 1,
     color: '#3b82f6',
     requirement: 'Add 1 vehicle',
     unlockCheck: (stats) => stats.vehicles >= 1,
   },
-  window_shopper: {
-    display: 'Window Shopper',
-    description: 'Browsing the possibilities',
+  bolt_on_believer: {
+    display: 'Bolt-On Believer',
+    description: 'Easy gains only',
     category: 'garage',
     tier: 1,
-    color: '#94a3b8',
-    requirement: 'Browse 5 cars',
-    unlockCheck: (stats) => stats.carsViewed >= 5,
+    color: '#10b981',
+    requirement: 'Install 1 mod',
+    unlockCheck: (stats) => stats.modsInstalled >= 1,
   },
 
   // Tier 2 - Active Builder
@@ -94,23 +156,41 @@ export const CALLSIGNS = {
     requirement: 'Install 3 mods',
     unlockCheck: (stats) => stats.modsInstalled >= 3,
   },
-  mod_enthusiast: {
-    display: 'Mod Enthusiast',
-    description: 'Loves the upgrade game',
-    category: 'garage',
-    tier: 2,
-    color: '#10b981',
-    requirement: 'Install 5 mods',
-    unlockCheck: (stats) => stats.modsInstalled >= 5,
-  },
   grease_monkey: {
     display: 'Grease Monkey',
     description: 'Born in the shop',
     category: 'garage',
     tier: 2,
     color: '#f59e0b',
+    requirement: 'Install 5 mods',
+    unlockCheck: (stats) => stats.modsInstalled >= 5,
+  },
+  project_addict: {
+    display: 'Project Addict',
+    description: '"I can fix her"',
+    category: 'garage',
+    tier: 2,
+    color: '#ef4444',
+    requirement: '2 vehicles',
+    unlockCheck: (stats) => stats.vehicles >= 2,
+  },
+  parts_bin_raider: {
+    display: 'Parts Bin Raider',
+    description: 'Junkyard treasure hunter',
+    category: 'garage',
+    tier: 2,
+    color: '#a855f7',
     requirement: 'Install 8 mods',
     unlockCheck: (stats) => stats.modsInstalled >= 8,
+  },
+  weekend_warrior: {
+    display: 'Weekend Warrior',
+    description: 'Saturdays are for wrenching',
+    category: 'garage',
+    tier: 2,
+    color: '#10b981',
+    requirement: 'Install 5 mods',
+    unlockCheck: (stats) => stats.modsInstalled >= 5,
   },
 
   // Tier 3 - Master Builder
@@ -125,7 +205,7 @@ export const CALLSIGNS = {
   },
   parts_hoarder: {
     display: 'Parts Hoarder',
-    description: 'Never enough parts',
+    description: '"I might need this someday"',
     category: 'garage',
     tier: 3,
     color: '#10b981',
@@ -134,12 +214,30 @@ export const CALLSIGNS = {
   },
   garage_legend: {
     display: 'Garage Legend',
-    description: 'Master of the build',
+    description: 'The shop never sleeps',
     category: 'garage',
     tier: 3,
     color: '#d4ff00',
     requirement: '3 vehicles + 5 builds',
     unlockCheck: (stats) => stats.vehicles >= 3 && stats.builds >= 5,
+  },
+  money_pit_survivor: {
+    display: 'Money Pit Survivor',
+    description: 'RIP savings account',
+    category: 'garage',
+    tier: 3,
+    color: '#ef4444',
+    requirement: 'Install 20 mods',
+    unlockCheck: (stats) => stats.modsInstalled >= 20,
+  },
+  fleet_commander: {
+    display: 'Fleet Commander',
+    description: 'Running out of garage space',
+    category: 'garage',
+    tier: 3,
+    color: '#d4ff00',
+    requirement: '5+ vehicles',
+    unlockCheck: (stats) => stats.vehicles >= 5,
   },
 
   // =========================================================================
@@ -147,9 +245,9 @@ export const CALLSIGNS = {
   // =========================================================================
   
   // Tier 1 - New Member
-  forum_rookie: {
-    display: 'Forum Rookie',
-    description: 'Fresh to the crew',
+  forum_fresh: {
+    display: 'Forum Fresh',
+    description: 'Just joined the crew',
     category: 'community',
     tier: 1,
     color: '#3b82f6',
@@ -174,6 +272,15 @@ export const CALLSIGNS = {
     requirement: 'Create first post',
     unlockCheck: (stats) => stats.posts >= 1,
   },
+  question_asker: {
+    display: 'Question Asker',
+    description: 'No dumb questions here',
+    category: 'community',
+    tier: 1,
+    color: '#a855f7',
+    requirement: 'Post 2 comments',
+    unlockCheck: (stats) => stats.comments >= 2,
+  },
 
   // Tier 2 - Active Member
   community_regular: {
@@ -194,14 +301,32 @@ export const CALLSIGNS = {
     requirement: '20 helpful comments',
     unlockCheck: (stats) => stats.comments >= 20,
   },
-  good_vibes: {
-    display: 'Good Vibes',
-    description: 'Brings the positivity',
+  hype_man: {
+    display: 'Hype Man',
+    description: 'Your build looks great, bro',
+    category: 'community',
+    tier: 2,
+    color: '#f59e0b',
+    requirement: '10 posts',
+    unlockCheck: (stats) => stats.posts >= 10,
+  },
+  thread_necromancer: {
+    display: 'Thread Necromancer',
+    description: 'Reviving dead topics since 2024',
+    category: 'community',
+    tier: 2,
+    color: '#a855f7',
+    requirement: '25 comments',
+    unlockCheck: (stats) => stats.comments >= 25,
+  },
+  build_cheerleader: {
+    display: 'Build Cheerleader',
+    description: 'Biggest supporter in the crew',
     category: 'community',
     tier: 2,
     color: '#10b981',
-    requirement: '10 posts',
-    unlockCheck: (stats) => stats.posts >= 10,
+    requirement: 'Give 20 likes',
+    unlockCheck: (stats) => stats.likesGiven >= 20,
   },
 
   // Tier 3 - Community Leader
@@ -223,6 +348,15 @@ export const CALLSIGNS = {
     requirement: '15 posts + 40 comments',
     unlockCheck: (stats) => stats.posts >= 15 && stats.comments >= 40,
   },
+  forum_troll_slayer: {
+    display: 'Forum Troll Slayer',
+    description: 'Keeping it civil since day one',
+    category: 'community',
+    tier: 3,
+    color: '#ef4444',
+    requirement: '50 helpful comments',
+    unlockCheck: (stats) => stats.comments >= 50,
+  },
   brotherhood_og: {
     display: 'Brotherhood OG',
     description: 'Day one for the fam',
@@ -231,6 +365,15 @@ export const CALLSIGNS = {
     color: '#d4ff00',
     requirement: '20 posts + 50 comments',
     unlockCheck: (stats) => stats.posts >= 20 && stats.comments >= 50,
+  },
+  meet_organizer: {
+    display: 'Meet Organizer',
+    description: 'Bringing the crew together',
+    category: 'community',
+    tier: 3,
+    color: '#d4ff00',
+    requirement: 'Organize events',
+    unlockCheck: (stats) => stats.eventsOrganized >= 1,
   },
 
   // =========================================================================
@@ -247,9 +390,9 @@ export const CALLSIGNS = {
     requirement: '1 AL conversation',
     unlockCheck: (stats) => stats.alConversations >= 1,
   },
-  data_explorer: {
-    display: 'Data Explorer',
-    description: 'Digging into the numbers',
+  data_dabbler: {
+    display: 'Data Dabbler',
+    description: 'Dipping toes in the numbers',
     category: 'al',
     tier: 1,
     color: '#10b981',
@@ -258,18 +401,27 @@ export const CALLSIGNS = {
   },
   al_apprentice: {
     display: 'AL Apprentice',
-    description: 'Learning from the best',
+    description: 'Learning from the AI',
     category: 'al',
     tier: 1,
     color: '#a855f7',
     requirement: '5 AL conversations',
     unlockCheck: (stats) => stats.alConversations >= 5,
   },
+  spec_checker: {
+    display: 'Spec Checker',
+    description: 'Always comparing numbers',
+    category: 'al',
+    tier: 1,
+    color: '#3b82f6',
+    requirement: 'View 10 car specs',
+    unlockCheck: (stats) => stats.carsViewed >= 10,
+  },
 
   // Tier 2 - Active User
-  ai_ronin: {
-    display: 'AI Ronin',
-    description: 'Master of AL chats',
+  ai_whisperer: {
+    display: 'AI Whisperer',
+    description: 'Gets the best answers from AL',
     category: 'al',
     tier: 2,
     color: '#a855f7',
@@ -278,7 +430,7 @@ export const CALLSIGNS = {
   },
   data_nerd: {
     display: 'Data Nerd',
-    description: 'Lives for the specs',
+    description: 'Lives for the spreadsheets',
     category: 'al',
     tier: 2,
     color: '#10b981',
@@ -293,6 +445,24 @@ export const CALLSIGNS = {
     color: '#ef4444',
     requirement: 'Log 3 track times',
     unlockCheck: (stats) => stats.trackTimes >= 3,
+  },
+  dyno_curious: {
+    display: 'Dyno Curious',
+    description: 'What does it make?',
+    category: 'al',
+    tier: 2,
+    color: '#f59e0b',
+    requirement: 'Log 2 dyno runs',
+    unlockCheck: (stats) => stats.dynoRuns >= 2,
+  },
+  number_cruncher: {
+    display: 'Number Cruncher',
+    description: 'Obsessed with the math',
+    category: 'al',
+    tier: 2,
+    color: '#3b82f6',
+    requirement: '25 AL conversations',
+    unlockCheck: (stats) => stats.alConversations >= 25,
   },
 
   // Tier 3 - Power User
@@ -323,9 +493,36 @@ export const CALLSIGNS = {
     requirement: '1000+ combined HP',
     unlockCheck: (stats) => stats.totalHp >= 1000,
   },
+  lap_time_hunter: {
+    display: 'Lap Time Hunter',
+    description: 'Every tenth counts',
+    category: 'al',
+    tier: 3,
+    color: '#ef4444',
+    requirement: '10 track times logged',
+    unlockCheck: (stats) => stats.trackTimes >= 10,
+  },
+  data_hoarder: {
+    display: 'Data Hoarder',
+    description: 'Never delete anything',
+    category: 'al',
+    tier: 3,
+    color: '#a855f7',
+    requirement: '50 AL conversations',
+    unlockCheck: (stats) => stats.alConversations >= 50,
+  },
+  ai_ronin: {
+    display: 'AI Ronin',
+    description: 'Masterless AI warrior',
+    category: 'al',
+    tier: 3,
+    color: '#d4ff00',
+    requirement: 'AL power user',
+    unlockCheck: (stats) => stats.alConversations >= 30,
+  },
 
   // =========================================================================
-  // CROSS-CATEGORY LEGENDARY CALLSIGNS
+  // LEGENDARY CALLSIGNS (Tier 4) - Cross-category mastery
   // =========================================================================
   
   apex_predator: {
@@ -356,16 +553,37 @@ export const CALLSIGNS = {
       return topTiers >= 2;
     },
   },
-
-  // Default starter callsign
-  rookie: {
-    display: 'Rookie',
-    description: 'Just getting started',
-    category: 'garage',
-    tier: 0,
-    color: '#94a3b8',
-    requirement: 'Default',
-    unlockCheck: () => true,
+  keyboard_warrior: {
+    display: 'Keyboard Warrior',
+    description: 'Types faster than they drive',
+    category: 'legendary',
+    tier: 4,
+    color: '#a855f7',
+    requirement: 'Community + AL master',
+    unlockCheck: (stats) => stats.comments >= 50 && stats.alConversations >= 40,
+  },
+  garage_hermit: {
+    display: 'Garage Hermit',
+    description: 'Sees family once a year',
+    category: 'legendary',
+    tier: 4,
+    color: '#ef4444',
+    requirement: 'Garage + Data master',
+    unlockCheck: (stats) => stats.modsInstalled >= 20 && stats.dynoRuns >= 5,
+  },
+  platform_legend: {
+    display: 'Platform Legend',
+    description: 'AutoRev hall of famer',
+    category: 'legendary',
+    tier: 4,
+    color: '#d4ff00',
+    requirement: 'Everything maxed',
+    unlockCheck: (stats) => 
+      stats.vehicles >= 5 &&
+      stats.modsInstalled >= 25 &&
+      stats.posts >= 25 &&
+      stats.comments >= 60 &&
+      stats.alConversations >= 60,
   },
 };
 
@@ -383,9 +601,10 @@ export function getCallsignsByCategory(category) {
 }
 
 /**
- * Get all callsigns for a category, split into unlocked and locked
+ * Get all callsigns for a category
+ * All callsigns are now unlocked for everyone - it's a fun personalization feature!
  */
-function getCategorizedCallsigns(category, unlockedTitles) {
+function getCategorizedCallsigns(category) {
   const categoryCallsigns = Object.entries(CALLSIGNS)
     .filter(([_, cs]) => cs.category === category || (category === 'legendary' && cs.category === 'legendary'))
     .sort((a, b) => {
@@ -394,27 +613,8 @@ function getCategorizedCallsigns(category, unlockedTitles) {
       return a[1].display.localeCompare(b[1].display);
     });
 
-  const unlocked = categoryCallsigns.filter(([key]) => unlockedTitles.includes(key));
-  const locked = categoryCallsigns.filter(([key]) => !unlockedTitles.includes(key));
-
-  return { unlocked, locked };
-}
-
-/**
- * Get the best auto-selected callsign based on unlocked titles
- * Returns the highest-tier callsign the user has unlocked
- */
-function getDefaultCallsign(unlockedTitles) {
-  if (!unlockedTitles || unlockedTitles.length === 0) {
-    return 'rookie';
-  }
-  
-  // Sort by tier descending and return highest
-  const sorted = [...unlockedTitles]
-    .filter(key => CALLSIGNS[key])
-    .sort((a, b) => (CALLSIGNS[b]?.tier || 0) - (CALLSIGNS[a]?.tier || 0));
-  
-  return sorted[0] || 'rookie';
+  // All callsigns are unlocked for everyone!
+  return { unlocked: categoryCallsigns, locked: [] };
 }
 
 /**
@@ -425,7 +625,6 @@ const TOTAL_CALLSIGNS = Object.keys(CALLSIGNS).length;
 export default function UserGreeting({ 
   firstName = 'there',
   selectedTitle = null,
-  unlockedTitles = ['rookie'],
   onTitleChange,
 }) {
   const [showPicker, setShowPicker] = useState(false);
@@ -436,25 +635,21 @@ export default function UserGreeting({
     if (selectedTitle && CALLSIGNS[selectedTitle]) {
       return selectedTitle;
     }
-    return getDefaultCallsign(unlockedTitles);
-  }, [selectedTitle, unlockedTitles]);
+    return 'rookie'; // Default callsign
+  }, [selectedTitle]);
   
   const currentCallsign = CALLSIGNS[displayCallsignKey];
 
-  // Get callsigns for the active category
+  // Get callsigns for the active category - all unlocked for everyone!
   const { unlocked, locked } = useMemo(() => {
     if (activeCategory === 'all') {
-      // Show all unlocked across categories
-      const allUnlocked = Object.entries(CALLSIGNS)
-        .filter(([key]) => unlockedTitles.includes(key))
+      // Show all callsigns across categories
+      const allCallsigns = Object.entries(CALLSIGNS)
         .sort((a, b) => (b[1].tier || 0) - (a[1].tier || 0));
-      const allLocked = Object.entries(CALLSIGNS)
-        .filter(([key]) => !unlockedTitles.includes(key))
-        .sort((a, b) => (a[1].tier || 0) - (b[1].tier || 0));
-      return { unlocked: allUnlocked, locked: allLocked };
+      return { unlocked: allCallsigns, locked: [] };
     }
-    return getCategorizedCallsigns(activeCategory, unlockedTitles);
-  }, [activeCategory, unlockedTitles]);
+    return getCategorizedCallsigns(activeCategory);
+  }, [activeCategory]);
 
   const handleCallsignSelect = async (callsignKey) => {
     setShowPicker(false);
@@ -463,9 +658,8 @@ export default function UserGreeting({
     }
   };
 
-  // Calculate totals for footer
-  const totalUnlocked = unlockedTitles.length;
-  const totalToUnlock = TOTAL_CALLSIGNS - totalUnlocked;
+  // Total callsigns available
+  const totalCallsigns = TOTAL_CALLSIGNS;
 
   return (
     <div className={styles.container}>
@@ -569,7 +763,7 @@ export default function UserGreeting({
           {/* Footer with totals */}
           <div className={styles.pickerFooter}>
             <span className={styles.footerStats}>
-              {totalUnlocked} unlocked · {totalToUnlock} to discover
+              {totalCallsigns} callsigns available
             </span>
           </div>
         </div>

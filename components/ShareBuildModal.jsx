@@ -14,6 +14,7 @@ import Modal from '@/components/ui/Modal';
 import { Icons } from '@/components/ui/Icons';
 import { getFacebookShareUrl, getTwitterShareUrl, getInstagramShareInfo, getNativeShareData } from '@/lib/communityService';
 import { platform } from '@/lib/platform';
+import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import styles from './ShareBuildModal.module.css';
 
 export default function ShareBuildModal({
@@ -35,6 +36,9 @@ export default function ShareBuildModal({
   const [error, setError] = useState(null);
   const [shareUrl, setShareUrl] = useState('');
   const [copySuccess, setCopySuccess] = useState(false);
+  
+  // Points notification
+  const { showPointsEarned } = usePointsNotification();
 
   // Determine if this is an edit of existing post
   const isEditing = !!linkedCommunityPost;
@@ -116,6 +120,11 @@ export default function ShareBuildModal({
         : data.shareUrl;
       setShareUrl(url);
       setStep('success');
+      
+      // Show points earned for new shares (not edits)
+      if (!isEditing) {
+        showPointsEarned(100, 'Build shared');
+      }
       
       // Notify parent of successful share/update
       if (onShareChange) {

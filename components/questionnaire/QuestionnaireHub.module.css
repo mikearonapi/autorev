@@ -1,0 +1,257 @@
+/**
+ * QuestionnaireHub Component Styles
+ */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.compact {
+  gap: 16px;
+}
+
+/* Loading & Error */
+.loading,
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 20px;
+  color: var(--color-text-secondary, #94a3b8);
+  font-size: var(--text-sm);
+}
+
+.error {
+  color: var(--color-error, #ef4444);
+}
+
+/* Header */
+.header {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+}
+
+.headerInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.headerTitle {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0 0 4px;
+}
+
+.headerSubtitle {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary, #94a3b8);
+  margin: 0 0 10px;
+}
+
+.headerBenefits {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.benefit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.benefitIcon {
+  font-size: var(--text-sm);
+}
+
+/* Quick Question Section */
+.quickQuestionSection {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.quickQuestionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.quickQuestionTitle {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0;
+}
+
+.quickQuestionCount {
+  font-size: var(--text-xs);
+  color: var(--color-text-tertiary, #64748b);
+}
+
+/* Question Navigation */
+.questionNav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.navBtn {
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary, #94a3b8);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-primary, #ffffff);
+}
+
+.navBtn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.navDots {
+  display: flex;
+  gap: 8px;
+}
+
+.navDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.navDot:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+.navDotActive {
+  background: var(--color-accent-teal, #10b981);
+}
+
+/* Persona Section */
+.personaSection {
+  /* Persona Summary component has its own styling */
+}
+
+/* Categories Section */
+.categoriesSection {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.categoriesTitle {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0 0 14px;
+}
+
+.categoriesList {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* All Done */
+.allDone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05));
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 14px;
+}
+
+.allDoneIcon {
+  font-size: 1.5rem;
+}
+
+.allDoneText {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-accent-teal, #10b981);
+}
+
+/* Compact mode */
+.compact .header {
+  padding: 14px;
+  gap: 12px;
+}
+
+.compact .headerTitle {
+  font-size: var(--text-h4);
+}
+
+.compact .headerSubtitle {
+  font-size: var(--text-xs);
+  margin-bottom: 8px;
+}
+
+.compact .headerBenefits {
+  gap: 8px;
+}
+
+.compact .benefit {
+  font-size: var(--text-2xs);
+}
+
+.compact .quickQuestionSection,
+.compact .categoriesSection {
+  padding: 14px;
+}
+
+.compact .categoriesTitle,
+.compact .quickQuestionTitle {
+  font-size: var(--text-xs);
+  margin-bottom: 12px;
+}
+
+.compact .categoriesList {
+  gap: 8px;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .header {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .headerBenefits {
+    justify-content: center;
+  }
+}

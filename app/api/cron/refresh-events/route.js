@@ -493,24 +493,43 @@ export async function GET(request) {
     }
     
     // 4. Mark expired events
+    // An event is expired when:
+    // - For multi-day events (end_date IS NOT NULL): end_date < today
+    // - For single-day events (end_date IS NULL): start_date < today
     if (!dryRun) {
       const today = new Date().toISOString().split('T')[0];
       
-      const { data: expiredData, error: expireErr } = await supabaseServiceRole
+      // Expire single-day events (no end_date) where start_date has passed
+      const { data: expiredSingleDay, error: expireSingleErr } = await supabaseServiceRole
         .from('events')
         .update({ status: 'expired' })
+        .is('end_date', null)
         .lt('start_date', today)
         .eq('status', 'approved')
         .select('id');
       
-      if (expireErr) {
-        console.error('[refresh-events] Error expiring events:', expireErr);
-        results.errors.push(`Failed to expire events: ${expireErr.message}`);
-      } else {
-        results.eventsExpired = expiredData?.length || 0;
-        if (results.eventsExpired > 0) {
-          console.log(`[refresh-events] Marked ${results.eventsExpired} events as expired`);
-        }
+      if (expireSingleErr) {
+        console.error('[refresh-events] Error expiring single-day events:', expireSingleErr);
+        results.errors.push(`Failed to expire single-day events: ${expireSingleErr.message}`);
+      }
+      
+      // Expire multi-day events where end_date has passed
+      const { data: expiredMultiDay, error: expireMultiErr } = await supabaseServiceRole
+        .from('events')
+        .update({ status: 'expired' })
+        .not('end_date', 'is', null)
+        .lt('end_date', today)
+        .eq('status', 'approved')
+        .select('id');
+      
+      if (expireMultiErr) {
+        console.error('[refresh-events] Error expiring multi-day events:', expireMultiErr);
+        results.errors.push(`Failed to expire multi-day events: ${expireMultiErr.message}`);
+      }
+      
+      results.eventsExpired = (expiredSingleDay?.length || 0) + (expiredMultiDay?.length || 0);
+      if (results.eventsExpired > 0) {
+        console.log(`[refresh-events] Marked ${results.eventsExpired} events as expired (${expiredSingleDay?.length || 0} single-day, ${expiredMultiDay?.length || 0} multi-day)`);
       }
     }
     

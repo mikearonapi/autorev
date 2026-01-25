@@ -15,7 +15,7 @@
 /* Main row - info, hero points, streak */
 .mainRow {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   width: 100%;
   gap: var(--space-3, 12px);

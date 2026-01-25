@@ -8,20 +8,18 @@
   gap: var(--space-3, 12px);
   padding: var(--space-4, 16px);
   
-  /* Light Theme Tile */
-  background: #ffffff;
-  border: 1px solid #e2e8f0;
+  /* Dark Theme Card - matches brand guidelines */
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: var(--radius-lg, 12px);
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.06);
   
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .card:hover {
-  background: #f8fafc;
-  border-color: #cbd5e1;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 /* ==========================================================================
@@ -46,27 +44,27 @@
   font-family: var(--font-body, 'Inter', sans-serif);
   font-size: var(--text-body, 16px);
   font-weight: 600;
-  color: #0f172a;
+  color: var(--color-text-primary, #ffffff);
   line-height: 1.3;
 }
 
 .distance {
   flex-shrink: 0;
   padding: 2px 8px;
-  background: #ecfdf5;
-  border: 1px solid #6ee7b7;
+  background: rgba(16, 185, 129, 0.15);
+  border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: var(--radius-full, 9999px);
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: var(--text-xs, 11px);
   font-weight: 600;
-  color: #059669;
+  color: #10b981;
   white-space: nowrap;
 }
 
 .address {
   margin: 0;
   font-size: var(--text-sm, 14px);
-  color: #64748b;
+  color: var(--color-text-secondary, #94a3b8);
   line-height: 1.4;
 }
 
@@ -94,23 +92,23 @@
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: var(--text-sm, 14px);
   font-weight: 600;
-  color: #0f172a;
+  color: var(--color-text-primary, #ffffff);
 }
 
 .reviewCount {
   font-size: var(--text-sm, 13px);
-  color: #94a3b8;
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 .reviewLink {
   font-size: var(--text-sm, 13px);
-  color: #2563eb;
+  color: #10b981;
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
 .reviewLink:hover {
-  color: #1d4ed8;
+  color: #34d399;
   text-decoration: underline;
 }
 
@@ -122,18 +120,18 @@
   display: inline-flex;
   align-self: flex-start;
   padding: 2px 8px;
-  background: #f1f5f9;
+  background: rgba(255, 255, 255, 0.08);
   border-radius: var(--radius-sm, 4px);
   font-size: var(--text-xs, 11px);
   font-weight: 500;
-  color: #64748b;
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 /* Highlighted badge for performance/tuning shops */
 .performanceBadge {
-  background: #f7fee7; /* very light lime/green */
-  color: #65a30d; /* darker lime */
-  border: 1px solid #d9f99d;
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
 /* ==========================================================================
@@ -145,7 +143,7 @@
   align-items: center;
   gap: var(--space-2, 8px);
   padding-top: var(--space-2, 8px);
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .actionBtn {
@@ -154,13 +152,13 @@
   gap: var(--space-1, 4px);
   padding: var(--space-2, 8px) var(--space-3, 12px);
   
-  background: #f1f5f9;
-  border: 1px solid transparent;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md, 8px);
   
   font-size: var(--text-sm, 13px);
   font-weight: 500;
-  color: #64748b;
+  color: var(--color-text-secondary, #94a3b8);
   text-decoration: none;
   
   cursor: pointer;
@@ -168,8 +166,8 @@
 }
 
 .actionBtn:hover {
-  background: #e2e8f0;
-  color: #0f172a;
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--color-text-primary, #ffffff);
 }
 
 .directionsBtn {

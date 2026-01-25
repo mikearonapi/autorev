@@ -147,6 +147,7 @@
   background: linear-gradient(135deg, var(--color-text-tertiary, #607d8b) 0%, #546E7A 100%);
   color: var(--brand-text-primary);
 }
+
 .type-other .typeIcon,
 .type-default .typeIcon { color: var(--color-text-tertiary, #607d8b); }
 
@@ -315,6 +316,7 @@
   justify-content: space-between;
   gap: 4px;
   min-width: 0;
+
   /* Add right padding to prevent overlap with absolute positioned save button */
   padding-right: 36px;
 }
@@ -468,6 +470,21 @@
 }
 
 /* ============================================
+   Attendees Badge
+   ============================================ */
+.attendeesBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-2xs);
+  color: var(--color-gray-500);
+}
+
+.attendeesBadge svg {
+  color: var(--color-gray-400);
+}
+
+/* ============================================
    Featured Wrapper
    ============================================ */
 .featuredWrapper .card {
@@ -539,6 +556,7 @@
   
   .footer {
     padding-top: 4px;
+    padding-right: 32px;
   }
   
   .cost {
@@ -552,10 +570,6 @@
   .saveButtonWrapper {
     bottom: 6px;
     right: 6px;
-  }
-  
-  .footer {
-    padding-right: 32px;
   }
 }
 

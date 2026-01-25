@@ -79,6 +79,62 @@
   border-radius: 50%;
 }
 
+/* Questionnaire Button - Opens full-page questionnaire */
+.questionnaireButton {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, rgba(212, 255, 0, 0.08) 0%, rgba(16, 185, 129, 0.08) 100%);
+  border: 1px solid rgba(212, 255, 0, 0.2);
+  border-radius: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.questionnaireButton:hover {
+  background: linear-gradient(135deg, rgba(212, 255, 0, 0.12) 0%, rgba(16, 185, 129, 0.12) 100%);
+  border-color: rgba(212, 255, 0, 0.3);
+  transform: translateY(-1px);
+}
+
+.questionnaireButton:active {
+  transform: translateY(0);
+}
+
+.questionnaireButtonIcon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.questionnaireButtonText {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.questionnaireButtonTitle {
+  font-size: var(--text-body, 15px);
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+}
+
+.questionnaireButtonHint {
+  font-size: var(--text-xs, 12px);
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.questionnaireButtonArrow {
+  font-size: 20px;
+  color: var(--color-accent-lime, #d4ff00);
+  flex-shrink: 0;
+}
+
 /* Rings Section */
 .ringsSection {
   display: flex;

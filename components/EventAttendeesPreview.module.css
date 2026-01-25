@@ -1,0 +1,396 @@
+/* ===========================================
+   EVENT ATTENDEES PREVIEW
+   Shows who's attending an event
+   =========================================== */
+
+/* Container */
+.container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Variants */
+.compact {
+  gap: 8px;
+}
+
+.expanded {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin-top: var(--space-lg, 24px);
+  padding: var(--space-md, 16px);
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.07));
+  border-radius: var(--radius-lg, 12px);
+}
+
+.inline {
+  display: inline-flex;
+}
+
+/* Empty State */
+.empty {
+  color: var(--brand-text-tertiary);
+  font-size: var(--font-size-sm);
+}
+
+.emptyText {
+  font-style: italic;
+}
+
+/* ===========================================
+   AVATAR STACK
+   =========================================== */
+
+.avatarsSection {
+  flex-shrink: 0;
+}
+
+.avatarStack {
+  display: flex;
+  align-items: center;
+}
+
+.stackedAvatar {
+  margin-left: -10px;
+  position: relative;
+}
+
+.stackedAvatar:first-child {
+  margin-left: 0;
+}
+
+/* Avatar */
+.avatarWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar {
+  border-radius: var(--radius-full);
+  border: 2px solid var(--brand-bg-primary);
+  object-fit: cover;
+}
+
+.defaultAvatar {
+  border-radius: var(--radius-full);
+  border: 2px solid var(--brand-bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: var(--font-ui);
+}
+
+/* Status badge on avatar */
+.statusBadge {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--brand-bg-primary);
+}
+
+.statusBadge.going {
+  background: var(--brand-success);
+  color: white;
+}
+
+.statusBadge.interested {
+  background: var(--brand-warning, #f59e0b);
+  color: white;
+}
+
+/* Overflow badge */
+.overflowBadge {
+  margin-left: -10px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--brand-bg-primary);
+  background: var(--brand-bg-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--brand-text-secondary);
+  font-family: var(--font-ui);
+}
+
+/* ===========================================
+   INFO SECTION
+   =========================================== */
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.counts {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: var(--font-size-sm);
+  color: var(--brand-text-secondary);
+}
+
+.countItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.countItem svg {
+  color: var(--brand-text-tertiary);
+}
+
+.countItem strong {
+  color: var(--brand-text-primary);
+  font-weight: 600;
+}
+
+/* Inline count (compact) */
+.countInline {
+  font-size: var(--font-size-xs);
+  color: var(--brand-text-tertiary);
+}
+
+/* Names (expanded) */
+.names {
+  font-size: var(--font-size-sm);
+  color: var(--brand-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.moreNames {
+  color: var(--brand-text-tertiary);
+}
+
+/* "You're going" indicator */
+.youIndicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--font-size-xs);
+  color: var(--brand-success);
+  font-weight: 500;
+}
+
+/* See All Link */
+.seeAllBtn {
+  margin-left: auto;
+  padding: 4px 8px;
+  background: transparent;
+  border: none;
+  font-size: var(--font-size-sm);
+  color: var(--sn-primary);
+  cursor: pointer;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+}
+
+.seeAllBtn:hover {
+  color: var(--sn-primary-dark);
+  text-decoration: underline;
+}
+
+/* ===========================================
+   LOADING STATE
+   =========================================== */
+
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.skeleton {
+  width: 80px;
+  height: 32px;
+  background: var(--brand-bg-secondary);
+  border-radius: var(--radius-full);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.skeletonText {
+  width: 100px;
+  height: 16px;
+  background: var(--brand-bg-secondary);
+  border-radius: var(--radius-sm);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ===========================================
+   FULL ATTENDEE LIST (Modal/Sheet)
+   =========================================== */
+
+.listContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  max-height: 70vh;
+}
+
+.listHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-md);
+  border-bottom: 1px solid var(--brand-border);
+}
+
+.listTitle {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--brand-text-primary);
+  margin: 0;
+}
+
+.listCount {
+  font-size: var(--font-size-sm);
+  color: var(--brand-text-tertiary);
+}
+
+/* Filter Tabs */
+.filterTabs {
+  display: flex;
+  gap: 8px;
+  padding: var(--space-sm) var(--space-md);
+  border-bottom: 1px solid var(--brand-border);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.filterTab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: var(--brand-bg-secondary);
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  color: var(--brand-text-secondary);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.filterTab:hover {
+  background: var(--brand-bg-tertiary);
+}
+
+.filterTabActive {
+  background: var(--sn-primary);
+  color: white;
+}
+
+.filterTabActive:hover {
+  background: var(--sn-primary-dark);
+}
+
+/* Attendee List */
+.attendeeList {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--space-sm) 0;
+}
+
+.attendeeRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: var(--space-sm) var(--space-md);
+  transition: background 0.15s ease;
+}
+
+.attendeeRow:hover {
+  background: var(--brand-bg-secondary);
+}
+
+.attendeeInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.attendeeName {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--brand-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.youBadge {
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  color: var(--sn-primary);
+  background: rgba(var(--sn-primary-rgb), 0.1);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.attendeeNotes {
+  font-size: var(--font-size-xs);
+  color: var(--brand-text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.noAttendees {
+  padding: var(--space-xl);
+  text-align: center;
+  color: var(--brand-text-tertiary);
+}
+
+.listLoading {
+  padding: var(--space-xl);
+  text-align: center;
+  color: var(--brand-text-tertiary);
+}
+
+/* ===========================================
+   MOBILE OPTIMIZATION
+   =========================================== */
+
+@media (max-width: 767px) {
+  .container:not(.compact) {
+    flex-wrap: wrap;
+  }
+  
+  .seeAllBtn {
+    width: 100%;
+    margin-left: 0;
+    margin-top: 8px;
+    justify-content: center;
+    padding: 8px;
+    background: var(--brand-bg-secondary);
+    border-radius: var(--radius-md);
+  }
+  
+  .filterTabs {
+    padding: var(--space-sm);
+  }
+}

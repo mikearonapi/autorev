@@ -1,0 +1,199 @@
+/**
+ * PersonaSummary Component Styles
+ */
+
+.card {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(139, 92, 246, 0.04));
+  border: 1px solid rgba(139, 92, 246, 0.25);
+  border-radius: 16px;
+  padding: 18px;
+  overflow: hidden;
+}
+
+.compact {
+  padding: 14px;
+  border-radius: 14px;
+}
+
+/* Empty state */
+.empty {
+  text-align: center;
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.emptyIcon {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.emptyTitle {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: var(--text-body);
+  font-weight: 500;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0 0 6px;
+}
+
+.emptyText {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary, #94a3b8);
+  margin: 0;
+}
+
+/* Header */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.headerIcon {
+  font-size: var(--text-lg);
+}
+
+.headerText {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.headerText strong {
+  color: var(--color-info, #a78bfa);
+  font-weight: 600;
+}
+
+/* Persona */
+.persona {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.personaIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.personaInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.personaName {
+  display: block;
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: var(--text-h4);
+  font-weight: 500;
+  color: var(--color-text-primary, #ffffff);
+  margin-bottom: 2px;
+}
+
+.personaDesc {
+  display: block;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+/* Traits */
+.traits {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.trait {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.traitLabel {
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-tertiary, #64748b);
+}
+
+.traitValue {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+}
+
+/* Interests */
+.interests {
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.interestsLabel {
+  display: block;
+  font-size: var(--text-2xs);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-tertiary, #64748b);
+  margin-bottom: 8px;
+}
+
+.interestTags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.interestTag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 100px;
+  font-size: var(--text-xs);
+  color: var(--color-text-primary, #ffffff);
+}
+
+/* Compact mode */
+.compact .header {
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+}
+
+.compact .persona {
+  margin-bottom: 12px;
+}
+
+.compact .personaIcon {
+  width: 40px;
+  height: 40px;
+  font-size: 1.25rem;
+}
+
+.compact .personaName {
+  font-size: var(--text-body);
+}
+
+.compact .personaDesc {
+  font-size: var(--text-xs);
+}
+
+.compact .traits {
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.compact .interestTag {
+  padding: 3px 8px;
+  font-size: var(--text-2xs);
+}

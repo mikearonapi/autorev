@@ -10,6 +10,7 @@
 
 import React, { useMemo } from 'react';
 import Link from 'next/link';
+import InsightFeedback from './ui/InsightFeedback';
 import styles from './NextUpgradeRecommendation.module.css';
 
 // Icons
@@ -301,6 +302,7 @@ export default function NextUpgradeRecommendation({
   currentHp = 300,
   carSlug,
   vehicleId,
+  onFeedback,
 }) {
   const recommendations = useMemo(() => {
     const installedKeys = installedUpgrades
@@ -351,7 +353,16 @@ export default function NextUpgradeRecommendation({
       <div className={styles.nextUpgrade}>
         <div className={styles.header}>
           <CompassIcon size={18} />
-          <span>Next Steps</span>
+          <span className={styles.headerTitle}>Next Steps</span>
+          {onFeedback && (
+            <InsightFeedback 
+              insightType="next-upgrade"
+              insightKey="next-upgrade-complete"
+              insightTitle="Next Steps (Complete)"
+              onFeedback={onFeedback}
+              variant="inline"
+            />
+          )}
         </div>
         <div className={styles.completeState}>
           <div className={styles.completeIcon}>🎯</div>
@@ -373,7 +384,16 @@ export default function NextUpgradeRecommendation({
     <div className={styles.nextUpgrade}>
       <div className={styles.header}>
         <CompassIcon size={18} />
-        <span>Recommended Next Upgrades</span>
+        <span className={styles.headerTitle}>Recommended Next Upgrades</span>
+        {onFeedback && (
+          <InsightFeedback 
+            insightType="next-upgrade"
+            insightKey={`next-upgrade-${primaryRec.id}`}
+            insightTitle={`Recommended: ${primaryRec.name}`}
+            onFeedback={onFeedback}
+            variant="inline"
+          />
+        )}
       </div>
 
       {/* Primary Recommendation */}

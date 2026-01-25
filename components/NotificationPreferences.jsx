@@ -1,8 +1,11 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import styles from './NotificationPreferences.module.css';
 import { CATEGORY_CONFIG } from '@/lib/notificationService';
+import { Icons } from '@/components/ui/Icons';
+import { UI_IMAGES } from '@/lib/images';
 
 /**
  * NotificationPreferences Component
@@ -193,17 +196,11 @@ export default function NotificationPreferences() {
       <section className={styles.section}>
         <h3 className={styles.sectionTitle}>Notification Types</h3>
         
-        <div className={styles.categoryGrid}>
-          <div className={styles.categoryHeader}>
-            <span>Type</span>
-            <span>In-App</span>
-            <span>Email</span>
-          </div>
-
+        <div className={styles.categoryList}>
           {Object.entries(CATEGORY_CONFIG).map(([key, config]) => (
             <div key={key} className={styles.categoryRow}>
               <div className={styles.categoryInfo}>
-                <span className={styles.categoryIcon}>{config.icon}</span>
+                <CategoryIcon iconName={config.icon} color={config.color} />
                 <div>
                   <span className={styles.categoryLabel}>{config.label}</span>
                   <span className={styles.categoryDescription}>
@@ -212,14 +209,16 @@ export default function NotificationPreferences() {
                 </div>
               </div>
               <Toggle
-                checked={preferences?.categories?.[key]?.in_app_enabled ?? true}
-                onChange={(v) => handleCategoryToggle(key, 'in_app', v)}
-                disabled={!preferences?.notifications_enabled || !preferences?.in_app_enabled || !config.canDisable}
-              />
-              <Toggle
-                checked={preferences?.categories?.[key]?.email_enabled ?? true}
-                onChange={(v) => handleCategoryToggle(key, 'email', v)}
-                disabled={!preferences?.notifications_enabled || !preferences?.email_enabled || !config.canDisable}
+                checked={
+                  (preferences?.categories?.[key]?.in_app_enabled ?? true) ||
+                  (preferences?.categories?.[key]?.email_enabled ?? true)
+                }
+                onChange={(v) => {
+                  // Toggle both in-app and email together
+                  handleCategoryToggle(key, 'in_app', v);
+                  handleCategoryToggle(key, 'email', v);
+                }}
+                disabled={!preferences?.notifications_enabled || !config.canDisable}
               />
             </div>
           ))}
@@ -340,5 +339,39 @@ function Toggle({ checked, onChange, disabled = false }) {
     >
       <span className={styles.toggleThumb} />
     </button>
+  );
+}
+
+// =============================================================================
+// CATEGORY ICON COMPONENT
+// =============================================================================
+
+function CategoryIcon({ iconName, color }) {
+  // Special case: AL uses avatar image instead of SVG icon
+  if (iconName === 'al-avatar') {
+    return (
+      <div className={styles.categoryIconWrapper}>
+        <Image
+          src={UI_IMAGES.alMascot}
+          alt="AL"
+          width={24}
+          height={24}
+          className={styles.alAvatarIcon}
+        />
+      </div>
+    );
+  }
+
+  // Render SVG icon from Icons library
+  const IconComponent = Icons[iconName];
+  if (!IconComponent) {
+    console.warn(`[NotificationPreferences] Unknown icon: ${iconName}`);
+    return null;
+  }
+
+  return (
+    <div className={styles.categoryIconWrapper} style={{ color }}>
+      <IconComponent size={20} />
+    </div>
   );
 }

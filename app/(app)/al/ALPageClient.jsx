@@ -18,6 +18,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import styles from './page.module.css';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import { useCarSelection } from '@/components/providers/CarSelectionProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import { UI_IMAGES } from '@/lib/images';
@@ -354,6 +355,7 @@ export default function ALPageClient() {
   const abortControllerRef = useRef(null);
   
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { showPointsEarned } = usePointsNotification();
   const { selectedCar } = useCarSelection();
   const authModal = useAuthModal();
   const { trackEvent } = useAnalytics();
@@ -886,6 +888,9 @@ export default function ALPageClient() {
                 }]);
                 setStreamingContent('');
                 setCurrentConversationId(newConversationId);
+                
+                // Show points notification for asking AL
+                showPointsEarned(10, 'Asked AL');
               }
               
               // Legacy fallback for non-typed events

@@ -157,7 +157,8 @@ export default function EventCard({
   isSaved, 
   onSaveToggle,
   showSaveButton = true,
-  compact = false
+  compact = false,
+  showAttendees = false, // Show attendee count badge
 }) {
   const {
     id,
@@ -176,7 +177,11 @@ export default function EventCard({
     is_recurring,
     upcoming_occurrences,
     series,
+    // RSVP counts (optional - populated by API if requested)
+    rsvp_counts,
   } = event;
+  
+  const hasAttendees = rsvp_counts && (rsvp_counts.going > 0 || rsvp_counts.interested > 0);
 
   const timeDisplay = formatEventTime(start_time);
   const location = venue_name || `${city}, ${state}`;
@@ -257,6 +262,15 @@ export default function EventCard({
               )}
               {brandAffinity && (
                 <span className={styles.brandBadge}>{brandAffinity.brand}</span>
+              )}
+              {/* Attendee count badge */}
+              {showAttendees && hasAttendees && (
+                <span className={styles.attendeesBadge}>
+                  <Icons.users size={12} />
+                  {rsvp_counts.going > 0 && <span>{rsvp_counts.going} going</span>}
+                  {rsvp_counts.going > 0 && rsvp_counts.interested > 0 && ' · '}
+                  {rsvp_counts.interested > 0 && <span>{rsvp_counts.interested} interested</span>}
+                </span>
               )}
             </div>
             <div className={styles.footerActions}>

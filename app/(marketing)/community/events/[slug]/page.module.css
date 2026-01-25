@@ -1,13 +1,25 @@
-/* Community Event Detail Page - On-Brand Styling */
+/* ==========================================================================
+   Community Event Detail Page - Dark Theme On-Brand Styling
+   
+   Brand Colors:
+   - Background: #0d1b2a (primary), #1b263b (elevated)
+   - Cards: rgba(255,255,255,0.04) with rgba(255,255,255,0.06) border
+   - Lime (#d4ff00): CTAs, primary actions
+   - Teal (#10b981): Positive/success states, featured badges
+   - Blue (#3b82f6): Info, baseline data
+   - Text: #ffffff (primary), #94a3b8 (secondary), #64748b (tertiary)
+   ========================================================================== */
 
 .page {
   min-height: 100vh;
-  /* Transparent to show body gradient */
   background: transparent;
   padding-bottom: var(--space-2xl);
 }
 
-/* Loading & Error States */
+/* ==========================================================================
+   Loading & Error States
+   ========================================================================== */
+
 .loadingState,
 .errorState {
   display: flex;
@@ -15,7 +27,6 @@
   align-items: center;
   justify-content: center;
   padding: var(--space-3xl) var(--space-md);
-  /* Account for fixed header + beta banner */
   padding-top: calc(var(--space-3xl) + var(--header-plus-banner-mobile));
   text-align: center;
 }
@@ -30,8 +41,8 @@
 .spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid var(--color-gray-200);
-  border-top-color: var(--sn-primary);
+  border: 3px solid var(--color-border-default, rgba(255, 255, 255, 0.07));
+  border-top-color: var(--color-accent-lime, #d4ff00);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin-bottom: var(--space-md);
@@ -42,19 +53,19 @@
 }
 
 .loadingState p {
-  color: var(--color-gray-500);
+  color: var(--color-text-secondary, #94a3b8);
   margin: 0;
 }
 
 .errorState h2 {
   font-family: var(--font-display);
   font-size: var(--font-size-xl);
-  color: var(--color-gray-900);
+  color: var(--color-text-primary, #ffffff);
   margin: 0 0 var(--space-sm);
 }
 
 .errorState p {
-  color: var(--color-gray-500);
+  color: var(--color-text-secondary, #94a3b8);
   margin: 0 0 var(--space-lg);
 }
 
@@ -63,50 +74,85 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-sm) var(--space-md);
-  background: var(--sn-primary);
+  background: var(--color-accent-lime, #d4ff00);
   border: none;
-  border-radius: var(--radius-md);
-  color: var(--color-white);
-  font-weight: 500;
+  border-radius: var(--radius-full);
+  color: var(--color-bg-base, #0d1b2a);
+  font-weight: 600;
   text-decoration: none;
-  transition: background var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
 .backBtn:hover {
-  background: var(--sn-primary-dark);
+  background: var(--color-accent-lime-dark, #bfe600);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(212, 255, 0, 0.3);
 }
 
-/* Back Link */
-.backLinkContainer {
-  padding: var(--space-md);
-  /* Account for fixed header + beta banner */
-  padding-top: calc(var(--space-md) + var(--header-plus-banner-mobile));
+/* ==========================================================================
+   Title Bar - Event name with back button at top
+   ========================================================================== */
+
+.titleBar {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  padding-top: calc(var(--space-sm) + var(--header-plus-banner-mobile));
   max-width: var(--container-max);
   margin: 0 auto;
 }
 
 @media (min-width: 768px) {
-  .backLinkContainer {
-    padding: var(--space-lg) var(--space-xl);
-    padding-top: calc(var(--space-lg) + var(--header-plus-banner));
+  .titleBar {
+    padding: var(--space-md) var(--space-xl);
+    padding-top: calc(var(--space-sm) + var(--header-plus-banner));
   }
 }
 
-.backLink {
-  display: inline-flex;
+.backButton {
+  display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  color: var(--color-gray-500);
-  font-size: var(--font-size-sm);
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.07));
+  border-radius: var(--radius-full);
+  color: var(--color-text-secondary, #94a3b8);
   text-decoration: none;
-  transition: color var(--transition-fast);
+  transition: all var(--transition-fast);
 }
 
-.backLink:hover {
-  color: var(--sn-primary);
+.backButton:hover {
+  background: var(--color-bg-card-hover, rgba(255, 255, 255, 0.08));
+  border-color: var(--color-accent-lime, #d4ff00);
+  color: var(--color-accent-lime, #d4ff00);
 }
 
-/* Hero Image */
+.titleBar .title {
+  flex: 1;
+  font-family: var(--font-display);
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0;
+  line-height: 1.2;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 768px) {
+  .titleBar .title {
+    font-size: var(--font-size-xl);
+  }
+}
+
+/* ==========================================================================
+   Hero Image
+   ========================================================================== */
+
 .heroImage {
   position: relative;
   width: 100%;
@@ -128,10 +174,18 @@
 .heroOverlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, var(--color-gray-50) 0%, transparent 50%);
+  background: linear-gradient(
+    to top,
+    var(--color-bg-base, #0d1b2a) 0%,
+    rgba(13, 27, 42, 0.8) 30%,
+    transparent 70%
+  );
 }
 
-/* Content */
+/* ==========================================================================
+   Content Layout
+   ========================================================================== */
+
 .content {
   display: grid;
   grid-template-columns: 1fr;
@@ -152,7 +206,10 @@
   min-width: 0;
 }
 
-/* Header */
+/* ==========================================================================
+   Header Section
+   ========================================================================== */
+
 .header {
   position: relative;
   z-index: 1;
@@ -170,22 +227,23 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: var(--space-xs) var(--space-sm);
-  background: var(--sn-primary);
+  padding: 6px 12px;
+  background: var(--color-accent-blue, #3b82f6);
   border-radius: var(--radius-full);
-  color: var(--color-white);
+  color: var(--color-text-primary, #ffffff);
   font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .trackBadge {
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: var(--space-xs) var(--space-sm);
-  background: var(--color-error-light);
+  padding: 6px 12px;
+  background: var(--color-error-muted, rgba(239, 68, 68, 0.15));
+  border: 1px solid var(--color-error-border, rgba(239, 68, 68, 0.3));
   border-radius: var(--radius-full);
-  color: var(--color-error);
+  color: var(--color-error, #ef4444);
   font-size: var(--font-size-sm);
   font-weight: 500;
 }
@@ -194,30 +252,21 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  padding: var(--space-xs) var(--space-sm);
-  background: rgba(16, 185, 129, 0.15);
+  padding: 6px 12px;
+  background: var(--color-accent-teal-muted, rgba(16, 185, 129, 0.15));
+  border: 1px solid var(--color-accent-teal-border, rgba(16, 185, 129, 0.3));
   border-radius: var(--radius-full);
-  color: var(--sn-gold-dark);
+  color: var(--color-accent-teal, #10b981);
   font-size: var(--font-size-sm);
-  font-weight: 500;
+  font-weight: 600;
 }
 
-.title {
-  font-family: var(--font-display);
-  font-size: var(--font-size-2xl);
-  font-weight: 700;
-  color: var(--color-gray-900);
-  margin: 0 0 var(--space-lg);
-  line-height: 1.2;
-}
+/* Title styles moved to .titleBar .title */
 
-@media (min-width: 768px) {
-  .title {
-    font-size: var(--font-size-3xl);
-  }
-}
+/* ==========================================================================
+   Header Actions (RSVP, Save, Calendar, Share)
+   ========================================================================== */
 
-/* Header Actions */
 .headerActions {
   display: flex;
   flex-wrap: wrap;
@@ -229,29 +278,34 @@
   align-items: center;
   gap: var(--space-xs);
   padding: var(--space-sm) var(--space-md);
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-300);
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.07));
   border-radius: var(--radius-md);
-  color: var(--color-gray-700);
+  color: var(--color-text-secondary, #94a3b8);
   font-size: var(--font-size-sm);
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition-fast);
+  min-height: 44px;
 }
 
 .shareBtn:hover {
-  background: var(--color-gray-50);
-  border-color: var(--sn-primary);
-  color: var(--sn-primary);
+  background: var(--color-bg-card-hover, rgba(255, 255, 255, 0.08));
+  border-color: var(--color-accent-lime, #d4ff00);
+  color: var(--color-accent-lime, #d4ff00);
 }
 
-/* Sections */
+/* ==========================================================================
+   Section Cards (Date/Time, Location, About, Cost, etc.)
+   ========================================================================== */
+
 .section {
   margin-bottom: var(--space-lg);
   padding: var(--space-lg);
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.07));
   border-radius: var(--radius-lg);
+  backdrop-filter: blur(10px);
 }
 
 .sectionTitle {
@@ -261,15 +315,20 @@
   font-family: var(--font-display);
   font-size: var(--font-size-lg);
   font-weight: 600;
-  color: var(--color-gray-900);
+  color: var(--color-text-primary, #ffffff);
   margin: 0 0 var(--space-md);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .sectionTitle svg {
-  color: var(--sn-primary);
+  color: var(--color-accent-blue, #3b82f6);
 }
 
-/* Date/Time */
+/* ==========================================================================
+   Date/Time Section
+   ========================================================================== */
+
 .dateTime {
   display: flex;
   flex-direction: column;
@@ -285,14 +344,15 @@
 
 .dateLabel {
   font-size: var(--font-size-xs);
-  color: var(--color-gray-500);
+  color: var(--color-text-tertiary, #64748b);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.1em;
+  font-weight: 500;
 }
 
 .dateValue {
   font-size: var(--font-size-base);
-  color: var(--color-gray-900);
+  color: var(--color-text-primary, #ffffff);
   font-weight: 500;
 }
 
@@ -300,20 +360,23 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  color: var(--color-gray-600);
+  color: var(--color-text-secondary, #94a3b8);
   font-size: var(--font-size-base);
 }
 
 .timeBlock svg {
-  color: var(--color-gray-400);
+  color: var(--color-text-tertiary, #64748b);
 }
 
 .timezone {
   font-size: var(--font-size-sm);
-  color: var(--color-gray-400);
+  color: var(--color-text-tertiary, #64748b);
 }
 
-/* Location */
+/* ==========================================================================
+   Location Section
+   ========================================================================== */
+
 .location {
   display: flex;
   flex-direction: column;
@@ -323,11 +386,11 @@
 .venueName {
   font-size: var(--font-size-base);
   font-weight: 600;
-  color: var(--color-gray-900);
+  color: var(--color-text-primary, #ffffff);
 }
 
 .address {
-  color: var(--color-gray-600);
+  color: var(--color-text-secondary, #94a3b8);
   line-height: 1.5;
 }
 
@@ -336,7 +399,7 @@
   align-items: center;
   gap: var(--space-xs);
   margin-top: var(--space-sm);
-  color: var(--sn-primary);
+  color: var(--color-accent-blue, #3b82f6);
   font-size: var(--font-size-sm);
   font-weight: 500;
   text-decoration: none;
@@ -344,36 +407,47 @@
 }
 
 .mapLink:hover {
-  color: var(--sn-primary-dark);
+  color: var(--color-accent-blue-light, #60a5fa);
   text-decoration: underline;
 }
 
-/* Description */
+/* ==========================================================================
+   Description Section
+   ========================================================================== */
+
 .description {
-  color: var(--color-gray-700);
+  color: var(--color-text-secondary, #94a3b8);
   line-height: 1.7;
   white-space: pre-line;
   margin: 0;
 }
 
-/* Cost */
+/* ==========================================================================
+   Cost Section
+   ========================================================================== */
+
 .costBadge {
   display: inline-flex;
   padding: var(--space-sm) var(--space-md);
-  background: var(--color-info-light);
+  background: var(--color-accent-blue-muted, rgba(59, 130, 246, 0.15));
+  border: 1px solid var(--color-accent-blue-border, rgba(59, 130, 246, 0.3));
   border-radius: var(--radius-md);
-  color: var(--color-info);
-  font-weight: 500;
+  color: var(--color-accent-blue, #3b82f6);
+  font-weight: 600;
 }
 
 .costBadge.costFree {
-  background: var(--color-success-light);
-  color: var(--color-success);
+  background: var(--color-accent-teal-muted, rgba(16, 185, 129, 0.15));
+  border-color: var(--color-accent-teal-border, rgba(16, 185, 129, 0.3));
+  color: var(--color-accent-teal, #10b981);
 }
 
-/* Affinities */
+/* ==========================================================================
+   Car/Brand Affinities
+   ========================================================================== */
+
 .affinityIntro {
-  color: var(--color-gray-600);
+  color: var(--color-text-secondary, #94a3b8);
   margin: 0 0 var(--space-md);
   line-height: 1.5;
 }
@@ -388,29 +462,29 @@
 .affinityBadge {
   display: inline-flex;
   align-items: center;
-  padding: var(--space-xs) var(--space-sm);
-  background: var(--color-gray-100);
-  border: 1px solid var(--color-gray-200);
+  padding: 6px 12px;
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.07));
   border-radius: var(--radius-full);
-  color: var(--color-gray-700);
+  color: var(--color-text-secondary, #94a3b8);
   font-size: var(--font-size-sm);
   text-decoration: none;
   transition: all var(--transition-fast);
 }
 
 .affinityBadge:hover {
-  background: var(--sn-primary);
-  border-color: var(--sn-primary);
-  color: var(--color-white);
+  background: var(--color-accent-lime, #d4ff00);
+  border-color: var(--color-accent-lime, #d4ff00);
+  color: var(--color-bg-base, #0d1b2a);
 }
 
 .affinityType {
   margin-left: var(--space-xs);
-  color: var(--color-gray-500);
+  color: var(--color-text-tertiary, #64748b);
 }
 
 .findMoreLink {
-  color: var(--sn-primary);
+  color: var(--color-accent-blue, #3b82f6);
   font-size: var(--font-size-sm);
   font-weight: 500;
   text-decoration: none;
@@ -418,26 +492,32 @@
 }
 
 .findMoreLink:hover {
-  color: var(--sn-primary-dark);
+  color: var(--color-accent-blue-light, #60a5fa);
   text-decoration: underline;
 }
 
-/* Source */
+/* ==========================================================================
+   Source Attribution
+   ========================================================================== */
+
 .source {
   font-size: var(--font-size-sm);
-  color: var(--color-gray-500);
+  color: var(--color-text-tertiary, #64748b);
 }
 
 .source a {
-  color: var(--sn-primary);
+  color: var(--color-accent-blue, #3b82f6);
   text-decoration: underline;
 }
 
 .source a:hover {
-  color: var(--sn-primary-dark);
+  color: var(--color-accent-blue-light, #60a5fa);
 }
 
-/* Sidebar */
+/* ==========================================================================
+   Sidebar
+   ========================================================================== */
+
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -447,15 +527,19 @@
 @media (min-width: 968px) {
   .sidebar {
     position: sticky;
-    /* Account for fixed header + beta banner */
     top: calc(var(--header-plus-banner) + var(--space-lg));
     align-self: start;
   }
 }
 
+/* ==========================================================================
+   CTA Card (External Link)
+   ========================================================================== */
+
 .ctaCard {
   padding: var(--space-lg);
-  background: linear-gradient(135deg, var(--color-accent-blue, #1a4d6e) 0%, #0d2d42 100%);
+  background: linear-gradient(135deg, var(--color-bg-elevated, #1b263b) 0%, var(--color-bg-base, #0d1b2a) 100%);
+  border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.07));
   border-radius: var(--radius-lg);
   text-align: center;
 }
@@ -463,8 +547,10 @@
 .ctaCard h3 {
   font-family: var(--font-display);
   font-size: var(--font-size-base);
-  color: var(--color-white);
+  color: var(--color-text-primary, #ffffff);
   margin: 0 0 var(--space-md);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .ctaBtn {
@@ -474,32 +560,39 @@
   gap: var(--space-xs);
   width: 100%;
   padding: var(--space-md) var(--space-lg);
-  background: var(--sn-gold);
+  background: var(--color-accent-lime, #d4ff00);
   border: none;
-  border-radius: var(--radius-md);
-  color: var(--color-gray-900);
+  border-radius: var(--radius-full);
+  color: var(--color-bg-base, #0d1b2a);
   font-size: var(--font-size-base);
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
   transition: all var(--transition-fast);
+  min-height: 48px;
 }
 
 .ctaBtn:hover {
-  background: var(--sn-gold-light);
+  background: var(--color-accent-lime-dark, #bfe600);
   transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(212, 255, 0, 0.3);
 }
 
 .ctaNote {
   margin: var(--space-sm) 0 0;
   font-size: var(--font-size-xs);
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--color-text-tertiary, #64748b);
 }
 
-/* Quick Info */
+/* ==========================================================================
+   Quick Info Card
+   ========================================================================== */
+
 .quickInfo {
   padding: var(--space-lg);
-  background: var(--color-white);
-  border: 1px solid var(--color-gray-200);
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.07));
   border-radius: var(--radius-lg);
 }
 
@@ -507,10 +600,12 @@
   font-family: var(--font-display);
   font-size: var(--font-size-sm);
   font-weight: 600;
-  color: var(--color-gray-900);
+  color: var(--color-text-primary, #ffffff);
   margin: 0 0 var(--space-md);
   padding-bottom: var(--space-sm);
-  border-bottom: 1px solid var(--color-gray-100);
+  border-bottom: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.04));
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .quickInfo dl {
@@ -522,22 +617,25 @@
 
 .quickInfo dt {
   font-size: var(--font-size-sm);
-  color: var(--color-gray-500);
+  color: var(--color-text-tertiary, #64748b);
 }
 
 .quickInfo dd {
   font-size: var(--font-size-sm);
-  color: var(--color-gray-900);
+  color: var(--color-text-primary, #ffffff);
   margin: 0;
   text-align: right;
 }
 
-/* Related Events */
+/* ==========================================================================
+   Related Events Section
+   ========================================================================== */
+
 .relatedSection {
   padding: var(--space-2xl) var(--space-md);
   margin-top: var(--space-xl);
-  background: var(--color-white);
-  border-top: 1px solid var(--color-gray-200);
+  background: var(--color-bg-elevated, #1b263b);
+  border-top: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.07));
 }
 
 @media (min-width: 768px) {
@@ -555,8 +653,10 @@
   font-family: var(--font-display);
   font-size: var(--font-size-xl);
   font-weight: 600;
-  color: var(--color-gray-900);
+  color: var(--color-text-primary, #ffffff);
   margin: 0 0 var(--space-lg);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .relatedGrid {
@@ -575,4 +675,37 @@
   .relatedGrid {
     grid-template-columns: repeat(4, 1fr);
   }
+}
+
+/* ==========================================================================
+   Attendees Section - Rendered directly by EventAttendeesPreview component
+   ========================================================================== */
+
+/* ==========================================================================
+   RSVP Card (Sidebar)
+   ========================================================================== */
+
+.rsvpCard {
+  padding: var(--space-lg);
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 2px solid var(--color-accent-teal, #10b981);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+
+.rsvpCard h3 {
+  font-family: var(--font-display);
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0 0 var(--space-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.rsvpCardDesc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary, #94a3b8);
+  margin: 0 0 var(--space-md);
+  line-height: 1.5;
 }

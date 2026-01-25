@@ -1959,7 +1959,16 @@ const { data: estimate } = useLapTimeEstimate({
 | `user_vehicles` | Owned vehicles | `user_id`, `matched_car_id`, `vin` |
 | `user_favorites` | Favorited cars | `user_id`, `car_id` |
 | `user_projects` | Build configs | `user_id`, `car_id`, `selected_upgrades` |
-| `user_preferences` | User settings | `user_id`, `preferences` |
+| `user_preferences` | User settings (legacy) | `user_id`, `preferences` |
+| `user_questionnaire_responses` | Enthusiast Profile answers | `user_id`, `question_id`, `answer` |
+| `user_profile_summary` | Derived user persona | `user_id`, `driving_persona`, `knowledge_level` |
+
+**Enthusiast Profile (Questionnaire System):**
+The questionnaire system (`data/questionnaireLibrary.js`) provides 60+ questions across 8 categories for deep user personalization. Responses are stored in `user_questionnaire_responses` and used by AL to tailor recommendations. Key components:
+- `QuestionnaireHub` - Main UI in Settings
+- `useQuestionnaire` hook - React Query data fetching
+- `get_questionnaire_for_al()` RPC - Optimized AL context fetch
+- `buildPersonalizationSection()` in alConfig.js - System prompt generation
 
 **user_profiles Subscription Columns:**
 | Column | Type | Purpose |
