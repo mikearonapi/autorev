@@ -281,42 +281,42 @@
    ============================================================================= */
 
 .titlePicker {
-  composes: callsignpicker;
+  composes: callsignPicker;
 }
 
 .titlePickerHeader {
-  composes: pickerheader;
+  composes: pickerHeader;
 }
 
 /* Note: Can't use composes on descendant selectors - create dedicated class */
 .titlePickerTitle {
-  composes: pickertitle;
+  composes: pickerTitle;
 }
 
 .titleList {
-  composes: callsignlist;
+  composes: callsignList;
 }
 
 .titleOption {
-  composes: callsignoption;
+  composes: callsignOption;
 }
 
 .titleOptionSelected {
-  composes: callsignoptionselected;
+  composes: callsignOptionSelected;
 }
 
 .titleName {
-  composes: callsignname;
+  composes: callsignName;
 }
 
 .titleDesc {
-  composes: callsigndesc;
+  composes: callsignDesc;
 }
 
 .titlePickerFooter {
-  composes: pickerfooter;
+  composes: pickerFooter;
 }
 
 .lockedCount {
-  composes: footerstats;
+  composes: footerStats;
 }
