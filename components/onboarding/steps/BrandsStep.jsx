@@ -6,44 +6,46 @@ import styles from './BrandsStep.module.css';
 
 /**
  * Car brands we showcase - ordered by recognition/prestige
- * Using free car logos from car-logos dataset (MIT licensed)
- * https://github.com/filippofilip95/car-logos-dataset
+ * Logos stored in Vercel Blob (TinyPNG compressed)
+ * Original source: filippofilip95/car-logos-dataset (MIT licensed)
  */
+const BLOB_BASE = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/brand-logos';
+
 const SHOWCASE_BRANDS = [
   // Row 1 - Premium European
-  { name: 'Porsche', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/porsche.png' },
-  { name: 'Ferrari', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/ferrari.png' },
-  { name: 'Lamborghini', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/lamborghini.png' },
-  { name: 'McLaren', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/mclaren.png' },
-  { name: 'Aston Martin', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/aston-martin.png' },
+  { name: 'Porsche', logo: `${BLOB_BASE}/porsche.png` },
+  { name: 'Ferrari', logo: `${BLOB_BASE}/ferrari.png` },
+  { name: 'Lamborghini', logo: `${BLOB_BASE}/lamborghini.png` },
+  { name: 'McLaren', logo: `${BLOB_BASE}/mclaren.png` },
+  { name: 'Aston Martin', logo: `${BLOB_BASE}/aston-martin.png` },
   
   // Row 2 - German Performance
-  { name: 'BMW', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/bmw.png' },
-  { name: 'Mercedes', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/mercedes-benz.png' },
-  { name: 'Audi', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/audi.png' },
-  { name: 'Volkswagen', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/volkswagen.png' },
-  { name: 'Alfa Romeo', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/alfa-romeo.png' },
+  { name: 'BMW', logo: `${BLOB_BASE}/bmw.png` },
+  { name: 'Mercedes', logo: `${BLOB_BASE}/mercedes-benz.png` },
+  { name: 'Audi', logo: `${BLOB_BASE}/audi.png` },
+  { name: 'Volkswagen', logo: `${BLOB_BASE}/volkswagen.png` },
+  { name: 'Alfa Romeo', logo: `${BLOB_BASE}/alfa-romeo.png` },
   
   // Row 3 - American Muscle
-  { name: 'Ford', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/ford.png' },
-  { name: 'Chevrolet', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/chevrolet.png' },
-  { name: 'Dodge', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/dodge.png' },
-  { name: 'Cadillac', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/cadillac.png' },
-  { name: 'Tesla', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/tesla.png' },
+  { name: 'Ford', logo: `${BLOB_BASE}/ford.png` },
+  { name: 'Chevrolet', logo: `${BLOB_BASE}/chevrolet.png` },
+  { name: 'Dodge', logo: `${BLOB_BASE}/dodge.png` },
+  { name: 'Cadillac', logo: `${BLOB_BASE}/cadillac.png` },
+  { name: 'Tesla', logo: `${BLOB_BASE}/tesla.png` },
   
   // Row 4 - Japanese Performance
-  { name: 'Toyota', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/toyota.png' },
-  { name: 'Nissan', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/nissan.png' },
-  { name: 'Honda', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/honda.png' },
-  { name: 'Mazda', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/mazda.png' },
-  { name: 'Subaru', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/subaru.png' },
+  { name: 'Toyota', logo: `${BLOB_BASE}/toyota.png` },
+  { name: 'Nissan', logo: `${BLOB_BASE}/nissan.png` },
+  { name: 'Honda', logo: `${BLOB_BASE}/honda.png` },
+  { name: 'Mazda', logo: `${BLOB_BASE}/mazda.png` },
+  { name: 'Subaru', logo: `${BLOB_BASE}/subaru.png` },
   
   // Row 5 - Luxury Japanese + Others
-  { name: 'Lexus', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/lexus.png' },
-  { name: 'Acura', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/acura.png' },
-  { name: 'Lotus', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/lotus.png' },
-  { name: 'Maserati', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/maserati.png' },
-  { name: 'Jaguar', logo: 'https://raw.githubusercontent.com/filippofilip95/car-logos-dataset/master/logos/optimized/jaguar.png' },
+  { name: 'Lexus', logo: `${BLOB_BASE}/lexus.png` },
+  { name: 'Acura', logo: `${BLOB_BASE}/acura.png` },
+  { name: 'Lotus', logo: `${BLOB_BASE}/lotus.png` },
+  { name: 'Maserati', logo: `${BLOB_BASE}/maserati.png` },
+  { name: 'Jaguar', logo: `${BLOB_BASE}/jaguar.png` },
 ];
 
 // Split brands into rows for the animated grid

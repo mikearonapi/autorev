@@ -135,40 +135,38 @@
   cursor: default;
 }
 
-/* Mobile adjustments */
-@media (min-width: 481px) {
+/* Small phones */
+@media (max-width: 380px) {
   .container {
-    padding: var(--space-xl);
+    padding: var(--space-lg);
+  }
+  
+  .brandTitle {
+    font-size: var(--text-h1);
+  }
+  
+  .ctaButton {
+    padding: 14px 24px;
+    font-size: var(--text-body);
+    min-height: 48px;
+  }
+}
+
+/* Tablet and desktop */
+@media (min-width: 768px) {
+  .container {
+    padding: var(--space-2xl);
   }
   
   .brandTitle {
     font-size: var(--text-hero);
-    margin-bottom: 12px;
-  }
-  
-  .welcomeText {
-    font-size: var(--text-h1);
-  }
-  
-  .subtitleText {
-    font-size: var(--text-body);
+    margin-bottom: 20px;
   }
   
   .ctaButton {
-    max-width: 100%;
-    padding: 16px 28px;
-    font-size: var(--text-body);
-    margin-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
-  }
-}
-
-/* Small phones */
-@media (min-width: 381px) {
-  .brandTitle {
-    font-size: var(--text-h1);
-  }
-  
-  .welcomeText {
-    font-size: var(--text-h2);
+    max-width: 320px;
+    padding: 18px 32px;
+    font-size: var(--text-h4);
+    margin-bottom: var(--space-xl);
   }
 }

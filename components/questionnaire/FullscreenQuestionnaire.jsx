@@ -27,7 +27,7 @@ import { usePointsNotification } from '@/components/providers/PointsNotification
 
 export default function FullscreenQuestionnaire({ userId, onComplete, onClose }) {
   const router = useRouter();
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [currentQuestionIndex, _setCurrentQuestionIndex] = useState(0);
   const [localSelection, setLocalSelection] = useState(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -37,7 +37,7 @@ export default function FullscreenQuestionnaire({ userId, onComplete, onClose })
   
   const {
     responses,
-    summary,
+    summary: _summary,
     isLoading,
     isError,
     submitResponse,
@@ -107,20 +107,28 @@ export default function FullscreenQuestionnaire({ userId, onComplete, onClose })
       setIsTransitioning(true);
       
       setTimeout(() => {
-        if (currentQuestionIndex < totalQuestions - 1) {
-          setCurrentQuestionIndex(prev => prev + 1);
-          setLocalSelection(null);
-        } else {
-          // Show success state
+        // NOTE: We do NOT increment currentQuestionIndex here.
+        // The optimistic update in useQuestionnaire immediately adds the response,
+        // which causes getAvailableQuestions() to return a smaller list
+        // (the answered question is filtered out). The "next" question naturally
+        // slides into the current index position. Incrementing would skip a question.
+        //
+        // We only show success when this was the last available question.
+        // Since totalQuestions is computed from availableQuestions.length BEFORE
+        // the optimistic update shrinks it, we check if we were at the last question.
+        if (currentQuestionIndex >= totalQuestions - 1) {
+          // This was the last question - show success
           setShowSuccess(true);
         }
+        // Clear selection for the next question (which is now at the same index)
+        setLocalSelection(null);
         setIsTransitioning(false);
       }, 300);
       
     } catch (err) {
       console.error('[FullscreenQuestionnaire] Submit error:', err);
     }
-  }, [currentQuestion, localSelection, submitResponse, currentQuestionIndex, totalQuestions, isSubmitting, isTransitioning]);
+  }, [currentQuestion, localSelection, submitResponse, showPointsEarned, currentQuestionIndex, totalQuestions, isSubmitting, isTransitioning]);
   
   
   // Handle close/finish

@@ -180,41 +180,16 @@
 }
 
 /* ==========================================================
-   MOBILE ADJUSTMENTS
+   SMALLER PHONES (under 380px)
    ========================================================== */
-@media (min-width: 481px) {
-  .container {
-    gap: var(--space-xs);
-  }
-  
-  .header {
-    padding: 16px 20px 8px;
-  }
-  
-  .phoneWrapper {
-    transform: scale(0.85);
-    margin-top: 0;
-  }
-  
-  .navigation {
-    gap: 4px;
-    margin-top: -20px;
-  }
-  
-  .swipeHint {
-    font-size: var(--text-2xs);
-  }
-}
-
-/* Small phones */
-@media (min-width: 381px) {
+@media (max-width: 380px) {
   .header {
     padding: 12px 16px 6px;
   }
   
   .phoneWrapper {
-    transform: scale(0.78);
-    margin-top: -4px;
+    transform: scale(0.75);
+    margin-top: -8px;
   }
   
   .dot {
@@ -227,18 +202,46 @@
   }
   
   .navigation {
-    margin-top: -28px;
+    margin-top: -32px;
+  }
+  
+  .swipeHint {
+    font-size: var(--text-2xs);
   }
 }
 
-/* Taller phones (iPhone Pro Max, etc.) */
-@media (min-width: 390px) and (max-width: 480px) and (min-height: 800px) {
+/* Taller phones (iPhone Pro Max, etc.) - more room for content */
+@media (min-height: 800px) and (max-width: 480px) {
   .phoneWrapper {
-    transform: scale(0.9);
-    margin-top: 4px;
+    transform: scale(0.95);
+    margin-top: 8px;
   }
   
   .navigation {
-    margin-top: -20px;
+    margin-top: -16px;
+  }
+}
+
+/* ==========================================================
+   TABLET AND DESKTOP
+   ========================================================== */
+@media (min-width: 768px) {
+  .container {
+    gap: var(--space-md);
+  }
+  
+  .header {
+    padding: 24px 24px 16px;
+  }
+  
+  .phoneWrapper {
+    transform: scale(1);
+    margin-top: 8px;
+  }
+  
+  .navigation {
+    gap: var(--space-sm);
+    margin-top: -8px;
+    padding-bottom: 16px;
   }
 }

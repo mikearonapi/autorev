@@ -4,43 +4,40 @@
 /* Overlay - Full screen coverage including safe areas */
 .overlay {
   position: fixed;
-  /* Extend beyond viewport to cover safe areas (notch, dynamic island) */
-  top: calc(-1 * env(safe-area-inset-top, 50px) - 50px);
+  top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  /* Use 100% instead of 100vw to avoid scrollbar width issues on Android */
   width: 100%;
-  /* Add extra height to compensate for negative top */
-  min-height: calc(100vh + env(safe-area-inset-top, 50px) + 50px);
-  min-height: calc(100dvh + env(safe-area-inset-top, 50px) + 50px);
+  height: 100vh;
+  height: 100dvh;
   /* High z-index - rendered at body level via portal */
   z-index: 9999;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  /* Add padding to offset the negative top */
-  padding-top: calc(env(safe-area-inset-top, 50px) + 50px);
   /* Navy background */
   background: var(--color-bg-base, #0d1b2a);
   box-sizing: border-box;
   /* Prevent horizontal overflow on Android */
-  overflow-x: hidden;
+  overflow: hidden;
 }
 
-/* Modal Container */
+/* Modal Container - Full screen on mobile, constrained on desktop */
 .modal {
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   width: 100%;
-  max-width: 440px;
-  max-height: 90vh;
-  max-height: 90dvh;
+  max-width: none;
+  max-height: none;
   overflow: hidden;
   background: var(--color-bg-base);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-xl);
+  border: none;
+  border-radius: 0;
   display: flex;
   flex-direction: column;
+  /* Safe area padding for iOS home indicator */
+  padding-bottom: env(safe-area-inset-bottom, 0);
 }
 
 /* Final Step Modal - Full navy, no chrome */
@@ -59,7 +56,8 @@
    UNIFIED PROGRESS BAR - Single continuous bar
    ========================================================== */
 .progressBarContainer {
-  padding: var(--space-lg) var(--space-xl) var(--space-md);
+  padding: var(--space-md) var(--space-lg) var(--space-sm);
+  padding-top: calc(var(--space-md) + env(safe-area-inset-top, 0px));
   flex-shrink: 0;
 }
 
@@ -104,7 +102,7 @@
 .stepContainer {
   flex: 1;
   overflow: hidden; /* Prevent scrolling - content must fit */
-  padding: var(--space-sm) var(--space-lg);
+  padding: var(--space-xs) var(--space-md);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -426,9 +424,9 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  padding: var(--space-md) var(--space-xl);
-  padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  gap: 6px;
+  padding: var(--space-sm) var(--space-md);
+  padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom, 0px));
   border-top: none;
   background: transparent;
   flex-shrink: 0;
@@ -438,27 +436,28 @@
   display: flex;
   gap: var(--space-sm);
   width: 100%;
+  max-width: 360px;
 }
 
 .backBtn {
-  flex: 1;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 12px 24px;
+  padding: 10px 20px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 100px;
   font-family: 'Oswald', var(--font-display), system-ui, sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   color: rgba(255, 255, 255, 0.7);
   cursor: pointer;
   transition: all 0.2s ease;
-  min-height: 44px;
+  min-height: 40px;
 }
 
 .backBtn:hover {
@@ -471,10 +470,10 @@
 .skipLink {
   background: none;
   border: none;
-  padding: 8px 12px;
+  padding: 6px 12px;
   color: rgba(255, 255, 255, 0.45);
   font-family: var(--font-body, 'Inter', system-ui);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
   transition: color 0.2s ease;
@@ -490,20 +489,20 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 12px 32px;
+  gap: 6px;
+  padding: 10px 24px;
   background: var(--color-accent-lime, #d4ff00);
   border: none;
   border-radius: 100px;
   font-family: 'Oswald', var(--font-display), system-ui, sans-serif;
-  font-size: 0.9rem;
+  font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
   color: var(--color-bg-base, #0d1b2a);
   cursor: pointer;
   transition: all 0.25s ease;
-  min-height: 44px;
+  min-height: 40px;
 }
 
 .nextBtn:hover:not(:disabled) {
@@ -607,112 +606,86 @@
 }
 
 /* ==========================================================
-   MOBILE: FULL SCREEN - Cross-device compatible
-   Tested for: iOS Safari, Chrome, Android Chrome, Samsung Browser
+   TABLET AND DESKTOP: Centered modal with constraints
    ========================================================== */
-@media (min-width: 481px) {
+@media (min-width: 768px) {
   .overlay {
-    /* Full screen on mobile - extend into safe areas */
-    position: fixed;
-    top: calc(-1 * env(safe-area-inset-top, 50px) - 50px);
-    left: 0;
-    right: 0;
-    bottom: 0;
-    /* Use 100% instead of 100vw to avoid scrollbar width issues on Android */
-    width: 100%;
-    min-height: calc(100vh + env(safe-area-inset-top, 50px) + 50px);
-    min-height: calc(100dvh + env(safe-area-inset-top, 50px) + 50px);
-    display: block;
-    background: var(--color-bg-base, #0d1b2a);
-    padding: 0;
-    margin: 0;
-    overflow: hidden;
-    overflow-x: hidden; /* Extra protection for Android */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--space-xl);
   }
   
   .modal {
-    /* Position modal in the visible viewport area */
-    position: absolute;
-    top: calc(env(safe-area-inset-top, 50px) + 50px);
-    left: 0;
-    right: 0;
-    bottom: 0;
+    position: relative;
+    top: auto;
+    left: auto;
+    right: auto;
+    bottom: auto;
     width: 100%;
-    max-width: none;
-    max-height: none;
-    border-radius: 0;
-    border: none;
-    display: flex;
-    flex-direction: column;
-    background: var(--color-bg-base, #0d1b2a);
-    /* Safe area padding for home indicator */
-    padding-bottom: env(safe-area-inset-bottom, 0);
+    max-width: 480px;
+    max-height: 85vh;
+    max-height: 85dvh;
+    min-height: 560px;
+    border-radius: var(--radius-xl);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 0;
   }
   
   .progressBarContainer {
-    padding: var(--space-md) var(--space-lg) var(--space-sm);
-    /* iOS safe area for notch/dynamic island */
-    padding-top: calc(var(--space-md) + env(safe-area-inset-top, 0px));
-    flex-shrink: 0;
+    padding: var(--space-lg) var(--space-xl) var(--space-md);
+    padding-top: var(--space-lg);
   }
 
   .stepContainer {
-    flex: 1;
-    padding: var(--space-xs) var(--space-md);
-    min-height: 0;
-    overflow: hidden;
-  }
-  
-  /* Final step - full screen navy */
-  .stepContainer.finalStepContainer {
-    padding: 0;
-    padding-top: env(safe-area-inset-top, 0px);
+    padding: var(--space-md) var(--space-xl);
   }
   
   .footer {
-    padding: var(--space-sm) var(--space-md);
-    /* iOS safe area for home indicator */
-    padding-bottom: calc(var(--space-sm) + env(safe-area-inset-bottom, 0px));
-    gap: var(--space-xs);
-    flex-shrink: 0;
+    padding: var(--space-md) var(--space-xl);
+    padding-bottom: var(--space-lg);
   }
   
-  .optionGrid {
-    grid-template-columns: 1fr;
+  .navButtons {
+    max-width: none;
   }
   
-  .optionCardWide {
-    grid-column: span 1;
+  .backBtn {
+    padding: 12px 24px;
+    font-size: 0.85rem;
+    min-height: 44px;
+  }
+  
+  .nextBtn {
+    padding: 12px 28px;
+    font-size: 0.85rem;
+    min-height: 44px;
+  }
+  
+  .skipLink {
+    font-size: 0.8rem;
+    padding: 8px 12px;
   }
   
   .welcomeIcon {
-    width: 72px;
-    height: 72px;
-    margin-bottom: var(--space-lg);
+    width: 96px;
+    height: 96px;
+    margin-bottom: var(--space-xl);
   }
   
   .welcomeTitle {
-    font-size: var(--font-size-2xl);
+    font-size: var(--font-size-4xl);
   }
   
   .welcomeTagline {
-    font-size: var(--font-size-sm);
+    font-size: var(--font-size-base);
   }
 }
 
 /* ==========================================================
-   TABLET AND UP
+   LARGER SCREENS: Show progress step labels
    ========================================================== */
 @media (min-width: 768px) {
-  .modal {
-    max-width: 480px;
-    min-height: 500px;
-  }
-  
-  .stepContainer {
-    padding: var(--space-xl) var(--space-2xl);
-  }
-  
   .progressSteps {
     display: flex;
     justify-content: space-between;
@@ -735,14 +708,5 @@
   
   .progressStep.completed {
     color: rgba(255, 255, 255, 0.5);
-  }
-  
-  .welcomeIcon {
-    width: 96px;
-    height: 96px;
-  }
-  
-  .welcomeTitle {
-    font-size: var(--font-size-4xl);
   }
 }
