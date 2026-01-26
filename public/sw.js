@@ -7,7 +7,7 @@
 // - Offline page fallback
 // - Separate caches by data type
 
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const STATIC_CACHE = `autorev-static-${CACHE_VERSION}`;
 const API_CACHE = `autorev-api-${CACHE_VERSION}`;
 const OFFLINE_URL = '/offline.html';
@@ -19,35 +19,35 @@ const PRECACHE_URLS = [
   '/apple-touch-icon.png',
   '/icon-192x192.png',
   '/icon-512x512.png',
-  '/manifest.json'
+  '/manifest.json',
 ];
 
 // API routes to cache with stale-while-revalidate
 // These are public, read-only car data endpoints
 const CACHEABLE_API_PATTERNS = [
-  /\/api\/cars$/,                        // Car list
-  /\/api\/cars\/[^/]+\/enriched$/,       // Car enriched data
-  /\/api\/cars\/[^/]+\/efficiency$/,     // Fuel efficiency
+  /\/api\/cars$/, // Car list
+  /\/api\/cars\/[^/]+\/enriched$/, // Car enriched data
+  /\/api\/cars\/[^/]+\/efficiency$/, // Fuel efficiency
   /\/api\/cars\/[^/]+\/safety-ratings$/, // Safety ratings
-  /\/api\/cars\/[^/]+\/recalls$/,        // Recalls
-  /\/api\/cars\/[^/]+\/maintenance$/,    // Maintenance
-  /\/api\/cars\/[^/]+\/issues$/,         // Known issues
-  /\/api\/cars\/[^/]+\/lap-times$/,      // Lap times
-  /\/api\/cars\/[^/]+\/dyno$/,           // Dyno runs
-  /\/api\/parts\/popular$/,              // Popular parts
-  /\/api\/events$/,                      // Events list
-  /\/api\/events\/featured$/,            // Featured events
+  /\/api\/cars\/[^/]+\/recalls$/, // Recalls
+  /\/api\/cars\/[^/]+\/maintenance$/, // Maintenance
+  /\/api\/cars\/[^/]+\/issues$/, // Known issues
+  /\/api\/cars\/[^/]+\/lap-times$/, // Lap times
+  /\/api\/cars\/[^/]+\/dyno$/, // Dyno runs
+  /\/api\/parts\/popular$/, // Popular parts
+  /\/api\/events$/, // Events list
+  /\/api\/events\/featured$/, // Featured events
 ];
 
-// Max age for cached API responses (5 minutes)
-const API_CACHE_MAX_AGE = 5 * 60 * 1000;
+// Max age for cached API responses (5 minutes) - reserved for future use
+const _API_CACHE_MAX_AGE = 5 * 60 * 1000;
 
 /**
  * Check if a URL matches any cacheable API pattern
  */
 function isCacheableApi(url) {
   const pathname = new URL(url).pathname;
-  return CACHEABLE_API_PATTERNS.some(pattern => pattern.test(pathname));
+  return CACHEABLE_API_PATTERNS.some((pattern) => pattern.test(pathname));
 }
 
 /**
@@ -57,29 +57,34 @@ function isCacheableApi(url) {
 async function staleWhileRevalidate(request) {
   const cache = await caches.open(API_CACHE);
   const cachedResponse = await cache.match(request);
-  
+
   // Start fetch in background regardless of cache
-  const fetchPromise = fetch(request).then(async (response) => {
-    if (response.ok) {
-      // Clone and cache the response
-      const responseToCache = response.clone();
-      await cache.put(request, responseToCache);
-    }
-    return response;
-  }).catch((error) => {
-    console.warn('[SW] Fetch failed:', error);
-    return cachedResponse || new Response(
-      JSON.stringify({ error: 'Offline', code: 'OFFLINE' }),
-      { status: 503, headers: { 'Content-Type': 'application/json' } }
-    );
-  });
+  const fetchPromise = fetch(request)
+    .then(async (response) => {
+      if (response.ok) {
+        // Clone and cache the response
+        const responseToCache = response.clone();
+        await cache.put(request, responseToCache);
+      }
+      return response;
+    })
+    .catch((error) => {
+      console.warn('[SW] Fetch failed:', error);
+      return (
+        cachedResponse ||
+        new Response(JSON.stringify({ error: 'Offline', code: 'OFFLINE' }), {
+          status: 503,
+          headers: { 'Content-Type': 'application/json' },
+        })
+      );
+    });
 
   // Return cached response immediately if available, otherwise wait for fetch
   if (cachedResponse) {
     // Return stale data immediately
     return cachedResponse;
   }
-  
+
   // No cache, wait for network
   return fetchPromise;
 }
@@ -127,9 +132,7 @@ self.addEventListener('activate', (event) => {
         cacheNames
           .filter((name) => {
             // Delete old version caches
-            return name.startsWith('autorev-') && 
-                   name !== STATIC_CACHE && 
-                   name !== API_CACHE;
+            return name.startsWith('autorev-') && name !== STATIC_CACHE && name !== API_CACHE;
           })
           .map((name) => caches.delete(name))
       );
@@ -151,20 +154,24 @@ self.addEventListener('fetch', (event) => {
   if (url.origin !== self.location.origin) return;
 
   // Skip Supabase and analytics
-  if (url.hostname.includes('supabase') || 
-      url.pathname.includes('analytics') ||
-      url.pathname.includes('_next/webpack')) {
+  if (
+    url.hostname.includes('supabase') ||
+    url.pathname.includes('analytics') ||
+    url.pathname.includes('_next/webpack')
+  ) {
     return;
   }
 
   // Handle API requests
   if (url.pathname.startsWith('/api/')) {
     // Skip user-specific APIs (require fresh data)
-    if (url.pathname.includes('/users/') || 
-        url.pathname.includes('/al/') ||
-        url.pathname.includes('/checkout') ||
-        url.pathname.includes('/billing') ||
-        url.pathname.includes('/admin/')) {
+    if (
+      url.pathname.includes('/users/') ||
+      url.pathname.includes('/al/') ||
+      url.pathname.includes('/checkout') ||
+      url.pathname.includes('/billing') ||
+      url.pathname.includes('/admin/')
+    ) {
       return; // Let browser handle normally
     }
 
@@ -185,11 +192,9 @@ self.addEventListener('fetch', (event) => {
 // Message handler for cache management
 self.addEventListener('message', (event) => {
   if (event.data && event.data.type === 'CLEAR_API_CACHE') {
-    caches.delete(API_CACHE).then(() => {
-      console.log('[SW] API cache cleared');
-    });
+    caches.delete(API_CACHE);
   }
-  
+
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
