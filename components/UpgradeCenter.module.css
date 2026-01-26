@@ -680,8 +680,7 @@
   padding: 12px 14px;
 }
 
-/* Section titles use TEAL per brand guidelines - LARGER than body content */
-/* Inherits font-family, text-transform from global .text-display */
+/* Section titles use WHITE text with TEAL icon - LARGER than body content */
 .buildRecommendationsHeader {
   display: flex;
   align-items: center;
@@ -689,12 +688,14 @@
   margin-bottom: 10px;
   font-size: 0.875rem;
   font-weight: 700;
+  text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--brand-teal);
+  color: var(--color-white, #ffffff);
 }
 
 .buildRecommendationsHeader > svg {
-  color: var(--brand-teal);
+  color: var(--color-accent-teal, #10b981);
+  flex-shrink: 0;
 }
 
 .buildRecommendationsHeader > span {
@@ -879,16 +880,21 @@
   padding: 12px 14px;
   background: rgba(255, 255, 255, 0.02);
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  color: var(--brand-teal);
+  color: var(--color-white, #ffffff);
 }
 
-/* Section titles use TEAL per brand guidelines - LARGER than body content */
-/* Inherits font-family, text-transform from global .text-display */
+.sidebarCardHeader > svg {
+  color: var(--color-accent-teal, #10b981);
+  flex-shrink: 0;
+}
+
+/* Section titles use WHITE text - LARGER than body content */
 .sidebarCardTitle {
   font-size: 0.875rem;
   font-weight: 700;
+  text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--brand-teal);
+  color: var(--color-white, #ffffff);
 }
 
 /* Ask AL button in section headers - LIME per brand guidelines */
@@ -948,9 +954,14 @@
   background: rgba(255, 255, 255, 0.02);
   border: none;
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-  color: var(--brand-teal);
+  color: var(--color-white, #ffffff);
   cursor: pointer;
   transition: background-color 0.2s ease;
+}
+
+.sidebarCardHeaderCollapsible > svg {
+  color: var(--color-accent-teal, #10b981);
+  flex-shrink: 0;
 }
 
 .sidebarCardHeaderCollapsible:hover {
@@ -6855,7 +6866,7 @@
 
 /* 3. Build Recommendations - Standard Light Tile */
 .buildRecommendationsSection {
-  padding: 0 16px 32px; /* Match workspace horizontal padding for aligned tiles */
+  padding: 0 16px 16px; /* Match workspace horizontal padding for aligned tiles */
   margin-top: 8px; /* Added some top spacing */
 }
 

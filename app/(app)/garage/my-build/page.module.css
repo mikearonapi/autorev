@@ -31,6 +31,12 @@
   margin-bottom: var(--space-2, 8px);
 }
 
+/* AL Search Input Wrapper */
+.alSearchWrapper {
+  padding: 0 var(--space-4, 16px);
+  margin-bottom: var(--space-3, 12px);
+}
+
 /* Upgrade Center Container */
 .upgradeContainer {
   flex: 1;

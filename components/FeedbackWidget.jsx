@@ -520,7 +520,7 @@ export default function FeedbackWidget({
 
       {/* Full-Screen Overlay */}
       {isOpen && (
-        <div className={styles.overlay} onClick={handleClose}>
+        <div className={styles.overlay} onClick={handleClose} data-overlay-modal>
           <div className={styles.widget} onClick={(e) => e.stopPropagation()}>
             {/* Close Button - Floating */}
             <button

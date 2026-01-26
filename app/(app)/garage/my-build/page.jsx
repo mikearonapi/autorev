@@ -40,7 +40,7 @@ import { useCarImages } from '@/hooks/useCarImages';
 import ShareBuildButton from '@/components/ShareBuildButton';
 
 // Tuning shop components
-import { useWheelTireSelection } from '@/components/tuning-shop';
+import { useWheelTireSelection, ALBuildSearchInput } from '@/components/tuning-shop';
 import { Icons } from '@/components/ui/Icons';
 
 // Auto-save Status Indicator - removed per user request
@@ -476,6 +476,17 @@ function MyBuildContent() {
         selectedCarSlug={selectedCar.slug}
         buildId={currentBuildId}
       />
+
+      {/* AL Build Search Input */}
+      <div className={styles.alSearchWrapper}>
+        <ALBuildSearchInput
+          carName={selectedCar.name}
+          carSlug={selectedCar.slug}
+          selectedUpgrades={buildSummary.selectedUpgrades || []}
+          totalHpGain={buildSummary.totalHpGain || 0}
+          goal={currentGoal}
+        />
+      </div>
 
       {/* Upgrade Center */}
       <div className={styles.upgradeContainer}>

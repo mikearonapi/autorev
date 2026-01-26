@@ -166,7 +166,7 @@ export default function FeedbackDimensionsModal({
   if (!isOpen) return null;
 
   return (
-    <div className={styles.overlay} onClick={!isSubmitting ? onClose : undefined}>
+    <div className={styles.overlay} onClick={!isSubmitting ? onClose : undefined} data-overlay-modal>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         {/* Close button */}
         {!isSubmitting && (

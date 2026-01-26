@@ -125,6 +125,7 @@ export default function SlideUpPanel({
       className={`${styles.overlay} ${isOpen ? styles.overlayOpen : ''}`}
       onClick={handleBackdropClick}
       aria-hidden={!isOpen}
+      {...(isOpen && { 'data-overlay-modal': true })}
     >
       <div
         ref={panelRef}

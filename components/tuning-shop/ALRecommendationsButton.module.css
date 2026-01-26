@@ -1,0 +1,145 @@
+/* AL Parts Search Input */
+
+.alSearchContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 6px 8px 12px;
+  margin-bottom: 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  transition: all 0.15s ease;
+}
+
+.alSearchContainer:focus-within {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Clickable avatar button - lime ring glow */
+.avatarBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: var(--brand-lime, #d4ff00);
+  border: 2px solid var(--brand-lime, #d4ff00);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+  /* Lime ring glow effect */
+  box-shadow: 
+    0 0 12px rgba(212, 255, 0, 0.4),
+    0 0 20px rgba(212, 255, 0, 0.2);
+}
+
+.avatarBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 
+    0 0 16px rgba(212, 255, 0, 0.5),
+    0 0 28px rgba(212, 255, 0, 0.3);
+}
+
+.avatarBtn:active {
+  transform: scale(0.98);
+}
+
+.alAvatar {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: none;
+  display: block;
+}
+
+/* Input wrapper - styled as visible input field */
+.alInputWrapper {
+  flex: 1;
+  min-width: 0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.alInputWrapper:focus-within {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.alInput {
+  width: 100%;
+  padding: 8px 10px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--color-text-primary, #ffffff);
+  font-size: 16px; /* Must be 16px+ to prevent iOS zoom */
+  font-family: inherit;
+  line-height: 1.3;
+  min-height: 18px;
+  /* Visual scaling to appear smaller while keeping 16px for iOS */
+  transform: scale(0.875);
+  transform-origin: left center;
+  width: 114%; /* Compensate for scale */
+}
+
+.alInput::placeholder {
+  color: var(--color-text-tertiary, #64748b);
+}
+
+.alInput:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+
+/* Send button - matches AL page */
+.alSendBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  background: var(--color-accent-lime, #d4ff00);
+  border: none;
+  border-radius: 12px;
+  color: var(--color-bg-base, #0d1b2a);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.alSendBtn:hover:not(:disabled) {
+  background: var(--color-accent-lime-hover, #bde600);
+}
+
+.alSendBtn:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+.alSendBtn:disabled {
+  opacity: 0.2;
+  cursor: not-allowed;
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--color-text-tertiary, #64748b);
+}
+
+.alSendBtn:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
+}
+
+/* Larger phones and up */
+@media (min-width: 481px) {
+  .alSearchContainer {
+    padding: 6px 6px 6px 12px;
+    gap: 10px;
+  }
+}

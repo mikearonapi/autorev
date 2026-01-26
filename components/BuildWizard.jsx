@@ -328,7 +328,7 @@ export default function BuildWizard({
   const stepProgress = ((currentStep + 1) / STEPS.length) * 100;
   
   const wizard = (
-    <div className={`${styles.overlay} ${isOpen ? styles.overlayOpen : ''}`} data-overlay-modal>
+    <div className={`${styles.overlay} ${isOpen ? styles.overlayOpen : ''}`} {...(isOpen && { 'data-overlay-modal': true })}>
       <div className={styles.wizard}>
         {/* Header */}
         <header className={styles.header}>

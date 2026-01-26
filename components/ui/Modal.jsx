@@ -135,6 +135,7 @@ export default function Modal({
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? 'modal-title' : undefined}
+      data-overlay-modal
     >
       <div 
         ref={modalRef}

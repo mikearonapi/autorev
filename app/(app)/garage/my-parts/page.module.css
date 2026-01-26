@@ -25,6 +25,14 @@
   gap: 16px;
 }
 
+/* ===========================================
+   AL RECOMMENDATIONS CONTAINER
+   =========================================== */
+
+.alRecommendationsContainer {
+  padding: 8px 16px 0;
+}
+
 /* Screen reader only text */
 .sr-only {
   position: absolute;

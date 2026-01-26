@@ -1,13 +1,13 @@
 -- ============================================================================
--- Migration: 20260125100000_conversation_preview_rpc.sql
--- Description: Add RPC for fetching conversations with preview in single query
---              Fixes N+1 pattern in lib/alConversationService.js (21 queries → 2)
+-- Migration: 20260127100000_fix_conversation_rpc_soft_delete.sql
+-- Description: Fix RPC to filter out soft-deleted conversations
+--              The original RPC was created before soft delete was implemented
 -- ============================================================================
 
--- Drop if exists for idempotency
+-- Drop and recreate to fix the soft delete filter
 DROP FUNCTION IF EXISTS get_user_conversations_with_preview(UUID, INT, INT, BOOLEAN, TEXT);
 
--- Create the RPC function
+-- Create the RPC function with soft delete filter
 CREATE OR REPLACE FUNCTION get_user_conversations_with_preview(
   p_user_id UUID,
   p_limit INT DEFAULT 20,
@@ -56,6 +56,7 @@ BEGIN
     ) as preview
   FROM al_conversations c
   WHERE c.user_id = p_user_id
+    AND c.deleted_at IS NULL  -- FIX: Filter out soft-deleted conversations
     AND (p_include_archived = TRUE OR c.is_archived = FALSE)
     AND (p_car_slug IS NULL OR c.initial_car_slug = p_car_slug)
   ORDER BY c.last_message_at DESC
@@ -64,11 +65,11 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql STABLE SECURITY DEFINER;
 
--- Grant access to authenticated users (they can only query their own via RLS pattern)
+-- Grant access to authenticated users
 GRANT EXECUTE ON FUNCTION get_user_conversations_with_preview TO authenticated;
 
 -- Add comment for documentation
 COMMENT ON FUNCTION get_user_conversations_with_preview IS 
   'Fetches user conversations with first assistant message preview in single query. 
-   Replaces N+1 pattern that made 21 queries per page load.
-   Database Audit C - January 2026';
+   Filters out soft-deleted conversations (deleted_at IS NULL).
+   Fixed in Migration 20260127100000.';

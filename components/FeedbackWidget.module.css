@@ -56,7 +56,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.85);
+  /* Charcoal overlay - matches safe area color (#1a1a1a) when blurred */
+  background: var(--color-bg-overlay, rgba(26, 26, 26, 0.85));
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;

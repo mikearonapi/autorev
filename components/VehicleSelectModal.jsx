@@ -35,6 +35,7 @@ const VehicleSelectModal = forwardRef(function VehicleSelectModal({ vehicles, se
         className={styles.backdrop}
         onClick={onClose}
         aria-hidden="true"
+        data-overlay-modal
       />
       
       {/* Modal - sibling, not child of backdrop */}

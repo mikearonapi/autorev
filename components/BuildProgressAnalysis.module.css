@@ -1,4 +1,4 @@
-/* Build Progress Analysis */
+/* Build Progress Analysis - Design System Aligned (Jan 2026) */
 .buildProgress {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -11,7 +11,7 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 14px;
-  font-size: 14px;
+  font-size: var(--text-body, 14px);
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
 }
@@ -60,19 +60,19 @@
   width: 28px;
   height: 28px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  background: var(--color-bg-input, rgba(255, 255, 255, 0.06));
+  border: 2px solid rgba(255, 255, 255, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: var(--text-xs);
+  font-size: var(--text-xs, 11px);
   font-weight: 700;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-tertiary, #64748b);
   transition: all 0.3s ease;
 }
 
 .stageNode.current .stageNumber {
-  background: rgba(16, 185, 129, 0.2);
+  background: var(--color-accent-teal-muted, rgba(16, 185, 129, 0.15));
   border-color: var(--color-accent-teal, #10b981);
   color: var(--color-accent-teal, #10b981);
   box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
@@ -85,16 +85,16 @@
 }
 
 .stageName {
-  font-size: var(--text-xs);
+  font-size: var(--text-xs, 11px);
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-tertiary, #64748b);
   text-align: center;
   white-space: nowrap;
 }
 
 .stageNode.current .stageName,
 .stageNode.complete .stageName {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 .stageConnector {
@@ -103,7 +103,7 @@
   left: calc(50% + 18px);
   width: calc(100% - 36px);
   height: 2px;
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .stageConnector.complete {
@@ -112,8 +112,8 @@
 
 /* Current Stage Card */
 .currentStageCard {
-  background: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  background: var(--color-accent-teal-muted, rgba(16, 185, 129, 0.15));
+  border: 1px solid var(--color-accent-teal-border, rgba(16, 185, 129, 0.3));
   border-radius: 10px;
   padding: 12px 14px;
   margin-bottom: 14px;
@@ -131,21 +131,21 @@
 }
 
 .currentStageTitle {
-  font-size: var(--text-body);
+  font-size: var(--text-body, 14px);
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
 }
 
 .currentStageProgress {
   margin-left: auto;
-  font-size: var(--text-xs);
+  font-size: var(--text-xs, 11px);
   font-weight: 600;
   color: var(--color-accent-teal, #10b981);
 }
 
 .stageNotes {
-  font-size: var(--text-xs);
-  color: rgba(255, 255, 255, 0.6);
+  font-size: var(--text-xs, 11px);
+  color: var(--color-text-secondary, #94a3b8);
   margin-bottom: 12px;
   line-height: 1.5;
 }
@@ -153,7 +153,7 @@
 /* Progress Bar */
 .progressBar {
   height: 5px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--color-bg-input, rgba(255, 255, 255, 0.06));
   border-radius: 100px;
   overflow: hidden;
   margin-bottom: 12px;
@@ -161,7 +161,7 @@
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-accent-teal, #10b981), #34d399);
+  background: var(--gradient-improved, linear-gradient(90deg, var(--color-accent-teal, #10b981), var(--color-accent-teal-light, #34d399)));
   border-radius: 100px;
   transition: width 0.5s ease;
 }
@@ -180,19 +180,19 @@
   gap: 6px;
   padding: 6px 10px;
   border-radius: 6px;
-  font-size: var(--text-xs);
+  font-size: var(--text-xs, 11px);
   font-weight: 500;
 }
 
 .componentItem.completed {
-  background: rgba(16, 185, 129, 0.15);
+  background: var(--color-accent-teal-muted, rgba(16, 185, 129, 0.15));
   color: var(--color-accent-teal, #10b981);
 }
 
 .componentItem.pending {
-  background: rgba(255, 255, 255, 0.05);
-  color: rgba(255, 255, 255, 0.6);
-  border: 1px dashed rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--color-text-secondary, #94a3b8);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
 }
 
 /* Completion Estimate */
@@ -201,7 +201,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 12px;
   padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .estimateItem {
@@ -211,16 +211,16 @@
 }
 
 .estimateLabel {
-  font-size: var(--text-2xs);
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.5);
+  font-size: var(--text-2xs, 10px);
+  font-weight: var(--text-label-weight, 600);
+  color: var(--color-text-tertiary, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .estimateValue {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: var(--text-body);
+  font-size: var(--text-body, 14px);
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
 }
@@ -229,40 +229,40 @@
 .completedCard {
   text-align: center;
   padding: 24px;
-  background: linear-gradient(135deg, rgba(212, 255, 0, 0.08), rgba(16, 185, 129, 0.08));
+  background: linear-gradient(135deg, var(--color-accent-lime-muted, rgba(212, 255, 0, 0.1)), var(--color-accent-teal-muted, rgba(16, 185, 129, 0.15)));
   border-radius: 12px;
-  border: 1px solid rgba(212, 255, 0, 0.15);
+  border: 1px solid var(--color-accent-lime-border, rgba(212, 255, 0, 0.3));
 }
 
 .completedIcon {
-  font-size: var(--text-h1);
+  font-size: var(--text-h1, 26px);
   margin-bottom: 12px;
 }
 
 .completedText {
-  font-size: var(--text-body);
+  font-size: var(--text-body, 14px);
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
   margin-bottom: 8px;
 }
 
 .completedSubtext {
-  font-size: var(--text-xs);
-  color: rgba(255, 255, 255, 0.6);
+  font-size: var(--text-xs, 11px);
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 /* Stages Overview */
 .stagesOverview {
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   padding-top: 16px;
 }
 
 .overviewHeader {
-  font-size: var(--text-xs);
+  font-size: var(--text-xs, 11px);
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-tertiary, #64748b);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--text-label-lg-tracking, 0.08em);
   margin-bottom: 12px;
 }
 
@@ -283,7 +283,7 @@
 }
 
 .overviewRow.current {
-  background: rgba(16, 185, 129, 0.05);
+  background: var(--color-accent-teal-muted, rgba(16, 185, 129, 0.08));
   margin: 0 -16px;
   padding: 10px 16px;
   border-radius: 8px;
@@ -297,14 +297,15 @@
 }
 
 .overviewStageName {
-  font-size: var(--text-sm);
+  font-size: var(--text-sm, 13px);
   font-weight: 500;
   color: var(--color-text-primary, #ffffff);
 }
 
 .overviewRow.complete .overviewStageName {
   text-decoration: line-through;
-  text-decoration-color: rgba(16, 185, 129, 0.5);
+  text-decoration-color: var(--color-accent-teal, #10b981);
+  text-decoration-thickness: 1px;
 }
 
 .overviewStage svg {
@@ -314,7 +315,7 @@
 .overviewStats {
   display: flex;
   gap: 16px;
-  font-size: var(--text-xs);
+  font-size: var(--text-xs, 11px);
 }
 
 .overviewHp {
@@ -324,7 +325,7 @@
 }
 
 .overviewCost {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-tertiary, #64748b);
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
@@ -332,11 +333,11 @@
 .noData {
   text-align: center;
   padding: 32px 20px;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: var(--text-sm);
+  color: var(--color-text-tertiary, #64748b);
+  font-size: var(--text-sm, 13px);
 }
 
-/* Mobile */
+/* Tablet and Desktop */
 @media (min-width: 641px) {
   .buildProgress {
     padding: 16px;
@@ -349,11 +350,11 @@
   .stageNumber {
     width: 24px;
     height: 24px;
-    font-size: var(--text-2xs);
+    font-size: var(--text-2xs, 10px);
   }
   
   .stageName {
-    font-size: 9px; /* Sub-minimum for mobile compact */
+    font-size: var(--text-2xs, 10px);
   }
   
   .stageConnector {
@@ -368,7 +369,7 @@
   
   .componentItem {
     padding: 5px 8px;
-    font-size: var(--text-xs);
+    font-size: var(--text-xs, 11px);
   }
   
   .completionEstimate {

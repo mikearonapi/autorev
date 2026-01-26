@@ -228,3 +228,103 @@
   background: var(--color-gray-400, #a3a3a3);
 }
 
+/* ==========================================================================
+   DARK VARIANT - AL-style input for dark backgrounds
+   ========================================================================== */
+
+.dark .inputWrapper {
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
+  border-radius: 18px;
+}
+
+.dark .inputWrapper:focus-within {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  box-shadow: none;
+}
+
+.dark .searchIcon {
+  color: var(--color-text-tertiary, #64748b);
+}
+
+.dark .input {
+  color: var(--color-text-primary, #ffffff);
+}
+
+.dark .input::placeholder {
+  color: var(--color-text-tertiary, #64748b);
+}
+
+.dark .input:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+
+.dark .clearBtn {
+  color: var(--color-text-tertiary, #64748b);
+}
+
+.dark .clearBtn:hover {
+  color: var(--color-text-primary, #ffffff);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark .loadingSpinner {
+  border-color: rgba(255, 255, 255, 0.15);
+  border-top-color: var(--color-text-secondary, #94a3b8);
+}
+
+.dark .suggestions {
+  background: var(--brand-bg-elevated, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.dark .suggestionItem {
+  color: var(--color-text-primary, #ffffff);
+}
+
+.dark .suggestionItem:hover,
+.dark .suggestionItem.highlighted {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.dark .cityName {
+  color: var(--color-text-primary, #ffffff);
+}
+
+.dark .stateText {
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.dark .countyText {
+  color: var(--color-text-tertiary, #64748b);
+}
+
+.dark .locationIcon {
+  color: var(--color-text-tertiary, #64748b);
+}
+
+.dark .suggestionZip {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.dark .attribution {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+.dark .osmAttribution {
+  color: var(--color-text-muted, #475569);
+}
+
+.dark .suggestions::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.dark .suggestions::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+

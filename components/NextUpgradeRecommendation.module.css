@@ -1,4 +1,4 @@
-/* Next Upgrade Recommendation */
+/* Next Upgrade Recommendation - Design System Aligned (Jan 2026) */
 .nextUpgrade {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -11,23 +11,24 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 14px;
-  font-size: 14px;
+  font-size: var(--text-body, 14px);
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
 }
 
 .header svg {
-  color: var(--color-accent-lime, #d4ff00);
+  /* Informational icon - use teal (insights), not lime (CTAs) */
+  color: var(--color-accent-teal, #10b981);
 }
 
 .headerTitle {
   flex: 1;
 }
 
-/* Primary Recommendation */
+/* Primary Recommendation - use teal (improvements), lime only for CTA button */
 .primaryRec {
-  background: linear-gradient(135deg, rgba(212, 255, 0, 0.08), rgba(16, 185, 129, 0.08));
-  border: 1px solid rgba(212, 255, 0, 0.15);
+  background: var(--color-accent-teal-muted, rgba(16, 185, 129, 0.15));
+  border: 1px solid var(--color-accent-teal-border, rgba(16, 185, 129, 0.3));
   border-radius: 10px;
   padding: 12px 14px;
   margin-bottom: 12px;
@@ -41,7 +42,8 @@
 }
 
 .primaryLabel {
-  background: var(--color-accent-lime, #d4ff00);
+  /* Highlight badge - use teal (positive), not lime (CTAs) */
+  background: var(--color-accent-teal, #10b981);
   color: var(--color-bg-base, #0a1628);
   padding: 4px 10px;
   border-radius: 100px;
@@ -55,8 +57,8 @@
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: var(--text-xs);
-  color: rgba(255, 255, 255, 0.5);
+  font-size: var(--text-xs, 11px);
+  color: var(--color-text-tertiary, #64748b);
   text-transform: capitalize;
 }
 
@@ -65,15 +67,15 @@
 }
 
 .primaryName {
-  font-size: var(--text-h3);
+  font-size: var(--text-h3, 18px);
   font-weight: 700;
   color: var(--color-text-primary, #ffffff);
   margin: 0 0 8px;
 }
 
 .primaryDescription {
-  font-size: var(--text-sm);
-  color: rgba(255, 255, 255, 0.7);
+  font-size: var(--text-sm, 13px);
+  color: var(--color-text-secondary, #94a3b8);
   line-height: 1.5;
   margin: 0 0 14px;
 }
@@ -89,13 +91,13 @@
   align-items: center;
   gap: 6px;
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: var(--text-sm);
+  font-size: var(--text-sm, 13px);
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 .stat svg {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-text-tertiary, #64748b);
 }
 
 .hpStat {
@@ -111,17 +113,18 @@
   align-items: flex-start;
   gap: 6px;
   padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.04);
   border-radius: 8px;
   margin: 0 0 14px;
-  font-size: var(--text-xs);
-  color: rgba(255, 255, 255, 0.6);
+  font-size: var(--text-xs, 11px);
+  color: var(--color-text-secondary, #94a3b8);
   line-height: 1.5;
 }
 
 .primaryNote svg {
   flex-shrink: 0;
-  color: var(--color-accent-lime, #d4ff00);
+  /* Tip/info icon - use amber (tips/warnings), not lime (CTAs) */
+  color: var(--color-accent-amber, #f59e0b);
   margin-top: 2px;
 }
 
@@ -152,11 +155,11 @@
 }
 
 .secondaryHeader {
-  font-size: 10px;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.5);
+  font-size: var(--text-label, 10px);
+  font-weight: var(--text-label-weight, 600);
+  color: var(--color-text-tertiary, #64748b);
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: var(--text-label-tracking, 0.12em);
   margin-bottom: 8px;
 }
 
@@ -193,8 +196,8 @@
 
 .secondaryCost {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: var(--text-xs);
-  color: rgba(255, 255, 255, 0.5);
+  font-size: var(--text-xs, 11px);
+  color: var(--color-text-tertiary, #64748b);
 }
 
 .secondaryMeta {
@@ -203,14 +206,14 @@
 
 .secondaryHp {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: var(--text-xs);
+  font-size: var(--text-xs, 11px);
   font-weight: 600;
   color: var(--color-accent-teal, #10b981);
 }
 
 .secondaryCategory {
-  font-size: var(--text-xs);
-  color: rgba(255, 255, 255, 0.4);
+  font-size: var(--text-xs, 11px);
+  color: var(--color-text-muted, #475569);
   text-transform: capitalize;
 }
 
@@ -218,26 +221,26 @@
 .completeState {
   text-align: center;
   padding: 24px;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(212, 255, 0, 0.08));
+  background: linear-gradient(135deg, var(--color-accent-teal-muted, rgba(16, 185, 129, 0.15)), var(--color-accent-lime-muted, rgba(212, 255, 0, 0.1)));
   border-radius: 12px;
-  border: 1px solid rgba(16, 185, 129, 0.15);
+  border: 1px solid var(--color-accent-teal-border, rgba(16, 185, 129, 0.3));
 }
 
 .completeIcon {
-  font-size: var(--text-h1);
+  font-size: var(--text-h1, 26px);
   margin-bottom: 12px;
 }
 
 .completeText {
-  font-size: var(--text-body);
+  font-size: var(--text-body, 14px);
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
   margin: 0 0 8px;
 }
 
 .completeSubtext {
-  font-size: var(--text-xs);
-  color: rgba(255, 255, 255, 0.6);
+  font-size: var(--text-xs, 11px);
+  color: var(--color-text-secondary, #94a3b8);
   margin: 0;
 }
 
@@ -246,8 +249,8 @@
   margin-top: 10px;
   padding-top: 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.4);
+  font-size: var(--text-2xs, 10px);
+  color: var(--color-text-muted, #475569);
   text-align: center;
 }
 

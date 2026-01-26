@@ -32,9 +32,10 @@
 .overlayOpen {
   opacity: 1;
   visibility: visible;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  /* Charcoal overlay - matches safe area color (#1a1a1a) when blurred */
+  background: var(--color-bg-overlay, rgba(26, 26, 26, 0.85));
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
   /* Re-enable interactions when open */
   pointer-events: auto;
 }

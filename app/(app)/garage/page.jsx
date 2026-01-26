@@ -3125,7 +3125,7 @@ function BuildHeroDisplay({
 // Performance Overlay Component - Shows Performance Hub preview within garage
 function PerformanceOverlay({ car, onClose }) {
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    <div className={styles.overlay} onClick={onClose} data-overlay-modal>
       <div className={styles.overlayContentWide} onClick={(e) => e.stopPropagation()}>
         <button className={styles.overlayClose} onClick={onClose}>
           <Icons.x size={24} />
@@ -3679,7 +3679,7 @@ function CarPickerModal({ isOpen, onClose, onSelectCar, existingBuilds, allCars 
   if (!isOpen) return null;
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    <div className={styles.overlay} onClick={onClose} data-overlay-modal>
       <div className={styles.carPickerModal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.carPickerHeader}>
           <h2>Start a New Project</h2>

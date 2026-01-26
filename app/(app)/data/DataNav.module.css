@@ -5,12 +5,12 @@
 
 .tabBar {
   display: flex;
-  gap: 6px;
+  gap: 4px;
   padding: 3px;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-radius: 18px;
+  border-radius: 20px;
 }
 
 .tab {
@@ -24,8 +24,8 @@
   cursor: pointer;
   transition: all 0.2s ease;
   text-decoration: none;
-  /* 44px min touch target - Cardinal Rule */
-  min-height: 44px;
+  /* Compact height */
+  min-height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,8 +36,8 @@
 }
 
 .tab.tabActive {
-  color: var(--color-text-primary);
-  background: var(--color-accent-teal);
+  color: var(--color-accent-teal);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* ==========================================================================
@@ -46,7 +46,8 @@
 
 @media (min-width: 768px) {
   .tab {
-    padding: 8px 28px;
+    padding: 6px 28px;
     font-size: 0.875rem;
+    min-height: 38px;
   }
 }

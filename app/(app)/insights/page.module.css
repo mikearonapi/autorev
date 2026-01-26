@@ -260,20 +260,29 @@
 
 .drivingCharacterCard {
   background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 14px;
-  padding: 16px;
+  padding: 14px 16px;
   box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
 }
 
-.drivingCharacterTitle {
-  font-family: var(--font-display, 'Oswald', sans-serif);
-  font-size: 0.8rem;
+/* Header - Matches Build Progression and other tile headers */
+.drivingCharacterHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+  font-size: var(--text-body, 14px);
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--color-accent-lime, #d4ff00);
-  margin: 0 0 16px;
+  color: var(--color-text-primary, #ffffff);
+}
+
+.drivingCharacterHeader svg {
+  color: var(--color-accent-teal, #10b981);
+}
+
+.drivingCharacterTitle {
+  flex: 1;
 }
 
 .drivingCharacterItems {
@@ -290,7 +299,7 @@
 
 .drivingCharacterLabel {
   font-family: var(--font-display, 'Oswald', sans-serif);
-  font-size: 0.7rem;
+  font-size: var(--text-xs, 11px);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -298,7 +307,7 @@
 }
 
 .drivingCharacterText {
-  font-size: 0.9rem;
+  font-size: var(--text-body, 14px);
   line-height: 1.5;
   color: var(--color-text-primary, #ffffff);
   margin: 0;
@@ -366,10 +375,10 @@
 }
 
 .feedTitle {
-  font-size: 0.75rem;
+  font-size: var(--text-xs, 11px);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
+  letter-spacing: var(--text-label-tracking, 0.12em);
   color: var(--color-text-tertiary, #64748b);
   margin: 0;
 }
@@ -381,9 +390,9 @@
   min-width: 20px;
   height: 20px;
   padding: 0 6px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--color-bg-input, rgba(255, 255, 255, 0.06));
   border-radius: 10px;
-  font-size: 0.7rem;
+  font-size: var(--text-2xs, 10px);
   font-weight: 600;
   color: var(--color-text-secondary, #94a3b8);
 }
@@ -433,7 +442,7 @@
 }
 
 .cardType {
-  font-size: 0.65rem;
+  font-size: var(--text-2xs, 10px);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -490,7 +499,7 @@
 }
 
 .cardTitle {
-  font-size: 0.95rem;
+  font-size: var(--text-body, 14px);
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
   margin: 0 0 4px;
@@ -498,14 +507,14 @@
 }
 
 .cardText {
-  font-size: 0.85rem;
+  font-size: var(--text-sm, 13px);
   color: var(--color-text-secondary, #94a3b8);
   margin: 0;
   line-height: 1.45;
 }
 
 .cardSubtext {
-  font-size: 0.75rem;
+  font-size: var(--text-xs, 11px);
   color: var(--color-text-tertiary, #64748b);
   margin-top: 8px;
   font-weight: 500;
@@ -520,7 +529,7 @@
   background: rgba(255, 255, 255, 0.04);
   border-radius: 8px;
   color: var(--color-text-primary, #ffffff);
-  font-size: 0.8rem;
+  font-size: var(--text-sm, 13px);
   font-weight: 600;
   text-decoration: none;
   transition: background 0.15s ease;
@@ -549,14 +558,14 @@
 }
 
 .emptyTitle {
-  font-size: 1.25rem;
+  font-size: var(--text-xl, 22px);
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
   margin: 0 0 10px;
 }
 
 .emptyText {
-  font-size: 0.95rem;
+  font-size: var(--text-body, 14px);
   color: var(--color-text-secondary, #94a3b8);
   margin: 0 0 28px;
   max-width: 300px;
@@ -592,11 +601,11 @@
   align-items: center;
   gap: 8px;
   padding: 14px 24px;
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  background: var(--color-accent-teal-muted, rgba(16, 185, 129, 0.15));
+  border: 1px solid var(--color-accent-teal-border, rgba(16, 185, 129, 0.3));
   border-radius: 12px;
   color: var(--color-accent-teal, #10b981);
-  font-size: 0.95rem;
+  font-size: var(--text-body, 14px);
   font-weight: 600;
   text-decoration: none;
   transition: all 0.2s ease;
@@ -650,7 +659,7 @@
   padding: 0 5px;
   background: var(--color-accent-teal, #10b981);
   border-radius: 9px;
-  font-size: 0.65rem;
+  font-size: var(--text-2xs, 10px);
   font-weight: 700;
   color: var(--color-bg-base, #000000);
   display: flex;
@@ -685,7 +694,7 @@
 }
 
 .filterPanelTitle {
-  font-size: 0.85rem;
+  font-size: var(--text-sm, 13px);
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
   margin: 0;
@@ -738,13 +747,13 @@
 }
 
 .filterOptionLabel {
-  font-size: 0.9rem;
+  font-size: var(--text-body, 14px);
   font-weight: 500;
   color: var(--color-text-primary, #ffffff);
 }
 
 .filterOptionDesc {
-  font-size: 0.75rem;
+  font-size: var(--text-xs, 11px);
   color: var(--color-text-tertiary, #64748b);
 }
 
@@ -798,11 +807,11 @@
 .filterResetBtn {
   width: 100%;
   padding: 10px 16px;
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--color-bg-input, rgba(255, 255, 255, 0.06));
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 10px;
   color: var(--color-text-secondary, #94a3b8);
-  font-size: 0.85rem;
+  font-size: var(--text-sm, 13px);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease;

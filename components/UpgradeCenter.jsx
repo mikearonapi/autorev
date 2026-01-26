@@ -308,19 +308,18 @@ function ConflictNotification({ message, onDismiss, replacedUpgrade }) {
 
 /**
  * Dependency Warnings Banner
- * Shows critical issues, warnings, and synergies for the current upgrade selection
+ * Shows critical issues and warnings for the current upgrade selection
  */
 function DependencyWarnings({ validation, requiredUpgrades, onAddUpgrade }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   
-  // Don't render if no issues
-  if (!validation || (validation.totalIssues === 0 && validation.synergies?.length === 0 && requiredUpgrades?.length === 0)) {
+  // Don't render if no issues (only show for actual problems, not synergies)
+  if (!validation || (validation.totalIssues === 0 && requiredUpgrades?.length === 0)) {
     return null;
   }
   
   const hasCritical = validation.critical?.length > 0 || requiredUpgrades?.length > 0;
   const hasWarnings = validation.warnings?.length > 0;
-  const hasSynergies = validation.synergies?.length > 0;
   
   return (
     <div className={`${styles.dependencyWarnings} ${hasCritical ? styles.dependencyWarningsCritical : ''}`}>
@@ -331,13 +330,11 @@ function DependencyWarnings({ validation, requiredUpgrades, onAddUpgrade }) {
         <div className={styles.dependencyWarningsTitle}>
           {hasCritical ? (
             <Icons.alertTriangle size={16} className={styles.criticalIcon} />
-          ) : hasWarnings ? (
-            <Icons.info size={16} className={styles.warningIcon} />
           ) : (
-            <Icons.check size={16} className={styles.synergyIcon} />
+            <Icons.info size={16} className={styles.warningIcon} />
           )}
           <span>
-            {hasCritical ? 'Build Issues Detected' : hasWarnings ? 'Build Recommendations' : 'Good Synergies'}
+            {hasCritical ? 'Build Issues Detected' : 'Build Recommendations'}
           </span>
           <span className={styles.dependencyWarningsCount}>
             {validation.totalIssues + (requiredUpgrades?.length || 0)} {validation.totalIssues + (requiredUpgrades?.length || 0) === 1 ? 'item' : 'items'}
@@ -401,22 +398,6 @@ function DependencyWarnings({ validation, requiredUpgrades, onAddUpgrade }) {
                   <Icons.info size={14} className={styles.warningIcon} />
                   <div className={styles.warningItemContent}>
                     <span className={styles.warningItemMessage}>{warning.message}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-          
-          {/* Synergies (Positive) */}
-          {hasSynergies && (
-            <div className={styles.warningSection}>
-              <div className={styles.warningSectionTitle}>Good Synergies</div>
-              {validation.synergies.map((synergy, idx) => (
-                <div key={idx} className={`${styles.warningItem} ${styles.warningItemSynergy}`}>
-                  <Icons.check size={14} className={styles.synergyIcon} />
-                  <div className={styles.warningItemContent}>
-                    <span className={styles.warningItemName}>{synergy.name}</span>
-                    <span className={styles.warningItemMessage}>{synergy.message}</span>
                   </div>
                 </div>
               ))}
@@ -1323,9 +1304,9 @@ export default function UpgradeCenter({
           ═══════════════════════════════════════════════════════════════════════ */}
       <div className={styles.buildRecommendationsSection}>
           <div className={styles.buildRecommendationsCard}>
-            <div className={`${styles.buildRecommendationsHeader} text-display`}>
+            <div className={styles.buildRecommendationsHeader}>
               <Icons.settings size={16} />
-              <span>BUILD RECOMMENDATIONS</span>
+              <span>Build Recommendations</span>
             </div>
             {/* Street, Track, Drag on first row */}
             <div className={styles.buildRecommendationsGrid}>
@@ -1383,7 +1364,7 @@ export default function UpgradeCenter({
           <div className={styles.sidebarCard}>
             <div className={styles.sidebarCardHeader}>
               <Icons.bolt size={16} />
-              <span className={`${styles.sidebarCardTitle} text-display`}>Upgrade Categories</span>
+              <span className={styles.sidebarCardTitle}>Upgrade Categories</span>
             </div>
             <div className={styles.sidebarCardContent}>
               {/* Goal indicator if goal is set */}

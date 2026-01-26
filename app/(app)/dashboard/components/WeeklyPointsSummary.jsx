@@ -7,11 +7,11 @@
  * - Weekly points as the hero number
  * - Streak badge
  * - Weekly/monthly/lifetime breakdown
- * - Info button to open points explainer
+ * - "earn points" link to open points explainer
  */
 
 import { useEffect, useState } from 'react';
-import { FlameIcon, InfoIcon } from './DashboardIcons';
+import { FlameIcon } from './DashboardIcons';
 import PointsExplainerModal from './PointsExplainerModal';
 import styles from './WeeklyPointsSummary.module.css';
 
@@ -59,15 +59,6 @@ export default function WeeklyPointsSummary({
     <div className={styles.container}>
       {/* Main content row */}
       <div className={styles.mainRow}>
-        {/* Info button */}
-        <button 
-          className={styles.infoButton}
-          onClick={() => setShowExplainer(true)}
-          aria-label="How to earn points"
-        >
-          <InfoIcon size={16} />
-        </button>
-
         {/* Center - Hero points */}
         <div className={styles.heroSection}>
           <span className={styles.heroValue}>{formatPoints(animatedWeeklyPoints)}</span>
@@ -75,14 +66,12 @@ export default function WeeklyPointsSummary({
         </div>
 
         {/* Streak badge */}
-        {currentStreak > 0 ? (
+        {currentStreak > 0 && (
           <div className={styles.streakBadge}>
             <FlameIcon size={14} />
             <span className={styles.streakCount}>{currentStreak}</span>
             <span className={styles.streakUnit}>wk</span>
           </div>
-        ) : (
-          <div className={styles.streakPlaceholder} />
         )}
       </div>
 
@@ -103,6 +92,15 @@ export default function WeeklyPointsSummary({
           <span className={styles.statLabel}>lifetime</span>
         </div>
       </div>
+
+      {/* Earn points link */}
+      <button 
+        className={styles.earnPointsLink}
+        onClick={() => setShowExplainer(true)}
+        aria-label="Learn how to earn points"
+      >
+        earn points
+      </button>
 
       {/* Points Explainer Modal */}
       <PointsExplainerModal 

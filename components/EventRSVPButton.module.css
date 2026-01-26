@@ -19,11 +19,22 @@
   justify-content: center;
 }
 
-/* Variant: Compact */
+/* Variant: Compact - smaller for event list cards */
 .compact .rsvpBtn {
-  min-height: 44px;
-  padding: 10px 14px;
-  font-size: var(--font-size-sm);
+  min-height: 36px;
+  padding: 6px 10px;
+  font-size: var(--font-size-xs, 11px);
+  gap: 4px;
+  border-radius: var(--radius-sm, 6px);
+}
+
+.compact .rsvpBtn svg {
+  width: 12px;
+  height: 12px;
+}
+
+.compact .label {
+  font-size: var(--font-size-xs, 11px);
 }
 
 /* ===========================================
@@ -234,9 +245,10 @@
     padding: 10px 16px;
   }
   
+  /* Compact stays small on desktop too - it's intentionally minimal */
   .compact .rsvpBtn {
-    min-height: 44px;
-    padding: 8px 12px;
+    min-height: 32px;
+    padding: 6px 10px;
   }
   
   .menu {

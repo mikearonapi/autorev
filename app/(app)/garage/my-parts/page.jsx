@@ -35,6 +35,7 @@ import { calculateTotalCost } from '@/lib/performance.js';
 import { Icons } from '@/components/ui/Icons';
 import EmptyState from '@/components/ui/EmptyState';
 import { Skeleton, ListSkeleton } from '@/components/ui/Skeleton';
+import ALRecommendationsButton from '@/components/tuning-shop/ALRecommendationsButton';
 
 // Empty State - no vehicle selected  
 function NoVehicleSelectedState() {
@@ -308,42 +309,17 @@ function MyPartsContent() {
         buildId={currentBuildId}
       />
       
-      {/* Cost Summary Header - shows when there are upgrades */}
+      {/* AL Parts Recommendations - shows when there are upgrades */}
       {effectiveModules.length > 0 && (
-        <div className={styles.costSummary}>
-          <div className={styles.costRow}>
-            <div className={styles.costItem}>
-              <span className={styles.costLabel}>Estimated Cost</span>
-              <span className={styles.costValue}>
-                ${totalCost.low.toLocaleString()} - ${totalCost.high.toLocaleString()}
-              </span>
-            </div>
-            {costSummary.specifiedCount > 0 && (
-              <div className={styles.costItem}>
-                <span className={styles.costLabel}>Your Selections</span>
-                <span className={styles.costValueActual}>
-                  ${costSummary.specifiedTotal.toLocaleString()}
-                </span>
-              </div>
-            )}
-          </div>
-          
-          {(costSummary.purchasedCount > 0 || costSummary.plannedCount > 0) && (
-            <div className={styles.costBreakdown}>
-              {costSummary.purchasedCount > 0 && (
-                <div className={styles.costBadge}>
-                  <Icons.checkCircle size={14} />
-                  <span>{costSummary.purchasedCount} purchased (${costSummary.purchasedTotal.toLocaleString()})</span>
-                </div>
-              )}
-              {costSummary.plannedCount > 0 && (
-                <div className={styles.costBadgePlanned}>
-                  <Icons.shoppingCart size={14} />
-                  <span>{costSummary.plannedCount} to purchase (${costSummary.plannedTotal.toLocaleString()})</span>
-                </div>
-              )}
-            </div>
-          )}
+        <div className={styles.alRecommendationsContainer}>
+          <ALRecommendationsButton 
+            carName={selectedCar.name}
+            carSlug={selectedCar.slug}
+            upgrades={profile.selectedUpgrades}
+            selectedParts={selectedParts}
+            totalHpGain={hpGain}
+            totalCostRange={{ low: totalCost.low, high: totalCost.high }}
+          />
         </div>
       )}
       
@@ -364,6 +340,7 @@ function MyPartsContent() {
             buildId={currentBuildId}
             totalHpGain={hpGain}
             totalCostRange={{ low: totalCost.low, high: totalCost.high }}
+            hideALRecommendations={true}
           />
         )}
       </div>
@@ -395,25 +372,20 @@ function MyPartsContent() {
 function PartsListSkeleton() {
   return (
     <div className={styles.skeletonContainer} aria-label="Loading parts list" role="status">
-      {/* Cost Summary Skeleton */}
-      <div className={styles.costSummary}>
-        <div className={styles.costRow}>
-          <div className={styles.costItem}>
-            <Skeleton height={12} width={80} variant="rounded" />
-            <Skeleton height={18} width={120} variant="rounded" />
-          </div>
-        </div>
+      {/* AL Recommendations Button Skeleton */}
+      <div className={styles.alRecommendationsContainer}>
+        <Skeleton height={64} width="100%" variant="rounded" />
       </div>
       
       {/* Parts List Skeleton */}
       <div className={styles.content}>
-        {/* AL Recommendations Button Skeleton */}
-        <Skeleton height={64} width="100%" variant="rounded" />
-        
-        {/* Header Skeleton */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-          <Skeleton height={20} width={20} variant="circular" />
-          <Skeleton height={18} width={140} variant="rounded" />
+        {/* Header Skeleton with inline cost */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Skeleton height={20} width={20} variant="circular" />
+            <Skeleton height={18} width={140} variant="rounded" />
+          </div>
+          <Skeleton height={16} width={100} variant="rounded" />
         </div>
         
         {/* Status Summary Skeleton */}

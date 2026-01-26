@@ -640,6 +640,15 @@ body:has([data-overlay-modal])::after {
   background: #1a1a1a !important;
 }
 
+/* CRITICAL: Hide underlying page content when overlay modal is open
+   This creates the fully immersive effect - the semi-transparent overlay
+   shows only the charcoal body background, not the page content underneath.
+   Portal content (rendered directly to body) remains visible.
+   This matches how Event Detail pages work naturally (no underlying content). */
+body:has([data-overlay-modal]) > :not([data-overlay-modal]) {
+  visibility: hidden;
+}
+
 /* AUTOMATIC: When an immersive element is present (galleries, video), use deep black */
 body:has([data-immersive-modal])::before {
   background: var(--color-bg-immersive, #050a12);
@@ -670,6 +679,11 @@ body.has-overlay-modal::before {
 
 body.has-overlay-modal::after {
   background: #1a1a1a !important;
+}
+
+/* Fallback: Hide underlying page content (matches :has() rule above) */
+body.has-overlay-modal > :not([data-overlay-modal]) {
+  visibility: hidden;
 }
 
 /* Fallback: Immersive modal class (added by SafeAreaFallback.jsx) */
@@ -1770,11 +1784,11 @@ section:not(:first-child) {
   -webkit-backdrop-filter: blur(32px) saturate(200%);
 }
 
-/* Premium overlay - navy tinted with blur */
+/* Premium overlay - charcoal with blur (matches safe area #1a1a1a) */
 .overlay-premium {
-  background: var(--color-bg-overlay, rgba(10, 21, 32, 0.85));
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background: var(--color-bg-overlay, rgba(26, 26, 26, 0.85));
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
 }
 
 /* Elevated surface with subtle inner glow */

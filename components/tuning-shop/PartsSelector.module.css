@@ -98,13 +98,27 @@
   height: 18px;
 }
 
+/* Section title - matches Specs/Build/Performance page headers */
 .title {
-  font-family: var(--font-display, 'Oswald', sans-serif);
-  font-size: 1rem;
+  font-size: 0.875rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--brand-text-primary, #fff);
+  letter-spacing: 0.08em;
+  color: var(--color-white, #ffffff);
+}
+
+/* Header Cost - inline with title */
+.headerCost {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.headerCostValue {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 /* Status Summary Bar - Styled as pills */
@@ -285,6 +299,13 @@
   border-color: rgba(212, 255, 0, 0.2);
 }
 
+/* Non-interactive status (installed) - smaller since no touch target needed */
+.statusBadge.statusComplete {
+  min-height: auto;
+  padding: 5px 10px;
+  cursor: default;
+}
+
 /* Bottom Row */
 .itemBottomRow {
   display: flex;
@@ -341,14 +362,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 44px;
-  min-height: 44px;
-  width: 44px;
-  height: 44px;
+  min-width: 32px;
+  min-height: 32px;
+  width: 32px;
+  height: 32px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  color: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.5);
   transition: all 0.2s ease;
   flex-shrink: 0;
   cursor: pointer;
@@ -363,39 +384,6 @@
 .addPartBtn:focus-visible {
   outline: 2px solid var(--brand-lime, #d4ff00);
   outline-offset: 2px;
-}
-
-/* Find Part Button - Premium Pill */
-.findPartBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 10px 14px;
-  min-height: 44px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  background: rgba(212, 255, 0, 0.1);
-  border: 1px solid rgba(212, 255, 0, 0.2);
-  border-radius: 10px;
-  color: var(--brand-lime, #d4ff00);
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.findPartBtn:hover {
-  background: rgba(212, 255, 0, 0.15);
-  border-color: rgba(212, 255, 0, 0.3);
-  transform: translateY(-1px);
-}
-
-.findPartBtn:focus-visible {
-  outline: 2px solid var(--brand-lime, #d4ff00);
-  outline-offset: 2px;
-}
-
-.findPartBtn .alAvatar {
-  width: 18px;
-  height: 18px;
 }
 
 /* Edit/View Buttons */
@@ -429,9 +417,134 @@
 
 /* Edit Form */
 .editForm {
-  padding: 14px;
+  padding: 10px 12px;
   background: rgba(0, 0, 0, 0.2);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Form Row Layout */
+.editRow {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@media (min-width: 480px) {
+  .editRow {
+    flex-direction: row;
+    gap: 8px;
+  }
+}
+
+/* Input Fields - Dark Theme */
+.input {
+  width: 100%;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: var(--brand-text-primary, #fff);
+  font-size: max(16px, 0.8125rem); /* Prevent iOS zoom */
+  font-family: inherit;
+  transition: all 0.2s ease;
+  min-height: 40px;
+}
+
+.input:hover {
+  border-color: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-accent-teal, #10b981);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.input::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 400;
+}
+
+/* Small Input Variant (for price, part number) */
+.inputSmall {
+  flex: 1;
+  min-width: 0;
+}
+
+@media (min-width: 480px) {
+  .inputSmall {
+    max-width: 140px;
+  }
+}
+
+/* Edit Form Actions */
+.editActions {
+  display: flex;
+  gap: 8px;
+  padding-top: 2px;
+}
+
+/* Cancel Button */
+.cancelBtn {
+  flex: 1;
+  padding: 10px 14px;
+  min-height: 40px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancelBtn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--brand-text-primary, #fff);
+}
+
+.cancelBtn:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
+}
+
+/* Save Button - Primary CTA */
+.saveBtn {
+  flex: 1.5;
+  padding: 10px 16px;
+  min-height: 40px;
+  background: var(--color-accent-teal, #10b981);
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.saveBtn:hover {
+  background: #059669;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.saveBtn:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
+}
+
+.saveBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* Total Row - Premium Card */

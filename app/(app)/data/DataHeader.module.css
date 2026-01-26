@@ -68,7 +68,7 @@
 
 .vehicleSelector {
   position: relative;
-  z-index: 9000;
+  z-index: 100;
 }
 
 .selectorButton {

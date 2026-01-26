@@ -919,7 +919,10 @@ export default function InsightsClient() {
        (fullCarData.engineCharacter || fullCarData.steeringFeel || fullCarData.soundSignature) && (
         <section className={styles.drivingCharacterSection}>
           <div className={styles.drivingCharacterCard}>
-            <h3 className={styles.drivingCharacterTitle}>Driving Character</h3>
+            <div className={styles.drivingCharacterHeader}>
+              <CarIcon size={18} />
+              <span className={styles.drivingCharacterTitle}>Driving Character</span>
+            </div>
             <div className={styles.drivingCharacterItems}>
               {fullCarData.engineCharacter && (
                 <div className={styles.drivingCharacterItem}>

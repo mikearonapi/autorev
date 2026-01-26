@@ -102,6 +102,15 @@ const HeartIcon = ({ size = 12 }) => (
   </svg>
 );
 
+const RepeatIcon = ({ size = 12 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <polyline points="17 1 21 5 17 9"/>
+    <path d="M3 11V9a4 4 0 0 1 4-4h14"/>
+    <polyline points="7 23 3 19 7 15"/>
+    <path d="M21 13v2a4 4 0 0 1-4 4H3"/>
+  </svg>
+);
+
 
 // Fallback event types - matches database seed data
 // Used if API fails to load types
@@ -144,6 +153,27 @@ function getDateParts(dateStr) {
   };
 }
 
+/**
+ * Detect if search query looks like a location (city name, ZIP code, or "City, ST")
+ * Used to trigger geocoded radius search vs text search on event name
+ */
+function looksLikeLocation(query) {
+  if (!query || query.length < 2) return false;
+  const trimmed = query.trim();
+  
+  // ZIP code pattern (5 digits, optionally with +4)
+  if (/^\d{5}(-\d{4})?$/.test(trimmed)) return true;
+  
+  // "City, ST" or "City, State" pattern
+  if (/^[a-zA-Z\s]+,\s*[A-Z]{2}$/i.test(trimmed)) return true;
+  
+  // Single word that could be a city (4+ chars, letters only)
+  // Avoid triggering on short words or words with numbers (likely event names)
+  if (/^[a-zA-Z]{4,}$/.test(trimmed)) return true;
+  
+  return false;
+}
+
 export default function EventsView() {
   const { user, profile, isAuthenticated } = useAuth();
   
@@ -157,8 +187,15 @@ export default function EventsView() {
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [selectedType, setSelectedType] = useState(null);
   const [nearMeEnabled, setNearMeEnabled] = useState(false);
+  const [searchRadius, setSearchRadius] = useState(50); // Default 50 miles
   // Initialize with fallback types so pills show immediately (API will update if available)
   const [eventTypes, setEventTypes] = useState(FALLBACK_EVENT_TYPES);
+  
+  // Track if current search is location-based (for showing radius control)
+  const isLocationSearch = useMemo(() => {
+    const queryTrimmed = debouncedQuery.trim();
+    return queryTrimmed && looksLikeLocation(queryTrimmed);
+  }, [debouncedQuery]);
   
   // Data state
   const [events, setEvents] = useState([]);
@@ -263,9 +300,23 @@ export default function EventsView() {
         const params = new URLSearchParams();
         params.set('limit', '30');
         
-        // Add search query
-        if (debouncedQuery.trim()) {
-          params.set('query', debouncedQuery.trim());
+        // Determine if search query looks like a location
+        const queryTrimmed = debouncedQuery.trim();
+        const isLocationSearch = queryTrimmed && looksLikeLocation(queryTrimmed);
+        
+        // Determine if we're doing a location-based search
+        const doingLocationSearch = (queryTrimmed && looksLikeLocation(queryTrimmed)) || (nearMeEnabled && userLocation);
+        
+        // Add search query - either as location or text search
+        if (queryTrimmed) {
+          if (looksLikeLocation(queryTrimmed)) {
+            // Treat as location search with radius
+            params.set('location', queryTrimmed);
+            params.set('radius', String(searchRadius));
+          } else {
+            // Regular text search on event name/venue
+            params.set('query', queryTrimmed);
+          }
         }
         
         // Add event type filter
@@ -274,13 +325,17 @@ export default function EventsView() {
         }
         
         // Add location filter if "near me" is enabled and user has location
+        // (this overrides location search if both are active)
         if (nearMeEnabled && userLocation) {
           params.set('location', userLocation);
-          params.set('radius', '100'); // 100 mile radius
+          params.set('radius', String(searchRadius));
         }
         
-        // Default sort by date
-        params.set('sort', 'date');
+        // Sort by distance when doing location search, otherwise by date
+        params.set('sort', doingLocationSearch ? 'distance' : 'date');
+        
+        // Group recurring events (e.g., weekly Cars & Coffee) into single entries
+        params.set('group_recurring', 'true');
         
         const res = await fetch(`/api/events?${params.toString()}`);
         
@@ -300,7 +355,7 @@ export default function EventsView() {
     }
     
     fetchEvents();
-  }, [debouncedQuery, selectedType, nearMeEnabled, userLocation]);
+  }, [debouncedQuery, selectedType, nearMeEnabled, userLocation, searchRadius]);
   
   // Clear search
   const clearSearch = useCallback(() => {
@@ -357,130 +412,175 @@ export default function EventsView() {
 
   return (
     <div className={styles.container}>
-      {/* Header with View Mode Dropdown */}
-      <div className={styles.header}>
-        <div className={styles.titleDropdown} ref={dropdownRef}>
-          <button 
-            className={styles.titleDropdownBtn}
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-            aria-expanded={isDropdownOpen}
-            aria-haspopup="listbox"
-          >
-            <h2 className={styles.title}>
-              {viewMode === VIEW_MODES.FIND ? 'Find Events' : 'My Events'}
-            </h2>
-            <ChevronDownIcon size={18} />
-          </button>
-          
-          {isDropdownOpen && (
-            <div className={styles.dropdownMenu} role="listbox">
-              <button
-                className={`${styles.dropdownItem} ${viewMode === VIEW_MODES.FIND ? styles.dropdownItemActive : ''}`}
-                onClick={() => handleViewModeChange(VIEW_MODES.FIND)}
-                role="option"
-                aria-selected={viewMode === VIEW_MODES.FIND}
-              >
-                <CalendarIcon size={16} />
-                <span>Find Events</span>
-                {viewMode === VIEW_MODES.FIND && <CheckCircleIcon size={14} />}
-              </button>
-              <button
-                className={`${styles.dropdownItem} ${viewMode === VIEW_MODES.MY_EVENTS ? styles.dropdownItemActive : ''}`}
-                onClick={() => handleViewModeChange(VIEW_MODES.MY_EVENTS)}
-                role="option"
-                aria-selected={viewMode === VIEW_MODES.MY_EVENTS}
-                disabled={!isAuthenticated}
-                title={!isAuthenticated ? 'Sign in to see your events' : undefined}
-              >
-                <HeartIcon size={16} />
-                <span>My Events</span>
-                {viewMode === VIEW_MODES.MY_EVENTS && <CheckCircleIcon size={14} />}
-              </button>
-            </div>
-          )}
-        </div>
-        
-{/* Events are shown inline - no separate full view page */}
-      </div>
-      
-      {/* Category Pills - horizontal scroll filter - ABOVE search bar */}
-      {viewMode === VIEW_MODES.FIND && (
-        <div className={styles.categoryScroller}>
-          <div className={styles.categoryPills}>
-            {(eventTypes.length > 0 ? eventTypes : FALLBACK_EVENT_TYPES).map((type) => (
-              <button
-                key={type.slug}
-                className={`${styles.categoryPill} ${selectedType === type.slug ? styles.categoryPillActive : ''}`}
-                onClick={() => toggleEventType(type.slug)}
-                style={selectedType === type.slug ? { 
-                  backgroundColor: EVENT_TYPE_COLORS[type.slug] || EVENT_TYPE_COLORS.default,
-                  borderColor: EVENT_TYPE_COLORS[type.slug] || EVENT_TYPE_COLORS.default,
-                } : {}}
-              >
-                {type.name}
-              </button>
-            ))}
+      {/* Compact Header Section */}
+      <div className={styles.headerSection}>
+        {/* Title Row */}
+        <div className={styles.header}>
+          <div className={styles.titleDropdown} ref={dropdownRef}>
+            <button 
+              className={styles.titleDropdownBtn}
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              aria-expanded={isDropdownOpen}
+              aria-haspopup="listbox"
+            >
+              <h2 className={styles.title}>
+                {viewMode === VIEW_MODES.FIND ? 'Find Events' : 'My Events'}
+              </h2>
+              <ChevronDownIcon size={16} />
+            </button>
+            
+            {isDropdownOpen && (
+              <div className={styles.dropdownMenu} role="listbox">
+                <button
+                  className={`${styles.dropdownItem} ${viewMode === VIEW_MODES.FIND ? styles.dropdownItemActive : ''}`}
+                  onClick={() => handleViewModeChange(VIEW_MODES.FIND)}
+                  role="option"
+                  aria-selected={viewMode === VIEW_MODES.FIND}
+                >
+                  <CalendarIcon size={16} />
+                  <span>Find Events</span>
+                  {viewMode === VIEW_MODES.FIND && <CheckCircleIcon size={14} />}
+                </button>
+                <button
+                  className={`${styles.dropdownItem} ${viewMode === VIEW_MODES.MY_EVENTS ? styles.dropdownItemActive : ''}`}
+                  onClick={() => handleViewModeChange(VIEW_MODES.MY_EVENTS)}
+                  role="option"
+                  aria-selected={viewMode === VIEW_MODES.MY_EVENTS}
+                  disabled={!isAuthenticated}
+                  title={!isAuthenticated ? 'Sign in to see your events' : undefined}
+                >
+                  <HeartIcon size={16} />
+                  <span>My Events</span>
+                  {viewMode === VIEW_MODES.MY_EVENTS && <CheckCircleIcon size={14} />}
+                </button>
+              </div>
+            )}
           </div>
         </div>
-      )}
-      
-      {/* Search Bar - only show in Find mode */}
-      {viewMode === VIEW_MODES.FIND && (
-        <div className={styles.searchContainer}>
-          <div className={styles.searchInputWrapper}>
-            <SearchIcon size={18} />
+        
+        {/* Search Bar - directly under title */}
+        {viewMode === VIEW_MODES.FIND && (
+          <div className={styles.searchBar}>
+            <SearchIcon size={16} />
             <input
               ref={searchInputRef}
               type="text"
-              placeholder="Search by name or city..."
+              placeholder="Search events or enter city/ZIP..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className={styles.searchInput}
             />
             {searchQuery && (
               <button onClick={clearSearch} className={styles.clearBtn} aria-label="Clear search">
-                <ClearIcon size={16} />
+                <ClearIcon size={14} />
               </button>
             )}
           </div>
-          
-          {/* Near Me Toggle - only show if user has location */}
-          {userLocation && (
-            <button 
-              className={`${styles.nearMeBtn} ${nearMeEnabled ? styles.nearMeBtnActive : ''}`}
-              onClick={() => setNearMeEnabled(!nearMeEnabled)}
-              title={`Events near ${userLocation}`}
-            >
-              <LocateIcon size={16} />
-              <span>Near Me</span>
-            </button>
-          )}
-        </div>
-      )}
-      
-      {/* Active Filters Summary */}
-      {(nearMeEnabled || selectedType || debouncedQuery) && (
-        <div className={styles.filterSummary}>
-          {isSearching && <span className={styles.searchingText}>Searching...</span>}
-          {!isSearching && (
+        )}
+        
+        {/* Compact Filter Row - Categories + Location + Results */}
+        {viewMode === VIEW_MODES.FIND && (
+          <div className={styles.filterRow}>
+            {/* Category Pills - inline scrollable */}
+            <div className={styles.categoryScroller}>
+              {(eventTypes.length > 0 ? eventTypes : FALLBACK_EVENT_TYPES).map((type) => (
+                <button
+                  key={type.slug}
+                  className={`${styles.categoryPill} ${selectedType === type.slug ? styles.categoryPillActive : ''}`}
+                  onClick={() => toggleEventType(type.slug)}
+                  style={selectedType === type.slug ? { 
+                    backgroundColor: EVENT_TYPE_COLORS[type.slug] || EVENT_TYPE_COLORS.default,
+                    borderColor: EVENT_TYPE_COLORS[type.slug] || EVENT_TYPE_COLORS.default,
+                  } : {}}
+                >
+                  {type.name}
+                </button>
+              ))}
+              
+              {/* Divider */}
+              <span className={styles.filterDivider} />
+              
+              {/* Near Me / Location Button */}
+              {userLocation && (
+                <button 
+                  className={`${styles.locationBtn} ${nearMeEnabled ? styles.locationBtnActive : ''}`}
+                  onClick={() => setNearMeEnabled(!nearMeEnabled)}
+                  title={`Events near ${userLocation}`}
+                >
+                  <LocateIcon size={12} />
+                  <span>Near Me</span>
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+        
+        {/* Active Filters Bar - compact, only when filters active */}
+        {viewMode === VIEW_MODES.FIND && (nearMeEnabled || selectedType || isLocationSearch || debouncedQuery) && (
+          <div className={styles.activeFiltersBar}>
+            {/* Results count */}
             <span className={styles.resultsCount}>
-              {displayEvents.length} event{displayEvents.length !== 1 ? 's' : ''} found
+              {isSearching ? 'Searching...' : `${displayEvents.length} found`}
             </span>
-          )}
-          {(nearMeEnabled || selectedType || debouncedQuery) && (
+            
+            {/* Active filter pills */}
+            <div className={styles.filterPills}>
+              {/* Location pill */}
+              {(isLocationSearch || nearMeEnabled) && (
+                <div className={styles.filterPill}>
+                  <MapPinIcon size={10} />
+                  <span>{nearMeEnabled ? 'Near me' : debouncedQuery.trim()}</span>
+                  <select
+                    className={styles.radiusSelect}
+                    value={searchRadius}
+                    onChange={(e) => setSearchRadius(Number(e.target.value))}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <option value={25}>25mi</option>
+                    <option value={50}>50mi</option>
+                    <option value={100}>100mi</option>
+                    <option value={200}>200mi</option>
+                  </select>
+                  <button 
+                    className={styles.pillRemove}
+                    onClick={() => nearMeEnabled ? setNearMeEnabled(false) : setSearchQuery('')}
+                    aria-label="Remove"
+                  >
+                    <ClearIcon size={8} />
+                  </button>
+                </div>
+              )}
+              
+              {/* Type pill */}
+              {selectedType && (
+                <div className={styles.filterPill}>
+                  <span>{eventTypes.find(t => t.slug === selectedType)?.name || selectedType}</span>
+                  <button 
+                    className={styles.pillRemove}
+                    onClick={() => setSelectedType(null)}
+                    aria-label="Remove"
+                  >
+                    <ClearIcon size={8} />
+                  </button>
+                </div>
+              )}
+            </div>
+            
+            {/* Clear all */}
             <button 
-              className={styles.clearFiltersBtn}
+              className={styles.clearAllBtn}
               onClick={() => {
                 setSearchQuery('');
                 setSelectedType(null);
                 setNearMeEnabled(false);
+                setSearchRadius(50);
               }}
             >
-              Clear filters
+              Clear
             </button>
-          )}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
       
       {/* My Events Mode Header */}
       {viewMode === VIEW_MODES.MY_EVENTS && (
@@ -659,6 +759,17 @@ export default function EventsView() {
                         {event.rsvp_counts.going > 0 && `${event.rsvp_counts.going} going`}
                         {event.rsvp_counts.going > 0 && event.rsvp_counts.interested > 0 && ' · '}
                         {event.rsvp_counts.interested > 0 && `${event.rsvp_counts.interested} interested`}
+                      </span>
+                    </div>
+                  )}
+                  
+                  {/* Recurring Event Indicator */}
+                  {event.is_recurring && event.upcoming_occurrences > 1 && (
+                    <div className={styles.recurringBadge}>
+                      <RepeatIcon size={12} />
+                      <span>
+                        {event.series?.recurrence_rule || 'Recurring'}
+                        {' · '}{event.upcoming_occurrences} upcoming
                       </span>
                     </div>
                   )}

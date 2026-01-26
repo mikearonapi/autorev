@@ -31,3 +31,7 @@ export { default as CollapsibleSection, CollapsibleAccordion, PerformanceSummary
 // Parts Components
 export { default as PartRecommendationCard, ALPartsResults } from './PartRecommendationCard';
 
+// AL Search Inputs
+export { default as ALRecommendationsButton } from './ALRecommendationsButton';
+export { default as ALBuildSearchInput } from './ALBuildSearchInput';
+

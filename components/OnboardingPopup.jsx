@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import styles from './OnboardingPopup.module.css';
 
 // Check icon for feature list
@@ -42,6 +43,12 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
   const [dontShowAgain, setDontShowAgain] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [slideDirection, setSlideDirection] = useState('next');
+  const [isMounted, setIsMounted] = useState(false);
+  
+  // Portal mounting - required for SSR compatibility
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Determine if we are in controlled mode
   const isControlled = controlledIsOpen !== undefined;
@@ -154,14 +161,17 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
     }
   };
 
-  if (!isOpen || !steps || steps.length === 0) return null;
+  // Don't render until mounted (SSR) or if not open/no steps
+  if (!isMounted || !isOpen || !steps || steps.length === 0) return null;
 
   const step = steps[currentStep];
   const isLastStep = currentStep === steps.length - 1;
   const isFirstStep = currentStep === 0;
 
-  return (
-    <div className={styles.overlay} onClick={handleBackdropClick}>
+  // Use portal to render at document body level (above all other content)
+  // This ensures the modal is not trapped inside any parent's stacking context
+  const popupContent = (
+    <div className={styles.overlay} onClick={handleBackdropClick} data-overlay-modal>
       <div className={styles.popup} role="dialog" aria-modal="true">
         {/* Close Button */}
         <button className={styles.closeBtn} onClick={() => handleClose(false)} aria-label="Close">
@@ -273,6 +283,8 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
       </div>
     </div>
   );
+
+  return createPortal(popupContent, document.body);
 }
 
 /**
@@ -291,6 +303,33 @@ export const OnboardingIcons = {
       <circle cx="7" cy="17" r="2"/>
       <path d="M9 17h6"/>
       <circle cx="17" cy="17" r="2"/>
+    </svg>
+  ),
+  clipboard: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+      <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+      <path d="M9 12h6"/>
+      <path d="M9 16h6"/>
+    </svg>
+  ),
+  package: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M16.5 9.4l-9-5.19"/>
+      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+      <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+      <line x1="12" y1="22.08" x2="12" y2="12"/>
+    </svg>
+  ),
+  tool: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+    </svg>
+  ),
+  camera: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+      <circle cx="12" cy="13" r="4"/>
     </svg>
   ),
   heart: (
@@ -332,6 +371,22 @@ export const OnboardingIcons = {
       <path d="M9 12l2 2 4-4"/>
     </svg>
   ),
+  timer: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="13" r="8"/>
+      <path d="M12 9v4l2 2"/>
+      <path d="M5 3L2 6"/>
+      <path d="M22 6l-3-3"/>
+      <path d="M12 5V2"/>
+      <path d="M10 2h4"/>
+    </svg>
+  ),
+  flag: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+      <line x1="4" y1="22" x2="4" y2="15"/>
+    </svg>
+  ),
   save: (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
@@ -343,150 +398,150 @@ export const OnboardingIcons = {
 
 /**
  * Garage Page Onboarding Steps
- * Focus: Research-to-action engine — from "I want to upgrade" to "here are the exact parts"
  * 
- * Key value props:
- * - Research already done for you (hours saved)
- * - Objective-driven (your goal: track/street/daily)
- * - Vehicle-specific (your car, not generic)
- * - Navigation simplified (from 47 options to "the right one")
- * - Bridge to action (not just info)
- * - Trust (no trolls, no BS)
+ * Maps directly to the 6 Garage tabs: Specs → Build → Perf → Parts → Install → Photos
+ * Each step introduces what the user can do in that section.
+ * 
+ * Flow:
+ * 1. Welcome - The value prop
+ * 2. Specs - Know your car inside out
+ * 3. Build - Configure your upgrades
+ * 4. Performance - See the impact
+ * 5. Parts - Find and buy the right parts
+ * 6. Install - DIY or find a shop
+ * 7. Photos - Document and share your build
  */
 export const garageOnboardingSteps = [
   {
     icon: OnboardingIcons.garage,
     title: 'Welcome to Your Garage',
-    description: 'Your Garage does all the research so you don\'t have to. Get curated upgrade paths with the exact parts you should buy—and why.',
+    description: 'Your command center for building the car you\'ve always wanted. Research, plan, and track every modification—all in one place.',
     features: [
-      'No forum trolls or marketing BS',
-      'Research already done for you',
-      'Trusted, vehicle-specific advice',
+      'Vehicle-specific recommendations',
+      'Track every mod from idea to install',
+      'Share your build with the community',
     ],
   },
   {
-    icon: OnboardingIcons.car,
-    title: 'Add Your Car',
-    description: 'Start by adding your vehicle. Everything that follows is tailored to YOUR specific car—not generic advice.',
+    icon: OnboardingIcons.clipboard,
+    title: 'Specs',
+    description: 'Everything you need to know about your car. Factory specs, performance ratings, tuning potential, and maintenance schedules.',
     features: [
-      'Vehicle-specific insights & data',
-      'VIN decoding & recall alerts',
-      'Your car\'s unique characteristics',
-    ],
-  },
-  {
-    icon: OnboardingIcons.sparkles,
-    title: 'Set Your Goals',
-    description: 'Tell us what you want: track weapon, daily driver, or weekend show car. The right upgrades depend on YOUR objective.',
-    features: [
-      'Track car ≠ Daily driver ≠ Show car',
-      'Upgrades adapt to your intent',
-      'No one-size-fits-all recommendations',
+      'Full factory specifications',
+      'Tuning profiles & power limits',
+      'Service intervals & known issues',
     ],
   },
   {
     icon: OnboardingIcons.wrench,
-    title: 'Get the Right Upgrades',
-    description: 'See exactly what upgrades make sense for your car AND your goals. Not "all possible upgrades"—the RIGHT upgrades.',
+    title: 'Build',
+    description: 'Configure your perfect build. Select from curated upgrade categories and see exactly what\'s possible for your car.',
     features: [
-      'Curated recommendations, not overwhelming lists',
-      'Why each upgrade matters for your build',
-      'Categories prioritized by your goal',
+      'Intake, exhaust, suspension & more',
+      'Goal-based recommendations',
+      'Auto-saves as you go',
     ],
   },
   {
     icon: OnboardingIcons.gauge,
-    title: 'See the Impact First',
-    description: 'Visualize what each upgrade actually does to your car BEFORE you buy. HP gains, 0-60 times, and experience scores.',
+    title: 'Performance',
+    description: 'See exactly how your upgrades affect your car. HP gains, 0-60 times, braking, grip—plus comfort and reliability tradeoffs.',
     features: [
       'Real-time performance estimates',
-      'See HP, braking, and grip improvements',
-      'Track comfort, reliability, and sound tradeoffs',
+      'Before vs. after comparisons',
+      'Experience scores for daily driveability',
     ],
   },
   {
-    icon: OnboardingIcons.shield,
-    title: 'Find the Exact Parts',
-    description: '"I need an intake" → but which one? Ask AL for personalized part recommendations with pricing and compatibility info.',
+    icon: OnboardingIcons.package,
+    title: 'Parts',
+    description: 'Turn your build plan into a shopping list. Get AL-powered part recommendations with pricing and compatibility info.',
     features: [
-      'One-click "Find with AL" for any upgrade',
-      'Track your shopping list: planned → purchased → installed',
-      'Copy your full parts list to share or shop',
+      'Ask AL: "Which intake should I buy?"',
+      'Track: planned → purchased',
+      'Copy your full parts list to shop',
+    ],
+  },
+  {
+    icon: OnboardingIcons.tool,
+    title: 'Install',
+    description: 'Choose your path: DIY with tool lists and install videos, or find a trusted service center near you.',
+    features: [
+      'DIY: tools needed & how-to videos',
+      'Shop finder: nearby service centers',
+      'Track: purchased → installed',
+    ],
+  },
+  {
+    icon: OnboardingIcons.camera,
+    title: 'Photos',
+    description: 'Document your build journey. Upload photos, track your progress, and share your finished build with the community.',
+    features: [
+      'Upload unlimited build photos',
+      'Create a visual timeline',
+      'Share with the AutoRev community',
     ],
   },
 ];
 
 /**
  * Data Page Onboarding Steps
- * Focus: Bridge the gap between "theoretical gains" and "real-world experience"
  * 
- * Key value props:
- * - The Visualization Problem: What does 20 HP actually mean? Is 0.2s worth $500?
- * - The Feedback Loop: Predictions → Actuals → Gap analysis → What to do next
- * - Personalized Progression: Log observations, get tailored recommendations
- * - Challenge/Gamification: "Did you hit that number?" — validation mechanism
- * - Credibility: Benchmarked against real tuning data, not made up
- * - Nothing like this exists: Personalized, data-driven guidance
+ * Two main areas with virtual + real-world logging for each:
+ * - DYNO: Virtual dyno estimates + Log your actual dyno results
+ * - TRACK: Virtual lap time estimator + Log your actual track times
+ * 
+ * The feedback loop: Predictions → Actuals → Compare → Improve
  */
 export const dataOnboardingSteps = [
   {
     icon: OnboardingIcons.chart,
     title: 'Welcome to My Data',
-    description: 'My Data turns your modifications into insights. See what your upgrades should deliver, log what you actually experience, and get personalized guidance on what to do next.',
+    description: 'Your performance data hub. Get estimates for what your mods should deliver, then log your actual results to compare predictions vs. reality.',
     features: [
-      'The feedback loop car enthusiasts never had',
-      'Predictions → Actuals → Better advice',
-      'Not generic—tailored to YOUR results',
+      'Virtual estimates for dyno & track',
+      'Log real results to compare',
+      'Track your progress over time',
     ],
   },
   {
     icon: OnboardingIcons.gauge,
-    title: 'See What Gains Really Mean',
-    description: '20 HP sounds cool—but will you actually notice it? We translate abstract numbers into real-world impact. "Is 0.2 seconds worth $500?"',
+    title: 'Virtual Dyno',
+    description: 'See estimated HP and torque curves based on your modifications. Stock vs. modified side-by-side, with interactive RPM exploration.',
     features: [
-      'Virtual dyno with HP/TQ curves',
-      'Real-world impact translation',
-      'Helps you decide: worth it or not?',
+      'HP/TQ curves for your exact build',
+      'Stock vs. modified comparison',
+      'Models turbo spool & power delivery',
     ],
   },
   {
     icon: OnboardingIcons.save,
-    title: 'Log Your Real Results',
-    description: 'You\'ve done the mods—here\'s what you should have. Now log what you actually got. Compare predictions vs. reality.',
+    title: 'Log Dyno Results',
+    description: 'Been to the dyno? Log your actual numbers to compare against our estimates. Track your power progression over time.',
     features: [
-      'Log dyno runs & track times',
-      'Compare against our estimates',
-      'Gap analysis: what\'s different & why',
+      'Enter WHP & torque readings',
+      'Compare actual vs. predicted',
+      'Build your dyno history',
     ],
   },
   {
-    icon: OnboardingIcons.sparkles,
-    title: 'Did You Hit That Number?',
-    description: 'We predict "You should hit X." You log your results. Did you hit it? Track your progress like a challenge—and celebrate your wins.',
+    icon: OnboardingIcons.timer,
+    title: 'Lap Time Estimator',
+    description: 'Estimate lap times at real tracks based on your build. Powered by 3,800+ real lap times across 340+ tracks.',
     features: [
-      'Validation: predictions vs. reality',
-      'Track progression over time',
-      'Realistic expectation-setting',
+      'Select from real tracks worldwide',
+      'Adjust for driver skill level',
+      'See how mods affect lap times',
     ],
   },
   {
-    icon: OnboardingIcons.wrench,
-    title: 'What Should You Do Next?',
-    description: '"I\'ve done these mods, here\'s what I\'m experiencing—what do I do next?" Your data drives personalized recommendations.',
+    icon: OnboardingIcons.flag,
+    title: 'Log Track Times',
+    description: 'Hit the track? Log your actual lap times to compare against estimates. Track your personal bests and improvement over time.',
     features: [
-      'Tailored to YOUR actual situation',
-      'Not generic forum advice',
-      'Data-driven guidance',
-    ],
-  },
-  {
-    icon: OnboardingIcons.shield,
-    title: 'Calibrated Against Real Data',
-    description: 'Our estimates aren\'t perfect—but they\'re not made up either. Benchmarked against real dyno data and track times from our database.',
-    features: [
-      'Validated against real tuning data',
-      'Continuously improved accuracy',
-      'Honest about limitations',
+      'Record lap times by track',
+      'Compare actual vs. estimated',
+      'Track PBs & improvement',
     ],
   },
 ];

@@ -470,7 +470,10 @@ function MySpecsContent() {
           {/* Performance - Semantic table for accessibility */}
           <div className={styles.specCard}>
             <div className={styles.cardHeader}>
-              <h3 className={styles.cardTitle} id="performance-specs">Performance</h3>
+              <h3 className={styles.cardTitle} id="performance-specs">
+                <Icons.zap size={16} />
+                Performance
+              </h3>
             </div>
             <SpecTable caption="Performance specifications" aria-labelledby="performance-specs">
               {hasBuildUpgrades ? (
@@ -496,7 +499,10 @@ function MySpecsContent() {
           {/* Engine & Drivetrain - Semantic table for accessibility */}
           <div className={styles.specCard}>
             <div className={styles.cardHeader}>
-              <h3 className={styles.cardTitle} id="engine-specs">Engine & Drivetrain</h3>
+              <h3 className={styles.cardTitle} id="engine-specs">
+                <Icons.engine size={16} />
+                Engine & Drivetrain
+              </h3>
             </div>
             <SpecTable caption="Engine and drivetrain specifications" aria-labelledby="engine-specs">
               <SpecRow label="Engine" value={selectedCar.engine} />
@@ -509,7 +515,10 @@ function MySpecsContent() {
           {/* Chassis & Body - Semantic table for accessibility */}
           <div className={styles.specCard}>
             <div className={styles.cardHeader}>
-              <h3 className={styles.cardTitle} id="chassis-specs">Chassis & Body</h3>
+              <h3 className={styles.cardTitle} id="chassis-specs">
+                <Icons.car size={16} />
+                Chassis & Body
+              </h3>
             </div>
             <SpecTable caption="Chassis and body specifications" aria-labelledby="chassis-specs">
               <SpecRow 
@@ -527,7 +536,10 @@ function MySpecsContent() {
           {(carWithDetails?.trackReadiness || carWithDetails?.chassisDynamics) && (
             <div className={styles.specCard}>
               <div className={styles.cardHeader}>
-                <h3 className={styles.cardTitle} id="track-specs">Track Capability</h3>
+                <h3 className={styles.cardTitle} id="track-specs">
+                  <Icons.flag size={16} />
+                  Track Capability
+                </h3>
               </div>
               <dl className={styles.specDescriptionList} aria-labelledby="track-specs">
                 {carWithDetails?.trackReadiness && (
@@ -556,7 +568,10 @@ function MySpecsContent() {
           {maintenanceData?.data?.specs && (
             <div className={styles.specCard}>
               <div className={styles.cardHeader}>
-                <h3 className={styles.cardTitle} id="fluids-specs">Fluids & Maintenance</h3>
+                <h3 className={styles.cardTitle} id="fluids-specs">
+                  <Icons.wrench size={16} />
+                  Fluids & Maintenance
+                </h3>
               </div>
               <SpecTable caption="Fluids and maintenance specifications" aria-labelledby="fluids-specs">
                 <SpecRow label="Oil Type" value={maintenanceData.data.specs.oil_viscosity} />
@@ -572,7 +587,10 @@ function MySpecsContent() {
           {maintenanceData?.data?.specs && (maintenanceData.data.specs.tire_size_front || maintenanceData.data.specs.wheel_bolt_pattern) && (
             <div className={styles.specCard}>
               <div className={styles.cardHeader}>
-                <h3 className={styles.cardTitle} id="wheels-specs">Wheels & Tires</h3>
+                <h3 className={styles.cardTitle} id="wheels-specs">
+                  <Icons.tire size={16} />
+                  Wheels & Tires
+                </h3>
               </div>
               <SpecTable caption="Wheels and tires specifications" aria-labelledby="wheels-specs">
                 <SpecRow label="Front Tires" value={maintenanceData.data.specs.tire_size_front} />
@@ -591,7 +609,10 @@ function MySpecsContent() {
           {hasTuningProfile && tuningProfile && (
             <div className={styles.specCard}>
               <div className={styles.cardHeader}>
-                <h3 className={styles.cardTitle} id="tuning-specs">Tuning Potential</h3>
+                <h3 className={styles.cardTitle} id="tuning-specs">
+                  <Icons.sliders size={16} />
+                  Tuning Potential
+                </h3>
               </div>
               <SpecTable caption="Tuning potential specifications" aria-labelledby="tuning-specs">
                 <SpecRow 
@@ -763,7 +784,10 @@ function MySpecsContent() {
         {/* AutoRev Ratings - with ARIA for accessibility */}
         <div className={styles.ratingsCard} role="region" aria-labelledby="ratings-heading">
           <div className={styles.cardHeader}>
-            <h3 className={styles.cardTitle} id="ratings-heading">AutoRev Ratings</h3>
+            <h3 className={styles.cardTitle} id="ratings-heading">
+              <Icons.star size={16} />
+              AutoRev Ratings
+            </h3>
           </div>
           <div className={styles.ratingsGrid} role="list" aria-label="Vehicle ratings out of 10">
             <RatingBar value={selectedCar.driverFun} label="Driver Fun" />
@@ -782,7 +806,10 @@ function MySpecsContent() {
             {selectedCar.pros?.length > 0 && (
               <div className={styles.prosCard} role="region" aria-labelledby="pros-heading">
                 <div className={styles.cardHeader}>
-                  <h3 className={styles.cardTitle} id="pros-heading">Pros</h3>
+                  <h3 className={styles.cardTitle} id="pros-heading">
+                    <Icons.thumbsUp size={16} />
+                    Pros
+                  </h3>
                 </div>
                 <ul className={styles.prosList} aria-label="Vehicle advantages">
                   {selectedCar.pros.slice(0, 5).map((pro, i) => (
@@ -794,7 +821,10 @@ function MySpecsContent() {
             {selectedCar.cons?.length > 0 && (
               <div className={styles.consCard} role="region" aria-labelledby="cons-heading">
                 <div className={styles.cardHeader}>
-                  <h3 className={styles.cardTitle} id="cons-heading">Cons</h3>
+                  <h3 className={styles.cardTitle} id="cons-heading">
+                    <Icons.thumbsDown size={16} />
+                    Cons
+                  </h3>
                 </div>
                 <ul className={styles.consList} aria-label="Vehicle disadvantages">
                   {selectedCar.cons.slice(0, 5).map((con, i) => (

@@ -241,7 +241,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
   // Verification sent view
   if (view === 'verification-sent') {
     return (
-      <div className={styles.overlay} onClick={handleBackdropClick}>
+      <div className={styles.overlay} onClick={handleBackdropClick} data-overlay-modal>
         <div className={styles.modal} role="dialog" aria-modal="true">
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
             <Icons.x size={20} />
@@ -270,7 +270,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
   // Check email (password reset) view
   if (view === 'check-email') {
     return (
-      <div className={styles.overlay} onClick={handleBackdropClick}>
+      <div className={styles.overlay} onClick={handleBackdropClick} data-overlay-modal>
         <div className={styles.modal} role="dialog" aria-modal="true">
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
             <Icons.x size={20} />
@@ -299,7 +299,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
   // Forgot password view
   if (view === 'forgot') {
     return (
-      <div className={styles.overlay} onClick={handleBackdropClick}>
+      <div className={styles.overlay} onClick={handleBackdropClick} data-overlay-modal>
         <div className={styles.modal} role="dialog" aria-modal="true">
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
             <Icons.x size={20} />
@@ -349,7 +349,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
   // Sign Up view
   if (view === 'signup') {
     return (
-      <div className={styles.overlay} onClick={handleBackdropClick}>
+      <div className={styles.overlay} onClick={handleBackdropClick} data-overlay-modal>
         <div className={styles.modal} role="dialog" aria-modal="true">
           <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
             <Icons.x size={20} />
@@ -493,7 +493,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
 
   // Sign In view (default)
   return (
-    <div className={styles.overlay} onClick={handleBackdropClick}>
+    <div className={styles.overlay} onClick={handleBackdropClick} data-overlay-modal>
       <div className={styles.modal} role="dialog" aria-modal="true">
         <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
           <Icons.x size={20} />

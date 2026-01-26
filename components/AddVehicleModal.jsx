@@ -152,7 +152,7 @@ export default function AddVehicleModal({ isOpen, onClose, onAdd, existingVehicl
   };
 
   const modalContent = (
-    <div className={styles.overlay} onClick={handleClose}>
+    <div className={styles.overlay} onClick={handleClose} data-overlay-modal>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className={styles.header}>
@@ -279,6 +279,7 @@ export default function AddVehicleModal({ isOpen, onClose, onAdd, existingVehicl
   
   // Use portal to render at document body level (above all other content)
   // This ensures the modal is not trapped inside any parent's stacking context
-  if (!isMounted) return null;
+  // Only render when mounted AND open - prevents data-overlay-modal from affecting safe area when closed
+  if (!isMounted || !isOpen) return null;
   return createPortal(modalContent, document.body);
 }

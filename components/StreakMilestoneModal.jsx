@@ -40,7 +40,7 @@ export default function StreakMilestoneModal({
   const milestoneInfo = getMilestoneInfo(milestone);
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    <div className={styles.overlay} onClick={onClose} data-overlay-modal>
       <div 
         className={styles.modal}
         onClick={(e) => e.stopPropagation()}

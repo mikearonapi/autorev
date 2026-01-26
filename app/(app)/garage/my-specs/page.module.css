@@ -211,14 +211,14 @@
   gap: 8px;
 }
 
-/* Section titles use TEAL per brand guidelines - LARGER than body content */
+/* Section titles use WHITE text with TEAL icon - LARGER than body content */
 .cardTitle {
   display: flex;
   align-items: center;
   gap: 8px;
   font-size: 0.875rem;
   font-weight: 700;
-  color: var(--brand-teal);
+  color: var(--color-white, #ffffff);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin: 0;
@@ -226,6 +226,7 @@
 
 .cardTitle svg {
   color: var(--color-accent-teal, #10b981);
+  flex-shrink: 0;
 }
 
 /* Edit link for custom specs */

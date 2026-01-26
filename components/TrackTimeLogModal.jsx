@@ -15,8 +15,8 @@
  */
 
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import styles from './TrackTimeLogModal.module.css';
-import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
 
 // SVG Icons
 const FlagIcon = () => (
@@ -142,8 +142,32 @@ export default function TrackTimeLogModal({
   editingResult = null,
   currentBuildInfo = null, // { upgrades: [], totalHpGain, estimatedHp }
 }) {
-  // Set safe area color to match overlay background when modal is open
-  useSafeAreaColor(SAFE_AREA_COLORS.OVERLAY, { enabled: isOpen });
+  // Portal mounting - required for SSR compatibility
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Prevent body scroll when open (matches OnboardingPopup)
+  // Critical for iOS when keyboard appears - prevents content from peeking through safe areas
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      // Directly set safe area backgrounds to charcoal for full immersion
+      // This ensures coverage even if :has() selector timing is delayed
+      document.documentElement.style.setProperty('--safe-area-top-bg', '#1a1a1a');
+      document.documentElement.style.setProperty('--safe-area-bottom-bg', '#1a1a1a');
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+      // Reset safe area backgrounds to default
+      document.documentElement.style.removeProperty('--safe-area-top-bg');
+      document.documentElement.style.removeProperty('--safe-area-bottom-bg');
+    };
+  }, [isOpen]);
   
   const [formData, setFormData] = useState({
     trackName: '',
@@ -298,9 +322,10 @@ export default function TrackTimeLogModal({
     }
   };
 
-  if (!isOpen) return null;
+  // Don't render until mounted (SSR) or if not open
+  if (!isMounted || !isOpen) return null;
 
-  return (
+  const modalContent = (
     <div className={styles.overlay} onClick={onClose} data-overlay-modal>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
@@ -319,31 +344,6 @@ export default function TrackTimeLogModal({
         </div>
 
         <form onSubmit={handleLapTimeSubmit} className={styles.form}>
-          {/* Prediction Comparison Banner */}
-          {predictedTime && (
-            <div className={styles.predictionBanner}>
-              <div className={styles.predictionInfo}>
-                <span className={styles.predictionLabel}>AutoRev Estimate</span>
-                <span className={styles.predictionValue}>{formatLapTime(predictedTime)}</span>
-              </div>
-              {timeDiff !== null && (
-                <div className={`${styles.predictionDiff} ${timeDiff <= 0 ? styles.positive : styles.negative}`}>
-                  {timeDiff <= 0 ? '' : '+'}{timeDiff.toFixed(3)}s
-                </div>
-              )}
-            </div>
-          )}
-          
-          {/* Current Build Snapshot (read-only) */}
-          {currentBuildInfo && currentBuildInfo.upgrades && currentBuildInfo.upgrades.length > 0 && !editingResult && (
-            <div className={styles.buildSnapshot}>
-              <span className={styles.buildSnapshotLabel}>Build at time of lap:</span>
-              <span className={styles.buildSnapshotValue}>
-                {currentBuildInfo.upgrades.length} mods (+{currentBuildInfo.totalHpGain || 0} HP)
-              </span>
-            </div>
-          )}
-
           {/* Track & Time Section */}
           <div className={styles.section}>
             <h3 className={styles.sectionTitle}>
@@ -624,4 +624,7 @@ export default function TrackTimeLogModal({
       </div>
     </div>
   );
+
+  // Use portal to render at document body level (above all other content including PWA nav)
+  return createPortal(modalContent, document.body);
 }

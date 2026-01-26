@@ -1,4 +1,4 @@
-/* Platform Insights */
+/* Platform Insights - Design System Aligned (Jan 2026) */
 .platformInsights {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -11,13 +11,14 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 14px;
-  font-size: 14px;
+  font-size: var(--text-body, 14px);
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
 }
 
 .header svg {
-  color: var(--color-accent-lime, #d4ff00);
+  /* Informational icon - use teal (insights/positive), not lime (CTAs) */
+  color: var(--color-accent-teal, #10b981);
 }
 
 .headerTitle {
@@ -25,10 +26,10 @@
 }
 
 .carLabel {
-  font-size: 10px;
+  font-size: var(--text-2xs, 10px);
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.4);
-  background: rgba(255, 255, 255, 0.06);
+  color: var(--color-text-muted, #475569);
+  background: var(--color-bg-input, rgba(255, 255, 255, 0.06));
   padding: 3px 8px;
   border-radius: 100px;
 }
@@ -42,7 +43,7 @@
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
-  font-size: 11px;
+  font-size: var(--text-xs, 11px);
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
   cursor: pointer;
@@ -51,8 +52,8 @@
 }
 
 .askAlBtn:hover {
-  background: rgba(212, 255, 0, 0.15);
-  border-color: rgba(212, 255, 0, 0.3);
+  background: var(--color-accent-lime-muted, rgba(212, 255, 0, 0.1));
+  border-color: var(--color-accent-lime-border, rgba(212, 255, 0, 0.3));
   color: var(--color-accent-lime, #d4ff00);
 }
 
@@ -82,9 +83,9 @@
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid transparent;
   border-radius: 6px;
-  font-size: 11px;
+  font-size: var(--text-xs, 11px);
   font-weight: 500;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--color-text-secondary, #94a3b8);
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -95,8 +96,8 @@
 }
 
 .tab.active {
-  background: rgba(16, 185, 129, 0.15);
-  border-color: rgba(16, 185, 129, 0.3);
+  background: var(--color-accent-teal-muted, rgba(16, 185, 129, 0.15));
+  border-color: var(--color-accent-teal-border, rgba(16, 185, 129, 0.3));
   color: var(--color-accent-teal, #10b981);
 }
 
@@ -163,13 +164,13 @@
 
 .insightTitle {
   flex: 1;
-  font-size: 13px;
+  font-size: var(--text-sm, 13px);
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
 }
 
 .chevron {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--color-text-muted, #475569);
   transition: transform 0.2s ease;
 }
 
@@ -179,8 +180,8 @@
 
 .insightDescription {
   padding: 0 14px 14px;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.65);
+  font-size: var(--text-xs, 11px);
+  color: var(--color-text-secondary, #94a3b8);
   line-height: 1.6;
   margin: 0;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
@@ -207,21 +208,21 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 12px;
-  font-size: 11px;
+  font-size: var(--text-xs, 11px);
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 .youtubeSectionHeader svg {
-  color: var(--color-error, #ff0000);
+  color: var(--color-error, #ef4444);
 }
 
 .videoCount {
   margin-left: auto;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--color-bg-input, rgba(255, 255, 255, 0.06));
   padding: 2px 8px;
   border-radius: 100px;
-  font-size: 10px;
+  font-size: var(--text-2xs, 10px);
 }
 
 .youtubeList {
@@ -235,8 +236,8 @@
 
 .youtubePro,
 .youtubeCon {
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.75);
+  font-size: var(--text-xs, 11px);
+  color: var(--color-text-secondary, #94a3b8);
   line-height: 1.5;
   font-style: italic;
   padding-left: 12px;
@@ -256,22 +257,22 @@
   content: '−';
   position: absolute;
   left: 0;
-  color: var(--color-warning, #f59e0b);
+  color: var(--color-accent-amber, #f59e0b);
   font-weight: 700;
   font-style: normal;
 }
 
 /* Owner Section */
 .ownerSection {
-  background: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.15);
+  background: var(--color-accent-teal-muted, rgba(16, 185, 129, 0.15));
+  border: 1px solid var(--color-accent-teal-border, rgba(16, 185, 129, 0.3));
   border-radius: 10px;
   padding: 14px;
 }
 
 .ownerSection.notIdeal {
-  background: rgba(245, 158, 11, 0.08);
-  border-color: rgba(245, 158, 11, 0.15);
+  background: var(--color-accent-amber-muted, rgba(245, 158, 11, 0.1));
+  border-color: var(--color-accent-amber-border, rgba(245, 158, 11, 0.2));
 }
 
 .ownerHeader {
@@ -279,9 +280,9 @@
   align-items: center;
   gap: 8px;
   margin-bottom: 8px;
-  font-size: 11px;
+  font-size: var(--text-xs, 11px);
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--color-text-secondary, #94a3b8);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -291,12 +292,12 @@
 }
 
 .ownerSection.notIdeal .ownerHeader svg {
-  color: var(--color-warning, #f59e0b);
+  color: var(--color-accent-amber, #f59e0b);
 }
 
 .ownerText {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: var(--text-sm, 13px);
+  color: var(--color-text-secondary, #94a3b8);
   line-height: 1.5;
   margin: 0;
 }
@@ -313,21 +314,23 @@
   align-items: flex-start;
   gap: 10px;
   padding: 12px;
-  background: rgba(212, 255, 0, 0.05);
-  border: 1px solid rgba(212, 255, 0, 0.1);
+  /* Tips are informational content - use blue (informational), not lime (CTAs) */
+  background: var(--color-accent-blue-muted, rgba(59, 130, 246, 0.15));
+  border: 1px solid var(--color-accent-blue-border, rgba(59, 130, 246, 0.3));
   border-radius: 10px;
 }
 
 .tipCard svg:first-child {
   flex-shrink: 0;
-  color: var(--color-accent-lime, #d4ff00);
+  /* Informational icon - use blue, not lime */
+  color: var(--color-accent-blue, #3b82f6);
   margin-top: 2px;
 }
 
 .tipText {
   flex: 1;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.8);
+  font-size: var(--text-xs, 11px);
+  color: var(--color-text-secondary, #94a3b8);
   line-height: 1.5;
 }
 
@@ -337,13 +340,13 @@
   justify-content: center;
   width: 18px;
   height: 18px;
-  background: rgba(255, 0, 0, 0.2);
+  background: rgba(239, 68, 68, 0.2);
   border-radius: 4px;
   flex-shrink: 0;
 }
 
 .tipSource svg {
-  color: var(--color-error, #ff6666);
+  color: var(--color-error, #ef4444);
 }
 
 /* Source Note */
@@ -351,8 +354,8 @@
   margin-top: 10px;
   padding-top: 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
-  font-size: 10px;
-  color: rgba(255, 255, 255, 0.4);
+  font-size: var(--text-2xs, 10px);
+  color: var(--color-text-muted, #475569);
   text-align: center;
 }
 
@@ -360,11 +363,11 @@
 .noData {
   text-align: center;
   padding: 32px 20px;
-  color: rgba(255, 255, 255, 0.5);
-  font-size: 13px;
+  color: var(--color-text-tertiary, #64748b);
+  font-size: var(--text-sm, 13px);
 }
 
-/* Mobile */
+/* Tablet and Desktop */
 @media (min-width: 641px) {
   .platformInsights {
     padding: 16px;
@@ -376,7 +379,7 @@
   
   .tab {
     padding: 6px 10px;
-    font-size: 11px;
+    font-size: var(--text-xs, 11px);
   }
   
   .insightHeader {
@@ -384,11 +387,11 @@
   }
   
   .insightTitle {
-    font-size: 12px;
+    font-size: var(--text-xs, 11px);
   }
   
   .insightDescription {
     padding: 0 12px 12px;
-    font-size: 11px;
+    font-size: var(--text-xs, 11px);
   }
 }

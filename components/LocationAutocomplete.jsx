@@ -73,12 +73,14 @@ function parseGoogleState(secondaryText) {
  * @param {Function} props.onChange - Callback when value changes (value, coords)
  * @param {string} [props.placeholder] - Placeholder text
  * @param {string} [props.className] - Additional CSS class
+ * @param {string} [props.variant] - Theme variant: 'light' (default) or 'dark'
  */
 export default function LocationAutocomplete({
   value,
   onChange,
   placeholder = "City, State or ZIP code",
   className = '',
+  variant = 'light',
 }) {
   const [inputValue, setInputValue] = useState(value || '');
   const [suggestions, setSuggestions] = useState([]);
@@ -409,7 +411,7 @@ export default function LocationAutocomplete({
   };
 
   return (
-    <div className={`${styles.container} ${className}`}>
+    <div className={`${styles.container} ${variant === 'dark' ? styles.dark : ''} ${className}`}>
       <div className={styles.inputWrapper}>
         <svg className={styles.searchIcon} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <circle cx="11" cy="11" r="8"/>

@@ -270,6 +270,7 @@ export default function ServiceCenterFinder({
             onChange={handleLocationChange}
             placeholder="Enter city, state or ZIP code"
             className={styles.locationInput}
+            variant="dark"
           />
           <button 
             className={styles.searchBtn}

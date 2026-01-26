@@ -12,38 +12,21 @@
   width: 100%;
 }
 
-/* Main row - info, hero points, streak */
+/* Main row - hero points, streak */
 .mainRow {
   display: flex;
   align-items: flex-start;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
   gap: var(--space-3, 12px);
+  position: relative;
 }
 
-/* Info button */
-.infoButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  color: var(--color-text-tertiary, #64748b);
-  cursor: pointer;
-  transition: all 0.15s ease;
-  flex-shrink: 0;
-}
-
-.infoButton:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--color-text-secondary, #94a3b8);
-}
-
-.infoButton:active {
-  transform: scale(0.95);
+/* Streak badge positioned top-right */
+.mainRow .streakBadge {
+  position: absolute;
+  right: 0;
+  top: 0;
 }
 
 /* Hero section - big points number */
@@ -111,11 +94,6 @@
   text-transform: lowercase;
 }
 
-.streakPlaceholder {
-  width: 32px;
-  flex-shrink: 0;
-}
-
 /* Stats row - weekly/monthly/lifetime */
 .statsRow {
   display: flex;
@@ -154,6 +132,31 @@
   color: var(--color-text-tertiary, #64748b);
   font-size: var(--text-body, 16px);
   opacity: 0.5;
+}
+
+/* Earn points link */
+.earnPointsLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: var(--space-2, 8px) var(--space-4, 16px);
+  background: transparent;
+  border: none;
+  color: var(--color-text-tertiary, #64748b);
+  font-size: var(--text-sm, 14px);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+
+.earnPointsLink:hover {
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.earnPointsLink:active {
+  color: var(--color-text-primary, #ffffff);
 }
 
 /* Category legend - 5 items on one row */

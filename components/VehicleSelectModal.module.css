@@ -8,8 +8,10 @@
   right: 0;
   bottom: 0;
   z-index: 999998;
-  background: rgba(0, 0, 0, 0.85);
-  backdrop-filter: blur(4px);
+  /* Charcoal overlay - matches safe area color (#1a1a1a) when blurred */
+  background: var(--color-bg-overlay, rgba(26, 26, 26, 0.85));
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
   -webkit-tap-highlight-color: transparent;
   /* Safe area padding for mobile */
   padding-top: env(safe-area-inset-top);

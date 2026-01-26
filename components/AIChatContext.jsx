@@ -45,6 +45,7 @@ export function useAIChat() {
       displayMessage: displayMessage || prompt,
       context,
       options: extra?.options,
+      autoSend: extra?.autoSend ?? false,
     });
     
     // Navigate to the AL page

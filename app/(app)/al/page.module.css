@@ -164,11 +164,12 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding-top: 80px;
-  /* Premium frosted glass - brand standard (Jan 2026) */
-  background: var(--color-bg-overlay, rgba(10, 21, 32, 0.85));
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  /* Closer to top - accounts for safe area on notched devices */
+  padding-top: max(env(safe-area-inset-top, 0px) + 16px, 24px);
+  /* Charcoal overlay - matches safe area color (#1a1a1a) when blurred */
+  background: var(--color-bg-overlay, rgba(26, 26, 26, 0.85));
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
   animation: fadeIn 0.2s ease;
 }
 
@@ -227,12 +228,17 @@
   margin-left: auto;
 }
 
+.assistantMessage {
+  align-items: flex-start;
+}
+
 .assistantMessage .messageContent {
   background: transparent;
   border: none;
   color: var(--color-text-primary, #ffffff);
   border-radius: 0;
   padding-left: 0;
+  padding-top: 0;
 }
 
 .messageAvatar {
@@ -273,6 +279,11 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+/* Loading message - vertically center avatar with phase indicator */
+.loadingMessage {
+  align-items: center;
 }
 
 .phaseIndicator {
@@ -1076,16 +1087,46 @@
   transition: all 0.15s ease;
   text-align: left;
   min-height: 90px;
+  width: 100%;
+  font: inherit;
+  color: inherit;
+  -webkit-appearance: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.conversationItem:hover {
+.conversationItem:hover,
+.conversationItem:focus-visible {
   background: rgba(255, 255, 255, 0.06);
   border-color: rgba(255, 255, 255, 0.1);
+  outline: none;
+}
+
+.conversationItem:active {
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(0.995);
 }
 
 .conversationItemActive {
   background: rgba(16, 185, 129, 0.1);
   border-color: rgba(16, 185, 129, 0.3);
+}
+
+.conversationItemLoading {
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.conversationLoading {
+  display: inline-block;
+  font-size: 12px;
+  color: var(--color-accent-teal, #10b981);
+  margin-top: 4px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 .conversationContent {
@@ -1094,11 +1135,6 @@
   flex-direction: column;
   gap: 6px;
   min-width: 0;
-  background: transparent;
-  border: none;
-  padding: 0;
-  cursor: pointer;
-  text-align: left;
 }
 
 .conversationTitle {
@@ -1286,23 +1322,27 @@
 .messageActions {
   display: flex;
   align-items: center;
-  gap: 4px; /* Mobile-first: slightly more space for touch */
-  margin-top: 12px;
-  padding-top: 10px; /* Mobile-first */
-  opacity: 0.6;
+  gap: 6px; /* Mobile-first: touch-friendly spacing */
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  opacity: 1; /* Always visible on mobile - no hover state */
   transition: opacity 0.15s ease;
 }
 
-/* Larger phones and up */
-@media (min-width: 481px) {
+/* Desktop: subtle until hover */
+@media (min-width: 1024px) {
   .messageActions {
     gap: 2px;
-    padding-top: 0;
+    padding-top: 8px;
+    margin-top: 12px;
+    border-top: none;
+    opacity: 0.5;
   }
-}
-
-.message:hover .messageActions {
-  opacity: 1;
+  
+  .message:hover .messageActions {
+    opacity: 1;
+  }
 }
 
 .actionBtn {
@@ -1311,24 +1351,35 @@
   justify-content: center;
   width: 44px;
   height: 44px;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.04);
   border: none;
-  border-radius: 8px;
-  color: var(--color-text-tertiary, #64748b);
+  border-radius: 10px;
+  color: var(--color-text-secondary, #94a3b8);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
 .actionBtn:hover {
-  color: var(--color-text-secondary, #94a3b8);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--color-text-primary, #ffffff);
 }
 
 .actionBtn:active {
-  transform: scale(0.9);
+  transform: scale(0.92);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .actionBtnActive {
   color: var(--color-accent-teal, #10b981);
+  background: rgba(16, 185, 129, 0.1);
+}
+
+/* Desktop: more subtle default state */
+@media (min-width: 1024px) {
+  .actionBtn {
+    background: transparent;
+    color: var(--color-text-tertiary, #64748b);
+  }
 }
 
 .copiedCheck {
@@ -1339,23 +1390,25 @@
 
 .actionDivider {
   width: 1px;
-  height: 16px;
-  background: rgba(255, 255, 255, 0.08);
-  margin: 0 4px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 0 6px;
 }
 
 .feedbackThanks {
   display: flex;
   align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  color: var(--color-text-tertiary, #64748b);
-  font-weight: 400;
-  padding: 0 4px;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--color-text-secondary, #94a3b8);
+  font-weight: 500;
+  padding: 8px 12px;
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 8px;
 }
 
 .feedbackThanks svg {
-  color: var(--color-text-tertiary, #64748b);
+  color: var(--color-accent-teal, #10b981);
 }
 
 .messageTimestamp {

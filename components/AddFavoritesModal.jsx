@@ -95,7 +95,7 @@ export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavo
   if (!isOpen) return null;
 
   return (
-    <div className={styles.overlay} onClick={handleClose}>
+    <div className={styles.overlay} onClick={handleClose} data-overlay-modal>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         {/* Header */}
         <div className={styles.header}>

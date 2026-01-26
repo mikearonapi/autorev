@@ -345,7 +345,10 @@ function MyPerformanceContent() {
         {/* === PERFORMANCE METRICS CARD === */}
         <div className={styles.performanceCard}>
           <div className={styles.performanceHeader}>
-            <h3 className={styles.performanceTitle}>Performance Metrics</h3>
+            <h3 className={styles.performanceTitle}>
+              <Icons.zap size={16} />
+              Performance Metrics
+            </h3>
           </div>
           <div className={styles.performanceMetrics}>
             <MetricRow 
@@ -384,7 +387,10 @@ function MyPerformanceContent() {
         {/* === EXPERIENCE SCORES === */}
         <div className={styles.section}>
           <div className={styles.sectionHeader}>
-            <h4 className={styles.sectionTitle}>Experience Scores</h4>
+            <h4 className={styles.sectionTitle}>
+              <Icons.star size={16} />
+              Experience Scores
+            </h4>
           </div>
           <ScoreBar label="Comfort" stockScore={profile?.stockScores?.drivability ?? 7} upgradedScore={profile?.upgradedScores?.drivability ?? 7} />
           <ScoreBar label="Reliability" stockScore={profile?.stockScores?.reliabilityHeat ?? 7.5} upgradedScore={profile?.upgradedScores?.reliabilityHeat ?? 7.5} />

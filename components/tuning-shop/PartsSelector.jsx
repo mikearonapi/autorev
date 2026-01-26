@@ -38,7 +38,7 @@ import styles from './PartsSelector.module.css';
 const PART_STATUS = {
   planned: { label: 'Planned', color: 'muted', next: 'purchased', canToggle: true },
   purchased: { label: 'Purchased', color: 'teal', next: 'planned', canToggle: true }, // Can toggle back to planned
-  installed: { label: 'Installed', color: 'lime', next: null, canToggle: false }, // Read-only on Parts page
+  installed: { label: 'Installed', color: 'teal', next: null, canToggle: false }, // Read-only on Parts page (teal = completed/success)
 };
 
 /**
@@ -249,17 +249,6 @@ function ShoppingListItem({
           
           {/* Right side: Actions */}
           <div className={styles.itemActions}>
-            {!isEditing && !hasPartDetails && (
-              <button
-                className={styles.findPartBtn}
-                onClick={handleFindWithAL}
-                title="Find part with AL"
-                aria-label={`Find ${upgrade.name} part with AL assistant`}
-              >
-                <ALAvatar size={18} />
-                <span>Find Part</span>
-              </button>
-            )}
             {!isEditing && hasPartDetails && (
               <>
                 {partDetails.productUrl && (
@@ -289,7 +278,7 @@ function ShoppingListItem({
       </div>
 
       {isEditing && (
-        <div className={styles.editForm}>
+        <div className={styles.editForm} role="form" aria-label={`Edit part details for ${upgrade.name}`}>
           <div className={styles.editRow}>
             <input
               type="text"
@@ -297,6 +286,8 @@ function ShoppingListItem({
               value={editData.brandName}
               onChange={(e) => setEditData({ ...editData, brandName: e.target.value })}
               className={styles.input}
+              aria-label="Brand name"
+              autoComplete="off"
             />
             <input
               type="text"
@@ -304,31 +295,39 @@ function ShoppingListItem({
               value={editData.partName}
               onChange={(e) => setEditData({ ...editData, partName: e.target.value })}
               className={styles.input}
+              aria-label="Part name"
+              autoComplete="off"
             />
           </div>
           <div className={styles.editRow}>
             <input
               type="text"
-              placeholder="Part # (optional)"
+              placeholder="Part #"
               value={editData.partNumber}
               onChange={(e) => setEditData({ ...editData, partNumber: e.target.value })}
               className={`${styles.input} ${styles.inputSmall}`}
+              aria-label="Part number (optional)"
+              autoComplete="off"
             />
             <input
               type="number"
-              placeholder="Price $"
+              placeholder="Price"
               value={editData.price}
               onChange={(e) => setEditData({ ...editData, price: e.target.value })}
               className={`${styles.input} ${styles.inputSmall}`}
+              aria-label="Price in dollars"
               min="0"
               step="0.01"
+              inputMode="decimal"
             />
             <input
               type="text"
-              placeholder="Vendor Name"
+              placeholder="Vendor"
               value={editData.vendorName}
               onChange={(e) => setEditData({ ...editData, vendorName: e.target.value })}
               className={`${styles.input} ${styles.inputSmall}`}
+              aria-label="Vendor name"
+              autoComplete="off"
             />
           </div>
           <div className={styles.editRow}>
@@ -338,14 +337,24 @@ function ShoppingListItem({
               value={editData.productUrl}
               onChange={(e) => setEditData({ ...editData, productUrl: e.target.value })}
               className={styles.input}
+              aria-label="Product URL (optional)"
+              autoComplete="off"
             />
           </div>
           <div className={styles.editActions}>
-            <button className={styles.cancelBtn} onClick={handleCancel}>
+            <button 
+              type="button"
+              className={styles.cancelBtn} 
+              onClick={handleCancel}
+            >
               Cancel
             </button>
-            <button className={styles.saveBtn} onClick={handleSave}>
-              Save
+            <button 
+              type="button"
+              className={styles.saveBtn} 
+              onClick={handleSave}
+            >
+              Save Part
             </button>
           </div>
         </div>
@@ -370,6 +379,7 @@ export default function PartsSelector({
   buildId = null, // Optional build ID for linking to install page
   totalHpGain = 0,
   totalCostRange = null, // { low, high }
+  hideALRecommendations = false, // Hide AL button when rendered at page level
 }) {
   const { openChatWithPrompt } = useAIChat();
 
@@ -555,26 +565,36 @@ Be specific to my ${carName} and this exact build configuration.`;
 
   return (
     <div className={styles.container} role="region" aria-label="Parts Shopping List">
-      {/* AL Parts Recommendations CTA - Premium Card */}
-      <button
-        className={styles.alRecommendationsBtn}
-        onClick={handleALBuildReview}
-        aria-label="Get AL parts recommendations - compatibility checks, suggestions, and find best parts for your build"
-      >
-        <ALAvatar size={42} />
-        <div className={styles.alRecommendationsText}>
-          <span className={styles.alRecommendationsTitle}>AL Parts Recommendations</span>
-          <span className={styles.alRecommendationsSubtitle}>
-            Get compatibility checks, suggestions & find the best parts for your build
-          </span>
-        </div>
-      </button>
+      {/* AL Parts Recommendations CTA - Only show if not rendered at page level */}
+      {!hideALRecommendations && (
+        <button
+          className={styles.alRecommendationsBtn}
+          onClick={handleALBuildReview}
+          aria-label="Get AL parts recommendations - compatibility checks, suggestions, and find best parts for your build"
+        >
+          <ALAvatar size={42} />
+          <div className={styles.alRecommendationsText}>
+            <span className={styles.alRecommendationsTitle}>AL Parts Recommendations</span>
+            <span className={styles.alRecommendationsSubtitle}>
+              Get compatibility checks, suggestions & find the best parts for your build
+            </span>
+          </div>
+        </button>
+      )}
 
       <div className={styles.header}>
         <div className={styles.headerLeft}>
           <Icons.shoppingCart size={20} />
           <span className={styles.title}>Parts Shopping List</span>
         </div>
+        {/* Estimated Cost - inline with header */}
+        {totalCostRange && (totalCostRange.low > 0 || totalCostRange.high > 0) && (
+          <div className={styles.headerCost}>
+            <span className={styles.headerCostValue}>
+              ${totalCostRange.low.toLocaleString()} - ${totalCostRange.high.toLocaleString()}
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Status Summary - Shopping focused (planned/purchased) */}
@@ -588,7 +608,7 @@ Be specific to my ${carName} and this exact build configuration.`;
           <span className={styles.statusCountLabel}>Purchased</span>
         </div>
         {statusCounts.installed > 0 && (
-          <div className={`${styles.statusCount} ${styles.statuslime}`}>
+          <div className={`${styles.statusCount} ${styles.statusteal}`}>
             <span className={styles.statusCountNumber}>{statusCounts.installed}</span>
             <span className={styles.statusCountLabel}>Installed</span>
           </div>

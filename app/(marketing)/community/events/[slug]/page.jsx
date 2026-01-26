@@ -1,32 +1,36 @@
 'use client';
 
+/**
+ * Event Detail Page - Simplified Fullscreen View
+ * 
+ * GRAVL-Inspired Design matching DynoLogModal:
+ * - Centered white card on charcoal overlay
+ * - Essential information only: Date, Location, Actions
+ * - Clean, focused UX
+ */
+
 import { useState, useEffect, useCallback, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { useParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
 import styles from './page.module.css';
-import EventCard from '@/components/EventCard';
 import SaveEventButton from '@/components/SaveEventButton';
 import AddToCalendarButton from '@/components/AddToCalendarButton';
-import EventRSVPButton from '@/components/EventRSVPButton';
-import EventAttendeesPreview, { EventAttendeesList } from '@/components/EventAttendeesPreview';
+import EventAttendeesPreview from '@/components/EventAttendeesPreview';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { EventTypeIcon, TrackEventBadgeIcon, FeaturedBadgeIcon } from '@/components/icons/EventIcons';
 import { useUserSavedEvents } from '@/hooks/useUserData';
-import { useEventAttendees } from '@/hooks/useEventsData';
 import { isPastDate } from '@/lib/dateUtils';
 
 /**
  * Format date for display
  */
-function formatEventDate(dateStr, options = {}) {
+function formatEventDate(dateStr) {
   if (!dateStr) return '';
   const date = new Date(dateStr + 'T00:00:00');
   return date.toLocaleDateString('en-US', {
-    weekday: options.weekday || 'long',
-    month: options.month || 'long',
-    day: options.day || 'numeric',
-    year: options.year || 'numeric',
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
   });
 }
 
@@ -52,7 +56,6 @@ function getGoogleMapsUrl(event) {
   if (event.city) parts.push(event.city);
   if (event.state) parts.push(event.state);
   if (event.zip) parts.push(event.zip);
-  if (event.country) parts.push(event.country);
   
   const query = encodeURIComponent(parts.join(', '));
   return `https://www.google.com/maps/search/?api=1&query=${query}`;
@@ -62,24 +65,12 @@ function getGoogleMapsUrl(event) {
  * Icons
  */
 const Icons = {
-  arrowLeft: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <line x1="19" y1="12" x2="5" y2="12"/>
-      <polyline points="12 19 5 12 12 5"/>
-    </svg>
-  ),
   calendar: ({ size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
       <line x1="16" y1="2" x2="16" y2="6"/>
       <line x1="8" y1="2" x2="8" y2="6"/>
       <line x1="3" y1="10" x2="21" y2="10"/>
-    </svg>
-  ),
-  clock: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10"/>
-      <polyline points="12 6 12 12 16 14"/>
     </svg>
   ),
   mapPin: ({ size = 20 }) => (
@@ -110,12 +101,12 @@ const Icons = {
       <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
     </svg>
   ),
-  car: ({ size = 20 }) => (
+  users: ({ size = 20 }) => (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/>
-      <circle cx="7" cy="17" r="2"/>
-      <path d="M9 17h6"/>
-      <circle cx="17" cy="17" r="2"/>
+      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+      <circle cx="9" cy="7" r="4"/>
+      <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
     </svg>
   ),
 };
@@ -126,13 +117,35 @@ export default function CommunityEventDetailPage() {
   const slug = params?.slug;
   
   const [event, setEvent] = useState(null);
-  const [relatedEvents, setRelatedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [imageError, setImageError] = useState(false);
-  const [isSavedLocal, setIsSavedLocal] = useState(false); // Local state for optimistic updates
+  const [isSavedLocal, setIsSavedLocal] = useState(false);
+  const [mounted, setMounted] = useState(false);
   
-  const { isAuthenticated, user, isLoading: authLoading, session } = useAuth();
+  const { isAuthenticated, user, isLoading: authLoading } = useAuth();
+  
+  // Mount check for portal rendering (SSR compatibility)
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+  
+  // Lock body scroll and set safe area colors when page is mounted
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    
+    if (mounted) {
+      document.body.style.overflow = 'hidden';
+      // Set safe area backgrounds to charcoal overlay color
+      document.documentElement.style.setProperty('--safe-area-top-bg', '#1a1a1a');
+      document.documentElement.style.setProperty('--safe-area-bottom-bg', '#1a1a1a');
+    }
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.removeProperty('--safe-area-top-bg');
+      document.documentElement.style.removeProperty('--safe-area-bottom-bg');
+    };
+  }, [mounted]);
   
   // React Query hook for saved events
   const { data: savedEventsData } = useUserSavedEvents(
@@ -178,11 +191,6 @@ export default function CommunityEventDetailPage() {
         
         const data = await res.json();
         setEvent(data.event);
-        
-        // Fetch related events
-        if (data.event) {
-          fetchRelatedEvents(data.event);
-        }
       } catch (err) {
         console.error('[EventDetailPage] Error:', err);
         setError('Unable to load event details');
@@ -191,29 +199,10 @@ export default function CommunityEventDetailPage() {
       }
     }
     
-    async function fetchRelatedEvents(eventData) {
-      try {
-        const params = new URLSearchParams();
-        if (eventData.event_type?.slug) {
-          params.set('type', eventData.event_type.slug);
-        }
-        params.set('limit', '4');
-        
-        const res = await fetch(`/api/events?${params.toString()}`);
-        const data = await res.json();
-        
-        const related = (data.events || []).filter(e => e.slug !== slug);
-        setRelatedEvents(related.slice(0, 4));
-      } catch (err) {
-        console.error('[EventDetailPage] Error fetching related events:', err);
-      }
-    }
-    
     fetchEvent();
   }, [slug]);
 
-  // Handle save change - called by SaveEventButton after it makes the API call
-  // SaveEventButton passes (eventSlug, isSaved)
+  // Handle save change
   const handleSaveChange = useCallback((eventSlug, newSavedState) => {
     setIsSavedLocal(newSavedState);
   }, []);
@@ -230,68 +219,66 @@ export default function CommunityEventDetailPage() {
       alert('Link copied!');
     }
   }, [event?.name]);
+  
+  // Handle close/back navigation
+  const handleClose = useCallback(() => {
+    router.push('/community');
+  }, [router]);
 
+  // Don't render until mounted (SSR compatibility for portal)
+  if (!mounted) return null;
+
+  // Loading state
   if (loading) {
-    return (
-      <div className={styles.page} data-no-main-offset>
-        {/* Skeleton Loading State */}
-        <div className={styles.titleBar}>
-          <div className={`${styles.backButton} ${styles.skeleton}`} />
-          <div className={styles.skeletonTitle} />
-        </div>
-        <div className={styles.skeletonHero} />
-        <div className={styles.content}>
-          <div className={styles.mainColumn}>
-            <div className={styles.skeletonHeader}>
-              <div className={styles.skeletonBadges}>
-                <div className={styles.skeletonBadge} />
-                <div className={styles.skeletonBadge} />
-              </div>
-              <div className={styles.skeletonActions}>
-                <div className={styles.skeletonBtn} />
-                <div className={styles.skeletonBtn} />
-                <div className={styles.skeletonBtn} />
-              </div>
+    const loadingContent = (
+      <div className={styles.overlay} data-overlay-modal>
+        <div className={styles.modal}>
+          <div className={styles.header}>
+            <div className={styles.titleRow}>
+              <div className={styles.skeletonTitle} />
+              <button className={styles.closeBtn} onClick={handleClose} aria-label="Close">×</button>
             </div>
-            <div className={styles.skeletonSection}>
-              <div className={styles.skeletonSectionTitle} />
-              <div className={styles.skeletonText} />
-              <div className={styles.skeletonText} style={{ width: '60%' }} />
-            </div>
-            <div className={styles.skeletonSection}>
-              <div className={styles.skeletonSectionTitle} />
-              <div className={styles.skeletonText} />
-              <div className={styles.skeletonText} style={{ width: '80%' }} />
-            </div>
+            <div className={styles.skeletonActions} />
           </div>
-          <aside className={styles.sidebar}>
-            <div className={styles.skeletonCard} />
-            <div className={styles.skeletonCard} />
-          </aside>
+          <div className={styles.content}>
+            <div className={styles.skeletonSection} />
+            <div className={styles.skeletonSection} />
+            <div className={styles.skeletonSection} />
+          </div>
         </div>
       </div>
     );
+    
+    return createPortal(loadingContent, document.body);
   }
 
+  // Error state
   if (error || !event) {
-    return (
-      <div className={styles.page} data-no-main-offset>
-        <div className={styles.errorState}>
-          <h2>Event Not Found</h2>
-          <p>{error || 'The event you\'re looking for doesn\'t exist or has expired.'}</p>
-          <Link href="/community" className={styles.backBtn}>
-            <Icons.arrowLeft size={16} />
-            Back to Events
-          </Link>
+    const errorContent = (
+      <div className={styles.overlay} onClick={handleClose} data-overlay-modal>
+        <div className={styles.modal} onClick={e => e.stopPropagation()}>
+          <div className={styles.header}>
+            <div className={styles.titleRow}>
+              <h2 className={styles.title}>Event</h2>
+              <button className={styles.closeBtn} onClick={handleClose} aria-label="Close">×</button>
+            </div>
+          </div>
+          <div className={styles.content}>
+            <div className={styles.errorState}>
+              <h3>Event Not Found</h3>
+              <p>{error || 'The event you\'re looking for doesn\'t exist or has expired.'}</p>
+            </div>
+          </div>
         </div>
       </div>
     );
+    
+    return createPortal(errorContent, document.body);
   }
 
   const {
     name,
     description,
-    event_type,
     start_date,
     end_date,
     start_time,
@@ -302,17 +289,8 @@ export default function CommunityEventDetailPage() {
     city,
     state,
     zip,
-    country,
-    region,
-    scope,
-    source_url,
-    source_name,
-    registration_url,
-    image_url,
     cost_text,
     is_free,
-    featured,
-    car_affinities = [],
   } = event;
 
   const isMultiDay = end_date && end_date !== start_date;
@@ -321,155 +299,117 @@ export default function CommunityEventDetailPage() {
   const formattedStartTime = formatTime(start_time);
   const formattedEndTime = formatTime(end_time);
   const googleMapsUrl = getGoogleMapsUrl(event);
-  const hasImage = image_url && !imageError;
-
-  const brandAffinities = car_affinities.filter(a => a.brand);
-  const carAffinities = car_affinities.filter(a => a.car_slug);
-
+  
   // Check if event is in the past
-  // Use end_date if available, otherwise start_date
   const eventEndDate = end_date || start_date;
   const isPastEvent = eventEndDate ? isPastDate(eventEndDate) : false;
 
-  return (
-    <div className={styles.page} data-no-main-offset>
-      {/* Title Bar - Fixed at top */}
-      <div className={styles.titleBar}>
-        <Link href="/community" className={styles.backButton} aria-label="Back to Events">
-          <Icons.arrowLeft size={20} />
-        </Link>
-        <h1 className={styles.title}>{name}</h1>
-      </div>
-
-      {/* Hero Image */}
-      {hasImage && (
-        <div className={styles.heroImage}>
-          <Image
-            src={image_url}
-            alt={name}
-            fill
-            priority
-            className={styles.image}
-            onError={() => setImageError(true)}
-          />
-          <div className={styles.heroOverlay} />
-        </div>
-      )}
-
-      {/* Main Content */}
-      <div className={styles.content}>
-        <div className={styles.mainColumn}>
-          {/* Event Header */}
-          <header className={styles.header}>
-            <div className={styles.badges}>
-              {isPastEvent && (
-                <span className={styles.pastEventBadge}>
-                  Past Event
-                </span>
-              )}
-              {event_type && (
-                <span className={styles.typeBadge}>
-                  <EventTypeIcon slug={event_type.slug} size={16} />
-                  {event_type.name}
-                </span>
-              )}
-              {event_type?.is_track_event && (
-                <span className={styles.trackBadge}>
-                  <TrackEventBadgeIcon size={14} />
-                  Track Event
-                </span>
-              )}
-              {featured && (
-                <span className={styles.featuredBadge}>
-                  <FeaturedBadgeIcon size={12} />
-                  Featured
-                </span>
-              )}
-            </div>
-            
-            {/* Action Buttons */}
-            <div className={styles.headerActions}>
-              {!isPastEvent && (
-                <EventRSVPButton
-                  eventSlug={slug}
-                  eventName={name}
-                />
-              )}
-              <SaveEventButton
-                eventId={event.id}
-                eventSlug={slug}
-                eventName={name}
-                isSaved={isSaved}
-                onSaveChange={handleSaveChange}
-              />
-              {!isPastEvent && <AddToCalendarButton event={event} />}
-              <button 
-                className={styles.shareBtn}
-                onClick={handleShare}
-              >
-                <Icons.share size={18} />
-                <span>Share</span>
-              </button>
-            </div>
-            
-            {/* Attendees Preview - Who's Going */}
-            <EventAttendeesPreview 
-              eventSlug={slug} 
-              variant="expanded"
-              maxAvatars={8}
+  const pageContent = (
+    <div className={styles.overlay} onClick={handleClose} data-overlay-modal>
+      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+        {/* Header */}
+        <div className={styles.header}>
+          <div className={styles.titleRow}>
+            <h2 className={styles.title}>{name}</h2>
+            <button className={styles.closeBtn} onClick={handleClose} aria-label="Close">×</button>
+          </div>
+          
+          {/* Action Buttons - Right under title */}
+          <div className={styles.actionRow}>
+            <SaveEventButton
+              eventId={event.id}
+              eventSlug={slug}
+              eventName={name}
+              isSaved={isSaved}
+              onSaveChange={handleSaveChange}
+              size="small"
+              theme="light"
             />
-          </header>
+            {!isPastEvent && <AddToCalendarButton event={event} variant="compact" />}
+            <button 
+              className={styles.iconBtn}
+              onClick={handleShare}
+              aria-label="Share event"
+            >
+              <Icons.share size={18} />
+            </button>
+          </div>
+        </div>
 
-          {/* Date & Time */}
-          <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>
-              <Icons.calendar size={20} />
+        {/* Scrollable Content */}
+        <div className={styles.content}>
+          {/* Past Event Banner */}
+          {isPastEvent && (
+            <div className={styles.pastBanner}>
+              This event has ended
+            </div>
+          )}
+
+          {/* Cost Section */}
+          <div className={styles.section}>
+            <h3 className={styles.sectionTitle}>
+              <Icons.dollar size={16} />
+              Cost
+            </h3>
+            <div className={styles.sectionContent}>
+              <span className={`${styles.costBadge} ${is_free ? styles.costFree : ''}`}>
+                {is_free ? 'Free' : cost_text || 'Contact organizer'}
+              </span>
+            </div>
+          </div>
+
+          {/* Description (if present) */}
+          {description && (
+            <div className={styles.section}>
+              <h3 className={styles.sectionTitle}>About</h3>
+              <p className={styles.description}>{description}</p>
+            </div>
+          )}
+
+          {/* Date & Time Section */}
+          <div className={styles.section}>
+            <h3 className={styles.sectionTitle}>
+              <Icons.calendar size={16} />
               Date & Time
-            </h2>
-            <div className={styles.dateTime}>
-              <div className={styles.dateBlock}>
-                {isMultiDay ? (
-                  <>
-                    <span className={styles.dateLabel}>From</span>
-                    <span className={styles.dateValue}>{formattedStartDate}</span>
-                    <span className={styles.dateLabel}>To</span>
-                    <span className={styles.dateValue}>{formattedEndDate}</span>
-                  </>
-                ) : (
+            </h3>
+            <div className={styles.sectionContent}>
+              {isMultiDay ? (
+                <div className={styles.dateRange}>
+                  <span className={styles.dateLabel}>From</span>
                   <span className={styles.dateValue}>{formattedStartDate}</span>
-                )}
-              </div>
+                  <span className={styles.dateLabel}>To</span>
+                  <span className={styles.dateValue}>{formattedEndDate}</span>
+                </div>
+              ) : (
+                <p className={styles.dateValue}>{formattedStartDate}</p>
+              )}
               {(formattedStartTime || formattedEndTime) && (
-                <div className={styles.timeBlock}>
-                  <Icons.clock size={16} />
-                  {formattedStartTime && <span>{formattedStartTime}</span>}
-                  {formattedStartTime && formattedEndTime && <span> – </span>}
-                  {formattedEndTime && <span>{formattedEndTime}</span>}
+                <p className={styles.timeValue}>
+                  {formattedStartTime}
+                  {formattedStartTime && formattedEndTime && ' – '}
+                  {formattedEndTime}
                   {timezone && (
                     <span className={styles.timezone}>
-                      ({timezone.split('/').pop().replace('_', ' ')})
+                      {' '}({timezone.split('/').pop().replace('_', ' ')})
                     </span>
                   )}
-                </div>
+                </p>
               )}
             </div>
-          </section>
+          </div>
 
-          {/* Location */}
-          <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>
-              <Icons.mapPin size={20} />
+          {/* Location Section */}
+          <div className={styles.section}>
+            <h3 className={styles.sectionTitle}>
+              <Icons.mapPin size={16} />
               Location
-            </h2>
-            <div className={styles.location}>
-              {venue_name && <div className={styles.venueName}>{venue_name}</div>}
-              <div className={styles.address}>
-                {address && <div>{address}</div>}
-                <div>
-                  {city}{state ? `, ${state}` : ''} {zip}
-                </div>
-                {country && country !== 'USA' && <div>{country}</div>}
-              </div>
+            </h3>
+            <div className={styles.sectionContent}>
+              {venue_name && <p className={styles.venueName}>{venue_name}</p>}
+              <p className={styles.address}>
+                {address && <>{address}<br /></>}
+                {city}{state ? `, ${state}` : ''} {zip}
+              </p>
               <a 
                 href={googleMapsUrl}
                 target="_blank"
@@ -480,166 +420,26 @@ export default function CommunityEventDetailPage() {
                 View on Google Maps
               </a>
             </div>
-          </section>
+          </div>
 
-          {/* Description */}
-          {description && (
-            <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>About This Event</h2>
-              <p className={styles.description}>{description}</p>
-            </section>
-          )}
-
-          {/* Cost */}
-          <section className={styles.section}>
-            <h2 className={styles.sectionTitle}>
-              <Icons.dollar size={20} />
-              Cost
-            </h2>
-            <div className={`${styles.costBadge} ${is_free ? styles.costFree : ''}`}>
-              {is_free ? 'Free Event' : cost_text || 'See event page for pricing'}
-            </div>
-          </section>
-
-          {/* Car Affinities */}
-          {(brandAffinities.length > 0 || carAffinities.length > 0) && (
-            <section className={styles.section}>
-              <h2 className={styles.sectionTitle}>
-                <Icons.car size={20} />
-                Featured Cars & Brands
-              </h2>
-              <p className={styles.affinityIntro}>
-                This event features:{' '}
-                {[...carAffinities.map(a => a.car_name || a.car_slug), ...brandAffinities.map(a => a.brand)]
-                  .slice(0, 5)
-                  .join(', ')}
-                {car_affinities.length > 5 && ' and more'}
-              </p>
-              <div className={styles.affinities}>
-                {brandAffinities.map((aff, i) => (
-                  <Link 
-                    key={`brand-${i}`} 
-                    href={`/browse-cars?brand=${encodeURIComponent(aff.brand)}`}
-                    className={styles.affinityBadge}
-                  >
-                    {aff.brand}
-                    {aff.affinity_type === 'exclusive' && (
-                      <span className={styles.affinityType}> Only</span>
-                    )}
-                  </Link>
-                ))}
-                {carAffinities.map((aff, i) => (
-                  <Link 
-                    key={`car-${i}`} 
-                    href={`/browse-cars/${aff.car_slug}`}
-                    className={styles.affinityBadge}
-                  >
-                    {aff.car_name || aff.car_slug}
-                  </Link>
-                ))}
-              </div>
-              {brandAffinities.length > 0 && (
-                <Link 
-                  href="/community"
-                  className={styles.findMoreLink}
-                >
-                  Find more {brandAffinities[0].brand} events →
-                </Link>
-              )}
-            </section>
-          )}
-
-          {/* Source Attribution */}
-          <section className={styles.section}>
-            <div className={styles.source}>
-              Event information from{' '}
-              <a href={source_url} target="_blank" rel="noopener noreferrer">
-                {source_name || 'external source'}
-              </a>
-            </div>
-          </section>
-        </div>
-
-        {/* Sidebar */}
-        <aside className={styles.sidebar}>
-          {/* RSVP Card - Different content for past events */}
-          {isPastEvent ? (
-            <div className={`${styles.rsvpCard} ${styles.pastEventCard}`}>
-              <h3>This Event Has Ended</h3>
-              <p className={styles.rsvpCardDesc}>
-                This event took place on {formattedStartDate}. Check out similar upcoming events below.
-              </p>
-            </div>
-          ) : (
-            <div className={styles.rsvpCard}>
-              <h3>Going to this event?</h3>
-              <p className={styles.rsvpCardDesc}>
-                Let others know you're attending and connect with fellow enthusiasts at the event.
-              </p>
-              <EventRSVPButton
-                eventSlug={slug}
-                eventName={name}
-                variant="full-width"
+          {/* Attendees Section */}
+          <div className={styles.section}>
+            <h3 className={styles.sectionTitle}>
+              <Icons.users size={16} />
+              Who's Going
+            </h3>
+            <div className={styles.sectionContent}>
+              <EventAttendeesPreview 
+                eventSlug={slug} 
+                variant="compact"
+                maxAvatars={6}
               />
             </div>
-          )}
-          
-          {/* CTA Card */}
-          <div className={styles.ctaCard}>
-            <h3>Interested in this event?</h3>
-            <a
-              href={registration_url || source_url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.ctaBtn}
-            >
-              <Icons.externalLink size={18} />
-              {registration_url ? 'Register / Learn More' : 'View Full Event Details'}
-            </a>
-            <p className={styles.ctaNote}>
-              Opens in a new tab
-            </p>
           </div>
-
-          {/* Quick Info */}
-          <div className={styles.quickInfo}>
-            <h4>Quick Info</h4>
-            <dl>
-              <dt>Event Type</dt>
-              <dd>{event_type?.name || 'General'}</dd>
-              
-              <dt>Scope</dt>
-              <dd style={{ textTransform: 'capitalize' }}>{scope}</dd>
-              
-              {region && (
-                <>
-                  <dt>Region</dt>
-                  <dd>{region}</dd>
-                </>
-              )}
-            </dl>
-          </div>
-        </aside>
+        </div>
       </div>
-
-      {/* Related Events */}
-      {relatedEvents.length > 0 && (
-        <section className={styles.relatedSection}>
-          <div className={styles.relatedContainer}>
-            <h2 className={styles.relatedTitle}>Similar Events</h2>
-            <div className={styles.relatedGrid}>
-              {relatedEvents.map(e => (
-                <EventCard 
-                  key={e.id} 
-                  event={e}
-                  showSaveButton={false}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
     </div>
   );
-}
 
+  return createPortal(pageContent, document.body);
+}

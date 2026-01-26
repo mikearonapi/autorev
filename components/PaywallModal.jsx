@@ -157,6 +157,7 @@ export default function PaywallModal({
     <div 
       className={`${styles.overlay} ${showModal ? styles.overlayVisible : ''}`}
       onClick={handleClose}
+      data-overlay-modal
     >
       <div 
         className={`${styles.modal} ${showModal ? styles.modalVisible : ''}`}

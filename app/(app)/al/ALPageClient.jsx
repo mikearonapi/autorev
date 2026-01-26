@@ -36,7 +36,8 @@ import ALSourcesList from '@/components/ALSourcesList';
 // NOTE: Citation parsing functions available for future enhanced source display
 // import { parseALResponseWithCitations, collectSourcesFromToolResults } from '@/lib/alCitationParser';
 import PullToRefresh from '@/components/ui/PullToRefresh';
-import SwipeableRow from '@/components/ui/SwipeableRow';
+// SwipeableRow removed from conversation list - was causing double-tap issues on iOS
+// import SwipeableRow from '@/components/ui/SwipeableRow';
 
 // Simple markdown formatter for AL responses
 const FormattedMessage = ({ content }) => {
@@ -160,7 +161,6 @@ const LocalIcons = {
   search: Icons.search,
   mic: Icons.mic,
   share: Icons.share,
-  download: Icons.download,
   x: Icons.x,
 };
 
@@ -381,17 +381,19 @@ export default function ALPageClient() {
     refetch: refetchConversations,
   } = useUserConversations(user?.id, { enabled: isAuthenticated && showHistory });
   
-  // Load a specific conversation when selected
-  const { data: selectedConversationData } = useUserConversation(
+  // Note: We use direct API calls for loading conversations (see loadConversation)
+  // This hook is kept but disabled - could be used for caching in the future
+  const { data: _selectedConversationData } = useUserConversation(
     user?.id, 
-    selectedConversationId,
-    { enabled: !!selectedConversationId }
+    null, // Always disabled - we load conversations directly
+    { enabled: false }
   );
   
-  // Scroll to bottom when messages change
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages, streamingContent]);
+  // Auto-scroll disabled - user prefers to see top of AL's response first
+  // If you want to re-enable, uncomment the following:
+  // useEffect(() => {
+  //   messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  // }, [messages, streamingContent]);
   
   // Focus input on mount
   useEffect(() => {
@@ -444,6 +446,21 @@ export default function ALPageClient() {
     }
   }, []);
   
+  // Auto-send pending prompt if autoSend flag is true
+  // Uses a small delay to ensure sendMessageRef is populated
+  useEffect(() => {
+    if (pendingPrompt?.autoSend && sendMessageRef.current) {
+      const timer = setTimeout(() => {
+        if (pendingPrompt && sendMessageRef.current) {
+          const promptText = pendingPrompt.prompt;
+          setPendingPrompt(null);
+          sendMessageRef.current(promptText);
+        }
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [pendingPrompt]);
+  
   // Fetch initial daily usage on mount
   useEffect(() => {
     if (!isAuthenticated || !user?.id) return;
@@ -469,23 +486,62 @@ export default function ALPageClient() {
     fetchDailyUsage();
   }, [isAuthenticated, user?.id]);
   
-  // Handle loaded conversation data from React Query
-  useEffect(() => {
-    if (selectedConversationData?.messages) {
-      setMessages(selectedConversationData.messages.map(msg => ({
-        role: msg.role,
-        content: msg.content,
-      })));
-      setCurrentConversationId(selectedConversationId);
-      setSelectedConversationId(null); // Reset to prevent refetching
-      setShowHistory(false);
-    }
-  }, [selectedConversationData, selectedConversationId]);
+  // Note: Conversation loading is now handled directly in loadConversation()
+  // The React Query hook is kept for potential future caching but not used for loading
   
-  // Load a specific conversation (triggers React Query fetch)
-  const loadConversation = useCallback((conversationId) => {
-    setSelectedConversationId(conversationId);
-  }, []);
+  // Load a specific conversation - direct API call for reliability
+  const [isLoadingConversationDirect, setIsLoadingConversationDirect] = useState(false);
+  
+  const loadConversation = useCallback(async (conversationId) => {
+    // Prevent loading while already loading
+    if (isLoadingConversationDirect) return;
+    if (!user?.id) {
+      console.error('[AL] Cannot load conversation: no user ID');
+      return;
+    }
+    
+    console.log('[AL] Loading conversation:', conversationId);
+    setIsLoadingConversationDirect(true);
+    setSelectedConversationId(conversationId); // For loading indicator
+    
+    try {
+      const response = await fetch(`/api/users/${user.id}/al-conversations/${conversationId}`);
+      
+      if (response.status === 404) {
+        // Conversation was likely soft-deleted but still showing in list
+        // Refresh the list and show a message
+        console.warn('[AL] Conversation not found (may have been deleted)');
+        refetchConversations();
+        setShowHistory(false);
+        return;
+      }
+      
+      if (!response.ok) {
+        throw new Error(`Failed to load conversation: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('[AL] Conversation loaded:', data.messages?.length || 0, 'messages');
+      
+      if (data.messages && data.messages.length > 0) {
+        setMessages(data.messages.map(msg => ({
+          role: msg.role,
+          content: msg.content,
+        })));
+        setCurrentConversationId(conversationId);
+        setShowHistory(false);
+      } else {
+        console.warn('[AL] Conversation has no messages');
+        setError({ message: 'This conversation has no messages.', canRetry: false });
+      }
+    } catch (err) {
+      console.error('[AL] Failed to load conversation:', err);
+      setError({ message: 'Failed to load conversation. Please try again.', canRetry: false });
+    } finally {
+      setIsLoadingConversationDirect(false);
+      setSelectedConversationId(null);
+    }
+  }, [user?.id, isLoadingConversationDirect, refetchConversations]);
   
   // Start new chat
   const startNewChat = useCallback(() => {
@@ -527,40 +583,6 @@ export default function ALPageClient() {
       speechRecognitionRef.current.start();
     }
   }, [isListening]);
-  
-  // Export conversation as markdown
-  const exportConversation = useCallback(() => {
-    if (messages.length === 0) return;
-    
-    const carContext = selectedCar ? `Car: ${selectedCar.name}` : '';
-    const date = new Date().toLocaleDateString('en-US', { 
-      year: 'numeric', month: 'long', day: 'numeric' 
-    });
-    
-    let markdown = `# AL Conversation\n\n`;
-    markdown += `**Date:** ${date}\n`;
-    if (carContext) markdown += `**${carContext}**\n`;
-    markdown += `\n---\n\n`;
-    
-    messages.forEach((msg) => {
-      const role = msg.role === 'user' ? '**You:**' : '**AL:**';
-      const timestamp = msg.timestamp 
-        ? ` _(${new Date(msg.timestamp).toLocaleTimeString()})_` 
-        : '';
-      markdown += `${role}${timestamp}\n\n${msg.content}\n\n---\n\n`;
-    });
-    
-    // Create and download file
-    const blob = new Blob([markdown], { type: 'text/markdown' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `al-conversation-${Date.now()}.md`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }, [messages, selectedCar]);
   
   // Generate share link for conversation
   const generateShareLink = useCallback(async () => {
@@ -1176,44 +1198,46 @@ export default function ALPageClient() {
                 </div>
               ) : (
                 displayedConversations.map((conv) => (
-                  <SwipeableRow
+                  <button
                     key={conv.id}
-                    rightActions={[
-                      {
-                        icon: <LocalIcons.trash size={18} />,
-                        label: 'Delete',
-                        onClick: () => setDeleteConfirm({ conversationId: conv.id, title: conv.title }),
-                        variant: 'danger',
-                      },
-                    ]}
+                    type="button"
+                    className={`${styles.conversationItem} ${conv.id === currentConversationId ? styles.conversationItemActive : ''} ${isLoadingConversationDirect && selectedConversationId === conv.id ? styles.conversationItemLoading : ''}`}
+                    onClick={() => !isLoadingConversationDirect && loadConversation(conv.id)}
+                    disabled={isLoadingConversationDirect}
                   >
-                    <div
-                      className={`${styles.conversationItem} ${conv.id === currentConversationId ? styles.conversationItemActive : ''}`}
-                    >
-                      <button
-                        className={styles.conversationContent}
-                        onClick={() => loadConversation(conv.id)}
-                      >
-                        <span className={styles.conversationTitle}>{conv.title || 'New conversation'}</span>
-                        {conv.preview && (
-                          <span className={styles.conversationPreview}>{conv.preview}</span>
-                        )}
-                      </button>
-                      <div className={styles.conversationMeta}>
-                        <span className={styles.conversationDate}>{formatDate(conv.created_at)}</span>
-                        <button
-                          className={styles.deleteConversationBtn}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setDeleteConfirm({ conversationId: conv.id, title: conv.title });
-                          }}
-                          title="Delete conversation"
-                        >
-                          <LocalIcons.trash size={14} />
-                        </button>
-                      </div>
+                    <div className={styles.conversationContent}>
+                      <span className={styles.conversationTitle}>{conv.title || 'New conversation'}</span>
+                      {conv.preview && (
+                        <span className={styles.conversationPreview}>{conv.preview}</span>
+                      )}
+                      {isLoadingConversationDirect && selectedConversationId === conv.id && (
+                        <span className={styles.conversationLoading}>Loading...</span>
+                      )}
                     </div>
-                  </SwipeableRow>
+                    <div className={styles.conversationMeta}>
+                      <span className={styles.conversationDate}>{formatDate(conv.created_at)}</span>
+                      <span
+                        role="button"
+                        tabIndex={0}
+                        className={styles.deleteConversationBtn}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          e.preventDefault();
+                          setDeleteConfirm({ conversationId: conv.id, title: conv.title });
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.stopPropagation();
+                            e.preventDefault();
+                            setDeleteConfirm({ conversationId: conv.id, title: conv.title });
+                          }
+                        }}
+                        title="Delete conversation"
+                      >
+                        <LocalIcons.trash size={14} />
+                      </span>
+                    </div>
+                  </button>
                 ))
               )}
             </div>
@@ -1283,17 +1307,6 @@ export default function ALPageClient() {
             </button>
           )}
           
-          {/* Export button - only show when there are messages */}
-          {messages.length > 0 && (
-            <button 
-              className={styles.settingsBtn}
-              onClick={exportConversation}
-              title="Export conversation"
-            >
-              <LocalIcons.download size={18} />
-            </button>
-          )}
-          
           <button 
             className={styles.settingsBtn}
             onClick={() => setShowPreferences(!showPreferences)}
@@ -1314,7 +1327,7 @@ export default function ALPageClient() {
       
       {/* Preferences Panel */}
       {showPreferences && (
-        <div className={styles.preferencesOverlay}>
+        <div className={styles.preferencesOverlay} data-overlay-modal>
           <ALPreferencesPanel
             isOpen={showPreferences}
             onClose={() => setShowPreferences(false)}
@@ -1514,7 +1527,7 @@ export default function ALPageClient() {
             )}
             
             {isLoading && !streamingContent && (
-              <div className={`${styles.message} ${styles.assistantMessage}`}>
+              <div className={`${styles.message} ${styles.assistantMessage} ${styles.loadingMessage}`}>
                 <Image 
                   src={UI_IMAGES.alMascotFull}
                   alt="AL"
