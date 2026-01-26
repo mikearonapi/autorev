@@ -1,24 +1,36 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import Image from 'next/image';
+
 import usePWAInstall from '@/hooks/usePWAInstall';
+
 import styles from './PWAInstallPrompt.module.css';
 
 /**
  * PWAInstallPrompt - Smart installation prompt for all platforms
- * 
+ *
  * Shows contextual UI based on the user's platform:
  * - Chrome/Edge: Button to trigger native install prompt
  * - iOS Safari: Visual step-by-step instructions
  * - macOS Safari: Instructions for File → Add to Dock
- * 
+ *
  * Design: Follows AutoRev brand guidelines (teal accent, dark theme)
  */
 
 // iOS Share icon SVG
 const ShareIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
     <polyline points="16 6 12 2 8 6" />
     <line x1="12" y1="2" x2="12" y2="15" />
@@ -27,7 +39,16 @@ const ShareIcon = () => (
 
 // Plus/Add icon
 const AddIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
     <line x1="12" y1="8" x2="12" y2="16" />
     <line x1="8" y1="12" x2="16" y2="12" />
@@ -36,7 +57,16 @@ const AddIcon = () => (
 
 // Download/Install icon
 const InstallIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
     <polyline points="7 10 12 15 17 10" />
     <line x1="12" y1="15" x2="12" y2="3" />
@@ -45,7 +75,16 @@ const InstallIcon = () => (
 
 // Close icon
 const CloseIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <line x1="18" y1="6" x2="6" y2="18" />
     <line x1="6" y1="6" x2="18" y2="18" />
   </svg>
@@ -53,7 +92,16 @@ const CloseIcon = () => (
 
 // Check icon
 const CheckIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="3"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <polyline points="20 6 9 17 4 12" />
   </svg>
 );
@@ -67,7 +115,7 @@ const MenuIcon = () => (
   </svg>
 );
 
-export default function PWAInstallPrompt({ 
+export default function PWAInstallPrompt({
   variant = 'banner', // 'banner' | 'modal' | 'inline'
   onInstalled,
   onDismissed,
@@ -76,7 +124,7 @@ export default function PWAInstallPrompt({
   forceShow = false, // Force show (for programmatic triggering)
 }) {
   const {
-    isInstallable,
+    isInstallable: _isInstallable,
     isInstalled,
     isIOS,
     shouldShowInstallPrompt,
@@ -127,7 +175,7 @@ export default function PWAInstallPrompt({
       setInstallStarted(true);
       const result = await promptInstall();
       setInstallStarted(false);
-      
+
       if (result.outcome === 'accepted') {
         setIsVisible(false);
         setShowInstructions(false);
@@ -155,11 +203,11 @@ export default function PWAInstallPrompt({
   if (variant === 'modal' && forceShow) {
     // Render only the modal
     const instructions = getInstallInstructions();
-    
+
     return (
       <div className={styles.modalOverlay} onClick={() => handleDismiss(false)}>
         <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-          <button 
+          <button
             className={styles.modalClose}
             onClick={() => handleDismiss(false)}
             aria-label="Close"
@@ -170,7 +218,7 @@ export default function PWAInstallPrompt({
           <div className={styles.modalHeader}>
             <div className={styles.appIconWrapper}>
               <Image
-                src="/apple-touch-icon.png"
+                src="/apple-touch-icon-v2.png"
                 alt="AutoRev"
                 width={64}
                 height={64}
@@ -178,9 +226,7 @@ export default function PWAInstallPrompt({
               />
             </div>
             <h2 className={styles.modalTitle}>Install AutoRev</h2>
-            <p className={styles.modalSubtitle}>
-              Get the full app experience on your home screen
-            </p>
+            <p className={styles.modalSubtitle}>Get the full app experience on your home screen</p>
           </div>
 
           <div className={styles.stepsContainer}>
@@ -194,12 +240,8 @@ export default function PWAInstallPrompt({
                     {step.icon === 'install' && <InstallIcon />}
                     {step.icon === 'menu' && <MenuIcon />}
                     {step.icon === 'confirm' && <CheckIcon />}
-                    {step.icon === 'scroll' && (
-                      <span className={styles.scrollText}>↓</span>
-                    )}
-                    {step.icon === 'file' && (
-                      <span className={styles.fileText}>File</span>
-                    )}
+                    {step.icon === 'scroll' && <span className={styles.scrollText}>↓</span>}
+                    {step.icon === 'file' && <span className={styles.fileText}>File</span>}
                   </div>
                   <span className={styles.stepText}>{step.text}</span>
                 </div>
@@ -217,10 +259,7 @@ export default function PWAInstallPrompt({
           )}
 
           <div className={styles.modalActions}>
-            <button 
-              className={styles.dismissButton}
-              onClick={() => handleDismiss(false)}
-            >
+            <button className={styles.dismissButton} onClick={() => handleDismiss(false)}>
               Maybe Later
             </button>
           </div>
@@ -248,11 +287,7 @@ export default function PWAInstallPrompt({
               Add to your home screen for the best experience
             </span>
           </div>
-          <button 
-            className={styles.inlineButton}
-            onClick={handleInstall}
-            disabled={installStarted}
-          >
+          <button className={styles.inlineButton} onClick={handleInstall} disabled={installStarted}>
             {installStarted ? 'Installing...' : 'Install'}
           </button>
         </div>
@@ -265,7 +300,7 @@ export default function PWAInstallPrompt({
     return (
       <div className={styles.modalOverlay} onClick={() => setShowInstructions(false)}>
         <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-          <button 
+          <button
             className={styles.modalClose}
             onClick={() => handleDismiss(false)}
             aria-label="Close"
@@ -276,7 +311,7 @@ export default function PWAInstallPrompt({
           <div className={styles.modalHeader}>
             <div className={styles.appIconWrapper}>
               <Image
-                src="/apple-touch-icon.png"
+                src="/apple-touch-icon-v2.png"
                 alt="AutoRev"
                 width={64}
                 height={64}
@@ -284,9 +319,7 @@ export default function PWAInstallPrompt({
               />
             </div>
             <h2 className={styles.modalTitle}>Install AutoRev</h2>
-            <p className={styles.modalSubtitle}>
-              Get the full app experience on your home screen
-            </p>
+            <p className={styles.modalSubtitle}>Get the full app experience on your home screen</p>
           </div>
 
           <div className={styles.stepsContainer}>
@@ -300,12 +333,8 @@ export default function PWAInstallPrompt({
                     {step.icon === 'install' && <InstallIcon />}
                     {step.icon === 'menu' && <MenuIcon />}
                     {step.icon === 'confirm' && <CheckIcon />}
-                    {step.icon === 'scroll' && (
-                      <span className={styles.scrollText}>↓</span>
-                    )}
-                    {step.icon === 'file' && (
-                      <span className={styles.fileText}>File</span>
-                    )}
+                    {step.icon === 'scroll' && <span className={styles.scrollText}>↓</span>}
+                    {step.icon === 'file' && <span className={styles.fileText}>File</span>}
                   </div>
                   <span className={styles.stepText}>{step.text}</span>
                 </div>
@@ -323,10 +352,7 @@ export default function PWAInstallPrompt({
           )}
 
           <div className={styles.modalActions}>
-            <button 
-              className={styles.dismissButton}
-              onClick={() => handleDismiss(false)}
-            >
+            <button className={styles.dismissButton} onClick={() => handleDismiss(false)}>
               Maybe Later
             </button>
           </div>
@@ -341,7 +367,7 @@ export default function PWAInstallPrompt({
       <div className={styles.bannerContent}>
         <div className={styles.bannerLeft}>
           <Image
-            src="/apple-touch-icon.png"
+            src="/apple-touch-icon-v2.png"
             alt="AutoRev"
             width={44}
             height={44}
@@ -350,21 +376,21 @@ export default function PWAInstallPrompt({
           <div className={styles.bannerText}>
             <span className={styles.bannerTitle}>Install AutoRev</span>
             <span className={styles.bannerDescription}>
-              {isIOS 
+              {isIOS
                 ? 'Add to home screen for the best experience'
                 : 'Install our app for quick access'}
             </span>
           </div>
         </div>
         <div className={styles.bannerActions}>
-          <button 
+          <button
             className={styles.installButton}
             onClick={handleInstall}
             disabled={installStarted}
           >
             {installStarted ? '...' : 'Install'}
           </button>
-          <button 
+          <button
             className={styles.closeButton}
             onClick={() => handleDismiss(false)}
             aria-label="Dismiss"
@@ -383,10 +409,10 @@ export default function PWAInstallPrompt({
 export function PWAInstallButton({ className }) {
   const {
     shouldShowInstallPrompt,
-    isIOS,
+    isIOS: _isIOS,
     canPromptNatively,
     promptInstall,
-    getInstallInstructions,
+    getInstallInstructions: _getInstallInstructions,
   } = usePWAInstall();
 
   const [showModal, setShowModal] = useState(false);
@@ -406,18 +432,14 @@ export function PWAInstallButton({ className }) {
 
   return (
     <>
-      <button 
-        className={className}
-        onClick={handleInstallClick}
-        disabled={installing}
-      >
+      <button className={className} onClick={handleInstallClick} disabled={installing}>
         <InstallIcon />
         <span>{installing ? 'Installing...' : 'Install App'}</span>
       </button>
 
       {showModal && (
-        <PWAInstallPrompt 
-          variant="modal" 
+        <PWAInstallPrompt
+          variant="modal"
           forceShow={true}
           onDismissed={() => setShowModal(false)}
         />

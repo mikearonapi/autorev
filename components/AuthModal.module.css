@@ -4,14 +4,18 @@
 .overlay {
   position: fixed;
   inset: 0;
-  z-index: 1100;
+
+  /* High z-index to ensure modal appears above all other overlays */
+  z-index: 100000;
   display: flex;
   align-items: center;
   justify-content: center;
+
   /* Safe area padding for mobile */
   padding: var(--space-md);
   padding-top: max(var(--space-md), env(safe-area-inset-top));
   padding-bottom: max(var(--space-md), env(safe-area-inset-bottom));
+
   /* Charcoal overlay - matches safe area color (#1a1a1a) when blurred */
   background: var(--color-bg-overlay, rgba(26, 26, 26, 0.85));
   backdrop-filter: blur(12px) saturate(180%);
@@ -20,8 +24,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* Modal */
@@ -29,7 +38,9 @@
   position: relative;
   width: 100%;
   max-width: 380px;
-  background: var(--color-white);
+
+  /* IMPORTANT: Fallback ensures white background even if CSS var fails */
+  background: var(--color-white, #ffffff);
   border-radius: var(--radius-lg);
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
   padding: var(--space-xl) var(--space-lg);
@@ -42,7 +53,7 @@
     justify-content: center;
     padding: var(--space-md);
   }
-  
+
   .modal {
     max-width: calc(100% - var(--space-lg));
     border-radius: var(--radius-xl);
@@ -55,6 +66,7 @@
     opacity: 0;
     transform: translateY(16px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -116,7 +128,11 @@
   font-family: var(--font-body);
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--color-bg-elevated, #1e293b); /* Slate-800: Strong contrast for headings on light background */
+  color: var(
+    --color-bg-elevated,
+    #1e293b
+  ); /* Slate-800: Strong contrast for headings on light background */
+
   text-align: center;
   margin: 0 0 var(--space-md);
 }
@@ -194,7 +210,9 @@
   border-radius: var(--radius-md);
   background: var(--color-white, #ffffff);
   color: var(--color-bg-elevated, #1e293b); /* Slate-800: High contrast input text */
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
 }
 
 .inputGroup input:focus {
@@ -204,7 +222,10 @@
 }
 
 .inputGroup input::placeholder {
-  color: var(--color-text-secondary, #94a3b8); /* Slate-400: Readable placeholder on white (4.5:1 contrast) */
+  color: var(
+    --color-text-secondary,
+    #94a3b8
+  ); /* Slate-400: Readable placeholder on white (4.5:1 contrast) */
 }
 
 .inputGroup input:disabled {
@@ -438,7 +459,7 @@
   .primaryBtn:active {
     transform: scale(0.98);
   }
-  
+
   .socialBtn:active {
     transform: scale(0.95);
   }
