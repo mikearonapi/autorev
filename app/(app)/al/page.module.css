@@ -12,6 +12,7 @@
   flex-direction: column;
   min-height: 100%;
   flex: 1;
+
   /* Transparent to show body gradient */
   background: transparent;
   color: var(--color-text-primary, #ffffff);
@@ -113,7 +114,7 @@
   .queryCounter {
     padding: 6px 12px;
   }
-  
+
   .queryCountNumber {
     font-size: var(--text-sm, 14px);
   }
@@ -164,8 +165,10 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
+
   /* Closer to top - accounts for safe area on notched devices */
   padding-top: max(env(safe-area-inset-top, 0px) + 16px, 24px);
+
   /* Charcoal overlay - matches safe area color (#1a1a1a) when blurred */
   background: var(--color-bg-overlay, rgba(26, 26, 26, 0.85));
   backdrop-filter: blur(12px) saturate(180%);
@@ -174,8 +177,15 @@
 }
 
 @keyframes slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ===========================================
@@ -184,8 +194,7 @@
 
 .messagesArea {
   flex: 1;
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden auto;
   padding: 20px 16px;
   display: flex;
   flex-direction: column;
@@ -213,8 +222,15 @@
 }
 
 @keyframes messageIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .userMessage {
@@ -224,7 +240,7 @@
 .userMessage .messageContent {
   background: rgba(255, 255, 255, 0.1);
   color: var(--color-text-primary, #ffffff);
-  border-radius: 18px 18px 4px 18px;
+  border-radius: 18px 18px 4px;
   margin-left: auto;
 }
 
@@ -305,8 +321,16 @@
 }
 
 @keyframes phasePulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.3); opacity: 0.6; }
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.3);
+    opacity: 0.6;
+  }
 }
 
 .phaseLabel {
@@ -347,7 +371,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .toolCheckmark {
@@ -364,8 +390,15 @@
 }
 
 @keyframes fadeInSlide {
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ===========================================
@@ -497,8 +530,14 @@
 }
 
 @keyframes voicePulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
 }
 
 /* ===========================================
@@ -519,8 +558,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .shareModalContent {
@@ -797,15 +841,11 @@
   .inputArea {
     padding: 8px 16px 16px;
   }
-  
+
   .inputWrapper {
     border-radius: 20px;
     padding: 8px 8px 8px 6px;
   }
-}
-
-.inputWrapper:focus-within {
-  background: rgba(255, 255, 255, 0.08);
 }
 
 /* Attachment Button */
@@ -1125,8 +1165,14 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
 }
 
 .conversationContent {
@@ -1330,16 +1376,16 @@
   transition: opacity 0.15s ease;
 }
 
-/* Desktop: subtle until hover */
+/* Desktop: always visible with slight visual enhancement on hover */
 @media (min-width: 1024px) {
   .messageActions {
-    gap: 2px;
-    padding-top: 8px;
+    gap: 4px;
+    padding-top: 10px;
     margin-top: 12px;
-    border-top: none;
-    opacity: 0.5;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    opacity: 0.85; /* More visible by default */
   }
-  
+
   .message:hover .messageActions {
     opacity: 1;
   }
@@ -1374,11 +1420,13 @@
   background: rgba(16, 185, 129, 0.1);
 }
 
-/* Desktop: more subtle default state */
+/* Desktop: slightly more visible default state for discoverability */
 @media (min-width: 1024px) {
   .actionBtn {
-    background: transparent;
-    color: var(--color-text-tertiary, #64748b);
+    background: rgba(255, 255, 255, 0.02);
+    color: var(--color-text-secondary, #94a3b8);
+    width: 36px;
+    height: 36px;
   }
 }
 
@@ -1481,6 +1529,7 @@
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.96);
   }
+
   to {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1);
@@ -1588,23 +1637,23 @@
   .container {
     padding-bottom: 0;
   }
-  
+
   .header {
     padding: 12px 20px;
   }
-  
+
   .messagesArea {
     padding: 32px 24px;
   }
-  
+
   .inputArea {
     padding: 16px 24px 24px;
   }
-  
+
   .emptyTitle {
     font-size: 28px;
   }
-  
+
   .suggestions {
     bottom: 120px;
   }

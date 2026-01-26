@@ -35,43 +35,6 @@ import { calculateAllModificationGains } from '@/lib/performanceCalculator';
 
 import styles from './page.module.css';
 
-// Local alias for sparkle (used with fill instead of stroke)
-const LocalIcons = {
-  sparkle: ({ size = 20 }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2Z" />
-    </svg>
-  ),
-};
-
-
-// Rating bar component
-function RatingBar({ value, label, maxValue = 10 }) {
-  if (value === undefined || value === null) return null;
-  const percentage = Math.min(Math.max((value / maxValue) * 100, 0), 100);
-
-  return (
-    <div className={styles.ratingRow} role="row">
-      <span className={styles.ratingLabel} id={`rating-${label.toLowerCase().replace(/\s+/g, '-')}`}>
-        {label}
-      </span>
-      <div 
-        className={styles.ratingTrack} 
-        role="progressbar" 
-        aria-valuenow={value} 
-        aria-valuemin={0} 
-        aria-valuemax={maxValue}
-        aria-labelledby={`rating-${label.toLowerCase().replace(/\s+/g, '-')}`}
-      >
-        <div className={styles.ratingFill} style={{ width: `${percentage}%` }} />
-      </div>
-      <span className={styles.ratingValue} aria-hidden="true">
-        {value}/{maxValue}
-      </span>
-    </div>
-  );
-}
-
 /**
  * SpecRow - Semantic table row for spec display
  * Per SOURCE_OF_TRUTH.md: Use proper ARIA and semantic HTML
@@ -80,22 +43,33 @@ function SpecRow({ label, value, unit = '', stockValue, modifiedValue, gain }) {
   // Handle missing values with "—" per audit requirements
   const displayValue = value !== undefined && value !== null ? value : '—';
   const hasModification = stockValue !== undefined && modifiedValue !== undefined;
-  
+
   return (
     <tr className={styles.specTableRow}>
-      <th scope="row" className={styles.specTableLabel}>{label}</th>
+      <th scope="row" className={styles.specTableLabel}>
+        {label}
+      </th>
       <td className={styles.specTableValue}>
         {hasModification ? (
           <span className={styles.specValueWithGain}>
             <span className={styles.stockValue}>{stockValue}</span>
-            <span className={styles.arrow} aria-hidden="true">→</span>
-            <span className={styles.upgradedValue}>{modifiedValue} {unit}</span>
+            <span className={styles.arrow} aria-hidden="true">
+              →
+            </span>
+            <span className={styles.upgradedValue}>
+              {modifiedValue} {unit}
+            </span>
             {gain !== undefined && (
-              <span className={styles.gainBadge} aria-label={`Gain of ${gain}`}>+{gain}</span>
+              <span className={styles.gainBadge} aria-label={`Gain of ${gain}`}>
+                +{gain}
+              </span>
             )}
           </span>
         ) : (
-          <span>{displayValue}{displayValue !== '—' && unit ? ` ${unit}` : ''}</span>
+          <span>
+            {displayValue}
+            {displayValue !== '—' && unit ? ` ${unit}` : ''}
+          </span>
         )}
       </td>
     </tr>
@@ -116,9 +90,7 @@ function SpecTable({ caption, children, className = '' }) {
           <th scope="col">Value</th>
         </tr>
       </thead>
-      <tbody>
-        {children}
-      </tbody>
+      <tbody>{children}</tbody>
     </table>
   );
 }
@@ -134,13 +106,11 @@ function ErrorState({ error, onRetry, title = 'Something went wrong' }) {
         <Icons.alertCircle size={48} />
       </div>
       <h3 className={styles.errorTitle}>{title}</h3>
-      <p className={styles.errorMessage}>{error?.message || 'Failed to load data. Please try again.'}</p>
+      <p className={styles.errorMessage}>
+        {error?.message || 'Failed to load data. Please try again.'}
+      </p>
       {onRetry && (
-        <button 
-          className={styles.retryButton} 
-          onClick={onRetry}
-          aria-label="Retry loading data"
-        >
+        <button className={styles.retryButton} onClick={onRetry} aria-label="Retry loading data">
           <Icons.refresh size={16} />
           Try Again
         </button>
@@ -179,12 +149,12 @@ function MySpecsLoading() {
       <div style={{ padding: '12px 16px', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
         <Skeleton width={200} height={20} variant="rounded" />
       </div>
-      
+
       {/* Skeleton for vehicle selector */}
       <div style={{ padding: '16px' }}>
         <Skeleton width="100%" height={60} variant="rounded" />
       </div>
-      
+
       {/* Skeleton for specs grid */}
       <div className={styles.skeletonContent}>
         <div className={styles.skeletonGrid}>
@@ -193,7 +163,7 @@ function MySpecsLoading() {
           <SpecsCardSkeleton />
           <SpecsCardSkeleton />
         </div>
-        
+
         {/* Skeleton for ratings card */}
         <div className={styles.skeletonCard} style={{ marginBottom: '12px' }}>
           <div className={styles.skeletonHeader}>
@@ -231,19 +201,24 @@ function MySpecsContent() {
   const { vehicles, refreshVehicles } = useOwnedVehicles();
 
   // Use cached cars data from React Query hook
-  const { data: allCars = [], isLoading: carsLoading, error: carsError, refetch: refetchCars } = useCarsList();
+  const {
+    data: allCars = [],
+    isLoading: _carsLoading,
+    error: carsError,
+    refetch: refetchCars,
+  } = useCarsList();
 
   // Get URL params for fallback fetch
   const carSlugParam = searchParams.get('car');
 
   // Fallback: fetch single car in parallel with full list
   // This provides faster data when the full list is slow or unavailable
-  const carFromList = carSlugParam ? allCars.find(c => c.slug === carSlugParam) : null;
-  const { 
-    data: fallbackCar, 
-    isLoading: fallbackLoading, 
-    error: fallbackError, 
-    refetch: refetchFallback 
+  const carFromList = carSlugParam ? allCars.find((c) => c.slug === carSlugParam) : null;
+  const {
+    data: fallbackCar,
+    isLoading: fallbackLoading,
+    error: fallbackError,
+    refetch: refetchFallback,
   } = useCarBySlug(carSlugParam, {
     enabled: !!carSlugParam && !carFromList && !selectedCar,
   });
@@ -257,33 +232,42 @@ function MySpecsContent() {
   });
 
   // Fetch full car details for driving character fields (not in list view)
-  const { 
-    data: fullCarData, 
-    error: fullCarError, 
-    refetch: refetchFullCar 
+  const {
+    data: fullCarData,
+    error: fullCarError,
+    refetch: refetchFullCar,
   } = useCarBySlug(selectedCar?.slug, {
     enabled: !!selectedCar?.slug,
   });
 
   // Fetch maintenance specs (fluids, tires, etc.)
-  const { 
-    data: maintenanceData, 
-    error: maintenanceError, 
-    refetch: refetchMaintenance 
+  const {
+    data: maintenanceData,
+    error: maintenanceError,
+    refetch: refetchMaintenance,
   } = useCarMaintenance(selectedCar?.slug, {
     enabled: !!selectedCar?.slug,
   });
 
   // Combined error state for data fetching
   const dataError = carsError || fallbackError || fullCarError || maintenanceError;
-  
+
   // Retry handler for error state
   const handleRetry = useCallback(() => {
     if (carsError) refetchCars();
     if (fallbackError) refetchFallback();
     if (fullCarError) refetchFullCar();
     if (maintenanceError) refetchMaintenance();
-  }, [carsError, fallbackError, fullCarError, maintenanceError, refetchCars, refetchFallback, refetchFullCar, refetchMaintenance]);
+  }, [
+    carsError,
+    fallbackError,
+    fullCarError,
+    maintenanceError,
+    refetchCars,
+    refetchFallback,
+    refetchFullCar,
+    refetchMaintenance,
+  ]);
 
   // Fetch tuning profile data
   const { profile: tuningProfile, hasProfile: hasTuningProfile } = useTuningProfile(selectedCar);
@@ -429,11 +413,7 @@ function MySpecsContent() {
     return (
       <div className={styles.page}>
         <MyGarageSubNav carSlug={carSlugParam} buildId={buildIdParam} onBack={handleBack} />
-        <ErrorState 
-          error={dataError} 
-          onRetry={handleRetry}
-          title="Failed to Load Vehicle Data"
-        />
+        <ErrorState error={dataError} onRetry={handleRetry} title="Failed to Load Vehicle Data" />
         <AuthModal {...authModal.props} />
       </div>
     );
@@ -477,10 +457,10 @@ function MySpecsContent() {
             </div>
             <SpecTable caption="Performance specifications" aria-labelledby="performance-specs">
               {hasBuildUpgrades ? (
-                <SpecRow 
-                  label="Horsepower" 
-                  stockValue={selectedCar.hp} 
-                  modifiedValue={finalHp} 
+                <SpecRow
+                  label="Horsepower"
+                  stockValue={selectedCar.hp}
+                  modifiedValue={finalHp}
                   gain={hpGain}
                   unit="HP"
                 />
@@ -504,7 +484,10 @@ function MySpecsContent() {
                 Engine & Drivetrain
               </h3>
             </div>
-            <SpecTable caption="Engine and drivetrain specifications" aria-labelledby="engine-specs">
+            <SpecTable
+              caption="Engine and drivetrain specifications"
+              aria-labelledby="engine-specs"
+            >
               <SpecRow label="Engine" value={selectedCar.engine} />
               <SpecRow label="Transmission" value={selectedCar.trans} />
               <SpecRow label="Drivetrain" value={selectedCar.drivetrain} />
@@ -521,10 +504,10 @@ function MySpecsContent() {
               </h3>
             </div>
             <SpecTable caption="Chassis and body specifications" aria-labelledby="chassis-specs">
-              <SpecRow 
-                label="Curb Weight" 
-                value={selectedCar.curbWeight ? selectedCar.curbWeight.toLocaleString() : null} 
-                unit="lbs" 
+              <SpecRow
+                label="Curb Weight"
+                value={selectedCar.curbWeight ? selectedCar.curbWeight.toLocaleString() : null}
+                unit="lbs"
               />
               <SpecRow label="Seats" value={selectedCar.seats} />
               <SpecRow label="Origin" value={selectedCar.country} />
@@ -573,9 +556,16 @@ function MySpecsContent() {
                   Fluids & Maintenance
                 </h3>
               </div>
-              <SpecTable caption="Fluids and maintenance specifications" aria-labelledby="fluids-specs">
+              <SpecTable
+                caption="Fluids and maintenance specifications"
+                aria-labelledby="fluids-specs"
+              >
                 <SpecRow label="Oil Type" value={maintenanceData.data.specs.oil_viscosity} />
-                <SpecRow label="Oil Capacity" value={maintenanceData.data.specs.oil_capacity_liters} unit="L" />
+                <SpecRow
+                  label="Oil Capacity"
+                  value={maintenanceData.data.specs.oil_capacity_liters}
+                  unit="L"
+                />
                 <SpecRow label="Coolant" value={maintenanceData.data.specs.coolant_type} />
                 <SpecRow label="Brake Fluid" value={maintenanceData.data.specs.brake_fluid_type} />
                 <SpecRow label="Spark Plugs" value={maintenanceData.data.specs.spark_plug_type} />
@@ -584,26 +574,44 @@ function MySpecsContent() {
           )}
 
           {/* Wheels & Tires - Semantic table for accessibility */}
-          {maintenanceData?.data?.specs && (maintenanceData.data.specs.tire_size_front || maintenanceData.data.specs.wheel_bolt_pattern) && (
-            <div className={styles.specCard}>
-              <div className={styles.cardHeader}>
-                <h3 className={styles.cardTitle} id="wheels-specs">
-                  <Icons.tire size={16} />
-                  Wheels & Tires
-                </h3>
+          {maintenanceData?.data?.specs &&
+            (maintenanceData.data.specs.tire_size_front ||
+              maintenanceData.data.specs.wheel_bolt_pattern) && (
+              <div className={styles.specCard}>
+                <div className={styles.cardHeader}>
+                  <h3 className={styles.cardTitle} id="wheels-specs">
+                    <Icons.tire size={16} />
+                    Wheels & Tires
+                  </h3>
+                </div>
+                <SpecTable caption="Wheels and tires specifications" aria-labelledby="wheels-specs">
+                  <SpecRow label="Front Tires" value={maintenanceData.data.specs.tire_size_front} />
+                  {maintenanceData.data.specs.tire_size_rear !==
+                    maintenanceData.data.specs.tire_size_front && (
+                    <SpecRow label="Rear Tires" value={maintenanceData.data.specs.tire_size_rear} />
+                  )}
+                  <SpecRow
+                    label="Tire Pressure (F)"
+                    value={maintenanceData.data.specs.tire_pressure_front_psi}
+                    unit="PSI"
+                  />
+                  <SpecRow
+                    label="Tire Pressure (R)"
+                    value={maintenanceData.data.specs.tire_pressure_rear_psi}
+                    unit="PSI"
+                  />
+                  <SpecRow
+                    label="Bolt Pattern"
+                    value={maintenanceData.data.specs.wheel_bolt_pattern}
+                  />
+                  <SpecRow
+                    label="Center Bore"
+                    value={maintenanceData.data.specs.wheel_center_bore_mm}
+                    unit="mm"
+                  />
+                </SpecTable>
               </div>
-              <SpecTable caption="Wheels and tires specifications" aria-labelledby="wheels-specs">
-                <SpecRow label="Front Tires" value={maintenanceData.data.specs.tire_size_front} />
-                {maintenanceData.data.specs.tire_size_rear !== maintenanceData.data.specs.tire_size_front && (
-                  <SpecRow label="Rear Tires" value={maintenanceData.data.specs.tire_size_rear} />
-                )}
-                <SpecRow label="Tire Pressure (F)" value={maintenanceData.data.specs.tire_pressure_front_psi} unit="PSI" />
-                <SpecRow label="Tire Pressure (R)" value={maintenanceData.data.specs.tire_pressure_rear_psi} unit="PSI" />
-                <SpecRow label="Bolt Pattern" value={maintenanceData.data.specs.wheel_bolt_pattern} />
-                <SpecRow label="Center Bore" value={maintenanceData.data.specs.wheel_center_bore_mm} unit="mm" />
-              </SpecTable>
-            </div>
-          )}
+            )}
 
           {/* Tuning Potential - Semantic table for accessibility */}
           {hasTuningProfile && tuningProfile && (
@@ -615,28 +623,41 @@ function MySpecsContent() {
                 </h3>
               </div>
               <SpecTable caption="Tuning potential specifications" aria-labelledby="tuning-specs">
-                <SpecRow 
-                  label="Focus" 
-                  value={tuningProfile.tuning_focus ? 
-                    tuningProfile.tuning_focus.charAt(0).toUpperCase() + tuningProfile.tuning_focus.slice(1) : null} 
+                <SpecRow
+                  label="Focus"
+                  value={
+                    tuningProfile.tuning_focus
+                      ? tuningProfile.tuning_focus.charAt(0).toUpperCase() +
+                        tuningProfile.tuning_focus.slice(1)
+                      : null
+                  }
                 />
                 <SpecRow label="Engine Family" value={tuningProfile.engine_family} />
                 <SpecRow label="Stock WHP" value={tuningProfile.stock_whp} unit="WHP" />
-                {tuningProfile.power_limits && (() => {
-                  const limits = getFormattedPowerLimits(tuningProfile);
-                  const stockTurbo = limits.find(l => l.key.toLowerCase().includes('turbo'));
-                  const stockInternals = limits.find(l => l.key.toLowerCase().includes('internals'));
-                  return (
-                    <>
-                      {stockTurbo && <SpecRow label={stockTurbo.name} value={stockTurbo.value} />}
-                      {stockInternals && <SpecRow label={stockInternals.name} value={stockInternals.value} />}
-                    </>
-                  );
-                })()}
-                <SpecRow 
-                  label="Data Quality" 
-                  value={tuningProfile.data_quality_tier ? 
-                    tuningProfile.data_quality_tier.charAt(0).toUpperCase() + tuningProfile.data_quality_tier.slice(1) : null} 
+                {tuningProfile.power_limits &&
+                  (() => {
+                    const limits = getFormattedPowerLimits(tuningProfile);
+                    const stockTurbo = limits.find((l) => l.key.toLowerCase().includes('turbo'));
+                    const stockInternals = limits.find((l) =>
+                      l.key.toLowerCase().includes('internals')
+                    );
+                    return (
+                      <>
+                        {stockTurbo && <SpecRow label={stockTurbo.name} value={stockTurbo.value} />}
+                        {stockInternals && (
+                          <SpecRow label={stockInternals.name} value={stockInternals.value} />
+                        )}
+                      </>
+                    );
+                  })()}
+                <SpecRow
+                  label="Data Quality"
+                  value={
+                    tuningProfile.data_quality_tier
+                      ? tuningProfile.data_quality_tier.charAt(0).toUpperCase() +
+                        tuningProfile.data_quality_tier.slice(1)
+                      : null
+                  }
                 />
               </SpecTable>
             </div>
@@ -666,24 +687,31 @@ function MySpecsContent() {
                         <span>Front Wheels</span>
                         <span>
                           {userVehicle.customSpecs.wheels.front.size || ''}
-                          {userVehicle.customSpecs.wheels.front.brand && ` ${userVehicle.customSpecs.wheels.front.brand}`}
-                          {userVehicle.customSpecs.wheels.front.model && ` ${userVehicle.customSpecs.wheels.front.model}`}
-                          {userVehicle.customSpecs.wheels.front.offset && ` (${userVehicle.customSpecs.wheels.front.offset})`}
+                          {userVehicle.customSpecs.wheels.front.brand &&
+                            ` ${userVehicle.customSpecs.wheels.front.brand}`}
+                          {userVehicle.customSpecs.wheels.front.model &&
+                            ` ${userVehicle.customSpecs.wheels.front.model}`}
+                          {userVehicle.customSpecs.wheels.front.offset &&
+                            ` (${userVehicle.customSpecs.wheels.front.offset})`}
                         </span>
                       </div>
                     )}
-                    {userVehicle.customSpecs.wheels.rear && 
-                     JSON.stringify(userVehicle.customSpecs.wheels.rear) !== JSON.stringify(userVehicle.customSpecs.wheels.front) && (
-                      <div className={styles.specItem}>
-                        <span>Rear Wheels</span>
-                        <span>
-                          {userVehicle.customSpecs.wheels.rear.size || ''}
-                          {userVehicle.customSpecs.wheels.rear.brand && ` ${userVehicle.customSpecs.wheels.rear.brand}`}
-                          {userVehicle.customSpecs.wheels.rear.model && ` ${userVehicle.customSpecs.wheels.rear.model}`}
-                          {userVehicle.customSpecs.wheels.rear.offset && ` (${userVehicle.customSpecs.wheels.rear.offset})`}
-                        </span>
-                      </div>
-                    )}
+                    {userVehicle.customSpecs.wheels.rear &&
+                      JSON.stringify(userVehicle.customSpecs.wheels.rear) !==
+                        JSON.stringify(userVehicle.customSpecs.wheels.front) && (
+                        <div className={styles.specItem}>
+                          <span>Rear Wheels</span>
+                          <span>
+                            {userVehicle.customSpecs.wheels.rear.size || ''}
+                            {userVehicle.customSpecs.wheels.rear.brand &&
+                              ` ${userVehicle.customSpecs.wheels.rear.brand}`}
+                            {userVehicle.customSpecs.wheels.rear.model &&
+                              ` ${userVehicle.customSpecs.wheels.rear.model}`}
+                            {userVehicle.customSpecs.wheels.rear.offset &&
+                              ` (${userVehicle.customSpecs.wheels.rear.offset})`}
+                          </span>
+                        </div>
+                      )}
                   </>
                 )}
                 {/* Tires */}
@@ -694,22 +722,27 @@ function MySpecsContent() {
                         <span>Front Tires</span>
                         <span>
                           {userVehicle.customSpecs.tires.front.size || ''}
-                          {userVehicle.customSpecs.tires.front.brand && ` ${userVehicle.customSpecs.tires.front.brand}`}
-                          {userVehicle.customSpecs.tires.front.model && ` ${userVehicle.customSpecs.tires.front.model}`}
+                          {userVehicle.customSpecs.tires.front.brand &&
+                            ` ${userVehicle.customSpecs.tires.front.brand}`}
+                          {userVehicle.customSpecs.tires.front.model &&
+                            ` ${userVehicle.customSpecs.tires.front.model}`}
                         </span>
                       </div>
                     )}
-                    {userVehicle.customSpecs.tires.rear && 
-                     JSON.stringify(userVehicle.customSpecs.tires.rear) !== JSON.stringify(userVehicle.customSpecs.tires.front) && (
-                      <div className={styles.specItem}>
-                        <span>Rear Tires</span>
-                        <span>
-                          {userVehicle.customSpecs.tires.rear.size || ''}
-                          {userVehicle.customSpecs.tires.rear.brand && ` ${userVehicle.customSpecs.tires.rear.brand}`}
-                          {userVehicle.customSpecs.tires.rear.model && ` ${userVehicle.customSpecs.tires.rear.model}`}
-                        </span>
-                      </div>
-                    )}
+                    {userVehicle.customSpecs.tires.rear &&
+                      JSON.stringify(userVehicle.customSpecs.tires.rear) !==
+                        JSON.stringify(userVehicle.customSpecs.tires.front) && (
+                        <div className={styles.specItem}>
+                          <span>Rear Tires</span>
+                          <span>
+                            {userVehicle.customSpecs.tires.rear.size || ''}
+                            {userVehicle.customSpecs.tires.rear.brand &&
+                              ` ${userVehicle.customSpecs.tires.rear.brand}`}
+                            {userVehicle.customSpecs.tires.rear.model &&
+                              ` ${userVehicle.customSpecs.tires.rear.model}`}
+                          </span>
+                        </div>
+                      )}
                   </>
                 )}
                 {/* Suspension */}
@@ -719,7 +752,8 @@ function MySpecsContent() {
                       <div className={styles.specItem}>
                         <span>Suspension</span>
                         <span>
-                          {userVehicle.customSpecs.suspension.brand && `${userVehicle.customSpecs.suspension.brand} `}
+                          {userVehicle.customSpecs.suspension.brand &&
+                            `${userVehicle.customSpecs.suspension.brand} `}
                           {userVehicle.customSpecs.suspension.type}
                         </span>
                       </div>
@@ -739,8 +773,11 @@ function MySpecsContent() {
                       <div className={styles.specItem}>
                         <span>Front Brakes</span>
                         <span>
-                          {userVehicle.customSpecs.brakes.front.brand && `${userVehicle.customSpecs.brakes.front.brand} `}
-                          {userVehicle.customSpecs.brakes.front.size || userVehicle.customSpecs.brakes.front.type || ''}
+                          {userVehicle.customSpecs.brakes.front.brand &&
+                            `${userVehicle.customSpecs.brakes.front.brand} `}
+                          {userVehicle.customSpecs.brakes.front.size ||
+                            userVehicle.customSpecs.brakes.front.type ||
+                            ''}
                         </span>
                       </div>
                     )}
@@ -748,8 +785,11 @@ function MySpecsContent() {
                       <div className={styles.specItem}>
                         <span>Rear Brakes</span>
                         <span>
-                          {userVehicle.customSpecs.brakes.rear.brand && `${userVehicle.customSpecs.brakes.rear.brand} `}
-                          {userVehicle.customSpecs.brakes.rear.size || userVehicle.customSpecs.brakes.rear.type || ''}
+                          {userVehicle.customSpecs.brakes.rear.brand &&
+                            `${userVehicle.customSpecs.brakes.rear.brand} `}
+                          {userVehicle.customSpecs.brakes.rear.size ||
+                            userVehicle.customSpecs.brakes.rear.type ||
+                            ''}
                         </span>
                       </div>
                     )}
@@ -781,25 +821,6 @@ function MySpecsContent() {
           )}
         </div>
 
-        {/* AutoRev Ratings - with ARIA for accessibility */}
-        <div className={styles.ratingsCard} role="region" aria-labelledby="ratings-heading">
-          <div className={styles.cardHeader}>
-            <h3 className={styles.cardTitle} id="ratings-heading">
-              <Icons.star size={16} />
-              AutoRev Ratings
-            </h3>
-          </div>
-          <div className={styles.ratingsGrid} role="list" aria-label="Vehicle ratings out of 10">
-            <RatingBar value={selectedCar.driverFun} label="Driver Fun" />
-            <RatingBar value={selectedCar.track} label="Track" />
-            <RatingBar value={selectedCar.sound} label="Sound" />
-            <RatingBar value={selectedCar.reliability} label="Reliability" />
-            <RatingBar value={selectedCar.interior} label="Interior" />
-            <RatingBar value={selectedCar.value} label="Value" />
-            <RatingBar value={selectedCar.aftermarket} label="Aftermarket" />
-          </div>
-        </div>
-
         {/* Pros & Cons - with proper list semantics */}
         {(selectedCar.pros?.length > 0 || selectedCar.cons?.length > 0) && (
           <div className={styles.prosConsRow}>
@@ -813,7 +834,9 @@ function MySpecsContent() {
                 </div>
                 <ul className={styles.prosList} aria-label="Vehicle advantages">
                   {selectedCar.pros.slice(0, 5).map((pro, i) => (
-                    <li key={i}><span aria-hidden="true">✓</span> {pro}</li>
+                    <li key={i}>
+                      <span aria-hidden="true">✓</span> {pro}
+                    </li>
                   ))}
                 </ul>
               </div>
@@ -828,7 +851,9 @@ function MySpecsContent() {
                 </div>
                 <ul className={styles.consList} aria-label="Vehicle disadvantages">
                   {selectedCar.cons.slice(0, 5).map((con, i) => (
-                    <li key={i}><span aria-hidden="true">✗</span> {con}</li>
+                    <li key={i}>
+                      <span aria-hidden="true">✗</span> {con}
+                    </li>
                   ))}
                 </ul>
               </div>

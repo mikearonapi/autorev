@@ -1,5 +1,3 @@
-import { ImageResponse } from 'next/og';
-
 export const runtime = 'edge';
 
 export const size = {
@@ -15,11 +13,14 @@ export const contentType = 'image/png';
  */
 export default async function AppleIcon() {
   // Fetch the pre-generated apple touch icon with logo
-  const logoUrl = new URL('/apple-touch-icon.png', process.env.NEXT_PUBLIC_SITE_URL || 'https://autorev.app');
-  
+  const logoUrl = new URL(
+    '/apple-touch-icon-v2.png',
+    process.env.NEXT_PUBLIC_SITE_URL || 'https://autorev.app'
+  );
+
   const logoResponse = await fetch(logoUrl);
   const logoArrayBuffer = await logoResponse.arrayBuffer();
-  
+
   return new Response(logoArrayBuffer, {
     headers: {
       'Content-Type': 'image/png',

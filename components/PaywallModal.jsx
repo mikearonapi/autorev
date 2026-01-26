@@ -2,27 +2,27 @@
 
 /**
  * PaywallModal Component
- * 
+ *
  * A modal paywall with:
  * - Plan comparison
  * - Social proof (user count)
  * - Monthly/annual billing toggle
  * - Feature highlights
  * - Placement tracking for analytics
- * 
+ *
  * Used when users hit feature limits or try to access premium features.
- * 
+ * Rendered via React Portal to document.body for proper stacking context.
+ *
  * @module components/PaywallModal
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
-import Image from 'next/image';
+import { createPortal } from 'react-dom';
 import { useCheckout } from '@/hooks/useCheckout';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { SUBSCRIPTION_TIERS, getTierPricing, formatPrice } from '@/lib/stripe';
+import { getTierPricing } from '@/lib/stripe';
 import { IS_BETA } from '@/lib/tierAccess';
 import BillingToggle from '@/components/BillingToggle';
-import { UI_IMAGES } from '@/lib/images';
 import { Icons } from '@/components/ui/Icons';
 import styles from './PaywallModal.module.css';
 
@@ -53,7 +53,7 @@ const TIER_HIGHLIGHTS = {
 
 /**
  * PaywallModal Component
- * 
+ *
  * @param {Object} props
  * @param {boolean} props.isOpen - Whether modal is open
  * @param {Function} props.onClose - Close handler
@@ -72,10 +72,16 @@ export default function PaywallModal({
 }) {
   const { user } = useAuth();
   const { checkoutSubscription, isLoading: checkoutLoading } = useCheckout();
-  
+
   const [selectedTier, setSelectedTier] = useState(preselectedTier);
   const [billingInterval, setBillingInterval] = useState(showAnnualFirst ? 'year' : 'month');
   const [showModal, setShowModal] = useState(false);
+
+  // Portal mounting - required for SSR compatibility
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Track modal shown event
   useEffect(() => {
@@ -102,7 +108,7 @@ export default function PaywallModal({
 
     document.addEventListener('keydown', handleEscape);
     return () => document.removeEventListener('keydown', handleEscape);
-  }, [isOpen]);
+  }, [isOpen, handleClose]);
 
   const handleClose = useCallback(() => {
     // Track paywall_dismissed event
@@ -148,18 +154,18 @@ export default function PaywallModal({
     await checkoutSubscription(selectedTier, billingInterval);
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !isMounted) return null;
 
-  const pricing = getTierPricing(selectedTier, billingInterval);
+  const _pricing = getTierPricing(selectedTier, billingInterval);
   const highlights = TIER_HIGHLIGHTS[selectedTier] || TIER_HIGHLIGHTS.collector;
 
-  return (
-    <div 
+  const modalContent = (
+    <div
       className={`${styles.overlay} ${showModal ? styles.overlayVisible : ''}`}
       onClick={handleClose}
       data-overlay-modal
     >
-      <div 
+      <div
         className={`${styles.modal} ${showModal ? styles.modalVisible : ''}`}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
@@ -177,16 +183,10 @@ export default function PaywallModal({
             <Icons.crown size={32} />
           </div>
           <h2 id="paywall-title" className={styles.title}>
-            {feature 
-              ? `Unlock ${feature}` 
-              : 'Upgrade Your Experience'
-            }
+            {feature ? `Unlock ${feature}` : 'Upgrade Your Experience'}
           </h2>
           <p className={styles.subtitle}>
-            {IS_BETA 
-              ? 'Get premium features free during beta'
-              : 'Start your 7-day free trial'
-            }
+            {IS_BETA ? 'Get premium features free during beta' : 'Start your 7-day free trial'}
           </p>
         </div>
 
@@ -285,27 +285,24 @@ export default function PaywallModal({
         </div>
 
         {/* CTA */}
-        <button
-          className={styles.ctaButton}
-          onClick={handleCTAClick}
-          disabled={checkoutLoading}
-        >
-          {checkoutLoading 
-            ? 'Processing...' 
-            : IS_BETA 
+        <button className={styles.ctaButton} onClick={handleCTAClick} disabled={checkoutLoading}>
+          {checkoutLoading
+            ? 'Processing...'
+            : IS_BETA
               ? 'Get Started Free'
-              : 'Start 7-Day Free Trial'
-          }
+              : 'Start 7-Day Free Trial'}
         </button>
 
         {/* Terms */}
         <p className={styles.terms}>
-          {IS_BETA 
+          {IS_BETA
             ? 'Free during beta. No credit card required.'
-            : 'Cancel anytime. No questions asked.'
-          }
+            : 'Cancel anytime. No questions asked.'}
         </p>
       </div>
     </div>
   );
+
+  // Use portal to render at document body level
+  return createPortal(modalContent, document.body);
 }

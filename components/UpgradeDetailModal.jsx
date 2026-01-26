@@ -1,5 +1,7 @@
 'use client';
 
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { analyzeScenario } from '@/lib/dependencyChecker';
 import InfoTooltip from './ui/InfoTooltip';
 import styles from './UpgradeDetailModal.module.css';
@@ -11,7 +13,7 @@ import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
  */
 function getRelevantScenario(upgradeKey) {
   if (!upgradeKey) return null;
-  
+
   // Boost/Tune upgrades -> boost_increase scenario
   if (
     upgradeKey.includes('tune') ||
@@ -21,39 +23,36 @@ function getRelevantScenario(upgradeKey) {
   ) {
     return 'boost_increase';
   }
-  
+
   // Note: Tire compound selection is handled by WheelTireConfigurator
-  
+
   // Lowering upgrades -> lowering scenario
-  if (
-    upgradeKey === 'lowering-springs' ||
-    upgradeKey.includes('coilovers')
-  ) {
+  if (upgradeKey === 'lowering-springs' || upgradeKey.includes('coilovers')) {
     return 'lowering';
   }
-  
+
   // BBK -> bbk scenario
   if (upgradeKey === 'big-brake-kit') {
     return 'bbk';
   }
-  
+
   return null;
 }
 
 /**
  * Shared Upgrade Detail Modal Component
- * 
+ *
  * Displays detailed information about an upgrade from the Upgrade Encyclopedia.
  * Used by both the UpgradeGuide and PerformanceHub components.
- * 
+ *
  * @param {Object} upgrade - The upgrade object with encyclopedia data
  * @param {Function} onClose - Callback to close the modal
  * @param {Array} onAddToBuild - Optional callback when user clicks "Add to Build"
  * @param {boolean} showAddToBuild - Whether to show the Add to Build button
  */
-export default function UpgradeDetailModal({ 
-  upgrade, 
-  onClose, 
+export default function UpgradeDetailModal({
+  upgrade,
+  onClose,
   onAddToBuild = null,
   showAddToBuild = false,
   carName = null,
@@ -61,8 +60,14 @@ export default function UpgradeDetailModal({
 }) {
   // Set safe area color to match overlay background
   useSafeAreaColor(SAFE_AREA_COLORS.OVERLAY, { enabled: !!upgrade });
-  
-  if (!upgrade) return null;
+
+  // Portal mounting - required for SSR compatibility
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!upgrade || !isMounted) return null;
 
   // Handle keyboard escape
   const handleKeyDown = (e) => {
@@ -72,9 +77,9 @@ export default function UpgradeDetailModal({
   // Build the cost display
   const costDisplay = upgrade.cost?.range || upgrade.estimatedCost || 'Varies';
 
-  return (
-    <div 
-      className={styles.overlay} 
+  const modalContent = (
+    <div
+      className={styles.overlay}
       onClick={onClose}
       onKeyDown={handleKeyDown}
       data-overlay-modal
@@ -82,14 +87,16 @@ export default function UpgradeDetailModal({
       aria-modal="true"
       aria-labelledby="upgrade-modal-title"
     >
-      <div className={styles.panel} onClick={e => e.stopPropagation()}>
+      <div className={styles.panel} onClick={(e) => e.stopPropagation()}>
         <button className={styles.closeBtn} onClick={onClose} aria-label="Close modal">
           <Icons.close size={24} />
         </button>
 
         {/* Header */}
         <div className={styles.header}>
-          <h2 id="upgrade-modal-title" className={styles.title}>{upgrade.name}</h2>
+          <h2 id="upgrade-modal-title" className={styles.title}>
+            {upgrade.name}
+          </h2>
           <div className={styles.metaRow}>
             <span className={styles.metaItem}>
               <Icons.dollar size={16} />
@@ -139,14 +146,13 @@ export default function UpgradeDetailModal({
           {(() => {
             const scenarioType = getRelevantScenario(upgrade.key);
             const scenario = scenarioType ? analyzeScenario(scenarioType) : null;
-            
+
             if (!scenario) return null;
-            
+
             return (
               <section className={styles.section}>
                 <h3>
-                  <Icons.chain size={16} />
-                  {' '}Chain of Effects
+                  <Icons.chain size={16} /> Chain of Effects
                 </h3>
                 <p className={styles.scenarioDesc}>{scenario.description}</p>
                 <div className={styles.chainContainer}>
@@ -171,10 +177,14 @@ export default function UpgradeDetailModal({
                 </div>
                 {scenario.recommendedUpgrades?.length > 0 && (
                   <div className={styles.scenarioRecs}>
-                    <span className={styles.scenarioRecsLabel}>Supporting upgrades to consider:</span>
+                    <span className={styles.scenarioRecsLabel}>
+                      Supporting upgrades to consider:
+                    </span>
                     <div className={styles.tagList}>
                       {scenario.recommendedUpgrades.map((key, i) => (
-                        <span key={i} className={styles.tagRecommended}>{key}</span>
+                        <span key={i} className={styles.tagRecommended}>
+                          {key}
+                        </span>
                       ))}
                     </div>
                   </div>
@@ -226,31 +236,40 @@ export default function UpgradeDetailModal({
           )}
 
           {/* Metric Changes (from performance modules) - HP gain removed per design */}
-          {upgrade.metricChanges && (upgrade.metricChanges.zeroToSixtyImprovement || upgrade.metricChanges.brakingImprovement || upgrade.metricChanges.lateralGImprovement) && (
-            <section className={styles.section}>
-              <h3>Performance Impact</h3>
-              <div className={styles.gainsGrid}>
-                {upgrade.metricChanges.zeroToSixtyImprovement && (
-                  <div className={styles.gainItem}>
-                    <span className={styles.gainLabel}>0-60 Improvement</span>
-                    <span className={styles.gainValue}>-{upgrade.metricChanges.zeroToSixtyImprovement}s</span>
-                  </div>
-                )}
-                {upgrade.metricChanges.brakingImprovement && (
-                  <div className={styles.gainItem}>
-                    <span className={styles.gainLabel}>Braking Improvement</span>
-                    <span className={styles.gainValue}>-{upgrade.metricChanges.brakingImprovement} ft</span>
-                  </div>
-                )}
-                {upgrade.metricChanges.lateralGImprovement && (
-                  <div className={styles.gainItem}>
-                    <span className={styles.gainLabel}>Lateral G Improvement</span>
-                    <span className={styles.gainValue}>+{upgrade.metricChanges.lateralGImprovement}g</span>
-                  </div>
-                )}
-              </div>
-            </section>
-          )}
+          {upgrade.metricChanges &&
+            (upgrade.metricChanges.zeroToSixtyImprovement ||
+              upgrade.metricChanges.brakingImprovement ||
+              upgrade.metricChanges.lateralGImprovement) && (
+              <section className={styles.section}>
+                <h3>Performance Impact</h3>
+                <div className={styles.gainsGrid}>
+                  {upgrade.metricChanges.zeroToSixtyImprovement && (
+                    <div className={styles.gainItem}>
+                      <span className={styles.gainLabel}>0-60 Improvement</span>
+                      <span className={styles.gainValue}>
+                        -{upgrade.metricChanges.zeroToSixtyImprovement}s
+                      </span>
+                    </div>
+                  )}
+                  {upgrade.metricChanges.brakingImprovement && (
+                    <div className={styles.gainItem}>
+                      <span className={styles.gainLabel}>Braking Improvement</span>
+                      <span className={styles.gainValue}>
+                        -{upgrade.metricChanges.brakingImprovement} ft
+                      </span>
+                    </div>
+                  )}
+                  {upgrade.metricChanges.lateralGImprovement && (
+                    <div className={styles.gainItem}>
+                      <span className={styles.gainLabel}>Lateral G Improvement</span>
+                      <span className={styles.gainValue}>
+                        +{upgrade.metricChanges.lateralGImprovement}g
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </section>
+            )}
 
           {/* Pros & Cons */}
           {(upgrade.pros?.length > 0 || upgrade.cons?.length > 0) && (
@@ -258,7 +277,9 @@ export default function UpgradeDetailModal({
               <div className={styles.prosConsGrid}>
                 {upgrade.pros?.length > 0 && (
                   <div className={styles.prosColumn}>
-                    <h4><Icons.check size={16} /> Pros</h4>
+                    <h4>
+                      <Icons.check size={16} /> Pros
+                    </h4>
                     <ul>
                       {upgrade.pros.map((pro, i) => (
                         <li key={i}>{pro}</li>
@@ -268,7 +289,9 @@ export default function UpgradeDetailModal({
                 )}
                 {upgrade.cons?.length > 0 && (
                   <div className={styles.consColumn}>
-                    <h4><Icons.x size={16} /> Cons</h4>
+                    <h4>
+                      <Icons.x size={16} /> Cons
+                    </h4>
                     <ul>
                       {upgrade.cons.map((con, i) => (
                         <li key={i}>{con}</li>
@@ -286,7 +309,9 @@ export default function UpgradeDetailModal({
               <h3>Best For</h3>
               <div className={styles.tagList}>
                 {upgrade.bestFor.map((item, i) => (
-                  <span key={i} className={styles.tag}>{item}</span>
+                  <span key={i} className={styles.tag}>
+                    {item}
+                  </span>
                 ))}
               </div>
             </section>
@@ -298,7 +323,9 @@ export default function UpgradeDetailModal({
               <h3>Works Well With</h3>
               <div className={styles.tagList}>
                 {upgrade.worksWellWith.map((item, i) => (
-                  <span key={i} className={styles.tagSecondary}>{item}</span>
+                  <span key={i} className={styles.tagSecondary}>
+                    {item}
+                  </span>
                 ))}
               </div>
             </section>
@@ -308,15 +335,16 @@ export default function UpgradeDetailModal({
           {(upgrade.requires?.length > 0 || upgrade.stronglyRecommended?.length > 0) && (
             <section className={styles.section}>
               <h3>
-                <Icons.alertTriangle size={16} />
-                {' '}Dependencies & Recommendations
+                <Icons.alertTriangle size={16} /> Dependencies & Recommendations
               </h3>
               {upgrade.requires?.length > 0 && (
                 <div className={styles.dependencyGroup}>
                   <span className={styles.depLabel}>Required:</span>
                   <div className={styles.tagList}>
                     {upgrade.requires.map((item, i) => (
-                      <span key={i} className={styles.tagRequired}>{item}</span>
+                      <span key={i} className={styles.tagRequired}>
+                        {item}
+                      </span>
                     ))}
                   </div>
                 </div>
@@ -326,7 +354,9 @@ export default function UpgradeDetailModal({
                   <span className={styles.depLabel}>Strongly Recommended:</span>
                   <div className={styles.tagList}>
                     {upgrade.stronglyRecommended.map((item, i) => (
-                      <span key={i} className={styles.tagRecommended}>{item}</span>
+                      <span key={i} className={styles.tagRecommended}>
+                        {item}
+                      </span>
                     ))}
                   </div>
                 </div>
@@ -348,7 +378,9 @@ export default function UpgradeDetailModal({
               <h3>Recommended Brands</h3>
               <div className={styles.brandsList}>
                 {upgrade.brands.map((brand, i) => (
-                  <span key={i} className={styles.brand}>{brand}</span>
+                  <span key={i} className={styles.brand}>
+                    {brand}
+                  </span>
                 ))}
               </div>
             </section>
@@ -358,10 +390,7 @@ export default function UpgradeDetailModal({
         {/* Footer with optional Add to Build button */}
         {showAddToBuild && onAddToBuild && (
           <div className={styles.footer}>
-            <button 
-              className={styles.addToBuildBtn}
-              onClick={() => onAddToBuild(upgrade.key)}
-            >
+            <button className={styles.addToBuildBtn} onClick={() => onAddToBuild(upgrade.key)}>
               Add to Build
             </button>
           </div>
@@ -369,5 +398,7 @@ export default function UpgradeDetailModal({
       </div>
     </div>
   );
-}
 
+  // Use portal to render at document body level
+  return createPortal(modalContent, document.body);
+}

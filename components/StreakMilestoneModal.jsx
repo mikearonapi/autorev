@@ -1,20 +1,22 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import styles from './StreakMilestoneModal.module.css';
 import { getStreakDisplayInfo, STREAK_MILESTONES } from '@/lib/engagementService';
 
 /**
  * StreakMilestoneModal Component
- * 
+ *
  * Celebration modal shown when user reaches a streak milestone.
  */
-export default function StreakMilestoneModal({ 
-  isOpen, 
-  onClose, 
-  milestone,
-  currentStreak,
-}) {
+export default function StreakMilestoneModal({ isOpen, onClose, milestone, currentStreak }) {
+  // Portal mounting - required for SSR compatibility
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   // Close on escape
   useEffect(() => {
     const handleEscape = (e) => {
@@ -30,18 +32,20 @@ export default function StreakMilestoneModal({
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-      return () => { document.body.style.overflow = ''; };
+      return () => {
+        document.body.style.overflow = '';
+      };
     }
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !isMounted) return null;
 
-  const displayInfo = getStreakDisplayInfo(currentStreak);
+  const _displayInfo = getStreakDisplayInfo(currentStreak);
   const milestoneInfo = getMilestoneInfo(milestone);
 
-  return (
+  const modalContent = (
     <div className={styles.overlay} onClick={onClose} data-overlay-modal>
-      <div 
+      <div
         className={styles.modal}
         onClick={(e) => e.stopPropagation()}
         role="dialog"
@@ -50,8 +54,8 @@ export default function StreakMilestoneModal({
       >
         <div className={styles.confetti}>
           {[...Array(20)].map((_, i) => (
-            <div 
-              key={i} 
+            <div
+              key={i}
               className={styles.confettiPiece}
               style={{
                 '--delay': `${Math.random() * 0.5}s`,
@@ -70,10 +74,8 @@ export default function StreakMilestoneModal({
         <h2 id="milestone-title" className={styles.title}>
           {milestoneInfo.title}
         </h2>
-        
-        <p className={styles.subtitle}>
-          {milestoneInfo.message}
-        </p>
+
+        <p className={styles.subtitle}>{milestoneInfo.message}</p>
 
         <div className={styles.stats}>
           <div className={styles.stat}>
@@ -91,22 +93,19 @@ export default function StreakMilestoneModal({
         </div>
 
         <div className={styles.actions}>
-          <button 
-            className={styles.shareButton}
-            onClick={() => handleShare(currentStreak)}
-          >
+          <button className={styles.shareButton} onClick={() => handleShare(currentStreak)}>
             Share Achievement
           </button>
-          <button 
-            className={styles.closeButton}
-            onClick={onClose}
-          >
+          <button className={styles.closeButton} onClick={onClose}>
             Keep Going!
           </button>
         </div>
       </div>
     </div>
   );
+
+  // Use portal to render at document body level
+  return createPortal(modalContent, document.body);
 }
 
 // =============================================================================
@@ -119,31 +118,31 @@ function getMilestoneInfo(milestone) {
       return {
         icon: '🎉',
         title: 'First Week Complete!',
-        message: 'You\'ve built a solid habit. Keep the momentum going!',
+        message: "You've built a solid habit. Keep the momentum going!",
       };
     case 14:
       return {
         icon: '🌟',
         title: 'Two Week Streak!',
-        message: 'Consistency is key, and you\'ve got it!',
+        message: "Consistency is key, and you've got it!",
       };
     case 30:
       return {
         icon: '🏆',
         title: 'One Month Strong!',
-        message: 'A full month of dedication. You\'re officially committed!',
+        message: "A full month of dedication. You're officially committed!",
       };
     case 50:
       return {
         icon: '💪',
         title: '50 Day Legend!',
-        message: 'Half way to triple digits. You\'re unstoppable!',
+        message: "Half way to triple digits. You're unstoppable!",
       };
     case 100:
       return {
         icon: '🔥',
         title: 'Triple Digit Streak!',
-        message: '100 days of commitment. You\'re in the elite club now!',
+        message: "100 days of commitment. You're in the elite club now!",
       };
     case 365:
       return {
@@ -173,15 +172,20 @@ function handleShare(streak) {
   const url = 'https://autorev.app';
 
   if (navigator.share) {
-    navigator.share({
-      title: 'My AutoRev Streak',
-      text,
-      url,
-    }).catch(() => {});
+    navigator
+      .share({
+        title: 'My AutoRev Streak',
+        text,
+        url,
+      })
+      .catch(() => {});
   } else {
     // Fallback to copying to clipboard
-    navigator.clipboard.writeText(`${text} ${url}`).then(() => {
-      alert('Copied to clipboard!');
-    }).catch(() => {});
+    navigator.clipboard
+      .writeText(`${text} ${url}`)
+      .then(() => {
+        alert('Copied to clipboard!');
+      })
+      .catch(() => {});
   }
 }

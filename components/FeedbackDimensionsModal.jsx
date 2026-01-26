@@ -2,18 +2,20 @@
 
 /**
  * Feedback Dimensions Modal
- * 
+ *
  * Multi-dimensional feedback collection for AL responses.
  * Supports both positive and negative feedback flows:
- * 
+ *
  * Positive: "What did you like?" - Quick tags + optional text
  * Negative: "Help us improve" - Quick tags + dimension ratings + required text
- * 
+ *
  * All additional input is optional to minimize friction.
  * Basic thumbs up/down is captured regardless.
+ * Rendered via React Portal to document.body for proper stacking context.
  */
 
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import styles from './FeedbackDimensionsModal.module.css';
 import { Icons } from '@/components/ui/Icons';
 
@@ -37,23 +39,23 @@ const NEGATIVE_TAGS = [
 
 // Dimension definitions for detailed feedback
 const DIMENSIONS = [
-  { 
-    id: 'accuracy', 
+  {
+    id: 'accuracy',
     label: 'Accuracy',
     question: 'Was the information correct?',
   },
-  { 
-    id: 'completeness', 
+  {
+    id: 'completeness',
     label: 'Completeness',
     question: 'Did it fully answer your question?',
   },
-  { 
-    id: 'relevance', 
+  {
+    id: 'relevance',
     label: 'Relevance',
     question: 'Was it relevant to your car?',
   },
-  { 
-    id: 'actionability', 
+  {
+    id: 'actionability',
     label: 'Actionability',
     question: 'Can you act on this advice?',
   },
@@ -64,7 +66,7 @@ const DIMENSIONS = [
  */
 function StarRating({ value, onChange, disabled = false }) {
   const [hoverValue, setHoverValue] = useState(0);
-  
+
   return (
     <div className={styles.starRating}>
       {[1, 2, 3, 4, 5].map((star) => (
@@ -93,7 +95,7 @@ export default function FeedbackDimensionsModal({
   onClose,
   onSubmit,
   feedbackType = 'negative', // 'positive' or 'negative'
-  messageContent = '',
+  messageContent: _messageContent = '',
   disabled = false,
 }) {
   const [selectedTags, setSelectedTags] = useState([]);
@@ -101,7 +103,13 @@ export default function FeedbackDimensionsModal({
   const [dimensionRatings, setDimensionRatings] = useState({});
   const [showDimensions, setShowDimensions] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  
+
+  // Portal mounting - required for SSR compatibility
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const isPositive = feedbackType === 'positive';
   const tags = isPositive ? POSITIVE_TAGS : NEGATIVE_TAGS;
 
@@ -139,7 +147,7 @@ export default function FeedbackDimensionsModal({
 
   const handleFeedbackDimensionsSubmit = async () => {
     setIsSubmitting(true);
-    
+
     try {
       await onSubmit({
         tags: selectedTags,
@@ -163,10 +171,14 @@ export default function FeedbackDimensionsModal({
     onClose();
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !isMounted) return null;
 
-  return (
-    <div className={styles.overlay} onClick={!isSubmitting ? onClose : undefined} data-overlay-modal>
+  const modalContent = (
+    <div
+      className={styles.overlay}
+      onClick={!isSubmitting ? onClose : undefined}
+      data-overlay-modal
+    >
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         {/* Close button */}
         {!isSubmitting && (
@@ -177,19 +189,20 @@ export default function FeedbackDimensionsModal({
 
         <div className={styles.content}>
           {/* Header */}
-          <div className={`${styles.iconContainer} ${isPositive ? styles.iconPositive : styles.iconNegative}`}>
+          <div
+            className={`${styles.iconContainer} ${isPositive ? styles.iconPositive : styles.iconNegative}`}
+          >
             {isPositive ? <Icons.thumbsUp size={24} /> : <Icons.thumbsDown size={24} />}
           </div>
-          
+
           <h2 className={styles.title}>
             {isPositive ? 'Thanks for the feedback!' : 'Help us improve'}
           </h2>
-          
+
           <p className={styles.subtitle}>
-            {isPositive 
+            {isPositive
               ? 'What did you like about this response? (optional)'
-              : 'What went wrong? This helps us make AL smarter.'
-            }
+              : 'What went wrong? This helps us make AL smarter.'}
           </p>
 
           {/* Quick Tags */}
@@ -203,7 +216,11 @@ export default function FeedbackDimensionsModal({
                   onClick={() => toggleTag(tag.id)}
                   disabled={disabled || isSubmitting}
                 >
-                  {selectedTags.includes(tag.id) && <span className={styles.tagCheck}><Icons.check size={14} /></span>}
+                  {selectedTags.includes(tag.id) && (
+                    <span className={styles.tagCheck}>
+                      <Icons.check size={14} />
+                    </span>
+                  )}
                   {tag.label}
                 </button>
               ))}
@@ -216,9 +233,10 @@ export default function FeedbackDimensionsModal({
               className={styles.textInput}
               value={feedbackText}
               onChange={(e) => setFeedbackText(e.target.value)}
-              placeholder={isPositive 
-                ? 'Any other comments? (optional)'
-                : 'Tell us more about what went wrong...'
+              placeholder={
+                isPositive
+                  ? 'Any other comments? (optional)'
+                  : 'Tell us more about what went wrong...'
               }
               rows={3}
               maxLength={500}
@@ -237,19 +255,19 @@ export default function FeedbackDimensionsModal({
                 disabled={isSubmitting}
               >
                 <span>{showDimensions ? 'Hide' : 'Show'} detailed ratings</span>
-                <svg 
-                  width="16" 
-                  height="16" 
-                  viewBox="0 0 24 24" 
-                  fill="none" 
-                  stroke="currentColor" 
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
                   strokeWidth="2"
                   className={`${styles.chevron} ${showDimensions ? styles.chevronUp : ''}`}
                 >
-                  <polyline points="6 9 12 15 18 9"/>
+                  <polyline points="6 9 12 15 18 9" />
                 </svg>
               </button>
-              
+
               {showDimensions && (
                 <div className={styles.dimensionsList}>
                   {DIMENSIONS.map((dim) => (
@@ -293,4 +311,7 @@ export default function FeedbackDimensionsModal({
       </div>
     </div>
   );
+
+  // Use portal to render at document body level
+  return createPortal(modalContent, document.body);
 }

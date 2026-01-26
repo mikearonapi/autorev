@@ -1,9 +1,9 @@
 /**
  * Wheel & Tire Fitment Options API Route
- * 
+ *
  * Returns wheel/tire fitment options for a specific car.
  * Used by Tuning Shop wheel configurator.
- * 
+ *
  * Data includes:
  * - OEM baseline specs
  * - OEM optional packages
@@ -14,7 +14,6 @@
  */
 
 import { NextResponse } from 'next/server';
-import { errors } from '@/lib/apiErrors';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { resolveCarId } from '@/lib/carResolver';
@@ -40,7 +39,7 @@ function transformFitmentOption(row) {
     id: row.id,
     fitmentType: row.fitment_type,
     displayName: getFitmentDisplayName(row.fitment_type),
-    
+
     // Wheel specs
     wheelDiameter: row.wheel_diameter_inches,
     wheelWidthFront: row.wheel_width_front,
@@ -49,7 +48,7 @@ function transformFitmentOption(row) {
     wheelOffsetRear: row.wheel_offset_rear_mm,
     wheelOffsetRangeFront: row.wheel_offset_range_front,
     wheelOffsetRangeRear: row.wheel_offset_range_rear,
-    
+
     // Tire specs
     tireSizeFront: row.tire_size_front,
     tireSizeRear: row.tire_size_rear,
@@ -57,11 +56,11 @@ function transformFitmentOption(row) {
     tireWidthRear: row.tire_width_rear_mm,
     tireAspectFront: row.tire_aspect_front,
     tireAspectRear: row.tire_aspect_rear,
-    
+
     // Size change impact
     diameterChangePercent: row.diameter_change_percent,
     speedometerErrorPercent: row.speedometer_error_percent,
-    
+
     // Fitment warnings
     requiresFenderRoll: row.requires_fender_roll || false,
     requiresFenderPull: row.requires_fender_pull || false,
@@ -74,22 +73,22 @@ function transformFitmentOption(row) {
     spacerSizeRearMm: row.spacer_size_rear_mm,
     clearanceNotes: row.clearance_notes,
     knownIssues: row.known_issues,
-    
+
     // Use case recommendations
     recommendedFor: row.recommended_for || [],
     notRecommendedFor: row.not_recommended_for || [],
-    
+
     // Community data
     popularityScore: row.popularity_score,
     communityVerified: row.community_verified || false,
     forumThreads: row.forum_threads || [],
-    
+
     // Verification status
     verified: row.verified || false,
     verifiedBy: row.verified_by,
     verifiedAt: row.verified_at,
     confidence: row.confidence,
-    
+
     // Source
     sourceType: row.source_type,
     sourceUrl: row.source_url,
@@ -116,10 +115,7 @@ async function handleGet(request, { params }) {
   const { slug } = await params;
 
   if (!slug) {
-    return NextResponse.json(
-      { error: 'Car slug is required' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Car slug is required' }, { status: 400 });
   }
 
   // If Supabase isn't configured, return empty data
@@ -149,9 +145,24 @@ async function handleGet(request, { params }) {
         message: 'Car not found',
       });
     }
-    
-    const FITMENT_COLS = 'id, car_id, year, trim, suspension, wheel_position, wheel_width, wheel_diameter, wheel_offset, tire_width, tire_aspect_ratio, tire_diameter, is_oem, notes, created_at';
-    
+
+    // Columns must match the actual wheel_tire_fitment_options schema (058_wheel_tire_fitment_options.sql)
+    const FITMENT_COLS = `
+      id, car_id, car_slug, fitment_type,
+      wheel_diameter_inches, wheel_width_front, wheel_width_rear,
+      wheel_offset_front_mm, wheel_offset_rear_mm, wheel_offset_range_front, wheel_offset_range_rear,
+      tire_size_front, tire_size_rear, tire_width_front_mm, tire_width_rear_mm,
+      tire_aspect_front, tire_aspect_rear,
+      diameter_change_percent, speedometer_error_percent,
+      requires_fender_roll, requires_fender_pull, requires_camber_adjustment,
+      recommended_camber_front, recommended_camber_rear, requires_coilovers,
+      requires_spacers, spacer_size_front_mm, spacer_size_rear_mm,
+      clearance_notes, known_issues, recommended_for, not_recommended_for,
+      popularity_score, community_verified, forum_threads,
+      source_type, source_url, confidence, verified, verified_by, verified_at,
+      created_at, updated_at
+    `;
+
     // Fetch all fitment options for this car
     const { data: fitmentRows, error: fitmentError } = await supabase
       .from('wheel_tire_fitment_options')
@@ -160,10 +171,7 @@ async function handleGet(request, { params }) {
 
     if (fitmentError) {
       console.error('[Fitments API] Database error:', fitmentError);
-      return NextResponse.json(
-        { error: 'Failed to fetch fitment options' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to fetch fitment options' }, { status: 500 });
     }
 
     // If no fitment data, try to get OEM specs from maintenance specs
@@ -171,7 +179,9 @@ async function handleGet(request, { params }) {
       // Fall back to vehicle_maintenance_specs for basic OEM tire info (using car_id)
       const { data: maintenanceSpecs } = await supabase
         .from('vehicle_maintenance_specs')
-        .select('tire_size_front, tire_size_rear, wheel_size_front, wheel_size_rear, wheel_bolt_pattern')
+        .select(
+          'tire_size_front, tire_size_rear, wheel_size_front, wheel_size_rear, wheel_bolt_pattern'
+        )
         .eq('car_id', carId)
         .single();
 
@@ -222,8 +232,8 @@ async function handleGet(request, { params }) {
     const transformedOptions = sortedRows.map(transformFitmentOption);
 
     // Extract OEM baseline (first OEM type)
-    const oemOption = transformedOptions.find(opt => opt.fitmentType === 'oem');
-    const upgradeOptions = transformedOptions.filter(opt => opt.fitmentType !== 'oem');
+    const oemOption = transformedOptions.find((opt) => opt.fitmentType === 'oem');
+    const upgradeOptions = transformedOptions.filter((opt) => opt.fitmentType !== 'oem');
 
     return NextResponse.json({
       success: true,
@@ -236,12 +246,11 @@ async function handleGet(request, { params }) {
     });
   } catch (err) {
     console.error('[Fitments API] Error:', err);
-    return NextResponse.json(
-      { error: 'Failed to fetch fitment options' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch fitment options' }, { status: 500 });
   }
 }
 
-export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/fitments', feature: 'tuning-shop' });
-
+export const GET = withErrorLogging(handleGet, {
+  route: 'cars/[slug]/fitments',
+  feature: 'tuning-shop',
+});

@@ -1122,12 +1122,7 @@ function HeroVehicleDisplay({
     };
 
     loadFitmentOptions();
-  }, [
-    type,
-    panelState,
-    item?.matchedCar?.slug,
-    item?.vehicle?.matchedCarSlug,
-  ]);
+  }, [type, panelState, item?.matchedCar?.slug, item?.vehicle?.matchedCarSlug]);
 
   // Fetch safety data when vehicle info is available
   useEffect(() => {
@@ -2314,22 +2309,6 @@ function HeroVehicleDisplay({
                     </div>
                   </div>
 
-                  {/* AutoRev Ratings - Visual Bars */}
-                  <div className={styles.detailBlock}>
-                    <h4 className={styles.detailBlockTitle}>
-                      <span>AutoRev Ratings</span>
-                    </h4>
-                    <div className={styles.detailBlockItems}>
-                      <RatingBar value={car.driverFun} label="Driver Fun" />
-                      <RatingBar value={car.track} label="Track" />
-                      <RatingBar value={car.sound} label="Sound" />
-                      <RatingBar value={car.reliability} label="Reliability" />
-                      <RatingBar value={car.interior} label="Interior" />
-                      <RatingBar value={car.value} label="Value" />
-                      <RatingBar value={car.aftermarket} label="Aftermarket" />
-                    </div>
-                  </div>
-
                   {/* Ownership */}
                   <div className={styles.detailBlock}>
                     <h4 className={styles.detailBlockTitle}>
@@ -2401,9 +2380,7 @@ function HeroVehicleDisplay({
                         {car.partsAvailability && (
                           <div className={styles.detailBlockItem}>
                             <span>Parts</span>
-                            <span className={styles.textCapitalize}>
-                              {car.partsAvailability}
-                            </span>
+                            <span className={styles.textCapitalize}>{car.partsAvailability}</span>
                           </div>
                         )}
                         {car.dealerVsIndependent && (
@@ -2781,7 +2758,13 @@ function HeroVehicleDisplay({
                           <ul className={styles.proConList}>
                             {vinData.recalls.map((recall, i) => (
                               <li key={i} className={styles.conItem}>
-                                <span className={recall.status === 'Completed' ? styles.colorSuccess : styles.colorError}>
+                                <span
+                                  className={
+                                    recall.status === 'Completed'
+                                      ? styles.colorSuccess
+                                      : styles.colorError
+                                  }
+                                >
                                   {recall.status === 'Completed' ? '✓' : '!'}
                                 </span>{' '}
                                 {recall.description} ({recall.status})
@@ -2814,7 +2797,9 @@ function HeroVehicleDisplay({
                     {/* Safety Summary */}
                     <div className={styles.safetySummary}>
                       <div className={styles.safetyStatCard}>
-                        <span className={`${styles.safetyStatValue} ${safetyData.recalls.length > 0 ? styles.colorError : styles.colorSuccess}`}>
+                        <span
+                          className={`${styles.safetyStatValue} ${safetyData.recalls.length > 0 ? styles.colorError : styles.colorSuccess}`}
+                        >
                           {safetyData.recalls.length}
                         </span>
                         <span className={styles.safetyStatLabel}>Recalls</span>
@@ -3372,12 +3357,7 @@ function EmptyState({ icon: Icon, title, description, actionLabel, onAction }) {
 }
 
 // Sortable Vehicle Item - Individual draggable item in the list
-function SortableVehicleItem({
-  item,
-  onSelectVehicle,
-  onDeleteVehicle,
-  isDragging,
-}) {
+function SortableVehicleItem({ item, onSelectVehicle, onDeleteVehicle, isDragging }) {
   const {
     attributes,
     listeners,
@@ -3458,9 +3438,7 @@ function SortableVehicleItem({
           {/* Info */}
           <div className={styles.vehicleListInfo}>
             <h3 className={styles.vehicleListName}>{displayName}</h3>
-            <p className={styles.vehicleListSubtitle}>
-              {subtitle !== displayName ? subtitle : ''}
-            </p>
+            <p className={styles.vehicleListSubtitle}>{subtitle !== displayName ? subtitle : ''}</p>
 
             {/* Build stats */}
             <div className={styles.vehicleListStats}>
@@ -3479,11 +3457,7 @@ function SortableVehicleItem({
 
           {/* Actions (visible on desktop, hidden on mobile where swipe is available) */}
           <div className={styles.vehicleListActions}>
-            <button
-              className={styles.vehicleListAction}
-              onClick={handleDelete}
-              title="Delete"
-            >
+            <button className={styles.vehicleListAction} onClick={handleDelete} title="Delete">
               <Icons.trash size={18} />
             </button>
           </div>
@@ -3518,12 +3492,7 @@ function DragOverlayItem({ item }) {
 }
 
 // Vehicle List View Component - Compact list with drag-and-drop reordering
-function VehicleListView({
-  items,
-  onSelectVehicle,
-  onDeleteVehicle,
-  onReorder,
-}) {
+function VehicleListView({ items, onSelectVehicle, onDeleteVehicle, onReorder }) {
   const { heroImageUrl: _defaultHero } = useCarImages(null);
   const [activeId, setActiveId] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
@@ -3548,34 +3517,34 @@ function VehicleListView({
   );
 
   // Get the vehicle IDs for SortableContext
-  const vehicleIds = useMemo(
-    () => items.map((item) => item.vehicle?.id).filter(Boolean),
-    [items]
-  );
+  const vehicleIds = useMemo(() => items.map((item) => item.vehicle?.id).filter(Boolean), [items]);
 
   const handleDragStart = useCallback((event) => {
     setActiveId(event.active.id);
     setIsDragging(true);
   }, []);
 
-  const handleDragEnd = useCallback((event) => {
-    const { active, over } = event;
-    setActiveId(null);
-    setIsDragging(false);
+  const handleDragEnd = useCallback(
+    (event) => {
+      const { active, over } = event;
+      setActiveId(null);
+      setIsDragging(false);
 
-    if (over && active.id !== over.id) {
-      const oldIndex = items.findIndex((item) => item.vehicle?.id === active.id);
-      const newIndex = items.findIndex((item) => item.vehicle?.id === over.id);
+      if (over && active.id !== over.id) {
+        const oldIndex = items.findIndex((item) => item.vehicle?.id === active.id);
+        const newIndex = items.findIndex((item) => item.vehicle?.id === over.id);
 
-      if (oldIndex !== -1 && newIndex !== -1 && onReorder) {
-        // Create new array with reordered items
-        const newItems = arrayMove(items, oldIndex, newIndex);
-        // Extract vehicle IDs in new order and call reorder
-        const vehicleIds = newItems.map((item) => item.vehicle.id);
-        onReorder(vehicleIds);
+        if (oldIndex !== -1 && newIndex !== -1 && onReorder) {
+          // Create new array with reordered items
+          const newItems = arrayMove(items, oldIndex, newIndex);
+          // Extract vehicle IDs in new order and call reorder
+          const vehicleIds = newItems.map((item) => item.vehicle.id);
+          onReorder(vehicleIds);
+        }
       }
-    }
-  }, [items, onReorder]);
+    },
+    [items, onReorder]
+  );
 
   const handleDragCancel = useCallback(() => {
     setActiveId(null);
@@ -3606,9 +3575,7 @@ function VehicleListView({
           ))}
         </div>
       </SortableContext>
-      <DragOverlay>
-        {activeId ? <DragOverlayItem item={activeItem} /> : null}
-      </DragOverlay>
+      <DragOverlay>{activeId ? <DragOverlayItem item={activeItem} /> : null}</DragOverlay>
     </DndContext>
   );
 }
@@ -3739,7 +3706,7 @@ const SELECTED_INDEX_KEY = 'autorev_garage_selected_index';
 function GarageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  
+
   // Selection persistence: hydrate from localStorage on mount
   // Per SOURCE_OF_TRUTH.md: Selection should persist across navigation/refresh
   const [selectedIndex, setSelectedIndex] = useState(() => {
@@ -3752,7 +3719,7 @@ function GarageContent() {
       return 0;
     }
   });
-  
+
   const [isAddVehicleOpen, setIsAddVehicleOpen] = useState(false);
   const [_addingFavoriteCar, setAddingFavoriteCar] = useState(null);
   const [selectedBuild, setSelectedBuild] = useState(null);
@@ -3794,10 +3761,11 @@ function GarageContent() {
     user?.user_metadata?.full_name?.split(' ')[0] ||
     user?.email?.split('@')[0] ||
     'My';
-  
+
   // Get user's avatar URL for profile button
-  const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
-  
+  const avatarUrl =
+    profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
+
   const {
     favorites,
     addFavorite: _addFavorite,
@@ -3855,12 +3823,12 @@ function GarageContent() {
       // Already loaded, no timeout needed
       return;
     }
-    
+
     const timeout = setTimeout(() => {
       console.warn('[Garage] Loading timeout reached - showing content to prevent stuck state');
       setLoadingTimedOut(true);
     }, 8000); // 8 second max loading time
-    
+
     return () => clearTimeout(timeout);
   }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading]);
 
@@ -3870,7 +3838,7 @@ function GarageContent() {
       setLoadingTimedOut(false);
     }
   }, [authLoading, isDataFetchReady, vehiclesLoading]);
-  
+
   // Handle action=add URL parameter to auto-open add vehicle modal
   const [addActionProcessed, setAddActionProcessed] = useState(false);
   useEffect(() => {
@@ -3879,13 +3847,13 @@ function GarageContent() {
       const timer = setTimeout(() => {
         setIsAddVehicleOpen(true);
         setAddActionProcessed(true);
-        
+
         // Clear the action param from URL
         const newUrl = new URL(window.location.href);
         newUrl.searchParams.delete('action');
         router.replace(newUrl.pathname + newUrl.search, { scroll: false });
       }, 300);
-      
+
       return () => clearTimeout(timer);
     }
   }, [searchParams, addActionProcessed, isAuthenticated, authLoading, router]);
@@ -3902,7 +3870,7 @@ function GarageContent() {
   const isDataLoading = useMemo(() => {
     // Safety hatch: if loading times out, show content anyway
     if (loadingTimedOut) return false;
-    
+
     // Always show loading during auth check
     if (authLoading) return true;
 
@@ -3942,7 +3910,7 @@ function GarageContent() {
     enabled: !!currentVehicleCarSlug && !currentCarInArray,
   });
 
-  const favoriteCars = useMemo(() => {
+  const _favoriteCars = useMemo(() => {
     return favorites.map((fav) => {
       const fullCarData = carsArray.find((c) => c.slug === fav.slug);
       return fullCarData ? { ...fullCarData, addedAt: fav.addedAt } : fav;
@@ -4192,7 +4160,7 @@ function GarageContent() {
       console.error('Failed to add vehicle: No data or error returned');
       throw new Error('Failed to save vehicle. Please try signing in again.');
     }
-    
+
     // Show points notification for adding vehicle
     showPointsEarned(10, 'Vehicle added');
   };
@@ -4365,7 +4333,13 @@ function GarageContent() {
           {/* Profile Button */}
           <Link href="/dashboard" className={styles.profileLink}>
             {avatarUrl ? (
-              <Image src={avatarUrl} alt="" width={36} height={36} className={styles.profileAvatar} />
+              <Image
+                src={avatarUrl}
+                alt=""
+                width={36}
+                height={36}
+                className={styles.profileAvatar}
+              />
             ) : (
               <Icons.user size={20} />
             )}
@@ -4491,7 +4465,10 @@ function GarageContent() {
                       </button>
                     </div>
                     {/* Add Vehicle Button */}
-                    <button className={styles.addVehicleBtn} onClick={() => setIsAddVehicleOpen(true)}>
+                    <button
+                      className={styles.addVehicleBtn}
+                      onClick={() => setIsAddVehicleOpen(true)}
+                    >
                       <Icons.plus size={16} />
                       Add Vehicle
                     </button>

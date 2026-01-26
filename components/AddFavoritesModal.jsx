@@ -2,14 +2,16 @@
 
 /**
  * Add Favorites Modal
- * 
+ *
  * Modal for adding cars to user's favorites within the garage.
  * Simple search interface - tap a car to add it to favorites.
- * 
+ * Rendered via React Portal to document.body for proper stacking context.
+ *
  * Now fetches car data from database via carsClient.
  */
 
 import { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import styles from './AddFavoritesModal.module.css';
 import { fetchCars } from '@/lib/carsClient';
 import { calculateWeightedScore, ENTHUSIAST_WEIGHTS } from '@/lib/scoring';
@@ -22,6 +24,12 @@ export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavo
   const [recentlyAdded, setRecentlyAdded] = useState(new Set());
   const [allCars, setAllCars] = useState([]);
 
+  // Portal mounting - required for SSR compatibility
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   // Fetch car data from database on mount
   useEffect(() => {
     fetchCars().then(setAllCars).catch(console.error);
@@ -31,53 +39,54 @@ export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavo
   // Uses ENTHUSIAST_WEIGHTS from lib/scoring.js for consistent scoring across the app
   const filteredCars = useMemo(() => {
     let results = allCars;
-    
+
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
-      results = allCars.filter(car => 
-        car.name?.toLowerCase().includes(query) ||
-        car.brand?.toLowerCase().includes(query) ||
-        car.category?.toLowerCase().includes(query) ||
-        car.engine?.toLowerCase().includes(query) ||
-        car.years?.toLowerCase().includes(query)
+      results = allCars.filter(
+        (car) =>
+          car.name?.toLowerCase().includes(query) ||
+          car.brand?.toLowerCase().includes(query) ||
+          car.category?.toLowerCase().includes(query) ||
+          car.engine?.toLowerCase().includes(query) ||
+          car.years?.toLowerCase().includes(query)
       );
     }
-    
+
     // Sort by weighted score (highest scoring cars first)
     return results
-      .map(car => ({
+      .map((car) => ({
         car,
-        score: calculateWeightedScore(car, ENTHUSIAST_WEIGHTS)
+        score: calculateWeightedScore(car, ENTHUSIAST_WEIGHTS),
       }))
       .sort((a, b) => b.score - a.score)
-      .map(item => item.car)
+      .map((item) => item.car)
       .slice(0, 30);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery, allCars]);
 
   // Check if a car is already favorited
   const isFavorited = (slug) => {
-    return existingFavorites.some(f => f.slug === slug) || recentlyAdded.has(slug);
+    return existingFavorites.some((f) => f.slug === slug) || recentlyAdded.has(slug);
   };
 
   // Handle adding a car to favorites - Optimistic UI pattern
   const handleAddFavorite = async (car) => {
     if (isFavorited(car.slug) || addingSlug) return;
-    
+
     // Optimistic: immediately mark as added
-    setRecentlyAdded(prev => new Set([...prev, car.slug]));
-    
+    setRecentlyAdded((prev) => new Set([...prev, car.slug]));
+
     // Brief visual feedback for tactile response
     setAddingSlug(car.slug);
     setTimeout(() => setAddingSlug(null), 100);
-    
+
     // Save in background
     try {
       await onAdd(car);
     } catch (err) {
       console.error('Error adding favorite:', err);
       // Revert on error
-      setRecentlyAdded(prev => {
+      setRecentlyAdded((prev) => {
         const next = new Set(prev);
         next.delete(car.slug);
         return next;
@@ -92,11 +101,11 @@ export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavo
     onClose();
   };
 
-  if (!isOpen) return null;
+  if (!isOpen || !isMounted) return null;
 
-  return (
+  const modalContent = (
     <div className={styles.overlay} onClick={handleClose} data-overlay-modal>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         {/* Header */}
         <div className={styles.header}>
           <h2 className={styles.title}>Add to Favorites</h2>
@@ -119,7 +128,7 @@ export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavo
               autoFocus
             />
             {searchQuery && (
-              <button 
+              <button
                 onClick={() => setSearchQuery('')}
                 className={styles.searchClear}
                 type="button"
@@ -138,10 +147,10 @@ export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavo
 
           {/* Car List */}
           <div className={styles.carList}>
-            {filteredCars.map(car => {
+            {filteredCars.map((car) => {
               const alreadyFavorited = isFavorited(car.slug);
               const isAdding = addingSlug === car.slug;
-              
+
               return (
                 <button
                   key={car.slug}
@@ -200,4 +209,7 @@ export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavo
       </div>
     </div>
   );
+
+  // Use portal to render at document body level
+  return createPortal(modalContent, document.body);
 }

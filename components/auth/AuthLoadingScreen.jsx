@@ -2,25 +2,26 @@
 
 /**
  * Auth Loading Screen
- * 
+ *
  * Full-screen loading overlay shown after authentication
  * while user data is being loaded. Shows progress for each
  * data type being fetched.
- * 
+ *
  * Features:
  * - Shows loading status per step (pending, loading, completed, failed, timeout)
  * - Retry button for failed/timed out steps
  * - Animated progress indicators
  * - Auto-dismiss when ALL steps reach a terminal state (completed/failed/timeout)
  * - User can dismiss manually at any time via close button
- * 
+ *
  * Note: Step timeouts are enforced by LoadingProgressProvider's global watchdog,
  * not by this component. This ensures deterministic completion.
- * 
+ *
  * @module components/auth/AuthLoadingScreen
  */
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import styles from './AuthLoadingScreen.module.css';
 
@@ -47,25 +48,31 @@ const StepStatus = {
 // Friendly Robot/Wrench Icon for loading - Brand teal color
 function LoadingIcon({ size = 64 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 100 100"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       {/* Gear/cog background */}
-      <circle cx="50" cy="50" r="40" fill="#1a1a1a" stroke="#10b981" strokeWidth="2"/>
+      <circle cx="50" cy="50" r="40" fill="#1a1a1a" stroke="#10b981" strokeWidth="2" />
       {/* Wrench icon */}
-      <path 
-        d="M35 65 L45 55 L55 55 L65 65 L60 70 L55 65 L45 65 L40 70 Z" 
-        fill="#10b981" 
+      <path
+        d="M35 65 L45 55 L55 55 L65 65 L60 70 L55 65 L45 65 L40 70 Z"
+        fill="#10b981"
         opacity="0.3"
       />
       {/* Car silhouette */}
-      <path 
-        d="M30 50 L35 40 L65 40 L70 50 L75 50 L75 60 L70 60 L70 55 L30 55 L30 60 L25 60 L25 50 Z" 
+      <path
+        d="M30 50 L35 40 L65 40 L70 50 L75 50 L75 60 L70 60 L70 55 L30 55 L30 60 L25 60 L25 50 Z"
         fill="#10b981"
       />
       {/* Wheels */}
-      <circle cx="38" cy="55" r="5" fill="#1a1a1a" stroke="#10b981" strokeWidth="2"/>
-      <circle cx="62" cy="55" r="5" fill="#1a1a1a" stroke="#10b981" strokeWidth="2"/>
+      <circle cx="38" cy="55" r="5" fill="#1a1a1a" stroke="#10b981" strokeWidth="2" />
+      <circle cx="62" cy="55" r="5" fill="#1a1a1a" stroke="#10b981" strokeWidth="2" />
       {/* Shine effect */}
-      <path d="M40 45 L60 45" stroke="#fff" strokeWidth="2" strokeLinecap="round" opacity="0.5"/>
+      <path d="M40 45 L60 45" stroke="#fff" strokeWidth="2" strokeLinecap="round" opacity="0.5" />
     </svg>
   );
 }
@@ -73,7 +80,16 @@ function LoadingIcon({ size = 64 }) {
 // Close icon component
 function CloseIcon() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <line x1="18" y1="6" x2="6" y2="18" />
       <line x1="6" y1="6" x2="18" y2="18" />
     </svg>
@@ -85,13 +101,13 @@ function CloseIcon() {
  */
 function CheckIcon() {
   return (
-    <svg 
-      className={styles.checkIcon} 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
+    <svg
+      className={styles.checkIcon}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
       strokeWidth="3"
-      strokeLinecap="round" 
+      strokeLinecap="round"
       strokeLinejoin="round"
     >
       <polyline points="20 6 9 17 4 12" />
@@ -118,13 +134,13 @@ function SpinnerIcon() {
  */
 function ErrorIcon() {
   return (
-    <svg 
-      className={styles.errorIcon} 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
+    <svg
+      className={styles.errorIcon}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
       strokeWidth="2"
-      strokeLinecap="round" 
+      strokeLinecap="round"
       strokeLinejoin="round"
     >
       <circle cx="12" cy="12" r="10" />
@@ -139,13 +155,13 @@ function ErrorIcon() {
  */
 function RetryIcon() {
   return (
-    <svg 
-      className={styles.retryIcon} 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
+    <svg
+      className={styles.retryIcon}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
       strokeWidth="2"
-      strokeLinecap="round" 
+      strokeLinecap="round"
       strokeLinejoin="round"
     >
       <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
@@ -171,9 +187,9 @@ function getStepStatus(stepState) {
  */
 function isStepDone(stepState) {
   const status = getStepStatus(stepState);
-  return status === StepStatus.COMPLETED || 
-         status === StepStatus.FAILED || 
-         status === StepStatus.TIMEOUT;
+  return (
+    status === StepStatus.COMPLETED || status === StepStatus.FAILED || status === StepStatus.TIMEOUT
+  );
 }
 
 /**
@@ -185,7 +201,7 @@ function isStepCompleted(stepState) {
 
 /**
  * AuthLoadingScreen Component
- * 
+ *
  * @param {Object} props
  * @param {boolean} props.isVisible - Whether to show the loading screen
  * @param {Object} props.loadingStates - Object with status states for each data type
@@ -195,9 +211,9 @@ function isStepCompleted(stepState) {
  * @param {string} props.userName - Optional user name to display
  * @param {string} props.userAvatar - Optional user avatar URL
  */
-export default function AuthLoadingScreen({ 
-  isVisible, 
-  loadingStates = {}, 
+export default function AuthLoadingScreen({
+  isVisible,
+  loadingStates = {},
   onComplete,
   onDismiss,
   onRetry,
@@ -207,47 +223,57 @@ export default function AuthLoadingScreen({
   const [shouldShow, setShouldShow] = useState(false);
   const [isExiting, setIsExiting] = useState(false);
   const [hasMetMinTime, setHasMetMinTime] = useState(false);
+
+  // Portal mounting - required for SSR compatibility
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
   const [showTime, setShowTime] = useState(null);
 
   // Calculate progress with new status model
-  const { completedSteps, totalSteps, failedSteps, allDone, allCompleted, currentStep } = useMemo(() => {
-    const total = LOADING_STEPS.length;
-    let completed = 0;
-    let failed = 0;
-    let current = null;
-    
-    LOADING_STEPS.forEach(step => {
-      const status = getStepStatus(loadingStates[step.key]);
-      if (status === StepStatus.COMPLETED) {
-        completed++;
-      } else if (status === StepStatus.FAILED || status === StepStatus.TIMEOUT) {
-        failed++;
-      } else if (status === StepStatus.LOADING && !current) {
-        current = step.key;
-      }
-    });
-    
-    // All done = every step is either completed, failed, or timed out
-    const done = LOADING_STEPS.every(step => isStepDone(loadingStates[step.key]));
-    // All completed = every step is successfully completed
-    const allSuccess = LOADING_STEPS.every(step => isStepCompleted(loadingStates[step.key]));
-    
-    return {
-      completedSteps: completed,
-      totalSteps: total,
-      failedSteps: failed,
-      allDone: done,
-      allCompleted: allSuccess,
-      currentStep: current,
-    };
-  }, [loadingStates]);
+  const { completedSteps, totalSteps, failedSteps, allDone, allCompleted, currentStep } =
+    useMemo(() => {
+      const total = LOADING_STEPS.length;
+      let completed = 0;
+      let failed = 0;
+      let current = null;
+
+      LOADING_STEPS.forEach((step) => {
+        const status = getStepStatus(loadingStates[step.key]);
+        if (status === StepStatus.COMPLETED) {
+          completed++;
+        } else if (status === StepStatus.FAILED || status === StepStatus.TIMEOUT) {
+          failed++;
+        } else if (status === StepStatus.LOADING && !current) {
+          current = step.key;
+        }
+      });
+
+      // All done = every step is either completed, failed, or timed out
+      const done = LOADING_STEPS.every((step) => isStepDone(loadingStates[step.key]));
+      // All completed = every step is successfully completed
+      const allSuccess = LOADING_STEPS.every((step) => isStepCompleted(loadingStates[step.key]));
+
+      return {
+        completedSteps: completed,
+        totalSteps: total,
+        failedSteps: failed,
+        allDone: done,
+        allCompleted: allSuccess,
+        currentStep: current,
+      };
+    }, [loadingStates]);
 
   const progressPercent = Math.round((completedSteps / totalSteps) * 100);
 
   // Handle retry for a specific step
-  const handleRetry = useCallback((stepKey) => {
-    onRetry?.(stepKey);
-  }, [onRetry]);
+  const handleRetry = useCallback(
+    (stepKey) => {
+      onRetry?.(stepKey);
+    },
+    [onRetry]
+  );
 
   // Track when screen becomes visible
   useEffect(() => {
@@ -262,10 +288,10 @@ export default function AuthLoadingScreen({
   // Minimum display time timer
   useEffect(() => {
     if (!showTime) return;
-    
+
     const elapsed = Date.now() - showTime;
     const remaining = MIN_DISPLAY_TIME - elapsed;
-    
+
     if (remaining <= 0) {
       setHasMetMinTime(true);
     } else {
@@ -284,7 +310,7 @@ export default function AuthLoadingScreen({
     if (allDone && hasMetMinTime && shouldShow && !isExiting) {
       // Start exit animation
       setIsExiting(true);
-      
+
       // Call onComplete after exit animation
       const timer = setTimeout(() => {
         setShouldShow(false);
@@ -292,13 +318,13 @@ export default function AuthLoadingScreen({
         setShowTime(null);
         onComplete?.();
       }, 400); // Match CSS transition duration
-      
+
       return () => clearTimeout(timer);
     }
   }, [allDone, hasMetMinTime, shouldShow, isExiting, onComplete]);
 
-  // Don't render if not showing
-  if (!shouldShow) return null;
+  // Don't render if not showing or not mounted
+  if (!shouldShow || !isMounted) return null;
 
   // Handle dismiss
   const handleDismiss = () => {
@@ -311,11 +337,11 @@ export default function AuthLoadingScreen({
     }, 400);
   };
 
-  return (
-    <div className={`${styles.overlay} ${isExiting ? styles.exiting : ''}`}>
+  const loadingContent = (
+    <div className={`${styles.overlay} ${isExiting ? styles.exiting : ''}`} data-overlay-modal>
       {/* Close button */}
-      <button 
-        className={styles.closeButton} 
+      <button
+        className={styles.closeButton}
         onClick={handleDismiss}
         aria-label="Close loading screen"
       >
@@ -347,10 +373,7 @@ export default function AuthLoadingScreen({
 
         {/* Progress bar */}
         <div className={styles.progressBarContainer}>
-          <div 
-            className={styles.progressBar} 
-            style={{ width: `${progressPercent}%` }}
-          />
+          <div className={styles.progressBar} style={{ width: `${progressPercent}%` }} />
         </div>
 
         {/* Loading steps */}
@@ -362,9 +385,9 @@ export default function AuthLoadingScreen({
             const isComplete = status === StepStatus.COMPLETED;
             const isLoading = status === StepStatus.LOADING;
             const isPending = status === StepStatus.PENDING;
-            
+
             return (
-              <div 
+              <div
                 key={step.key}
                 className={`${styles.step} ${isComplete ? styles.stepComplete : ''} ${isLoading ? styles.stepLoading : ''} ${isFailed ? styles.stepFailed : ''} ${isPending ? styles.stepPending : ''}`}
                 style={{ animationDelay: `${index * 100}ms` }}
@@ -377,9 +400,7 @@ export default function AuthLoadingScreen({
                 </div>
                 <div className={styles.stepContent}>
                   <span className={styles.stepLabel}>{step.label}</span>
-                  {isFailed && error && (
-                    <span className={styles.stepError}>{error}</span>
-                  )}
+                  {isFailed && error && <span className={styles.stepError}>{error}</span>}
                 </div>
                 {isFailed && onRetry && (
                   <button
@@ -400,7 +421,8 @@ export default function AuthLoadingScreen({
         <div className={styles.progressText}>
           {failedSteps > 0 ? (
             <span className={styles.failedText}>
-              {failedSteps} {failedSteps === 1 ? 'step' : 'steps'} failed · {progressPercent}% complete
+              {failedSteps} {failedSteps === 1 ? 'step' : 'steps'} failed · {progressPercent}%
+              complete
             </span>
           ) : currentStep ? (
             <span>Loading... {progressPercent}% complete</span>
@@ -413,5 +435,7 @@ export default function AuthLoadingScreen({
       </div>
     </div>
   );
-}
 
+  // Use portal to render at document body level
+  return createPortal(loadingContent, document.body);
+}
