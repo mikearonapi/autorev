@@ -230,7 +230,7 @@ function dismissInlineSplash(callback) {
   
   const startTime = window.__splashStartTime || Date.now();
   const elapsed = Date.now() - startTime;
-  const minDuration = 2000; // 2 seconds minimum
+  const minDuration = 3000; // 3 seconds minimum - gives time for prefetch to complete
   const remaining = Math.max(0, minDuration - elapsed);
   
   console.log('[Splash] Will dismiss in', remaining, 'ms (elapsed:', elapsed, 'ms)');

@@ -15,6 +15,7 @@
  * - Full-height layouts
  */
 
+import AppDataPrefetcher from '@/components/AppDataPrefetcher';
 import BottomTabBar from '@/components/BottomTabBar';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import styles from './layout.module.css';
@@ -22,6 +23,8 @@ import styles from './layout.module.css';
 export default function AppLayout({ children }) {
   return (
     <div className={styles.appLayout} data-app-layout="true">
+      {/* Pre-load common user data at layout level for instant page navigation */}
+      <AppDataPrefetcher />
       {children}
       <BottomTabBar />
       {/* PWA Install Banner - shows after 5 page views, 3s delay */}

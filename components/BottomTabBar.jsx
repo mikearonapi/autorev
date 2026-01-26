@@ -1,11 +1,13 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import styles from './BottomTabBar.module.css';
 import { UI_IMAGES } from '@/lib/images';
 import { APP_ROUTES, isAppRoute } from '@/lib/appRoutes';
+import { usePrefetchNavigation } from '@/hooks/usePrefetchNavigation';
 
 /**
  * BottomTabBar - Premium Minimal Tab Navigation
@@ -126,6 +128,15 @@ const tabs = [
 
 export default function BottomTabBar() {
   const pathname = usePathname();
+  const { prefetchRoute } = usePrefetchNavigation();
+  
+  /**
+   * Handle prefetch on hover (desktop) or touch start (mobile)
+   * This loads data before navigation so pages render instantly
+   */
+  const handlePrefetch = useCallback((href) => {
+    prefetchRoute(href);
+  }, [prefetchRoute]);
   
   const shouldShow = isAppRoute(pathname);
   if (!shouldShow) return null;
@@ -147,6 +158,8 @@ export default function BottomTabBar() {
               href={tab.href}
               className={`${styles.tab} ${active ? styles.active : ''} ${tab.isAL ? styles.alTab : ''}`}
               aria-current={active ? 'page' : undefined}
+              onMouseEnter={() => handlePrefetch(tab.href)}
+              onTouchStart={() => handlePrefetch(tab.href)}
             >
               <span className={styles.icon}>
                 <TabIcon active={active} />

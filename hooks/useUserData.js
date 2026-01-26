@@ -14,6 +14,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/lib/apiClient';
 import { CACHE_TIMES } from './useCarData';
+import { getPrefetchedData } from '@/lib/prefetch';
 
 // =============================================================================
 // QUERY KEY FACTORIES
@@ -762,6 +763,44 @@ export function useUserInsights(userId, options = {}) {
     staleTime: CACHE_TIMES.FAST, // 30 seconds - insights should feel fresh
     gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
     refetchOnWindowFocus: true, // Refetch when user returns to tab (handles bfcache)
+    enabled: !!userId,
+    ...options,
+  });
+}
+
+// =============================================================================
+// DASHBOARD HOOKS
+// =============================================================================
+
+/**
+ * Hook to fetch user's dashboard data
+ * Returns streak, points, achievements, activity, and profile data
+ * 
+ * Uses prefetched data from splash screen if available for instant rendering.
+ * 
+ * @param {string} userId - User ID
+ * @param {object} options - React Query options
+ */
+export function useDashboardData(userId, options = {}) {
+  // Check for prefetched data (loaded during splash screen)
+  const prefetchedDashboard = getPrefetchedData('dashboard', userId);
+  
+  return useQuery({
+    queryKey: [...userKeys.all, userId, 'dashboard'],
+    queryFn: async () => {
+      const res = await fetch(`/api/users/${userId}/dashboard`);
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.error || 'Failed to fetch dashboard data');
+      }
+      const result = await res.json();
+      return result.data; // API returns { data: { streak, points, achievements, ... } }
+    },
+    staleTime: CACHE_TIMES.FAST, // 5 minutes - dashboard updates with user activity
+    gcTime: 10 * 60 * 1000, // Keep in cache for 10 minutes
+    refetchOnWindowFocus: true, // Refetch when user returns to tab
+    // Use prefetched data as placeholder for instant rendering
+    placeholderData: prefetchedDashboard || undefined,
     enabled: !!userId,
     ...options,
   });

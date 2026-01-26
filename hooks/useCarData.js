@@ -18,6 +18,7 @@
 import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/lib/apiClient';
 import { carKeys, partsKeys } from '@/lib/queryKeys';
+import { getPrefetchedData } from '@/lib/prefetch';
 
 // Re-export for backwards compatibility with existing imports
 export { carKeys, partsKeys };
@@ -187,14 +188,22 @@ async function fetchMarketValue(slug) {
 /**
  * Hook to fetch all cars list
  * 
+ * Uses prefetched data from splash screen if available for instant rendering.
+ * 
  * @example
  * const { data: cars, isLoading } = useCarsList();
  */
 export function useCarsList(options = {}) {
+  // Check for prefetched data (loaded during splash screen)
+  const prefetchedCars = getPrefetchedData('carsList');
+  
   return useQuery({
     queryKey: carKeys.lists(),
     queryFn: fetchCarsList,
     staleTime: CACHE_TIMES.FAST, // 5 min - car list updates when new cars are added
+    // Use prefetched data as placeholder for instant rendering
+    // Query will still refetch in background to ensure freshness
+    placeholderData: prefetchedCars || undefined,
     ...options,
   });
 }

@@ -7,9 +7,14 @@
  * - Streak counter (the ONE number)
  * - Achievements as hero (real metrics)
  * - Weekly activity chart
+ * 
+ * Uses React Query for data caching - dashboard data is prefetched
+ * by AppDataPrefetcher at the layout level, so subsequent visits
+ * render instantly from cache.
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 
 import Link from 'next/link';
 
@@ -17,6 +22,8 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { FullscreenQuestionnaire } from '@/components/questionnaire';
 import { useProfileSummary } from '@/hooks/useQuestionnaire';
+import { useDashboardData } from '@/hooks/useUserData';
+import { userKeys } from '@/lib/queryKeys';
 
 import { GearIcon, MessageIcon } from './components/DashboardIcons';
 import ImprovementActions from './components/ImprovementActions';
@@ -28,15 +35,26 @@ import styles from './page.module.css';
 
 export default function DashboardClient() {
   const { user, profile, loading: authLoading } = useAuth();
-  const [dashboardData, setDashboardData] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const queryClient = useQueryClient();
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
   const [loadingTimedOut, setLoadingTimedOut] = useState(false);
 
+  // Use React Query for cached dashboard data
+  const { 
+    data: dashboardData, 
+    isLoading: dataLoading, 
+    error: dataError,
+    refetch: refetchDashboard,
+  } = useDashboardData(user?.id, {
+    enabled: Boolean(user?.id) && !authLoading,
+  });
+
+  // Combined loading state
+  const loading = authLoading || (dataLoading && !dashboardData);
+
   // Safety timeout to prevent infinite loading
   useEffect(() => {
-    if (!loading && !authLoading) {
+    if (!loading) {
       setLoadingTimedOut(false);
       return;
     }
@@ -45,7 +63,7 @@ export default function DashboardClient() {
       setLoadingTimedOut(true);
     }, 6000);
     return () => clearTimeout(timeout);
-  }, [loading, authLoading]);
+  }, [loading]);
 
   // Fetch questionnaire profile summary for the button
   const { summary: questionnaireSummary } = useProfileSummary(user?.id, {
@@ -55,50 +73,12 @@ export default function DashboardClient() {
   const _avatarUrl =
     profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
 
-  const fetchDashboardData = useCallback(async () => {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
-
-    try {
-      setLoading(true);
-      setError(null);
-
-      const response = await fetch(`/api/users/${user.id}/dashboard`, {
-        signal: controller.signal,
-      });
-      clearTimeout(timeoutId);
-
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Failed to fetch dashboard data');
-
-      setDashboardData(result.data);
-      setLoading(false);
-    } catch (err) {
-      clearTimeout(timeoutId);
-      if (err.name === 'AbortError') {
-        setError('Loading took too long. Please try again.');
-      } else {
-        console.error('Dashboard fetch error:', err);
-        setError(err.message);
-      }
-      setLoading(false);
-    }
-  }, [user?.id]);
-
-  useEffect(() => {
-    if (authLoading) return;
-    if (!user?.id) {
-      setLoading(false);
-      return;
-    }
-    fetchDashboardData();
-  }, [user?.id, authLoading, fetchDashboardData]);
-
   const handleTitleChange = useCallback(
     async (newTitle) => {
       if (!user?.id) return;
 
-      setDashboardData((prev) => ({
+      // Optimistic update - update React Query cache immediately
+      queryClient.setQueryData([...userKeys.all, user.id, 'dashboard'], (prev) => ({
         ...prev,
         profile: { ...prev?.profile, selectedTitle: newTitle },
       }));
@@ -109,9 +89,11 @@ export default function DashboardClient() {
         });
       } catch (err) {
         console.error('Failed to update title:', err);
+        // Refetch to restore correct state on error
+        refetchDashboard();
       }
     },
-    [user?.id]
+    [user?.id, queryClient, refetchDashboard]
   );
 
   // Not logged in
@@ -125,7 +107,8 @@ export default function DashboardClient() {
   }
 
   // Loading - with safety timeout to prevent stuck state
-  if ((loading || authLoading) && !loadingTimedOut) {
+  // Show loading only if we don't have cached data (stale-while-revalidate pattern)
+  if (loading && !dashboardData && !loadingTimedOut) {
     return (
       <LoadingSpinner
         variant="branded"
@@ -136,12 +119,12 @@ export default function DashboardClient() {
     );
   }
 
-  // Error
-  if (error) {
+  // Error - only show if we have no data at all
+  if (dataError && !dashboardData) {
     return (
       <div className={styles.error}>
-        <p>{error}</p>
-        <button onClick={fetchDashboardData} className={styles.retryButton}>
+        <p>{dataError.message || 'Failed to load dashboard'}</p>
+        <button onClick={() => refetchDashboard()} className={styles.retryButton}>
           Try Again
         </button>
       </div>
