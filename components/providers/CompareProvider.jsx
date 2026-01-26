@@ -10,7 +10,7 @@
  * @module components/providers/CompareProvider
  */
 
-import { createContext, useContext, useReducer, useEffect, useState, useCallback } from 'react';
+import { createContext, useContext, useReducer, useEffect, useState, useCallback, useMemo } from 'react';
 import { useAuth } from '@/components/providers/AuthProvider';
 import {
   loadCompare,
@@ -285,7 +285,7 @@ export function CompareProvider({ children }) {
     setShowCompareModal(true);
   }, []);
 
-  const value = {
+  const value = useMemo(() => ({
     // Current comparison
     cars: state.cars,
     count: state.cars.length,
@@ -312,7 +312,23 @@ export function CompareProvider({ children }) {
     deleteSavedList,
     loadSavedList,
     canSave: isAuthenticated && state.cars.length > 0,
-  };
+  }), [
+    state.cars,
+    state.savedLists,
+    isHydrated,
+    isLoading,
+    addToCompare,
+    removeFromCompare,
+    toggleCompare,
+    checkIsInCompare,
+    clearAll,
+    showCompareModal,
+    openCompareWithCars,
+    saveCurrentComparison,
+    deleteSavedList,
+    loadSavedList,
+    isAuthenticated,
+  ]);
 
   return (
     <CompareContext.Provider value={value}>

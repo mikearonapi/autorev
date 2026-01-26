@@ -9,6 +9,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { isAdminEmail } from '@/lib/adminAccess';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -39,7 +40,7 @@ function centsToDollars(cents) {
   return (cents / 100).toFixed(2);
 }
 
-export async function GET(request) {
+async function handleGet(request) {
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
   }
@@ -71,10 +72,12 @@ export async function GET(request) {
     
     switch (exportType) {
       case 'monthly': {
+        const FINANCIAL_COLS = 'id, fiscal_year, fiscal_month, revenue_cents, total_fixed_costs_cents, total_variable_costs_cents, net_income_cents, notes, created_at';
+        
         // Export monthly financials
         const { data: monthly, error } = await supabase
           .from('monthly_financials')
-          .select('*')
+          .select(FINANCIAL_COLS)
           .order('fiscal_year', { ascending: false })
           .order('fiscal_month', { ascending: false });
         
@@ -154,9 +157,11 @@ export async function GET(request) {
         const targetYear = year ? parseInt(year) : new Date().getFullYear();
         const targetMonth = month ? parseInt(month) : new Date().getMonth() + 1;
         
+        const FINANCIAL_DETAIL_COLS = 'id, fiscal_year, fiscal_month, revenue_cents, total_fixed_costs_cents, total_variable_costs_cents, net_income_cents, notes, created_at';
+        
         const { data: monthData, error } = await supabase
           .from('monthly_financials')
-          .select('*')
+          .select(FINANCIAL_DETAIL_COLS)
           .eq('fiscal_year', targetYear)
           .eq('fiscal_month', targetMonth)
           .single();
@@ -219,10 +224,12 @@ export async function GET(request) {
       }
       
       case 'gl': {
+        const ACCOUNT_COLS = 'id, code, name, category, description, is_active, created_at';
+        
         // Export GL accounts
         const { data: accounts, error } = await supabase
           .from('gl_accounts')
-          .select('*')
+          .select(ACCOUNT_COLS)
           .order('code', { ascending: true });
         
         if (error) throw error;
@@ -262,3 +269,4 @@ export async function GET(request) {
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'admin/export', feature: 'admin' });

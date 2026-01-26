@@ -25,6 +25,8 @@
 
 import { NextResponse } from 'next/server';
 import { saveDailySnapshot, getAllMetrics } from '@/lib/subscriptionMetricsService';
+import { withErrorLogging, logCronError } from '@/lib/serverErrorLogger';
+import { notifyCronEnrichment } from '@/lib/discord';
 
 /**
  * Verify cron secret for security
@@ -42,7 +44,7 @@ function verifyCronSecret(request) {
   return isVercelCron || isValidToken;
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   // Verify this is an authorized cron request
   if (!verifyCronSecret(request)) {
     console.warn('[SubscriptionMetrics Cron] Unauthorized request');
@@ -72,6 +74,18 @@ export async function POST(request) {
     console.log('[SubscriptionMetrics Cron] Total subscribers:', metrics.total_subscribers);
     console.log('[SubscriptionMetrics Cron] Churn rate:', metrics.monthly_churn_rate, '%');
 
+    // Send success notification to Discord
+    notifyCronEnrichment('Subscription Metrics', {
+      duration,
+      table: 'subscription_metrics_snapshots',
+      recordsAdded: 1,
+      details: [
+        { label: '💰 MRR', value: `$${(metrics.mrr_cents / 100).toFixed(2)}` },
+        { label: '👥 Subscribers', value: metrics.total_subscribers },
+        { label: '📉 Churn', value: `${metrics.monthly_churn_rate}%` },
+      ],
+    }).catch(() => {}); // Don't fail if Discord fails
+
     return NextResponse.json({
       success: true,
       duration_ms: duration,
@@ -88,10 +102,12 @@ export async function POST(request) {
   } catch (error) {
     console.error('[SubscriptionMetrics Cron] Error:', error);
     
+    // Log to error tracking and Discord
+    await logCronError('subscription-metrics', error, { phase: 'metrics_calculation' });
+    
     return NextResponse.json(
       { 
-        error: 'Failed to calculate metrics',
-        message: error.message,
+        error: 'Failed to calculate subscription metrics',
       },
       { status: 500 }
     );
@@ -99,7 +115,7 @@ export async function POST(request) {
 }
 
 // Also support GET for manual testing
-export async function GET(request) {
+async function handleGet(request) {
   // For GET requests, just return current metrics without saving
   // (useful for admin dashboard)
   try {
@@ -128,3 +144,6 @@ export async function GET(request) {
     );
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cron/subscription-metrics', feature: 'cron' });
+export const POST = withErrorLogging(handlePost, { route: 'cron/subscription-metrics', feature: 'cron' });

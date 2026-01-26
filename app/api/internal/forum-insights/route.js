@@ -17,6 +17,7 @@ import { NextResponse } from 'next/server';
 import { ForumScraperService } from '@/lib/forumScraper/index.js';
 import { InsightExtractor } from '@/lib/forumScraper/insightExtractor.js';
 import { supabaseServiceRole } from '@/lib/supabase.js';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -31,7 +32,7 @@ function isAuthorized(request) {
 /**
  * GET handler - Retrieve forum intelligence stats
  */
-export async function GET(request) {
+async function handleGet(request) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -92,8 +93,7 @@ export async function GET(request) {
   } catch (error) {
     console.error('[ForumInsights] GET error:', error);
     return NextResponse.json({ 
-      error: 'Failed to fetch stats', 
-      message: error.message 
+      error: 'Failed to fetch forum insights stats'
     }, { status: 500 });
   }
 }
@@ -110,7 +110,7 @@ export async function GET(request) {
  *   - threadId: Specific thread ID (for reprocess action)
  *   - dryRun: Boolean to enable dry-run mode
  */
-export async function POST(request) {
+async function handlePost(request) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -162,7 +162,7 @@ export async function POST(request) {
             errors.push({
               forum: forumSlug,
               success: false,
-              error: err.message
+              error: 'Forum scrape failed'
             });
           }
         }
@@ -293,12 +293,13 @@ export async function POST(request) {
   } catch (error) {
     console.error('[ForumInsights] POST error:', error);
     return NextResponse.json({ 
-      error: 'Operation failed', 
-      message: error.message,
-      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      error: 'Forum insights operation failed'
     }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'internal/forum-insights', feature: 'internal' });
+export const POST = withErrorLogging(handlePost, { route: 'internal/forum-insights', feature: 'internal' });
 
 // Route segment config for longer execution time
 // https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config

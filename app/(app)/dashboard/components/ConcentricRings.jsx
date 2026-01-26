@@ -21,33 +21,73 @@ import PointsExplainerModal from './PointsExplainerModal';
 import styles from './ConcentricRings.module.css';
 
 // Ring configuration - outer to inner
+// Profile is innermost as it represents one-time completion progress
+// Colors reference CSS custom properties from styles/tokens/colors.css
 const RINGS = [
-  { key: 'al', label: 'AL', color: '#a855f7', maxWeekly: 30 },
-  { key: 'community', label: 'Community', color: '#3b82f6', maxWeekly: 20 },
-  { key: 'data', label: 'Data', color: '#10b981', maxWeekly: 15 },
-  { key: 'garage', label: 'Garage', color: '#d4ff00', maxWeekly: 10 },
+  { key: 'al', label: 'AL', colorVar: '--color-accent-purple', maxWeekly: 30 },
+  { key: 'community', label: 'Community', colorVar: '--color-accent-blue', maxWeekly: 20 },
+  { key: 'data', label: 'Data', colorVar: '--color-accent-teal', maxWeekly: 15 },
+  { key: 'garage', label: 'Garage', colorVar: '--color-accent-lime', maxWeekly: 10 },
+  { key: 'profile', label: 'Profile', colorVar: '--color-accent-pink', maxWeekly: 100 }, // % based
 ];
+
+// Get computed color from CSS variable at runtime
+const getComputedColor = (colorVar) => {
+  if (typeof window === 'undefined') {
+    // SSR fallback colors
+    const fallbacks = {
+      '--color-accent-purple': '#a855f7',
+      '--color-accent-blue': '#3b82f6',
+      '--color-accent-teal': '#10b981',
+      '--color-accent-lime': '#d4ff00',
+      '--color-accent-pink': '#ec4899',
+    };
+    return fallbacks[colorVar] || '#ffffff';
+  }
+  return getComputedStyle(document.documentElement).getPropertyValue(colorVar).trim() || '#ffffff';
+};
 
 export default function ConcentricRings({
   weeklyActivity = { al: 0, community: 0, data: 0, garage: 0 },
   currentStreak = 0,
   longestStreak = 0,
   garageScore = 0,
+  profileCompleteness = 0,
   points = { weekly: 0, monthly: 0, lifetime: 0 },
   size = 180,
   animated = true,
 }) {
   const [animatedProgress, setAnimatedProgress] = useState(
-    animated ? { al: 0, community: 0, data: 0, garage: 0 } : weeklyActivity
+    animated ? { al: 0, community: 0, data: 0, garage: 0, profile: 0 } : { ...weeklyActivity, profile: profileCompleteness }
   );
+  
+  // Compute colors from CSS variables on mount (client-side only)
+  const [ringColors, setRingColors] = useState(() => {
+    // Initial SSR-safe fallback colors
+    return RINGS.reduce((acc, ring) => {
+      acc[ring.key] = getComputedColor(ring.colorVar);
+      return acc;
+    }, {});
+  });
+  
+  // Update colors after mount to get actual CSS values
+  useEffect(() => {
+    setRingColors(
+      RINGS.reduce((acc, ring) => {
+        acc[ring.key] = getComputedColor(ring.colorVar);
+        return acc;
+      }, {})
+    );
+  }, []);
   const [animatedGarageScore, setAnimatedGarageScore] = useState(animated ? 0 : garageScore);
+  const [animatedProfileScore, setAnimatedProfileScore] = useState(animated ? 0 : profileCompleteness);
   const [animatedWeeklyPoints, setAnimatedWeeklyPoints] = useState(animated ? 0 : points.weekly);
   const [showExplainer, setShowExplainer] = useState(false);
 
-  // Animate activity rings (AL, Community, Data, and fallback Garage activity)
+  // Animate activity rings (AL, Community, Data, Garage, Profile)
   useEffect(() => {
     if (!animated) {
-      setAnimatedProgress(weeklyActivity);
+      setAnimatedProgress({ ...weeklyActivity, profile: profileCompleteness });
       return;
     }
 
@@ -64,13 +104,14 @@ export default function ConcentricRings({
         community: weeklyActivity.community * eased,
         data: weeklyActivity.data * eased,
         garage: weeklyActivity.garage * eased,
+        profile: profileCompleteness * eased,
       });
 
       if (progress < 1) requestAnimationFrame(animate);
     };
 
     requestAnimationFrame(animate);
-  }, [weeklyActivity, animated]);
+  }, [weeklyActivity, profileCompleteness, animated]);
 
   // Animate garage score (inner ring) - separate animation for the garage percentage
   useEffect(() => {
@@ -142,6 +183,11 @@ export default function ConcentricRings({
       return Math.min(animatedGarageScore, 100);
     }
     
+    // For profile, use profile completeness directly as percentage (0-100)
+    if (key === 'profile') {
+      return Math.min(animatedProgress.profile || 0, 100);
+    }
+    
     // For activity rings, calculate based on maxWeekly
     const value = animatedProgress[key] || 0;
     return Math.min((value / ring.maxWeekly) * 100, 100);
@@ -181,6 +227,7 @@ export default function ConcentricRings({
               const { radius, circumference } = getRingProps(index);
               const progress = getProgress(ring.key);
               const offset = circumference - (progress / 100) * circumference;
+              const color = ringColors[ring.key];
               
               return (
                 <g key={ring.key}>
@@ -190,7 +237,7 @@ export default function ConcentricRings({
                     cy={size / 2}
                     r={radius}
                     fill="none"
-                    stroke={`${ring.color}15`}
+                    stroke={`${color}15`}
                     strokeWidth={strokeWidth}
                   />
                   
@@ -200,13 +247,13 @@ export default function ConcentricRings({
                     cy={size / 2}
                     r={radius}
                     fill="none"
-                    stroke={ring.color}
+                    stroke={color}
                     strokeWidth={strokeWidth}
                     strokeLinecap="round"
                     strokeDasharray={circumference}
                     strokeDashoffset={offset}
                     className={styles.ringProgress}
-                    style={{ filter: progress > 0 ? `drop-shadow(0 0 4px ${ring.color}40)` : 'none' }}
+                    style={{ filter: progress > 0 ? `drop-shadow(0 0 4px ${color}40)` : 'none' }}
                   />
                 </g>
               );
@@ -228,7 +275,7 @@ export default function ConcentricRings({
             <div key={ring.key} className={styles.legendItem}>
               <span 
                 className={styles.legendDot} 
-                style={{ background: ring.color }}
+                style={{ background: ringColors[ring.key] }}
               />
               <span className={styles.legendLabel}>{ring.label}</span>
             </div>

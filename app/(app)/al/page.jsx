@@ -39,6 +39,11 @@ export async function generateMetadata() {
       'car maintenance help',
       'parts fitment search',
     ],
+    // Don't index authenticated pages
+    robots: {
+      index: false,
+      follow: false,
+    },
   };
 }
 

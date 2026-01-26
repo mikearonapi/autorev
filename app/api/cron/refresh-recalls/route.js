@@ -17,7 +17,7 @@ import { NextResponse } from 'next/server';
 import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
 import { fetchRecallRowsForCar, upsertRecallRows } from '@/lib/recallService';
 import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
-import { logCronError } from '@/lib/serverErrorLogger';
+import { logCronError, withErrorLogging } from '@/lib/serverErrorLogger';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -46,7 +46,7 @@ async function mapWithConcurrency(items, concurrency, mapper) {
   return results;
 }
 
-export async function GET(request) {
+async function handleGet(request) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: 'Unauthorized', code: 'UNAUTHORIZED' }, { status: 401 });
   }
@@ -130,13 +130,11 @@ export async function GET(request) {
     console.error('[Cron] refresh-recalls error:', err);
     await logCronError('refresh-recalls', err, { phase: 'processing' });
     notifyCronFailure('Refresh Recalls', err, { phase: 'processing' });
-    return NextResponse.json({ error: 'Failed', message: err.message }, { status: 500 });
+    return NextResponse.json({ error: 'Recall refresh cron job failed' }, { status: 500 });
   }
 }
 
-
-
-
+export const GET = withErrorLogging(handleGet, { route: 'cron/refresh-recalls', feature: 'cron' });
 
 
 

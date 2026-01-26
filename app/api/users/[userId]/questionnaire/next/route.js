@@ -6,11 +6,16 @@
  * - Category completion
  * - Prerequisites from previous answers
  * 
+ * Auth: User must be authenticated and can only access their own questionnaire
+ * 
  * @route /api/users/[userId]/questionnaire/next
  */
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { createServerSupabaseClient, getBearerToken, createAuthenticatedClient } from '@/lib/supabaseServer';
+import { errors } from '@/lib/apiErrors';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { 
   QUESTIONNAIRE_LIBRARY,
   QUESTION_CATEGORIES,
@@ -36,7 +41,7 @@ function getSupabase() {
  * - category: Preferred category to pull from
  * - excludeIds: Comma-separated question IDs to exclude
  */
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   try {
     const { userId } = await params;
     const { searchParams } = new URL(request.url);
@@ -47,7 +52,30 @@ export async function GET(request, { params }) {
     const excludeIds = excludeIdsParam ? new Set(excludeIdsParam.split(',')) : new Set();
     
     if (!userId) {
-      return NextResponse.json({ error: 'User ID required' }, { status: 400 });
+      return errors.missingField('userId');
+    }
+
+    // Get authenticated user
+    const bearerToken = getBearerToken(request);
+    const authSupabase = bearerToken 
+      ? createAuthenticatedClient(bearerToken) 
+      : await createServerSupabaseClient();
+
+    if (!authSupabase) {
+      return errors.serviceUnavailable('Authentication service');
+    }
+
+    const { data: { user }, error: authError } = bearerToken
+      ? await authSupabase.auth.getUser(bearerToken)
+      : await authSupabase.auth.getUser();
+    
+    if (authError || !user) {
+      return errors.unauthorized();
+    }
+    
+    // Verify the authenticated user matches the userId param (IDOR protection)
+    if (user.id !== userId) {
+      return errors.forbidden('Not authorized to access this user\'s questionnaire');
     }
     
     const supabase = getSupabase();
@@ -60,7 +88,7 @@ export async function GET(request, { params }) {
     
     if (error && error.code !== 'PGRST116') {
       console.error('[Questionnaire Next API] Error:', error);
-      return NextResponse.json({ error: 'Failed to fetch responses' }, { status: 500 });
+      return errors.database('Failed to fetch responses');
     }
     
     // Build responses map for prerequisite checking
@@ -134,6 +162,9 @@ export async function GET(request, { params }) {
     });
   } catch (error) {
     console.error('[Questionnaire Next API] Error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return errors.internal('Failed to fetch next questions');
   }
 }
+
+// Export wrapped handler with error logging
+export const GET = withErrorLogging(handleGet, { route: 'users/questionnaire/next', feature: 'questionnaire' });

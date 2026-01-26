@@ -2,121 +2,121 @@
 
 > Complete feature-by-tier access reference
 >
-> **Last Updated:** January 20, 2026
+> **Last Updated:** January 26, 2026
 
 ---
 
-## Tier Hierarchy
+## Pricing Model (Simplified Jan 2026)
+
+**Core principle:** Full app for everyone. Gate on AL usage & car count.
 
 ```
-free → collector → tuner
+free → collector (Enthusiast) → tuner (Pro)
 ```
 
-| Tier | Internal ID | Display Name | Price | Monthly AL Budget |
-|------|-------------|--------------|-------|-------------------|
-| **Free** | `free` | Free | $0 forever | 25 chats |
-| **Collector** | `collector` | Enthusiast | $4.99/mo | 75 chats |
-| **Tuner** | `tuner` | Tuner | $9.99/mo | 150 chats |
+| Tier | Internal ID | Display Name | Price | Annual | Max Cars | AL Budget |
+|------|-------------|--------------|-------|--------|----------|-----------|
+| **Free** | `free` | Free | $0 | — | 1 | $0.25/mo (~15 chats) |
+| **Enthusiast** | `collector` | Enthusiast | $9.99/mo | $79/yr | 3 | $2.00/mo (~130 chats) |
+| **Pro** | `tuner` | Pro | $19.99/mo | $149/yr | ∞ | $5.00/mo (~350 chats) |
+
+> **Terminology:** A "chat" = one AL response (your prompt + AL's response = token cost). A "conversation" = a thread containing multiple chats.
 
 > **Beta Mode:** Currently `IS_BETA = true` — all features unlocked for authenticated users.
 
 ---
 
-## Complete Feature Matrix
+## Complete Feature Matrix (Simplified Jan 2026)
 
-### Discovery & Research (Free Tier)
+### Garage (All Tiers)
 
-| Feature Key | Name | Free | Collector | Tuner | Description |
+| Feature Key | Name | Free | Enthusiast | Pro | Description |
 |-------------|------|:----:|:---------:|:-----:|-------------|
-| `carSelector` | Car Selector | ✅ | ✅ | ✅ | Find and compare sports cars |
-| `carDetailPages` | Car Detail Pages | ✅ | ✅ | ✅ | Full specs and buying guides |
-| `fuelEconomy` | Fuel Economy | ✅ | ✅ | ✅ | EPA fuel economy data |
-| `safetyRatings` | Safety Ratings | ✅ | ✅ | ✅ | NHTSA and IIHS safety ratings |
-| `priceByYear` | Price by Year | ✅ | ✅ | ✅ | Best value model years |
-| `partsTeaser` | Parts Preview | ✅ | ✅ | ✅ | See top 3 popular parts |
-| `lapTimesTeaser` | Lap Times Preview | ✅ | ✅ | ✅ | See top 2 lap times |
+| `basicGarage` | Garage | ✅ (1 car) | ✅ (3 cars) | ✅ (∞) | Add cars to your garage |
+| `vinDecode` | VIN Decode | ✅ | ✅ | ✅ | Decode your exact vehicle variant |
+| `mySpecs` | My Specs | ✅ | ✅ | ✅ | View all your car specifications |
+| `myBuild` | My Build | ✅ | ✅ | ✅ | Plan your upgrades |
+| `myPerformance` | My Performance | ✅ | ✅ | ✅ | See HP and metric gains |
+| `myParts` | My Parts | ✅ | ✅ | ✅ | Research specific parts |
+| `myInstall` | My Install | ✅ | ✅ | ✅ | Track installation progress |
+| `myPhotos` | My Photos | ✅ | ✅ | ✅ | Upload vehicle photos |
 
-### My Garage
+### Insights & Data (Enthusiast+)
 
-| Feature Key | Name | Free | Collector | Tuner | Description |
+| Feature Key | Name | Free | Enthusiast | Pro | Description |
 |-------------|------|:----:|:---------:|:-----:|-------------|
-| `basicGarage` | Basic Garage | ✅ | ✅ | ✅ | Save cars to your garage |
-| `favorites` | Favorites | ✅ | ✅ | ✅ | Save favorite cars |
-| `vinDecode` | VIN Decode | ❌ | ✅ | ✅ | Decode your exact vehicle variant |
-| `ownerReference` | Owner's Reference | ❌ | ✅ | ✅ | Maintenance specs for your car |
-| `serviceLog` | Service Log | ❌ | ✅ | ✅ | Track your maintenance history |
-| `serviceReminders` | Service Reminders | ❌ | ✅ | ✅ | Get notified when service is due |
-| `recallAlerts` | Recall Alerts | ❌ | ✅ | ✅ | Active recalls for YOUR VIN |
-| `safetyData` | Your Safety Data | ❌ | ✅ | ✅ | Recalls and complaints for your VIN |
-| `marketValue` | Market Value | ❌ | ✅ | ✅ | Track what your car is worth |
-| `priceHistory` | Price History | ❌ | ✅ | ✅ | Historical price trends |
-| `fullCompare` | Full Compare | ❌ | ✅ | ✅ | Side-by-side comparison tool |
-| `collections` | Collections | ❌ | ✅ | ✅ | Organize cars into collections |
-| `exportData` | Export Data | ❌ | ✅ | ✅ | Export your garage data |
+| `insightsTab` | Insights | ❌ | ✅ | ✅ | Health scores and recommendations |
+| `dataTab` | Data | ❌ | ✅ | ✅ | Virtual Dyno and Lap Time Estimator |
+| `virtualDyno` | Virtual Dyno | ❌ | ✅ | ✅ | HP/TQ curves visualization |
+| `dynoLogging` | Dyno Logging | ❌ | ✅ | ✅ | Log your dyno results |
+| `lapTimeEstimator` | Lap Time Estimator | ❌ | ✅ | ✅ | Estimate track times |
+| `trackTimeLogging` | Track Logging | ❌ | ✅ | ✅ | Log your track times |
 
-### Events
+### Community & Events (All Tiers)
 
-| Feature Key | Name | Free | Collector | Tuner | Description |
+| Feature Key | Name | Free | Enthusiast | Pro | Description |
 |-------------|------|:----:|:---------:|:-----:|-------------|
+| `communityBrowse` | Community | ✅ | ✅ | ✅ | Browse community builds |
+| `communityShare` | Share Builds | ✅ | ✅ | ✅ | Share your build publicly |
+| `leaderboard` | Leaderboard | ✅ | ✅ | ✅ | View rankings and standings |
 | `eventsBrowse` | Browse Events | ✅ | ✅ | ✅ | Browse car events and meetups |
 | `eventsMapView` | Map View | ✅ | ✅ | ✅ | View events on a map |
+| `eventsSave` | Save Events | ✅ | ✅ | ✅ | Bookmark events for later |
+| `eventsCalendarExport` | Calendar Export | ✅ | ✅ | ✅ | Add events to your calendar |
 | `eventsSubmit` | Submit Events | ✅ | ✅ | ✅ | Submit new events for review |
-| `eventsCalendarView` | Calendar View | ❌ | ✅ | ✅ | Monthly calendar view of events |
-| `eventsSave` | Save Events | ❌ | ✅ | ✅ | Bookmark events for later |
-| `eventsCalendarExport` | Calendar Export | ❌ | ✅ | ✅ | Add events to your calendar |
-| `eventsForMyCars` | Events for My Cars | ❌ | ✅ | ✅ | Filter events by your garage vehicles |
-
-### Tuning Shop (Tuner Tier)
-
-| Feature Key | Name | Free | Collector | Tuner | Description |
-|-------------|------|:----:|:---------:|:-----:|-------------|
-| `dynoDatabase` | Dyno Database | ❌ | ❌ | ✅ | Real HP/torque from actual cars |
-| `fullLapTimes` | Lap Times Library | ❌ | ❌ | ✅ | Complete track benchmark data |
-| `fullPartsCatalog` | Parts Catalog | ❌ | ❌ | ✅ | Full parts database with pricing |
-| `buildProjects` | Build Projects | ❌ | ❌ | ✅ | Save and organize build plans |
-| `buildAnalytics` | Build Analytics | ❌ | ❌ | ✅ | Cost projections and HP gains |
-| `partsCompatibility` | Parts Compatibility | ❌ | ❌ | ✅ | Check what works together |
-| `modImpactAnalysis` | Mod Impact | ❌ | ❌ | ✅ | Before/after performance data |
-| `pdfExport` | PDF Export | ❌ | ❌ | ✅ | Export builds as PDF |
-| `earlyAccess` | Early Access | ❌ | ❌ | ✅ | First access to new features |
+| `dashboard` | Dashboard | ✅ | ✅ | ✅ | Points, streaks, achievements |
 
 ### AL Assistant
 
-| Feature Key | Name | Free | Collector | Tuner | Description |
+| Feature Key | Name | Free | Enthusiast | Pro | Description |
 |-------------|------|:----:|:---------:|:-----:|-------------|
-| `alBasic` | AL Basic | ✅ | ✅ | ✅ | 25 AI chats per month |
-| `alCollector` | AL Enthusiast | ❌ | ✅ | ✅ | 75 AI chats per month |
-| `alTuner` | AL Tuner | ❌ | ❌ | ✅ | 150 AI chats per month |
+| `alBasic` | AL Basic | ✅ | — | — | ~15 chats/month ($0.25 budget) |
+| `alEnthusiast` | AL Enthusiast | — | ✅ | — | ~130 chats/month ($2.00 budget) |
+| `alPro` | AL Pro | — | — | ✅ | ~350 chats/month ($5.00 budget) |
+
+### Pro Only
+
+| Feature Key | Name | Free | Enthusiast | Pro | Description |
+|-------------|------|:----:|:---------:|:-----:|-------------|
+| `unlimitedCars` | Unlimited Cars | ❌ | ❌ | ✅ | No limit on garage size |
+| `prioritySupport` | Priority Support | ❌ | ❌ | ✅ | Faster response times |
 
 ---
 
-## Teaser Limits
+## Tier Limits
 
-For free users, certain content shows a preview before prompting upgrade:
-
-| Content Type | Free Preview | Upgrade Prompt |
-|--------------|--------------|----------------|
-| Popular Parts | 3 parts | "See all parts" |
-| Lap Times | 2 times | "See all lap times" |
-| Dyno Runs | 0 (none) | "Unlock dyno data" |
-| Compare Cars | 2 cars | "Compare more cars" |
-| Saved Projects | 0 (none) | "Save build projects" |
+| Limit Type | Free | Enthusiast | Pro |
+|------------|------|------------|-----|
+| **Cars in Garage** | 1 | 3 | Unlimited |
+| **AL Monthly Budget** | $0.25 | $2.00 | $5.00 |
+| **Est. AL Chats** | ~15 | ~130 | ~350 |
 
 **Code Reference:**
 ```javascript
-export const TEASER_LIMITS = {
-  popularParts: 3,
-  lapTimes: 2,
-  dynoRuns: 0,
-  compareCars: 2,
-  savedProjects: 0,
-  aiChatsPerMonth: {
-    free: 25,
-    collector: 75,
-    tuner: 150,
+export const TIER_LIMITS = {
+  maxCars: {
+    free: 1,
+    collector: 3,
+    tuner: Infinity,
   },
 };
+
+export const AL_ESTIMATES = {
+  free: '~15',
+  collector: '~130',
+  tuner: '~350',
+};
 ```
+
+## AL Top-Up Packs
+
+Users can purchase additional AL budget anytime:
+
+| Pack | AL Budget | Price | Est. Chats |
+|------|-----------|-------|------------|
+| **AL Boost** | $0.50 | $1.99 | ~35 |
+| **AL Power Pack** | $1.50 | $4.99 | ~100 |
+| **AL Turbo Pack** | $3.50 | $9.99 | ~230 |
 
 ---
 
@@ -218,20 +218,21 @@ Triggered by:
 import { getUpgradeCTA } from '@/lib/tierAccess';
 
 const cta = getUpgradeCTA('collector');
-// → { tier: 'collector', tierName: 'Enthusiast', price: '$4.99/mo', ... }
+// → { tier: 'collector', tierName: 'Enthusiast', price: '$9.99/mo', ... }
 ```
 
 ---
 
-## Feature Categories Summary
+## Feature Summary by Tier
 
-| Category | Free Features | Collector Adds | Tuner Adds |
-|----------|---------------|----------------|------------|
-| **Discovery** | Car database, selector, specs, teasers | — | — |
-| **Ownership** | Basic garage, favorites | VIN decode, service log, market value, recalls | — |
-| **Events** | Browse, map, submit | Save, calendar, filter by cars | — |
-| **Tuning** | Preview parts/times | — | Full dyno, lap times, builds, analytics |
-| **AI** | 25 chats/mo | 75 chats/mo | 150 chats/mo |
+| Category | Free | Enthusiast ($9.99/mo) | Pro ($19.99/mo) |
+|----------|------|----------------------|-----------------|
+| **Garage** | Full features, 1 car | Full features, 3 cars | Full features, unlimited cars |
+| **Insights & Data** | ❌ | ✅ Virtual Dyno, Lap Estimator, Logging | ✅ Everything |
+| **Community** | ✅ Browse, share, leaderboard | ✅ Everything | ✅ Everything |
+| **Events** | ✅ Browse, save, calendar | ✅ Everything | ✅ Everything |
+| **AL Budget** | $0.25/mo (~15 chats) | $2.00/mo (~130 chats) | $5.00/mo (~350 chats) |
+| **Support** | Community | Community | Priority |
 
 ---
 

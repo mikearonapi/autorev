@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdmin, getAuthErrorStatus } from '@/lib/adminAuth';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -24,7 +25,7 @@ function computeFitmentQualityScore(row) {
  * GET /api/internal/parts/fitments?carSlug=&verified=&limit=
  * Admin-only. Service role reads, returns fitments with parts.
  */
-export async function GET(request) {
+async function handleGet(request) {
   try {
     const auth = requireAdmin(request);
     if (!auth.ok) {
@@ -88,7 +89,7 @@ export async function GET(request) {
     });
   } catch (err) {
     console.error('[internal/parts/fitments] GET error:', err);
-    return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch part fitments' }, { status: 500 });
   }
 }
 
@@ -107,7 +108,7 @@ export async function GET(request) {
  * Bulk mode:
  * - ids: string[] (fitment ids)
  */
-export async function PATCH(request) {
+async function handlePatch(request) {
   try {
     const auth = requireAdmin(request);
     if (!auth.ok) {
@@ -176,9 +177,12 @@ export async function PATCH(request) {
     return NextResponse.json({ success: true, count: (data || []).length, fitments: data || [] });
   } catch (err) {
     console.error('[internal/parts/fitments] PATCH error:', err);
-    return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to update part fitments' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'internal/parts/fitments', feature: 'internal' });
+export const PATCH = withErrorLogging(handlePatch, { route: 'internal/parts/fitments', feature: 'internal' });
 
 
 

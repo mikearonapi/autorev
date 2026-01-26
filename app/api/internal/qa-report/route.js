@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * GET /api/internal/qa-report
@@ -7,7 +8,7 @@ import { supabase, isSupabaseConfigured } from '@/lib/supabase';
  * Internal QA endpoint for reviewing expert coverage and score discrepancies.
  * Returns per-car analysis of external sentiment vs internal scores.
  */
-export async function GET() {
+async function handleGet() {
   try {
     if (!isSupabaseConfigured) {
       return NextResponse.json({ 
@@ -195,3 +196,4 @@ export async function GET() {
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'internal-qa-report', feature: 'internal' });

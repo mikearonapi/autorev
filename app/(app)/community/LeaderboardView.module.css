@@ -2,6 +2,8 @@
    LEADERBOARD VIEW - Points Leaderboard with Monthly/All-Time Toggle
    ========================================================================== */
 
+/* Bronze color: #CD7F32 - used inline where needed since :root not allowed in CSS modules */
+
 .container {
   flex: 1;
   display: flex;
@@ -205,6 +207,7 @@
   align-items: center;
   gap: var(--space-3);
   padding: 12px 8px;
+  min-height: 44px; /* Touch target per SOURCE_OF_TRUTH.md */
   border-bottom: 1px solid rgba(255, 255, 255, 0.03);
   transition: background 0.2s ease;
 }
@@ -218,11 +221,12 @@
 }
 
 .entry.topThree {
-  /* Removed gold gradients for cleaner look */
+  /* Subtle distinction for top 3 */
 }
 
 .entry.currentUser {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(16, 185, 129, 0.08); /* Teal background */
+  border-left: 3px solid var(--color-accent-teal);
 }
 
 /* ==========================================================================
@@ -242,6 +246,41 @@
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--color-text-tertiary);
+}
+
+/* Rank number for non-top-3 */
+.rankNumber {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-text-tertiary);
+}
+
+/* Top 3 rank badges with medal emojis */
+.rankBadge {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.medal {
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+/* Subtle glow effects for top 3 */
+.rankGold .medal {
+  filter: drop-shadow(0 0 4px rgba(255, 215, 0, 0.4));
+}
+
+.rankSilver .medal {
+  filter: drop-shadow(0 0 4px rgba(192, 192, 192, 0.4));
+}
+
+.rankBronze .medal {
+  filter: drop-shadow(0 0 4px rgba(205, 127, 50, 0.3));
 }
 
 /* ==========================================================================
@@ -344,7 +383,10 @@
 }
 
 .pointsLabel {
-  display: none; /* Hide 'pts' label for cleaner look */
+  font-size: 0.6875rem;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 /* ==========================================================================
@@ -442,4 +484,42 @@
   .points {
     font-size: 1rem;
   }
+}
+
+/* ==========================================================================
+   LOAD MORE BUTTON
+   ========================================================================== */
+
+.loadMoreContainer {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-4) 0;
+  margin-top: var(--space-2);
+}
+
+.loadMoreBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  padding: 12px 24px;
+  background: var(--color-bg-elevated);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  color: var(--color-text-primary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 44px; /* Touch target */
+}
+
+.loadMoreBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.loadMoreBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }

@@ -11,9 +11,13 @@
  * @see https://vitest.dev/config/
  */
 
+import path from 'path';
+import { fileURLToPath } from 'url';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import { defineConfig } from 'vitest/config';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   plugins: [tsconfigPaths(), react()],
@@ -65,10 +69,10 @@ export default defineConfig({
     reporter: ['verbose'],
   },
 
-  // Resolve aliases to match Next.js paths
+  // Resolve aliases to match Next.js paths (using path.resolve for spaces in path)
   resolve: {
     alias: {
-      '@': new URL('./', import.meta.url).pathname,
+      '@': path.resolve(__dirname, './'),
     },
   },
 });

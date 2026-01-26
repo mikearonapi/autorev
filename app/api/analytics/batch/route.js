@@ -11,6 +11,7 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -32,7 +33,7 @@ const supabase = createClient(
  *   }>
  * }
  */
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const { events } = await request.json();
     
@@ -104,3 +105,5 @@ export async function POST(request) {
     );
   }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'analytics/batch', feature: 'analytics' });

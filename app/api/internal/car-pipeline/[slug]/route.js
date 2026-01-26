@@ -12,6 +12,7 @@ import { NextResponse } from 'next/server';
 import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * Check if user is admin
@@ -51,7 +52,7 @@ async function isAdmin() {
  * GET /api/internal/car-pipeline/[slug]
  * Get pipeline run by car slug
  */
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   const { slug } = await params;
   
   if (!isSupabaseConfigured || !supabaseServiceRole) {
@@ -66,10 +67,12 @@ export async function GET(request, { params }) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   
+  const PIPELINE_COLS = 'id, car_slug, status, steps_completed, steps_total, current_step, error_message, started_at, completed_at, metadata, created_at';
+  
   try {
     const { data: run, error } = await supabaseServiceRole
       .from('car_pipeline_runs')
-      .select('*')
+      .select(PIPELINE_COLS)
       .eq('car_slug', slug)
       .single();
     
@@ -91,7 +94,7 @@ export async function GET(request, { params }) {
  * PATCH /api/internal/car-pipeline/[slug]
  * Update pipeline run
  */
-export async function PATCH(request, { params }) {
+async function handlePatch(request, { params }) {
   const { slug } = await params;
   
   if (!isSupabaseConfigured || !supabaseServiceRole) {
@@ -162,7 +165,7 @@ export async function PATCH(request, { params }) {
  * DELETE /api/internal/car-pipeline/[slug]
  * Delete pipeline run
  */
-export async function DELETE(request, { params }) {
+async function handleDelete(request, { params }) {
   const { slug } = await params;
   
   if (!isSupabaseConfigured || !supabaseServiceRole) {
@@ -189,3 +192,6 @@ export async function DELETE(request, { params }) {
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'internal-car-pipeline-slug', feature: 'internal' });
+export const PATCH = withErrorLogging(handlePatch, { route: 'internal-car-pipeline-slug', feature: 'internal' });
+export const DELETE = withErrorLogging(handleDelete, { route: 'internal-car-pipeline-slug', feature: 'internal' });

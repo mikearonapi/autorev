@@ -2627,18 +2627,20 @@
   border-radius: var(--radius-sm);
 }
 
+/* CF-001: Touch target compliance - minimum 44px */
 .recAddBtn {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 44px;
+  height: 44px;
   background: var(--sn-primary);
   color: var(--color-white);
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   cursor: pointer;
   transition: all var(--transition-fast);
+  flex-shrink: 0;
 }
 
 .recAddBtn:hover {
@@ -3542,18 +3544,20 @@
   margin: 0;
 }
 
+/* CF-001: Touch target compliance - minimum 44px */
 .saveModalClose {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   background: rgba(255, 255, 255, 0.1);
   border: none;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   color: inherit;
   cursor: pointer;
   transition: background 0.15s ease;
+  flex-shrink: 0;
 }
 
 .saveModalClose:hover {

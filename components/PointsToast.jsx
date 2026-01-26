@@ -16,13 +16,11 @@ export default function PointsToast({
   onDismiss,
   duration = 2500 
 }) {
-  const [isVisible, setIsVisible] = useState(false);
+  // Start visible immediately - no delay for instant feedback
+  const [isVisible, setIsVisible] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
-    // Trigger enter animation
-    const showTimer = setTimeout(() => setIsVisible(true), 50);
-    
     // Auto-dismiss after duration
     const hideTimer = setTimeout(() => {
       setIsExiting(true);
@@ -32,7 +30,6 @@ export default function PointsToast({
     }, duration);
 
     return () => {
-      clearTimeout(showTimer);
       clearTimeout(hideTimer);
     };
   }, [duration, onDismiss]);

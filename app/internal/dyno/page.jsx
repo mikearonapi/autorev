@@ -62,7 +62,7 @@ export default function DynoPage() {
     loadCars();
   }, []);
 
-  async function handleSubmit(e) {
+  async function handleDynoRunSubmit(e) {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
@@ -132,7 +132,7 @@ export default function DynoPage() {
         <p>Manual entry for citeable dyno runs (baseline/modded), including peak numbers and optional curves.</p>
       </header>
 
-      <form className={styles.form} onSubmit={handleSubmit}>
+      <form className={styles.form} onSubmit={handleDynoRunSubmit}>
         <div className={styles.grid}>
           <div className={styles.formGroup}>
             <label>Admin Key</label>

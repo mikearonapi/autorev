@@ -1,25 +1,26 @@
 'use client';
 
 /**
- * Data Page - Performance Data Hub
+ * Data Page - Virtual Dyno (Primary Tab)
  * 
- * This page is dedicated to viewing and logging performance data for your vehicles.
+ * This page shows dyno-related performance data for the selected vehicle:
+ * - Virtual Dyno Chart (estimated HP/TQ curves)
+ * - Calculated Performance (0-60, 1/4 mile, etc.)
+ * - Power Breakdown (where HP gains come from)
+ * - Dyno logging (user-recorded dyno results)
  * 
- * Structure:
- * 1. Vehicle Selector - Choose which car to view data for
- * 2. Synthetic Data - Estimated performance based on modifications
- *    - Virtual Dyno (estimated HP/TQ curves)
- *    - Lap Time Estimator (track time predictions)
- * 3. Logged Data - User-recorded performance data
- *    - Track sessions & lap times
- *    - Future: OBD2 data, telemetry uploads, acceleration runs
+ * Vehicle selection is handled by the shared DataHeader in layout.jsx.
+ * Vehicle ID comes from URL params (?vehicle=123).
+ * 
+ * Legacy URL handling:
+ * - /data?filter=track → redirects to /data/track
+ * - /data?action=log&filter=track → redirects to /data/track?action=log
  */
 
-import { useState, useMemo, useEffect, useRef, useCallback, Suspense, useLayoutEffect } from 'react';
-import { createPortal } from 'react-dom';
+import { useState, useMemo, useEffect, useCallback, Suspense } from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
@@ -27,16 +28,11 @@ import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { useCarsList } from '@/hooks/useCarData';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import VirtualDynoChart from '@/components/VirtualDynoChart';
-import LapTimeEstimator from '@/components/LapTimeEstimator';
 import CalculatedPerformance from '@/components/CalculatedPerformance';
 import PowerBreakdown from '@/components/PowerBreakdown';
 import DynoLogModal from '@/components/DynoLogModal';
-import TrackTimeLogModal from '@/components/TrackTimeLogModal';
-// NOTE: Analysis components (BuildProgressAnalysis, BuildValueAnalysis, PlatformInsights, 
-// NextUpgradeRecommendation) moved to Insights page (Jan 2026)
-import { useCarImages } from '@/hooks/useCarImages';
-import { useUserTrackTimes, useAddTrackTime, useDynoResults } from '@/hooks/useUserData';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import { useDynoResults } from '@/hooks/useUserData';
+import { DataPageSkeleton } from '@/components/ui/Skeleton';
 import OnboardingPopup, { dataOnboardingSteps } from '@/components/OnboardingPopup';
 import { calculateAllModificationGains } from '@/lib/performanceCalculator';
 import styles from './page.module.css';
@@ -51,24 +47,11 @@ const ChartIcon = () => (
   </svg>
 );
 
-const FlagIcon = () => (
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
-    <line x1="4" y1="22" x2="4" y2="15"/>
-  </svg>
-);
-
 const CarIcon = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
     <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L18 10l-2.7-5.5c-.4-.7-1.1-1.5-2.3-1.5H11c-1.2 0-1.9.8-2.3 1.5L6 10l-2.5 1.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2"/>
     <circle cx="7" cy="17" r="2"/>
     <circle cx="17" cy="17" r="2"/>
-  </svg>
-);
-
-const ChevronDownIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <polyline points="6 9 12 15 18 9"/>
   </svg>
 );
 
@@ -92,74 +75,60 @@ const GaugeIcon = () => (
   </svg>
 );
 
-const CheckIcon = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12"/>
-  </svg>
-);
-
-// Data filter categories - focused on what's available now
-// NOTE: Analysis tab moved to Insights page (Jan 2026)
-const DATA_CATEGORIES = [
-  { id: 'power', label: 'Dyno' },           // Virtual Dyno, Calculated Performance, Power Breakdown
-  { id: 'track', label: 'Track' },          // Lap Time Estimator, Track Sessions
-];
-
-function DataPageContent() {
+function DynoPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, isAuthenticated, isLoading: authLoading, isDataFetchReady, profile } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading, isDataFetchReady } = useAuth();
   const { showPointsEarned } = usePointsNotification();
-  const { vehicles, isLoading: vehiclesLoading, refreshVehicles } = useOwnedVehicles();
-  
-  // Get user's first name for personalized title
-  const firstName = profile?.display_name?.split(' ')[0] || 
-                    user?.user_metadata?.full_name?.split(' ')[0] ||
-                    user?.email?.split('@')[0] || 
-                    'My';
+  const { vehicles, isLoading: vehiclesLoading } = useOwnedVehicles();
   const { builds, getBuildsByCarSlug, isLoading: buildsLoading } = useSavedBuilds();
   const { data: carsData } = useCarsList();
-  // NOTE: useCarsList returns the cars array directly, not { cars: [...] }
   const allCars = useMemo(() => carsData || [], [carsData]);
   const authModal = useAuthModal();
   
-  
-  // Get URL params for action handling
+  // Handle legacy URL redirects
   const filterFromUrl = searchParams.get('filter');
   const actionFromUrl = searchParams.get('action');
   
-  const [activeFilter, setActiveFilter] = useState(filterFromUrl || 'power');
-  const [showVehicleDropdown, setShowVehicleDropdown] = useState(false);
-  // NOTE: selectedCar state removed - tuning profile now fetched on Insights page
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
-  const [mounted, setMounted] = useState(false);
-  const dropdownRef = useRef(null);
-  const buttonRef = useRef(null);
+  useEffect(() => {
+    // Redirect legacy ?filter=track URLs to /data/track
+    if (filterFromUrl === 'track') {
+      const redirectUrl = actionFromUrl 
+        ? `/data/track?action=${actionFromUrl}` 
+        : '/data/track';
+      router.replace(redirectUrl);
+    }
+  }, [filterFromUrl, actionFromUrl, router]);
   
   // Dyno logging state
   const [showDynoModal, setShowDynoModal] = useState(false);
   const [editingDynoResult, setEditingDynoResult] = useState(null);
   
-  // Track time logging state
-  const [showTrackTimeModal, setShowTrackTimeModal] = useState(false);
-  const [editingTrackTime, setEditingTrackTime] = useState(null);
-  
-  // Track if we've processed the action param (to avoid re-opening modal on re-renders)
+  // Track if we've processed the action param
   const [actionProcessed, setActionProcessed] = useState(false);
   
-  // Get vehicle ID from URL params or localStorage for persistence
+  // Safety timeout to prevent infinite loading
+  const [loadingTimedOut, setLoadingTimedOut] = useState(false);
+  useEffect(() => {
+    if (!authLoading && isDataFetchReady && !vehiclesLoading) {
+      setLoadingTimedOut(false);
+      return;
+    }
+    const timeout = setTimeout(() => {
+      console.warn('[Data] Loading timeout - showing content');
+      setLoadingTimedOut(true);
+    }, 6000);
+    return () => clearTimeout(timeout);
+  }, [authLoading, isDataFetchReady, vehiclesLoading]);
+  
+  // Get vehicle ID from URL params (shared with layout)
   const vehicleIdFromUrl = searchParams.get('vehicle');
   
-  // Get user's vehicles with matched car data FIRST
-  // Note: vehicles from provider are flat objects with year, make, model directly on them
-  // PRIORITY: Prefer matchedCarId (UUID) over matchedCarSlug for reliable lookups
+  // Get user's vehicles with matched car data
   const userVehicles = useMemo(() => {
     if (!vehicles || vehicles.length === 0) return [];
     
     return vehicles.map(vehicle => {
-      // Find matched car in catalog for additional specs (hp, weight, etc.)
-      // PRIORITY 1: Match by car ID (most reliable)
-      // PRIORITY 2: Match by slug (fallback for legacy data)
       let matchedCar = null;
       if (vehicle.matchedCarId) {
         matchedCar = allCars.find(c => c.id === vehicle.matchedCarId);
@@ -170,137 +139,53 @@ function DataPageContent() {
       
       return {
         ...vehicle,
-        // Attach the matched car for specs like hp, weight, drivetrain
         matchedCar,
-        // Flag if car resolution failed (for error states)
         matchedCarResolved: !!matchedCar,
       };
     });
   }, [vehicles, allCars]);
   
-  // Determine selected vehicle ID with proper fallback logic
-  // Priority: URL param > localStorage > first vehicle
+  // Determine selected vehicle ID with fallback logic
   const selectedVehicleId = useMemo(() => {
-    // If we have no vehicles yet, return null
     if (userVehicles.length === 0) return null;
     
-    // Check if URL param vehicle exists in our list
     if (vehicleIdFromUrl) {
       const vehicleExists = userVehicles.some(v => v.id === vehicleIdFromUrl);
-      if (vehicleExists) {
-        return vehicleIdFromUrl;
-      }
+      if (vehicleExists) return vehicleIdFromUrl;
     }
     
-    // Check localStorage for last selected vehicle on this page
     if (typeof window !== 'undefined') {
       const storedId = localStorage.getItem('autorev_data_selected_vehicle');
       if (storedId) {
         const vehicleExists = userVehicles.some(v => v.id === storedId);
-        if (vehicleExists) {
-          return storedId;
-        }
+        if (vehicleExists) return storedId;
       }
     }
     
-    // Default to first vehicle
     return userVehicles[0]?.id || null;
   }, [userVehicles, vehicleIdFromUrl]);
   
-  // Dyno results via React Query - MUST be after selectedVehicleId is defined
+  // Dyno results via React Query
   const { 
     data: dynoResults = [], 
     isLoading: dynoResultsLoading,
     refetch: refetchDynoResults,
   } = useDynoResults(selectedVehicleId, { enabled: isAuthenticated && !!selectedVehicleId });
   
-  // Handler for selecting a new vehicle - updates URL and localStorage
-  const handleSelectVehicle = useCallback((vehicleId) => {
-    if (!vehicleId) return;
-    
-    // Update URL without full navigation (shallow)
-    const newUrl = new URL(window.location.href);
-    newUrl.searchParams.set('vehicle', vehicleId);
-    router.replace(newUrl.pathname + newUrl.search, { scroll: false });
-    
-    // Also store in localStorage for cross-session persistence
-    localStorage.setItem('autorev_data_selected_vehicle', vehicleId);
-    
-    // Close dropdown
-    setShowVehicleDropdown(false);
-  }, [router]);
-  
-  // Mark as mounted for portal rendering
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-  
-  // Position dropdown below button
-  useLayoutEffect(() => {
-    if (showVehicleDropdown && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setDropdownPosition({ 
-        top: rect.bottom + 6, 
-        left: rect.left, 
-        width: rect.width 
-      });
-    }
-  }, [showVehicleDropdown]);
-  
-  // Close dropdown when clicking/tapping outside
-  useEffect(() => {
-    if (!showVehicleDropdown) return;
-    
-    const handleClickOutside = (e) => {
-      const dropdown = document.getElementById('data-vehicle-selector-dropdown');
-      if (
-        dropdownRef.current && 
-        !dropdownRef.current.contains(e.target) && 
-        (!dropdown || !dropdown.contains(e.target))
-      ) {
-        setShowVehicleDropdown(false);
-      }
-    };
-    
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
-  }, [showVehicleDropdown]);
-  
-  // Close on escape key
-  useEffect(() => {
-    if (!showVehicleDropdown) return;
-    
-    const handleEscape = (e) => {
-      if (e.key === 'Escape') setShowVehicleDropdown(false);
-    };
-    
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, [showVehicleDropdown]);
-  
-  // Get selected vehicle data - derived from selectedVehicleId
-  // userVehicles already has matchedCar attached via the useMemo above
+  // Get selected vehicle data
   const selectedVehicle = useMemo(() => {
     if (!selectedVehicleId) return null;
-    // userVehicles already has matchedCar, matchedCarResolved attached
     return userVehicles.find(v => v.id === selectedVehicleId) || null;
   }, [userVehicles, selectedVehicleId]);
   
-  // Handle action=log param to auto-open track time modal
-  // This runs when the page loads with ?action=log&filter=track
+  // Handle action=log param to auto-open dyno modal
   useEffect(() => {
-    if (actionFromUrl === 'log' && !actionProcessed && selectedVehicle && isAuthenticated) {
-      // Set filter to track if specified
-      if (filterFromUrl === 'track') {
-        setActiveFilter('track');
-      }
-      
-      // Slight delay to ensure everything is mounted
+    if (actionFromUrl === 'log' && filterFromUrl !== 'track' && !actionProcessed && selectedVehicle && isAuthenticated) {
       const timer = setTimeout(() => {
-        setShowTrackTimeModal(true);
+        setShowDynoModal(true);
         setActionProcessed(true);
         
-        // Clear the action param from URL to prevent re-opening on navigation
+        // Clear the action param from URL
         const newUrl = new URL(window.location.href);
         newUrl.searchParams.delete('action');
         router.replace(newUrl.pathname + newUrl.search, { scroll: false });
@@ -310,18 +195,7 @@ function DataPageContent() {
     }
   }, [actionFromUrl, filterFromUrl, actionProcessed, selectedVehicle, isAuthenticated, router]);
   
-  // Get user's hero image for the selected vehicle's matched car
-  const { heroImageUrl: userHeroImageUrl } = useCarImages(
-    selectedVehicle?.matchedCarSlug, 
-    { enabled: !!selectedVehicle?.matchedCarSlug }
-  );
-  
   // Get build data for selected vehicle
-  // PRIORITY ORDER:
-  // 1. Vehicle's installedModifications (what's actually on the car via OwnedVehiclesProvider)
-  // 2. Active build linked to vehicle (activeBuildId)
-  // 3. Most recent build for this car slug
-  // 4. Default stock values
   const vehicleBuildData = useMemo(() => {
     if (!selectedVehicle) return null;
     
@@ -329,30 +203,22 @@ function DataPageContent() {
     const carSlug = selectedVehicle.matchedCarSlug;
     const carId = selectedVehicle.matchedCarId;
     
-    // WARNING: If we have a slug/id but no resolved car, data will be incorrect
-    // This indicates a database or catalog mismatch
     const hasCarReference = !!(carSlug || carId);
     const matchedCarNotFound = hasCarReference && !matchedCar;
     
     if (matchedCarNotFound) {
-      console.warn(`[Data Page] Vehicle ${selectedVehicle.id} has car reference (slug: ${carSlug}, id: ${carId}) but matchedCar not found in catalog. Using fallback values.`);
+      console.warn(`[Data Page] Vehicle ${selectedVehicle.id} has car reference but matchedCar not found in catalog.`);
     }
     
-    // Use actual values when available, with explicit fallbacks for missing data
-    // NOTE: Fallbacks are only used when matchedCar is missing - this is a data issue
     const stockHp = matchedCar?.hp || (matchedCarNotFound ? null : 300);
     const weight = matchedCar?.curb_weight || matchedCar?.weight || (matchedCarNotFound ? null : 3500);
     const drivetrain = matchedCar?.drivetrain || (matchedCarNotFound ? null : 'RWD');
     
-    // 1. PRIORITY: Check if vehicle has direct installed modifications
-    // This is the source of truth for "what's actually on this car"
     const vehicleMods = selectedVehicle.installedModifications || [];
     const vehicleHpGain = selectedVehicle.totalHpGain || 0;
     const vehicleActiveBuildId = selectedVehicle.activeBuildId;
     
     if (vehicleMods.length > 0 || vehicleHpGain > 0) {
-      // Vehicle has direct modifications - use these as primary source
-      // If there's an active build, get additional data from it
       let buildData = null;
       if (vehicleActiveBuildId) {
         buildData = builds.find(b => b.id === vehicleActiveBuildId);
@@ -361,7 +227,6 @@ function DataPageContent() {
       return {
         id: vehicleActiveBuildId,
         projectName: buildData?.name || 'My Build',
-        // Use vehicle's installed mods as the primary source
         selectedUpgrades: {
           upgrades: vehicleMods,
           wheelFitment: buildData?.wheelFitment || selectedVehicle.customSpecs?.wheels,
@@ -373,20 +238,16 @@ function DataPageContent() {
         finalHp: stockHp !== null ? stockHp + vehicleHpGain : null,
         weight,
         drivetrain,
-        // Mark that this data comes from the vehicle directly
         sourceType: 'vehicle',
-        // Flag when car baseline data is missing (for error states)
         matchedCarNotFound,
       };
     }
     
-    // 2. No direct mods on vehicle - try to find a build for this car
     if (carSlug) {
       const carBuilds = getBuildsByCarSlug(carSlug);
       
       if (carBuilds && carBuilds.length > 0) {
-        // Use the most recent build for this car
-        const latestBuild = carBuilds[0]; // Already sorted by created_at desc
+        const latestBuild = carBuilds[0];
         
         return {
           id: latestBuild.id,
@@ -408,7 +269,6 @@ function DataPageContent() {
       }
     }
     
-    // 3. No modifications or builds found - return stock values
     return {
       specs: selectedVehicle.customSpecs || {},
       selectedUpgrades: { upgrades: [] },
@@ -422,40 +282,30 @@ function DataPageContent() {
     };
   }, [selectedVehicle, getBuildsByCarSlug, builds]);
   
-  // Get HP values - calculate dynamically using performanceCalculator as SOURCE OF TRUTH
-  // NOTE: When matchedCarNotFound is true, stockHp may be null - use 0 to avoid NaN
-  // The UI should display an error state in this case
+  // Get HP values
   const stockHp = vehicleBuildData?.stockHp ?? selectedVehicle?.matchedCar?.hp ?? 300;
   
-  // Flag for UI to show warning when car baseline data couldn't be resolved
-  const hasDataIssue = vehicleBuildData?.matchedCarNotFound === true;
-  
-  // Get tire compound from build - stored in wheelFitment or suspension
+  // Get tire compound from build
   const tireCompound = useMemo(() => {
     const wheelFitment = vehicleBuildData?.selectedUpgrades?.wheelFitment;
     return wheelFitment?.tireCompound || vehicleBuildData?.specs?.suspension?.tireCompound || 'summer';
   }, [vehicleBuildData]);
   
-  // Get list of installed upgrades from build
+  // Get list of installed upgrades
   const installedUpgrades = useMemo(() => {
     return vehicleBuildData?.selectedUpgrades?.upgrades || [];
   }, [vehicleBuildData]);
   
-  // Calculate ALL gains using performanceCalculator as the SINGLE SOURCE OF TRUTH
-  // SOURCE OF TRUTH: lib/performanceCalculator/hpCalculator.js::calculateAllModificationGains
-  // NOTE: Must be after installedUpgrades is defined
+  // Calculate ALL gains using performanceCalculator
   const stockTorque = selectedVehicle?.matchedCar?.torque || Math.round(stockHp * 0.85);
   const modificationGains = useMemo(() => {
     const modKeys = installedUpgrades.map(u => typeof u === 'string' ? u : u?.key).filter(Boolean);
     return calculateAllModificationGains(modKeys, selectedVehicle?.matchedCar);
   }, [installedUpgrades, selectedVehicle?.matchedCar]);
   
-  // HP gain - use dynamically calculated value from performanceCalculator (not stored value)
-  // This ensures consistency: both HP and torque come from the same source of truth
   const hpGain = modificationGains.hpGain || 0;
   const estimatedHp = stockHp + hpGain;
   
-  // Torque gain
   const torqueGain = modificationGains.torqueGain || 0;
   const estimatedTorque = stockTorque + torqueGain;
   
@@ -470,59 +320,21 @@ function DataPageContent() {
     };
   }, [installedUpgrades]);
   
-  // DIAGNOSTIC: Log data flow for debugging (remove in production)
-  useEffect(() => {
-    if (process.env.NODE_ENV === 'development' && selectedVehicle) {
-      console.group('[MyData] Data Flow Diagnostics');
-      console.log('Selected Vehicle:', {
-        id: selectedVehicle.id,
-        year: selectedVehicle.year,
-        make: selectedVehicle.make,
-        model: selectedVehicle.model,
-        matchedCarSlug: selectedVehicle.matchedCarSlug,
-        // CRITICAL: Check if matchedCar was found from catalog
-        matchedCarFound: !!selectedVehicle.matchedCar,
-        matchedCarHp: selectedVehicle.matchedCar?.hp || 'NOT FOUND - using fallback',
-        matchedCarTorque: selectedVehicle.matchedCar?.torque || 'NOT FOUND',
-        installedModifications: selectedVehicle.installedModifications,
-        totalHpGain: selectedVehicle.totalHpGain,
-        activeBuildId: selectedVehicle.activeBuildId,
-      });
-      console.log('Cars Catalog Status:', {
-        carsLoaded: allCars.length,
-        carLookupAttempted: !!selectedVehicle.matchedCarSlug,
-      });
-      console.log('Vehicle Build Data:', {
-        sourceType: vehicleBuildData?.sourceType,
-        id: vehicleBuildData?.id,
-        projectName: vehicleBuildData?.projectName,
-        stockHp: vehicleBuildData?.stockHp,
-        totalHpGain: vehicleBuildData?.totalHpGain,
-        finalHp: vehicleBuildData?.finalHp,
-        upgradeCount: vehicleBuildData?.selectedUpgrades?.upgrades?.length || 0,
-        upgrades: vehicleBuildData?.selectedUpgrades?.upgrades?.map(u => typeof u === 'string' ? u : u?.key),
-      });
-      console.log('Derived Values:', {
-        stockHp,
-        hpGain,
-        estimatedHp,
-        installedUpgradesCount: installedUpgrades.length,
-        installedUpgradeKeys: installedUpgrades.map(u => typeof u === 'string' ? u : u?.key),
-        upgradeCategories,
-      });
-      console.groupEnd();
-    }
-  }, [selectedVehicle, vehicleBuildData, stockHp, hpGain, estimatedHp, installedUpgrades, upgradeCategories, allCars]);
-  
-  // Note: Dyno results are now fetched via useDynoResults hook above
-  
   // Save dyno result handler
   const handleSaveDynoResult = useCallback(async (dynoData) => {
     if (!selectedVehicleId) return;
     
     try {
+      const modsSnapshot = {
+        upgrades: installedUpgrades.map(u => typeof u === 'string' ? u : u?.key).filter(Boolean),
+        totalHpGain: hpGain,
+        estimatedHp,
+        stockHp,
+      };
+      
       const payload = {
         userVehicleId: selectedVehicleId,
+        modsSummary: modsSnapshot,
         ...dynoData,
       };
       
@@ -536,10 +348,8 @@ function DataPageContent() {
         throw new Error('Failed to save dyno result');
       }
       
-      // Refresh dyno results
       await refetchDynoResults();
       
-      // Show points notification for new dyno logs (not edits)
       if (!editingDynoResult) {
         showPointsEarned(50, 'Dyno logged');
       }
@@ -548,81 +358,34 @@ function DataPageContent() {
       setEditingDynoResult(null);
     } catch (err) {
       console.error('[DataPage] Error saving dyno result:', err);
-      throw err; // Re-throw so modal can show error
+      throw err;
     }
-  }, [selectedVehicleId, editingDynoResult, refetchDynoResults, showPointsEarned]);
+  }, [selectedVehicleId, editingDynoResult, refetchDynoResults, showPointsEarned, installedUpgrades, hpGain, estimatedHp, stockHp]);
   
   // Get the latest dyno result for comparison
   const latestDynoResult = useMemo(() => {
     return dynoResults.length > 0 ? dynoResults[0] : null;
   }, [dynoResults]);
   
-  // React Query hooks for track times
-  const carSlugForTracks = selectedVehicle?.matchedCarSlug;
-  const { 
-    data: trackTimes = [], 
-    isLoading: trackTimesLoading,
-  } = useUserTrackTimes(user?.id, carSlugForTracks, { 
-    enabled: isAuthenticated && !!user?.id,
-    limit: 10,
-  });
-  
-  const addTrackTime = useAddTrackTime();
-  
-  // Save track time handler
-  const handleSaveTrackTime = useCallback(async (trackData) => {
-    if (!user?.id || !selectedVehicle) return;
-    
-    try {
-      const payload = {
-        ...trackData,
-        carSlug: selectedVehicle.matchedCarSlug,
-        userVehicleId: selectedVehicle.id,
-        estimatedHp: estimatedHp,
-        modsSummary: vehicleBuildData?.selectedUpgrades || {},
-      };
-      
-      await addTrackTime.mutateAsync({ userId: user.id, trackTime: payload });
-      
-      // Show points notification for new track times
-      showPointsEarned(50, 'Track time logged');
-      
-      setShowTrackTimeModal(false);
-      setEditingTrackTime(null);
-    } catch (err) {
-      console.error('[DataPage] Error saving track time:', err);
-      throw err; // Re-throw so modal can show error
-    }
-  }, [user?.id, selectedVehicle, estimatedHp, vehicleBuildData, addTrackTime, showPointsEarned]);
-  
   // Calculate predicted WHP (with ~15% drivetrain loss)
   const predictedWhp = useMemo(() => {
     return Math.round(estimatedHp * 0.85);
   }, [estimatedHp]);
   
-  // Proper loading state - wait for both auth AND data fetch to be ready
-  // CRITICAL: isDataFetchReady ensures providers have started/completed their fetch
-  // Without this, the page shows empty state before vehicles are loaded
-  // NOTE: This useMemo MUST be before any conditional returns (React hooks rules)
+  // Loading state
   const isDataLoading = useMemo(() => {
-    // Always show loading during auth check
+    if (loadingTimedOut) return false;
     if (authLoading) return true;
-    
-    // Not authenticated = no loading (will show sign-in prompt)
     if (!isAuthenticated) return false;
-    
-    // Wait for prefetch to complete before showing any data
-    // This prevents showing empty state while vehicles are being fetched
     if (!isDataFetchReady) return true;
-    
-    // Finally check if vehicles are still loading
     return vehiclesLoading;
-  }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading]);
+  }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading, loadingTimedOut]);
   
   // Not authenticated - show sign in prompt
+  // NOTE: Keep messaging consistent with original combined page
   if (!authLoading && !isAuthenticated) {
     return (
-      <div className={styles.container}>
+      <div className={styles.pageContent}>
         <div className={styles.emptyState}>
           <ChartIcon />
           <h2>Your Data Hub</h2>
@@ -640,29 +403,19 @@ function DataPageContent() {
     );
   }
   
-  // Loading state
+  // Loading state - use skeleton that matches content shape
   if (isDataLoading) {
     return (
-      <div className={styles.container}>
-        <LoadingSpinner 
-          variant="branded" 
-          text="Loading Your Data" 
-          subtext="Fetching performance insights..."
-          fullPage 
-        />
+      <div className={styles.pageContent}>
+        <DataPageSkeleton />
       </div>
     );
   }
   
-  // No vehicles - prompt to add one
+  // No vehicles - show centered prompt matching original page layout
   if (userVehicles.length === 0) {
     return (
-      <div className={styles.container}>
-        <header className={styles.header}>
-          <h1 className={styles.title}>{firstName}&apos;s Data</h1>
-          <p className={styles.subtitle}>Performance insights for your vehicles</p>
-        </header>
-        
+      <div className={styles.pageContent}>
         <div className={styles.noVehicles}>
           <CarIcon size={48} />
           <p>Add a vehicle to your garage to see performance data</p>
@@ -682,102 +435,8 @@ function DataPageContent() {
   }
   
   return (
-    <div className={styles.container}>
-      {/* Header with Tab Bar */}
-      <header className={styles.header}>
-        <div className={styles.headerLeft}>
-          <h1 className={styles.title}>{firstName}&apos;s Data</h1>
-        </div>
-        <div className={styles.tabBar}>
-          {DATA_CATEGORIES.map(cat => (
-            <button
-              key={cat.id}
-              className={`${styles.tab} ${activeFilter === cat.id ? styles.tabActive : ''}`}
-              onClick={() => setActiveFilter(cat.id)}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-      </header>
-      
-      {/* Vehicle Selector - Full width bar matching garage pages */}
-      <section className={styles.vehicleSelector} ref={dropdownRef}>
-        <button 
-          ref={buttonRef}
-          type="button"
-          className={styles.selectorButton}
-          onClick={() => setShowVehicleDropdown(prev => !prev)}
-          aria-expanded={showVehicleDropdown}
-          aria-haspopup="listbox"
-        >
-          <div className={styles.selectorLeft}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={styles.selectorIcon}>
-              <path d="M2 20v-8l10-6 10 6v8"/>
-              <path d="M4 20v-4a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v4"/>
-              <path d="M4 20h16"/>
-            </svg>
-            <span className={styles.selectorValue}>
-              {selectedVehicle 
-                ? (selectedVehicle.nickname || `${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`)
-                : 'Select Vehicle'
-              }
-            </span>
-          </div>
-          <svg 
-            width="16" 
-            height="16" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className={`${styles.selectorChevron} ${showVehicleDropdown ? styles.selectorChevronOpen : ''}`}
-          >
-            <polyline points="6 9 12 15 18 9"/>
-          </svg>
-        </button>
-        
-        {/* Inline Dropdown Portal - matches garage page style */}
-        {showVehicleDropdown && mounted && createPortal(
-          <div 
-            id="data-vehicle-selector-dropdown"
-            className={styles.selectorDropdownPortal} 
-            role="listbox"
-            style={{
-              position: 'fixed',
-              top: dropdownPosition.top,
-              left: dropdownPosition.left,
-              width: dropdownPosition.width,
-            }}
-          >
-            {userVehicles.map(vehicle => (
-              <button
-                type="button"
-                role="option"
-                aria-selected={selectedVehicleId === vehicle.id}
-                key={vehicle.id}
-                className={`${styles.selectorOption} ${selectedVehicleId === vehicle.id ? styles.selectorOptionActive : ''}`}
-                onClick={() => handleSelectVehicle(vehicle.id)}
-              >
-                {selectedVehicleId === vehicle.id ? (
-                  <CheckIcon size={16} />
-                ) : (
-                  <CarIcon size={16} />
-                )}
-                <span className={styles.selectorOptionText}>
-                  {vehicle.nickname || `${vehicle.year} ${vehicle.make} ${vehicle.model}`}
-                </span>
-              </button>
-            ))}
-          </div>,
-          document.body
-        )}
-      </section>
-      
-      
-      {/* How Estimates Work - Single explanation for the whole page */}
+    <div className={styles.pageContent}>
+      {/* How Estimates Work - Single explanation */}
       {selectedVehicle && !buildsLoading && (
         <div className={styles.estimateExplainer}>
           <span className={styles.estimateExplainerIcon}>ⓘ</span>
@@ -787,8 +446,8 @@ function DataPageContent() {
         </div>
       )}
       
-      {/* POWER TAB - Virtual Dyno, Calculated Performance, Power Breakdown */}
-      {activeFilter === 'power' && selectedVehicle && (
+      {/* Dyno Content */}
+      {selectedVehicle && (
         <section className={styles.syntheticDataSection}>
           {buildsLoading ? (
             <div className={styles.loadingCard}>
@@ -812,7 +471,7 @@ function DataPageContent() {
                 />
               </div>
               
-              {/* Calculated Performance - All metrics + experience scores */}
+              {/* Calculated Performance */}
               <CalculatedPerformance
                 stockHp={stockHp}
                 estimatedHp={estimatedHp}
@@ -820,12 +479,11 @@ function DataPageContent() {
                 drivetrain={selectedVehicle.matchedCar?.drivetrain || 'RWD'}
                 tireCompound={tireCompound}
                 weightMod={vehicleBuildData?.specs?.weight?.reduction || 0}
-                // Pass ACTUAL stock metrics from database
                 stockZeroToSixty={selectedVehicle.matchedCar?.zeroToSixty}
                 stockQuarterMile={selectedVehicle.matchedCar?.quarterMile}
                 stockBraking={selectedVehicle.matchedCar?.braking60To0}
                 stockLateralG={selectedVehicle.matchedCar?.lateralG}
-                stockTrapSpeed={null} // Not in cars table
+                stockTrapSpeed={null}
                 hasExhaust={upgradeCategories.hasExhaust}
                 hasIntake={upgradeCategories.hasIntake}
                 hasTune={upgradeCategories.hasTune}
@@ -834,7 +492,7 @@ function DataPageContent() {
                 carSlug={selectedVehicle.matchedCarSlug}
               />
               
-              {/* Power Breakdown - Where HP gains come from */}
+              {/* Power Breakdown */}
               <div className={styles.dataCard}>
                 <PowerBreakdown
                   upgrades={installedUpgrades}
@@ -856,10 +514,7 @@ function DataPageContent() {
                 </div>
               )}
               
-              {/* ============================================
-                  LOG YOUR DYNO DATA SECTION
-                  Users can submit their actual dyno results
-                  ============================================ */}
+              {/* Log Your Dyno Data Section */}
               <div className={styles.logDataSection}>
                 <div className={styles.logDataHeader}>
                   <div className={styles.logDataTitleRow}>
@@ -873,7 +528,7 @@ function DataPageContent() {
                   </p>
                 </div>
                 
-                {/* Show logged dyno results if any */}
+                {/* Show logged dyno results */}
                 {dynoResultsLoading ? (
                   <div className={styles.logDataLoading}>
                     <div className={styles.spinner} />
@@ -957,122 +612,6 @@ function DataPageContent() {
         </section>
       )}
       
-      {/* TRACK TAB - Lap Time Estimator + Track Time Logging */}
-      {activeFilter === 'track' && selectedVehicle && (
-        <section className={styles.syntheticDataSection}>
-          {buildsLoading ? (
-            <div className={styles.loadingCard}>
-              <div className={styles.spinner} />
-              <span>Loading build data...</span>
-            </div>
-          ) : (
-            <>
-              {/* Lap Time Estimator - Predictions only */}
-              <div className={styles.dataCard}>
-                <LapTimeEstimator
-                  stockHp={stockHp}
-                  estimatedHp={estimatedHp}
-                  weight={selectedVehicle.matchedCar?.curb_weight || selectedVehicle.matchedCar?.weight || 3500}
-                  drivetrain={selectedVehicle.matchedCar?.drivetrain || 'RWD'}
-                  tireCompound={tireCompound}
-                  suspensionSetup={vehicleBuildData?.specs?.suspension}
-                  brakeSetup={vehicleBuildData?.specs?.brakes}
-                  aeroSetup={vehicleBuildData?.specs?.aero}
-                  weightMod={vehicleBuildData?.specs?.weight?.reduction || 0}
-                  user={user}
-                  carSlug={selectedVehicle.matchedCarSlug}
-                  carName={`${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`}
-                  modsSummary={vehicleBuildData?.specs}
-                  hideLogging={true}
-                />
-              </div>
-              
-              {/* ============================================
-                  LOG YOUR TRACK TIMES SECTION
-                  Users can submit their actual lap times
-                  ============================================ */}
-              <div className={styles.logDataSection}>
-                <div className={styles.logDataHeader}>
-                  <div className={styles.logDataTitleRow}>
-                    <span className={styles.logDataIcon}>
-                      <FlagIcon />
-                    </span>
-                    <h3 className={styles.logDataTitle}>Your Lap Times</h3>
-                  </div>
-                  <p className={styles.logDataSubtitle}>
-                    Log your actual track times for deeper insights and to help us improve predictions for your car
-                  </p>
-                </div>
-                
-                {/* Show logged track times if any */}
-                {trackTimesLoading ? (
-                  <div className={styles.logDataLoading}>
-                    <div className={styles.spinner} />
-                    <span>Loading lap times...</span>
-                  </div>
-                ) : trackTimes.length > 0 ? (
-                  <div className={styles.trackTimesList}>
-                    {trackTimes.slice(0, 3).map((time) => (
-                      <div key={time.id} className={styles.trackTimeItem}>
-                        <div className={styles.trackTimeMain}>
-                          <span className={styles.trackTimeLap}>
-                            {Math.floor(time.lap_time_seconds / 60)}:{(time.lap_time_seconds % 60).toFixed(3).padStart(6, '0')}
-                          </span>
-                          <span className={styles.trackTimeTrack}>{time.track_name}</span>
-                          {time.track_config && (
-                            <span className={styles.trackTimeConfig}>({time.track_config})</span>
-                          )}
-                        </div>
-                        <div className={styles.trackTimeMeta}>
-                          <span className={styles.trackTimeDate}>
-                            {new Date(time.session_date).toLocaleDateString('en-US', { 
-                              month: 'short', 
-                              day: 'numeric',
-                              year: time.session_date?.startsWith(new Date().getFullYear().toString()) ? undefined : 'numeric'
-                            })}
-                          </span>
-                          <span className={styles.trackTimeConditions}>
-                            {time.conditions || 'dry'}
-                          </span>
-                        </div>
-                        {time.estimated_time_seconds && (
-                          <div className={`${styles.trackTimeDiff} ${time.lap_time_seconds <= time.estimated_time_seconds ? styles.positive : styles.negative}`}>
-                            {time.lap_time_seconds <= time.estimated_time_seconds ? '' : '+'}
-                            {(time.lap_time_seconds - time.estimated_time_seconds).toFixed(2)}s vs estimate
-                          </div>
-                        )}
-                      </div>
-                    ))}
-                    {trackTimes.length > 3 && (
-                      <div className={styles.trackTimesMore}>
-                        +{trackTimes.length - 3} more lap times
-                      </div>
-                    )}
-                  </div>
-                ) : (
-                  <div className={styles.logDataEmpty}>
-                    <p>No lap times logged yet</p>
-                    <span>Your data helps refine track estimates for this model</span>
-                  </div>
-                )}
-                
-                {/* Log Track Time CTA Button */}
-                <button 
-                  className={styles.logDataCta}
-                  onClick={() => {
-                    setEditingTrackTime(null);
-                    setShowTrackTimeModal(true);
-                  }}
-                >
-                  <PlusIcon />
-                  Log Lap Time
-                </button>
-              </div>
-            </>
-          )}
-        </section>
-      )}
-      
       <AuthModal 
         isOpen={authModal.isOpen} 
         onClose={authModal.close}
@@ -1094,22 +633,11 @@ function DataPageContent() {
         } : null}
         predictedWhp={predictedWhp}
         editingResult={editingDynoResult}
-      />
-      
-      {/* Track Time Log Modal */}
-      <TrackTimeLogModal
-        isOpen={showTrackTimeModal}
-        onClose={() => {
-          setShowTrackTimeModal(false);
-          setEditingTrackTime(null);
+        currentBuildInfo={{
+          upgrades: installedUpgrades.map(u => typeof u === 'string' ? u : u?.key).filter(Boolean),
+          totalHpGain: hpGain,
+          estimatedHp,
         }}
-        onSave={handleSaveTrackTime}
-        vehicleInfo={selectedVehicle ? {
-          year: selectedVehicle.year,
-          make: selectedVehicle.make,
-          model: selectedVehicle.model,
-        } : null}
-        editingResult={editingTrackTime}
       />
       
       {/* Onboarding Popup */}
@@ -1122,20 +650,15 @@ function DataPageContent() {
   );
 }
 
-// Wrap in Suspense for useSearchParams (required for Next.js 14 static generation)
+// Wrap in Suspense for useSearchParams
 export default function DataPage() {
   return (
     <Suspense fallback={
-      <div className={styles.container}>
-        <LoadingSpinner 
-          variant="branded" 
-          text="Loading Your Data" 
-          subtext="Fetching performance insights..."
-          fullPage 
-        />
+      <div className={styles.pageContent}>
+        <DataPageSkeleton />
       </div>
     }>
-      <DataPageContent />
+      <DynoPageContent />
     </Suspense>
   );
 }

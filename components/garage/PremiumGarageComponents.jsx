@@ -504,10 +504,10 @@ export function RatingBar({
   
   // Determine color based on value if not provided
   const barColor = color || (
-    percentage >= 80 ? '#4ade80' : // Green for high scores
-    percentage >= 60 ? 'var(--accent-primary, #d4a84b)' : // Gold for good scores
-    percentage >= 40 ? '#fbbf24' : // Yellow for medium
-    '#ef4444' // Red for low
+    percentage >= 80 ? 'var(--color-accent-teal, #10b981)' : // Teal for high scores
+    percentage >= 60 ? 'var(--color-accent-amber, #f59e0b)' : // Amber for good scores
+    percentage >= 40 ? 'var(--color-accent-amber-light, #fbbf24)' : // Yellow for medium
+    'var(--color-error, #ef4444)' // Red for low
   );
   
   const sizeStyles = {
@@ -601,7 +601,7 @@ export function PerformanceScoreCard({
         <div style={{
           fontSize: '14px',
           fontWeight: 600,
-          color: color || 'var(--accent-primary, #d4a84b)',
+          color: color || 'var(--color-accent-amber, #f59e0b)',
           textTransform: 'uppercase',
           letterSpacing: '1px',
         }}>
@@ -668,7 +668,7 @@ export function PremiumHeroInfo({
       <div style={{
         fontSize: '11px',
         fontWeight: 700,
-        color: 'var(--accent-primary, #d4a84b)',
+        color: 'var(--color-text-secondary, rgba(255, 255, 255, 0.6))',
         textTransform: 'uppercase',
         letterSpacing: '2px',
       }}>
@@ -701,12 +701,12 @@ export function PremiumHeroInfo({
               alignItems: 'center',
               gap: '4px',
               padding: '4px 10px',
-              background: badge.color ? `${badge.color}20` : 'rgba(212, 168, 75, 0.15)',
-              border: `1px solid ${badge.color || 'var(--accent-primary, #d4a84b)'}`,
+              background: badge.color ? `${badge.color}20` : 'rgba(245, 158, 11, 0.15)',
+              border: `1px solid ${badge.color || 'var(--color-accent-amber, #f59e0b)'}`,
               borderRadius: '6px',
               fontSize: '10px',
               fontWeight: 700,
-              color: badge.color || 'var(--accent-primary, #d4a84b)',
+              color: badge.color || 'var(--color-accent-amber, #f59e0b)',
               textTransform: 'uppercase',
               letterSpacing: '0.5px',
             }}

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdmin, getAuthErrorStatus } from '@/lib/adminAuth';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -52,7 +53,7 @@ function parseLapTimeToMs(input) {
  * GET /api/internal/track/lap-times?carSlug=&limit=
  * Admin-only listing for QA.
  */
-export async function GET(request) {
+async function handleGet(request) {
   try {
     const auth = requireAdmin(request);
     if (!auth.ok) {
@@ -85,7 +86,7 @@ export async function GET(request) {
     return NextResponse.json({ count: (data || []).length, rows: data || [] });
   } catch (err) {
     console.error('[internal/track/lap-times] GET error:', err);
-    return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch lap times' }, { status: 500 });
   }
 }
 
@@ -106,7 +107,7 @@ export async function GET(request) {
  * - sourceUrl (optional but strongly recommended)
  * - confidence (optional 0..1)
  */
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const auth = requireAdmin(request);
     if (!auth.ok) {
@@ -208,9 +209,12 @@ export async function POST(request) {
     return NextResponse.json({ success: true, lapTime: inserted, track: trackRow });
   } catch (err) {
     console.error('[internal/track/lap-times] POST error:', err);
-    return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to create lap time record' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'internal/track/lap-times', feature: 'internal' });
+export const POST = withErrorLogging(handlePost, { route: 'internal/track/lap-times', feature: 'internal' });
 
 
 

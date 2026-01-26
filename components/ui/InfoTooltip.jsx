@@ -4,7 +4,7 @@
  * InfoTooltip Component
  * 
  * A lightweight educational tooltip that shows an info icon (ⓘ) next to labels.
- * Tapping opens a compact modal with educational content + "Ask AL" CTA.
+ * Tapping opens a compact modal with educational content.
  * 
  * Usage:
  *   import InfoTooltip from '@/components/ui/InfoTooltip';
@@ -17,7 +17,6 @@
 import { useState } from 'react';
 import Modal from './Modal';
 import { Icons } from './Icons';
-import AskALButton from '@/components/AskALButton';
 import { WHY_CONTENT } from '@/data/whyContent';
 import styles from './InfoTooltip.module.css';
 
@@ -59,9 +58,6 @@ export default function InfoTooltip({
     setIsOpen(false);
   };
   
-  // Build the prompt for Ask AL
-  const alPrompt = `Explain ${content.title} in detail${carName ? ` for my ${carName}` : ''}. What should I know about how it affects performance and modifications?`;
-  
   return (
     <>
       <span className={`${styles.trigger} ${styles[variant]} ${className}`}>
@@ -102,17 +98,6 @@ export default function InfoTooltip({
             <p className={styles.sectionText}>{content.whatAffects}</p>
           </section>
           
-          {/* Ask AL CTA */}
-          <div className={styles.alCta}>
-            <AskALButton
-              category={content.title}
-              prompt={alPrompt}
-              displayMessage={`Tell me more about ${content.title}`}
-              carName={carName}
-              carSlug={carSlug}
-              variant="full"
-            />
-          </div>
         </div>
       </Modal>
     </>
@@ -142,8 +127,6 @@ export function InfoTooltipIcon({
     e.preventDefault();
     setIsOpen(true);
   };
-  
-  const alPrompt = `Explain ${content.title} in detail${carName ? ` for my ${carName}` : ''}. What should I know about how it affects performance and modifications?`;
   
   return (
     <>
@@ -179,16 +162,6 @@ export function InfoTooltipIcon({
             <p className={styles.sectionText}>{content.whatAffects}</p>
           </section>
           
-          <div className={styles.alCta}>
-            <AskALButton
-              category={content.title}
-              prompt={alPrompt}
-              displayMessage={`Tell me more about ${content.title}`}
-              carName={carName}
-              carSlug={carSlug}
-              variant="full"
-            />
-          </div>
         </div>
       </Modal>
     </>

@@ -63,14 +63,16 @@ async function handleGet(request, { params }) {
     return errors.serviceUnavailable('Database');
   }
 
+  const PREF_COLS = 'user_id, driving_focus, work_preference, budget_comfort, mod_experience, primary_goals, track_frequency, detail_level, created_at, updated_at';
+  
   const { data, error } = await supabase
     .from('user_preferences')
-    .select('*')
+    .select(PREF_COLS)
     .eq('user_id', userId)
     .single();
 
   if (error && error.code !== 'PGRST116') { // Ignore "no rows returned"
-    return errors.database(error.message);
+    return errors.database('Failed to fetch preferences');
   }
 
   return NextResponse.json({
@@ -178,7 +180,7 @@ async function handlePost(request, { params }) {
 
   if (error) {
     console.error('[Preferences API] Database error:', error);
-    return errors.database(error.message);
+    return errors.database('Failed to update preferences');
   }
 
   // Award points for answering questions

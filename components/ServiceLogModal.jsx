@@ -9,6 +9,7 @@
 
 import { useState, useEffect } from 'react';
 import styles from './ServiceLogModal.module.css';
+import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
 
 // SVG Icons for service categories
 const ServiceIcons = {
@@ -137,6 +138,9 @@ export default function ServiceLogModal({
   vehicleInfo,
   editingLog = null,
 }) {
+  // Set safe area color to match overlay background when modal is open
+  useSafeAreaColor(SAFE_AREA_COLORS.OVERLAY, { enabled: isOpen });
+  
   const [formData, setFormData] = useState({
     serviceDate: new Date().toISOString().split('T')[0],
     serviceCategory: 'oil_change',
@@ -253,7 +257,7 @@ export default function ServiceLogModal({
   if (!isOpen) return null;
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    <div className={styles.overlay} onClick={onClose} data-overlay-modal>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
           <h2 className={styles.title}>

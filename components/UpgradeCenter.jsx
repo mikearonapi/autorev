@@ -45,6 +45,11 @@ import {
   resolveConflicts,
   getConflictingUpgrades,
 } from '@/data/upgradeConflicts.js';
+import {
+  validateUpgradeSelection,
+  getRequiredUpgrades,
+  SEVERITY,
+} from '@/lib/dependencyChecker.js';
 // carUpgradeRecommendations imports removed - recommendations moved to Insights page
 import CarImage from './CarImage';
 import UpgradeDetailModal from './UpgradeDetailModal';
@@ -72,7 +77,6 @@ import {
 // Mobile-first tuning shop components
 import { CategoryNav, FactoryConfig, WheelTireConfigurator } from './tuning-shop';
 import PartsSelector from './tuning-shop/PartsSelector';
-import { useAIChat } from './AIChatContext';
 import { useLinkedPost } from '@/hooks/useCommunityData';
 // Image management moved to Garage Photos section for cleaner UX
 import VideoPlayer from './VideoPlayer';
@@ -295,9 +299,131 @@ function ConflictNotification({ message, onDismiss, replacedUpgrade }) {
         <span className={styles.conflictToastTitle}>Upgrade Replaced</span>
         <span className={styles.conflictToastMessage}>{message}</span>
       </div>
-      <button className={styles.conflictToastClose} onClick={onDismiss}>
+      <button className={styles.conflictToastClose} onClick={onDismiss} aria-label="Dismiss notification">
         <Icons.x size={14} />
       </button>
+    </div>
+  );
+}
+
+/**
+ * Dependency Warnings Banner
+ * Shows critical issues, warnings, and synergies for the current upgrade selection
+ */
+function DependencyWarnings({ validation, requiredUpgrades, onAddUpgrade }) {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  
+  // Don't render if no issues
+  if (!validation || (validation.totalIssues === 0 && validation.synergies?.length === 0 && requiredUpgrades?.length === 0)) {
+    return null;
+  }
+  
+  const hasCritical = validation.critical?.length > 0 || requiredUpgrades?.length > 0;
+  const hasWarnings = validation.warnings?.length > 0;
+  const hasSynergies = validation.synergies?.length > 0;
+  
+  return (
+    <div className={`${styles.dependencyWarnings} ${hasCritical ? styles.dependencyWarningsCritical : ''}`}>
+      <button 
+        className={styles.dependencyWarningsHeader}
+        onClick={() => setIsCollapsed(!isCollapsed)}
+      >
+        <div className={styles.dependencyWarningsTitle}>
+          {hasCritical ? (
+            <Icons.alertTriangle size={16} className={styles.criticalIcon} />
+          ) : hasWarnings ? (
+            <Icons.info size={16} className={styles.warningIcon} />
+          ) : (
+            <Icons.check size={16} className={styles.synergyIcon} />
+          )}
+          <span>
+            {hasCritical ? 'Build Issues Detected' : hasWarnings ? 'Build Recommendations' : 'Good Synergies'}
+          </span>
+          <span className={styles.dependencyWarningsCount}>
+            {validation.totalIssues + (requiredUpgrades?.length || 0)} {validation.totalIssues + (requiredUpgrades?.length || 0) === 1 ? 'item' : 'items'}
+          </span>
+        </div>
+        <Icons.chevronDown 
+          size={16} 
+          className={`${styles.collapseIcon} ${isCollapsed ? styles.collapsed : ''}`} 
+        />
+      </button>
+      
+      {!isCollapsed && (
+        <div className={styles.dependencyWarningsContent}>
+          {/* Required Upgrades (Hard Dependencies) */}
+          {requiredUpgrades?.length > 0 && (
+            <div className={styles.warningSection}>
+              <div className={styles.warningSectionTitle}>Required Supporting Mods</div>
+              {requiredUpgrades.map((req, idx) => (
+                <div key={idx} className={`${styles.warningItem} ${styles.warningItemCritical}`}>
+                  <Icons.alertTriangle size={14} className={styles.criticalIcon} />
+                  <div className={styles.warningItemContent}>
+                    <span className={styles.warningItemMessage}>
+                      <strong>{req.upgrade?.name || req.upgradeKey}</strong> is required for {req.requiredBy}
+                    </span>
+                    <span className={styles.warningItemReason}>{req.reason}</span>
+                  </div>
+                  {onAddUpgrade && (
+                    <button 
+                      className={styles.addRequiredBtn}
+                      onClick={() => onAddUpgrade(req.upgradeKey)}
+                    >
+                      Add
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {/* Critical Issues */}
+          {validation.critical?.length > 0 && (
+            <div className={styles.warningSection}>
+              <div className={styles.warningSectionTitle}>Critical Issues</div>
+              {validation.critical.map((issue, idx) => (
+                <div key={idx} className={`${styles.warningItem} ${styles.warningItemCritical}`}>
+                  <Icons.alertTriangle size={14} className={styles.criticalIcon} />
+                  <div className={styles.warningItemContent}>
+                    <span className={styles.warningItemMessage}>{issue.message}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {/* Warnings */}
+          {validation.warnings?.length > 0 && (
+            <div className={styles.warningSection}>
+              <div className={styles.warningSectionTitle}>Recommendations</div>
+              {validation.warnings.map((warning, idx) => (
+                <div key={idx} className={`${styles.warningItem} ${styles.warningItemWarning}`}>
+                  <Icons.info size={14} className={styles.warningIcon} />
+                  <div className={styles.warningItemContent}>
+                    <span className={styles.warningItemMessage}>{warning.message}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          {/* Synergies (Positive) */}
+          {hasSynergies && (
+            <div className={styles.warningSection}>
+              <div className={styles.warningSectionTitle}>Good Synergies</div>
+              {validation.synergies.map((synergy, idx) => (
+                <div key={idx} className={`${styles.warningItem} ${styles.warningItemSynergy}`}>
+                  <Icons.check size={14} className={styles.synergyIcon} />
+                  <div className={styles.warningItemContent}>
+                    <span className={styles.warningItemName}>{synergy.name}</span>
+                    <span className={styles.warningItemMessage}>{synergy.message}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -371,7 +497,7 @@ function CategoryPopup({
             <span>{category.label}</span>
             <span className={styles.popupCount}>{upgrades.length}</span>
           </div>
-          <button className={styles.popupClose} onClick={onClose}><Icons.x size={14} /></button>
+          <button className={styles.popupClose} onClick={onClose} aria-label="Close upgrade options"><Icons.x size={14} /></button>
         </div>
         <div className={styles.popupContent}>
           {upgrades.map(upgrade => {
@@ -456,7 +582,6 @@ export default function UpgradeCenter({
   const { saveBuild, updateBuild, getBuildById, canSave } = useSavedBuilds();
   const { vehicles, applyModifications, addVehicle } = useOwnedVehicles();
   const { tierConfig } = useTierConfig();
-  const { openChatWithPrompt } = useAIChat();
   
   // Vehicle-specific tuning profile (safe additive enhancement)
   const { profile: tuningProfile, hasProfile: hasTuningProfile, loading: tuningProfileLoading } = useTuningProfile(car);
@@ -709,6 +834,20 @@ export default function UpgradeCenter({
   const effectiveHpGain = hpGain;
   const effectiveFinalHp = profile.upgradedMetrics.hp;
   
+  // Dependency Validation - Check for required/recommended supporting mods
+  const dependencyValidation = useMemo(() => {
+    if (!car || effectiveModules.length === 0) {
+      return { isValid: true, critical: [], warnings: [], info: [], synergies: [], totalIssues: 0 };
+    }
+    return validateUpgradeSelection(effectiveModules, car, { usageProfile: goal || 'mixed' });
+  }, [effectiveModules, car, goal]);
+  
+  // Get required upgrades (hard dependencies)
+  const requiredUpgrades = useMemo(() => {
+    if (!car || effectiveModules.length === 0) return [];
+    return getRequiredUpgrades(effectiveModules, car);
+  }, [effectiveModules, car]);
+  
   // Tunability & Recommendations (with guards for missing car)
   const tunability = useMemo(() => {
     if (!car) return { score: 0, label: 'Unknown' };
@@ -854,62 +993,24 @@ export default function UpgradeCenter({
     return Object.values(upgradesByCategory).flat();
   }, [upgradesByCategory]);
   
+  // Map preset packages to build goals
+  // When a user selects a preset, auto-set the corresponding goal
+  const PRESET_TO_GOAL = {
+    streetSport: 'street',
+    trackPack: 'track',
+    drag: 'track', // Drag builds prioritize track-focused categories
+    // 'custom' and 'stock' don't auto-set a goal
+  };
+  
   const handlePackageSelect = (pkgKey) => {
     setSelectedPackage(pkgKey);
     if (pkgKey !== 'custom') setSelectedModules([]);
+    
+    // Auto-set goal when selecting a preset (if onGoalChange callback exists)
+    if (onGoalChange && PRESET_TO_GOAL[pkgKey]) {
+      onGoalChange(PRESET_TO_GOAL[pkgKey]);
+    }
   };
-  
-  // Create contextualized AL prompts based on build context
-  const askALAboutBuild = useCallback((section) => {
-    if (!car) return;
-    
-    const carName = car.name;
-    const upgradeCount = effectiveModules.length;
-    const currentHpGain = hpGain;
-    const buildType = selectedPackage !== 'custom' && selectedPackage !== 'stock' 
-      ? selectedPackage.charAt(0).toUpperCase() + selectedPackage.slice(1) 
-      : null;
-    
-    // Detailed prompts sent to AL
-    const prompts = {
-      recommendation: upgradeCount > 0
-        ? `I have a ${carName} with ${upgradeCount} upgrades (+${currentHpGain} HP). What else would you recommend for my ${buildType ? buildType + ' build' : 'current setup'}?`
-        : `Give me detailed upgrade recommendations for my ${carName}. What are the best bang-for-buck mods, and what should I prioritize?`,
-      buildType: buildType
-        ? `Help me optimize my ${buildType} build for my ${carName}. What upgrades work best together for this style?`
-        : `What build should I do for my ${carName}? Should I focus on street, track, or something else?`,
-      upgrades: upgradeCount > 0
-        ? `I have these upgrades on my ${carName}: ${effectiveModules.slice(0, 5).join(', ')}${upgradeCount > 5 ? ` and ${upgradeCount - 5} more` : ''}. What should I add next for the best gains?`
-        : `What upgrades should I do first on my ${carName}? I want the best power gains without reliability issues.`,
-      configure: `Help me configure my upgrades for my ${carName}. I have ${upgradeCount} mods (+${currentHpGain} HP). What tuning settings and configurations will give me the best results?`,
-    };
-    
-    // Short, clear questions shown to user in the confirmation card
-    const displayMessages = {
-      recommendation: upgradeCount > 0
-        ? `What upgrades should I add next to my ${carName}? (+${currentHpGain} HP so far)`
-        : `What are the best upgrades for my ${carName}? Where should I start?`,
-      buildType: buildType
-        ? `How do I optimize my ${buildType} build on my ${carName}?`
-        : `Should I build my ${carName} for street, track, or both?`,
-      upgrades: upgradeCount > 0
-        ? `What should I add next? (${upgradeCount} mods selected)`
-        : `What upgrades give the best gains on my ${carName}?`,
-      configure: `How should I configure my ${upgradeCount} mods for the best results?`,
-    };
-    
-    const prompt = prompts[section] || `Tell me about ${section} for my ${carName}`;
-    const displayMessage = displayMessages[section] || prompt;
-    
-    openChatWithPrompt(prompt, {
-      category: section.charAt(0).toUpperCase() + section.slice(1),
-      carSlug: car.slug,
-      carName,
-      upgradeCount,
-      hpGain: currentHpGain,
-      buildType,
-    }, displayMessage);
-  }, [car, effectiveModules, hpGain, selectedPackage, openChatWithPrompt]);
   
   const handleModuleToggle = useCallback((moduleKey, moduleName, replacementInfo, upgrade) => {
     // When switching from a package to Custom, preserve the package's upgrades
@@ -1225,14 +1326,6 @@ export default function UpgradeCenter({
             <div className={`${styles.buildRecommendationsHeader} text-display`}>
               <Icons.settings size={16} />
               <span>BUILD RECOMMENDATIONS</span>
-              <button 
-                className={styles.askAlBtn}
-                onClick={() => askALAboutBuild('buildType')}
-                title="Ask AL what build to do"
-              >
-                <Icons.sparkle size={12} />
-                Ask AL
-              </button>
             </div>
             {/* Street, Track, Drag on first row */}
             <div className={styles.buildRecommendationsGrid}>
@@ -1261,6 +1354,21 @@ export default function UpgradeCenter({
         </div>
       
       {/* ═══════════════════════════════════════════════════════════════════════
+          DEPENDENCY WARNINGS - Show issues and recommendations for current build
+          ═══════════════════════════════════════════════════════════════════════ */}
+      {effectiveModules.length > 0 && (
+        <DependencyWarnings
+          validation={dependencyValidation}
+          requiredUpgrades={requiredUpgrades}
+          onAddUpgrade={(upgradeKey) => {
+            // Add the required upgrade by toggling it on
+            const upgrade = getUpgradeByKey(upgradeKey);
+            handleModuleToggle(upgradeKey, upgrade?.name || upgradeKey, null, upgrade);
+          }}
+        />
+      )}
+      
+      {/* ═══════════════════════════════════════════════════════════════════════
           WORKSPACE - Build configuration (sidebar only, no performance panel)
           ═══════════════════════════════════════════════════════════════════════ */}
       <div className={styles.workspace}>
@@ -1276,14 +1384,6 @@ export default function UpgradeCenter({
             <div className={styles.sidebarCardHeader}>
               <Icons.bolt size={16} />
               <span className={`${styles.sidebarCardTitle} text-display`}>Upgrade Categories</span>
-              <button 
-                className={styles.askAlBtn}
-                onClick={() => askALAboutBuild('upgrades')}
-                title="Ask AL about upgrades"
-              >
-                <Icons.sparkle size={12} />
-                Ask AL
-              </button>
             </div>
             <div className={styles.sidebarCardContent}>
               {/* Goal indicator if goal is set */}
@@ -1383,7 +1483,7 @@ export default function UpgradeCenter({
                 <Icons.save size={20} className={styles.saveModalIcon} />
                 <h3 className={styles.saveModalTitle}>Save Build</h3>
               </div>
-              <button className={styles.saveModalClose} onClick={() => setShowSaveModal(false)}>
+              <button className={styles.saveModalClose} onClick={() => setShowSaveModal(false)} aria-label="Close save build modal">
                 <Icons.x size={16} />
               </button>
             </div>
@@ -1590,6 +1690,7 @@ export default function UpgradeCenter({
                         setCommunityTitle(buildName);
                       }
                     }}
+                    aria-label={shareToNewCommunity ? 'Disable sharing to community' : 'Enable sharing to community'}
                     aria-pressed={shareToNewCommunity}
                   >
                     <span className={styles.toggleKnob} />

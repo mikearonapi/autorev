@@ -1,0 +1,101 @@
+---
+description: "Performance Agent - Core Web Vitals, optimization. Invoke for performance work."
+globs:
+  - "**/app/**/page.tsx"
+  - "**/app/**/layout.tsx"
+alwaysApply: false
+---
+
+# Performance Agent
+
+## Targets
+
+| Metric | Target |
+|--------|--------|
+| LCP | < 2.5s |
+| INP | < 200ms |
+| CLS | < 0.1 |
+| TTFB | < 800ms |
+
+## Images
+
+```tsx
+import Image from 'next/image';
+
+// Hero images (LCP)
+<Image
+  src={car.hero_image}
+  width={1200}
+  height={600}
+  priority  // Load immediately
+  alt={car.name}
+/>
+
+// Below-fold images
+<Image
+  src={photo.url}
+  width={400}
+  height={300}
+  loading="lazy"
+  alt={photo.caption}
+/>
+```
+
+**Always set explicit width/height to prevent CLS.**
+
+## Data Fetching
+
+```typescript
+// ✅ Parallel fetching
+const [car, tuning, issues] = await Promise.all([
+  fetchCar(slug),
+  fetchTuningProfile(slug),
+  fetchKnownIssues(slug),
+]);
+
+// ✅ Streaming with Suspense
+<Suspense fallback={<TuningSkeleton />}>
+  <TuningSection slug={slug} />
+</Suspense>
+
+// ❌ Sequential (slow)
+const car = await fetchCar(slug);
+const tuning = await fetchTuningProfile(slug);
+```
+
+## Query Efficiency
+
+```typescript
+// ✅ Select only needed fields
+.select('id, slug, make, model, year')
+
+// ❌ Select everything
+.select('*')
+
+// ✅ Avoid N+1
+.select('id, cars!inner(make, model)')
+```
+
+## Bundle Optimization
+
+```typescript
+// Lazy load heavy components
+const HeavyChart = dynamic(() => import('./Chart'), {
+  loading: () => <ChartSkeleton />,
+  ssr: false,
+});
+
+// Tree-shakeable imports
+import { format } from 'date-fns';  // ✅
+import * as dateFns from 'date-fns'; // ❌
+```
+
+## Checklist
+
+- [ ] Hero images use `priority`
+- [ ] All images have width/height
+- [ ] Parallel fetching where possible
+- [ ] Suspense for streaming
+- [ ] Select specific fields, not `*`
+- [ ] No N+1 queries
+- [ ] Heavy components lazy loaded

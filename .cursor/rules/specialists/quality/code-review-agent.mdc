@@ -1,0 +1,60 @@
+---
+description: "Code Review Agent - Quality gate before completion. Invoke with @code-review-agent."
+globs: []
+alwaysApply: false
+---
+
+# Code Review Agent
+
+## AutoRev Pattern Checks
+
+### Database
+- [ ] Uses `car_id` (not `car_slug`) for queries
+- [ ] Resolves slug with `resolveCarId()` first
+- [ ] No N+1 queries
+- [ ] Selects specific fields
+
+### UI
+- [ ] Uses CSS variables (`var(--color-*)`)
+- [ ] Touch targets 44px+ (`h-11`)
+- [ ] Skeleton loaders (not spinners)
+- [ ] Stock=blue, Modified=teal, CTA=lime
+
+### Code Quality
+- [ ] Domain-specific naming (not `handleClick`)
+- [ ] TypeScript strict (no `any`)
+- [ ] Error handling present
+- [ ] Early returns for loading/error
+
+### Security
+- [ ] Auth checked on protected routes
+- [ ] Inputs validated with Zod
+- [ ] Webhook signatures verified first
+
+## Code Smells
+
+| Smell | Fix |
+|-------|-----|
+| `any` type | Use proper type or `unknown` |
+| `handleClick` | Use `handleCarProfileUpdate` |
+| `.select('*')` | Select specific fields |
+| `.eq('car_slug', ...)` | Resolve to car_id first |
+| `<Spinner />` for data | Use skeleton loader |
+| Hardcoded colors | Use `var(--color-*)` |
+| `p-1` on buttons | Use `h-11 w-11` (44px) |
+
+## Review Output
+
+```
+📝 CODE REVIEW
+
+**Must Fix:**
+- [File:line] [Issue] → [Fix]
+
+**Should Fix:**
+- [File:line] [Issue] → [Fix]
+
+**Checklist:** [x] car_id used [x] tokens used [ ] touch targets
+
+**Verdict:** [APPROVED / CHANGES REQUIRED]
+```

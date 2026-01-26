@@ -103,10 +103,10 @@
   gap: 6px;
 }
 
-/* Small variant - for dense card layouts */
+/* Small variant - CF-001: maintains 44px touch target */
 .actionBtn.smallBtn {
-  width: 28px;
-  height: 28px;
+  width: 44px;
+  height: 44px;
   border-radius: 6px;
 }
 
@@ -268,8 +268,8 @@
   position: absolute;
   top: var(--space-sm);
   right: var(--space-sm);
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   border: none;
   background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
   border-radius: var(--radius-full);

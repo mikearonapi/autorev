@@ -16,6 +16,7 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const execAsync = promisify(exec);
 
@@ -57,7 +58,7 @@ async function isAdmin() {
  * POST /api/internal/add-car-ai
  * Add a car using full AI automation
  */
-export async function POST(request) {
+async function handlePost(request) {
   if (!isSupabaseConfigured || !supabaseServiceRole) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
   }
@@ -146,8 +147,7 @@ export async function POST(request) {
   } catch (err) {
     console.error('[AddCarAI API] Error:', err);
     return NextResponse.json({ 
-      error: 'Failed to start AI car research',
-      message: err.message 
+      error: 'Failed to start AI car research'
     }, { status: 500 });
   }
 }
@@ -198,7 +198,7 @@ async function runAIResearchInBackground(carName, scriptPath, dryRunFlag, verbos
  * GET /api/internal/add-car-ai
  * Get status of AI car addition jobs (future enhancement)
  */
-export async function GET(request) {
+async function handleGet(request) {
   return NextResponse.json({
     message: 'AI Car Addition Service',
     usage: {
@@ -216,3 +216,6 @@ export async function GET(request) {
     ]
   });
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'internal/add-car-ai', feature: 'internal' });
+export const POST = withErrorLogging(handlePost, { route: 'internal/add-car-ai', feature: 'internal' });

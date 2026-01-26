@@ -66,9 +66,55 @@
   margin: 0 0 8px;
 }
 
+.carContext {
+  font-size: 15px;
+  color: var(--color-text-secondary, #94a3b8);
+  margin: 0 0 8px;
+}
+
+.carContext strong {
+  color: var(--color-accent-teal, #10b981);
+}
+
 .meta {
   font-size: 14px;
+  color: var(--color-text-tertiary, #64748b);
+  margin: 0 0 16px;
+}
+
+/* Share buttons */
+.shareButtons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.shareButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 16px;
+  min-height: 44px;
+  min-width: 44px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
   color: var(--color-text-secondary, #94a3b8);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shareButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary, #ffffff);
+}
+
+.shareButton:focus-visible {
+  outline: 2px solid var(--color-accent-teal, #10b981);
+  outline-offset: 2px;
 }
 
 /* Messages */
@@ -84,6 +130,7 @@
   max-width: 90%;
 }
 
+/* User messages - RIGHT aligned, NEUTRAL gray (not teal) */
 .userMessage {
   margin-left: auto;
   flex-direction: row-reverse;
@@ -107,16 +154,18 @@
   line-height: 1.6;
 }
 
+/* User messages - neutral gray background (per audit) */
 .userMessage .messageContent {
-  background: linear-gradient(135deg, var(--color-accent-teal, #10b981) 0%, var(--color-accent-teal, #059669) 100%);
+  background: var(--color-bg-elevated, #1e293b);
   color: var(--color-text-primary, #ffffff);
   border-bottom-right-radius: 6px;
 }
 
+/* Assistant messages - subtle background */
 .assistantMessage .messageContent {
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  color: var(--color-bg-muted, #f1f5f9);
+  color: var(--color-text-primary, #f1f5f9);
   border-bottom-left-radius: 6px;
 }
 
@@ -147,6 +196,53 @@
   margin: 4px 0;
 }
 
+/* Citations - TEAL color per brand guidelines */
+.citationsWrapper {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.citationsLabel {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-tertiary, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.citationsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.citation {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-accent-teal, #10b981);
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.citation:hover {
+  background: rgba(16, 185, 129, 0.2);
+  text-decoration: underline;
+}
+
+a.citation:focus-visible {
+  outline: 2px solid var(--color-accent-teal, #10b981);
+  outline-offset: 2px;
+}
+
 /* CTA Section */
 .cta {
   text-align: center;
@@ -157,17 +253,26 @@
   border-radius: 16px;
 }
 
-.cta p {
-  font-size: 16px;
-  color: var(--color-text-secondary, #94a3b8);
-  margin: 0 0 16px;
+.ctaHeading {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  margin: 0 0 8px;
 }
 
+.ctaText {
+  font-size: 15px;
+  color: var(--color-text-secondary, #94a3b8);
+  margin: 0 0 20px;
+}
+
+/* CTA button - LIME color per brand guidelines */
 .ctaBtn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   padding: 14px 32px;
+  min-height: 44px;
   background: var(--color-accent-lime, #d4ff00);
   border-radius: 100px;
   font-size: 15px;
@@ -182,6 +287,11 @@
 .ctaBtn:hover {
   background: var(--color-accent-lime-dark, #bfe600);
   transform: scale(1.02);
+}
+
+.ctaBtn:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 4px;
 }
 
 /* Error state */
@@ -207,9 +317,36 @@
   margin: 0 0 24px;
 }
 
+.retryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  min-height: 44px;
+  background: var(--color-accent-teal, #10b981);
+  border: none;
+  border-radius: 10px;
+  color: var(--color-text-primary, #ffffff);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+}
+
+.retryButton:hover {
+  background: var(--color-accent-teal-dark, #059669);
+}
+
+.retryButton:focus-visible {
+  outline: 2px solid var(--color-accent-teal, #10b981);
+  outline-offset: 2px;
+}
+
 .homeLink {
   display: inline-flex;
   padding: 12px 24px;
+  min-height: 44px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 10px;
@@ -221,6 +358,11 @@
 
 .homeLink:hover {
   background: rgba(255, 255, 255, 0.12);
+}
+
+.homeLink:focus-visible {
+  outline: 2px solid var(--color-accent-teal, #10b981);
+  outline-offset: 2px;
 }
 
 /* Footer */
@@ -245,8 +387,8 @@
   text-decoration: underline;
 }
 
-/* Mobile */
-@media (min-width: 641px) {
+/* Mobile-first responsive adjustments */
+@media (max-width: 640px) {
   .header {
     padding: 14px 16px;
   }
@@ -270,5 +412,37 @@
   
   .cta {
     padding: 24px 20px;
+  }
+  
+  .shareButtons {
+    gap: 6px;
+  }
+  
+  .shareButton {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}
+
+/* Tablet and up */
+@media (min-width: 768px) {
+  .conversationHeader {
+    margin-bottom: 40px;
+  }
+  
+  .title {
+    font-size: 32px;
+  }
+  
+  .message {
+    max-width: 85%;
+  }
+  
+  .cta {
+    padding: 40px 48px;
+  }
+  
+  .ctaHeading {
+    font-size: 24px;
   }
 }

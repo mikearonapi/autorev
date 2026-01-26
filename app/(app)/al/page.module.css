@@ -34,11 +34,18 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: 6px 8px; /* Mobile-first: smallest screens */
   background: transparent;
   flex-shrink: 0;
   position: relative;
   z-index: 20;
+}
+
+/* Larger phones and up */
+@media (min-width: 481px) {
+  .header {
+    padding: 8px 12px;
+  }
 }
 
 .headerRight {
@@ -87,7 +94,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
+  padding: 4px 8px; /* Mobile-first: smallest screens */
   background: transparent;
   border: none;
   border-radius: 100px;
@@ -95,10 +102,21 @@
 }
 
 .queryCountNumber {
-  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-family: var(--font-mono);
   font-weight: 600;
   color: var(--color-text-tertiary, #64748b);
-  font-size: var(--text-sm, 14px);
+  font-size: var(--text-xs, 12px); /* Mobile-first: smallest screens */
+}
+
+/* Larger phones and up */
+@media (min-width: 481px) {
+  .queryCounter {
+    padding: 6px 12px;
+  }
+  
+  .queryCountNumber {
+    font-size: var(--text-sm, 14px);
+  }
 }
 
 .queryCountLabel {
@@ -125,7 +143,7 @@
   align-items: center;
   padding: 2px 8px;
   background: rgba(139, 92, 246, 0.12);
-  color: #a78bfa;
+  color: var(--color-info, #a78bfa);
   font-size: 10px;
   font-weight: 600;
   border-radius: 100px;
@@ -133,38 +151,25 @@
   letter-spacing: 0.05em;
 }
 
-/* Mobile: Even more minimal */
-@media (max-width: 480px) {
-  .header {
-    padding: 6px 8px;
-  }
-  
-  .queryCounter {
-    padding: 4px 8px;
-  }
-  
-  .queryCountNumber {
-    font-size: var(--text-xs, 12px);
-  }
-  
-  .historyBtn,
-  .newChatHeaderBtn,
-  .settingsBtn {
-    width: 40px;
-    height: 40px;
-  }
-}
+/* Touch targets already 44px in base styles - mobile accessibility ensured */
 
 /* ===========================================
    Preferences Overlay
    =========================================== */
 
 .preferencesOverlay {
-  position: absolute;
-  top: 64px;
-  right: 16px;
-  z-index: 50;
-  animation: slideDown 0.2s ease;
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal, 1000);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 80px;
+  /* Premium frosted glass - brand standard (Jan 2026) */
+  background: var(--color-bg-overlay, rgba(10, 21, 32, 0.85));
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  animation: fadeIn 0.2s ease;
 }
 
 @keyframes slideDown {
@@ -241,10 +246,18 @@
 
 .messageContent {
   padding: 14px 18px;
-  font-size: 15px;
+  font-size: 14px; /* Mobile-first: smallest screens */
   line-height: 1.7;
-  max-width: 88%;
+  max-width: 92%; /* Mobile-first: more width on small screens */
   word-wrap: break-word;
+}
+
+/* Larger phones and up */
+@media (min-width: 481px) {
+  .messageContent {
+    font-size: 15px;
+    max-width: 88%;
+  }
 }
 
 .thinking {
@@ -406,7 +419,7 @@
 }
 
 .errorText {
-  color: #fca5a5;
+  color: var(--color-error-light, #fca5a5);
   font-size: var(--text-body, 16px);
   line-height: 1.5;
 }
@@ -427,7 +440,7 @@
 }
 
 .retryBtn:hover {
-  background: #dc2626;
+  background: var(--color-error, #dc2626);
   transform: scale(1.02);
 }
 
@@ -464,12 +477,12 @@
 }
 
 .voiceBtnActive {
-  color: #f87171;
+  color: var(--color-error, #f87171);
   animation: voicePulse 1.2s ease-in-out infinite;
 }
 
 .voiceBtnActive:hover {
-  color: #ef4444;
+  color: var(--color-error, #ef4444);
 }
 
 @keyframes voicePulse {
@@ -514,8 +527,8 @@
   position: absolute;
   top: 16px;
   right: 16px;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -584,7 +597,7 @@
 }
 
 .copyUrlBtn:hover {
-  background: #059669;
+  background: var(--color-accent-teal, #059669);
 }
 
 .copyUrlBtn:active {
@@ -606,7 +619,7 @@
 
 .emptyStateContent {
   position: absolute;
-  top: 38%;
+  top: 35%; /* Mobile-first: smallest screens */
   left: 50%;
   transform: translate(-50%, -50%);
   display: flex;
@@ -618,13 +631,27 @@
   max-width: 400px;
 }
 
+/* Larger phones and up */
+@media (min-width: 481px) {
+  .emptyStateContent {
+    top: 38%;
+  }
+}
+
 .emptyTitle {
   font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: 24px;
+  font-size: 22px; /* Mobile-first: smallest screens */
   font-weight: 500;
   margin: 20px 0 6px;
   color: var(--color-text-primary, #ffffff);
   letter-spacing: -0.02em;
+}
+
+/* Larger phones and up */
+@media (min-width: 481px) {
+  .emptyTitle {
+    font-size: 24px;
+  }
 }
 
 .emptySubtitle {
@@ -637,12 +664,12 @@
 /* Suggested prompts - Simple, subtle cards */
 .suggestions {
   position: absolute;
-  bottom: 100px;
+  bottom: 90px; /* Mobile-first: smallest screens */
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px; /* Mobile-first: smallest screens */
   width: calc(100% - 32px);
   max-width: 400px;
   padding: 0 16px;
@@ -655,21 +682,38 @@
   pointer-events: none;
 }
 
+/* Larger phones and up */
+@media (min-width: 481px) {
+  .suggestions {
+    bottom: 100px;
+    gap: 8px;
+  }
+}
+
 .suggestionBtn {
   display: flex;
   align-items: center;
   justify-content: flex-start;
-  padding: 14px 18px;
+  padding: 12px 16px; /* Mobile-first: smallest screens */
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 14px;
   color: var(--color-text-secondary, #94a3b8);
-  font-size: var(--text-sm, 14px);
+  font-size: 13px; /* Mobile-first: smallest screens */
   font-weight: 400;
   text-align: left;
   cursor: pointer;
   transition: all 0.15s ease;
-  min-height: 48px;
+  min-height: 44px; /* Mobile-first: 44px touch target */
+}
+
+/* Larger phones and up */
+@media (min-width: 481px) {
+  .suggestionBtn {
+    padding: 14px 18px;
+    font-size: var(--text-sm, 14px);
+    min-height: 48px;
+  }
 }
 
 .suggestionBtn:hover {
@@ -717,7 +761,7 @@
    =========================================== */
 
 .inputArea {
-  padding: 8px 16px 16px;
+  padding: 8px 12px 12px; /* Mobile-first: smallest screens */
   background: transparent;
   flex-shrink: 0;
   position: relative;
@@ -730,11 +774,23 @@
   gap: 8px;
   background: rgba(255, 255, 255, 0.06);
   border: none;
-  border-radius: 20px;
-  padding: 8px 8px 8px 6px;
+  border-radius: 18px; /* Mobile-first: smallest screens */
+  padding: 6px 6px 6px 4px; /* Mobile-first: smallest screens */
   max-width: 680px;
   margin: 0 auto;
   transition: all 0.15s ease;
+}
+
+/* Larger phones and up */
+@media (min-width: 481px) {
+  .inputArea {
+    padding: 8px 16px 16px;
+  }
+  
+  .inputWrapper {
+    border-radius: 20px;
+    padding: 8px 8px 8px 6px;
+  }
 }
 
 .inputWrapper:focus-within {
@@ -809,9 +865,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
-  background: var(--color-text-primary, #ffffff);
+  width: 44px;
+  height: 44px;
+  background: var(--color-accent-lime, #d4ff00);
   border: none;
   border-radius: 10px;
   color: var(--color-bg-base, #0d1b2a);
@@ -821,7 +877,7 @@
 }
 
 .sendBtn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.9);
+  background: var(--color-accent-lime-hover, #bde600);
 }
 
 .sendBtn:active:not(:disabled) {
@@ -928,8 +984,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   background: rgba(255, 255, 255, 0.04);
   border: none;
   border-radius: 10px;
@@ -967,6 +1023,13 @@
   outline: none;
 }
 
+/* Accessibility: visible focus state */
+.historySearchInput:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 .historySearchInput::placeholder {
   color: var(--color-text-tertiary, #64748b);
 }
@@ -975,8 +1038,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  width: 44px;
+  height: 44px;
   background: rgba(255, 255, 255, 0.08);
   border: none;
   border-radius: 50%;
@@ -1079,8 +1142,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 44px;
+  height: 44px;
   background: transparent;
   border: none;
   border-radius: 8px;
@@ -1096,7 +1159,7 @@
 
 .deleteConversationBtn:hover {
   background: rgba(239, 68, 68, 0.15);
-  color: #f87171;
+  color: var(--color-error, #f87171);
 }
 
 .loadingConversations,
@@ -1192,7 +1255,7 @@
 }
 
 .deleteModalConfirm:hover {
-  background: #dc2626;
+  background: var(--color-error, #dc2626);
 }
 
 /* ===========================================
@@ -1223,10 +1286,19 @@
 .messageActions {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 4px; /* Mobile-first: slightly more space for touch */
   margin-top: 12px;
+  padding-top: 10px; /* Mobile-first */
   opacity: 0.6;
   transition: opacity 0.15s ease;
+}
+
+/* Larger phones and up */
+@media (min-width: 481px) {
+  .messageActions {
+    gap: 2px;
+    padding-top: 0;
+  }
 }
 
 .message:hover .messageActions {
@@ -1237,8 +1309,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   background: transparent;
   border: none;
   border-radius: 8px;
@@ -1334,13 +1406,21 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 28px 24px;
-  width: calc(100% - 48px);
+  padding: 20px 18px; /* Mobile-first: smallest screens */
+  width: calc(100% - 32px); /* Mobile-first: smallest screens */
   max-width: 360px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 20px;
   animation: pendingCardIn 0.25s ease;
+}
+
+/* Larger phones and up */
+@media (min-width: 481px) {
+  .pendingPromptCard {
+    padding: 28px 24px;
+    width: calc(100% - 48px);
+  }
 }
 
 @keyframes pendingCardIn {
@@ -1367,12 +1447,20 @@
 }
 
 .pendingPromptText {
-  margin: 16px 0 24px;
-  font-size: 16px;
+  margin: 14px 0 20px; /* Mobile-first: smallest screens */
+  font-size: 15px; /* Mobile-first: smallest screens */
   font-weight: 400;
   line-height: 1.5;
   color: var(--color-text-primary, #ffffff);
   word-break: break-word;
+}
+
+/* Larger phones and up */
+@media (min-width: 481px) {
+  .pendingPromptText {
+    margin: 16px 0 24px;
+    font-size: 16px;
+  }
 }
 
 .pendingPromptActions {
@@ -1386,16 +1474,25 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 14px 28px;
+  padding: 12px 20px; /* Mobile-first: smallest screens */
   background: var(--color-text-primary, #ffffff);
   border: none;
   border-radius: 12px;
   color: var(--color-bg-base, #0d1b2a);
-  font-size: 15px;
+  font-size: 14px; /* Mobile-first: smallest screens */
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
-  min-height: 48px;
+  min-height: 44px; /* Mobile-first: 44px touch target */
+}
+
+/* Larger phones and up */
+@media (min-width: 481px) {
+  .pendingPromptSend {
+    padding: 14px 28px;
+    font-size: 15px;
+    min-height: 48px;
+  }
 }
 
 .pendingPromptSend:hover {
@@ -1430,15 +1527,8 @@
 }
 
 /* ===========================================
-   Responsive Adjustments
+   Responsive Adjustments - Desktop Enhancements
    =========================================== */
-
-/* Tablet */
-@media (min-width: 481px) and (max-width: 1023px) {
-  .container {
-    padding-bottom: var(--page-bottom-padding);
-  }
-}
 
 /* Desktop */
 @media (min-width: 1024px) {
@@ -1464,84 +1554,5 @@
   
   .suggestions {
     bottom: 120px;
-  }
-}
-
-/* Mobile */
-@media (max-width: 480px) {
-  .emptyTitle {
-    font-size: 22px;
-  }
-  
-  .emptyStateContent {
-    top: 35%;
-  }
-  
-  .suggestions {
-    bottom: 90px;
-    gap: 6px;
-  }
-  
-  .suggestionBtn {
-    padding: 12px 16px;
-    font-size: 13px;
-    min-height: 44px;
-  }
-  
-  .messageContent {
-    max-width: 92%;
-    font-size: 14px;
-  }
-  
-  .inputArea {
-    padding: 8px 12px 12px;
-  }
-  
-  .inputWrapper {
-    padding: 6px 6px 6px 4px;
-    border-radius: 18px;
-  }
-  
-  .attachmentBtn,
-  .voiceBtn,
-  .sendBtn {
-    width: 36px;
-    height: 36px;
-  }
-  
-  .messageActions {
-    margin-top: 12px;
-    padding-top: 10px;
-    gap: 4px;
-  }
-  
-  .actionBtn {
-    width: 32px;
-    height: 32px;
-  }
-  
-  .deleteConversationBtn {
-    opacity: 1;
-  }
-  
-  .pendingPromptCard {
-    padding: 20px 18px;
-    width: calc(100% - 32px);
-  }
-  
-  .pendingPromptText {
-    font-size: 15px;
-    margin: 14px 0 20px;
-  }
-  
-  .pendingPromptSend {
-    padding: 12px 20px;
-    min-height: 44px;
-    font-size: 14px;
-  }
-  
-  .pendingPromptDismiss {
-    width: 44px;
-    height: 44px;
   }
 }

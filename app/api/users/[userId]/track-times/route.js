@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { errors } from '@/lib/apiErrors';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { awardPoints } from '@/lib/pointsService';
+import { trackTimeSchema, validateWithSchema, validationErrorResponse } from '@/lib/schemas';
+import { rateLimit } from '@/lib/rateLimit';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * GET /api/users/[userId]/track-times
@@ -12,7 +15,7 @@ import { awardPoints } from '@/lib/pointsService';
  * - carSlug: Filter by car
  * - limit: Number of results (default 20)
  */
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   try {
     const { userId } = await params;
     
@@ -127,7 +130,10 @@ export async function GET(request, { params }) {
  * POST /api/users/[userId]/track-times
  * Log a new track time
  */
-export async function POST(request, { params }) {
+async function handlePost(request, { params }) {
+  const limited = rateLimit(request, 'api');
+  if (limited) return limited;
+
   try {
     const { userId } = await params;
     
@@ -158,6 +164,13 @@ export async function POST(request, { params }) {
     }
     
     const body = await request.json();
+    
+    // Validate with Zod schema
+    const validation = validateWithSchema(trackTimeSchema, body);
+    if (!validation.success) {
+      return validationErrorResponse(validation.errors);
+    }
+    
     const {
       trackName,
       trackConfig,
@@ -181,21 +194,7 @@ export async function POST(request, { params }) {
       carSlug,
       userVehicleId,
       timingSystem
-    } = body;
-    
-    // Validate required fields
-    if (!trackName || !lapTimeSeconds) {
-      return NextResponse.json({ 
-        error: 'Missing required fields: trackName, lapTimeSeconds' 
-      }, { status: 400 });
-    }
-    
-    // Validate lap time is reasonable (between 20 seconds and 20 minutes)
-    if (lapTimeSeconds < 20 || lapTimeSeconds > 1200) {
-      return NextResponse.json({ 
-        error: 'Lap time must be between 20 seconds and 20 minutes' 
-      }, { status: 400 });
-    }
+    } = validation.data;
     
     const { data, error } = await supabase
       .from('user_track_times')
@@ -253,7 +252,10 @@ export async function POST(request, { params }) {
  * DELETE /api/users/[userId]/track-times?id=xxx
  * Delete a track time entry
  */
-export async function DELETE(request, { params }) {
+async function handleDelete(request, { params }) {
+  const limited = rateLimit(request, 'api');
+  if (limited) return limited;
+
   try {
     const { userId } = await params;
     
@@ -308,3 +310,7 @@ export async function DELETE(request, { params }) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'users-track-times', feature: 'garage' });
+export const POST = withErrorLogging(handlePost, { route: 'users-track-times', feature: 'garage' });
+export const DELETE = withErrorLogging(handleDelete, { route: 'users-track-times', feature: 'garage' });

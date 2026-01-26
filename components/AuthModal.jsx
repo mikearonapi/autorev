@@ -305,7 +305,7 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
             <Icons.x size={20} />
           </button>
 
-          <button className={styles.backBtn} onClick={() => setView('signin')}>
+          <button className={styles.backBtn} onClick={() => setView('signin')} aria-label="Back to sign in">
             <Icons.arrowLeft size={18} />
           </button>
 
@@ -500,17 +500,6 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
         </button>
 
         <h2 className={styles.title}>Log Into Your Account</h2>
-        
-        <div className={styles.infoBox}>
-          Access your garage, saved cars, and personalized recommendations.
-          <button 
-            type="button" 
-            className={styles.forgotInline}
-            onClick={() => setView('forgot')}
-          >
-            Forgot?
-          </button>
-        </div>
 
         {error && (
           <div className={styles.errorBox} id="auth-error" role="alert" aria-live="assertive">
@@ -552,6 +541,13 @@ export default function AuthModal({ isOpen, onClose, defaultMode = 'signin' }) {
                 {showPassword ? 'Hide' : 'Show'}
               </button>
             </div>
+            <button 
+              type="button" 
+              className={styles.forgotLink}
+              onClick={() => setView('forgot')}
+            >
+              Forgot password?
+            </button>
           </div>
 
           <button type="submit" className={styles.primaryBtn} disabled={isSubmitting}>

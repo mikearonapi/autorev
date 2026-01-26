@@ -45,17 +45,17 @@ async function handleGet(request) {
         const latency = Date.now() - start;
         
         if (error) {
+          console.error('[Health] Database connection error:', error.message);
           response.database = 'disconnected';
           response.status = 'degraded';
-          response.error = error.message;
         } else {
           response.database = 'connected';
           response.latency_ms = latency;
         }
       } catch (err) {
+        console.error('[Health] Database check failed:', err.message);
         response.database = 'disconnected';
         response.status = 'degraded';
-        response.error = err.message;
       }
     }
   }

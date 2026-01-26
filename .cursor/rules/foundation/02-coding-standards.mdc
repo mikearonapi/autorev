@@ -1,0 +1,45 @@
+---
+description: "Core coding standards - TypeScript, React, naming"
+alwaysApply: true
+---
+
+# Coding Standards
+
+## TypeScript
+- Strict typing, no `any` without justification
+- Zod for runtime validation at API boundaries
+- Explicit return types on exported functions
+
+## React/Next.js
+- Server Components default, `'use client'` only when needed
+- Hooks order: useState → useQuery → useMemo → useCallback
+- Early returns for loading/error states
+
+## Naming
+| Type | Convention | Example |
+|------|------------|---------|
+| Components | PascalCase | `CarProfileCard.tsx` |
+| Hooks | use + camelCase | `useCarData.ts` |
+| Utilities | verb + camelCase | `formatHorsepower.ts` |
+| Services | camelCase + Service | `carDataService.ts` |
+
+**Functions must be domain-specific:**
+```typescript
+// ✅ Good
+const handleTuningProfileUpdate = () => {};
+const calculatePerformanceGain = (stock, modified) => {};
+
+// ❌ Bad (generic, duplicatable)
+const handleClick = () => {};
+const formatData = (data) => {};
+```
+
+## Database
+- Always `car_id` (resolve from slug with `resolveCarId()`)
+- Select specific fields, not `*`
+- No N+1 queries (use joins/includes)
+
+## UI
+- Colors: Lime (CTAs) / Teal (gains) / Blue (stock) / Amber (warnings only)
+- Touch targets: 44px minimum (`h-11 w-11`)
+- Loading: Skeletons that match content shape

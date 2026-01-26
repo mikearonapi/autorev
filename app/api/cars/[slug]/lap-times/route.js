@@ -63,10 +63,12 @@ async function handleGet(request, { params }) {
         .order('lap_time_seconds', { ascending: true });
       
       if (directError) {
+        const LAP_COLS = 'id, car_id, track_id, track_name, lap_time_seconds, driver, conditions, tires, source_url, source_type, recorded_date, notes, created_at';
+        
         // Try simpler query without joins
         const { data: simpleData, error: simpleError } = await supabase
           .from('car_track_lap_times')
-          .select('*')
+          .select(LAP_COLS)
           .eq('car_id', carId)
           .order('lap_time_seconds', { ascending: true });
         
@@ -104,7 +106,7 @@ async function handleGet(request, { params }) {
   } catch (err) {
     console.error('[API/lap-times] Error fetching lap times:', err);
     return NextResponse.json(
-      { error: 'Failed to fetch lap times', details: err.message },
+      { error: 'Failed to fetch lap times' },
       { status: 500 }
     );
   }

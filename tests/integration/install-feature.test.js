@@ -4,7 +4,7 @@
  * Tests for the installation tracking feature:
  * - DIY video search API (Exa fallback chain)
  * - Service center search API (Google Places + caching)
- * - InstallPathSelector component behavior
+ * - Install page tier access and tools data
  * 
  * Run with: npm test tests/integration/install-feature.test.js
  */

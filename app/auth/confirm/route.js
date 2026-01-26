@@ -15,7 +15,7 @@ export async function GET(request) {
   const requestUrl = new URL(request.url);
   const token_hash = requestUrl.searchParams.get('token_hash');
   const type = requestUrl.searchParams.get('type');
-  const next = requestUrl.searchParams.get('next') || '/';
+  const next = requestUrl.searchParams.get('next') || '/garage';
 
   // Validate required parameters
   if (!token_hash || !type) {

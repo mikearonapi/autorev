@@ -24,10 +24,12 @@ import styles from './page.module.css';
 async function getCarData(carSlug) {
   if (!carSlug || !supabase) return null;
   
+  const CAR_COLS = 'id, slug, name, make, model, years, generation, body_type, imageHeroUrl';
+  
   try {
     const { data, error } = await supabase
       .from('cars')
-      .select('*')
+      .select(CAR_COLS)
       .eq('slug', carSlug)
       .single();
     

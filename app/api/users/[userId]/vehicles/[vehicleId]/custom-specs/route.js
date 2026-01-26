@@ -101,7 +101,7 @@ async function handleGet(request, { params }) {
     if (error) {
       console.error('[API/vehicles/custom-specs] Error fetching specs:', error);
       return NextResponse.json(
-        { error: error.message || 'Failed to fetch custom specs' },
+        { error: 'Failed to fetch custom specs' },
         { status: 500 }
       );
     }
@@ -213,7 +213,7 @@ async function handlePost(request, { params }) {
     if (error) {
       console.error('[API/vehicles/custom-specs] Error updating specs:', error);
       return NextResponse.json(
-        { error: error.message || 'Failed to update custom specs' },
+        { error: 'Failed to update custom specs' },
         { status: 500 }
       );
     }
@@ -347,7 +347,7 @@ async function handleDelete(request, { params }) {
     if (error) {
       console.error('[API/vehicles/custom-specs] Error clearing specs:', error);
       return NextResponse.json(
-        { error: error.message || 'Failed to clear custom specs' },
+        { error: 'Failed to clear custom specs' },
         { status: 500 }
       );
     }

@@ -19,6 +19,7 @@ import { resolveCarId } from '@/lib/carResolver';
 import { errors } from '@/lib/apiErrors';
 import { trackActivity } from '@/lib/dashboardScoreService';
 import { awardPoints } from '@/lib/pointsService';
+import { communityPostSchema, communityPostUpdateSchema, validateWithSchema, validationErrorResponse } from '@/lib/schemas';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -109,6 +110,13 @@ async function handlePost(request) {
     }
 
     const body = await request.json();
+    
+    // Validate with Zod schema
+    const validation = validateWithSchema(communityPostSchema, body);
+    if (!validation.success) {
+      return validationErrorResponse(validation.errors);
+    }
+    
     const {
       postType,
       title,
@@ -117,17 +125,8 @@ async function handlePost(request) {
       buildId,
       carSlug,
       carName,
-      imageIds, // Array of image IDs to attach
-    } = body;
-
-    // Validate required fields
-    if (!postType || !title) {
-      return errors.badRequest('Missing required fields: postType and title are required');
-    }
-
-    if (!['garage', 'build', 'vehicle'].includes(postType)) {
-      return errors.invalidInput('Invalid postType. Must be: garage, build, or vehicle', { field: 'postType' });
-    }
+      imageIds,
+    } = validation.data;
 
     // Generate slug
     const { data: slugResult, error: slugError } = await supabaseAdmin.rpc('generate_community_post_slug', {
@@ -222,11 +221,14 @@ async function handlePatch(request) {
     }
 
     const body = await request.json();
-    const { postId, isPublished, title, description } = body;
-
-    if (!postId) {
-      return errors.missingField('postId');
+    
+    // Validate with Zod schema
+    const validation = validateWithSchema(communityPostUpdateSchema, body);
+    if (!validation.success) {
+      return validationErrorResponse(validation.errors);
     }
+    
+    const { postId, isPublished, title, description } = validation.data;
 
     // Build update object
     const updates = {};

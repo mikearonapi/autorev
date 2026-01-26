@@ -7,7 +7,6 @@
  * - Weekly points as the hero number
  * - Streak badge
  * - Weekly/monthly/lifetime breakdown
- * - Category legend (ties to Weekly Activity chart below)
  * - Info button to open points explainer
  */
 
@@ -15,14 +14,6 @@ import { useEffect, useState } from 'react';
 import { FlameIcon, InfoIcon } from './DashboardIcons';
 import PointsExplainerModal from './PointsExplainerModal';
 import styles from './WeeklyPointsSummary.module.css';
-
-// Category colors for legend
-const CATEGORIES = [
-  { key: 'al', label: 'AL', color: '#a855f7' },
-  { key: 'community', label: 'Community', color: '#3b82f6' },
-  { key: 'data', label: 'Data', color: '#10b981' },
-  { key: 'garage', label: 'Garage', color: '#d4ff00' },
-];
 
 export default function WeeklyPointsSummary({
   points = { weekly: 0, monthly: 0, lifetime: 0 },
@@ -111,19 +102,6 @@ export default function WeeklyPointsSummary({
           <span className={styles.statValue}>{formatPoints(points.lifetime)}</span>
           <span className={styles.statLabel}>lifetime</span>
         </div>
-      </div>
-
-      {/* Category legend */}
-      <div className={styles.legend}>
-        {CATEGORIES.map((cat) => (
-          <div key={cat.key} className={styles.legendItem}>
-            <span 
-              className={styles.legendDot} 
-              style={{ background: cat.color }}
-            />
-            <span className={styles.legendLabel}>{cat.label}</span>
-          </div>
-        ))}
       </div>
 
       {/* Points Explainer Modal */}

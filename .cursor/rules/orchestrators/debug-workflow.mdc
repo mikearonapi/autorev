@@ -1,0 +1,53 @@
+---
+description: "Debug Workflow - Systematic debugging. Invoke with @debug-workflow."
+globs: []
+alwaysApply: false
+---
+
+# Debug Workflow
+
+## Step 1: REPRODUCE
+```
+🐛 ISSUE:
+- Reported: [What's happening]
+- Expected: [What should happen]
+- Steps: [How to reproduce]
+- Reproducible: [Yes/No/Intermittent]
+```
+
+## Step 2: CHECK SOURCE_OF_TRUTH.md
+Many bugs are caused by pattern violations. Check:
+- Is a Cardinal Rule being violated?
+- Is this a known anti-pattern?
+
+### Common AutoRev Bugs
+
+| Symptom | Likely Cause | Fix |
+|---------|--------------|-----|
+| Data not loading | Using `car_slug` not `car_id` | Use `resolveCarId()` |
+| Wrong colors | Hardcoded hex | Use `var(--color-*)` |
+| Touch not working | Target < 44px | Add `h-11 w-11` |
+| N+1 performance | Loop queries | Use joins |
+| Webhook duplicate | Missing idempotency | Check processed_events |
+
+## Step 3: ISOLATE
+Trace the data flow:
+1. Source (database/API)
+2. Fetch/query
+3. State
+4. Render
+
+Find where data goes wrong.
+
+## Step 4: FIX
+- Fix root cause, not symptoms
+- Minimal change
+- Follow existing patterns
+
+## Step 5: VERIFY
+```
+✅ FIX VERIFIED:
+- Root cause: [What was wrong]
+- Fix: [What changed]
+- Evidence: [Proof it works]
+```

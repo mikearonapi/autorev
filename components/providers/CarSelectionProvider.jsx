@@ -9,7 +9,7 @@
  * @module components/providers/CarSelectionProvider
  */
 
-import { createContext, useContext, useReducer, useEffect, useState, useCallback } from 'react';
+import { createContext, useContext, useReducer, useEffect, useState, useCallback, useMemo } from 'react';
 import {
   loadState,
   carSelectionReducer,
@@ -144,7 +144,7 @@ useEffect(() => {
     dispatch({ type: ActionTypes.RESET_ALL });
   }, []);
 
-  const value = {
+  const value = useMemo(() => ({
     // State
     selectedCar: state.selectedCar,
     appliedUpgrades: state.appliedUpgrades,
@@ -159,7 +159,19 @@ useEffect(() => {
     clearUpgrades,
     setUpgrades,
     resetAll,
-  };
+  }), [
+    state.selectedCar,
+    state.appliedUpgrades,
+    state.buildSummary,
+    isHydrated,
+    selectCar,
+    clearCar,
+    addUpgrade,
+    removeUpgrade,
+    clearUpgrades,
+    setUpgrades,
+    resetAll,
+  ]);
 
   return (
     <CarSelectionContext.Provider value={value}>

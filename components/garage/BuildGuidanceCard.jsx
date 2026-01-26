@@ -149,13 +149,7 @@ export default function BuildGuidanceCard({
         
         <div className={styles.fallback}>
           <p>We're still gathering detailed tuning data for the {car?.name}.</p>
-          <p>Browse upgrade categories below, or ask AL for personalized recommendations.</p>
-          {onAskAL && (
-            <button className={styles.askAlBtn} onClick={onAskAL}>
-              <LocalIcons.sparkles size={14} />
-              Ask AL for recommendations
-            </button>
-          )}
+          <p>Browse upgrade categories below for personalized recommendations.</p>
         </div>
       </div>
     );

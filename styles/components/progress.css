@@ -185,7 +185,7 @@
 
 .score-gauge-fill {
   fill: none;
-  stroke: var(--color-accent-gold, #d4a84b);
+  stroke: var(--color-accent-amber, #f59e0b);
   stroke-width: 4;
   stroke-linecap: round;
   transition: stroke-dashoffset 0.8s cubic-bezier(0.4, 0, 0.2, 1);

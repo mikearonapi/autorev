@@ -8,32 +8,24 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { isAdminEmail } from '@/lib/adminAccess';
+import { requireAdmin } from '@/lib/adminAccess';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-export async function GET(request) {
+async function handleGet(request) {
+  // Verify admin access
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
+
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
-  }
-  
-  // Verify admin access
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
   
   try {
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
-    if (authError || !user || !isAdminEmail(user.email)) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-    }
-    
     const now = new Date();
     const last24h = new Date(now.getTime() - 24 * 60 * 60 * 1000);
     const last7d = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -73,10 +65,12 @@ export async function GET(request) {
       .gte('created_at', last7d.toISOString())
       .in('status', RESOLVED_STATUSES);
     
+    const FEEDBACK_COLS = 'id, user_id, category, severity, title, description, page_url, browser_info, screenshot_url, status, resolved_at, created_at';
+    
     // Get recent UNRESOLVED errors for display
     const { data: recentErrors } = await supabase
       .from('user_feedback')
-      .select('*')
+      .select(FEEDBACK_COLS)
       .eq('category', 'auto-error')
       .not('status', 'in', `(${RESOLVED_STATUSES.join(',')})`)
       .order('created_at', { ascending: false })
@@ -308,3 +302,4 @@ export async function GET(request) {
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'admin/system-health', feature: 'admin' });

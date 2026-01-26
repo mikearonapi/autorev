@@ -3,11 +3,10 @@
  * 
  * Two variants:
  * - Simple: Three concentric spinning rings (for inline/component loading)
- * - Branded: AutoRev logo with spinning ring (for full-page loading)
+ * - Branded: AutoRev wordmark logo with spinning ring (for full-page loading)
  * 
  * Brand colors used:
- * - Teal (#10b981) - Primary loading color (positive/improvements)
- * - Lime (#d4ff00) - Optional accent for CTAs
+ * - Lime (#d4ff00) - Primary brand color for loading indicators
  */
 
 /* ==============================================
@@ -124,10 +123,10 @@
   justify-content: center;
   text-align: center;
   padding: 48px 24px;
-  /* Subtle radial gradient with teal for premium feel */
+  /* Subtle radial gradient with lime for premium feel */
   background: radial-gradient(
     ellipse 60% 40% at 50% 45%,
-    rgba(16, 185, 129, 0.06) 0%,
+    rgba(212, 255, 0, 0.06) 0%,
     transparent 70%
   );
 }
@@ -144,15 +143,15 @@
   margin-bottom: 32px;
 }
 
-/* Teal perimeter ring SVG */
+/* Lime perimeter ring SVG */
 .perimeterRing {
   position: absolute;
   inset: 0;
-  filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.3));
+  filter: drop-shadow(0 0 20px rgba(212, 255, 0, 0.3));
 }
 
-/* Main teal ring - rotates clockwise */
-.tealRingAnimated {
+/* Main lime ring - rotates clockwise */
+.limeRingAnimated {
   animation: ringRotate 3s linear infinite;
   transform-origin: center;
 }
@@ -166,8 +165,8 @@
   }
 }
 
-/* Secondary teal ring - rotates counter-clockwise */
-.tealRingCounter {
+/* Secondary lime ring - rotates counter-clockwise */
+.limeRingCounter {
   animation: ringRotateCounter 4s linear infinite;
   transform-origin: center;
 }
@@ -193,10 +192,10 @@
 
 /* AutoRev logo image */
 .logoImage {
-  width: 50px !important;
+  width: 70px !important;
   height: auto !important;
   object-fit: contain;
-  filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.4));
+  filter: drop-shadow(0 0 12px rgba(212, 255, 0, 0.4));
 }
 
 @keyframes logoPulse {

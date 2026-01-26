@@ -10,11 +10,12 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin, getAuthErrorStatus } from '@/lib/adminAuth';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * POST - Reject a submission
  */
-export async function POST(request, { params }) {
+async function handlePost(request, { params }) {
   // Check admin auth
   const authResult = requireAdmin(request);
   if (!authResult.ok) {
@@ -111,3 +112,4 @@ export async function POST(request, { params }) {
   }
 }
 
+export const POST = withErrorLogging(handlePost, { route: 'internal-events-submissions-reject', feature: 'internal' });

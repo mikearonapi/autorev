@@ -1,0 +1,78 @@
+---
+description: "Testing Agent - Test patterns and coverage. Invoke when writing tests."
+globs:
+  - "**/*.test.ts"
+  - "**/*.test.tsx"
+  - "**/*.spec.ts"
+alwaysApply: false
+---
+
+# Testing Agent
+
+## Test Priority
+
+| Always Test | Usually Test | Rarely Test |
+|-------------|--------------|-------------|
+| Performance calculations | Component interactions | Styling |
+| car_id resolution | API responses | Static content |
+| Tier access logic | Form validation | |
+| Data transformations | Loading/error states | |
+
+## Unit Tests
+
+```typescript
+// Pure functions
+describe('calculateHpGain', () => {
+  it('calculates positive gain', () => {
+    expect(calculateHpGain(444, 543)).toBe(99);
+  });
+
+  it('handles null stock', () => {
+    expect(calculateHpGain(null, 543)).toBeNull();
+  });
+});
+```
+
+## Component Tests
+
+```typescript
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+
+describe('CarCard', () => {
+  it('displays car info', () => {
+    render(<CarCard car={mockCar} />);
+    expect(screen.getByText('2024 BMW M3')).toBeInTheDocument();
+  });
+
+  it('calls onSelect when clicked', async () => {
+    const onSelect = vi.fn();
+    render(<CarCard car={mockCar} onSelect={onSelect} />);
+    await userEvent.click(screen.getByRole('article'));
+    expect(onSelect).toHaveBeenCalledWith(mockCar.id);
+  });
+});
+```
+
+## API Tests
+
+```typescript
+describe('GET /api/cars/[slug]', () => {
+  it('returns car for valid slug', async () => {
+    const response = await GET(request, { params: { slug: 'bmw-m3-2024' } });
+    expect(response.status).toBe(200);
+  });
+
+  it('returns 404 for invalid slug', async () => {
+    const response = await GET(request, { params: { slug: 'invalid' } });
+    expect(response.status).toBe(404);
+  });
+});
+```
+
+## Checklist
+
+- [ ] Happy path tested
+- [ ] Error cases tested
+- [ ] Edge cases (null, empty, boundary)
+- [ ] Tests are independent (no order dependency)

@@ -19,28 +19,31 @@
 import { NextResponse } from 'next/server';
 import { supabaseServiceRole } from '@/lib/supabase';
 import { sendTrialEndingEmail } from '@/lib/emailService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
-// Verify cron secret
-function verifyCronAuth(request) {
+const CRON_SECRET = process.env.CRON_SECRET;
+
+/**
+ * Check if request is authorized via CRON_SECRET or Vercel cron header
+ * SECURITY: Requires either valid secret or Vercel cron header
+ */
+function isAuthorized(request) {
   const authHeader = request.headers.get('authorization');
-  const cronSecret = process.env.CRON_SECRET;
+  const vercelCron = request.headers.get('x-vercel-cron');
   
-  // Allow in development without secret
-  if (process.env.NODE_ENV === 'development') {
-    return true;
-  }
+  // Accept Vercel's automatic cron header
+  if (vercelCron === 'true') return true;
   
-  if (!cronSecret) {
-    console.warn('[Trial Reminders] CRON_SECRET not configured');
-    return false;
-  }
+  // Accept Bearer token with CRON_SECRET
+  if (CRON_SECRET && authHeader === `Bearer ${CRON_SECRET}`) return true;
   
-  return authHeader === `Bearer ${cronSecret}`;
+  return false;
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   // Verify authorization
-  if (!verifyCronAuth(request)) {
+  if (!isAuthorized(request)) {
+    console.error('[Trial Reminders] Unauthorized. CRON_SECRET set:', Boolean(CRON_SECRET), 'x-vercel-cron:', request.headers.get('x-vercel-cron'));
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -176,16 +179,19 @@ export async function POST(request) {
     console.error('[Trial Reminders] Fatal error:', error);
     return NextResponse.json({
       success: false,
-      error: error.message,
+      error: 'Trial reminders cron job failed',
       ...results,
     }, { status: 500 });
   }
 }
 
 // Also support GET for manual testing
-export async function GET(request) {
+async function handleGet(request) {
   if (process.env.NODE_ENV !== 'development') {
     return NextResponse.json({ error: 'GET only allowed in development' }, { status: 405 });
   }
-  return POST(request);
+  return handlePost(request);
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'cron/trial-reminders', feature: 'cron' });
+export const GET = withErrorLogging(handleGet, { route: 'cron/trial-reminders', feature: 'cron' });

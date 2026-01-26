@@ -9,8 +9,8 @@
 .virtualDyno {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 16px;
-  padding: 24px;
+  border-radius: 14px;
+  padding: 16px;
   /* Prevent chart elements from overflowing and causing page zoom on mobile */
   overflow: hidden;
   width: 100%;
@@ -29,8 +29,9 @@
   justify-content: space-between;
   align-items: flex-start;
   flex-wrap: nowrap;
+  flex-direction: row;
   margin-bottom: 20px;
-  gap: 12px;
+  gap: 8px;
 }
 
 .dynoTitleSection {
@@ -50,7 +51,7 @@
 }
 
 .dynoSubtitle {
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   color: var(--color-text-secondary, #94a3b8);
   line-height: 1.4;
 }
@@ -63,12 +64,14 @@
   background: rgba(16, 185, 129, 0.12);
   border: 1px solid rgba(16, 185, 129, 0.25);
   border-radius: 10px;
-  padding: 10px 16px;
+  padding: 8px 12px;
+  width: 100%;
+  justify-content: center;
 }
 
 .dynoGainValue {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: var(--color-accent-teal, #10b981);
 }
@@ -119,22 +122,23 @@
 /* Legend */
 .dynoLegend {
   display: flex;
-  justify-content: center;
-  gap: 24px;
+  justify-content: flex-start;
+  gap: 10px;
+  flex-wrap: wrap;
   margin-bottom: 16px;
 }
 
 .dynoLegendItem {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: var(--text-sm);
+  gap: 6px;
+  font-size: 0.75rem;
   color: rgba(255, 255, 255, 0.7);
   font-weight: 500;
 }
 
 .dynoLegendLine {
-  width: 20px;
+  width: 16px;
   height: 2px;
   border-radius: 1px;
 }
@@ -142,12 +146,13 @@
 /* Chart Container */
 .dynoChart {
   display: grid;
-  grid-template-columns: 40px 1fr;
+  grid-template-columns: 36px 1fr;
   grid-template-rows: 1fr 28px;
   gap: 6px;
-  height: 320px;
+  height: 260px;
   /* Reduced padding - markers now sit on the lines */
   padding-top: 16px;
+  padding-right: 0;
   /* No right padding needed - annotations now stay inside container */
   padding-right: 0;
 }
@@ -164,8 +169,8 @@
   flex-direction: column;
   justify-content: space-between;
   align-items: flex-end;
-  padding: 4px 6px 4px 0;
-  font-size: var(--text-xs);
+  padding: 4px 4px 4px 0;
+  font-size: 10px;
   color: rgba(255, 255, 255, 0.7);
   font-weight: 500;
 }
@@ -220,7 +225,7 @@
   display: flex;
   justify-content: space-between;
   padding: 4px 6px 0;
-  font-size: var(--text-2xs);
+  font-size: 10px;
   color: rgba(255, 255, 255, 0.7);
   font-weight: 500;
 }
@@ -253,8 +258,8 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 6px;
-  padding: 4px 8px;
+  gap: 4px;
+  padding: 3px 6px;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
   pointer-events: auto;
@@ -276,9 +281,9 @@
 /* Shared value styles - same size for both, compact */
 .dynoPeakValueMod,
 .dynoPeakValueTq {
-  font-size: 1rem;
+  font-size: 0.875rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   line-height: 1;
 }
 
@@ -288,7 +293,7 @@
   display: flex;
   align-items: center;
   gap: 2px;
-  font-size: 0.625rem;
+  font-size: 0.5625rem;
   font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
   text-transform: uppercase;
@@ -306,7 +311,7 @@
 
 .dynoPeakMarkerMod button:hover,
 .dynoPeakMarkerTq button:hover {
-  color: #fff;
+  color: var(--color-text-primary, #ffffff);
   background: rgba(255, 255, 255, 0.15);
 }
 
@@ -340,113 +345,188 @@
    Base styles are for mobile, media queries enhance for larger screens
    ========================================================================== */
 
-/* Mobile styles (base - screens under 600px) */
-@media (max-width: 600px) {
-  .virtualDyno {
-    padding: 16px;
-    border-radius: 14px;
-  }
-
-  .dynoHeader {
-    flex-direction: row;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .dynoTitleSection {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .dynoSubtitle {
-    font-size: 0.75rem;
-  }
-
-  .dynoGainBadge {
-    padding: 8px 12px;
-    width: 100%;
-    justify-content: center;
-  }
-
-  .dynoGainValue {
-    font-size: 1.25rem;
-  }
-
-  .dynoLegend {
-    gap: 10px;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  }
-
-  .dynoLegendItem {
-    font-size: 0.75rem;
-    gap: 6px;
-  }
-
-  .dynoLegendLine {
-    width: 16px;
-  }
-
-  /* Chart height on mobile - ensure it's tall enough to read */
-  .dynoChart {
-    height: 260px;
-    grid-template-columns: 36px 1fr;
-    padding-top: 16px;
-    padding-right: 0;
-  }
-
-  .dynoYAxis {
-    font-size: 10px;
-    padding-right: 4px;
-  }
-
-  .dynoXAxis {
-    font-size: 10px;
-  }
-
-  .dynoPeakMarkerMod,
-  .dynoPeakMarkerTq {
-    padding: 3px 6px;
-    gap: 4px;
-    transform: translate(-50%, 0%);
-  }
-
-  .dynoPeakValueMod,
-  .dynoPeakValueTq {
-    font-size: 0.875rem;
-  }
-
-  .dynoPeakLabelMod,
-  .dynoPeakLabelTq {
-    font-size: 0.5625rem;
-  }
-
-  .dynoGainAnnotation {
-    font-size: var(--text-xs);
-    right: 4px;
-  }
-}
-
 /* Tablet and up (min-width: 601px) - enhanced experience */
 @media (min-width: 601px) {
+  .virtualDyno {
+    padding: 24px;
+    border-radius: 16px;
+  }
+  
+  .dynoHeader {
+    gap: 12px;
+  }
+  
+  .dynoSubtitle {
+    font-size: 0.8125rem;
+  }
+  
+  .dynoGainBadge {
+    padding: 10px 16px;
+    width: auto;
+    justify-content: flex-start;
+  }
+  
+  .dynoGainValue {
+    font-size: 1.5rem;
+  }
+  
+  .dynoLegend {
+    gap: 28px;
+    justify-content: center;
+    flex-wrap: nowrap;
+  }
+  
+  .dynoLegendItem {
+    font-size: var(--text-sm);
+    gap: 10px;
+  }
+  
+  .dynoLegendLine {
+    width: 20px;
+  }
+  
   .dynoChart {
     height: 340px;
     grid-template-columns: 44px 1fr;
   }
   
-  .dynoLegend {
-    gap: 28px;
+  .dynoYAxis {
+    font-size: var(--text-xs);
+    padding-right: 6px;
+  }
+  
+  .dynoXAxis {
+    font-size: var(--text-2xs);
   }
   
   .dynoPeakMarkerMod,
   .dynoPeakMarkerTq {
     padding: 5px 10px;
     gap: 6px;
-    transform: translate(-50%, 0%);
   }
   
   .dynoPeakValueMod,
   .dynoPeakValueTq {
     font-size: 1.125rem;
+  }
+  
+  .dynoPeakLabelMod,
+  .dynoPeakLabelTq {
+    font-size: 0.625rem;
+  }
+}
+
+/* ==========================================================================
+   HOVER TOOLTIP - Interactive RPM value display
+   ========================================================================== */
+
+.dynoHoverLine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+  z-index: 15;
+}
+
+.dynoHoverTooltip {
+  position: absolute;
+  top: 8px;
+  background: rgba(0, 0, 0, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 6px 10px;
+  pointer-events: none;
+  z-index: 25;
+  min-width: 120px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+.dynoHoverRpm {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 6px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 4px;
+}
+
+.dynoHoverRow {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.6875rem;
+  margin-top: 4px;
+}
+
+.dynoHoverRow > span:first-child {
+  font-weight: 600;
+  min-width: 24px;
+}
+
+.dynoHoverStock {
+  color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-mono, monospace);
+}
+
+.dynoHoverArrow {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.625rem;
+}
+
+.dynoHoverMod {
+  color: rgba(255, 255, 255, 0.9);
+  font-family: var(--font-mono, monospace);
+  font-weight: 600;
+}
+
+.dynoHoverGain {
+  color: var(--color-accent-teal, #10b981);
+  font-family: var(--font-mono, monospace);
+  font-size: 0.6875rem;
+  font-weight: 600;
+}
+
+/* Tablet and up hover tooltip enhancements */
+@media (min-width: 601px) {
+  .dynoHoverTooltip {
+    padding: 8px 12px;
+    min-width: 140px;
+  }
+  
+  .dynoHoverRpm {
+    font-size: 0.75rem;
+  }
+  
+  .dynoHoverRow {
+    font-size: 0.75rem;
+    gap: 6px;
+  }
+}
+
+/* ==========================================================================
+   REDUCED MOTION - Accessibility support
+   Disable animations for users who prefer reduced motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .donutSegment {
+    animation: none;
+    transition: none;
+  }
+  
+  .dynoHoverLine {
+    transition: none;
+  }
+  
+  .dynoHoverTooltip {
+    transition: none;
+  }
+  
+  .dynoPeakMarkerMod,
+  .dynoPeakMarkerTq {
+    transition: none;
   }
 }

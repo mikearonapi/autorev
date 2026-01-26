@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdmin, getAuthErrorStatus } from '@/lib/adminAuth';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Force dynamic rendering - this route uses request.headers and request.url
 export const dynamic = 'force-dynamic';
@@ -16,7 +17,7 @@ const supabase = (supabaseUrl && supabaseServiceKey)
  * GET /api/internal/car-variants?carSlug=&limit=
  * Admin-only list of car variants for tooling/QA.
  */
-export async function GET(request) {
+async function handleGet(request) {
   try {
     const auth = requireAdmin(request);
     if (!auth.ok) {
@@ -56,9 +57,11 @@ export async function GET(request) {
     });
   } catch (err) {
     console.error('[internal/car-variants] GET error:', err);
-    return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch car variants' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'internal/car-variants', feature: 'internal' });
 
 
 

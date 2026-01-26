@@ -22,6 +22,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
 import { trackBackendAiUsage, AI_PURPOSES, AI_SOURCES } from '@/lib/backendAiLogger';
 import { resolveCarId } from '@/lib/carResolver';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Verify cron secret to prevent unauthorized access
 const CRON_SECRET = process.env.CRON_SECRET;
@@ -50,7 +51,7 @@ const CONFIG = {
 
 export const maxDuration = 300; // 5 minutes max for Vercel Pro
 
-export async function GET(request) {
+async function handleGet(request) {
   // Verify authorization
   const authHeader = request.headers.get('authorization');
   const vercelCron = request.headers.get('x-vercel-cron');
@@ -81,14 +82,17 @@ export async function GET(request) {
   } catch (error) {
     console.error('YouTube enrichment cron failed:', error);
     notifyCronFailure('YouTube Enrichment', error, { phase: 'pipeline' });
-    return Response.json({ error: error.message }, { status: 500 });
+    return Response.json({ error: 'YouTube enrichment cron failed' }, { status: 500 });
   }
 }
 
 // Also support POST for manual triggers
-export async function POST(request) {
-  return GET(request);
+async function handlePost(request) {
+  return handleGet(request);
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cron/youtube-enrichment', feature: 'cron' });
+export const POST = withErrorLogging(handlePost, { route: 'cron/youtube-enrichment', feature: 'cron' });
 
 async function runEnrichmentPipeline() {
   const startTime = Date.now();
@@ -323,10 +327,12 @@ async function searchYouTubeVideosWithExa(carName, brand) {
 async function fetchTranscripts() {
   const stats = { processed: 0, success: 0, failed: 0 };
 
+  const VIDEO_COLS = 'id, video_id, channel_id, title, description, thumbnail_url, duration_seconds, published_at, view_count, processing_status, transcript_text, created_at';
+  
   // Also check for videos stuck in 'transcript_fetched' with null transcripts
   const { data: videos } = await supabase
     .from('youtube_videos')
-    .select('*')
+    .select(VIDEO_COLS)
     .or('processing_status.eq.pending,and(processing_status.eq.transcript_fetched,transcript_text.is.null)')
     .limit(CONFIG.transcriptBatchSize);
 
@@ -475,9 +481,11 @@ async function fetchTranscriptViaSupadata(videoId) {
 async function processWithAI() {
   const stats = { processed: 0, success: 0, failed: 0 };
 
+  const AI_VIDEO_COLS = 'id, video_id, channel_id, title, description, transcript_text, processing_status, created_at';
+  
   const { data: videos } = await supabase
     .from('youtube_videos')
-    .select('*')
+    .select(AI_VIDEO_COLS)
     .eq('processing_status', 'transcript_fetched')
     .limit(CONFIG.aiBatchSize);
 
@@ -645,10 +653,12 @@ async function aggregateConsensus() {
 
   const uniqueCarIds = [...new Set(carLinks?.map(l => l.car_id).filter(Boolean) || [])];
 
+  const LINK_COLS = 'id, video_id, car_id, role, relevance_score, sentiment, key_points, created_at';
+  
   for (const carId of uniqueCarIds) {
     const { data: links } = await supabase
       .from('youtube_video_car_links')
-      .select('*')
+      .select(LINK_COLS)
       .eq('car_id', carId)
       .eq('role', 'primary');
 

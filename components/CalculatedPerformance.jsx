@@ -8,7 +8,6 @@
  */
 
 import React from 'react';
-import AskALButton from './AskALButton';
 import styles from './CalculatedPerformance.module.css';
 import { Icons } from '@/components/ui/Icons';
 
@@ -286,22 +285,6 @@ export default function CalculatedPerformance({
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
           <h3 className={styles.sectionTitle}>Performance Metrics</h3>
-          <AskALButton
-            category="Performance Metrics"
-            prompt={performancePrompt}
-            displayMessage={performanceDisplayMessage}
-            carName={carName}
-            carSlug={carSlug}
-            variant="header"
-            metadata={{
-              section: 'performance-metrics',
-              estimated060,
-              estimatedQuarter,
-              estimatedTrap,
-              stock060,
-              stockQuarter,
-            }}
-          />
         </div>
         <div className={styles.metricsGrid}>
           <MetricRow 
@@ -364,23 +347,6 @@ export default function CalculatedPerformance({
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
           <h3 className={styles.sectionTitle}>Experience Scores</h3>
-          <AskALButton
-            category="Experience Scores"
-            prompt={experiencePrompt}
-            displayMessage={experienceDisplayMessage}
-            carName={carName}
-            carSlug={carSlug}
-            variant="header"
-            metadata={{
-              section: 'experience-scores',
-              comfort: finalComfort,
-              reliability: finalReliability,
-              sound: finalSound,
-              hasExhaust,
-              hasSuspension,
-              hasTune,
-            }}
-          />
         </div>
         <div className={styles.scoresGrid}>
           <ScoreBar 

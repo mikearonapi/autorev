@@ -7,13 +7,14 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-export async function GET() {
+async function handleGet() {
   try {
     // Parallel queries for efficiency
     const [
@@ -214,3 +215,5 @@ function generateIssues(data) {
     return severityOrder[a.severity] - severityOrder[b.severity];
   });
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'internal/data-quality', feature: 'internal' });

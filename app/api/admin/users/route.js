@@ -7,7 +7,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { isAdminEmail } from '@/lib/adminAccess';
+import { requireAdmin, isAdminEmail } from '@/lib/adminAccess';
 import { getTotalUsersCount, getUserTierBreakdown } from '@/lib/adminMetricsService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
@@ -20,24 +20,16 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 async function handleGet(request) {
   try {
+    // Verify admin access
+    const denied = await requireAdmin(request);
+    if (denied) return denied;
+
     // Validate environment
     if (!supabaseUrl || !supabaseServiceKey) {
       return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
     }
 
-    // Verify admin access
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-    }
-
-    const token = authHeader.replace('Bearer ', '');
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    if (authError || !user || !isAdminEmail(user.email)) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
-    }
 
     // Parse params
     const { searchParams } = new URL(request.url);
@@ -81,7 +73,7 @@ async function handleGet(request) {
 
     if (profileError) {
       console.error('[AdminUsers] Profile query error:', profileError);
-      return NextResponse.json({ error: 'Database error', details: profileError.message }, { status: 500 });
+      return NextResponse.json({ error: 'Database error' }, { status: 500 });
     }
 
     // If no profiles, return early
@@ -295,7 +287,7 @@ async function handleGet(request) {
 
   } catch (err) {
     console.error('[AdminUsers] Unexpected error:', err);
-    return NextResponse.json({ error: 'Internal server error', details: err.message }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 

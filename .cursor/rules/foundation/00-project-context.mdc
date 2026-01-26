@@ -1,0 +1,21 @@
+---
+description: "AutoRev project context and quality standards"
+alwaysApply: true
+---
+
+# AutoRev Context
+
+**AutoRev** is a production-grade automotive platform for enthusiasts to track, tune, and optimize their vehicles.
+
+## Quality Standards (Non-Negotiable)
+- **Reliable:** Handle edge cases, fail gracefully
+- **Performant:** LCP < 2.5s, INP < 200ms, CLS < 0.1
+- **Accessible:** 44px touch targets, 4.5:1 contrast
+- **Secure:** Validate inputs, verify webhooks, check auth
+
+## Definition of Done
+- [ ] Works as specified + edge cases handled
+- [ ] Loading states (skeletons, not spinners)
+- [ ] Error states with user guidance
+- [ ] Existing patterns followed (SOURCE_OF_TRUTH.md consulted)
+- [ ] Verification evidence provided

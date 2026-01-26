@@ -2,14 +2,14 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { postDailyDigest, postALIntelligence } from '@/lib/discord';
 import { generateALIntelligence } from '@/lib/alIntelligence';
-import { logCronError } from '@/lib/serverErrorLogger';
+import { logCronError, withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-export async function GET(request) {
+async function handleGet(request) {
   // Verify cron secret
   const authHeader = request.headers.get('authorization');
   const cronHeader = request.headers.get('x-vercel-cron');
@@ -347,15 +347,13 @@ export async function GET(request) {
     console.error('[Cron/DailyDigest] Error:', error);
     await logCronError('daily-digest', error, { phase: 'digest-generation' });
     return NextResponse.json(
-      { error: 'Failed to generate digest', details: error.message },
+      { error: 'Failed to generate daily digest' },
       { status: 500 }
     );
   }
 }
 
-
-
-
+export const GET = withErrorLogging(handleGet, { route: 'cron/daily-digest', feature: 'cron' });
 
 
 

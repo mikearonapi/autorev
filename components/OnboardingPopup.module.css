@@ -30,7 +30,7 @@
   position: relative;
   width: 100%;
   max-width: 360px;
-  height: 460px;
+  height: 520px;
   max-height: 90vh;
   overflow: hidden;
   background: var(--color-white);
@@ -157,8 +157,8 @@
   width: 52px;
   height: 52px;
   border-radius: var(--radius-lg);
-  background: #e6f7f3;
-  color: #10b981;
+  background: var(--color-accent-teal-muted, rgba(16, 185, 129, 0.15));
+  color: var(--color-accent-teal, #10b981);
   margin-bottom: var(--space-md);
   flex-shrink: 0;
 }
@@ -175,9 +175,9 @@
 
 /* Description */
 .description {
-  font-size: var(--font-size-sm);
-  color: var(--color-gray-600);
-  line-height: 1.5;
+  font-size: var(--font-size-base);
+  color: var(--color-gray-700);
+  line-height: 1.55;
   margin: 0;
   max-width: 320px;
 }
@@ -200,16 +200,17 @@
   padding: 0;
   text-align: left;
   width: 100%;
-  max-width: 280px;
+  max-width: 300px;
 }
 
 .featureItem {
   display: flex;
   align-items: center;
-  gap: var(--space-xs);
-  padding: 4px 0;
-  font-size: var(--font-size-xs);
-  color: var(--color-gray-600);
+  gap: var(--space-sm);
+  padding: 6px 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-700);
+  line-height: 1.4;
 }
 
 .featureIcon {
@@ -217,6 +218,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 18px;
+  height: 18px;
 }
 
 /* Dot Navigation - inside footer */
@@ -252,10 +255,10 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-xs);
-  padding: var(--space-sm) var(--space-lg) var(--space-md);
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
   border-top: 1px solid var(--color-gray-200);
-  background: #ffffff;
+  background: var(--color-text-primary, #ffffff);
   border-radius: 0 0 var(--radius-xl) var(--radius-xl);
 }
 
@@ -269,14 +272,15 @@
 .prevBtn {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 8px 14px;
+  gap: 6px;
+  padding: 10px 16px;
+  min-height: 44px;
   background: var(--color-white);
   border: 1px solid var(--color-gray-300);
   border-radius: var(--radius-md);
-  font-size: var(--font-size-xs);
+  font-size: var(--font-size-sm);
   font-weight: 600;
-  color: var(--color-gray-600);
+  color: var(--color-gray-700);
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -289,13 +293,14 @@
 .nextBtn {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 8px 20px;
+  gap: 6px;
+  padding: 10px 24px;
+  min-height: 44px;
   background: var(--sn-accent);
   border: none;
   border-radius: var(--radius-md);
-  font-size: var(--font-size-xs);
-  font-weight: 600;
+  font-size: var(--font-size-sm);
+  font-weight: 700;
   color: var(--color-gray-900);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -309,14 +314,22 @@
   transform: scale(0.98);
 }
 
-/* Checkbox - at bottom, smaller */
+/* Checkbox - accessible touch target with visible label */
 .checkbox {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   cursor: pointer;
   user-select: none;
   justify-content: center;
+  padding: 8px 12px;
+  min-height: 44px;
+  border-radius: var(--radius-md);
+  transition: background-color 0.2s ease;
+}
+
+.checkbox:hover {
+  background: var(--color-gray-50);
 }
 
 .checkbox input {
@@ -327,37 +340,39 @@
 }
 
 .checkmark {
-  width: 14px;
-  height: 14px;
-  border: 1.5px solid var(--color-gray-300);
-  border-radius: 3px;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--color-gray-400);
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
   background: var(--color-white);
+  flex-shrink: 0;
 }
 
 .checkbox input:checked + .checkmark {
-  background: var(--sn-primary);
-  border-color: var(--sn-primary);
+  background: var(--color-accent-teal, #10b981);
+  border-color: var(--color-accent-teal, #10b981);
   color: var(--color-white);
 }
 
 .checkbox:hover .checkmark {
-  border-color: var(--color-gray-400);
+  border-color: var(--color-gray-500);
 }
 
 .checkboxLabel {
-  font-size: 11px;
-  color: var(--color-gray-400);
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  font-weight: 500;
 }
 
 /* Responsive adjustments */
 @media (min-width: 768px) {
   .popup {
-    max-width: 420px;
-    height: 500px;
+    max-width: 440px;
+    height: 560px;
   }
 
   .content {
@@ -365,12 +380,26 @@
   }
 
   .iconWrapper {
-    width: 56px;
-    height: 56px;
+    width: 60px;
+    height: 60px;
   }
 
   .title {
     font-size: var(--font-size-2xl);
+  }
+
+  .description {
+    font-size: var(--font-size-lg);
+  }
+
+  .featureItem {
+    font-size: var(--font-size-base);
+  }
+
+  .nextBtn,
+  .prevBtn {
+    font-size: var(--font-size-base);
+    padding: 12px 28px;
   }
 }
 

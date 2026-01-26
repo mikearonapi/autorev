@@ -17,9 +17,11 @@ const supabaseAdmin = createClient(
 );
 
 async function handleGet() {
+  const TURBO_COLS = 'id, brand, model, frame_size, inducer_mm, exducer_mm, trim, compressor_ar, turbine_ar, bearing_type, max_hp, oil_feed, water_cooled, notes, created_at';
+  
   const { data, error } = await supabaseAdmin
     .from('turbo_models')
-    .select('*')
+    .select(TURBO_COLS)
     .order('brand')
     .order('model');
   

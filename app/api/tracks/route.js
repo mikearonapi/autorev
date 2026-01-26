@@ -7,6 +7,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { errors } from '@/lib/apiErrors';
 import { NextResponse } from 'next/server';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Create Supabase client
 const supabase = createClient(
@@ -14,7 +15,7 @@ const supabase = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY
 );
 
-export async function GET(request) {
+async function handleGet(request) {
   try {
     const { searchParams } = new URL(request.url);
     const popularOnly = searchParams.get('popular') === 'true';
@@ -22,9 +23,11 @@ export async function GET(request) {
     const region = searchParams.get('region');
     const trackType = searchParams.get('type');
     
+    const TRACK_COLS = 'id, slug, name, location, country, region, track_type, length_miles, lap_record_seconds, lap_record_car, website_url, image_url, is_popular, is_active, popularity_rank, created_at';
+    
     let query = supabase
       .from('tracks')
-      .select('*')
+      .select(TRACK_COLS)
       .eq('is_active', true)
       .order('popularity_rank', { ascending: true, nullsLast: true });
     
@@ -94,3 +97,5 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'tracks', feature: 'lap-times' });

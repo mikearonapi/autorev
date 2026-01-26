@@ -256,8 +256,8 @@
 
 .tierPremium { background: var(--tier-premium-bg); color: var(--color-info-light, #c4b5fd); }
 .tierUpper { background: var(--tier-upper-bg); color: var(--color-accent-blue-light, #93c5fd); }
-.tierMid { background: var(--tier-mid-bg); color: #6ee7b7; }
-.tierEntry { background: var(--tier-entry-bg); color: #fcd34d; }
+.tierMid { background: var(--tier-mid-bg); color: var(--color-accent-teal-light, #34d399); }
+.tierEntry { background: var(--tier-entry-bg); color: var(--color-accent-amber-light, #fbbf24); }
 
 .categoryBadge,
 .brandBadge {
@@ -318,8 +318,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   background: rgba(255, 255, 255, 0.9);
   border: none;
   border-radius: 50%;
@@ -2107,8 +2107,8 @@
   }
 }
 
-/* Medium tablets - between phone and large tablet */
-@media (min-width: 601px) and (max-width: 900px) {
+/* Medium tablets - mobile-first: apply from 601px, override at 901px+ */
+@media (min-width: 601px) {
   .heroImageWrapper {
     max-width: min(90%, 450px);
     aspect-ratio: 16 / 9;

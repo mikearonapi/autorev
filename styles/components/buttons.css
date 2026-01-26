@@ -98,20 +98,21 @@
 }
 
 /* ==========================================================================
-   ACCENT BUTTON - GOLD
+   ACCENT BUTTON - AMBER
    Secondary CTAs, brand-colored actions
+   Note: Gold color deprecated - now uses amber
    ========================================================================== */
 
 .btn-accent {
   composes: btn-base;
-  background: var(--color-accent-gold, #d4a84b);
+  background: var(--color-accent-amber, #f59e0b);
   color: var(--color-text-inverted, #000);
   border-radius: var(--radius-md, 10px);
 }
 
 .btn-accent:hover:not(:disabled) {
-  background: var(--color-accent-gold-hover, #e8c875);
-  box-shadow: var(--shadow-gold);
+  background: var(--color-accent-amber-light, #fbbf24);
+  box-shadow: var(--shadow-amber, 0 4px 14px rgba(245, 158, 11, 0.25));
 }
 
 /* ==========================================================================

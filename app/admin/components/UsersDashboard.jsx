@@ -11,6 +11,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import Image from 'next/image';
 import styles from './UsersDashboard.module.css';
 import {
   UsersIcon,
@@ -376,7 +377,7 @@ export function UsersDashboard({ token, range = '7d', currentUserId = null }) {
                     <div className={styles.userCell}>
                       <div className={styles.avatar}>
                         {user.avatar ? (
-                          <img src={user.avatar} alt="" />
+                          <Image src={user.avatar} alt="" width={32} height={32} style={{ objectFit: 'cover', borderRadius: '50%' }} />
                         ) : (
                           <span>{(user.displayName?.[0] || '?').toUpperCase()}</span>
                         )}

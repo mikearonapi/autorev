@@ -1,0 +1,400 @@
+---
+description: "UI Quality Agent - Premium mobile UX patterns inspired by WHOOP, Strava, Airbnb. Auto-activates for UI files."
+globs:
+  - "**/*.tsx"
+  - "**/*.jsx"
+  - "**/*.css"
+  - "**/components/**"
+alwaysApply: false
+---
+
+# UI Quality Agent
+
+Build interfaces that match the quality of WHOOP, Strava, and Airbnb.
+
+---
+
+## AutoRev Brand Colors
+
+| Color | Variable | Purpose |
+|-------|----------|---------|
+| Lime | `--color-accent-lime` | CTAs, primary buttons |
+| Teal | `--color-accent-teal` | Gains, positive data, progress |
+| Blue | `--color-accent-blue` | Stock/baseline values |
+| Amber | `--color-warning` | Warnings only |
+
+```tsx
+// ✅ Correct
+<span className="text-[var(--color-accent-teal)]">+99 HP</span>
+
+// ❌ Never hardcode
+<span className="text-[#10b981]">+99 HP</span>
+```
+
+---
+
+## Dark Theme Excellence (Like WHOOP)
+
+AutoRev uses a dark theme. Do it right:
+
+```tsx
+// Background layers (darkest to lightest)
+bg-[var(--color-bg-base)]      // #0d1b2a - Page background
+bg-[var(--color-bg-surface)]   // #1b2838 - Cards, elevated surfaces
+bg-[var(--color-bg-elevated)]  // #243447 - Modals, dropdowns
+
+// Borders - subtle, not harsh
+border-[var(--color-border)]   // Subtle gray, not white
+
+// Text hierarchy
+text-white                     // Primary content
+text-[var(--color-text-secondary)]  // Secondary info
+text-[var(--color-text-muted)]      // Tertiary, hints
+```
+
+**Dark theme rules:**
+- Never use pure white backgrounds
+- Borders should be subtle (15-20% opacity)
+- Use surface elevation for hierarchy
+- Accent colors should "glow" against dark
+
+---
+
+## Touch Targets (NON-NEGOTIABLE)
+
+**44px minimum for ALL interactive elements.**
+
+```tsx
+// ✅ Buttons
+<Button className="h-11 px-6">Submit</Button>
+
+// ✅ Icon buttons
+<button className="h-11 w-11 flex items-center justify-center rounded-full">
+  <Icon className="h-5 w-5" />
+</button>
+
+// ✅ List items (tappable rows)
+<div className="min-h-[56px] flex items-center px-4 py-3">
+
+// ✅ Form inputs
+<Input className="h-11" />
+
+// ❌ Too small
+<button className="p-1"><Icon /></button>
+```
+
+---
+
+## Card Patterns (Like Airbnb)
+
+```tsx
+// Standard card
+<div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-surface)] p-4">
+  {children}
+</div>
+
+// Interactive card (tappable)
+<button className="w-full rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-surface)] p-4 text-left transition-colors hover:bg-[var(--color-bg-elevated)] active:scale-[0.98]">
+  {children}
+</button>
+
+// Card with image
+<div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-surface)] overflow-hidden">
+  <Image src={image} className="aspect-video object-cover" />
+  <div className="p-4">
+    <h3 className="font-semibold">Title</h3>
+    <p className="text-[var(--color-text-secondary)] text-sm">Subtitle</p>
+  </div>
+</div>
+```
+
+---
+
+## Bottom Sheets (Like WHOOP/Airbnb)
+
+For actions, filters, and confirmations:
+
+```tsx
+<Sheet>
+  <SheetTrigger asChild>
+    <Button>Open Options</Button>
+  </SheetTrigger>
+  <SheetContent side="bottom" className="rounded-t-2xl">
+    <SheetHeader>
+      <SheetTitle>Choose Option</SheetTitle>
+    </SheetHeader>
+    <div className="py-4 space-y-2">
+      {options.map(option => (
+        <button 
+          key={option.id}
+          className="w-full h-14 flex items-center px-4 rounded-lg hover:bg-[var(--color-bg-elevated)]"
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  </SheetContent>
+</Sheet>
+```
+
+---
+
+## Multi-Step Flows (Like WHOOP Onboarding)
+
+```tsx
+// Step indicator
+<div className="flex items-center justify-center gap-2 py-4">
+  {steps.map((_, index) => (
+    <div 
+      key={index}
+      className={cn(
+        "h-1.5 rounded-full transition-all",
+        index === currentStep 
+          ? "w-6 bg-[var(--color-accent-lime)]" 
+          : index < currentStep
+            ? "w-1.5 bg-[var(--color-accent-lime)]"
+            : "w-1.5 bg-[var(--color-border)]"
+      )}
+    />
+  ))}
+</div>
+
+// Step header
+<div className="text-center mb-8">
+  <p className="text-[var(--color-text-muted)] text-sm mb-2">
+    STEP {currentStep + 1} OF {totalSteps}
+  </p>
+  <h1 className="text-2xl font-bold">{title}</h1>
+  <p className="text-[var(--color-text-secondary)] mt-2">{description}</p>
+</div>
+```
+
+---
+
+## Data Visualization (Like WHOOP/Apple Fitness)
+
+### Circular Progress (Recovery/Strain gauges)
+
+```tsx
+<svg className="w-32 h-32 -rotate-90">
+  {/* Background ring */}
+  <circle
+    cx="64" cy="64" r="56"
+    fill="none"
+    stroke="var(--color-border)"
+    strokeWidth="8"
+  />
+  {/* Progress ring */}
+  <circle
+    cx="64" cy="64" r="56"
+    fill="none"
+    stroke="var(--color-accent-teal)"
+    strokeWidth="8"
+    strokeLinecap="round"
+    strokeDasharray={`${progress * 351.86} 351.86`}
+  />
+</svg>
+<div className="absolute inset-0 flex items-center justify-center">
+  <span className="text-3xl font-bold">{value}%</span>
+</div>
+```
+
+### Stats Display
+
+```tsx
+// Large stat (primary metric)
+<div className="text-center">
+  <p className="text-[var(--color-text-muted)] text-sm uppercase tracking-wider">
+    Horsepower
+  </p>
+  <p className="text-4xl font-bold font-mono mt-1">
+    {hp}
+  </p>
+</div>
+
+// Stat row (secondary metrics)
+<div className="flex justify-between py-3 border-b border-[var(--color-border)]">
+  <span className="text-[var(--color-text-secondary)]">Torque</span>
+  <span className="font-mono font-medium">{torque} lb-ft</span>
+</div>
+```
+
+---
+
+## Stock vs Modified Pattern (AutoRev Specific)
+
+```tsx
+<div className="flex items-center gap-3 font-mono">
+  <span className="text-[var(--color-accent-blue)]">{stock} HP</span>
+  <span className="text-[var(--color-text-muted)]">→</span>
+  <span className="text-[var(--color-accent-teal)]">{modified} HP</span>
+  <span className="px-2 py-0.5 rounded bg-[var(--color-accent-teal)]/15 text-[var(--color-accent-teal)] text-sm">
+    +{modified - stock}
+  </span>
+</div>
+```
+
+---
+
+## Loading States (Skeletons)
+
+**Always match the content shape:**
+
+```tsx
+// Card skeleton
+function CarCardSkeleton() {
+  return (
+    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-surface)] overflow-hidden animate-pulse">
+      <div className="aspect-video bg-[var(--color-bg-elevated)]" />
+      <div className="p-4 space-y-3">
+        <div className="h-5 w-3/4 bg-[var(--color-bg-elevated)] rounded" />
+        <div className="h-4 w-1/2 bg-[var(--color-bg-elevated)] rounded" />
+        <div className="flex gap-2">
+          <div className="h-6 w-16 bg-[var(--color-bg-elevated)] rounded-full" />
+          <div className="h-6 w-20 bg-[var(--color-bg-elevated)] rounded-full" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Stats skeleton
+function StatsSkeleton() {
+  return (
+    <div className="animate-pulse space-y-4">
+      <div className="h-8 w-24 bg-[var(--color-bg-elevated)] rounded mx-auto" />
+      <div className="h-12 w-32 bg-[var(--color-bg-elevated)] rounded mx-auto" />
+    </div>
+  );
+}
+```
+
+---
+
+## Empty States (With Guidance)
+
+```tsx
+function EmptyGarage() {
+  return (
+    <div className="flex flex-col items-center justify-center py-16 px-6 text-center">
+      <div className="w-16 h-16 rounded-full bg-[var(--color-bg-elevated)] flex items-center justify-center mb-4">
+        <CarIcon className="w-8 h-8 text-[var(--color-text-muted)]" />
+      </div>
+      <h3 className="text-lg font-semibold mb-2">No cars yet</h3>
+      <p className="text-[var(--color-text-secondary)] mb-6 max-w-xs">
+        Add your first car to start tracking performance and maintenance.
+      </p>
+      <Button className="h-11">
+        <PlusIcon className="w-4 h-4 mr-2" />
+        Add Your First Car
+      </Button>
+    </div>
+  );
+}
+```
+
+---
+
+## Form Patterns (Like Strava/Airbnb)
+
+```tsx
+// Input with label
+<div className="space-y-2">
+  <Label htmlFor="mileage">Current Mileage</Label>
+  <Input
+    id="mileage"
+    type="number"
+    inputMode="numeric"
+    placeholder="e.g., 45000"
+    className="h-11"
+  />
+  <p className="text-sm text-[var(--color-text-muted)]">
+    We'll use this for maintenance reminders
+  </p>
+</div>
+
+// Selection chips (like activity type selection)
+<div className="flex flex-wrap gap-2">
+  {options.map(option => (
+    <button
+      key={option.id}
+      onClick={() => toggleOption(option.id)}
+      className={cn(
+        "h-10 px-4 rounded-full border transition-colors",
+        selected.includes(option.id)
+          ? "bg-[var(--color-accent-lime)] border-[var(--color-accent-lime)] text-black"
+          : "border-[var(--color-border)] hover:border-[var(--color-text-muted)]"
+      )}
+    >
+      {option.label}
+    </button>
+  ))}
+</div>
+```
+
+---
+
+## Accessibility Essentials
+
+- **Touch targets:** 44px minimum (h-11)
+- **Focus states:** Visible ring on keyboard navigation
+- **Color independence:** Never color alone (add icons/text)
+- **Contrast:** 4.5:1 for text
+- **Labels:** All form inputs must have labels
+
+```tsx
+// Focus state
+<button className="focus-visible:ring-2 focus-visible:ring-[var(--color-accent-lime)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-bg-base)]">
+
+// Icon button with label
+<button aria-label="Delete car from garage">
+  <TrashIcon className="h-5 w-5" />
+</button>
+```
+
+---
+
+## Animation Principles
+
+```tsx
+// Subtle hover lift
+<div className="transition-transform hover:-translate-y-0.5">
+
+// Tap feedback
+<button className="active:scale-[0.98] transition-transform">
+
+// Smooth color transitions
+<div className="transition-colors duration-150">
+
+// Skeleton pulse
+<div className="animate-pulse">
+```
+
+---
+
+## Quality Checklist
+
+### Brand
+- [ ] Using CSS variables (no hardcoded colors)
+- [ ] Stock=blue, Modified=teal, CTA=lime
+- [ ] Dark theme layers correct
+
+### Touch & Interaction
+- [ ] All touch targets 44px+ (h-11)
+- [ ] Focus indicators visible
+- [ ] Tap feedback on buttons
+
+### Content
+- [ ] Skeletons match content shape
+- [ ] Empty states guide next action
+- [ ] Error states are helpful
+
+### Data Display
+- [ ] Monospace for numbers
+- [ ] Clear visual hierarchy
+- [ ] Stock/modified colors correct
+
+### Polish
+- [ ] Cards have consistent padding (p-4 or p-6)
+- [ ] Borders are subtle, not harsh
+- [ ] Spacing follows 4px grid

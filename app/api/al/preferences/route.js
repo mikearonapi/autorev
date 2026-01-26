@@ -15,6 +15,7 @@
 import { NextResponse } from 'next/server';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { errors } from '@/lib/apiErrors';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * Create Supabase client for route handlers (supports both cookie and Bearer token)
@@ -40,7 +41,7 @@ const DEFAULT_PREFERENCES = {
  * GET /api/al/preferences
  * Fetch user's AL preferences (creates defaults if none exist)
  */
-export async function GET(request) {
+async function handleGet(request) {
   try {
     const { supabase, bearerToken } = await createSupabaseClient(request);
     
@@ -57,10 +58,12 @@ export async function GET(request) {
       return errors.unauthorized();
     }
     
+    const PREF_COLS = 'id, user_id, response_style, technical_level, focus_areas, preferred_topics, communication_tone, created_at, updated_at';
+    
     // Fetch user preferences
     const { data: preferences, error: fetchError } = await supabase
       .from('al_user_preferences')
-      .select('*')
+      .select(PREF_COLS)
       .eq('user_id', user.id)
       .single();
     
@@ -89,7 +92,7 @@ export async function GET(request) {
  * PUT /api/al/preferences
  * Update user's AL preferences (upserts if none exist)
  */
-export async function PUT(request) {
+async function handlePut(request) {
   try {
     const { supabase, bearerToken } = await createSupabaseClient(request);
     
@@ -166,3 +169,6 @@ export async function PUT(request) {
     return errors.internal();
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'al/preferences', feature: 'al' });
+export const PUT = withErrorLogging(handlePut, { route: 'al/preferences', feature: 'al' });

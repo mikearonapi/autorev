@@ -9,11 +9,17 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { isAdminEmail } from '@/lib/adminAccess';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { rateLimit } from '@/lib/rateLimit';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-export async function GET(request) {
+async function handleGet(request) {
+  // Rate limit - prevent DoS on expensive analytics queries
+  const limited = rateLimit(request, 'api');
+  if (limited) return limited;
+
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
   }
@@ -39,10 +45,12 @@ export async function GET(request) {
     
     // =========================================================================
     // Get Historical Retention Data (last 30 days)
+    const METRIC_COLS = 'id, metric_type, service_name, metric_date, metric_value, metadata, created_at';
+    
     // =========================================================================
     const { data: retentionHistory } = await supabase
       .from('usage_metrics')
-      .select('*')
+      .select(METRIC_COLS)
       .in('metric_type', ['D1_RETENTION', 'D7_RETENTION', 'D30_RETENTION', 'DAILY_ACTIVE_USERS'])
       .eq('service_name', 'PLATFORM')
       .gte('metric_date', new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0])
@@ -198,3 +206,4 @@ export async function GET(request) {
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'admin/retention', feature: 'admin' });

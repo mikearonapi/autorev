@@ -14,6 +14,7 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { EventTypeIcon, TrackEventBadgeIcon, FeaturedBadgeIcon } from '@/components/icons/EventIcons';
 import { useUserSavedEvents } from '@/hooks/useUserData';
 import { useEventAttendees } from '@/hooks/useEventsData';
+import { isPastDate } from '@/lib/dateUtils';
 
 /**
  * Format date for display
@@ -233,9 +234,40 @@ export default function CommunityEventDetailPage() {
   if (loading) {
     return (
       <div className={styles.page} data-no-main-offset>
-        <div className={styles.loadingState}>
-          <div className={styles.spinner} />
-          <p>Loading event details...</p>
+        {/* Skeleton Loading State */}
+        <div className={styles.titleBar}>
+          <div className={`${styles.backButton} ${styles.skeleton}`} />
+          <div className={styles.skeletonTitle} />
+        </div>
+        <div className={styles.skeletonHero} />
+        <div className={styles.content}>
+          <div className={styles.mainColumn}>
+            <div className={styles.skeletonHeader}>
+              <div className={styles.skeletonBadges}>
+                <div className={styles.skeletonBadge} />
+                <div className={styles.skeletonBadge} />
+              </div>
+              <div className={styles.skeletonActions}>
+                <div className={styles.skeletonBtn} />
+                <div className={styles.skeletonBtn} />
+                <div className={styles.skeletonBtn} />
+              </div>
+            </div>
+            <div className={styles.skeletonSection}>
+              <div className={styles.skeletonSectionTitle} />
+              <div className={styles.skeletonText} />
+              <div className={styles.skeletonText} style={{ width: '60%' }} />
+            </div>
+            <div className={styles.skeletonSection}>
+              <div className={styles.skeletonSectionTitle} />
+              <div className={styles.skeletonText} />
+              <div className={styles.skeletonText} style={{ width: '80%' }} />
+            </div>
+          </div>
+          <aside className={styles.sidebar}>
+            <div className={styles.skeletonCard} />
+            <div className={styles.skeletonCard} />
+          </aside>
         </div>
       </div>
     );
@@ -294,6 +326,11 @@ export default function CommunityEventDetailPage() {
   const brandAffinities = car_affinities.filter(a => a.brand);
   const carAffinities = car_affinities.filter(a => a.car_slug);
 
+  // Check if event is in the past
+  // Use end_date if available, otherwise start_date
+  const eventEndDate = end_date || start_date;
+  const isPastEvent = eventEndDate ? isPastDate(eventEndDate) : false;
+
   return (
     <div className={styles.page} data-no-main-offset>
       {/* Title Bar - Fixed at top */}
@@ -325,6 +362,11 @@ export default function CommunityEventDetailPage() {
           {/* Event Header */}
           <header className={styles.header}>
             <div className={styles.badges}>
+              {isPastEvent && (
+                <span className={styles.pastEventBadge}>
+                  Past Event
+                </span>
+              )}
               {event_type && (
                 <span className={styles.typeBadge}>
                   <EventTypeIcon slug={event_type.slug} size={16} />
@@ -347,10 +389,12 @@ export default function CommunityEventDetailPage() {
             
             {/* Action Buttons */}
             <div className={styles.headerActions}>
-              <EventRSVPButton
-                eventSlug={slug}
-                eventName={name}
-              />
+              {!isPastEvent && (
+                <EventRSVPButton
+                  eventSlug={slug}
+                  eventName={name}
+                />
+              )}
               <SaveEventButton
                 eventId={event.id}
                 eventSlug={slug}
@@ -358,7 +402,7 @@ export default function CommunityEventDetailPage() {
                 isSaved={isSaved}
                 onSaveChange={handleSaveChange}
               />
-              <AddToCalendarButton event={event} />
+              {!isPastEvent && <AddToCalendarButton event={event} />}
               <button 
                 className={styles.shareBtn}
                 onClick={handleShare}
@@ -518,18 +562,27 @@ export default function CommunityEventDetailPage() {
 
         {/* Sidebar */}
         <aside className={styles.sidebar}>
-          {/* RSVP Card */}
-          <div className={styles.rsvpCard}>
-            <h3>Going to this event?</h3>
-            <p className={styles.rsvpCardDesc}>
-              Let others know you're attending and connect with fellow enthusiasts at the event.
-            </p>
-            <EventRSVPButton
-              eventSlug={slug}
-              eventName={name}
-              variant="full-width"
-            />
-          </div>
+          {/* RSVP Card - Different content for past events */}
+          {isPastEvent ? (
+            <div className={`${styles.rsvpCard} ${styles.pastEventCard}`}>
+              <h3>This Event Has Ended</h3>
+              <p className={styles.rsvpCardDesc}>
+                This event took place on {formattedStartDate}. Check out similar upcoming events below.
+              </p>
+            </div>
+          ) : (
+            <div className={styles.rsvpCard}>
+              <h3>Going to this event?</h3>
+              <p className={styles.rsvpCardDesc}>
+                Let others know you're attending and connect with fellow enthusiasts at the event.
+              </p>
+              <EventRSVPButton
+                eventSlug={slug}
+                eventName={name}
+                variant="full-width"
+              />
+            </div>
+          )}
           
           {/* CTA Card */}
           <div className={styles.ctaCard}>

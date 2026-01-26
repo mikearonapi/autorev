@@ -9,14 +9,14 @@
  */
 
 import { NextResponse } from 'next/server';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { withErrorLogging, logCronError } from '@/lib/serverErrorLogger';
 import { 
   runSpotCheck, 
   runFullEvaluation, 
   getRecentRuns,
 } from '@/lib/alEvaluationRunner';
 import { getEvalDatasetStats } from '@/lib/alEvaluations';
-import { notifyDiscord } from '@/lib/discord';
+import { notifyDiscord, notifyCronFailure } from '@/lib/discord';
 
 // Cron secret for authentication
 const CRON_SECRET = process.env.CRON_SECRET;
@@ -201,18 +201,19 @@ async function handleGet(request) {
   } catch (error) {
     console.error('[AL Eval Cron] Error:', error);
     
-    // Send error notification
+    // Log to error tracking and send Discord notification
+    await logCronError('al-evaluation', error, { phase: 'evaluation', evalType });
+    
+    // Also send to alerts webhook
     try {
-      await notifyDiscord(`AL Evaluation cron failed: ${error.message}`, {
-        webhookUrl: process.env.DISCORD_ALERTS_WEBHOOK,
-      });
+      await notifyCronFailure('al-evaluation', error, { evalType });
     } catch (discordError) {
       console.error('[AL Eval Cron] Discord error notification failed:', discordError);
     }
     
     return NextResponse.json({
       success: false,
-      error: error.message,
+      error: 'AL evaluation cron job failed',
     }, { status: 500 });
   }
 }

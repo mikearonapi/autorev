@@ -6,12 +6,13 @@
  */
 
 import { NextResponse } from 'next/server';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Force dynamic rendering - this route uses request.url
 export const dynamic = 'force-dynamic';
 import { getServiceClient } from '@/lib/supabaseServer';
 
-export async function GET(request) {
+async function handleGet(request) {
   const supabase = getServiceClient();
   if (!supabase) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
@@ -22,10 +23,12 @@ export async function GET(request) {
     const trendHours = parseInt(searchParams.get('trend_hours') || '168', 10); // 7 days default
     const bucketHours = parseInt(searchParams.get('bucket_hours') || '24', 10); // Daily default
 
+    const STATS_COLS = 'total_errors, unresolved_errors, resolved_errors, errors_today, errors_this_week, top_severity';
+    
     // Get overall statistics from view
     const { data: statsData, error: statsError } = await supabase
       .from('error_statistics')
-      .select('*')
+      .select(STATS_COLS)
       .single();
 
     if (statsError) {
@@ -130,6 +133,8 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Unexpected error' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'internal-errors-stats', feature: 'internal' });
 
 
 

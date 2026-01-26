@@ -17,6 +17,7 @@ import { getSessionEarly, clearSessionCache } from '@/lib/sessionCache';
 import { useLoadingProgress } from './LoadingProgressProvider';
 import { trackSignUp as ga4TrackSignUp, trackLogin as ga4TrackLogin } from '@/lib/ga4';
 import dynamic from 'next/dynamic';
+import { TRIAL_CONFIG, calculateTrialEndDate } from '@/lib/tierAccess';
 
 // Dynamically import OnboardingFlow to avoid SSR issues
 const OnboardingFlow = dynamic(() => import('@/components/onboarding/OnboardingFlow'), {
@@ -218,7 +219,7 @@ function hasInlineSplash() {
 
 /**
  * Dismiss the inline OAuth splash with fade animation.
- * Ensures minimum display time of 1.5s for branding.
+ * Ensures minimum display time of 2s for branding.
  * @param {Function} callback - Called after splash is fully removed
  */
 function dismissInlineSplash(callback) {
@@ -229,7 +230,7 @@ function dismissInlineSplash(callback) {
   
   const startTime = window.__splashStartTime || Date.now();
   const elapsed = Date.now() - startTime;
-  const minDuration = 1500; // 1.5 seconds minimum
+  const minDuration = 2000; // 2 seconds minimum
   const remaining = Math.max(0, minDuration - elapsed);
   
   console.log('[Splash] Will dismiss in', remaining, 'ms (elapsed:', elapsed, 'ms)');
@@ -645,7 +646,8 @@ export function AuthProvider({ children }) {
   // Fetch user profile when authenticated
   // Returns profile data on success, or a minimal profile object on failure
   // This ensures the app can continue functioning even if profile fetch fails
-  const fetchProfile = useCallback(async (userId, timeout = 12000) => {
+  // NOTE: Timeout reduced from 12s to 6s for better UX - matches page loading timeouts
+  const fetchProfile = useCallback(async (userId, timeout = 6000) => {
     if (!userId) return null;
 
     console.log('[AuthProvider] fetchProfile called for user:', userId);
@@ -680,6 +682,11 @@ export function AuthProvider({ children }) {
           const authUser = authUserResult?.user;
 
           if (authUser) {
+            // Calculate trial end date for new users (7-day Pro trial)
+            const trialEndsAt = TRIAL_CONFIG.enabled 
+              ? calculateTrialEndDate(new Date()).toISOString()
+              : null;
+            
             const newProfileData = {
               id: authUser.id,
               email: authUser.email,
@@ -690,7 +697,9 @@ export function AuthProvider({ children }) {
               avatar_url: authUser.user_metadata?.avatar_url
                 || authUser.user_metadata?.picture
                 || null,
+              // Start with 'free' tier but trial_ends_at gives Pro access
               subscription_tier: 'free',
+              trial_ends_at: trialEndsAt,
               al_credits: 10,
               preferred_units: 'imperial',
               email_notifications: true,
@@ -1748,6 +1757,13 @@ export function AuthProvider({ children }) {
   // Check onboarding status when profile loads
   useEffect(() => {
     if (state.isAuthenticated && state.profile) {
+      // DEBUG: Log what's in the profile for onboarding check
+      console.log('[AuthProvider] Checking onboarding status with profile:', {
+        hasProfile: !!state.profile,
+        onboarding_completed_at: state.profile?.onboarding_completed_at,
+        onboarding_step: state.profile?.onboarding_step,
+        profileKeys: state.profile ? Object.keys(state.profile) : [],
+      });
       // Pass whether this is a fresh login (clears temporary dismissals)
       const isFresh = isFreshLoginRef.current;
       checkOnboardingStatus(state.profile, isFresh);
@@ -1826,7 +1842,7 @@ export function AuthProvider({ children }) {
       {/* Splash Screen - full-screen branded loading shown on fresh login */}
       {state.showSplashScreen && (
         <SplashScreen
-          duration={1500}
+          duration={2000}
           onComplete={handleSplashComplete}
         />
       )}

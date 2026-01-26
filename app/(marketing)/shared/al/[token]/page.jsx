@@ -4,19 +4,137 @@
  * Shared AL Conversation View
  * 
  * Public, read-only view of a shared AL conversation.
- * No authentication required.
+ * No authentication required - accessed via share token.
+ * 
+ * Features:
+ * - Token-based access
+ * - Read-only conversation display
+ * - Vehicle context shown
+ * - Citations visible
+ * - Share buttons
+ * - CTA to try AL
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import styles from './page.module.css';
 import { UI_IMAGES } from '@/lib/images';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import { Skeleton, SkeletonText } from '@/components/ui/Skeleton';
 
-// Simple markdown formatter for AL responses
-const FormattedMessage = ({ content }) => {
+// =============================================================================
+// SKELETON LOADER
+// =============================================================================
+
+function ConversationSkeleton() {
+  return (
+    <div className={styles.container}>
+      <header className={styles.header}>
+        <div className={styles.logo}>
+          <Skeleton width={120} height={32} variant="rounded" />
+        </div>
+        <div className={styles.headerMeta}>
+          <Skeleton width={140} height={28} variant="rounded" />
+        </div>
+      </header>
+
+      <main className={styles.main}>
+        <div className={styles.conversationHeader}>
+          <Skeleton width="60%" height={28} variant="rounded" style={{ margin: '0 auto 8px' }} />
+          <Skeleton width={180} height={14} variant="rounded" style={{ margin: '0 auto' }} />
+        </div>
+
+        <div className={styles.messages} aria-label="Loading conversation">
+          {/* User message skeleton */}
+          <div className={`${styles.message} ${styles.userMessage}`}>
+            <div className={styles.messageContent}>
+              <Skeleton width="100%" height={40} variant="rounded" />
+            </div>
+          </div>
+          
+          {/* Assistant message skeleton */}
+          <div className={`${styles.message} ${styles.assistantMessage}`}>
+            <Skeleton width={36} height={36} variant="circular" />
+            <div className={styles.messageContent}>
+              <SkeletonText lines={4} lineHeight={16} gap={8} />
+            </div>
+          </div>
+          
+          {/* Another user message */}
+          <div className={`${styles.message} ${styles.userMessage}`}>
+            <div className={styles.messageContent}>
+              <Skeleton width="80%" height={40} variant="rounded" />
+            </div>
+          </div>
+          
+          {/* Another assistant message */}
+          <div className={`${styles.message} ${styles.assistantMessage}`}>
+            <Skeleton width={36} height={36} variant="circular" />
+            <div className={styles.messageContent}>
+              <SkeletonText lines={6} lineHeight={16} gap={8} />
+            </div>
+          </div>
+        </div>
+
+        <div className={styles.cta}>
+          <Skeleton width="70%" height={20} variant="rounded" style={{ margin: '0 auto 16px' }} />
+          <Skeleton width={140} height={48} variant="rounded" style={{ margin: '0 auto' }} />
+        </div>
+      </main>
+    </div>
+  );
+}
+
+// =============================================================================
+// CITATION DISPLAY
+// =============================================================================
+
+function CitationBadge({ source, index }) {
+  const label = source.title || source.name || `Source ${index + 1}`;
+  const url = source.url || source.link;
+  
+  if (url) {
+    return (
+      <a 
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={styles.citation}
+        aria-label={`Source ${index + 1}: ${label}`}
+      >
+        [{index + 1}] {label}
+      </a>
+    );
+  }
+  
+  return (
+    <span className={styles.citation} aria-label={`Source ${index + 1}: ${label}`}>
+      [{index + 1}] {label}
+    </span>
+  );
+}
+
+function Citations({ sources }) {
+  if (!sources || sources.length === 0) return null;
+  
+  return (
+    <div className={styles.citationsWrapper} aria-label="Sources">
+      <span className={styles.citationsLabel}>Sources:</span>
+      <div className={styles.citationsList}>
+        {sources.map((source, i) => (
+          <CitationBadge key={i} source={source} index={i} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
+// FORMATTED MESSAGE
+// =============================================================================
+
+function FormattedMessage({ content, sources }) {
   if (!content) return null;
   
   const formatContent = (text) => {
@@ -85,8 +203,111 @@ const FormattedMessage = ({ content }) => {
     return elements;
   };
   
-  return <div className={styles.formattedMessage}>{formatContent(content)}</div>;
-};
+  return (
+    <div className={styles.formattedMessage}>
+      {formatContent(content)}
+      <Citations sources={sources} />
+    </div>
+  );
+}
+
+// =============================================================================
+// SHARE BUTTONS
+// =============================================================================
+
+function ShareButtons({ url, title }) {
+  const [copied, setCopied] = useState(false);
+  
+  const handleCopyLink = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error('Failed to copy:', err);
+    }
+  }, [url]);
+  
+  const handleNativeShare = useCallback(async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: title,
+          text: 'Check out this AL conversation from AutoRev',
+          url: url,
+        });
+      } catch (err) {
+        // User cancelled or error
+        if (err.name !== 'AbortError') {
+          console.error('Share failed:', err);
+        }
+      }
+    }
+  }, [title, url]);
+  
+  const handleTwitterShare = useCallback(() => {
+    const tweetText = encodeURIComponent(`${title} - Check out this helpful car advice from AL!`);
+    const tweetUrl = encodeURIComponent(url);
+    window.open(`https://twitter.com/intent/tweet?text=${tweetText}&url=${tweetUrl}`, '_blank');
+  }, [title, url]);
+  
+  return (
+    <div className={styles.shareButtons}>
+      <button 
+        onClick={handleCopyLink}
+        className={styles.shareButton}
+        aria-label={copied ? 'Link copied!' : 'Copy link to clipboard'}
+      >
+        {copied ? '✓ Copied!' : 'Copy Link'}
+      </button>
+      
+      {typeof navigator !== 'undefined' && navigator.share && (
+        <button 
+          onClick={handleNativeShare}
+          className={styles.shareButton}
+          aria-label="Share conversation"
+        >
+          Share
+        </button>
+      )}
+      
+      <button 
+        onClick={handleTwitterShare}
+        className={styles.shareButton}
+        aria-label="Share on Twitter/X"
+      >
+        Tweet
+      </button>
+    </div>
+  );
+}
+
+// =============================================================================
+// ERROR STATE
+// =============================================================================
+
+function ErrorState({ error, onRetry }) {
+  return (
+    <div className={styles.container}>
+      <div className={styles.errorState} role="alert" aria-live="assertive">
+        <h1>Conversation Not Found</h1>
+        <p>{error}</p>
+        {onRetry && (
+          <button onClick={onRetry} className={styles.retryButton} aria-label="Retry loading conversation">
+            Try Again
+          </button>
+        )}
+        <Link href="/" className={styles.homeLink}>
+          Go to AutoRev
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+// =============================================================================
+// MAIN COMPONENT
+// =============================================================================
 
 export default function SharedConversationPage() {
   const params = useParams();
@@ -95,56 +316,43 @@ export default function SharedConversationPage() {
   const [conversation, setConversation] = useState(null);
   const [messages, setMessages] = useState([]);
 
-  useEffect(() => {
-    const fetchConversation = async () => {
-      try {
-        const response = await fetch(`/api/shared/al/${params.token}`);
-        const data = await response.json();
-        
-        if (!response.ok) {
-          setError(data.error || 'Failed to load conversation');
-          return;
-        }
-        
-        setConversation(data.conversation);
-        setMessages(data.messages);
-      } catch (err) {
-        setError('Failed to load conversation');
-        console.error(err);
-      } finally {
-        setLoading(false);
+  const fetchConversation = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+      const response = await fetch(`/api/shared/al/${params.token}`);
+      const data = await response.json();
+      
+      if (!response.ok) {
+        setError(data.error || 'Failed to load conversation');
+        return;
       }
-    };
-
-    if (params.token) {
-      fetchConversation();
+      
+      setConversation(data.conversation);
+      setMessages(data.messages);
+    } catch (err) {
+      setError('Failed to load conversation. Please check your connection and try again.');
+      console.error('[SharedAL] Fetch error:', err);
+    } finally {
+      setLoading(false);
     }
   }, [params.token]);
 
+  useEffect(() => {
+    if (params.token) {
+      fetchConversation();
+    }
+  }, [params.token, fetchConversation]);
+
+  // Loading state - skeleton that matches content shape
   if (loading) {
-    return (
-      <div className={styles.container}>
-        <LoadingSpinner 
-          variant="branded" 
-          text="Loading conversation" 
-          fullPage 
-        />
-      </div>
-    );
+    return <ConversationSkeleton />;
   }
 
+  // Error state with retry option
   if (error) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.errorState}>
-          <h1>Conversation Not Found</h1>
-          <p>{error}</p>
-          <Link href="/" className={styles.homeLink}>
-            Go to AutoRev
-          </Link>
-        </div>
-      </div>
-    );
+    return <ErrorState error={error} onRetry={fetchConversation} />;
   }
 
   const formatDate = (dateString) => {
@@ -154,11 +362,14 @@ export default function SharedConversationPage() {
       day: 'numeric',
     });
   };
+  
+  const shareUrl = typeof window !== 'undefined' ? window.location.href : '';
+  const shareTitle = conversation?.title || 'AL Conversation';
 
   return (
     <div className={styles.container}>
       <header className={styles.header}>
-        <Link href="/" className={styles.logo}>
+        <Link href="/" className={styles.logo} aria-label="AutoRev Home">
           <Image 
             src="/logo.svg" 
             alt="AutoRev" 
@@ -171,19 +382,31 @@ export default function SharedConversationPage() {
         </div>
       </header>
 
-      <main className={styles.main}>
+      <main className={styles.main} role="main">
         <div className={styles.conversationHeader}>
           <h1 className={styles.title}>{conversation?.title || 'AL Conversation'}</h1>
+          {conversation?.carName && (
+            <p className={styles.carContext}>
+              About: <strong>{conversation.carName}</strong>
+            </p>
+          )}
           <p className={styles.meta}>
             {formatDate(conversation?.createdAt)} • {messages.length} messages
           </p>
+          <ShareButtons url={shareUrl} title={shareTitle} />
         </div>
 
-        <div className={styles.messages}>
+        <div 
+          className={styles.messages} 
+          role="log" 
+          aria-label="Conversation messages"
+          aria-live="polite"
+        >
           {messages.map((msg, i) => (
-            <div 
+            <article 
               key={i} 
               className={`${styles.message} ${msg.role === 'user' ? styles.userMessage : styles.assistantMessage}`}
+              aria-label={msg.role === 'user' ? 'Your question' : 'AL response'}
             >
               {msg.role === 'assistant' && (
                 <Image 
@@ -196,21 +419,26 @@ export default function SharedConversationPage() {
               )}
               <div className={styles.messageContent}>
                 {msg.role === 'assistant' ? (
-                  <FormattedMessage content={msg.content} />
+                  <FormattedMessage content={msg.content} sources={msg.sources} />
                 ) : (
-                  msg.content
+                  <p>{msg.content}</p>
                 )}
               </div>
-            </div>
+            </article>
           ))}
         </div>
 
-        <div className={styles.cta}>
-          <p>Want your own AI-powered automotive assistant?</p>
+        <section className={styles.cta} aria-labelledby="cta-heading">
+          <h2 id="cta-heading" className={styles.ctaHeading}>
+            Want answers like this for your car?
+          </h2>
+          <p className={styles.ctaText}>
+            AL knows your specific vehicle and can help with maintenance, mods, and more.
+          </p>
           <Link href="/join" className={styles.ctaBtn}>
             Try AL Free
           </Link>
-        </div>
+        </section>
       </main>
 
       <footer className={styles.footer}>

@@ -12,8 +12,10 @@ import { NextResponse } from 'next/server';
 // Force dynamic rendering - this route uses request.headers and request.url
 export const dynamic = 'force-dynamic';
 import { createClient } from '@supabase/supabase-js';
-import { isAdminEmail } from '@/lib/adminAccess';
+import { requireAdmin, isAdminEmail } from '@/lib/adminAccess';
 import { generateWelcomeEmailHtml, EMAIL_TEMPLATES } from '@/lib/emailService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { generateUnsubscribeToken } from '@/lib/unsubscribeToken';
 
 // For local dev, use localhost; for production, use the production URL
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://autorev.app';
@@ -179,7 +181,7 @@ function generateInactivity7dHtml(vars, baseUrl) {
               <p style="margin: 0 0 8px 0; font-size: 12px; color: #9ca3af;">
                 © ${year} AutoRev · <a href="${baseUrl}/privacy" style="color: #9ca3af; text-decoration: underline;">Privacy</a> · <a href="${baseUrl}/terms" style="color: #9ca3af; text-decoration: underline;">Terms</a>
               </p>
-              <a href="${baseUrl}/unsubscribe?email=${encodeURIComponent(vars.email || '')}" style="font-size: 11px; color: #9ca3af; text-decoration: underline;">
+              <a href="${baseUrl}/unsubscribe?token=${generateUnsubscribeToken(vars.email || 'preview@example.com')}" style="font-size: 11px; color: #9ca3af; text-decoration: underline;">
                 Unsubscribe from these emails
               </a>
             </td>
@@ -336,7 +338,7 @@ function generateInactivity21dHtml(vars, baseUrl) {
               <p style="margin: 0 0 8px 0; font-size: 12px; color: #9ca3af;">
                 © ${year} AutoRev · <a href="${baseUrl}/privacy" style="color: #9ca3af; text-decoration: underline;">Privacy</a> · <a href="${baseUrl}/terms" style="color: #9ca3af; text-decoration: underline;">Terms</a>
               </p>
-              <a href="${baseUrl}/unsubscribe?email=${encodeURIComponent(vars.email || '')}" style="font-size: 11px; color: #9ca3af; text-decoration: underline;">
+              <a href="${baseUrl}/unsubscribe?token=${generateUnsubscribeToken(vars.email || 'preview@example.com')}" style="font-size: 11px; color: #9ca3af; text-decoration: underline;">
                 Unsubscribe from these emails
               </a>
             </td>
@@ -732,59 +734,41 @@ const PREVIEW_TEMPLATES = {
 };
 
 /**
- * Check if user is admin via Bearer token (header or query param)
- * Uses isAdminEmail to check email against admin whitelist
+ * Check admin access with support for query param token (for new tab/window opens)
+ * Falls back to query param if no Authorization header is present
  */
-async function isAdmin(request, searchParams) {
-  try {
-    // Check Bearer token from header first
-    let bearerToken = getBearerToken(request);
+async function checkAdminWithQueryParam(request, searchParams) {
+  // First try standard requireAdmin (checks Authorization header)
+  const authHeader = request.headers.get('authorization');
+  
+  // If no auth header but token in query param, create a modified request
+  if (!authHeader && searchParams?.get('token')) {
+    const token = searchParams.get('token');
+    // Create new headers with Authorization
+    const newHeaders = new Headers(request.headers);
+    newHeaders.set('authorization', `Bearer ${token}`);
     
-    // If not in header, check query param (for new tab/window opens)
-    if (!bearerToken && searchParams) {
-      bearerToken = searchParams.get('token');
-    }
+    // Create a new request with the modified headers
+    const modifiedRequest = new Request(request.url, {
+      method: request.method,
+      headers: newHeaders,
+    });
     
-    if (!bearerToken) {
-      console.log('[Email Preview] No token provided');
-      return false;
-    }
-    
-    // Use service role client to validate the JWT token
-    const supabaseAdmin = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL,
-      process.env.SUPABASE_SERVICE_ROLE_KEY,
-      { auth: { persistSession: false } }
-    );
-    
-    // Validate the JWT and get user
-    const { data: { user }, error } = await supabaseAdmin.auth.getUser(bearerToken);
-    
-    if (error || !user) {
-      console.log('[Email Preview] Token validation failed:', error?.message);
-      return false;
-    }
-    
-    // Check admin status via email whitelist (consistent with other admin APIs)
-    const isAdminUser = isAdminEmail(user.email);
-    console.log('[Email Preview] Admin check:', { userId: user.id, email: user.email, isAdmin: isAdminUser });
-    
-    return isAdminUser;
-  } catch (err) {
-    console.error('[Email Preview] Auth error:', err);
-    return false;
+    return requireAdmin(modifiedRequest);
   }
+  
+  // Otherwise use standard requireAdmin
+  return requireAdmin(request);
 }
 
-export async function GET(request) {
+async function handleGet(request) {
   try {
     const { searchParams } = new URL(request.url);
     const templateSlug = searchParams.get('template') || 'welcome';
     
     // Check admin auth (supports token in header or query param)
-    if (!await isAdmin(request, searchParams)) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-    }
+    const denied = await checkAdminWithQueryParam(request, searchParams);
+    if (denied) return denied;
 
     const template = PREVIEW_TEMPLATES[templateSlug];
     
@@ -850,6 +834,8 @@ export async function GET(request) {
 
   } catch (err) {
     console.error('[Email Preview] Error:', err);
-    return NextResponse.json({ error: 'Internal server error', message: err.message }, { status: 500 });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'admin/emails/preview', feature: 'admin' });

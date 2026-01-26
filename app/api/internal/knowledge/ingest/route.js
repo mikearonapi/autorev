@@ -9,6 +9,7 @@ import {
   isEmbeddingConfigured 
 } from '@/lib/embeddingUtils';
 import { requireAdmin } from '@/lib/adminAuth';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -42,7 +43,7 @@ async function generateEmbedding(text) {
  * - text: string (required) raw textual content to index
  * - metadata: object (optional)
  */
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const auth = requireAdmin(request);
     if (!auth.ok) {
@@ -183,9 +184,11 @@ export async function POST(request) {
     });
   } catch (err) {
     console.error('[internal/knowledge/ingest] Error:', err);
-    return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to ingest knowledge document' }, { status: 500 });
   }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'internal/knowledge/ingest', feature: 'internal' });
 
 
 

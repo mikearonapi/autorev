@@ -13,7 +13,7 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { logCronError } from '@/lib/serverErrorLogger';
+import { logCronError, withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Use service role for admin operations
 const supabase = createClient(
@@ -25,24 +25,29 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60; // Allow up to 60s for batch processing
 
+const CRON_SECRET = process.env.CRON_SECRET;
+
 /**
- * Verify cron secret to prevent unauthorized access
+ * Check if request is authorized via CRON_SECRET or Vercel cron header
+ * SECURITY: Requires either valid secret or Vercel cron header
  */
-function verifyCronAuth(request) {
+function isAuthorized(request) {
   const authHeader = request.headers.get('authorization');
-  const cronSecret = process.env.CRON_SECRET;
+  const vercelCron = request.headers.get('x-vercel-cron');
   
-  if (!cronSecret) {
-    console.warn('[EngagementCron] CRON_SECRET not configured');
-    return false;
-  }
+  // Accept Vercel's automatic cron header
+  if (vercelCron === 'true') return true;
   
-  return authHeader === `Bearer ${cronSecret}`;
+  // Accept Bearer token with CRON_SECRET
+  if (CRON_SECRET && authHeader === `Bearer ${CRON_SECRET}`) return true;
+  
+  return false;
 }
 
-export async function GET(request) {
+async function handleGet(request) {
   // Verify authorization
-  if (!verifyCronAuth(request)) {
+  if (!isAuthorized(request)) {
+    console.error('[EngagementCron] Unauthorized. CRON_SECRET set:', Boolean(CRON_SECRET), 'x-vercel-cron:', request.headers.get('x-vercel-cron'));
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -123,9 +128,10 @@ export async function GET(request) {
     
     return NextResponse.json({
       success: false,
-      error: error.message,
+      error: 'Engagement calculation cron job failed',
       results,
     }, { status: 500 });
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'cron/calculate-engagement', feature: 'cron' });

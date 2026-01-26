@@ -33,6 +33,7 @@ import {
   selectModelForQuery,
   MODEL_TIERS,
 } from '@/lib/alConfig';
+import { classifyQueryIntent } from '@/lib/alIntentClassifier';
 import { 
   getUserBalance, 
   deductUsage, 
@@ -90,7 +91,7 @@ async function getUserInfoForNotification(userId) {
     return { displayName: null, email: null };
   }
 }
-import { logServerError } from '@/lib/serverErrorLogger';
+import { logServerError, withErrorLogging } from '@/lib/serverErrorLogger';
 import { getAnthropicConfig } from '@/lib/observability';
 import { trackActivity } from '@/lib/dashboardScoreService';
 import { awardPoints } from '@/lib/pointsService';
@@ -561,6 +562,7 @@ async function handleStreamingResponse({
   context,
   contextText,
   domains,
+  intentClassification = null,
   plan,
   userBalance,
   isInternalEval,
@@ -581,6 +583,10 @@ async function handleStreamingResponse({
         sendSSE(controller, 'connected', { 
           correlationId, 
           domains,
+          intent: intentClassification ? {
+            primary: intentClassification.primaryIntent,
+            confidence: intentClassification.confidence,
+          } : null,
           conversationId: activeConversationId,
           dailyUsage: dailyUsage ? {
             queriesToday: dailyUsage.queriesToday,
@@ -841,7 +847,7 @@ async function handleStreamingResponse({
       } catch (error) {
         console.error('[AL] Streaming error:', error);
         sendSSE(controller, 'error', { 
-          message: error.message || 'Streaming failed',
+          message: 'Unable to process your request. Please try again.',
         });
         controller.close();
       }
@@ -862,7 +868,7 @@ async function handleStreamingResponse({
 // MAIN API HANDLER
 // =============================================================================
 
-export async function POST(request) {
+async function handlePost(request) {
   // Check if Anthropic is configured
   if (!ANTHROPIC_API_KEY) {
     return NextResponse.json({
@@ -960,11 +966,13 @@ export async function POST(request) {
         const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
         if (supabaseServiceUrl && supabaseServiceKey) {
           const supabaseAdmin = createClient(supabaseServiceUrl, supabaseServiceKey);
+          const AL_PREF_COLS = 'id, user_id, response_style, technical_level, focus_areas, preferred_topics, communication_tone, created_at, updated_at';
+          
           // Fetch AL preferences, legacy user_preferences, and new questionnaire data in parallel
           const [alPrefsResult, legacyPrefsResult, questionnaireResult] = await Promise.all([
             supabaseAdmin
               .from('al_user_preferences')
-              .select('*')
+              .select(AL_PREF_COLS)
               .eq('user_id', userId)
               .single(),
             // Legacy user_preferences table (for backwards compatibility)
@@ -1029,8 +1037,12 @@ export async function POST(request) {
     }
 
     // PARALLEL EXECUTION START
-    // 1. Detect domains (sync, fast)
+    // 1. Detect domains and classify intent (sync, fast)
     const domains = detectDomains(message);
+    const intentClassification = classifyQueryIntent(message);
+    
+    // Log intent for debugging/analytics
+    console.info(`[AL:${correlationId}] Intent: ${intentClassification.primaryIntent} (confidence: ${(intentClassification.confidence * 100).toFixed(0)}%), domains: [${domains.join(', ')}]`);
     
     // Add image_analysis domain if attachments are present
     if (attachments && attachments.length > 0) {
@@ -1138,6 +1150,7 @@ export async function POST(request) {
         context,
         contextText: formatContextForAI(context),
         domains,
+        intentClassification,
         plan,
         userBalance,
         isInternalEval,
@@ -1447,6 +1460,10 @@ export async function POST(request) {
       context: {
         carName: context.car?.name,
         domains,
+        intent: {
+          primary: intentClassification.primaryIntent,
+          confidence: intentClassification.confidence,
+        },
         toolsUsed: toolCallsUsed,
         correlationId,
         toolTimings,
@@ -1603,15 +1620,14 @@ function getAuthRequiredResponse() {
 To use my full capabilities, you'll need to **join AutoRev** first. It's free to get started!
 
 **What you get with a free account:**
-- 25 credits/month to chat with me
-- Access to our car database
-- Basic recommendations and search
+- ~15 AL chats/month
+- 1 car in your garage
+- Full garage features, Community & Events
 
-**With Tuner ($9.99/mo) and up:**
-- More monthly credits
-- Expert YouTube review summaries
-- Deep reliability analysis
-- Forum search integration
+**With Enthusiast ($9.99/mo) and up:**
+- More monthly credits (~130/mo)
+- Insights dashboard
+- Virtual Dyno & Lap Time Estimator
 - And much more!
 
 👉 **[Join Now](/join)** to start chatting with me and find your perfect sports car!`;
@@ -1642,7 +1658,7 @@ Even without balance, feel free to browse our car profiles, use the Performance 
 // SUGGESTIONS ENDPOINT
 // =============================================================================
 
-export async function GET(request) {
+async function handleGet(request) {
   const { searchParams } = new URL(request.url);
   const carSlug = searchParams.get('carSlug');
   const context = searchParams.get('context');
@@ -1651,6 +1667,9 @@ export async function GET(request) {
 
   return NextResponse.json({ suggestions });
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'ai-mechanic', feature: 'al' });
+export const POST = withErrorLogging(handlePost, { route: 'ai-mechanic', feature: 'al' });
 
 /**
  * Generate smart suggestions based on context

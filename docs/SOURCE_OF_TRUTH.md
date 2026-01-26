@@ -53,22 +53,29 @@
 | `offline queue`, `pwa analytics` | [Service Files](#service-files) | `lib/analytics/offlineQueue.js` |
 | `analytics manager`, `provider abstraction` | [Service Files](#service-files) | `lib/analytics/manager.js` |
 | `gdpr`, `delete data`, `export data`, `right to be forgotten` | [API Routes](#api-routes) | `/api/user/delete-data`, `/api/user/export-data` |
+| `avatar`, `profile photo`, `upload avatar` | [Settings Page](#core-app-pages-authenticated) | Avatar upload in `app/(app)/settings/page.jsx` |
+| `username`, `public slug`, `profile url` | [API Routes](#api-routes) | `/api/user/check-username`, `is_public_slug_available()` |
 | `speed insights`, `web vitals`, `cwv`, `lcp`, `inp` | [Observability](#observability) | SpeedInsights, `/api/admin/web-vitals/collect` |
 | `slo`, `error budget`, `availability target` | [docs/SLO.md](./SLO.md) | Service Level Objectives |
 | `schema version`, `event versioning` | [Analytics Event Naming](#analytics-event-naming) | `SCHEMA_VERSION` in `lib/analytics/events.js` |
 | `css audit`, `hardcoded colors`, `design tokens` | [CSS Audit & Maintenance](#css-audit--maintenance-scripts) | `npm run audit:css`, `npm run fix:colors` |
 | `color`, `hex`, `css variable`, `design token` | [Color Variable Reference](#color-variable-reference) | Hex to variable mapping, 195 mappings in `scripts/color-token-map.json` |
+| `purple`, `pink`, `category color`, `dashboard color` | [Color Variable Reference](#color-variable-reference) | Extended category colors: `--color-accent-purple`, `--color-accent-pink`, `--color-accent-red` |
 | `media query`, `mobile-first`, `min-width`, `max-width`, `responsive` | [CSS Audit & Maintenance](#css-audit--maintenance-scripts) | Mobile-first patterns, `npm run audit:media-queries` |
 | `breakpoint`, `responsive`, `tablet`, `desktop` | [CSS Audit & Maintenance](#css-audit--maintenance-scripts) | `min-width: 768px` patterns, breakpoint utilities |
 | `100vw`, `horizontal overflow`, `ios safari`, `viewport width` | [Anti-Patterns](#-css-anti-patterns) | Use `max-width: 100%` not `100vw` |
 | `design system`, `tokens`, `typography`, `spacing` | [docs/DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) | Comprehensive design reference |
+| `background`, `immersive`, `overlay`, `elevated`, `6-level` | [Color Variable Reference](#color-variable-reference) | 6-level background hierarchy |
 | `touch target`, `accessibility`, `focus`, `wcag` | [Accessibility Requirements](#accessibility-requirements-wcag-21-aa) | Touch targets, focus states, form inputs |
 | `aria`, `inputMode`, `error state`, `screen reader` | [Accessibility Requirements](#accessibility-requirements-wcag-21-aa) | ARIA attributes, mobile keyboards |
 | `rate limit`, `throttle`, `429` | [Service Files](#service-files) | `rateLimit()` in `lib/rateLimit.js` |
 | `validation`, `zod`, `schema` | [Service Files](#service-files) | `lib/schemas/index.js` validation schemas |
 | `reduced motion`, `animation`, `a11y` | [Custom Hooks](#custom-hooks) | `useReducedMotion()` hook |
+| `safe area`, `notch`, `status bar`, `pwa` | [Custom Hooks](#custom-hooks) | `useSafeAreaColor()` hook |
 | `skip link`, `accessibility`, `keyboard` | [Components](#components) | `SkipLink` component |
 | `security`, `csp`, `headers` | [Security](#security) | `next.config.js`, `middleware.js` |
+| `webhook`, `signature`, `verification` | [Webhook Security](#webhook-security) | Stripe, Vercel, Resend webhook handlers |
+| `cron`, `cron_secret`, `scheduled job` | [Cron Job Authentication](#cron-job-authentication) | `isAuthorized()` pattern |
 | `sentry`, `error tracking`, `monitoring` | [Error Tracking](#error-tracking-sentry) | Sentry config, ErrorBoundary |
 | `subscription`, `tier`, `billing`, `stripe` | [Subscription Hooks](#subscription-hooks) | `useSubscription()` hook |
 | `feature flag`, `a/b test`, `experiment` | [Feature Flags](#feature-flags--ab-testing) | `useFeatureFlag()`, `FLAGS` |
@@ -80,18 +87,23 @@
 | `e2e`, `playwright`, `test` | [Testing](#testing) | E2E test specs |
 | `vitest`, `unit test`, `react testing` | [Testing](#testing) | Unit tests with Vitest |
 | `llm judge`, `eval`, `golden dataset` | [Testing](#testing) | AL evaluation pipeline |
-| `query key`, `tanstack`, `cache invalidation` | [Service Files](#service-files) | `lib/queryKeys.js` |
+| `query key`, `tanstack`, `cache invalidation` | [Query Key Factory](#query-key-factory) | `lib/queryKeys.js`, detailed docs in Documentation section |
 | `dynamic import`, `code split`, `lazy load` | [Components](#components) | `components/dynamic.js` |
 | `adr`, `architecture decision` | [Documentation](#documentation) | `docs/adr/` folder |
 | `intent`, `classifier`, `routing` | [AL Assistant](#al-assistant) | `lib/alIntentClassifier.js` |
 | `gesture`, `pull to refresh`, `swipe`, `mobile` | [Components](#components) | `PullToRefresh`, `SwipeableRow` in `components/ui/` |
+| `drag`, `drop`, `reorder`, `sortable` | [Garage Feature Architecture](#garage-feature-architecture) | `@dnd-kit` in garage list view |
 | `optimistic`, `instant ui`, `background save` | [State Management](#state-management) | Optimistic patterns in providers |
 | `paired tokens`, `card foreground`, `theming` | [Color Variable Reference](#color-variable-reference) | `--color-card`, `--color-card-foreground` |
 | `notification`, `bell`, `in-app alert` | [Notification System](#notification-system) | `NotificationCenter`, `notificationService.js` |
 | `preferences`, `quiet hours`, `notification settings` | [Notification System](#notification-system) | `NotificationPreferences`, preference APIs |
 | `streak`, `daily streak`, `activity streak` | [Engagement & Streaks](#engagement--streaks) | `StreakIndicator`, `engagementService.js` |
+| `callsign`, `title`, `user greeting`, `tier color` | [Engagement & Streaks](#engagement--streaks) | `UserGreeting.jsx`, `getCallsignColor()` |
 | `fatigue`, `notification fatigue`, `dismiss rate` | [Notification System](#notification-system) | `notificationFatigueService.js` |
 | `milestone`, `achievement`, `celebration` | [Engagement & Streaks](#engagement--streaks) | `StreakMilestoneModal`, notification triggers |
+| `page`, `route`, `url`, `site map`, `audit` | [Site Index](#️-site-index-official-page-structure) | Official list of all 26 pages |
+| `seo`, `metadata`, `og`, `twitter`, `schema`, `json-ld` | [SEO & Metadata](#-seo--metadata) | Metadata patterns, noindex rules, structured data |
+| `sitemap`, `robots`, `canonical`, `noindex` | [SEO & Metadata](#-seo--metadata) | `app/sitemap.js`, `app/robots.js`, seoUtils.js |
 
 ---
 
@@ -200,21 +212,57 @@ import { myHpCalc } from '@/lib/utils/hpHelpers'; // DON'T
 ```
 **Why**: Performance calculations are complex with diminishing returns, conflicts, etc.
 
-### Rule 9: API Routes Follow Auth Pattern
+### Rule 9: API Routes Follow Standard Patterns
 ```javascript
-// ✅ CORRECT - User routes require auth
-export async function GET(request, { params }) {
-  const user = await getAuthenticatedUser(request);
-  if (!user) return unauthorized();
-  // ...
+// ✅ CORRECT - User routes require auth + IDOR protection + error logging
+import { createServerSupabaseClient, getBearerToken, createAuthenticatedClient } from '@/lib/supabaseServer';
+import { errors } from '@/lib/apiErrors';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { rateLimit } from '@/lib/rateLimit';
+import { mySchema, validateWithSchema, validationErrorResponse } from '@/lib/schemas';
+
+async function handlePost(request, { params }) {
+  // 1. Rate limiting (for mutations)
+  const limited = rateLimit(request, 'api');
+  if (limited) return limited;
+
+  // 2. Authentication
+  const bearerToken = getBearerToken(request);
+  const supabase = bearerToken ? createAuthenticatedClient(bearerToken) : await createServerSupabaseClient();
+  const { data: { user } } = await supabase.auth.getUser(bearerToken || undefined);
+  if (!user) return errors.unauthorized();
+
+  // 3. IDOR protection (for /api/users/[userId]/ routes)
+  const { userId } = await params;
+  if (user.id !== userId) return errors.forbidden('Access denied');
+
+  // 4. Input validation (for POST/PUT/PATCH)
+  const body = await request.json();
+  const validation = validateWithSchema(mySchema, body);
+  if (!validation.success) return validationErrorResponse(validation.errors);
+
+  // 5. Business logic with validated data...
 }
 
-// ❌ WRONG - Forgetting auth on user endpoints
+// 6. Wrap with error logging
+export const POST = withErrorLogging(handlePost, { route: 'my-route', feature: 'my-feature' });
+
+// ✅ CORRECT - Admin routes use requireAdmin helper
+import { requireAdmin } from '@/lib/adminAccess';
+
+async function handleGet(request) {
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
+  // Admin-only logic...
+}
+export const GET = withErrorLogging(handleGet, { route: 'admin/my-route', feature: 'admin' });
+
+// ❌ WRONG - Missing any of: auth, IDOR check, error logging, validation
 export async function GET(request) {
-  const data = await getUserData(userId); // Who's userId??
+  const data = await getUserData(userId); // No auth! No IDOR check!
 }
 ```
-**Why**: Auth bypass = security vulnerability.
+**Why**: Auth bypass = security vulnerability. Missing patterns = inconsistent error handling.
 
 ### Rule 10: Update This Document When Adding Features
 ```
@@ -228,11 +276,264 @@ When you create:
 
 ---
 
+## 🗺️ SITE INDEX (Official Page Structure)
+
+> **IMPORTANT**: This is the canonical list of all pages in the AutoRev app.
+> If a page is not listed here, it should not exist. When doing audits, use this list.
+> Last updated: January 25, 2026
+
+### Public Pages (Marketing)
+
+| Route | File Location | SEO | Purpose |
+|-------|---------------|-----|---------|
+| `/` | `app/(marketing)/page.jsx` | layout.jsx | Landing/home page |
+| `/privacy` | `app/(marketing)/privacy/page.jsx` | page.jsx | Privacy policy |
+| `/terms` | `app/(marketing)/terms/page.jsx` | page.jsx | Terms of service |
+| `/contact` | `app/(marketing)/contact/page.jsx` | layout.jsx | Contact form |
+| `/unsubscribe` | `app/(marketing)/unsubscribe/page.jsx` | layout.jsx (noindex) | Email unsubscribe |
+
+### Public Sharing Pages (Marketing)
+
+| Route | File Location | SEO | Purpose |
+|-------|---------------|-----|---------|
+| `/community/builds/[slug]` | `app/(marketing)/community/builds/[slug]/page.jsx` | page.jsx + OG image | Public build detail |
+| `/community/events/[slug]` | `app/(marketing)/community/events/[slug]/page.jsx` | layout.jsx + Event schema | Public event detail |
+| `/shared/al/[token]` | `app/(marketing)/shared/al/[token]/page.jsx` | layout.jsx (noindex) | Shared AL conversation |
+
+### Core App Pages (Authenticated)
+
+| Route | File Location | Purpose | Features |
+|-------|---------------|---------|----------|
+| `/insights` | `app/(app)/insights/page.jsx` | Insights dashboard | Vehicle overview, health scores, recommendations |
+| `/dashboard` | `app/(app)/dashboard/page.jsx` | User dashboard | Points, streaks, achievements |
+| `/profile` | `app/(app)/profile/page.jsx` | User profile | Profile info display |
+| `/settings` | `app/(app)/settings/page.jsx` | User settings | Avatar upload, username, theme, data export, notifications |
+| `/questionnaire` | `app/(app)/questionnaire/page.jsx` | Enthusiast profile | Onboarding questionnaire |
+
+### Garage Pages (Authenticated)
+
+| Route | File Location | Purpose | Features |
+|-------|---------------|---------|----------|
+| `/garage` | `app/(app)/garage/page.jsx` | Garage home | Vehicle selector, overview |
+| `/garage/my-specs` | `app/(app)/garage/my-specs/page.jsx` | Vehicle specs | Full specifications display |
+| `/garage/my-build` | `app/(app)/garage/my-build/page.jsx` | Build configuration | Select upgrades, plan modifications |
+| `/garage/my-performance` | `app/(app)/garage/my-performance/page.jsx` | Performance impact | HP/TQ gains, metrics |
+| `/garage/my-parts` | `app/(app)/garage/my-parts/page.jsx` | Parts research | Research and select specific parts |
+| `/garage/my-install` | `app/(app)/garage/my-install/page.jsx` | Installation tracking | Track install progress, find shops |
+| `/garage/my-photos` | `app/(app)/garage/my-photos/page.jsx` | Photo management | Upload and manage vehicle photos |
+
+### Data Pages (Authenticated)
+
+| Route | File Location | Purpose | Features |
+|-------|---------------|---------|----------|
+| `/data` | `app/(app)/data/page.jsx` | Virtual Dyno | HP/TQ curves, dyno result logging |
+| `/data/track` | `app/(app)/data/track/page.jsx` | Track Data | Lap time estimator, track time logging |
+
+### Community Pages (Authenticated)
+
+| Route | File Location | Purpose | Features |
+|-------|---------------|---------|----------|
+| `/community` | `app/(app)/community/page.jsx` | Builds Feed | TikTok-style build browsing, likes, comments, sharing |
+| `/community/events` | `app/(app)/community/events/page.jsx` | Events | Car meets, track days listing |
+| `/community/leaderboard` | `app/(app)/community/leaderboard/page.jsx` | Leaderboard | User rankings, points standings |
+
+### AI Assistant (Authenticated)
+
+| Route | File Location | Purpose | Features |
+|-------|---------------|---------|----------|
+| `/al` | `app/(app)/al/page.jsx` | AL chat | AI mechanic conversations |
+
+### System Pages
+
+| Route | File Location | Purpose |
+|-------|---------------|---------|
+| `/admin/*` | `app/admin/` | Admin dashboard (admin role only) |
+| `/internal/*` | `app/internal/` | Internal tools (admin/dev only) |
+| `/auth/*` | `app/auth/` | Auth flows (callback, reset-password, error) |
+| `/not-found` | `app/not-found.jsx` | 404 page |
+| `/error` | `app/error.jsx` | Error boundary |
+
+### Audit Checklist
+
+When auditing the app, these are ALL the user-facing pages to check:
+
+**Public (5 pages):**
+- [ ] `/` (home)
+- [ ] `/privacy`
+- [ ] `/terms`
+- [ ] `/contact`
+- [ ] `/unsubscribe`
+
+**Public Sharing (3 pages):**
+- [ ] `/community/builds/[slug]`
+- [ ] `/community/events/[slug]`
+- [ ] `/shared/al/[token]`
+
+**Core App (5 pages):**
+- [ ] `/insights`
+- [ ] `/dashboard`
+- [ ] `/profile`
+- [ ] `/settings`
+- [ ] `/questionnaire`
+
+**Garage (7 pages):**
+- [ ] `/garage`
+- [ ] `/garage/my-specs`
+- [ ] `/garage/my-build`
+- [ ] `/garage/my-performance`
+- [ ] `/garage/my-parts`
+- [ ] `/garage/my-install`
+- [ ] `/garage/my-photos`
+
+**Data (2 pages):**
+- [ ] `/data` (Virtual Dyno, Dyno Logs)
+- [ ] `/data/track` (Lap Time Estimator, Track Times)
+
+**Community (3 pages):**
+- [ ] `/community` (Builds Feed)
+- [ ] `/community/events` (Events Listing)
+- [ ] `/community/leaderboard` (Leaderboard)
+
+**AI (1 page):**
+- [ ] `/al`
+
+**Total: 26 user-facing pages**
+
+---
+
+## 🔍 SEO & Metadata
+
+> **IMPORTANT**: This section documents SEO patterns for proper search engine visibility.
+> All public pages need metadata. All authenticated pages need noindex.
+
+### Metadata Patterns
+
+**Pattern 1: Server Component with Static Metadata**
+```javascript
+// For server components, export metadata directly
+export const metadata = {
+  title: 'Page Title | AutoRev',
+  description: 'Page description under 160 characters.',
+  robots: { index: true, follow: true },
+  alternates: { canonical: '/page-path' },
+};
+```
+
+**Pattern 2: Server Component with Dynamic Metadata**
+```javascript
+// For dynamic routes, use generateMetadata
+export async function generateMetadata({ params }) {
+  const { slug } = await params;
+  const data = await fetchData(slug);
+  return {
+    title: `${data.name} | AutoRev`,
+    description: data.description,
+  };
+}
+```
+
+**Pattern 3: Client Component (Use layout.jsx)**
+```javascript
+// Client components can't export metadata, so create a layout.jsx
+// app/(marketing)/contact/layout.jsx
+export const metadata = { ... };
+export default function Layout({ children }) { return children; }
+```
+
+### noindex Requirements
+
+**Authenticated pages MUST have noindex:**
+```javascript
+export const metadata = {
+  title: 'Page Title | AutoRev',
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
+```
+
+**Pages with noindex:**
+| Route Group | Layout/Page with noindex |
+|-------------|-------------------------|
+| `/garage/*` | `app/(app)/garage/layout.jsx` |
+| `/data/*` | `app/(app)/data/layout.jsx` |
+| `/community` (app) | `app/(app)/community/layout.jsx` |
+| `/profile` | `app/(app)/profile/layout.jsx` |
+| `/settings` | `app/(app)/settings/layout.jsx` |
+| `/dashboard` | `app/(app)/dashboard/page.jsx` |
+| `/al` | `app/(app)/al/page.jsx` |
+| `/insights` | `app/(app)/insights/page.jsx` |
+| `/unsubscribe` | `app/(marketing)/unsubscribe/layout.jsx` |
+| `/shared/al/[token]` | `app/(marketing)/shared/al/[token]/layout.jsx` |
+
+### SEO Utilities
+
+Use `lib/seoUtils.js` for consistent metadata generation:
+
+```javascript
+import { 
+  generatePageMetadata,
+  generateEventMetadata,
+  generateCarMetadata,
+  generateBreadcrumbSchema,
+  generateEventSchema,
+  generateVehicleSchema,
+  SITE_URL 
+} from '@/lib/seoUtils';
+```
+
+### Structured Data (JSON-LD)
+
+Use `components/SchemaOrg.jsx` for schema.org markup:
+
+```javascript
+import SchemaOrg from '@/components/SchemaOrg';
+import { generateEventSchema } from '@/lib/seoUtils';
+
+// Single schema
+<SchemaOrg schema={eventSchema} />
+
+// Multiple schemas
+<SchemaOrg schemas={[articleSchema, breadcrumbSchema]} />
+```
+
+**Available Schema Generators:**
+- `generateOrganizationSchema()` - Site-wide (in root layout)
+- `generateWebsiteSchema()` - Site-wide with SearchAction
+- `generateBreadcrumbSchema(items)` - Navigation breadcrumbs
+- `generateVehicleSchema(car)` - Car detail pages
+- `generateEventSchema(event)` - Event detail pages
+- `generateArticleSchema(options)` - Content pages
+- `generateFAQSchema(faqs)` - FAQ pages
+
+### Configuration Files
+
+| File | Purpose |
+|------|---------|
+| `app/sitemap.js` | Dynamic sitemap generation |
+| `app/robots.js` | Crawler directives |
+| `lib/seoUtils.js` | Metadata & schema helpers |
+| `components/SchemaOrg.jsx` | JSON-LD injection |
+
+### OG Image Generation
+
+Dynamic OG images use Next.js ImageResponse:
+
+| Route | OG Image File |
+|-------|---------------|
+| `/` | `app/(marketing)/opengraph-image.tsx` |
+| `/community/builds/[slug]` | `app/(marketing)/community/builds/[slug]/opengraph-image.tsx` |
+
+---
+
 ## Table of Contents
 
 **Quick Reference (Read First)**
 - [AI Quick Search Index](#-ai-quick-search-index)
 - [Cardinal Rules](#️-cardinal-rules-read-first)
+- [Site Index](#️-site-index-official-page-structure)
+- [SEO & Metadata](#-seo--metadata)
 - [Naming Conventions](#-naming-conventions)
 - [Anti-Patterns & Common Mistakes](#anti-patterns--common-mistakes)
 
@@ -256,20 +557,22 @@ When you create:
 **Feature Documentation**
 12. [Garage Feature Architecture](#garage-feature-architecture)
 13. [Data Visualization Components](#data-visualization-components)
+14. [Theme System](#theme-system)
+15. [Settings Page Features](#settings-page-features)
 
 **External Services**
-14. [Email System](#email-system)
-15. [Billing System](#billing-system)
-16. [Security](#security)
+16. [Email System](#email-system)
+17. [Billing System](#billing-system)
+18. [Security](#security)
 
 **Development**
-17. [Import Rules](#import-rules)
-18. [Creating New Code](#creating-new-code)
-19. [Testing](#testing)
-20. [Quick Reference](#quick-reference)
+19. [Import Rules](#import-rules)
+20. [Creating New Code](#creating-new-code)
+21. [Testing](#testing)
+22. [Quick Reference](#quick-reference)
 
 **Reference**
-21. [Documentation](#documentation)
+23. [Documentation](#documentation)
 
 ---
 
@@ -336,11 +639,11 @@ All PostgreSQL entities use **snake_case**:
 
 **IMPORTANT:** The subscription system uses a dual naming convention:
 
-| Tier ID (Code/Database) | Display Name (UI/Marketing) | Price |
-|-------------------------|----------------------------|-------|
-| `free` | Free | $0 |
-| `collector` | **Enthusiast** | $4.99/mo |
-| `tuner` | Tuner | $9.99/mo |
+| Tier ID (Code/Database) | Display Name (UI/Marketing) | Monthly | Annual | Max Cars |
+|-------------------------|----------------------------|---------|--------|----------|
+| `free` | Free | $0 | - | 1 |
+| `collector` | **Enthusiast** | $9.99/mo | $79/yr | 3 |
+| `tuner` | **Pro** | $19.99/mo | $149/yr | ∞ |
 
 **Usage Rules:**
 - **In code, APIs, and database:** Always use tier IDs (`free`, `collector`, `tuner`)
@@ -562,6 +865,50 @@ All interactive elements must have visible `:focus-visible` styles.
 }
 ```
 
+**Custom Interactive Elements (NON-NEGOTIABLE):**
+
+Clickable non-button elements (like cards, list items) must be keyboard accessible:
+
+```jsx
+// ✅ CORRECT: Clickable div with keyboard support
+<div
+  className={styles.card}
+  onClick={() => handleSelect(item)}
+  onKeyDown={(e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      handleSelect(item);
+    }
+  }}
+  tabIndex={0}
+  role="button"
+  aria-label={`Select ${item.name}`}
+>
+  {/* content */}
+</div>
+
+// ❌ WRONG: Clickable div without keyboard support
+<div className={styles.card} onClick={() => handleSelect(item)}>
+  {/* inaccessible to keyboard users */}
+</div>
+```
+
+**CSS for custom interactive elements:**
+```css
+/* Focus state for clickable cards/items */
+.card:focus {
+  outline: none;
+  border-color: var(--brand-teal);
+  box-shadow: 0 0 0 2px rgba(var(--brand-teal-rgb), 0.3);
+}
+
+.card:focus-visible {
+  outline: none;
+  border-color: var(--brand-teal);
+  box-shadow: 0 0 0 2px rgba(var(--brand-teal-rgb), 0.3);
+}
+```
+
 **Form Inputs:**
 
 | Field Type | Required Attributes |
@@ -628,15 +975,128 @@ Use `inputMode` to show appropriate mobile keyboards:
 
 **Minimum Input Height:** All form inputs must be **44px (h-11)** for touch accessibility.
 
+**Semantic Tables for Data Display:**
+
+When displaying key-value data (specs, settings, comparisons), use semantic HTML tables for screen reader accessibility:
+
+```jsx
+// ✅ CORRECT: Semantic table with proper structure
+function SpecTable({ caption, children }) {
+  return (
+    <table className={styles.specTable} aria-label={caption}>
+      <caption className={styles.srOnly}>{caption}</caption>
+      <thead className={styles.srOnly}>
+        <tr>
+          <th scope="col">Specification</th>
+          <th scope="col">Value</th>
+        </tr>
+      </thead>
+      <tbody>{children}</tbody>
+    </table>
+  );
+}
+
+function SpecRow({ label, value, unit = '' }) {
+  const displayValue = value ?? '—'; // Show em-dash for missing values
+  return (
+    <tr>
+      <th scope="row">{label}</th>
+      <td>{displayValue}{displayValue !== '—' && unit ? ` ${unit}` : ''}</td>
+    </tr>
+  );
+}
+
+// Usage
+<SpecTable caption="Performance specifications">
+  <SpecRow label="Horsepower" value={car.hp} unit="HP" />
+  <SpecRow label="Torque" value={car.torque} unit="lb-ft" />
+</SpecTable>
+
+// ❌ WRONG: Divs for tabular data (inaccessible to screen readers)
+<div className={styles.specItem}>
+  <span>Horsepower</span>
+  <span>{car.hp} HP</span>
+</div>
+```
+
+**CSS for visually hidden but accessible content:**
+```css
+/* Screen reader only - visually hidden but accessible */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+```
+
+**Error State with Retry (Data Fetching):**
+
+When data fetching fails, show an error state with a retry button:
+
+```jsx
+// ✅ CORRECT: Error state with retry and proper ARIA
+function ErrorState({ error, onRetry, title = 'Something went wrong' }) {
+  return (
+    <div role="alert" aria-live="assertive" className={styles.errorState}>
+      <h3>{title}</h3>
+      <p>{error?.message || 'Failed to load data. Please try again.'}</p>
+      {onRetry && (
+        <button onClick={onRetry} aria-label="Retry loading data">
+          Try Again
+        </button>
+      )}
+    </div>
+  );
+}
+
+// Usage with React Query hooks
+const { data, error, refetch } = useCarBySlug(slug);
+
+if (error) {
+  return <ErrorState error={error} onRetry={refetch} />;
+}
+```
+
+**Implemented Examples:**
+- `/garage/my-specs` - Semantic tables for all spec cards, error state with retry
+
 ### Color Variable Reference
 
 **NEVER hardcode colors.** Always use CSS variables with fallbacks. Full mapping in `scripts/color-token-map.json`.
 
-**Backgrounds:**
+**Background Hierarchy (6 Levels):**
+
+AutoRev uses a **6-level background system** for premium visual hierarchy. See `docs/BRAND_GUIDELINES.md` for full details.
+
+| Level | Hex | CSS Variable | Brand Alias | Usage |
+|-------|-----|--------------|-------------|-------|
+| **1. Immersive** | `#050a12` | `var(--color-bg-immersive)` | `--brand-bg-immersive` | Media galleries, video players, splash screens |
+| **2. Base** | `#0d1b2a` | `var(--color-bg-base)` | `--brand-bg-primary` | Main app pages, navigation |
+| **3. Overlay** | `#1a1a1a` | `var(--color-bg-overlay-solid)` | `--brand-bg-overlay` | Full-screen modals, onboarding, questionnaires |
+| **4. Elevated** | `#1b263b` | `var(--color-bg-elevated)` | `--brand-bg-secondary` | Cards, panels, small modals |
+| **5. Surface** | `rgba(255,255,255,0.04)` | `var(--color-bg-surface)` | `--brand-bg-surface` | Card fills, subtle grouping |
+| **6. Input** | `rgba(255,255,255,0.06)` | `var(--color-bg-input)` | `--brand-bg-input` | Form fields, search bars |
+
+**Background Decision Tree:**
+```
+Media/gallery content? → IMMERSIVE (#050a12)
+Full-screen modal/onboarding? → OVERLAY (#1a1a1a)
+Card, panel, or small modal? → ELEVATED (#1b263b)
+Form field or input? → INPUT (rgba 6%)
+Otherwise → BASE (#0d1b2a)
+```
+
+**Legacy Mappings (for migration):**
 | Hex Values | CSS Variable | Usage |
 |------------|--------------|-------|
-| `#0d1b2a`, `#0a1628`, `#0f172a`, `#111827`, `#000000` | `var(--color-bg-base)` | Base backgrounds |
-| `#1b263b`, `#1a2332`, `#1e293b`, `#1f2937` | `var(--color-bg-elevated)` | Elevated surfaces |
+| `#0a1628`, `#0f172a`, `#111827`, `#000000` | `var(--color-bg-base)` | Map to base |
+| `#1a2332`, `#1e293b`, `#1f2937` | `var(--color-bg-elevated)` | Map to elevated |
 | `#f8fafc`, `#f9fafb`, `#f3f4f6`, `#f1f5f9`, `#f7f7f7` | `var(--color-bg-muted)` | Light mode backgrounds |
 
 **Text:**
@@ -647,7 +1107,7 @@ Use `inputMode` to show appropriate mobile keyboards:
 | `#64748b`, `#6b7280`, `#607d8b` | `var(--color-text-tertiary)` | Tertiary text |
 | `#475569`, `#334155`, `#4b5563`, `#374151` | `var(--color-text-muted)` | Muted text |
 
-**Accents:**
+**Core 4 Accents (Primary Brand Colors):**
 | Hex Values | CSS Variable | Usage |
 |------------|--------------|-------|
 | `#d4ff00` | `var(--color-accent-lime)` | Primary CTAs |
@@ -658,6 +1118,20 @@ Use `inputMode` to show appropriate mobile keyboards:
 | `#60a5fa`, `#93c5fd`, `#a5b4fc` | `var(--color-accent-blue-light)` | Blue variants |
 | `#f59e0b`, `#d97706`, `#b45309`, `#e67e22` | `var(--color-accent-amber)` | Warnings |
 | `#fbbf24`, `#ffe066` | `var(--color-accent-amber-light)` | Amber variants |
+
+**Extended Category Colors (Dashboard & Gamification):**
+| Hex Values | CSS Variable | Usage |
+|------------|--------------|-------|
+| `#a855f7` | `var(--color-accent-purple)` | AL assistant category |
+| `#c084fc` | `var(--color-accent-purple-light)` | Purple variants |
+| `#ec4899` | `var(--color-accent-pink)` | Profile category |
+| `#f472b6` | `var(--color-accent-pink-light)` | Pink variants |
+| `#ef4444` | `var(--color-accent-red)` | Danger states, high tier callsigns |
+| `#f87171` | `var(--color-accent-red-light)` | Red variants |
+
+**Info (Legacy):**
+| Hex Values | CSS Variable | Usage |
+|------------|--------------|-------|
 | `#8b5cf6`, `#7c3aed`, `#a78bfa`, `#9b59b6` | `var(--color-info)` | Info, purple tier |
 
 **Semantic:**
@@ -714,6 +1188,77 @@ Use `inputMode` to show appropriate mobile keyboards:
 | Direct Supabase in components | Bypasses caching, auth, error handling | Use service files or providers |
 | Multiple `.from()` calls | N+1 query problem | Use RPC functions or joins |
 | Creating duplicate tables | Data gets out of sync | Check DATABASE.md first |
+| `Promise.all(data.map(async => query))` | N+1: N queries in parallel | Use RPC with join or batch query |
+| Loop with `await supabase.update()` | N sequential updates | Use batch RPC or `.in('id', ids)` |
+| `select('*')` in core services | Fetches unused columns, slower | Select specific fields needed |
+
+**N+1 Query Pattern (CRITICAL)**:
+```javascript
+// ❌ WRONG: N+1 pattern - makes 21 queries for 20 items
+const itemsWithDetails = await Promise.all(
+  items.map(async (item) => {
+    const { data } = await supabase.from('details').select('*').eq('item_id', item.id);
+    return { ...item, detail: data[0] };
+  })
+);
+
+// ✅ CORRECT: Use RPC with lateral join (1 query)
+const { data } = await supabase.rpc('get_items_with_details', { p_user_id: userId });
+
+// ✅ CORRECT: Or use join in single query
+const { data } = await supabase.from('items')
+  .select('*, details!inner(*)').eq('user_id', userId);
+```
+
+**Column Selection Pattern (CRITICAL)**:
+```javascript
+// ❌ WRONG: Fetches all columns, slower and wastes bandwidth
+const { data } = await supabase
+  .from('user_feedback')
+  .select('*')
+  .eq('user_id', userId);
+
+// ✅ CORRECT: Define columns constant, select only what's needed
+const FEEDBACK_COLS = 'id, user_id, category, title, description, status, created_at';
+
+const { data } = await supabase
+  .from('user_feedback')
+  .select(FEEDBACK_COLS)
+  .eq('user_id', userId);
+```
+
+**Intentional Exceptions** (where `select('*')` is acceptable):
+| File | Reason |
+|------|--------|
+| `lib/carsClient.js` | Car detail pages need 100+ columns; explicit list would be unmaintainable |
+| `lib/carsCache.js` | Server-side car cache for detail views - same reason |
+| `lib/scrapeJobService.js` | Background enrichment jobs need full car data |
+| `scripts/*.js` | Development/admin scripts (not user-facing) |
+
+**car_slug Resolution Pattern**:
+```javascript
+// ✅ CORRECT: Resolve car_id, use it, fallback if needed
+import { resolveCarId } from '@/lib/carResolver';
+
+if (carSlug) {
+  const carId = await resolveCarId(carSlug);
+  if (carId) {
+    query = query.eq('car_id', carId);  // Uses index
+  } else {
+    // Fallback only if car not in database (edge case)
+    console.warn('Could not resolve car_id for slug:', carSlug);
+    query = query.eq('car_slug', carSlug);
+  }
+}
+```
+
+**Available Database RPCs** (use instead of client-side joins):
+| RPC | Purpose | Replaces |
+|-----|---------|----------|
+| `get_car_ai_context_v2` | Full car context for AL | Multiple car table joins |
+| `get_car_tuning_context` | Tuning data for car | Tuning profile + issues joins |
+| `get_user_conversations_with_preview` | Conversations with first message | N+1 message preview queries |
+| `batch_resolve_feedback` | Batch update feedback items | N sequential updates |
 
 ### ❌ Performance Calculation Anti-Patterns
 
@@ -773,8 +1318,94 @@ const hpGain = profile.upgradedMetrics.hp - profile.stockMetrics.hp;
 |--------------|----------------|-----------------|
 | Creating new icon files | Inconsistent icons, larger bundle | Use `Icons` from `@/components/ui/Icons` |
 | Inline styles with hex colors | Bypasses design tokens | Use CSS variables `var(--color-*)` |
+| Inline styles with static values | Creates new object each render, harder to maintain | Move to CSS module class |
 | Duplicate modal components | Inconsistent UX | Use `Modal` from `@/components/ui` |
 | New button styles | Brand inconsistency | Compose from `styles/components/buttons.css` |
+| Native `<img>` tag | No optimization, no lazy loading, no srcset | Use `next/image` `<Image>` component |
+| **`LoadingSpinner` for data fetching** | Causes layout shift, poor UX | Use `Skeleton` components that match content shape |
+| `console.log` in production code | Clutters console, exposes internals | Remove or use `console.error` for actual errors only |
+
+**Loading State Pattern**:
+```jsx
+// ❌ WRONG: Generic spinner causes layout shift
+if (isLoading) {
+  return <LoadingSpinner fullPage />;
+}
+
+// ✅ CORRECT: Skeleton matches the final content shape
+import { Skeleton, ListSkeleton } from '@/components/ui';
+
+if (isLoading) {
+  return (
+    <div className={styles.loadingSkeleton}>
+      <Skeleton width={180} height={24} variant="rounded" />
+      <ListSkeleton count={5} />
+    </div>
+  );
+}
+```
+
+**Unsaved Changes Pattern** (for pages with save functionality):
+```jsx
+// ✅ CORRECT: Warn users before leaving with unsaved changes
+useEffect(() => {
+  const handleBeforeUnload = (e) => {
+    if (hasUnsavedChanges && saveStatus === 'saving') {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  };
+  
+  window.addEventListener('beforeunload', handleBeforeUnload);
+  return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+}, [hasUnsavedChanges, saveStatus]);
+```
+
+**Image Optimization Pattern**:
+```jsx
+// ❌ WRONG: Native <img> - no optimization, no lazy loading
+<img src={car.imageHeroUrl} alt={car.name} />
+
+// ✅ CORRECT: Next.js Image with fill + sizes
+import Image from 'next/image';
+
+<Image
+  src={car.imageHeroUrl}
+  alt={car.name}
+  fill
+  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 80vw, 1200px"
+  className={styles.heroImage}
+/>
+
+// ✅ CORRECT: Hero/LCP images with priority
+<Image
+  src={heroImage}
+  alt="Hero"
+  fill
+  priority  // Load immediately for LCP
+  sizes="100vw"
+/>
+```
+
+**Intentional `<img>` Exceptions** (where native `<img>` is acceptable):
+| File | Reason |
+|------|--------|
+| `components/FeedbackWidget.jsx` | Inside `document.write()` - cannot use React components |
+| `components/LocationAutocomplete.jsx` | Google Maps attribution - external compliance requirement |
+
+**Inline Style Pattern**:
+```jsx
+// ❌ WRONG: Static colors/transforms in inline styles
+<div style={{ background: '#a855f7', textTransform: 'capitalize' }}>
+
+// ✅ CORRECT: Move static values to CSS, keep only dynamic values inline
+// In CSS module:
+.barAl { background: #a855f7; }
+.textCapitalize { text-transform: capitalize; }
+
+// In JSX:
+<div className={`${styles.barSegment} ${styles.barAl}`} style={{ height: `${dynamicPercent}%` }}>
+```
 
 ### ❌ CSS Anti-Patterns
 
@@ -863,14 +1494,23 @@ html {
 | Multiple sources for same data | State gets out of sync | Single provider per domain |
 | localStorage for auth state | Security issues | Use `AuthProvider` |
 | Prop drilling user data | Messy, error-prone | Use context providers |
+| Unmemoized context values | Causes all consumers to re-render on every parent render | Wrap `value` in `useMemo()` |
+| Duplicate query key factories | Cache inconsistencies | Use `lib/queryKeys.js` only |
+| `try/catch` on provider methods | Provider methods return `{ data, error }`, don't throw | Check `const { error } = await ...` |
+| Skipping state update when `data` is null | Parts-only updates return `data: null` but still succeed | Check `if (!error)` not `if (!error && data)` |
 
 ### ❌ API Route Anti-Patterns
 
 | Anti-Pattern | Why It's Wrong | Correct Pattern |
 |--------------|----------------|-----------------|
-| No auth check on user routes | Security vulnerability | Check `getAuthenticatedUser()` |
+| No auth check on user routes | Security vulnerability | Use `createServerSupabaseClient()` + `getUser()` |
+| No IDOR check on `/users/[userId]` routes | Users can access other users' data | Check `user.id !== userId` |
+| Returning `error.message` to clients | Exposes internal details | Use generic messages, log actual error |
+| Local `verifyAdmin` functions in admin routes | Inconsistent auth | Use `requireAdmin()` from `lib/adminAccess.js` |
+| Direct `export async function GET/POST` | No error tracking | Use `withErrorLogging()` wrapper |
+| No input validation on mutations | Accepts malformed data | Use Zod schemas from `lib/schemas` |
+| No rate limiting on mutations | Abuse potential | Use `rateLimit()` from `lib/rateLimit.js` |
 | Returning full user objects | Exposes sensitive data | Select specific fields |
-| No error handling | Silent failures, bad UX | Use `withErrorLogging()` |
 | Hardcoded response data | Gets stale | Query database |
 
 ### ❌ File Organization Anti-Patterns
@@ -923,6 +1563,49 @@ await supabase.from('user_vehicles').update({ ... });
 // FIX: Use the service which triggers score update
 import { recalculateScore } from '@/lib/garageScoreService';
 await recalculateScore(vehicleId);
+```
+
+**Bug**: "Parts status not updating in real-time after marking installed"
+```javascript
+// CAUSE: Provider methods return { data, error }, not throw on error
+// Also: Parts-only updates return data=null (no main table changes)
+try {
+  await updateBuild(buildId, { selectedParts });  // Wrong: doesn't throw
+  // Success code runs even if there was an error!
+} catch (err) { /* Never catches API errors */ }
+
+// FIX: Check the returned error, not try/catch
+const { error } = await updateBuild(buildId, { selectedParts });
+if (error) {
+  console.error('Failed to update:', error);
+  return;
+}
+// Now safe to show success UI
+```
+
+**Bug**: "Provider state not updating after parts-only save"
+```javascript
+// CAUSE: updateUserProject returns { data: null } for parts-only updates
+// because no main table columns change - only user_project_parts table
+if (!error && data) {  // data is null, so this block is skipped!
+  setBuilds(prev => ...);  // Never runs
+}
+
+// FIX: Update state when there's no error, regardless of data
+if (!error) {
+  setBuilds(prev => prev.map(build => {
+    if (build.id === buildId) {
+      if (data) {
+        // Full update - use response data
+        return { ...build, ...transformedData };
+      } else {
+        // Parts-only update - merge just the parts
+        return { ...build, parts: updates.selectedParts };
+      }
+    }
+    return build;
+  }));
+}
 ```
 
 ---
@@ -1098,9 +1781,15 @@ calculateAllModificationGains()        calculateUpgradedMetrics()
 | Feature | File | Function |
 |---------|------|----------|
 | **HP gain (PRIMARY)** | `hpCalculator.js` | `calculateSmartHpGain()` |
+| **Torque gain** | `hpCalculator.js` | Aspiration-aware (Turbo 1.2x, SC 1.1x, NA 0.95x) |
 | Modification gains | `hpCalculator.js` | `calculateAllModificationGains()` → uses `calculateSmartHpGain` |
-| Metrics (0-60, braking) | `metricsCalculator.js` | `calculateUpgradedMetrics()` → uses `calculateSmartHpGain` |
+| **All metrics** | `metricsCalculator.js` | `calculateUpgradedMetrics()` → physics-based |
 | 0-60 physics | `metricsCalculator.js` | `estimateZeroToSixty()` - drivetrain/traction model |
+| 1/4 mile physics | `metricsCalculator.js` | `estimateQuarterMile()` - ET formula |
+| Trap speed physics | `metricsCalculator.js` | `estimateTrapSpeed()` - WHP-based |
+| Braking physics | `metricsCalculator.js` | `estimateBrakingDistance()` - tire grip aware |
+| Lateral G physics | `metricsCalculator.js` | `estimateLateralG()` - tire/suspension/aero |
+| Weight tracking | `metricsCalculator.js` | `calculateWeightChange()` - mod weight impacts |
 | Performance profile | `scoreCalculator.js` | `getPerformanceProfile()` → uses `calculateUpgradedMetrics` |
 | Aspiration detection | `constants.js` | `detectAspiration(car)` - parses engine string |
 | Physics gains | `constants.js` | `getPhysicsBasedGainPercent(key, aspiration)` |
@@ -1126,8 +1815,28 @@ console.log(result.tier);            // 3
 console.log(result.aspiration);      // "TwinTurbo"
 ```
 
-#### 0-60 Physics Model
+#### Physics Models (Updated 2026-01-25)
 
+All performance metrics now use physics-based calculations instead of simple rule-of-thumb estimates.
+
+##### Torque Calculation
+Torque gains are calculated relative to HP gains with aspiration-aware multipliers:
+
+```javascript
+// Turbo cars gain more torque than HP due to boost characteristics
+const TORQUE_MULTIPLIERS = {
+  NA: 0.95,         // NA cars gain slightly less torque than HP
+  Turbo: 1.20,      // Turbo cars gain more torque (low-end boost)
+  TwinTurbo: 1.25,  // Twin turbo even more torque
+  Supercharged: 1.10,
+};
+
+// Example: RS5 (TwinTurbo) with 100 HP gain → 125 lb-ft torque gain
+```
+
+> ⚠️ **Calibration Note (2026-01-25)**: The 1.20x multiplier for Turbo may be too aggressive for I4 engines. Real-world Evo X data (FP Green + E85) shows HP:TQ ratios closer to 1:1, not 1:1.2. Consider future refinement: I4 Turbo → 1.05-1.10x, V6/V8 Turbo → 1.20x.
+
+##### 0-60 Time
 The `estimateZeroToSixty()` function uses physics-based calculations:
 
 ```javascript
@@ -1138,6 +1847,53 @@ The `estimateZeroToSixty()` function uses physics-based calculations:
 
 import { estimateZeroToSixty } from '@/lib/performanceCalculator';
 const time = estimateZeroToSixty(hp, weight, { drivetrain: 'AWD', transmission: 'dct' });
+```
+
+##### Quarter Mile & Trap Speed
+Uses industry-standard formulas calibrated against real drag strip data:
+
+```javascript
+import { estimateQuarterMile, estimateTrapSpeed } from '@/lib/performanceCalculator';
+
+// ET ≈ 5.825 × (weight / whp)^0.333 + traction adjustment
+const et = estimateQuarterMile(hp, weight, { drivetrain: 'AWD' });
+
+// Trap speed ≈ 224 × (whp / weight)^0.333
+const trapMph = estimateTrapSpeed(hp, weight, { drivetrain: 'AWD' });
+```
+
+##### Braking Distance
+Physics-based with tire compound awareness:
+
+```javascript
+import { estimateBrakingDistance } from '@/lib/performanceCalculator';
+
+// Tire grip coefficients:
+// - Stock: 0.90, Performance: 0.95, Track: 1.05, R-compound: 1.15, Slicks: 1.30
+const braking = estimateBrakingDistance(weight, brakeModBonus, tireGrip, stockBraking);
+```
+
+##### Lateral G
+Multi-factor physics model:
+
+```javascript
+import { estimateLateralG } from '@/lib/performanceCalculator';
+
+// Factors: Tire compound (60%), suspension (20%), aero (10%), weight (10%)
+// R-compound tires can add ~0.15-0.20g over stock
+const lateralG = estimateLateralG(baseLateralG, upgradeKeys, tireGrip);
+```
+
+##### Weight Tracking
+Mods that add or remove weight are now tracked:
+
+```javascript
+import { calculateWeightChange } from '@/lib/performanceCalculator';
+
+// Example weight changes (lbs):
+// +75 supercharger, +100 roll cage, -35 lightweight wheels, -25 carbon hood
+const weightDelta = calculateWeightChange(['supercharger-roots', 'carbon-hood']);
+// Returns: 75 - 25 = 50 lbs heavier
 ```
 
 **❌ DO NOT**:
@@ -1178,6 +1934,42 @@ Files with deprecated `totalHpGain` usage (marked with @deprecated comments):
 | `OwnedVehiclesProvider.jsx` | ⚠️ Deprecated | `totalHpGain` marked deprecated, use `useVehiclePerformance` |
 | `SavedBuildsProvider.jsx` | ⚠️ Deprecated | `totalHpGain` marked deprecated, use `useBuildPerformance` |
 | `app/api/community/builds/route.js` | ✅ Fixed | Uses `calculateAllModificationGains` |
+
+#### Real-World Validation (2026-01-25)
+
+The physics model has been validated against real-world dyno data and drag times for two vehicles:
+
+##### Audi RS5 (B9 2.9L TwinTurbo V6) - Stage 1 Build
+| Metric | Projection | Real-World Data | Status |
+|--------|------------|-----------------|--------|
+| HP Gain | +108 HP (450 → 558 HP) | APR/IE Stage 1: +90-120 HP | ✅ Accurate |
+| Torque | +135 lb-ft | APR Stage 1: +130-150 lb-ft | ✅ Accurate |
+| 0-60 | 3.5s | Tuned RS5 timeslips: 3.3-3.6s | ✅ Accurate |
+| 1/4 Mile | 11.3s | Tuned RS5 timeslips: 11.2-11.6s | ✅ Accurate |
+
+##### Mitsubishi Evo X (4B11T 2.0L Turbo I4) - Stage 3 E85 + Slicks Build
+| Metric | Projection | Real-World Data | Status |
+|--------|------------|-----------------|--------|
+| HP | 545 HP (~460 WHP) | FP Green + E85: 450-470 WHP | ✅ Accurate |
+| Torque | 605 lb-ft | FP Green dynos: 480-520 lb-ft | ⚠️ ~20% high |
+| 0-60 | 3.1s | Evo X slicks: 3.0-3.3s | ✅ Accurate |
+| 1/4 Mile | 10.6s | 460 WHP Evos: 10.8-11.2s | ⚠️ ~0.3s optimistic |
+| Trap Speed | 132 mph | 460 WHP Evos: 122-128 mph | ⚠️ ~5-10 mph high |
+| Braking | 88 ft | Track prep + slicks: 85-90 ft | ✅ Accurate |
+| Lateral G | 1.18g | Slicks: 1.20-1.35g | ✅ Conservative |
+
+**Overall Confidence: 75-85%** - HP projections are accurate. Torque and trap speed run slightly high for I4 turbos.
+
+##### Known Limitations
+1. **I4 Turbo Torque**: The 1.20x torque multiplier overestimates I4 turbo gains. Real data shows ~1.05-1.10x.
+2. **Quarter Mile / Trap Speed**: Slightly optimistic (~5-10%) at high power levels.
+3. **Lateral G**: Conservative for slick tires (real-world slicks can exceed 1.30g).
+
+##### Data Sources
+- evolutionm.net dyno results database
+- APR/IE/Unitronic published dyno sheets
+- Drag times from NHRA/drag strip timeslips
+- Car & Driver, Motor Trend braking/skidpad tests
 | `app/api/community/builds/[slug]/route.js` | ✅ Fixed | Uses `calculateAllModificationGains` |
 
 Files that still need migration to use hooks (consumers of deprecated values):
@@ -1320,16 +2112,33 @@ Files that still need migration to use hooks (consumers of deprecated values):
 | File | Responsibility | Key Exports |
 |------|----------------|-------------|
 | `lib/alTools.js` | AL tool definitions and execution | `executeToolCall()`, `searchKnowledge()`, `AL_TOOLS` |
-| `lib/alConversationService.js` | Conversation persistence | `createConversation()`, `addMessage()`, `formatMessagesForClaude()` |
+| `lib/alConversationService.js` | Conversation persistence (uses RPC) | `createConversation()`, `getUserConversations()`, `addMessage()`, sharing via DB functions |
 | `lib/alConfig.js` | AL configuration and prompts | `buildALSystemPrompt()`, `AL_PLANS`, `MODEL_TIERS`, `selectModelForQuery()` |
 | `lib/alUsageService.js` | Credit/usage tracking | `getUserBalance()`, `deductUsage()`, `processMonthlyRefill()` |
 | `lib/alEvaluationService.js` | LLM-as-judge evaluation | `evaluateResponse()`, `runGoldenDatasetEvaluation()`, `generateEvaluationReport()` |
 | `lib/alFeedbackService.js` | Response feedback collection | `recordFeedback()`, `getFeedbackStats()`, `getFeedbackTrend()` |
 | `lib/alIntentClassifier.js` | Query intent detection | `classifyQueryIntent()`, `getRecommendedTools()` |
+| `lib/alIntelligence.js` | Content gap detection | `getUnresolvedGaps()`, `analyzeConversationForGaps()` |
+| `lib/alContentGapResolver.js` | Gap resolution workflow | `resolveGap()`, `getGapsForReview()`, `searchExistingContent()` |
 | `lib/aiCircuitBreaker.js` | API resilience | `executeWithCircuitBreaker()`, `aiCircuitBreaker`, `CIRCUIT_STATES` |
 | `lib/cohereRerank.js` | Search result reranking | `rerankDocuments()`, `rerankALResults()` |
 | `lib/rrfRerank.js` | Reciprocal Rank Fusion | `reciprocalRankFusion()`, `mergeRRFWithDocuments()` |
 | `lib/knowledgeIndexService.js` | RAG document indexing | `ingestKnowledgeText()` (with `confidenceLevel` parameter) |
+
+**AL Database RPCs** (prefer over client-side queries):
+```javascript
+// ✅ CORRECT: Use RPC for conversations with preview (avoids N+1)
+const { data } = await client.rpc('get_user_conversations_with_preview', {
+  p_user_id: userId,
+  p_limit: 20,
+  p_offset: 0,
+  p_include_archived: false,
+});
+
+// ✅ CORRECT: Use car_id for al_content_gaps queries
+const carId = await resolveCarId(carSlug);
+query = query.eq('car_id', carId);  // al_content_gaps has index on car_id
+```
 
 **AL API Route**: `app/api/ai-mechanic/route.js`
 - Streaming responses with circuit breaker protection
@@ -1341,6 +2150,14 @@ Files that still need migration to use hooks (consumers of deprecated values):
 - Thumbs up/down feedback collection
 - Links feedback to conversations and prompt versions
 
+**Shared Conversation API**: `app/api/shared/al/[token]/route.js`
+- Public read-only access to shared conversations via token
+- Rate limited: 60 requests/minute per IP
+- Token validation: UUID format required
+- Security checks: expiration (`share_expires_at`), revocation (`share_revoked_at`)
+- Returns sanitized messages (no user_id, no email, no internal IDs)
+- Error responses: 404 (not found/revoked), 410 (expired)
+
 **AL Evaluation Tables**:
 - `al_evaluation_runs` - Evaluation run summaries
 - `al_evaluation_results` - Individual test case results
@@ -1348,7 +2165,9 @@ Files that still need migration to use hooks (consumers of deprecated values):
 - `al_prompt_versions` - Prompt version tracking for A/B testing
 
 ### Community Features
-**SOURCE OF TRUTH**: `lib/communityService.js`
+**SOURCE OF TRUTH**: 
+- Service: `lib/communityService.js` (server-side operations)
+- Hooks: `hooks/useCommunityData.js` (React Query hooks for client)
 
 ### Discord Notifications
 **SOURCE OF TRUTH**: `lib/discord.js`
@@ -1419,23 +2238,29 @@ export const GET = withErrorLogging(async (request) => {
 | `upgrades.js` | Upgrade data lookups | `getUpgradeByKey()` |
 | `eventsService.js` | Events data | Event CRUD |
 | `maintenanceService.js` | Maintenance data | Maintenance schedules |
+| `fitmentService.js` | Wheel/tire fitment data | `fetchCarFitments()`, `getFitmentWarnings()`, `formatWheelSpecs()` |
 | `communityService.js` | Community features | Posts, builds, insights |
 | `alTools.js` | AI assistant tools | AL tool definitions, `searchKnowledge()` with reranking |
-| `alConversationService.js` | AI conversations | Message handling |
+| `alConversationService.js` | AI conversations (uses RPC) | `getUserConversations()`, `createConversation()`, `addMessage()` |
 | `alConfig.js` | AL configuration | `buildALSystemPrompt()`, `MODEL_TIERS`, `selectModelForQuery()` |
 | `alUsageService.js` | AL usage/credits | `getUserBalance()`, `deductUsage()`, `processMonthlyRefill()` |
 | `alEvaluationService.js` | LLM-as-judge evaluation | `evaluateResponse()`, `runGoldenDatasetEvaluation()`, `EVALUATION_DIMENSIONS` |
 | `alFeedbackService.js` | Response feedback | `recordFeedback()`, `getFeedbackStats()`, `getFeedbackTrend()` |
+| `alIntelligence.js` | Content gap detection | `getUnresolvedGaps()`, `analyzeConversationForGaps()` |
+| `alContentGapResolver.js` | Gap resolution | `resolveGap()`, `getGapsForReview()` |
 | `aiCircuitBreaker.js` | API circuit breaker | `executeWithCircuitBreaker()`, `aiCircuitBreaker`, `CIRCUIT_STATES` |
 | `emailService.js` | Email sending (Resend) | `sendEmail()`, email templates |
+| `unsubscribeToken.js` | Secure unsubscribe tokens | `generateUnsubscribeToken()`, `verifyUnsubscribeToken()` |
 | `errorLogger.js` | Client error logging | `logError()` |
 | `serverErrorLogger.js` | Server error logging | `withErrorLogging()`, `logCronError()` |
+| `adminAccess.js` | Admin auth verification | `requireAdmin()`, `isAdminEmail()`, `getAdminFromRequest()` |
+| `apiErrors.js` | Standardized API error responses | `errors.unauthorized()`, `errors.forbidden()`, `errors.badRequest()`, `errors.notFound()`, `errors.database()` |
 | `activityTracker.js` | Analytics tracking | `trackEvent()` |
 | `garageScoreService.js` | Garage completeness scoring | `getVehicleScore()`, `recalculateScore()` |
 | `lapTimeService.js` | Lap time estimation from real data | `estimateLapTime()`, `getTrackBaseline()` |
 | `rateLimit.js` | API rate limiting | `rateLimit()`, `RateLimitPresets`, `withRateLimit()`, `distributedRateLimit()` |
-| `queryKeys.js` | TanStack Query key factory | `carKeys`, `userKeys`, `eventKeys`, `alKeys`, `partsKeys` |
-| `schemas/index.js` | Zod validation schemas | `feedbackSchema`, `contactSchema`, `validateWithSchema()` |
+| `queryKeys.js` | TanStack Query key factory | `carKeys`, `userKeys`, `eventKeys`, `alKeys`, `partsKeys`, `communityKeys` |
+| `schemas/index.js` | Zod validation schemas | `feedbackSchema`, `contactSchema`, `communityPostSchema`, `dynoResultSchema`, `trackTimeSchema`, `validateWithSchema()`, `validationErrorResponse()` |
 | `images.js` | Image utilities | `getCarImageUrl()`, `getOptimizedImageUrl()` |
 | `imageUploadService.js` | Image upload handling | `uploadImage()`, `deleteImage()` |
 | `cohereRerank.js` | Cohere reranking for search | `rerankDocuments()`, `rerankALResults()` |
@@ -1590,8 +2415,10 @@ onMouseEnter={() => preloadChartComponents()}
 - `ListSkeleton` - List loading placeholder
 - `TableSkeleton` - Table loading placeholder
 - `CarCardSkeleton` - AutoRev car card loading placeholder
+- `DynoChartSkeleton` - Virtual Dyno chart loading placeholder
+- `DataPageSkeleton` - Full /data page loading placeholder (includes dyno chart, metrics, power breakdown)
 
-Import: `import { Skeleton, CardSkeleton, ListSkeleton } from '@/components/ui';`
+Import: `import { Skeleton, CardSkeleton, ListSkeleton, DataPageSkeleton } from '@/components/ui';`
 
 **EmptyState Component:**
 - `EmptyState` - Standardized empty state display with icon, title, description, and actions
@@ -1637,6 +2464,27 @@ import SwipeableRow from '@/components/ui/SwipeableRow';
 
 Import both: `import { PullToRefresh, SwipeableRow } from '@/components/ui';`
 
+**Drag-and-Drop Reordering** (`@dnd-kit/core`, `@dnd-kit/sortable`)
+- Touch-friendly drag-and-drop for reordering lists
+- Used in: Garage vehicle list view (list mode)
+- Coexists with SwipeableRow via dedicated drag handle (grip icon)
+- Sensors configured for touch (150ms hold) and pointer (8px threshold)
+- Persists order via `reorderVehicles()` in `OwnedVehiclesProvider`
+
+```javascript
+// Key imports from @dnd-kit
+import { DndContext, closestCenter, TouchSensor, PointerSensor } from '@dnd-kit/core';
+import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
+// Wrap list with DndContext + SortableContext
+<DndContext sensors={sensors} onDragEnd={handleDragEnd}>
+  <SortableContext items={itemIds} strategy={verticalListSortingStrategy}>
+    {items.map(item => <SortableItem key={item.id} item={item} />)}
+  </SortableContext>
+</DndContext>
+```
+
 **Additional Components:**
 | Component | File | Usage |
 |-----------|------|-------|
@@ -1680,17 +2528,58 @@ Import both: `import { PullToRefresh, SwipeableRow } from '@/components/ui';`
 
 ### Route Organization
 
-| Path Pattern | Purpose | Auth Required |
-|--------------|---------|---------------|
-| `/api/cars/[slug]/...` | Car data endpoints | No |
-| `/api/users/[userId]/...` | User data endpoints | Yes |
-| `/api/community/...` | Community features | Varies |
-| `/api/events/...` | Events data | No |
-| `/api/ai-mechanic/...` | AL assistant | Yes |
-| `/api/admin/...` | Admin endpoints | Admin only |
-| `/api/internal/...` | Internal/pipeline | Service role |
-| `/api/cron/...` | Scheduled jobs | Cron secret |
-| `/api/notifications/...` | Notification system | Yes |
+| Path Pattern | Purpose | Auth Required | Rate Limited | Validation |
+|--------------|---------|---------------|--------------|------------|
+| `/api/cars/[slug]/...` | Car data endpoints | No | No | N/A |
+| `/api/users/[userId]/...` | User data endpoints | Yes + IDOR | Yes (mutations) | Zod |
+| `/api/community/...` | Community features | Varies | Yes (mutations) | Zod |
+| `/api/events/...` | Events data | No | No | N/A |
+| `/api/ai-mechanic/...` | AL assistant | Yes | Yes (`ai` preset) | N/A |
+| `/api/admin/...` | Admin endpoints | `requireAdmin()` | No | N/A |
+| `/api/internal/...` | Internal/pipeline | Service role | No | N/A |
+| `/api/cron/...` | Scheduled jobs | Cron secret | No | N/A |
+| `/api/notifications/...` | Notification system | Yes | No | N/A |
+| `/api/dyno-results` | User dyno data | Yes | Yes | `dynoResultSchema` |
+| `/api/checkout` | Stripe checkout | Yes | Yes (`checkout`) | N/A |
+
+### API Route Standard Patterns
+
+**All API routes MUST use `withErrorLogging` wrapper:**
+```javascript
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+
+async function handleGet(request) { /* ... */ }
+async function handlePost(request) { /* ... */ }
+
+export const GET = withErrorLogging(handleGet, { route: 'route-name', feature: 'feature' });
+export const POST = withErrorLogging(handlePost, { route: 'route-name', feature: 'feature' });
+```
+
+**Admin routes use `requireAdmin` helper:**
+```javascript
+import { requireAdmin } from '@/lib/adminAccess';
+
+async function handleGet(request) {
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
+  // ... admin logic
+}
+```
+
+**User routes require IDOR protection:**
+```javascript
+// For /api/users/[userId]/... routes
+const { userId } = await params;
+if (user.id !== userId) return errors.forbidden('Access denied');
+```
+
+**Mutation routes should have rate limiting:**
+```javascript
+import { rateLimit } from '@/lib/rateLimit';
+
+const limited = rateLimit(request, 'api'); // or 'form', 'ai', 'checkout'
+if (limited) return limited;
+```
 
 ### Key API Routes
 
@@ -1710,6 +2599,7 @@ Import both: `import { PullToRefresh, SwipeableRow } from '@/components/ui';`
 | `/api/cron/trial-reminders` | POST | Send trial expiration emails |
 | `/api/user/delete-data` | POST | GDPR: Delete all user data (Right to be Forgotten) |
 | `/api/user/export-data` | GET | GDPR: Export all user data (Right to Access) |
+| `/api/user/check-username` | GET | Check username availability (uses `is_public_slug_available()` DB function) |
 | `/api/analytics/batch` | POST | Batch analytics events (offline queue) |
 | `/api/admin/web-vitals/collect` | GET/POST | Core Web Vitals storage & aggregation |
 | `/api/notifications` | GET | List user's notifications (paginated) |
@@ -1747,6 +2637,8 @@ Import both: `import { PullToRefresh, SwipeableRow } from '@/components/ui';`
 | `ThemeProvider` | Dark/light mode | `useTheme()` (from next-themes) |
 | `PostHogProvider` | Product analytics | `usePostHog()` |
 | `LoadingProgressProvider` | Global loading state | `useLoadingProgress()` |
+| `BannerProvider` | Banner visibility state | `useBanner()` |
+| `PointsNotificationProvider` | Points toast queue | `usePointsNotification()` |
 
 ### Provider Hierarchy in app/layout.jsx
 
@@ -1755,13 +2647,25 @@ Import both: `import { PullToRefresh, SwipeableRow } from '@/components/ui';`
   <QueryProvider>
     <LoadingProgressProvider>
       <AuthProvider>
-        <PostHogProvider>
-          <AppConfigProvider>
-            <CarSelectionProvider>
-              {/* ... */}
-            </CarSelectionProvider>
-          </AppConfigProvider>
-        </PostHogProvider>
+        <PointsNotificationProvider>
+          <PostHogProvider>
+            <AppConfigProvider>
+              <CarSelectionProvider>
+                <FavoritesProvider>
+                  <CompareProvider>
+                    <SavedBuildsProvider>
+                      <OwnedVehiclesProvider>
+                        <BannerProvider>
+                          {/* App content */}
+                        </BannerProvider>
+                      </OwnedVehiclesProvider>
+                    </SavedBuildsProvider>
+                  </CompareProvider>
+                </FavoritesProvider>
+              </CarSelectionProvider>
+            </AppConfigProvider>
+          </PostHogProvider>
+        </PointsNotificationProvider>
       </AuthProvider>
     </LoadingProgressProvider>
   </QueryProvider>
@@ -1780,6 +2684,48 @@ Import both: `import { PullToRefresh, SwipeableRow } from '@/components/ui';`
 | `useAnimationDuration(normal, reduced)` | Get safe animation duration | `number` | `hooks/useReducedMotion.js` |
 | `useAnimationConfig()` | Get animation config object | `{ animate, duration, spring }` | `hooks/useReducedMotion.js` |
 
+### PWA & Mobile - Safe Area Colors (AUTOMATIC)
+
+iOS PWAs need the safe area (notch/Dynamic Island) to match the current screen's background. AutoRev handles this **automatically via CSS**.
+
+**How it works:**
+1. Add `data-overlay-modal` attribute to any fullscreen modal's container
+2. CSS `:has()` selector automatically detects it and changes safe area color
+
+**Usage (just add the data attribute):**
+```jsx
+// Fullscreen modal with overlay background (charcoal)
+function MyModal() {
+  return (
+    <div className={styles.overlay} data-overlay-modal>
+      {/* Modal content */}
+    </div>
+  );
+}
+
+// For media galleries (deep black)
+function Gallery() {
+  return (
+    <div className={styles.gallery} data-immersive-modal>
+      {/* Gallery content */}
+    </div>
+  );
+}
+```
+
+**Available data attributes:**
+| Attribute | Safe Area Color | Usage |
+|-----------|-----------------|-------|
+| `data-overlay-modal` | `#1a1a1a` (charcoal) | Fullscreen modals, questionnaires, onboarding |
+| `data-immersive-modal` | `#050a12` (deep black) | Media galleries, video players |
+| *(none)* | `#0d1b2a` (navy) | Default for main app pages |
+
+**Manual Hook (optional fallback):**
+```jsx
+import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
+useSafeAreaColor(SAFE_AREA_COLORS.OVERLAY, { enabled: isOpen });
+```
+
 ### Subscription Hooks
 
 | Hook | Purpose | Returns | Source File |
@@ -1795,6 +2741,28 @@ Import both: `import { PullToRefresh, SwipeableRow } from '@/components/ui';`
 - `willCancel` - True if active AND cancelAtPeriodEnd (use for "Cancels on [date]" UI)
 - `hasFeature(feature)` - Check feature access by tier
 - `openCustomerPortal()` - Open Stripe Customer Portal
+
+### Garage Hooks
+
+| Hook | Purpose | Returns | Source File |
+|------|---------|---------|-------------|
+| `useCarImages(carSlug)` | Manage car images shared across Garage/Tuning Shop | `{ images, heroImageUrl, setHeroImage, refreshImages }` | `hooks/useCarImages.js` |
+| `useGarageScore(vehicleId)` | Trigger garage score recalculation | `{ recalculateScore, isRecalculating, lastScore }` | `hooks/useGarageScore.js` |
+
+**useGarageScore Usage:**
+```javascript
+import { useGarageScore } from '@/hooks/useGarageScore';
+
+// Call after actions that affect garage score:
+// - Adding parts with brand/model (parts_specified category)
+// - Uploading photos (photos_uploaded category)
+// - Marking parts as installed
+const { recalculateScore } = useGarageScore(vehicleId);
+
+// Non-blocking recalculation after save
+await saveParts(newParts);
+recalculateScore().catch(err => console.warn('Score recalc failed:', err));
+```
 
 ### Feature Flag Hooks
 
@@ -1910,6 +2878,23 @@ Garage sub-pages (my-specs, my-build, my-performance, my-parts, my-photos, my-in
 | `useUserTrackTimes(userId, carSlug)` | User's logged track times | `hooks/useUserData.js` |
 | `useAddTrackTime()` | Mutation to add track time | `hooks/useUserData.js` |
 | `useTrackStats(trackSlug)` | Track statistics | `hooks/useLapTimeEstimate.js` |
+
+### Community Data Hooks
+
+| Hook | Purpose | File |
+|------|---------|------|
+| `useCommunityBuildsInfinite()` | Infinite scroll builds feed | `hooks/useCommunityData.js` |
+| `useBuildDetail(slug)` | Single build details | `hooks/useCommunityData.js` |
+| `usePostComments(postId)` | Comments for a post | `hooks/useCommunityData.js` |
+| `useToggleLike()` | Like/unlike mutation | `hooks/useCommunityData.js` |
+| `useAddComment()` | Add comment mutation | `hooks/useCommunityData.js` |
+| `useUpdateComment()` | Edit comment mutation | `hooks/useCommunityData.js` |
+| `useDeleteComment()` | Delete comment mutation | `hooks/useCommunityData.js` |
+| `useLinkedPost(buildId)` | Check if build is shared | `hooks/useCommunityData.js` |
+
+**Note:** Community likes (`useToggleLike`) are separate from car favorites (`useFavorites`). 
+- `useFavorites()` = favoriting cars for your "favorites" list
+- `useToggleLike()` = liking community build posts
 
 ### Hook Usage Examples
 
@@ -2045,7 +3030,7 @@ If not, it processes the event and records it. This handles Stripe's retry behav
 
 | Table | Purpose | Key Columns |
 |-------|---------|-------------|
-| `al_conversations` | Conversation sessions | `id`, `user_id`, `car_context`, `created_at` |
+| `al_conversations` | Conversation sessions | `id`, `user_id`, `car_context`, `share_token`, `share_expires_at`, `share_revoked_at`, `created_at` |
 | `al_messages` | Chat messages | `conversation_id`, `role`, `content`, `tool_calls` |
 | `al_prompt_versions` | Prompt A/B testing | `id`, `version_name`, `system_prompt`, `is_active` |
 | `al_evaluation_runs` | Evaluation run summaries | `prompt_version_id`, `pass_rate`, `avg_weighted_score`, `recommendation` |
@@ -2082,6 +3067,37 @@ If not, it processes the event and records it. This handles Stripe's retry behav
 | 0.7 | Curated database content (default) |
 | 0.5 | Community-contributed |
 | 0.3 | Unverified/scraped |
+
+**AL Conversation Sharing (`al_conversations` sharing columns):**
+| Column | Type | Purpose |
+|--------|------|---------|
+| `share_token` | uuid | Unique token for public sharing (NULL = not shared) |
+| `share_expires_at` | timestamptz | When the share link expires (NULL = never) |
+| `share_revoked_at` | timestamptz | When owner revoked sharing (NULL = active) |
+
+**Sharing Database Functions:**
+```sql
+-- Generate a share token (returns UUID)
+SELECT generate_conversation_share_token(
+  p_conversation_id := '...',
+  p_user_id := '...',
+  p_expires_in_days := 30  -- NULL for never expires
+);
+
+-- Revoke sharing (returns boolean)
+SELECT revoke_conversation_share_token(
+  p_conversation_id := '...',
+  p_user_id := '...'
+);
+```
+
+**Shared Conversation API**: `app/api/shared/al/[token]/route.js`
+- Public endpoint (no auth required)
+- Rate limited (60 req/min per IP)
+- Validates token format (UUID)
+- Checks expiration and revocation
+- Returns sanitized data (no PII - user_id, email excluded)
+- Returns 404 for invalid/revoked, 410 for expired
 
 ### DEPRECATED Tables (DO NOT USE)
 
@@ -2200,7 +3216,7 @@ If not, it processes the event and records it. This handles Stripe's retry behav
 
 ```javascript
 // ✅ CORRECT: Calculate from source data
-import { calculateHpGain } from '@/lib/performanceCalculator';
+import { calculateSmartHpGain, calculateAllModificationGains } from '@/lib/performanceCalculator';
 
 // Get stock specs from car
 const stockHp = car.hp;
@@ -2209,15 +3225,13 @@ const stockTorque = car.torque;
 // Get modifications from vehicle or build
 const mods = vehicle.installedModifications || build.upgrades;
 
-// Calculate
-const result = calculateHpGain({
-  stockHp,
-  stockTorque,
-  aspirationType: car.aspirationType,
-  upgrades: mods.map(key => getUpgradeByKey(key)),
-});
+// Calculate (option 1: full smart calculation)
+const result = calculateSmartHpGain(car, mods);
+// Returns: { stockHp, totalGain, projectedHp, confidence, tier }
 
-// Display: result.finalHp, result.totalHpGain
+// Calculate (option 2: simple wrapper)
+const { hpGain } = calculateAllModificationGains(mods, car);
+const finalHp = stockHp + hpGain;
 ```
 
 ### Displaying Vehicle Data in Components
@@ -2260,37 +3274,28 @@ function VehicleCard({ vehicle }) {
 
 | Page | Path | Purpose | Data Sources |
 |------|------|---------|--------------|
-| **Garage Home** | `/garage` | Vehicle selector, garage overview, favorites | `OwnedVehiclesProvider`, `FavoritesProvider` |
+| **Garage Home** | `/garage` | Vehicle selector, garage overview, drag-to-reorder | `OwnedVehiclesProvider`, `FavoritesProvider` |
 | **My Specs** | `/garage/my-specs` | Full vehicle specifications | `user_vehicles` + `cars` via `matched_car_id` |
 | **My Build** | `/garage/my-build` | Configure upgrades/modifications | `SavedBuildsProvider`, `performanceCalculator` |
 | **My Performance** | `/garage/my-performance` | See performance impact of upgrades | `user_projects`, `performanceCalculator` |
 | **My Parts** | `/garage/my-parts` | Research and select specific parts | `user_project_parts`, parts catalog |
 | **My Install** | `/garage/my-install` | Track installation progress, find service centers | `user_project_parts.status` |
 | **My Photos** | `/garage/my-photos` | Manage vehicle photos | `user_uploaded_images` |
-| **Builds List** | `/garage/builds` | All user's saved builds | `SavedBuildsProvider` |
-| **Compare** | `/garage/compare` | Compare cars side-by-side | `CompareProvider` |
-| **Public Share** | `/garage/[publicSlug]` | Public shareable garage | `user_vehicles` (public view) |
 
 ### Garage Navigation Flow
 
 ```
 /garage (Garage Home)
     │
-    ├── Select Vehicle → Opens vehicle detail pages
-    │       │
-    │       └── MyGarageSubNav dropdown navigates between:
-    │           ├── /garage/my-specs
-    │           ├── /garage/my-build
-    │           ├── /garage/my-performance
-    │           ├── /garage/my-parts
-    │           ├── /garage/my-install
-    │           └── /garage/my-photos
-    │
-    ├── /garage/builds (All saved builds)
-    │
-    ├── /garage/compare (Comparison tool)
-    │
-    └── /garage/[publicSlug] (Shareable public link)
+    └── Select Vehicle → Opens vehicle detail pages
+            │
+            └── MyGarageSubNav dropdown navigates between:
+                ├── /garage/my-specs
+                ├── /garage/my-build
+                ├── /garage/my-performance
+                ├── /garage/my-parts
+                ├── /garage/my-install
+                └── /garage/my-photos
 ```
 
 ### Garage URL Query Parameters
@@ -2362,6 +3367,13 @@ useEffect(() => {
 | `ServiceCenterCard` | Service center info | My Install |
 | `ServiceCenterFinder` | Find nearby service centers | My Install |
 | `DIYVideoEmbed` | YouTube DIY video embed | My Install |
+
+**Garage Home List View** (inline component in `app/(app)/garage/page.jsx`)
+- `VehicleListView` - Compact list of vehicles with drag-to-reorder
+- `SortableVehicleItem` - Individual draggable item with drag handle
+- Uses `@dnd-kit/core` + `@dnd-kit/sortable` for touch-friendly reordering
+- Drag handle (grip icon) separates drag from swipe-to-delete gesture
+- Persists order via `reorderVehicles()` API (`/api/users/[userId]/vehicles/reorder`)
 
 **Import pattern:**
 ```javascript
@@ -2458,27 +3470,89 @@ My Build Page
 
 ### Garage Provider Usage Matrix
 
-| Page | OwnedVehicles | SavedBuilds | Favorites | CarSelection | Compare |
-|------|---------------|-------------|-----------|--------------|---------|
-| /garage | ✅ | ✅ | ✅ | | |
-| /garage/my-specs | ✅ | | | | |
-| /garage/my-build | ✅ | ✅ | | ✅ | |
-| /garage/my-performance | ✅ | ✅ | | | |
-| /garage/my-parts | ✅ | ✅ | | | |
-| /garage/my-install | ✅ | ✅ | | | |
-| /garage/my-photos | ✅ | | | | |
-| /garage/builds | | ✅ | | | |
-| /garage/compare | | | | | ✅ |
+| Page | OwnedVehicles | SavedBuilds | Favorites | CarSelection |
+|------|---------------|-------------|-----------|--------------|
+| /garage | ✅ | ✅ | ✅ | |
+| /garage/my-specs | ✅ | | | |
+| /garage/my-build | ✅ | ✅ | | ✅ |
+| /garage/my-performance | ✅ | ✅ | | |
+| /garage/my-parts | ✅ | ✅ | | |
+| /garage/my-install | ✅ | ✅ | | |
+| /garage/my-photos | ✅ | | | |
+
+### Insights Page (Build Insights Dashboard)
+
+**Location**: `/insights` (`app/(app)/insights/`)
+
+**Purpose**: Personalized build insights for modification enthusiasts. Shows vehicle performance metrics, build progress, and mod recommendations.
+
+**Design Decision (Jan 2026)**: This page was intentionally redesigned to focus on **Build Insights** for car modification enthusiasts. The following features were **removed by design**:
+- ❌ Maintenance reminders (oil changes, tire rotation)
+- ❌ Registration/inspection due dates
+- ❌ Generic vehicle health cards
+- ❌ Action items for admin tasks
+
+**What the Insights page DOES show**:
+- ✅ Build Progress Rings (Power%, Handling%, Reliability%)
+- ✅ HP calculations with Stock → Gained → Current breakdown
+- ✅ Stage progression analysis (Stage 1/2/3)
+- ✅ Build value analysis (cost efficiency)
+- ✅ Next upgrade recommendations
+- ✅ Platform insights (strengths, weaknesses)
+- ✅ Known issues relevant to modding
+
+**Key Components** (in `app/(app)/insights/components/`):
+
+| Component | Purpose | Status |
+|-----------|---------|--------|
+| `BuildProgressRings.jsx` | Apple Watch-style Power/Handling/Reliability rings | ✅ Active |
+
+> **Note:** Several components were removed in the Jan 2026 cleanup (ActionCard, BuildProgressCard, GarageHealthRing, InsightCard, PersonalizeTooltip, VehicleHealthCard, VehicleSelector). See git history for details.
+
+**Data Flow**:
+```
+/insights Page
+    │
+    ├─── useUserInsights(userId) → /api/users/[userId]/insights
+    │       │
+    │       └─── Returns:
+    │             - vehicles[] with matched_car data
+    │             - insights.buildProgress[]
+    │             - summary (totalHpGain, totalMods)
+    │
+    ├─── HP Calculation (SOURCE OF TRUTH)
+    │       │
+    │       └─── calculateAllModificationGains(installedMods, car)
+    │             from lib/performanceCalculator
+    │             NEVER use stored totalHpGain values
+    │
+    └─── Analysis Components
+            ├─── BuildProgressAnalysis (Stage progression)
+            ├─── BuildValueAnalysis (Cost efficiency)
+            ├─── NextUpgradeRecommendation
+            ├─── PlatformInsights
+            └─── KnownIssuesAlert (mod-relevant issues only)
+```
+
+**Service**: `lib/insightService.js`
+- `getInsightsForUser(userId, vehicleId)` - Returns build-focused insights
+- Uses `calculateAllModificationGains()` for HP (SOURCE OF TRUTH)
 
 ### Snapshots vs Calculations
 
-| Data | Stored (Snapshot) | Calculated at Runtime |
-|------|-------------------|----------------------|
-| `user_projects.stock_hp` | ✅ For community display consistency | |
-| `user_projects.final_hp` | ✅ For community display consistency | |
-| `user_vehicles.total_hp_gain` | ✅ For quick display | |
-| Build performance details | | ✅ Use `calculateHpGain()` |
-| 0-60, quarter mile, etc. | | ✅ Use `calculateUpgradedMetrics()` |
+**IMPORTANT:** Stored HP values exist for historical tracking and community sharing consistency, but **ALWAYS calculate dynamically for in-app display**. Stored values become stale when calculation logic improves.
+
+| Data | Stored? | Purpose | Display Strategy |
+|------|---------|---------|------------------|
+| `user_projects.stock_hp` | ✅ | Community post consistency | Use stored for public community pages |
+| `user_projects.final_hp` | ✅ | Community post consistency | Use stored for public community pages |
+| `user_vehicles.total_hp_gain` | ✅ | Historical tracking | **CALCULATE** dynamically for garage display |
+| Build performance details | | | ✅ Use `calculateSmartHpGain()` |
+| 0-60, quarter mile, etc. | | | ✅ Use `calculateUpgradedMetrics()` |
+
+**Rule of thumb:**
+- **Public community pages**: Use stored snapshots (ensures posts show same values as when shared)
+- **User's own garage/insights**: ALWAYS calculate dynamically from `installedModifications`
 
 ---
 
@@ -2502,9 +3576,20 @@ The "Data" tab and performance visualization features use several interconnected
 Generates estimated HP/torque curves based on modifications using a physics model.
 
 **Key Features:**
-- Shows HP (solid teal) and Torque (dashed blue) curves
+- Shows BOTH stock AND modified curves when modifications present (stock = dashed/faded, modified = solid)
+- Shows HP (solid teal) and Torque (blue, labeled "lb-ft") curves
+- Interactive hover/touch to see HP/TQ values at specific RPM points
 - Models turbo spool characteristics (big turbo = delayed torque peak)
 - Auto-detects forced induction profile from car engine and selected upgrades
+- Accessible: `role="img"` with descriptive `aria-label` for screen readers
+- Respects `prefers-reduced-motion` for users who disable animations
+
+**Dual-Curve Display:**
+When `hasModifications` is true:
+- Stock curves appear as dashed/faded lines
+- Modified curves appear as solid lines
+- Legend shows "Stock" indicator + HP/TQ values for modified
+- Hover tooltip shows both stock and modified values at cursor position
 
 **Forced Induction Profiles:**
 
@@ -2679,6 +3764,62 @@ Donut chart showing HP contribution by modification category.
 />
 ```
 
+### User Track Times Display
+
+**Location**: `app/(app)/data/page.jsx` (Track tab)
+
+Displays logged track times with progress tracking and management.
+
+**Key Features:**
+- Personal Best (PB) indicator with trophy icon for fastest time per track
+- Edit/delete functionality for each logged time
+- Improvement trend visualization (total improvement across sessions)
+- Per-track progress indicator showing improvement over multiple sessions
+
+**Track Time Item Data:**
+```javascript
+{
+  id: string,
+  lap_time_seconds: number,
+  track_name: string,
+  track_config: string | null,
+  session_date: string,
+  conditions: 'dry' | 'wet' | 'mixed',
+  isPB: boolean,              // Calculated: is this the fastest at this track?
+  trackImprovement: {         // Calculated: improvement data for this track
+    total: number,            // Seconds improved (first time - PB)
+    sessions: number,         // Total sessions at this track
+    firstTime: number,
+    pb: number,
+  } | null,
+  sessionsAtTrack: number,
+}
+```
+
+**Hooks Used:**
+- `useUserTrackTimes(userId, carSlug)` - Fetch user's track times
+- `useAddTrackTime()` - Add new track time
+- `useDeleteTrackTime()` - Delete existing track time
+
+### Dyno/Track Logging Modals
+
+**Locations:**
+- `components/DynoLogModal.jsx`
+- `components/TrackTimeLogModal.jsx`
+
+**Mods Snapshot Feature:**
+Both modals accept `currentBuildInfo` prop to display and save the current modification state at time of logging:
+
+```javascript
+currentBuildInfo={{
+  upgrades: ['stage1-tune', 'catback-exhaust', ...], // Array of upgrade keys
+  totalHpGain: 45,                                   // HP gain from mods
+  estimatedHp: 489,                                  // Total estimated HP
+}}
+```
+
+This snapshot is saved with the logged data for future reference and analysis.
+
 ### Data Tables Used
 
 | Table | Purpose | Key Columns |
@@ -2793,6 +3934,41 @@ const { data: mergedSpecs } = await supabase.rpc('get_vehicle_merged_specs', {
 | `FavoritesProvider` | User's favorites | Supabase + localStorage | **Yes** | `useFavorites()` |
 | `CarSelectionProvider` | Currently selected car | localStorage | No | `useCarSelection()` |
 | `CompareProvider` | Comparison list (up to 4) | localStorage | No | `useCompare()` |
+| `LoadingProgressProvider` | Loading states coordination | Memory only | No | `useLoadingProgress()` |
+| `BannerProvider` | Banner visibility state | Memory only | No | `useBanner()` |
+| `PointsNotificationProvider` | Points toast queue | Memory only | No | `usePointsNotification()` |
+
+### Provider Context Value Memoization (REQUIRED)
+
+**All providers MUST memoize their context values using `useMemo` to prevent unnecessary re-renders.**
+
+```jsx
+// ✅ CORRECT - Memoized context value
+function MyProvider({ children }) {
+  const [state, setState] = useState(initialState);
+  const myCallback = useCallback(() => { /* ... */ }, []);
+  
+  const value = useMemo(() => ({
+    state,
+    myCallback,
+  }), [state, myCallback]);
+  
+  return <MyContext.Provider value={value}>{children}</MyContext.Provider>;
+}
+
+// ❌ WRONG - New object on every render (causes all consumers to re-render)
+function MyProvider({ children }) {
+  const [state, setState] = useState(initialState);
+  
+  return (
+    <MyContext.Provider value={{ state, setState }}>
+      {children}
+    </MyContext.Provider>
+  );
+}
+```
+
+**Audit Status (2026-01-25):** All 9 providers now use `useMemo` for their context values.
 
 ### Provider Details
 
@@ -2809,6 +3985,9 @@ const { data: mergedSpecs } = await supabase.rpc('get_vehicle_merged_specs', {
 **SavedBuildsProvider** (`components/providers/SavedBuildsProvider.jsx`)  
 - User's saved build configurations from `user_projects` table
 - Exports: `useSavedBuilds()`, `useCarBuilds(slug)`, `useSavedBuildCount()`
+- Methods: `saveBuild()`, `updateBuild()`, `deleteBuild()`, `getBuildById()`, `autoSaveBuild()`, `refreshBuilds()`
+- **IMPORTANT**: All mutating methods return `{ data, error }` - check `error` before assuming success
+- **IMPORTANT**: `updateBuild({ selectedParts })` returns `data: null` because only parts table is updated - check `if (!error)` not `if (data)`
 
 **FavoritesProvider** (`components/providers/FavoritesProvider.jsx`)
 - User's favorite cars from `user_favorites` table
@@ -2975,6 +4154,11 @@ See `docs/NAMING_CONVENTIONS.md` for complete naming standards.
 | Log error (client) | `logError()` | `lib/errorLogger` |
 | Log error (server) | `withErrorLogging()` | `lib/serverErrorLogger` |
 | Send Discord alert | `sendDiscordAlert()` | `lib/discord` |
+| Check admin auth | `requireAdmin(request)` | `lib/adminAccess` |
+| Return API error | `errors.unauthorized()`, `errors.forbidden()` | `lib/apiErrors` |
+| Rate limit API route | `rateLimit(request, 'api')` | `lib/rateLimit` |
+| Validate POST body | `validateWithSchema(schema, body)` | `lib/schemas` |
+| Auth user in API route | `createServerSupabaseClient()` + `getUser()` | `lib/supabaseServer` |
 | Add pull-to-refresh | `<PullToRefresh onRefresh={...}>` | `components/ui/PullToRefresh` |
 | Add swipe-to-delete | `<SwipeableRow rightActions={...}>` | `components/ui/SwipeableRow` |
 | Refresh vehicles list | `refresh()` from `useOwnedVehicles()` | `OwnedVehiclesProvider` |
@@ -3224,6 +4408,68 @@ Dark/light mode is implemented via `next-themes`.
 
 ---
 
+## Settings Page Features
+
+The Settings page (`app/(app)/settings/page.jsx`) is the central hub for user account management.
+
+### Features Overview
+
+| Feature | Description | Components/APIs |
+|---------|-------------|-----------------|
+| **Avatar Upload** | Click avatar to upload profile photo (JPG, PNG, WebP, max 5MB) | `/api/uploads` |
+| **Username** | Public profile URL with real-time availability check | `/api/user/check-username`, `is_public_slug_available()` |
+| **Display Name** | Editable display name with optimistic save | `updateProfile()` in AuthProvider |
+| **Theme Toggle** | Switch between light/dark mode | `ThemeToggle` component |
+| **AL Fuel** | View balance, purchase top-ups | `useUserCredits()`, checkout flow |
+| **Referral** | Copy referral link, earn fuel | `profile.referral_code` |
+| **Location** | ZIP code for local event recommendations | `useZipLookup()`, `useSaveLocation()` |
+| **Plan Management** | View/change subscription tier, manage billing | Stripe integration |
+| **Notifications** | Full notification preferences | `NotificationPreferences` component |
+| **Data Export** | Download all user data (GDPR) | `/api/user/export-data` |
+| **Clear Data** | Clear garage or AL history | `useClearUserData()` |
+| **Delete Account** | Multi-step deletion with feedback | `DeleteAccountModal` component |
+| **PWA Install** | Install app to home screen | `usePWAInstall()` hook |
+
+### Username Validation Rules
+
+Username (`public_slug`) is validated both client-side and via database function:
+
+```javascript
+// Validation rules (mirrors DB function validate_public_slug)
+- Length: 3-30 characters
+- Pattern: ^[a-z0-9][a-z0-9_-]*[a-z0-9]$ (lowercase only)
+- Must start and end with letter or number
+- Reserved words blocked: admin, api, app, auth, autorev, etc.
+```
+
+**API:** `GET /api/user/check-username?username=xxx`
+**DB Function:** `is_public_slug_available(slug)` - validates format AND checks uniqueness
+
+### Avatar Upload Flow
+
+```javascript
+// 1. User clicks avatar → file input opens
+// 2. Validate: JPG/PNG/WebP, max 5MB
+// 3. Show preview immediately (optimistic)
+// 4. Upload to /api/uploads
+// 5. Update profile.avatar_url
+// 6. Revert preview on error
+```
+
+### Data Export (GDPR Right to Access)
+
+The "Export My Data" button triggers a JSON download containing:
+- Profile information
+- Garage vehicles
+- Favorites and saved builds
+- AL conversations and messages
+- Activity log and engagement history
+- Feedback submitted
+
+Sensitive fields (Stripe IDs, IP addresses) are redacted.
+
+---
+
 ## Subscription Polish
 
 ### Trial Reminders
@@ -3418,6 +4664,35 @@ Security headers are configured in two places:
 - Connect: `supabase.co`, `api.stripe.com`, `api.anthropic.com`, `api.openai.com`, `posthog.com`, `sentry.io`
 - Frames: `js.stripe.com`, `youtube.com`
 
+### Admin Authentication
+
+Admin routes use the standardized `requireAdmin` helper from `lib/adminAccess.js`:
+
+```javascript
+import { requireAdmin } from '@/lib/adminAccess';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+
+async function handleGet(request) {
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
+  
+  // Admin-only logic here...
+}
+
+export const GET = withErrorLogging(handleGet, { route: 'admin/my-route', feature: 'admin' });
+```
+
+**Admin verification flow:**
+1. Extract Bearer token from `Authorization` header
+2. Verify token with Supabase `auth.getUser()`
+3. Check email against `isAdminEmail()` whitelist
+4. Return 401 (missing token) or 403 (not admin) if denied
+
+**DO NOT:**
+- Create local `verifyAdmin` or `isAdmin` functions
+- Inline admin email checks in route handlers
+- Skip `withErrorLogging` wrapper on admin routes
+
 ### Rate Limiting
 
 Rate limiting is implemented in `lib/rateLimit.js` with both in-memory and distributed options:
@@ -3438,6 +4713,11 @@ Rate limiting is implemented in `lib/rateLimit.js` with both in-memory and distr
 - `/api/feedback` → `form` preset
 - `/api/contact` → `form` preset
 - `/api/events/submit` → `form` preset
+- `/api/users/[userId]/vehicles/*` → `api` preset (PATCH, DELETE)
+- `/api/users/[userId]/track-times` → `api` preset (POST, DELETE)
+- `/api/dyno-results` → `api` preset (POST, PUT, DELETE)
+- `/api/admin/advanced-analytics` → `api` preset
+- `/api/admin/retention` → `api` preset
 
 **Distributed Rate Limiting (for exact limits):**
 ```javascript
@@ -3459,7 +4739,7 @@ const result = await distributedRateLimit('user:123:/api/ai', {
 
 ### Input Validation
 
-All API routes should use Zod schemas from `lib/schemas/index.js`:
+All API routes with POST/PUT/PATCH should use Zod schemas from `lib/schemas/index.js`:
 
 ```javascript
 import { feedbackSchema, validateWithSchema, validationErrorResponse } from '@/lib/schemas';
@@ -3470,16 +4750,96 @@ export async function POST(request) {
   if (!validation.success) {
     return validationErrorResponse(validation.errors);
   }
-  // Use validation.data (sanitized)
+  // Use validation.data (sanitized and typed)
 }
 ```
 
-**Available schemas:**
-- `feedbackSchema` - Feedback form submissions
-- `contactSchema` - Contact form submissions
-- `eventSubmitSchema` - Event submissions
-- `vehicleSchema` - Vehicle data
-- `userPreferencesSchema` - User preferences
+**Available Schemas:**
+| Schema | Purpose | Key Fields |
+|--------|---------|------------|
+| `feedbackSchema` | User feedback form | `message`, `category`, `feedback_type` |
+| `contactSchema` | Contact form | `name`, `email`, `message` |
+| `eventSubmitSchema` | Event submission | `name`, `start_date`, `venue_name` |
+| `userPreferencesSchema` | User settings | `theme`, `units`, `al_preferences` |
+| `vehicleSchema` | Vehicle data | `year`, `make`, `model`, `trim` |
+| `communityPostSchema` | Community posts | `postType`, `title`, `description`, `imageIds` |
+| `dynoResultSchema` | Dyno results | `userVehicleId`, `whp`, `wtq`, `dynoDate` |
+| `trackTimeSchema` | Track times | `trackName`, `lapTimeSeconds`, `conditions` |
+| `alFeedbackSchema` | AL feedback | `messageId`, `feedbackType`, `feedbackReason` |
+
+### Webhook Security
+
+All webhooks MUST verify signatures before processing. Never parse the request body before verification.
+
+**Pattern:**
+```javascript
+export async function POST(request) {
+  // 1. Get RAW body (required for signature verification)
+  const rawBody = await request.text();
+  const signature = request.headers.get('x-signature-header');
+
+  // 2. Verify FIRST, before any JSON parsing
+  if (!verifySignature(rawBody, signature, SECRET)) {
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+  }
+
+  // 3. Parse AFTER verification
+  const payload = JSON.parse(rawBody);
+  
+  // 4. Process event...
+}
+```
+
+**Webhook Handlers:**
+| Handler | Signature Header | Verification |
+|---------|-----------------|--------------|
+| `app/api/webhooks/stripe/route.js` | `stripe-signature` | `stripe.webhooks.constructEvent()` + idempotency |
+| `app/api/webhooks/vercel/route.js` | `x-vercel-signature` | HMAC-SHA1 with `VERCEL_WEBHOOK_SECRET` |
+| `app/api/webhooks/resend/route.js` | `svix-signature` | HMAC-SHA256 with `RESEND_WEBHOOK_SECRET` |
+
+**Critical Rules:**
+- ❌ NEVER parse JSON before verifying signature
+- ❌ NEVER skip verification if secret is not configured (fail closed)
+- ✅ Use `request.text()` first, then verify, then `JSON.parse()`
+- ✅ Log failed verification attempts for security monitoring
+
+### Cron Job Authentication
+
+All cron routes must validate authorization using either:
+1. Vercel's automatic `x-vercel-cron` header (for Vercel Cron)
+2. `Authorization: Bearer ${CRON_SECRET}` header (for manual/external calls)
+
+**Standard Pattern:**
+```javascript
+const CRON_SECRET = process.env.CRON_SECRET;
+
+function isAuthorized(request) {
+  const authHeader = request.headers.get('authorization');
+  const vercelCron = request.headers.get('x-vercel-cron');
+  
+  // Accept Vercel's automatic cron header
+  if (vercelCron === 'true') return true;
+  
+  // Accept Bearer token with CRON_SECRET
+  if (CRON_SECRET && authHeader === `Bearer ${CRON_SECRET}`) return true;
+  
+  return false;
+}
+
+async function handleGet(request) {
+  if (!isAuthorized(request)) {
+    console.error('[CronName] Unauthorized. CRON_SECRET set:', Boolean(CRON_SECRET), 'x-vercel-cron:', request.headers.get('x-vercel-cron'));
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+  // Process cron job...
+}
+```
+
+**Critical Rules:**
+- ❌ NEVER allow requests through if `CRON_SECRET` is not configured
+- ❌ NEVER create local verification functions that bypass the standard pattern
+- ✅ Always support both `x-vercel-cron` AND `CRON_SECRET` for flexibility
+- ✅ Log unauthorized attempts with context for debugging
 
 ### Observability & Monitoring
 
@@ -3702,6 +5062,60 @@ The `NotificationHealthPanel` component shows:
 
 ---
 
+## Gamification Systems
+
+AutoRev has **two separate scoring systems** for different purposes. Do not confuse them:
+
+### 1. Points System (Leaderboard)
+
+**Service File:** `lib/pointsService.js`
+**Database Tables:** `user_points_history` (individual point awards), `user_profiles.total_points` (aggregate)
+**API Endpoint:** `/api/community/leaderboard`
+
+The Points System powers the community leaderboard. Users earn points for specific actions:
+
+| Action | Points |
+|--------|--------|
+| Share a build | 25 |
+| Like a post | 2 |
+| Comment on a post | 5 |
+| RSVP to event | 3 |
+| Daily login bonus | 5 |
+| Streak bonus (7+ days) | 10-50 |
+
+**Leaderboard Query:**
+- Monthly: Aggregates from `user_points_history` WHERE `created_at >= month_start`
+- All-time: Uses pre-aggregated `user_profiles.total_points`
+
+```javascript
+// ✅ CORRECT - Use pointsService for leaderboard points
+import { awardPoints, getUserPoints, getMonthlyPoints } from '@/lib/pointsService';
+await awardPoints(userId, 'community_share_build', { build_id });
+
+// ❌ WRONG - engagementService is NOT for leaderboard points
+import { trackEngagementActivity } from '@/lib/engagementService'; // For internal metrics only!
+```
+
+### 2. Engagement Score System (Internal Metrics)
+
+**Service File:** `lib/engagementService.js`
+**Database Table:** `user_engagement_scores`
+**Purpose:** Internal retention tracking, re-engagement alerts, admin dashboards
+
+The Engagement Score System tracks user activity depth for internal analytics. It is **NOT** displayed on the leaderboard.
+
+| Column | Purpose |
+|--------|---------|
+| `score` | Calculated engagement score (0-100 scale) |
+| `current_streak` | Consecutive days active |
+| `garage_cars_count` | Number of vehicles owned |
+| `ai_conversations_count` | AL interactions |
+| `events_saved_count` | Events saved/RSVPd |
+
+**Cron Job:** `/api/cron/calculate-engagement` recalculates scores daily.
+
+---
+
 ## Engagement & Streaks
 
 **Service File:** `lib/engagementService.js`
@@ -3769,6 +5183,44 @@ const copy = getStreakReminderCopy(data.current_streak, data.hours_remaining);
 | `get_users_with_at_risk_streaks(min_streak)` | Find users for reminders |
 | `apply_streak_freeze(user_id, days)` | Apply streak freeze (premium) |
 
+### Dashboard Category Colors
+
+The dashboard uses 5 engagement categories, each with a distinct color from the extended color tokens:
+
+| Category | CSS Variable | Hex | Usage |
+|----------|--------------|-----|-------|
+| AL | `--color-accent-purple` | `#a855f7` | AI assistant conversations |
+| Community | `--color-accent-blue` | `#3b82f6` | Posts, comments, likes |
+| Data | `--color-accent-teal` | `#10b981` | Dyno runs, track times |
+| Garage | `--color-accent-lime` | `#d4ff00` | Vehicles, mods, photos |
+| Profile | `--color-accent-pink` | `#ec4899` | Profile completion |
+
+**Dashboard Components:**
+| Component | File | Purpose |
+|-----------|------|---------|
+| `WeeklyEngagement` | `dashboard/components/WeeklyEngagement.jsx` | Bar charts by category |
+| `LifetimeAchievements` | `dashboard/components/LifetimeAchievements.jsx` | Achievement badges |
+| `ConcentricRings` | `dashboard/components/ConcentricRings.jsx` | Apple-style activity rings |
+| `ImprovementActions` | `dashboard/components/ImprovementActions.jsx` | How to earn points |
+
+### Callsign Color System
+
+Callsigns (user titles) derive their color dynamically from tier and category:
+
+```javascript
+import { getCallsignColor } from '@/app/(app)/dashboard/components/UserGreeting';
+
+// Colors are computed from tier (0-4) and category (garage, community, al, legendary)
+const color = getCallsignColor(callsign.tier, callsign.category);
+```
+
+**Tier-based color progression:**
+| Tier | Color Strategy |
+|------|---------------|
+| 0 (Starter) | `--color-text-secondary` (muted gray) |
+| 1-3 | Category-based (teal/blue/purple/amber) |
+| 4 (Legendary) | `--color-accent-lime` (always lime) |
+
 ---
 
 ## Email System
@@ -3796,12 +5248,57 @@ Templates are defined in `lib/emailService.js` as HTML functions:
 - Admin notifications
 - Trial ending reminder (3 days, 1 day warnings)
 - Payment failed / dunning (with retry date)
+- Inactivity emails (7-day, 21-day)
+- Referral reward / invite emails
+
+### Unsubscribe System
+
+**Files:**
+- `lib/unsubscribeToken.js` - Token generation/verification
+- `app/api/email/unsubscribe/route.js` - Unsubscribe API
+- `app/(marketing)/unsubscribe/page.jsx` - Unsubscribe page
+
+**Security:** Token-based (HMAC SHA256 signed), not email-based. Tokens expire after 30 days.
+
+| Function | Purpose | File |
+|----------|---------|------|
+| `generateUnsubscribeToken(email)` | Create secure token | `lib/unsubscribeToken.js` |
+| `verifyUnsubscribeToken(token)` | Validate & decode token | `lib/unsubscribeToken.js` |
+
+**API Endpoint:** `POST /api/email/unsubscribe`
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `token` | string | Required. Secure unsubscribe token |
+| `type` | string | `'all'` \| `'features'` \| `'events'` (default: `'all'`) |
+| `action` | string | `'unsubscribe'` \| `'resubscribe'` (default: `'unsubscribe'`) |
+
+**Unsubscribe Link Format:**
+```
+/unsubscribe?token=<base64url_encoded_token>
+```
+
+**NEVER use raw email in unsubscribe links:**
+```javascript
+// ❌ WRONG - Insecure, anyone can unsubscribe anyone
+`/unsubscribe?email=${email}`
+
+// ✅ CORRECT - Cryptographically signed token
+import { generateUnsubscribeToken } from '@/lib/unsubscribeToken';
+`/unsubscribe?token=${generateUnsubscribeToken(email)}`
+```
+
+**Design System Colors (Unsubscribe Page):**
+- Success states: Teal (`--color-accent-teal`)
+- Error states: Amber (`--color-accent-amber`)
+- Buttons: Lime (`--color-accent-lime`)
 
 ### Required Environment Variables
 
 ```bash
 RESEND_API_KEY=re_xxx
 EMAIL_FROM=noreply@autorev.app  # Optional, defaults to noreply@autorev.app
+UNSUBSCRIBE_TOKEN_SECRET=xxx    # Optional, falls back to SUPABASE_SERVICE_ROLE_KEY
 ```
 
 ### Usage
@@ -3861,11 +5358,11 @@ The subscription system uses a **normalized schema** with dual-write to `user_pr
 
 ### Subscription Tiers & Pricing
 
-| Tier | Monthly | Annual | Features |
-|------|---------|--------|----------|
-| Free | $0 | - | Basic access, 25 AL chats |
-| Enthusiast | $4.99/mo | $29.99/yr (50% savings) | VIN decode, maintenance, 75 AL chats |
-| Tuner | $9.99/mo | $59.99/yr (50% savings) | Full parts, dyno data, 150 AL chats |
+| Tier ID | Display Name | Monthly | Annual | Features |
+|---------|--------------|---------|--------|----------|
+| `free` | Free | $0 | - | Basic access, ~25 AL conversations |
+| `collector` | **Enthusiast** | $9.99/mo | $79/yr | 3 cars, ~130 AL conversations, Insights & Data |
+| `tuner` | **Pro** | $19.99/mo | $149/yr | Unlimited cars, ~350 AL conversations, Priority support |
 
 ### Subscription Hooks & Components
 
@@ -3983,7 +5480,7 @@ function Component() {
 | Feature Flags | 🟢 Complete | `hooks/useFeatureFlag.js`, `components/ABTest.jsx` |
 | Analytics Abstraction | 🟢 Complete | `lib/analytics/manager.js` with provider adapters |
 | Offline Analytics | 🟢 Complete | `lib/analytics/offlineQueue.js` for PWA support |
-| GDPR Data Rights | 🟢 Complete | `/api/user/delete-data`, `/api/user/export-data` |
+| GDPR Data Rights | 🟢 Complete | `/api/user/delete-data`, `/api/user/export-data`, data export button in Settings |
 | Speed Insights | 🟢 Complete | Vercel Speed Insights (50% sample rate) |
 | Web Vitals API | 🟢 Complete | `/api/admin/web-vitals/collect` for CWV storage |
 | SLO Documentation | 🟢 Complete | `docs/SLO.md` with targets and error budgets |
@@ -4076,11 +5573,11 @@ Centralized query keys for TanStack Query prevent cache inconsistencies.
 **Location:** `lib/queryKeys.js`
 
 ```javascript
-import { carKeys, userKeys, eventKeys } from '@/lib/queryKeys';
+import { carKeys, userKeys, eventKeys, partsKeys } from '@/lib/queryKeys';
 
 // In hooks
 const { data } = useQuery({
-  queryKey: carKeys.bySlug(slug),
+  queryKey: carKeys.detail(slug),
   queryFn: () => fetchCar(slug),
 });
 
@@ -4089,14 +5586,27 @@ queryClient.invalidateQueries({ queryKey: carKeys.all });
 ```
 
 **Available Key Factories:**
-- `carKeys` - Car data (list, detail, enriched, dyno, maintenance)
-- `userKeys` - User data (current, garage, vehicles, subscription)
-- `eventKeys` - Events (list, featured, saved)
-- `alKeys` - AL conversations and stats
-- `partsKeys` - Parts search and relationships
-- `adminKeys` - Admin dashboard data
+
+| Factory | Keys | Description |
+|---------|------|-------------|
+| `carKeys` | `all`, `lists()`, `list(filters)`, `details()`, `detail(slug)`, `bySlug(slug)`, `enriched(slug)`, `efficiency(slug)`, `safety(slug)`, `priceByYear(slug)`, `marketValue(slug)`, `expertReviews(slug)`, `expertConsensus(slug)`, `dyno(slug)`, `lapTimes(slug)`, `popularParts(slug)`, `recalls(slug)`, `maintenance(slug)`, `issues(slug)`, `expertReviewedList(limit)` | Car data queries |
+| `userKeys` | `all`, `current()`, `byId(userId)`, `garage(userId)`, `vehicles(userId)`, `vehicle(userId, vehicleId)`, `savedEvents(userId)`, `preferences(userId)`, `subscription(userId)`, `alCredits(userId)`, `dashboard(userId)`, `trackTimes(userId)`, `onboarding(userId)` | User data queries |
+| `eventKeys` | `all`, `list(filters)`, `bySlug(slug)`, `featured()`, `types()`, `saved(userId)` | Events queries |
+| `alKeys` | `all`, `conversations(userId)`, `conversation(userId, id)`, `stats(userId)`, `preferences(userId)` | AL assistant queries |
+| `partsKeys` | `all`, `search(query, filters)`, `popular(carSlug)`, `relationships(partId)`, `turbos()`, `turbosByCarSlug(carSlug)` | Parts queries |
+| `adminKeys` | `all`, `dashboard()`, `users(filters)`, `analytics(type, range)`, `systemHealth()`, `feedback(filters)` | Admin queries |
+
+**IMPORTANT:** Always import from `lib/queryKeys.js`, not from hooks. The hooks re-export for backwards compatibility, but the source of truth is `lib/queryKeys.js`.
+
+```javascript
+// ✅ CORRECT - Import from centralized source
+import { carKeys } from '@/lib/queryKeys';
+
+// ⚠️ AVOID - Re-export (works but not preferred)
+import { carKeys } from '@/hooks/useCarData';
+```
 
 ---
 
-*Last Updated: 2026-01-23*
+*Last Updated: 2026-01-26*
 *Maintainer: Tech Debt Remediation Initiative*

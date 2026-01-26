@@ -12,7 +12,6 @@
 import React, { useState, useMemo } from 'react';
 import { calculateSmartHpGain } from '@/lib/performanceCalculator';
 import { getUpgradeByKey } from '@/lib/upgrades';
-import AskALButton from './AskALButton';
 import styles from './PowerBreakdown.module.css';
 
 // Color palette for donut segments (high contrast, distinct colors)
@@ -315,19 +314,6 @@ export default function PowerBreakdown({
       <div className={styles.powerBreakdown}>
         <div className={styles.breakdownHeader}>
           <span className={styles.breakdownTitle}>Power Breakdown</span>
-          <AskALButton
-            category="Power Breakdown"
-            prompt={powerBreakdownPrompt}
-            displayMessage={powerBreakdownDisplayMessage}
-            carName={carName}
-            carSlug={carSlug}
-            variant="header"
-            metadata={{
-              section: 'power-breakdown',
-              totalGain: 0,
-              hasUpgrades: false,
-            }}
-          />
         </div>
         <div className={styles.breakdownEmpty}>
           <p>No power-adding modifications detected</p>
@@ -341,19 +327,6 @@ export default function PowerBreakdown({
     <div className={styles.powerBreakdown}>
       <div className={styles.breakdownHeader}>
         <span className={styles.breakdownTitle}>Power Breakdown</span>
-        <AskALButton
-          category="Power Breakdown"
-          prompt={powerBreakdownPrompt}
-          displayMessage={powerBreakdownDisplayMessage}
-          carName={carName}
-          carSlug={carSlug}
-          variant="header"
-          metadata={{
-            section: 'power-breakdown',
-            totalGain,
-            categories: segments.map(s => ({ label: s.label, gain: s.gain, percent: Math.round(s.percent) })),
-          }}
-        />
       </div>
       
       <div className={styles.donutLayout}>

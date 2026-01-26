@@ -1,0 +1,50 @@
+---
+description: "Review Workflow - Pre-ship checklist. Invoke with @review-workflow before merging."
+globs: []
+alwaysApply: false
+---
+
+# Review Workflow
+
+## Pre-Ship Checklist
+
+### Pattern Compliance
+- [ ] `car_id` used for queries (not `car_slug`)
+- [ ] CSS variables used (no hardcoded colors)
+- [ ] Touch targets 44px+ (`h-11`)
+- [ ] Skeleton loaders (not spinners)
+- [ ] Domain-specific naming
+
+### Code Quality
+- [ ] TypeScript strict (no `any`)
+- [ ] Error handling present
+- [ ] Existing code reused where possible
+
+### Security (if API/auth)
+- [ ] Auth checked
+- [ ] Inputs validated
+- [ ] Webhook signatures verified first
+
+### Performance
+- [ ] Images have width/height
+- [ ] No N+1 queries
+- [ ] Parallel fetching used
+
+### Accessibility
+- [ ] Touch targets 44px
+- [ ] Focus indicators visible
+- [ ] Color not sole indicator
+
+## Output
+
+```
+🚀 PRE-SHIP REVIEW
+
+**Must Fix:**
+- [Issue] → [Fix]
+
+**Should Fix:**
+- [Issue] → [Fix]
+
+**Verdict:** [READY / NOT READY]
+```

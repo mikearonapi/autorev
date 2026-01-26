@@ -11,6 +11,9 @@ import { NextResponse } from 'next/server';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { errors } from '@/lib/apiErrors';
 import { awardPoints } from '@/lib/pointsService';
+import { dynoResultSchema, validateWithSchema, validationErrorResponse } from '@/lib/schemas';
+import { rateLimit } from '@/lib/rateLimit';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * Create Supabase client for route handlers (supports both cookie and Bearer token)
@@ -30,7 +33,7 @@ async function createSupabaseClient(request) {
  * - vehicleId: Filter by specific vehicle
  * - limit: Number of results (default 10)
  */
-export async function GET(request) {
+async function handleGet(request) {
   try {
     const { supabase, bearerToken } = await createSupabaseClient(request);
     
@@ -50,10 +53,12 @@ export async function GET(request) {
     const vehicleId = searchParams.get('vehicleId');
     const limit = parseInt(searchParams.get('limit')) || 10;
     
+    const DYNO_COLS = 'id, user_id, user_vehicle_id, dyno_date, dyno_shop, dyno_type, peak_hp, peak_torque, hp_at_wheels, torque_at_wheels, boost_psi, air_fuel_ratio, mods_at_time, notes, image_url, created_at';
+    
     // Build query
     let query = supabase
       .from('user_dyno_results')
-      .select('*')
+      .select(DYNO_COLS)
       .eq('user_id', user.id)
       .order('dyno_date', { ascending: false })
       .limit(limit);
@@ -98,7 +103,10 @@ export async function GET(request) {
  *   notes: string
  * }
  */
-export async function POST(request) {
+async function handlePost(request) {
+  const limited = rateLimit(request, 'api');
+  if (limited) return limited;
+
   try {
     const { supabase, bearerToken } = await createSupabaseClient(request);
     
@@ -116,24 +124,24 @@ export async function POST(request) {
     
     const body = await request.json();
     
-    // Validate required fields
-    if (!body.userVehicleId) {
-      return NextResponse.json({ error: 'userVehicleId is required' }, { status: 400 });
+    // Validate with Zod schema
+    const validation = validateWithSchema(dynoResultSchema, body);
+    if (!validation.success) {
+      return validationErrorResponse(validation.errors);
     }
-    if (!body.whp || body.whp < 1) {
-      return NextResponse.json({ error: 'whp is required and must be positive' }, { status: 400 });
-    }
+    
+    const validatedData = validation.data;
     
     // Verify the vehicle belongs to the user
     const { data: vehicle, error: vehicleError } = await supabase
       .from('user_vehicles')
       .select('id')
-      .eq('id', body.userVehicleId)
+      .eq('id', validatedData.userVehicleId)
       .eq('user_id', user.id)
       .single();
     
     if (vehicleError || !vehicle) {
-      return NextResponse.json({ error: 'Vehicle not found or not owned by user' }, { status: 404 });
+      return errors.notFound('Vehicle not found or not owned by user');
     }
     
     // Insert dyno result
@@ -141,20 +149,20 @@ export async function POST(request) {
       .from('user_dyno_results')
       .insert({
         user_id: user.id,
-        user_vehicle_id: body.userVehicleId,
-        whp: body.whp,
-        wtq: body.wtq || null,
-        boost_psi: body.boostPsi || null,
-        fuel_type: body.fuelType || null,
-        dyno_type: body.dynoType || null,
-        dyno_date: body.dynoDate || new Date().toISOString().split('T')[0],
-        dyno_shop: body.dynoShop || null,
-        dyno_sheet_url: body.dynoSheetUrl || null,
-        ambient_temp_f: body.ambientTempF || null,
-        humidity_percent: body.humidityPercent || null,
-        altitude_ft: body.altitudeFt || null,
-        correction_factor: body.correctionFactor || null,
-        notes: body.notes || null,
+        user_vehicle_id: validatedData.userVehicleId,
+        whp: validatedData.whp,
+        wtq: validatedData.wtq || null,
+        boost_psi: validatedData.boostPsi || null,
+        fuel_type: validatedData.fuelType || null,
+        dyno_type: validatedData.dynoType || null,
+        dyno_date: validatedData.dynoDate || new Date().toISOString().split('T')[0],
+        dyno_shop: validatedData.dynoShop || null,
+        dyno_sheet_url: validatedData.dynoSheetUrl || null,
+        ambient_temp_f: validatedData.ambientTempF || null,
+        humidity_percent: validatedData.humidityPercent || null,
+        altitude_ft: validatedData.altitudeFt || null,
+        correction_factor: validatedData.correctionFactor || null,
+        notes: validatedData.notes || null,
         is_verified: false,
       })
       .select()
@@ -162,11 +170,11 @@ export async function POST(request) {
     
     if (error) {
       console.error('[API/dyno-results] Insert error:', error);
-      return NextResponse.json({ error: 'Failed to save dyno result' }, { status: 500 });
+      return errors.database('Failed to save dyno result');
     }
     
     // Award points for logging dyno data (non-blocking)
-    awardPoints(user.id, 'data_log_dyno', { dynoResultId: data.id, whp: body.whp }).catch(() => {});
+    awardPoints(user.id, 'data_log_dyno', { dynoResultId: data.id, whp: validatedData.whp }).catch(() => {});
     
     return NextResponse.json({ result: data }, { status: 201 });
   } catch (err) {
@@ -185,7 +193,10 @@ export async function POST(request) {
  *   ...fields to update
  * }
  */
-export async function PUT(request) {
+async function handlePut(request) {
+  const limited = rateLimit(request, 'api');
+  if (limited) return limited;
+
   try {
     const { supabase, bearerToken } = await createSupabaseClient(request);
     
@@ -257,7 +268,10 @@ export async function PUT(request) {
  * Delete a dyno result.
  * Query param: id
  */
-export async function DELETE(request) {
+async function handleDelete(request) {
+  const limited = rateLimit(request, 'api');
+  if (limited) return limited;
+
   try {
     const { supabase, bearerToken } = await createSupabaseClient(request);
     
@@ -298,3 +312,8 @@ export async function DELETE(request) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'dyno-results', feature: 'garage' });
+export const POST = withErrorLogging(handlePost, { route: 'dyno-results', feature: 'garage' });
+export const PUT = withErrorLogging(handlePut, { route: 'dyno-results', feature: 'garage' });
+export const DELETE = withErrorLogging(handleDelete, { route: 'dyno-results', feature: 'garage' });

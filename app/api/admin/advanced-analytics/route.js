@@ -18,6 +18,8 @@ import { createClient } from '@supabase/supabase-js';
 // Force dynamic rendering - this route uses request.headers and request.url
 export const dynamic = 'force-dynamic';
 import { isAdminEmail } from '@/lib/adminAccess';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { rateLimit } from '@/lib/rateLimit';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -54,7 +56,11 @@ function getDateRange(range) {
   };
 }
 
-export async function GET(request) {
+async function handleGet(request) {
+  // Rate limit - prevent DoS on expensive analytics queries
+  const limited = rateLimit(request, 'api');
+  if (limited) return limited;
+
   try {
     // Auth check
     const authHeader = request.headers.get('authorization');
@@ -420,3 +426,4 @@ async function getUserHealth() {
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'admin/advanced-analytics', feature: 'admin' });

@@ -26,8 +26,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 50%;
@@ -57,11 +57,18 @@
 
 .heroValue {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: var(--text-display, 48px);
+  font-size: 40px; /* Mobile-first: extra small screens */
   font-weight: 800;
   color: var(--color-text-primary, #ffffff);
   line-height: 1;
   letter-spacing: -0.02em;
+}
+
+/* Regular phones and up */
+@media (min-width: 375px) {
+  .heroValue {
+    font-size: var(--text-display, 48px);
+  }
 }
 
 .heroLabel {
@@ -114,7 +121,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: var(--space-3, 12px);
+  gap: var(--space-2, 8px); /* Mobile-first: extra small screens */
+}
+
+/* Regular phones and up */
+@media (min-width: 375px) {
+  .statsRow {
+    gap: var(--space-3, 12px);
+  }
 }
 
 .stat {
@@ -142,49 +156,55 @@
   opacity: 0.5;
 }
 
-/* Category legend */
+/* Category legend - 5 items on one row */
 .legend {
   display: flex;
   justify-content: center;
-  gap: var(--space-4, 16px);
-  flex-wrap: wrap;
+  gap: 8px;
+  flex-wrap: nowrap;
   padding-top: var(--space-2, 8px);
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   width: 100%;
 }
 
+/* Regular phones and up - more spacing */
+@media (min-width: 390px) {
+  .legend {
+    gap: 12px;
+  }
+}
+
 .legendItem {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
 }
 
 .legendDot {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 .legendLabel {
-  font-size: var(--text-xs, 12px);
+  font-size: 10px;
   font-weight: 500;
   color: var(--color-text-secondary, #94a3b8);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
 }
 
-/* Responsive adjustments */
-@media (max-width: 374px) {
-  .heroValue {
-    font-size: 40px;
+/* Larger phones - slightly bigger legend */
+@media (min-width: 390px) {
+  .legendDot {
+    width: 7px;
+    height: 7px;
   }
   
-  .statsRow {
-    gap: var(--space-2, 8px);
-  }
-  
-  .legend {
-    gap: var(--space-3, 12px);
+  .legendLabel {
+    font-size: 11px;
   }
 }
+
+/* Mobile-first responsive styles are now in base selectors with min-width: 375px enhancements */

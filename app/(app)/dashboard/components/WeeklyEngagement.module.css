@@ -261,24 +261,112 @@
   transition: height 0.3s ease-out;
 }
 
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .barSegment {
+    transition: none;
+  }
+  
+  .dot {
+    transition: none;
+  }
+}
+
+/* Category colors - using CSS custom properties from styles/tokens/colors.css */
+.barAl {
+  background: var(--color-accent-purple, #a855f7);
+}
+
+.barCommunity {
+  background: var(--color-accent-blue, #3b82f6);
+}
+
+.barData {
+  background: var(--color-accent-teal, #10b981);
+}
+
+.barGarage {
+  background: var(--color-accent-lime, #d4ff00);
+}
+
+.barProfile {
+  background: var(--color-accent-pink, #ec4899);
+}
+
 .chartLegend {
   display: flex;
   justify-content: center;
   gap: 12px;
 }
 
+/* Category legend - 5 items on one row */
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: nowrap;
+  padding-top: 10px;
+  margin-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+@media (min-width: 390px) {
+  .legend {
+    gap: 12px;
+  }
+}
+
 .legendItem {
   display: flex;
   align-items: center;
   gap: 4px;
-  font-size: 9px; /* Sub-minimum for compact legend */
-  color: var(--color-text-tertiary, #64748b);
 }
 
 .legendDot {
   width: 6px;
   height: 6px;
-  border-radius: 2px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* Legend dot colors - using CSS custom properties from styles/tokens/colors.css */
+.legendDotAl {
+  background: var(--color-accent-purple, #a855f7);
+}
+
+.legendDotCommunity {
+  background: var(--color-accent-blue, #3b82f6);
+}
+
+.legendDotData {
+  background: var(--color-accent-teal, #10b981);
+}
+
+.legendDotGarage {
+  background: var(--color-accent-lime, #d4ff00);
+}
+
+.legendDotProfile {
+  background: var(--color-accent-pink, #ec4899);
+}
+
+.legendLabel {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--color-text-secondary, #94a3b8);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+@media (min-width: 390px) {
+  .legendDot {
+    width: 7px;
+    height: 7px;
+  }
+  
+  .legendLabel {
+    font-size: 11px;
+  }
 }
 
 /* View 2: Achievements - 4 cards in a row */

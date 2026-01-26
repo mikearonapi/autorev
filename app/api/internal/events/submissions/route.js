@@ -10,6 +10,7 @@
 import { NextResponse } from 'next/server';
 import { requireAdmin, getAuthErrorStatus } from '@/lib/adminAuth';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * Generate a slug from event name
@@ -26,7 +27,7 @@ function generateSlug(name, startDate) {
 /**
  * GET - List submissions
  */
-export async function GET(request) {
+async function handleGet(request) {
   // Check admin auth
   const authResult = requireAdmin(request);
   if (!authResult.ok) {
@@ -157,7 +158,7 @@ export async function GET(request) {
 /**
  * POST - Approve submission and create event
  */
-export async function POST(request) {
+async function handlePost(request) {
   // Check admin auth
   const authResult = requireAdmin(request);
   if (!authResult.ok) {
@@ -185,10 +186,12 @@ export async function POST(request) {
       );
     }
     
+    const SUBMISSION_COLS = 'id, user_id, event_name, event_date, location, description, website_url, image_url, status, rejection_reason, created_at';
+    
     // Get submission
     const { data: submission, error: subError } = await supabase
       .from('event_submissions')
-      .select('*')
+      .select(SUBMISSION_COLS)
       .eq('id', submissionId)
       .single();
     
@@ -314,3 +317,5 @@ export async function POST(request) {
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'internal-events-submissions', feature: 'internal' });
+export const POST = withErrorLogging(handlePost, { route: 'internal-events-submissions', feature: 'internal' });

@@ -10,8 +10,9 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { isAdminEmail } from '@/lib/adminAccess';
+import { requireAdmin } from '@/lib/adminAccess';
 import Anthropic from '@anthropic-ai/sdk';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -202,10 +203,12 @@ async function trackUsage(supabase, userId, inputTokens, outputTokens, model) {
  * Get cached insights if still valid
  */
 async function getCachedInsights(supabase) {
+  const CACHE_COLS = 'id, insights_json, generated_at, expires_at, created_at';
+  
   try {
     const { data, error } = await supabase
       .from('admin_insights_cache')
-      .select('*')
+      .select(CACHE_COLS)
       .order('generated_at', { ascending: false })
       .limit(1)
       .single();
@@ -310,26 +313,18 @@ async function generateInsights(businessData, supabase, userId) {
 }
 
 // GET: Retrieve insights (cached or generate)
-export async function GET(request) {
+async function handleGet(request) {
+  // Verify admin access
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
+
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
-  }
-  
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
   
   try {
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
-    if (authError || !user || !isAdminEmail(user.email)) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-    }
-    
     // Check for cached insights first
     const cached = await getCachedInsights(supabase);
     if (cached) {
@@ -361,25 +356,22 @@ export async function GET(request) {
 }
 
 // POST: Force generate new insights
-export async function POST(request) {
+async function handlePost(request) {
+  // Verify admin access
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
+
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
-  }
-  
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
   
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
   
   try {
+    // Get user for tracking
+    const authHeader = request.headers.get('authorization');
     const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
-    if (authError || !user || !isAdminEmail(user.email)) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-    }
+    const { data: { user } } = await supabase.auth.getUser(token);
     
     // Get business data from request body
     const businessData = await request.json();
@@ -401,7 +393,7 @@ export async function POST(request) {
   } catch (err) {
     console.error('[Admin Insights API] Error:', err);
     return NextResponse.json({ 
-      error: err.message || 'Failed to generate insights' 
+      error: 'Failed to generate insights' 
     }, { status: 500 });
   }
 }
@@ -461,7 +453,7 @@ async function enrichBusinessData(baseData, supabase) {
   
   const totalUsers = retentionUsers.length || 1;
   
-  return {
+    return {
     ...baseData,
     feedback: {
       recent: feedbackItems.map(f => ({
@@ -484,3 +476,5 @@ async function enrichBusinessData(baseData, supabase) {
   };
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'admin/insights', feature: 'admin' });
+export const POST = withErrorLogging(handlePost, { route: 'admin/insights', feature: 'admin' });

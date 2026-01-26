@@ -6,10 +6,15 @@
  * 
  * DELETE /api/users/[userId]/al-conversations/[conversationId]/share
  * Removes sharing for a conversation
+ * 
+ * Auth: User must be authenticated and can only share their own conversations
  */
 
 import { NextResponse } from 'next/server';
+import { createServerSupabaseClient, getBearerToken, createAuthenticatedClient } from '@/lib/supabaseServer';
+import { errors } from '@/lib/apiErrors';
 import { getConversation } from '@/lib/alConversationService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
 
@@ -21,26 +26,55 @@ const supabaseAdmin = supabaseUrl && supabaseServiceKey
   : null;
 
 /**
+ * Helper to authenticate and verify user ownership
+ */
+async function authenticateAndVerify(request, userId) {
+  const bearerToken = getBearerToken(request);
+  const authSupabase = bearerToken 
+    ? createAuthenticatedClient(bearerToken) 
+    : await createServerSupabaseClient();
+
+  if (!authSupabase) {
+    return { error: errors.serviceUnavailable('Authentication service') };
+  }
+
+  const { data: { user }, error: authError } = bearerToken
+    ? await authSupabase.auth.getUser(bearerToken)
+    : await authSupabase.auth.getUser();
+  
+  if (authError || !user) {
+    return { error: errors.unauthorized() };
+  }
+  
+  if (user.id !== userId) {
+    return { error: errors.forbidden('Not authorized to share this conversation') };
+  }
+
+  return { user };
+}
+
+/**
  * Generate a share token for a conversation
  */
-export async function POST(request, { params }) {
+async function handlePost(request, { params }) {
   try {
     const { userId, conversationId } = await params;
     
     if (!userId || !conversationId) {
-      return NextResponse.json(
-        { error: 'User ID and Conversation ID are required' },
-        { status: 400 }
-      );
+      return errors.badRequest('User ID and Conversation ID are required');
     }
 
-    // Verify ownership
+    // Authenticate user
+    const auth = await authenticateAndVerify(request, userId);
+    if (auth.error) return auth.error;
+
+    // Verify conversation ownership
     const conv = await getConversation(conversationId);
-    if (!conv.success || conv.conversation.user_id !== userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 403 }
-      );
+    if (!conv.success) {
+      return errors.notFound('Conversation');
+    }
+    if (conv.conversation.user_id !== userId) {
+      return errors.forbidden('Not authorized to share this conversation');
     }
 
     // Check if share token already exists
@@ -63,10 +97,7 @@ export async function POST(request, { params }) {
 
     if (error) {
       console.error('[Share] Failed to update share token:', error);
-      return NextResponse.json(
-        { error: 'Failed to generate share link' },
-        { status: 500 }
-      );
+      return errors.internal('Failed to generate share link');
     }
 
     return NextResponse.json({
@@ -76,34 +107,32 @@ export async function POST(request, { params }) {
     });
   } catch (err) {
     console.error('[Share] Error:', err);
-    return NextResponse.json(
-      { error: 'Failed to generate share link' },
-      { status: 500 }
-    );
+    return errors.internal('Failed to generate share link');
   }
 }
 
 /**
  * Remove sharing from a conversation
  */
-export async function DELETE(request, { params }) {
+async function handleDelete(request, { params }) {
   try {
     const { userId, conversationId } = await params;
     
     if (!userId || !conversationId) {
-      return NextResponse.json(
-        { error: 'User ID and Conversation ID are required' },
-        { status: 400 }
-      );
+      return errors.badRequest('User ID and Conversation ID are required');
     }
 
-    // Verify ownership
+    // Authenticate user
+    const auth = await authenticateAndVerify(request, userId);
+    if (auth.error) return auth.error;
+
+    // Verify conversation ownership
     const conv = await getConversation(conversationId);
-    if (!conv.success || conv.conversation.user_id !== userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 403 }
-      );
+    if (!conv.success) {
+      return errors.notFound('Conversation');
+    }
+    if (conv.conversation.user_id !== userId) {
+      return errors.forbidden('Not authorized to modify this conversation');
     }
 
     // Remove share token
@@ -114,18 +143,16 @@ export async function DELETE(request, { params }) {
 
     if (error) {
       console.error('[Share] Failed to remove share token:', error);
-      return NextResponse.json(
-        { error: 'Failed to remove share link' },
-        { status: 500 }
-      );
+      return errors.internal('Failed to remove share link');
     }
 
     return NextResponse.json({ success: true });
   } catch (err) {
     console.error('[Share] Error:', err);
-    return NextResponse.json(
-      { error: 'Failed to remove share link' },
-      { status: 500 }
-    );
+    return errors.internal('Failed to remove share link');
   }
 }
+
+// Export wrapped handlers with error logging
+export const POST = withErrorLogging(handlePost, { route: 'users/al-conversations/share', feature: 'al' });
+export const DELETE = withErrorLogging(handleDelete, { route: 'users/al-conversations/share', feature: 'al' });

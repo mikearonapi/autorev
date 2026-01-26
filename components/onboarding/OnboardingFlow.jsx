@@ -12,6 +12,7 @@ import ReferralStep from './steps/ReferralStep';
 import FinalStep from './steps/FinalStep';
 import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
 import { ONBOARDING_IMAGES } from '@/lib/images';
+import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
 
 
 // Feature slides configuration - each becomes its own step
@@ -103,6 +104,13 @@ export default function OnboardingFlow({
   initialStep = 1,
   initialData = {}
 }) {
+  // Set safe area color to match overlay background when modal is open
+  // Both top and bottom should be charcoal to match onboarding background
+  useSafeAreaColor(SAFE_AREA_COLORS.OVERLAY, { 
+    enabled: isOpen,
+    bottom: SAFE_AREA_COLORS.OVERLAY 
+  });
+  
   const router = useRouter();
   const { trackEvent, trackOnboardingStep } = useAnalytics();
   const [step, setStep] = useState(initialStep);
@@ -402,7 +410,11 @@ export default function OnboardingFlow({
 
   // The modal content
   const modalContent = (
-    <div className={styles.overlay} onClick={handleBackdropClick} data-onboarding-overlay>
+    <div className={styles.overlay} onClick={handleBackdropClick} data-overlay-modal data-onboarding-overlay>
+      {/* Safe area fills - actual DOM elements for reliable cross-browser coverage */}
+      <div className={styles.safeAreaTop} aria-hidden="true" />
+      <div className={styles.safeAreaBottom} aria-hidden="true" />
+      
       <div className={`${styles.modal} ${isFinalStep ? styles.finalStepModal : ''}`} role="dialog" aria-modal="true" aria-label="Welcome to AutoRev">
         {/* Unified Progress Bar - Hidden on final step */}
         {!isFinalStep && (

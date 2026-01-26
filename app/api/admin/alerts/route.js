@@ -9,6 +9,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { isAdminEmail } from '@/lib/adminAccess';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -39,7 +40,7 @@ const THRESHOLDS = {
   COST_PER_USER_WARNING: 50, // $0.50 per active user
 };
 
-export async function GET(request) {
+async function handleGet(request) {
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
   }
@@ -67,10 +68,12 @@ export async function GET(request) {
     // FINANCIAL ALERTS
     // =========================================================================
     
+    const FINANCIAL_COLS = 'id, fiscal_year, fiscal_month, revenue_cents, total_fixed_costs_cents, total_variable_costs_cents, net_income_cents';
+    
     // Get current month financials
     const { data: currentMonth } = await supabase
       .from('monthly_financials')
-      .select('*')
+      .select(FINANCIAL_COLS)
       .eq('fiscal_year', now.getFullYear())
       .eq('fiscal_month', now.getMonth() + 1)
       .single();
@@ -327,3 +330,4 @@ export async function GET(request) {
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'admin/alerts', feature: 'admin' });

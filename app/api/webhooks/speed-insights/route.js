@@ -19,6 +19,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import crypto from 'crypto';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -85,7 +86,7 @@ function processEvent(event) {
   };
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   // Check if properly configured
   if (!supabaseUrl || !supabaseServiceKey) {
     console.error('[Speed Insights Webhook] Supabase not configured');
@@ -147,12 +148,12 @@ export async function POST(request) {
     
   } catch (err) {
     console.error('[Speed Insights Webhook] Error:', err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to process speed insights data' }, { status: 500 });
   }
 }
 
 // Also support GET for health check
-export async function GET() {
+async function handleGet() {
   return NextResponse.json({
     status: 'ok',
     endpoint: 'Speed Insights Webhook',
@@ -161,3 +162,5 @@ export async function GET() {
   });
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'webhooks/speed-insights', feature: 'webhooks' });
+export const POST = withErrorLogging(handlePost, { route: 'webhooks/speed-insights', feature: 'webhooks' });

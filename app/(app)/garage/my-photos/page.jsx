@@ -25,6 +25,7 @@ import { MyGarageSubNav, GarageVehicleSelector } from '@/components/garage';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
+import { useGarageScore } from '@/hooks/useGarageScore';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import ImageUploader from '@/components/ImageUploader';
 import BuildMediaGallery from '@/components/BuildMediaGallery';
@@ -47,6 +48,9 @@ function MyPhotosContent() {
   const { builds, isLoading: buildsLoading } = useSavedBuilds();
   const { vehicles } = useOwnedVehicles();
   
+  // Garage score recalculation hook (uses vehicleId state set in useEffect below)
+  const { recalculateScore } = useGarageScore(vehicleId);
+  
   // Use cached cars data from React Query hook
   const { data: allCars = [], isLoading: carsLoading } = useCarsList();
   
@@ -57,9 +61,11 @@ function MyPhotosContent() {
   const buildIdParam = searchParams.get('build');
   const carSlugParam = searchParams.get('car');
   
-  // Fallback: fetch single car if not in list
+  // Fallback: fetch single car in parallel with full list
+  // This provides faster data when the full list is slow or unavailable
+  const carFromList = carSlugParam ? allCars.find(c => c.slug === carSlugParam) : null;
   const { data: fallbackCar, isLoading: fallbackLoading } = useCarBySlug(carSlugParam, {
-    enabled: !!carSlugParam && allCars.length === 0 && !carsLoading,
+    enabled: !!carSlugParam && !carFromList && !selectedCar,
   });
   
   // Get images for this car
@@ -127,9 +133,10 @@ function MyPhotosContent() {
     router.push('/garage');
   };
 
-  // Loading state
-  const isLoadingBuild = buildIdParam && (buildsLoading || carsLoading);
-  if (authLoading || carsLoading || isLoadingBuild) {
+  // Loading state - only block on auth and builds, NOT carsLoading
+  // The fallbackCar mechanism ensures we have car data when needed
+  const isLoadingBuild = buildIdParam && buildsLoading;
+  if (authLoading || isLoadingBuild) {
     return (
       <div className={styles.page}>
         <LoadingSpinner 
@@ -202,6 +209,12 @@ function MyPhotosContent() {
             <ImageUploader
               onUploadComplete={(media) => {
                 refreshCarImages();
+                // Recalculate garage score after photo upload (photos_uploaded category)
+                if (vehicleId) {
+                  recalculateScore().catch(err => {
+                    console.warn('[MyPhotos] Score recalculation failed:', err);
+                  });
+                }
               }}
               onUploadError={(err) => console.error('[Photos] Upload error:', err)}
               maxFiles={10}

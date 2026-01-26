@@ -17,8 +17,9 @@
 import { NextResponse } from 'next/server';
 import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
 import { getUser } from '@/lib/auth';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
-export async function GET(request) {
+async function handleGet(request) {
   try {
     // Check authentication
     const user = await getUser();
@@ -52,6 +53,8 @@ export async function GET(request) {
     return NextResponse.json(data);
   } catch (err) {
     console.error('[data-coverage] Error:', err);
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch coverage stats' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'admin/data-coverage', feature: 'admin' });

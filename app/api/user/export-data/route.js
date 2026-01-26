@@ -77,12 +77,13 @@ async function fetchTableData(table, select, userId) {
       if (error.message.includes('user_id')) {
         return { data: null, skipped: 'no user_id column' };
       }
-      return { data: null, error: error.message };
+      return { data: null, error: 'query failed' };
     }
 
     return { data: data || [] };
   } catch (error) {
-    return { data: null, error: error.message };
+    console.error(`[Export Data] Table fetch error:`, error);
+    return { data: null, error: 'fetch failed' };
   }
 }
 

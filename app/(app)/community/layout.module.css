@@ -1,0 +1,21 @@
+/* ==========================================================================
+   COMMUNITY LAYOUT - Wrapper for all community pages
+   ========================================================================== */
+
+.container {
+  position: fixed;
+  inset: 0;
+  /* Transparent to show body gradient */
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.content {
+  flex: 1;
+  min-height: 0; /* Critical for flex children to shrink */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}

@@ -25,6 +25,7 @@ const VIEW_MODES = {
   MY_EVENTS: 'my_events',
 };
 
+
 // Icons - following brand guidelines (Lucide style, 1.5px stroke)
 const SearchIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -56,7 +57,8 @@ const MapPinIcon = ({ size = 16 }) => (
   </svg>
 );
 
-const ChevronRightIcon = ({ size = 16 }) => (
+// NOTE: ChevronRightIcon available for future event navigation enhancement
+const _ChevronRightIcon = ({ size = 16 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
     <polyline points="9 18 15 12 9 6"/>
   </svg>
@@ -100,6 +102,7 @@ const HeartIcon = ({ size = 12 }) => (
   </svg>
 );
 
+
 // Fallback event types - matches database seed data
 // Used if API fails to load types
 const FALLBACK_EVENT_TYPES = [
@@ -131,12 +134,13 @@ const EVENT_TYPE_COLORS = {
 
 // Get month and day for date badge
 function getDateParts(dateStr) {
-  if (!dateStr) return { month: '', day: '', weekday: '' };
+  if (!dateStr) return { month: '', day: '', weekday: '', isoDate: '' };
   const date = new Date(dateStr + 'T00:00:00');
   return {
     month: date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase(),
     day: date.getDate().toString(),
     weekday: date.toLocaleDateString('en-US', { weekday: 'short' }),
+    isoDate: dateStr, // ISO format for datetime attribute
   };
 }
 
@@ -273,8 +277,10 @@ export default function EventsView() {
         if (nearMeEnabled && userLocation) {
           params.set('location', userLocation);
           params.set('radius', '100'); // 100 mile radius
-          params.set('sort', 'distance'); // Sort by distance when near me is enabled
         }
+        
+        // Default sort by date
+        params.set('sort', 'date');
         
         const res = await fetch(`/api/events?${params.toString()}`);
         
@@ -438,7 +444,7 @@ export default function EventsView() {
             )}
           </div>
           
-          {/* Near Me Toggle */}
+          {/* Near Me Toggle - only show if user has location */}
           {userLocation && (
             <button 
               className={`${styles.nearMeBtn} ${nearMeEnabled ? styles.nearMeBtnActive : ''}`}
@@ -584,12 +590,12 @@ export default function EventsView() {
             
             return (
               <div key={event.id} className={styles.eventCard}>
-                {/* Date Badge */}
-                <div className={styles.dateBadge}>
+                {/* Date Badge - semantic time element for accessibility */}
+                <time className={styles.dateBadge} dateTime={dateParts.isoDate}>
                   <span className={styles.dateMonth}>{dateParts.month}</span>
                   <span className={styles.dateDay}>{dateParts.day}</span>
                   <span className={styles.dateWeekday}>{dateParts.weekday}</span>
-                </div>
+                </time>
                 
                 {/* Event Info */}
                 <Link href={`/community/events/${event.slug}`} className={styles.eventInfo}>

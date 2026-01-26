@@ -378,11 +378,11 @@ Admin access is handled separately via `user_profiles.role` column, not the tier
 
 ### Pricing (Post-Beta)
 
-| Tier | Price | AI Credits/Month |
-|------|-------|------------------|
-| **Free** | $0 | 25 |
-| **Collector** (Enthusiast) | $4.99/mo | 75 |
-| **Tuner** | $9.99/mo | 150 |
+| Tier | Price | AL Chats/Month |
+|------|-------|----------------|
+| **Free** | $0 | ~15 |
+| **Enthusiast** (collector) | $9.99/mo | ~130 |
+| **Pro** (tuner) | $19.99/mo | ~350 |
 
 ### Implementation
 
@@ -622,7 +622,7 @@ AutoRev integrates with multiple external APIs for data enrichment. See [GOOGLE_
 | **Stripe** | Subscription billing, AL credit packs, donations | ✅ Integrated |
 
 **Features:**
-- Subscription management (Collector $4.99/mo, Tuner $9.99/mo)
+- Subscription management (Enthusiast $9.99/mo, Pro $19.99/mo)
 - One-time AL credit purchases
 - Customer portal for billing management
 - Webhook integration for real-time updates

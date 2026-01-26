@@ -2,6 +2,7 @@
 /* Rendered via React Portal to document.body for proper stacking */
 
 /* Overlay - Full screen coverage including safe areas */
+/* Level 3: Overlay background for focused onboarding experience */
 .overlay {
   position: fixed;
   top: 0;
@@ -13,14 +14,45 @@
   height: 100dvh;
   /* High z-index - rendered at body level via portal */
   z-index: 9999;
-  /* Navy background */
-  background: var(--color-bg-base, #0d1b2a);
+  /* Overlay background for onboarding - charcoal */
+  background: #1a1a1a;
   box-sizing: border-box;
-  /* Prevent horizontal overflow on Android */
   overflow: hidden;
 }
 
+/* ==========================================================
+   SAFE AREA FILLS - Cover the gaps Safari shows
+   These extend slightly beyond the viewport edges to ensure
+   complete coverage. Modal (z-index: 10002) sits above these.
+   ========================================================== */
+.safeAreaTop,
+.safeAreaBottom {
+  position: fixed;
+  left: 0;
+  right: 0;
+  /* Charcoal - matches overlay */
+  background: #1a1a1a;
+  /* Above body pseudo-elements (10000), below modal (10002) */
+  z-index: 10001;
+  pointer-events: none;
+}
+
+.safeAreaTop {
+  /* Extend above viewport */
+  top: -50px;
+  /* Cover safe area plus extension */
+  height: calc(env(safe-area-inset-top, 47px) + 50px);
+}
+
+.safeAreaBottom {
+  /* Extend below viewport */
+  bottom: -50px;
+  /* Cover safe area plus extension */
+  height: calc(env(safe-area-inset-bottom, 34px) + 50px);
+}
+
 /* Modal Container - Full screen on mobile, constrained on desktop */
+/* Level 3: Overlay background for focused onboarding experience */
 .modal {
   position: fixed;
   top: 0;
@@ -31,18 +63,21 @@
   max-width: none;
   max-height: none;
   overflow: hidden;
-  background: var(--color-bg-base);
+  /* Charcoal background */
+  background: #1a1a1a;
   border: none;
   border-radius: 0;
   display: flex;
   flex-direction: column;
   /* Safe area padding for iOS home indicator */
   padding-bottom: env(safe-area-inset-bottom, 0);
+  /* Must be above safe area fills (10001) so content is visible */
+  z-index: 10002;
 }
 
-/* Final Step Modal - Full navy, no chrome */
+/* Final Step Modal - Full overlay, no chrome */
 .modal.finalStepModal {
-  background: var(--color-bg-base);
+  background: var(--brand-bg-overlay, #1a1a1a);
   border-color: transparent;
 }
 

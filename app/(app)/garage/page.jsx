@@ -16,11 +16,28 @@ import React, { useState, useEffect, useRef, Suspense, useCallback, useMemo } fr
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  DragOverlay,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 import AddVehicleModal from '@/components/AddVehicleModal';
-import { useAIChat } from '@/components/AIChatContext';
-import AskALButton from '@/components/AskALButton';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import BuildDetailView from '@/components/BuildDetailView';
 import BuildMediaGallery from '@/components/BuildMediaGallery';
@@ -32,12 +49,13 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import OnboardingPopup, { garageOnboardingSteps } from '@/components/OnboardingPopup';
 import PremiumGate, { usePremiumAccess } from '@/components/PremiumGate';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import { useFavorites } from '@/components/providers/FavoritesProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
+import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import ServiceLogModal from '@/components/ServiceLogModal';
 import PullToRefresh from '@/components/ui/PullToRefresh';
+import { Skeleton } from '@/components/ui/Skeleton';
 import SwipeableRow from '@/components/ui/SwipeableRow';
 import VehicleBuildPanel from '@/components/VehicleBuildPanel';
 import WheelTireSpecsCard from '@/components/WheelTireSpecsCard';
@@ -52,7 +70,6 @@ import {
 } from '@/lib/maintenanceService';
 import { calculateAllModificationGains } from '@/lib/performanceCalculator';
 import { calculateWeightedScore, ENTHUSIAST_WEIGHTS } from '@/lib/scoring';
-import { supabase } from '@/lib/supabase';
 import { decodeVIN } from '@/lib/vinDecoder';
 
 import styles from './page.module.css';
@@ -225,6 +242,25 @@ const Icons = {
       >
         <polyline points="3 6 5 6 21 6" />
         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+      </svg>
+    </IconWrapper>
+  ),
+  // Drag handle (grip lines) for reordering
+  grip: ({ size = 20, style }) => (
+    <IconWrapper style={style}>
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <line x1="8" y1="6" x2="16" y2="6" />
+        <line x1="8" y1="12" x2="16" y2="12" />
+        <line x1="8" y1="18" x2="16" y2="18" />
       </svg>
     </IconWrapper>
   ),
@@ -752,6 +788,23 @@ const Icons = {
       </svg>
     </IconWrapper>
   ),
+  user: ({ size = 20, style }) => (
+    <IconWrapper style={style}>
+      <svg
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      >
+        <circle cx="12" cy="8" r="4" />
+        <path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" />
+      </svg>
+    </IconWrapper>
+  ),
 };
 
 // Visual Rating Bar Component - GRAVL-style progress bar for X/10 ratings
@@ -835,7 +888,8 @@ function PerformanceScoreGauge({ score, label: _label = 'Performance Score', sta
 // eslint-disable-next-line @typescript-eslint/no-unused-vars -- Reserved for future use
 function BrandLogo({ brand }) {
   // Use consistent gold/yellow color for all brands in garage view
-  const brandColor = 'var(--sn-gold, #c4a564)';
+  // Uses design token only - no hardcoded hex fallback per SOURCE_OF_TRUTH.md
+  const brandColor = 'var(--sn-gold)';
 
   return (
     <div className={styles.brandLogo}>
@@ -860,6 +914,9 @@ function HeroVehicleDisplay({
   selectedIndex,
   totalItems,
   onNavigate,
+  viewMode,
+  onViewModeChange,
+  onAddVehicle,
 }) {
   // Panel states: 'collapsed', 'expanded', 'details'
   const [panelState, setPanelState] = useState('collapsed');
@@ -1020,40 +1077,31 @@ function HeroVehicleDisplay({
   ]);
 
   // Fetch wheel/tire fitment options when panel is expanded
+  // Uses fitmentService per SOURCE_OF_TRUTH.md - no direct Supabase in components
   useEffect(() => {
     const loadFitmentOptions = async () => {
       if (type !== 'mycars') return;
       if (panelState !== 'expanded' && panelState !== 'details') return;
 
-      // NOTE: car_slug column was removed from wheel_tire_fitment_options (2026-01-11)
-      // Use car_id from matched car, or resolve from slug
-      const carId = item?.matchedCar?.id || item?.vehicle?.matchedCarId;
       const carSlug = item?.matchedCar?.slug || item?.vehicle?.matchedCarSlug;
-
-      if (!carId && !carSlug) return;
+      if (!carSlug) return;
 
       try {
-        // If we have carId, use it directly; otherwise resolve from slug
-        let resolvedCarId = carId;
-        if (!resolvedCarId && carSlug) {
-          const { data: carData } = await supabase
-            .from('cars')
-            .select('id')
-            .eq('slug', carSlug)
-            .single();
-          resolvedCarId = carData?.id;
+        const { fetchCarFitments } = await import('@/lib/fitmentService');
+        const { data, error } = await fetchCarFitments(carSlug);
+
+        if (error) {
+          console.error('[HeroVehicleDisplay] Error loading fitment options:', error);
+          return;
         }
 
-        if (!resolvedCarId) return;
+        if (data) {
+          // Transform service response to expected format
+          // Service returns { oem, options } - combine and sort by fitment type priority
+          const allOptions = [];
+          if (data.oem) allOptions.push(data.oem);
+          if (data.options) allOptions.push(...data.options);
 
-        const { data, error } = await supabase
-          .from('wheel_tire_fitment_options')
-          .select('*')
-          .eq('car_id', resolvedCarId)
-          .order('fitment_type', { ascending: true });
-
-        if (!error && data) {
-          // Sort by fitment type priority: oem first, then upgrades
           const sortOrder = {
             oem: 1,
             oem_optional: 2,
@@ -1063,10 +1111,10 @@ function HeroVehicleDisplay({
             aggressive: 6,
             conservative: 7,
           };
-          data.sort(
-            (a, b) => (sortOrder[a.fitment_type] || 99) - (sortOrder[b.fitment_type] || 99)
+          allOptions.sort(
+            (a, b) => (sortOrder[a.fitmentType] || 99) - (sortOrder[b.fitmentType] || 99)
           );
-          setFitmentOptions(data);
+          setFitmentOptions(allOptions);
         }
       } catch (err) {
         console.error('[HeroVehicleDisplay] Error loading fitment options:', err);
@@ -1077,9 +1125,7 @@ function HeroVehicleDisplay({
   }, [
     type,
     panelState,
-    item?.matchedCar?.id,
     item?.matchedCar?.slug,
-    item?.vehicle?.matchedCarId,
     item?.vehicle?.matchedCarSlug,
   ]);
 
@@ -1260,13 +1306,6 @@ function HeroVehicleDisplay({
             console.error('[VIN Lookup] Database update failed:', updateResult.error);
             setVinSaveStatus('error');
           } else {
-            // eslint-disable-next-line no-console -- Debug logging for VIN lookup
-            console.log('[VIN Lookup] VIN data saved successfully:', {
-              vin: decoded.vin,
-              year: decoded.year,
-              make: decoded.make,
-              model: decoded.model,
-            });
             setVinSaveStatus('saved');
             // Clear saved status after 3 seconds
             setTimeout(() => setVinSaveStatus(null), 3000);
@@ -1430,8 +1469,9 @@ function HeroVehicleDisplay({
   const hasCustomHero = !!userHeroImage;
 
   // Fallback hero: use first uploaded image if no designated hero and no stock image
-  const hasStockImage =
-    car?.imageGarageUrl || car?.imageHeroUrl || (car?.slug && !car?._hasNoMatchedCar);
+  // Only consider stock image available if car has explicit image URLs in database
+  // Don't assume all matched cars have images - many may not have images uploaded yet
+  const hasStockImage = !!(car?.imageGarageUrl || car?.imageHeroUrl);
   const fallbackHeroUrl =
     !hasCustomHero && !hasStockImage && carImages?.length > 0 ? carImages[0].url : null;
 
@@ -1583,7 +1623,7 @@ function HeroVehicleDisplay({
 
   return (
     <div className={styles.heroDisplay}>
-      {/* Vehicle Info Header - Above the image */}
+      {/* Vehicle Info Header - Vehicle name left, view toggle + add vehicle right */}
       {panelState === 'collapsed' && (
         <div className={styles.vehicleInfoHeader}>
           <div className={styles.vehicleInfoText}>
@@ -1599,6 +1639,36 @@ function HeroVehicleDisplay({
               {car?.model || item?.vehicle?.model || displayName}
             </h2>
           </div>
+          <div className={styles.vehicleHeaderActions}>
+            {/* View Toggle - Gallery/List */}
+            {viewMode && onViewModeChange && (
+              <div className={styles.viewToggle}>
+                <button
+                  className={`${styles.viewToggleBtn} ${viewMode === 'presentation' ? styles.viewToggleBtnActive : ''}`}
+                  onClick={() => onViewModeChange('presentation')}
+                  title="Gallery view"
+                  aria-label="Gallery view"
+                >
+                  <Icons.gallery size={16} />
+                </button>
+                <button
+                  className={`${styles.viewToggleBtn} ${viewMode === 'list' ? styles.viewToggleBtnActive : ''}`}
+                  onClick={() => onViewModeChange('list')}
+                  title="List view"
+                  aria-label="List view"
+                >
+                  <Icons.list size={16} />
+                </button>
+              </div>
+            )}
+            {/* Add Vehicle Button */}
+            {onAddVehicle && (
+              <button className={styles.addVehicleBtn} onClick={onAddVehicle}>
+                <Icons.plus size={16} />
+                Add Vehicle
+              </button>
+            )}
+          </div>
         </div>
       )}
 
@@ -1611,7 +1681,6 @@ function HeroVehicleDisplay({
               src={userHeroImageUrl}
               alt={displayName || 'Vehicle'}
               fill
-              style={{ objectFit: 'cover' }}
               className={styles.heroImage}
               priority
             />
@@ -1621,12 +1690,11 @@ function HeroVehicleDisplay({
               src={fallbackHeroUrl}
               alt={displayName || 'Vehicle'}
               fill
-              style={{ objectFit: 'cover' }}
               className={styles.heroImage}
               priority
             />
-          ) : car && !car._hasNoMatchedCar ? (
-            // Stock car image from database
+          ) : hasStockImage ? (
+            // Stock car image from database (only render if car has actual image URLs)
             <CarImage car={car} variant="garage" className={styles.heroImage} lazy={false} />
           ) : (
             // Placeholder for vehicles with no images
@@ -2053,14 +2121,6 @@ function HeroVehicleDisplay({
                           MODIFIED
                         </span>
                       )}
-                      <AskALButton
-                        variant="header"
-                        category="Performance"
-                        prompt={`Tell me about the performance capabilities of my ${car?.name || 'car'}. How does it compare to competitors, and what are its strengths on the street and track?`}
-                        displayMessage={`How fast is my ${car?.name || 'car'}? How does it compare to rivals?`}
-                        carName={car?.name}
-                        carSlug={car?.slug}
-                      />
                     </h4>
                     <div className={styles.detailBlockItems}>
                       {car.hp && (
@@ -2192,14 +2252,6 @@ function HeroVehicleDisplay({
                   <div className={styles.detailBlock}>
                     <h4 className={styles.detailBlockTitle}>
                       <span>Engine & Drivetrain</span>
-                      <AskALButton
-                        variant="header"
-                        category="Engine & Drivetrain"
-                        prompt={`Tell me about the engine and drivetrain in my ${car?.name || 'car'}. What are common issues, maintenance tips, and potential upgrades?`}
-                        displayMessage={`What should I know about my ${car?.engine || 'engine'}? Common issues, maintenance tips?`}
-                        carName={car?.name}
-                        carSlug={car?.slug}
-                      />
                     </h4>
                     <div className={styles.detailBlockItems}>
                       {car.engine && (
@@ -2239,14 +2291,6 @@ function HeroVehicleDisplay({
                   <div className={styles.detailBlock}>
                     <h4 className={styles.detailBlockTitle}>
                       <span>Chassis & Body</span>
-                      <AskALButton
-                        variant="header"
-                        category="Chassis & Body"
-                        prompt={`Tell me about the chassis and body of my ${car?.name || 'car'}. What makes it unique, and what should I know about its construction and handling characteristics?`}
-                        displayMessage={`What makes the ${car?.name || 'car'} platform special? How does weight affect handling?`}
-                        carName={car?.name}
-                        carSlug={car?.slug}
-                      />
                     </h4>
                     <div className={styles.detailBlockItems}>
                       {car.curbWeight && (
@@ -2274,14 +2318,6 @@ function HeroVehicleDisplay({
                   <div className={styles.detailBlock}>
                     <h4 className={styles.detailBlockTitle}>
                       <span>AutoRev Ratings</span>
-                      <AskALButton
-                        variant="header"
-                        category="AutoRev Ratings"
-                        prompt={`Explain the AutoRev ratings for my ${car?.name || 'car'}. Why did it receive these scores, and how does it compare to similar vehicles?`}
-                        displayMessage={`Why did my ${car?.name || 'car'} get these ratings? What do the scores mean?`}
-                        carName={car?.name}
-                        carSlug={car?.slug}
-                      />
                     </h4>
                     <div className={styles.detailBlockItems}>
                       <RatingBar value={car.driverFun} label="Driver Fun" />
@@ -2298,14 +2334,6 @@ function HeroVehicleDisplay({
                   <div className={styles.detailBlock}>
                     <h4 className={styles.detailBlockTitle}>
                       <span>Ownership</span>
-                      <AskALButton
-                        variant="header"
-                        category="Ownership"
-                        prompt={`What should I know about owning a ${car?.name || 'car'}? Include typical costs, common issues to watch for, and what makes it special as a daily driver or weekend car.`}
-                        displayMessage={`What's it really like to own a ${car?.name || 'car'}? Costs, reliability, common issues?`}
-                        carName={car?.name}
-                        carSlug={car?.slug}
-                      />
                     </h4>
                     <div className={styles.detailBlockItems}>
                       {car.priceRange && (
@@ -2368,20 +2396,12 @@ function HeroVehicleDisplay({
                     <div className={styles.detailBlock}>
                       <h4 className={styles.detailBlockTitle}>
                         <span>Ownership Extras</span>
-                        <AskALButton
-                          variant="header"
-                          category="Ownership Extras"
-                          prompt={`Tell me more about owning a ${car?.name || 'car'} - parts availability, DIY friendliness, track readiness, and the enthusiast community.`}
-                          displayMessage={`Is the ${car?.name || 'car'} DIY-friendly? What about parts availability and the community?`}
-                          carName={car?.name}
-                          carSlug={car?.slug}
-                        />
                       </h4>
                       <div className={styles.detailBlockItems}>
                         {car.partsAvailability && (
                           <div className={styles.detailBlockItem}>
                             <span>Parts</span>
-                            <span style={{ textTransform: 'capitalize' }}>
+                            <span className={styles.textCapitalize}>
                               {car.partsAvailability}
                             </span>
                           </div>
@@ -2389,7 +2409,7 @@ function HeroVehicleDisplay({
                         {car.dealerVsIndependent && (
                           <div className={styles.detailBlockItem}>
                             <span>Service</span>
-                            <span style={{ textTransform: 'capitalize' }}>
+                            <span className={styles.textCapitalize}>
                               {car.dealerVsIndependent.replace(/-/g, ' ')}
                             </span>
                           </div>
@@ -2398,7 +2418,7 @@ function HeroVehicleDisplay({
                         {car.trackReadiness && (
                           <div className={styles.detailBlockItem}>
                             <span>Track Ready</span>
-                            <span style={{ textTransform: 'capitalize' }}>
+                            <span className={styles.textCapitalize}>
                               {car.trackReadiness.replace(/-/g, ' ')}
                             </span>
                           </div>
@@ -2545,14 +2565,6 @@ function HeroVehicleDisplay({
                       <div className={styles.detailBlock}>
                         <h4 className={styles.detailBlockTitle}>
                           <span>Engine Oil</span>
-                          <AskALButton
-                            variant="header"
-                            category="Engine Oil"
-                            prompt={`What's the best engine oil for my ${car?.name || 'car'}? Include recommended brands, viscosity, and change intervals.`}
-                            displayMessage={`What oil should I use? Best brands and change interval for my ${car?.name || 'car'}?`}
-                            carName={car?.name}
-                            carSlug={car?.slug}
-                          />
                         </h4>
                         <div className={styles.detailBlockItems}>
                           <div className={styles.detailBlockItem}>
@@ -2582,14 +2594,6 @@ function HeroVehicleDisplay({
                       <div className={styles.detailBlock}>
                         <h4 className={styles.detailBlockTitle}>
                           <span>Fuel</span>
-                          <AskALButton
-                            variant="header"
-                            category="Fuel"
-                            prompt={`What fuel should I use in my ${car?.name || 'car'}? Is premium worth it, and what about E85 compatibility?`}
-                            displayMessage={`Do I need premium fuel? Is E85 an option for my ${car?.name || 'car'}?`}
-                            carName={car?.name}
-                            carSlug={car?.slug}
-                          />
                         </h4>
                         <div className={styles.detailBlockItems}>
                           <div className={styles.detailBlockItem}>
@@ -2641,14 +2645,6 @@ function HeroVehicleDisplay({
                       <div className={styles.detailBlock}>
                         <h4 className={styles.detailBlockTitle}>
                           <span>Fluids</span>
-                          <AskALButton
-                            variant="header"
-                            category="Fluids"
-                            prompt={`What fluids does my ${car?.name || 'car'} need? Include coolant, brake fluid, transmission fluid, and differential fluid specifications.`}
-                            displayMessage={`What fluids does my ${car?.name || 'car'} need? Coolant, brake fluid, trans fluid specs?`}
-                            carName={car?.name}
-                            carSlug={car?.slug}
-                          />
                         </h4>
                         <div className={styles.detailBlockItems}>
                           <div className={styles.detailBlockItem}>
@@ -2678,14 +2674,6 @@ function HeroVehicleDisplay({
                       <div className={styles.detailBlock}>
                         <h4 className={styles.detailBlockTitle}>
                           <span>Brakes</span>
-                          <AskALButton
-                            variant="header"
-                            category="Brakes"
-                            prompt={`Tell me about the brake system on my ${car?.name || 'car'}. What are good upgrade options and when should I replace pads/rotors?`}
-                            displayMessage={`When should I replace brakes? What are the best upgrade options for my ${car?.name || 'car'}?`}
-                            carName={car?.name}
-                            carSlug={car?.slug}
-                          />
                         </h4>
                         <div className={styles.detailBlockItems}>
                           <div className={styles.detailBlockItem}>
@@ -2707,14 +2695,6 @@ function HeroVehicleDisplay({
                       <div className={styles.detailBlock}>
                         <h4 className={styles.detailBlockTitle}>
                           <span>Battery</span>
-                          <AskALButton
-                            variant="header"
-                            category="Battery"
-                            prompt={`What battery should I get for my ${car?.name || 'car'}? Include recommended brands and any special considerations.`}
-                            displayMessage={`What battery should I get? Best brands for my ${car?.name || 'car'}?`}
-                            carName={car?.name}
-                            carSlug={car?.slug}
-                          />
                         </h4>
                         <div className={styles.detailBlockItems}>
                           <div className={styles.detailBlockItem}>
@@ -2738,14 +2718,6 @@ function HeroVehicleDisplay({
                       <div className={styles.detailBlock}>
                         <h4 className={styles.detailBlockTitle}>
                           <span>Wipers & Lights</span>
-                          <AskALButton
-                            variant="header"
-                            category="Wipers & Lights"
-                            prompt={`What are the wiper blade sizes and bulb types for my ${car?.name || 'car'}? Any recommended upgrades?`}
-                            displayMessage={`What wiper blades and bulbs fit my ${car?.name || 'car'}? Any good upgrades?`}
-                            carName={car?.name}
-                            carSlug={car?.slug}
-                          />
                         </h4>
                         <div className={styles.detailBlockItems}>
                           <div className={styles.detailBlockItem}>
@@ -2804,16 +2776,12 @@ function HeroVehicleDisplay({
                     {/* Recalls Section - if VIN decoded and has recalls */}
                     {vinData?.recalls && vinData.recalls.length > 0 && (
                       <div className={styles.prosConsRow}>
-                        <div className={styles.prosConsBlock} style={{ flex: 1 }}>
+                        <div className={`${styles.prosConsBlock} ${styles.flexOne}`}>
                           <h4 className={styles.detailBlockTitle}>Recalls & Campaigns</h4>
                           <ul className={styles.proConList}>
                             {vinData.recalls.map((recall, i) => (
                               <li key={i} className={styles.conItem}>
-                                <span
-                                  style={{
-                                    color: recall.status === 'Completed' ? '#10b981' : '#ef4444',
-                                  }}
-                                >
+                                <span className={recall.status === 'Completed' ? styles.colorSuccess : styles.colorError}>
                                   {recall.status === 'Completed' ? '✓' : '!'}
                                 </span>{' '}
                                 {recall.description} ({recall.status})
@@ -2846,10 +2814,7 @@ function HeroVehicleDisplay({
                     {/* Safety Summary */}
                     <div className={styles.safetySummary}>
                       <div className={styles.safetyStatCard}>
-                        <span
-                          className={styles.safetyStatValue}
-                          style={{ color: safetyData.recalls.length > 0 ? '#ef4444' : '#10b981' }}
-                        >
+                        <span className={`${styles.safetyStatValue} ${safetyData.recalls.length > 0 ? styles.colorError : styles.colorSuccess}`}>
                           {safetyData.recalls.length}
                         </span>
                         <span className={styles.safetyStatLabel}>Recalls</span>
@@ -3126,7 +3091,7 @@ function BuildHeroDisplay({
               src={userHeroImageUrl}
               alt={build?.name || 'Build'}
               fill
-              style={{ objectFit: 'cover' }}
+              className={styles.heroImage}
               priority
             />
           ) : (
@@ -3406,48 +3371,48 @@ function EmptyState({ icon: Icon, title, description, actionLabel, onAction }) {
   );
 }
 
-// Vehicle List View Component - Compact list for managing multiple vehicles
-function VehicleListView({
-  items,
+// Sortable Vehicle Item - Individual draggable item in the list
+function SortableVehicleItem({
+  item,
   onSelectVehicle,
-  onEditBuild: _onEditBuild,
   onDeleteVehicle,
-  onStartNewBuild: _onStartNewBuild,
+  isDragging,
 }) {
-  const router = useRouter();
-  const { heroImageUrl: _defaultHero } = useCarImages(null);
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging: isSortableDragging,
+  } = useSortable({ id: item.vehicle?.id });
 
-  const handleItemClick = (item) => {
-    if (onSelectVehicle) {
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isSortableDragging ? 0.5 : 1,
+    zIndex: isSortableDragging ? 1000 : 'auto',
+  };
+
+  const car = item.matchedCar;
+  const vehicle = item.vehicle;
+  const hasBuild = vehicle?.activeBuildId || vehicle?.installedModifications?.length > 0;
+  const hpGain = item.build?.totalHpGain ?? vehicle?.totalHpGain ?? 0;
+  const totalCost = item.build?.totalCostLow || 0;
+
+  const displayName =
+    vehicle?.nickname ||
+    car?.name ||
+    `${vehicle?.year || ''} ${vehicle?.make || ''} ${vehicle?.model || ''}`.trim();
+  const subtitle = car?.name || `${vehicle?.year} ${vehicle?.make} ${vehicle?.model}`;
+
+  const handleItemClick = () => {
+    if (onSelectVehicle && !isDragging) {
       onSelectVehicle(item);
     }
   };
 
-  const handleEditBuild = (e, item) => {
-    e.stopPropagation();
-    if (item.vehicle?.activeBuildId) {
-      router.push(`/garage/my-build?build=${item.vehicle.activeBuildId}`);
-    } else if (item.matchedCar?.slug) {
-      router.push(`/garage/my-build?car=${item.matchedCar.slug}`);
-    }
-  };
-
-  const _handleShare = (e, item) => {
-    e.stopPropagation();
-    // TODO: Implement share functionality
-    const buildName = item.vehicle?.nickname || item.matchedCar?.name || 'My Build';
-    if (navigator.share) {
-      navigator
-        .share({
-          title: buildName,
-          text: `Check out my ${buildName} build on AutoRev!`,
-          url: window.location.href,
-        })
-        .catch(() => {});
-    }
-  };
-
-  const handleDelete = (e, item) => {
+  const handleDelete = (e) => {
     e.stopPropagation();
     if (onDeleteVehicle) {
       onDeleteVehicle(item);
@@ -3455,90 +3420,196 @@ function VehicleListView({
   };
 
   return (
-    <div className={styles.vehicleListView}>
-      {items.map((item, index) => {
-        const car = item.matchedCar;
-        const vehicle = item.vehicle;
-        const hasBuild = vehicle?.activeBuildId || vehicle?.installedModifications?.length > 0;
-        // Use build's HP gain if available (current/accurate), fall back to vehicle's cached value
-        const hpGain = item.build?.totalHpGain ?? vehicle?.totalHpGain ?? 0;
-        const totalCost = item.build?.totalCostLow || 0;
-
-        // Display name
-        const displayName =
-          vehicle?.nickname ||
-          car?.name ||
-          `${vehicle?.year || ''} ${vehicle?.make || ''} ${vehicle?.model || ''}`.trim();
-        const subtitle = car?.name || `${vehicle?.year} ${vehicle?.make} ${vehicle?.model}`;
-
-        return (
-          <SwipeableRow
-            key={vehicle?.id || index}
-            rightActions={[
-              {
-                icon: <Icons.trash size={18} />,
-                label: 'Delete',
-                onClick: () => onDeleteVehicle?.(item),
-                variant: 'danger',
-              },
-            ]}
+    <div ref={setNodeRef} style={style}>
+      <SwipeableRow
+        rightActions={[
+          {
+            icon: <Icons.trash size={18} />,
+            label: 'Delete',
+            onClick: () => onDeleteVehicle?.(item),
+            variant: 'danger',
+          },
+        ]}
+      >
+        <div
+          className={`${styles.vehicleListItem} ${isSortableDragging ? styles.vehicleListItemDragging : ''}`}
+          onClick={handleItemClick}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleItemClick();
+            }
+          }}
+          tabIndex={0}
+          role="button"
+          aria-label={`Select ${displayName}`}
+        >
+          {/* Drag Handle */}
+          <button
+            className={styles.dragHandle}
+            {...attributes}
+            {...listeners}
+            aria-label="Drag to reorder"
+            title="Drag to reorder"
           >
-            <div className={styles.vehicleListItem} onClick={() => handleItemClick(item)}>
-              {/* Thumbnail */}
-              <div className={styles.vehicleListThumb}>
-                {car ? (
-                  <CarImage car={car} variant="garage" className={styles.vehicleListThumbImg} />
-                ) : (
-                  <div className={styles.vehicleListThumbPlaceholder}>
-                    <Icons.car size={24} />
-                  </div>
-                )}
-              </div>
+            <Icons.grip size={20} />
+          </button>
 
-              {/* Info */}
-              <div className={styles.vehicleListInfo}>
-                <h3 className={styles.vehicleListName}>{displayName}</h3>
-                <p className={styles.vehicleListSubtitle}>
-                  {subtitle !== displayName ? subtitle : ''}
-                </p>
+          {/* Info */}
+          <div className={styles.vehicleListInfo}>
+            <h3 className={styles.vehicleListName}>{displayName}</h3>
+            <p className={styles.vehicleListSubtitle}>
+              {subtitle !== displayName ? subtitle : ''}
+            </p>
 
-                {/* Build stats */}
-                <div className={styles.vehicleListStats}>
-                  {hasBuild && hpGain > 0 && (
-                    <span className={styles.vehicleListStat}>
-                      <Icons.bolt size={14} />
-                      <span className={styles.vehicleListStatValue}>+{hpGain}</span>
-                      <span className={styles.vehicleListStatLabel}>HP</span>
-                    </span>
-                  )}
-                  {totalCost > 0 && (
-                    <span className={styles.vehicleListStat}>${totalCost.toLocaleString()}</span>
-                  )}
-                </div>
-              </div>
-
-              {/* Actions (visible on desktop, hidden on mobile where swipe is available) */}
-              <div className={styles.vehicleListActions}>
-                <button
-                  className={styles.vehicleListAction}
-                  onClick={(e) => handleEditBuild(e, item)}
-                  title="Build"
-                >
-                  <Icons.wrench size={18} />
-                </button>
-                <button
-                  className={styles.vehicleListAction}
-                  onClick={(e) => handleDelete(e, item)}
-                  title="Delete"
-                >
-                  <Icons.trash size={18} />
-                </button>
-              </div>
+            {/* Build stats */}
+            <div className={styles.vehicleListStats}>
+              {hasBuild && hpGain > 0 && (
+                <span className={styles.vehicleListStat}>
+                  <Icons.bolt size={14} />
+                  <span className={styles.vehicleListStatValue}>+{hpGain}</span>
+                  <span className={styles.vehicleListStatLabel}>HP</span>
+                </span>
+              )}
+              {totalCost > 0 && (
+                <span className={styles.vehicleListStat}>${totalCost.toLocaleString()}</span>
+              )}
             </div>
-          </SwipeableRow>
-        );
-      })}
+          </div>
+
+          {/* Actions (visible on desktop, hidden on mobile where swipe is available) */}
+          <div className={styles.vehicleListActions}>
+            <button
+              className={styles.vehicleListAction}
+              onClick={handleDelete}
+              title="Delete"
+            >
+              <Icons.trash size={18} />
+            </button>
+          </div>
+        </div>
+      </SwipeableRow>
     </div>
+  );
+}
+
+// Drag overlay item - shown while dragging (visual feedback)
+function DragOverlayItem({ item }) {
+  const car = item?.matchedCar;
+  const vehicle = item?.vehicle;
+
+  const displayName =
+    vehicle?.nickname ||
+    car?.name ||
+    `${vehicle?.year || ''} ${vehicle?.make || ''} ${vehicle?.model || ''}`.trim();
+
+  if (!item) return null;
+
+  return (
+    <div className={`${styles.vehicleListItem} ${styles.vehicleListItemOverlay}`}>
+      <div className={styles.dragHandle}>
+        <Icons.grip size={20} />
+      </div>
+      <div className={styles.vehicleListInfo}>
+        <h3 className={styles.vehicleListName}>{displayName}</h3>
+      </div>
+    </div>
+  );
+}
+
+// Vehicle List View Component - Compact list with drag-and-drop reordering
+function VehicleListView({
+  items,
+  onSelectVehicle,
+  onDeleteVehicle,
+  onReorder,
+}) {
+  const { heroImageUrl: _defaultHero } = useCarImages(null);
+  const [activeId, setActiveId] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  // Configure sensors for touch and pointer input
+  // activationConstraint prevents accidental drags on tap/click
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8, // Require 8px movement before drag starts
+      },
+    }),
+    useSensor(TouchSensor, {
+      activationConstraint: {
+        delay: 150, // 150ms hold before drag starts on touch
+        tolerance: 5, // Allow 5px movement during delay
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  // Get the vehicle IDs for SortableContext
+  const vehicleIds = useMemo(
+    () => items.map((item) => item.vehicle?.id).filter(Boolean),
+    [items]
+  );
+
+  const handleDragStart = useCallback((event) => {
+    setActiveId(event.active.id);
+    setIsDragging(true);
+  }, []);
+
+  const handleDragEnd = useCallback((event) => {
+    const { active, over } = event;
+    setActiveId(null);
+    setIsDragging(false);
+
+    if (over && active.id !== over.id) {
+      const oldIndex = items.findIndex((item) => item.vehicle?.id === active.id);
+      const newIndex = items.findIndex((item) => item.vehicle?.id === over.id);
+
+      if (oldIndex !== -1 && newIndex !== -1 && onReorder) {
+        // Create new array with reordered items
+        const newItems = arrayMove(items, oldIndex, newIndex);
+        // Extract vehicle IDs in new order and call reorder
+        const vehicleIds = newItems.map((item) => item.vehicle.id);
+        onReorder(vehicleIds);
+      }
+    }
+  }, [items, onReorder]);
+
+  const handleDragCancel = useCallback(() => {
+    setActiveId(null);
+    setIsDragging(false);
+  }, []);
+
+  // Find the active item for the drag overlay
+  const activeItem = activeId ? items.find((item) => item.vehicle?.id === activeId) : null;
+
+  return (
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      onDragCancel={handleDragCancel}
+    >
+      <SortableContext items={vehicleIds} strategy={verticalListSortingStrategy}>
+        <div className={styles.vehicleListView}>
+          {items.map((item) => (
+            <SortableVehicleItem
+              key={item.vehicle?.id}
+              item={item}
+              onSelectVehicle={onSelectVehicle}
+              onDeleteVehicle={onDeleteVehicle}
+              isDragging={isDragging}
+            />
+          ))}
+        </div>
+      </SortableContext>
+      <DragOverlay>
+        {activeId ? <DragOverlayItem item={activeItem} /> : null}
+      </DragOverlay>
+    </DndContext>
   );
 }
 
@@ -3661,10 +3732,27 @@ function CarPickerModal({ isOpen, onClose, onSelectCar, existingBuilds, allCars 
   );
 }
 
+// LocalStorage key for persisting selected vehicle index
+const SELECTED_INDEX_KEY = 'autorev_garage_selected_index';
+
 // Main Garage Component Content
 function GarageContent() {
   const router = useRouter();
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const searchParams = useSearchParams();
+  
+  // Selection persistence: hydrate from localStorage on mount
+  // Per SOURCE_OF_TRUTH.md: Selection should persist across navigation/refresh
+  const [selectedIndex, setSelectedIndex] = useState(() => {
+    if (typeof window === 'undefined') return 0;
+    try {
+      const stored = localStorage.getItem(SELECTED_INDEX_KEY);
+      const parsed = stored ? parseInt(stored, 10) : 0;
+      return isNaN(parsed) ? 0 : parsed;
+    } catch {
+      return 0;
+    }
+  });
+  
   const [isAddVehicleOpen, setIsAddVehicleOpen] = useState(false);
   const [_addingFavoriteCar, setAddingFavoriteCar] = useState(null);
   const [selectedBuild, setSelectedBuild] = useState(null);
@@ -3706,6 +3794,10 @@ function GarageContent() {
     user?.user_metadata?.full_name?.split(' ')[0] ||
     user?.email?.split('@')[0] ||
     'My';
+  
+  // Get user's avatar URL for profile button
+  const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
+  
   const {
     favorites,
     addFavorite: _addFavorite,
@@ -3731,17 +3823,86 @@ function GarageContent() {
     refresh: refreshVehicles,
   } = useOwnedVehicles();
   const { hasAccess: _hasAccess } = usePremiumAccess();
-  const { openChatWithPrompt } = useAIChat();
 
-  // Combined loading state - show loading while auth or provider data is being fetched
+  // Persist selectedIndex to localStorage when it changes
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem(SELECTED_INDEX_KEY, String(selectedIndex));
+    } catch {
+      // localStorage may be unavailable in some contexts
+    }
+  }, [selectedIndex]);
+
+  // Validate selectedIndex when vehicles array changes (e.g., after deletion)
+  useEffect(() => {
+    if (vehicles.length === 0) {
+      if (selectedIndex !== 0) setSelectedIndex(0);
+      return;
+    }
+    // Clamp index to valid range if it exceeds vehicle count
+    if (selectedIndex >= vehicles.length) {
+      setSelectedIndex(vehicles.length - 1);
+    }
+  }, [vehicles.length, selectedIndex]);
+
+  // LOADING SCREEN TIMEOUT: Safety hatch to prevent infinite loading
+  // If loading takes longer than this, show content anyway (degraded but usable)
+  const [loadingTimedOut, setLoadingTimedOut] = useState(false);
+  useEffect(() => {
+    // Only start timeout if we're in a loading state
+    if (!authLoading && isAuthenticated && isDataFetchReady && !vehiclesLoading) {
+      // Already loaded, no timeout needed
+      return;
+    }
+    
+    const timeout = setTimeout(() => {
+      console.warn('[Garage] Loading timeout reached - showing content to prevent stuck state');
+      setLoadingTimedOut(true);
+    }, 8000); // 8 second max loading time
+    
+    return () => clearTimeout(timeout);
+  }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading]);
+
+  // Reset timeout flag when data successfully loads
+  useEffect(() => {
+    if (!authLoading && isDataFetchReady && !vehiclesLoading) {
+      setLoadingTimedOut(false);
+    }
+  }, [authLoading, isDataFetchReady, vehiclesLoading]);
+  
+  // Handle action=add URL parameter to auto-open add vehicle modal
+  const [addActionProcessed, setAddActionProcessed] = useState(false);
+  useEffect(() => {
+    const actionFromUrl = searchParams.get('action');
+    if (actionFromUrl === 'add' && !addActionProcessed && isAuthenticated && !authLoading) {
+      const timer = setTimeout(() => {
+        setIsAddVehicleOpen(true);
+        setAddActionProcessed(true);
+        
+        // Clear the action param from URL
+        const newUrl = new URL(window.location.href);
+        newUrl.searchParams.delete('action');
+        router.replace(newUrl.pathname + newUrl.search, { scroll: false });
+      }, 300);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams, addActionProcessed, isAuthenticated, authLoading, router]);
+
+  // Combined loading state - show loading while auth or vehicle data is being fetched
   // CRITICAL: Also check isDataFetchReady to prevent race condition on page refresh where
   // auth resolves (authLoading=false) but providers haven't started fetching yet (waiting for isDataFetchReady)
   // Without this check, there's a brief moment where the page shows empty state instead of loading
   //
-  // TAB-SPECIFIC: Only check loading for the current tab's data provider. This prevents
-  // one slow provider from blocking all tabs. If vehicles are loaded but builds is still
-  // loading, My Collection shows vehicles while Builds would show loading.
+  // PERFORMANCE OPTIMIZATION: We no longer block on carsLoading (full car list).
+  // Instead, individual vehicle cards use tempCarFromVehicle and _isCarDataLoading
+  // to show content immediately while car data loads in the background.
+  // This makes tab navigation feel instant for returning users.
   const isDataLoading = useMemo(() => {
+    // Safety hatch: if loading times out, show content anyway
+    if (loadingTimedOut) return false;
+    
     // Always show loading during auth check
     if (authLoading) return true;
 
@@ -3751,8 +3912,11 @@ function GarageContent() {
     // Wait for prefetch to complete before showing any data
     if (!isDataFetchReady) return true;
 
-    return vehiclesLoading || carsLoading;
-  }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading, carsLoading]);
+    // Only block on vehicles loading - NOT carsLoading
+    // The tempCarFromVehicle fallback provides enough data to render the UI
+    // Individual cards will show loading states via _isCarDataLoading flag
+    return vehiclesLoading;
+  }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading, loadingTimedOut]);
 
   // Merge favorites with full car data (from database)
   // Guard: ensure allCars is an array before using array methods
@@ -4033,124 +4197,6 @@ function GarageContent() {
     showPointsEarned(10, 'Vehicle added');
   };
 
-  // Handle "Analyze All Vehicles" button - opens AL with comprehensive context
-  const _handleAnalyzeAllVehicles = useCallback(async () => {
-    // Build comprehensive vehicle summary with all available data
-    const vehicleSummary = vehiclesWithCars
-      .map((v, idx) => {
-        const name = v.matchedCar?.name || `${v.vehicle.year} ${v.vehicle.make} ${v.vehicle.model}`;
-        const mileage = v.vehicle.current_mileage || v.vehicle.mileage;
-        const mileageStr = mileage ? `${mileage.toLocaleString()} mi` : 'Unknown mileage';
-        const year = v.vehicle.year || 'Unknown year';
-        const usageType = v.vehicle.usage_type || 'daily';
-        const slug = v.matchedCar?.slug || '';
-
-        // Include service history if available
-        let serviceInfo = '';
-        if (v.vehicle.last_oil_change_date || v.vehicle.last_oil_change_miles) {
-          const oilDate = v.vehicle.last_oil_change_date
-            ? new Date(v.vehicle.last_oil_change_date).toLocaleDateString()
-            : null;
-          const oilMiles = v.vehicle.last_oil_change_miles?.toLocaleString();
-          serviceInfo = ` | Last oil change: ${oilDate || 'unknown date'}${oilMiles ? ` at ${oilMiles} mi` : ''}`;
-        }
-
-        return `${idx + 1}. ${name} (${year}) - ${mileageStr} - Usage: ${usageType}${serviceInfo}${slug ? ` [slug: ${slug}]` : ''}`;
-      })
-      .join('\n');
-
-    // Get favorites summary
-    const favoritesSummary =
-      favoriteCars.length > 0
-        ? favoriteCars
-            .slice(0, 10)
-            .map((car) => `- ${car.name || `${car.year} ${car.make} ${car.model}`}`)
-            .join('\n')
-        : 'No favorites saved';
-
-    // Get builds summary
-    const buildsSummary =
-      builds.length > 0
-        ? builds
-            .slice(0, 5)
-            .map((b) => `- ${b.name || 'Unnamed build'}: ${b.carSlug || 'unknown car'}`)
-            .join('\n')
-        : 'No build projects';
-
-    // Get user location from profile if available
-    const userLocation = profile?.location_zip
-      ? `${profile.location_city || ''}, ${profile.location_state || ''} ${profile.location_zip}`.trim()
-      : null;
-
-    // Get current month/season for seasonal context
-    const now = new Date();
-    const month = now.toLocaleDateString('en-US', { month: 'long' });
-    const season =
-      now.getMonth() >= 2 && now.getMonth() <= 4
-        ? 'Spring'
-        : now.getMonth() >= 5 && now.getMonth() <= 7
-          ? 'Summer'
-          : now.getMonth() >= 8 && now.getMonth() <= 10
-            ? 'Fall'
-            : 'Winter';
-
-    // Build the comprehensive prompt
-    const prompt = `# Garage Concierge Analysis Request
-
-## My Vehicles (${vehiclesWithCars.length} total)
-${vehicleSummary}
-
-## My Favorites (${favoriteCars.length} cars)
-${favoritesSummary}
-
-## My Build Projects (${builds.length} projects)
-${buildsSummary}
-
-${userLocation ? `## My Location\n${userLocation}\n` : ''}
-## Current Date
-${month} ${now.getFullYear()} (${season})
-
----
-
-Please provide a comprehensive "Garage Concierge" analysis covering:
-
-1. **Maintenance Priorities** - Based on mileage and last service dates, what should I address first? Use get_maintenance_schedule for each vehicle to check intervals.
-
-2. **Safety & Reliability Alerts** - Are there any known issues, TSBs, or recalls affecting my vehicles? Use get_known_issues for each.
-
-3. **Fleet Strengths** - What does my collection do well? (Performance, practicality, variety, etc.)
-
-4. **Fleet Gaps** - What's missing? Suggestions for my next vehicle based on my taste (favorites/builds).
-
-${userLocation ? `5. **Upcoming Events Near Me** - Use search_events to find relevant car events in my area.\n` : ''}
-6. **Fresh Content** - Any expert reviews, comparison tests, or news about my cars? Use get_expert_reviews.
-
-7. **Seasonal Considerations** - What should I be thinking about for ${season}? (Tire swaps, storage prep, road trip planning, etc.)
-
-8. **Recommended Next Steps** - Top 3 actionable items I should tackle.
-
-Be specific, mention actual vehicles by name, and use your tools to get accurate data. This is a concierge-level analysis!`;
-
-    // Clean user-facing message (what they see in chat)
-    const vehicleNames = vehiclesWithCars
-      .slice(0, 3)
-      .map((v) => v.matchedCar?.name || `${v.vehicle.year} ${v.vehicle.make} ${v.vehicle.model}`);
-    const vehicleList = vehicleNames.join(', ');
-    const moreText = vehiclesWithCars.length > 3 ? ` and ${vehiclesWithCars.length - 3} more` : '';
-
-    const displayMessage = `Analyze my garage: ${vehicleList}${moreText}. Check maintenance priorities, safety alerts, and give me recommendations.`;
-
-    openChatWithPrompt(
-      prompt,
-      {
-        category: 'Garage Concierge',
-        vehicleCount: vehiclesWithCars.length,
-        hasLocation: !!userLocation,
-      },
-      displayMessage
-    );
-  }, [vehiclesWithCars, favoriteCars, builds, profile, openChatWithPrompt]);
-
   // Toggle quick update mode
   const handleToggleQuickUpdate = () => {
     if (!quickUpdateMode) {
@@ -4310,45 +4356,29 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
 
   return (
     <div className={styles.page}>
-      {/* Page Header - Title on left, Add Vehicle on right */}
+      {/* Page Header - Title on left, Profile on right */}
       <header className={styles.pageHeader}>
         <div className={styles.headerLeft}>
           <h1 className={styles.pageTitle}>{firstName}&apos;s Garage</h1>
         </div>
         <div className={styles.headerRight}>
-          {/* Add Vehicle Button */}
-          <button className={styles.addVehicleBtn} onClick={() => setIsAddVehicleOpen(true)}>
-            <Icons.plus size={16} />
-            Add Vehicle
-          </button>
+          {/* Profile Button */}
+          <Link href="/dashboard" className={styles.profileLink}>
+            {avatarUrl ? (
+              <Image src={avatarUrl} alt="" width={36} height={36} className={styles.profileAvatar} />
+            ) : (
+              <Icons.user size={20} />
+            )}
+          </Link>
         </div>
       </header>
 
-      {/* Subtitle row with vehicle count and view toggle */}
+      {/* Subtitle row with vehicle count */}
       <div className={styles.subtitleRow}>
         <p className={styles.pageSubtitle}>
           {vehiclesWithCars.length} {vehiclesWithCars.length === 1 ? 'vehicle' : 'vehicles'} in your
           collection
         </p>
-        {/* View Toggle */}
-        <div className={styles.viewToggle}>
-          <button
-            className={`${styles.viewToggleBtn} ${viewMode === 'presentation' ? styles.viewToggleBtnActive : ''}`}
-            onClick={() => handleViewModeChange('presentation')}
-            title="Gallery view"
-            aria-label="Gallery view"
-          >
-            <Icons.gallery size={16} />
-          </button>
-          <button
-            className={`${styles.viewToggleBtn} ${viewMode === 'list' ? styles.viewToggleBtnActive : ''}`}
-            onClick={() => handleViewModeChange('list')}
-            title="List view"
-            aria-label="List view"
-          >
-            <Icons.list size={16} />
-          </button>
-        </div>
       </div>
 
       {/* Garage Score moved to Dashboard tab - January 2026 */}
@@ -4438,6 +4468,35 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
             viewMode === 'list' ? (
               /* List View - Compact list for managing multiple vehicles */
               <div className={styles.listViewContainer}>
+                {/* Controls row - View toggle + Add Vehicle (same position as presentation view) */}
+                <div className={styles.listViewControls}>
+                  <div className={styles.vehicleHeaderActions}>
+                    {/* View Toggle - Gallery/List */}
+                    <div className={styles.viewToggle}>
+                      <button
+                        className={`${styles.viewToggleBtn} ${viewMode === 'presentation' ? styles.viewToggleBtnActive : ''}`}
+                        onClick={() => handleViewModeChange('presentation')}
+                        title="Gallery view"
+                        aria-label="Gallery view"
+                      >
+                        <Icons.gallery size={16} />
+                      </button>
+                      <button
+                        className={`${styles.viewToggleBtn} ${viewMode === 'list' ? styles.viewToggleBtnActive : ''}`}
+                        onClick={() => handleViewModeChange('list')}
+                        title="List view"
+                        aria-label="List view"
+                      >
+                        <Icons.list size={16} />
+                      </button>
+                    </div>
+                    {/* Add Vehicle Button */}
+                    <button className={styles.addVehicleBtn} onClick={() => setIsAddVehicleOpen(true)}>
+                      <Icons.plus size={16} />
+                      Add Vehicle
+                    </button>
+                  </div>
+                </div>
                 <VehicleListView
                   items={currentItems}
                   onSelectVehicle={(item) => {
@@ -4452,6 +4511,13 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
                     const idx = currentItems.findIndex((i) => i.vehicle?.id === item.vehicle?.id);
                     if (idx !== -1) {
                       handleRemoveRequest(idx);
+                    }
+                  }}
+                  onReorder={async (vehicleIds) => {
+                    // Persist the new order to the database
+                    const result = await reorderVehicles(vehicleIds);
+                    if (!result.success) {
+                      console.error('[Garage] Reorder failed:', result.error);
                     }
                   }}
                 />
@@ -4471,6 +4537,9 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
                   selectedIndex={selectedIndex}
                   totalItems={currentItems.length}
                   onNavigate={setSelectedIndex}
+                  viewMode={viewMode}
+                  onViewModeChange={handleViewModeChange}
+                  onAddVehicle={() => setIsAddVehicleOpen(true)}
                 />
               </>
             )
@@ -4541,16 +4610,41 @@ Be specific, mention actual vehicles by name, and use your tools to get accurate
   );
 }
 
-// Loading fallback
+// Loading fallback - uses skeleton loaders per SOURCE_OF_TRUTH.md
+// Skeleton shapes should match actual content to prevent layout shift
 function GarageLoading() {
   return (
     <div className={styles.page}>
-      <LoadingSpinner
-        variant="branded"
-        text="Loading Your Garage"
-        subtext="Preparing your vehicles..."
-        fullPage
-      />
+      {/* Header skeleton */}
+      <div className={styles.pageHeader}>
+        <div className={styles.headerLeft}>
+          <Skeleton width={200} height={36} variant="rounded" />
+        </div>
+        <div className={styles.headerRight}>
+          <Skeleton width={44} height={44} variant="circular" />
+        </div>
+      </div>
+
+      {/* Subtitle row skeleton */}
+      <div className={styles.subtitleRow}>
+        <Skeleton width={140} height={16} variant="rounded" />
+      </div>
+
+      {/* Vehicle card skeletons - match presentation view cards */}
+      <div className={styles.garageLoadingSkeleton}>
+        <div className={styles.vehicleCardSkeleton}>
+          <Skeleton height={200} variant="rectangular" className={styles.vehicleImageSkeleton} />
+          <div className={styles.vehicleInfoSkeleton}>
+            <Skeleton width="70%" height={24} variant="rounded" />
+            <Skeleton width="50%" height={18} variant="rounded" />
+            <div className={styles.vehicleStatsSkeleton}>
+              <Skeleton width={60} height={24} variant="rounded" />
+              <Skeleton width={60} height={24} variant="rounded" />
+              <Skeleton width={80} height={24} variant="rounded" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

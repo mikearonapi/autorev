@@ -58,8 +58,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -232,6 +232,19 @@
 
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .loadingSpinner {
+    animation: none;
+  }
+  
+  .skeletonRings,
+  .skeletonCard,
+  .skeletonCardSmall {
+    animation: none;
+  }
 }
 
 /* Empty State */

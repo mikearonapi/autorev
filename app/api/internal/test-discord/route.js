@@ -27,8 +27,9 @@ import {
   notifyCronCompletion,
   postDailyDigest,
 } from '@/lib/discord';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
-export async function GET(request) {
+async function handleGet(request) {
   // Simple auth check - require secret in query param
   const { searchParams } = new URL(request.url);
   const secret = searchParams.get('secret');
@@ -129,6 +130,4 @@ export async function GET(request) {
   return NextResponse.json(summary);
 }
 
-
-
-
+export const GET = withErrorLogging(handleGet, { route: 'internal-test-discord', feature: 'internal' });

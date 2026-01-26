@@ -44,11 +44,11 @@ AL_IDENTITY = {
 
 ## Chat Limits by Tier
 
-| Tier | Monthly Budget | Est. Conversations |
-|------|----------------|-------------------|
-| **Free** | $0.25 (25 cents) | ~15-20 |
-| **Enthusiast** | $1.00 | ~70-80 |
-| **Tuner** | $2.50 | ~175-200 |
+| Tier | Monthly AL Budget | Est. Chats |
+|------|-------------------|------------|
+| **Free** | $0.25 | ~15 |
+| **Enthusiast** | $2.00 | ~130 |
+| **Pro** | $5.00 | ~350 |
 
 Cost is based on actual token usage (Claude Sonnet 4 pricing):
 - Input: $3.00/1M tokens

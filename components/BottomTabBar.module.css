@@ -250,8 +250,8 @@
   }
 }
 
-/* Tablet */
-@media (min-width: 768px) and (max-width: 1023px) {
+/* Tablet and up - mobile-first (min-width: 768px) */
+@media (min-width: 768px) {
   .container {
     max-width: 480px;
     height: 68px;

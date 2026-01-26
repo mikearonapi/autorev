@@ -221,3 +221,120 @@
   padding-top: 12px;
   border-top: 1px solid var(--color-border, rgba(255, 255, 255, 0.08));
 }
+
+/* =============================================================================
+   DYNO CHART SKELETON (Virtual Dyno specific)
+   ============================================================================= */
+
+.dynoChart {
+  background-color: var(--color-card-bg, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.06));
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.dynoChartHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.dynoChartLegend {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.dynoChartBody {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 6px;
+  height: 220px;
+}
+
+.dynoChartYAxis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding-right: 4px;
+}
+
+.dynoChartArea {
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 12px;
+}
+
+.dynoChartXAxis {
+  display: flex;
+  justify-content: space-between;
+  padding-left: 42px;
+  margin-top: 6px;
+}
+
+/* =============================================================================
+   DATA PAGE SKELETON (Full page loading state)
+   ============================================================================= */
+
+.dataPageSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.perfSection {
+  background-color: var(--color-card-bg, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.06));
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.perfGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.perfMetric {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.powerSection {
+  background-color: var(--color-card-bg, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.06));
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.powerLayout {
+  display: flex;
+  gap: 24px;
+  align-items: center;
+}
+
+.powerLegend {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Responsive adjustments */
+@media (min-width: 601px) {
+  .dynoChart {
+    padding: 24px;
+    border-radius: 16px;
+  }
+  
+  .dynoChartBody {
+    height: 280px;
+    grid-template-columns: 44px 1fr;
+  }
+  
+  .dynoChartXAxis {
+    padding-left: 50px;
+  }
+}

@@ -41,11 +41,13 @@ function getCurrentMonthName() {
  * 
  * Query params:
  * - limit: max users to return (default 20, max 50)
+ * - offset: pagination offset (default 0)
  * - period: 'monthly' (default) or 'all-time'
  */
 async function handleGet(request) {
   const { searchParams } = new URL(request.url);
   const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 50);
+  const offset = parseInt(searchParams.get('offset') || '0');
   const period = searchParams.get('period') || 'monthly';
   
   const isAllTime = period === 'all-time';
@@ -53,7 +55,7 @@ async function handleGet(request) {
 
   // For all-time, we can use the pre-aggregated total_points from user_profiles
   if (isAllTime) {
-    return handleAllTimeLeaderboard(request, limit);
+    return handleAllTimeLeaderboard(request, limit, offset);
   }
 
   // Monthly leaderboard - aggregate from history
@@ -83,6 +85,8 @@ async function handleGet(request) {
       period: 'monthly',
       periodLabel: getCurrentMonthName(),
       currentUserRank: null,
+      hasMore: false,
+      total: 0,
     });
   }
 
@@ -97,8 +101,8 @@ async function handleGet(request) {
     return errors.database('Failed to fetch user profiles');
   }
 
-  // Step 4: Build final leaderboard
-  const finalLeaderboard = (profiles || [])
+  // Step 4: Build complete sorted list then paginate
+  const allUsers = (profiles || [])
     .filter(p => p.display_name) // Only users with display names
     .map(profile => ({
       userId: profile.id,
@@ -109,11 +113,16 @@ async function handleGet(request) {
       points: pointsMap.get(profile.id) || 0,
     }))
     .filter(u => u.points > 0)
-    .sort((a, b) => b.points - a.points)
-    .slice(0, limit)
+    .sort((a, b) => b.points - a.points);
+  
+  const total = allUsers.length;
+  
+  // Apply pagination with correct rank numbers
+  const finalLeaderboard = allUsers
+    .slice(offset, offset + limit)
     .map((user, index) => ({
       ...user,
-      rank: index + 1,
+      rank: offset + index + 1, // Rank considers offset
     }));
 
   // Step 5: Get current user's rank if authenticated
@@ -124,28 +133,37 @@ async function handleGet(request) {
     period: 'monthly',
     periodLabel: getCurrentMonthName(),
     currentUserRank,
+    hasMore: offset + limit < total,
+    total,
   });
 }
 
 /**
  * Handle all-time leaderboard using pre-aggregated total_points
  */
-async function handleAllTimeLeaderboard(request, limit) {
-  // Get all users with points, sorted by total_points
+async function handleAllTimeLeaderboard(request, limit, offset) {
+  // Get total count first
+  const { count: total } = await supabaseAdmin
+    .from('user_profiles')
+    .select('*', { count: 'exact', head: true })
+    .gt('total_points', 0)
+    .not('display_name', 'is', null);
+
+  // Get paginated users with points, sorted by total_points
   const { data: profiles, error: profileError } = await supabaseAdmin
     .from('user_profiles')
     .select('id, display_name, avatar_url, selected_title, total_points')
     .gt('total_points', 0)
     .not('display_name', 'is', null)
     .order('total_points', { ascending: false })
-    .limit(limit);
+    .range(offset, offset + limit - 1);
 
   if (profileError) {
     console.error('[Leaderboard API] All-time profile query error:', profileError);
     return errors.database('Failed to fetch user profiles');
   }
 
-  // Build leaderboard
+  // Build leaderboard with correct rank numbers
   const finalLeaderboard = (profiles || []).map((profile, index) => ({
     userId: profile.id,
     displayName: profile.display_name,
@@ -153,7 +171,7 @@ async function handleAllTimeLeaderboard(request, limit) {
     selectedTitle: profile.selected_title,
     totalPoints: profile.total_points || 0,
     points: profile.total_points || 0,
-    rank: index + 1,
+    rank: offset + index + 1, // Rank considers offset
   }));
 
   // Build points map for current user rank calculation
@@ -176,6 +194,8 @@ async function handleAllTimeLeaderboard(request, limit) {
     period: 'all-time',
     periodLabel: 'All Time',
     currentUserRank,
+    hasMore: offset + limit < (total || 0),
+    total: total || 0,
   });
 }
 

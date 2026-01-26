@@ -9,11 +9,18 @@
  * 
  * Uses apiClient for standardized error handling and cross-platform support.
  * 
+ * Query keys are imported from the centralized lib/queryKeys.js to ensure
+ * consistent cache invalidation across the app.
+ * 
  * @module hooks/useCarData
  */
 
 import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
 import apiClient from '@/lib/apiClient';
+import { carKeys, partsKeys } from '@/lib/queryKeys';
+
+// Re-export for backwards compatibility with existing imports
+export { carKeys, partsKeys };
 
 // =============================================================================
 // FETCHER HELPER
@@ -44,43 +51,6 @@ export const CACHE_TIMES = {
   
   // Slow-changing data (recalls, maintenance specs, safety ratings)
   SLOW: 30 * 60 * 1000,          // 30 minutes
-};
-
-// =============================================================================
-// QUERY KEY FACTORIES
-// =============================================================================
-
-/**
- * Standardized query keys for React Query.
- * Using factories ensures consistent cache invalidation.
- */
-export const carKeys = {
-  all: ['cars'],
-  lists: () => [...carKeys.all, 'list'],
-  list: (filters) => [...carKeys.lists(), filters],
-  expertReviewedList: (limit) => [...carKeys.all, 'expert-reviewed', { limit }],
-  details: () => [...carKeys.all, 'detail'],
-  detail: (slug) => [...carKeys.details(), slug],
-  enriched: (slug) => [...carKeys.detail(slug), 'enriched'],
-  efficiency: (slug) => [...carKeys.detail(slug), 'efficiency'],
-  safety: (slug) => [...carKeys.detail(slug), 'safety'],
-  priceByYear: (slug) => [...carKeys.detail(slug), 'price-by-year'],
-  marketValue: (slug) => [...carKeys.detail(slug), 'market-value'],
-  expertReviews: (slug) => [...carKeys.detail(slug), 'expert-reviews'],
-  expertConsensus: (slug) => [...carKeys.detail(slug), 'expert-consensus'],
-  lapTimes: (slug) => [...carKeys.detail(slug), 'lap-times'],
-  popularParts: (slug) => [...carKeys.detail(slug), 'popular-parts'],
-  recalls: (slug) => [...carKeys.detail(slug), 'recalls'],
-  maintenance: (slug) => [...carKeys.detail(slug), 'maintenance'],
-  issues: (slug) => [...carKeys.detail(slug), 'issues'],
-};
-
-/**
- * Query keys for parts data (not car-specific)
- */
-export const partsKeys = {
-  all: ['parts'],
-  turbos: () => [...partsKeys.all, 'turbos'],
 };
 
 // =============================================================================
@@ -268,6 +238,7 @@ export function useCarEfficiency(slug, options = {}) {
     queryKey: carKeys.efficiency(slug),
     queryFn: () => fetchEfficiency(slug),
     enabled: !!slug,
+    staleTime: CACHE_TIMES.SLOW, // 30 min - efficiency data rarely changes
     ...options,
   });
 }
@@ -284,6 +255,7 @@ export function useCarSafety(slug, options = {}) {
     queryKey: carKeys.safety(slug),
     queryFn: () => fetchSafety(slug),
     enabled: !!slug,
+    staleTime: CACHE_TIMES.SLOW, // 30 min - safety ratings rarely change
     ...options,
   });
 }
@@ -300,6 +272,7 @@ export function useCarPriceByYear(slug, options = {}) {
     queryKey: carKeys.priceByYear(slug),
     queryFn: () => fetchPriceByYear(slug),
     enabled: !!slug,
+    staleTime: CACHE_TIMES.STANDARD, // 10 min
     ...options,
   });
 }
@@ -317,6 +290,7 @@ export function useCarExpertReviews(slug, queryOptions = {}, options = {}) {
     queryKey: [...carKeys.expertReviews(slug), queryOptions],
     queryFn: () => fetchExpertReviews(slug, queryOptions),
     enabled: !!slug,
+    staleTime: CACHE_TIMES.STANDARD, // 10 min - reviews don't change frequently
     ...options,
   });
 }
@@ -333,6 +307,7 @@ export function useCarExpertConsensus(slug, options = {}) {
     queryKey: carKeys.expertConsensus(slug),
     queryFn: () => fetchExpertConsensus(slug),
     enabled: !!slug,
+    staleTime: CACHE_TIMES.STANDARD, // 10 min
     ...options,
   });
 }
@@ -350,6 +325,7 @@ export function useCarLapTimes(slug, queryOptions = {}, options = {}) {
     queryKey: [...carKeys.lapTimes(slug), queryOptions],
     queryFn: () => fetchLapTimes(slug, queryOptions),
     enabled: !!slug,
+    staleTime: CACHE_TIMES.FAST, // 5 min - lap times can update more frequently
     ...options,
   });
 }
@@ -367,6 +343,7 @@ export function useCarDynoRuns(slug, queryOptions = {}, options = {}) {
     queryKey: ['car', 'dyno', slug, queryOptions],
     queryFn: () => fetchDynoRuns(slug, queryOptions),
     enabled: !!slug,
+    staleTime: CACHE_TIMES.FAST, // 5 min - dyno data can update frequently
     ...options,
   });
 }
@@ -384,6 +361,7 @@ export function useCarPopularParts(slug, limit = 8, options = {}) {
     queryKey: [...carKeys.popularParts(slug), { limit }],
     queryFn: () => fetchPopularParts(slug, limit),
     enabled: !!slug,
+    staleTime: CACHE_TIMES.STANDARD, // 10 min
     ...options,
   });
 }

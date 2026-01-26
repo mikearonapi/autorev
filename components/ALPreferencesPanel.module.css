@@ -35,7 +35,8 @@
   font-family: var(--font-display);
   font-size: var(--text-body);
   font-weight: 600;
-  color: var(--color-text-primary);
+  /* Explicit white for title */
+  color: #ffffff;
   margin: 0;
   display: flex;
   align-items: center;
@@ -46,7 +47,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text-secondary);
+  /* Gray for icon */
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .closeButton {
@@ -116,7 +118,8 @@
   font-family: var(--font-display);
   font-size: var(--text-2xs);
   font-weight: 600;
-  color: var(--color-text-tertiary);
+  /* Muted gray for section headers */
+  color: rgba(255, 255, 255, 0.45);
   margin: 0;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -165,14 +168,16 @@
   height: 32px;
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.06);
-  color: var(--color-text-secondary);
+  /* Explicit color - gray for unselected icons */
+  color: rgba(255, 255, 255, 0.6);
   flex-shrink: 0;
   transition: all 0.15s ease;
 }
 
 .modeCardActive .modeIcon {
   background: rgba(16, 185, 129, 0.2);
-  color: var(--color-accent-teal);
+  /* Teal for selected icon - brand standard */
+  color: #10b981;
 }
 
 .modeText {
@@ -186,7 +191,8 @@
 .modeLabel {
   font-size: var(--text-sm);
   font-weight: 600;
-  color: var(--color-text-primary);
+  /* Explicit white for labels */
+  color: #ffffff;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -195,7 +201,8 @@
 .recommended {
   font-size: 9px; /* Sub-minimum decorative badge */
   font-weight: 600;
-  color: var(--color-accent-teal);
+  /* Teal badge - brand standard */
+  color: #10b981;
   background: rgba(16, 185, 129, 0.15);
   padding: 2px 5px;
   border-radius: 3px;
@@ -205,7 +212,8 @@
 
 .modeDescription {
   font-size: var(--text-xs);
-  color: var(--color-text-tertiary);
+  /* Muted gray for descriptions */
+  color: rgba(255, 255, 255, 0.5);
   line-height: 1.3;
 }
 
@@ -253,7 +261,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--color-text-secondary);
+  /* Explicit gray for icons */
+  color: rgba(255, 255, 255, 0.6);
   flex-shrink: 0;
 }
 
@@ -265,48 +274,55 @@
 .toggleLabel {
   font-size: var(--text-sm);
   font-weight: 500;
-  color: var(--color-text-primary);
+  /* Explicit white for labels */
+  color: #ffffff;
 }
 
-/* Toggle Switch - Compact */
+/* Toggle Switch - Brand standard (matches NotificationPreferences) */
 .toggle {
-  width: 36px;
-  height: 20px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.12);
-  border: none;
-  cursor: pointer;
   position: relative;
+  width: 50px;
+  height: 28px;
+  padding: 0;
+  background-color: rgba(255, 255, 255, 0.12);
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
   flex-shrink: 0;
-  transition: background 0.15s ease;
 }
 
-.toggle:hover {
-  background: rgba(255, 255, 255, 0.18);
+.toggle:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.18);
+}
+
+.toggle:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
 }
 
 .toggleOn {
-  background: var(--color-accent-teal);
+  background-color: var(--color-accent-teal, #10b981);
 }
 
-.toggleOn:hover {
-  background: var(--color-accent-teal, #0ea574);
+.toggleOn:hover:not(:disabled) {
+  background-color: var(--color-accent-teal-dark, #0d9668);
 }
 
 .toggleKnob {
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 16px;
-  height: 16px;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background-color: #ffffff;
   border-radius: 50%;
-  background: white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
-  transition: transform 0.15s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
 }
 
 .toggleOn .toggleKnob {
-  transform: translateX(16px);
+  transform: translateX(22px);
 }
 
 /* Tier Badge */

@@ -1,0 +1,45 @@
+---
+description: "Feature Workflow - For building new features. Invoke with @feature-workflow."
+globs: []
+alwaysApply: false
+---
+
+# Feature Workflow
+
+## Phase 1: UNDERSTAND
+1. Restate what's being built
+2. Identify affected areas
+3. Check tier access requirements
+
+## Phase 2: RESEARCH
+1. **Read SOURCE_OF_TRUTH.md** — Cardinal rules, anti-patterns
+2. **Search existing code** — Don't duplicate
+3. List what to reuse vs create
+
+```
+📖 SOURCE_OF_TRUTH: [Rules that apply]
+🔍 EXISTING CODE: [What to reuse]
+🆕 NEW CODE NEEDED: [What to create]
+```
+
+## Phase 3: PLAN
+1. Component/file structure
+2. Data flow
+3. State ownership
+4. Get approval before implementing
+
+## Phase 4: BUILD
+Invoke specialists as needed:
+- UI work → `@frontend-agent`, `@ui-quality-agent`
+- Data work → `@database-agent`
+- API work → `@security-agent`
+
+## Phase 5: VERIFY
+```
+✅ VERIFICATION:
+- [ ] Works as specified
+- [ ] Edge cases handled
+- [ ] Loading/error states
+- [ ] SOURCE_OF_TRUTH patterns followed
+- [ ] Evidence: [show output]
+```

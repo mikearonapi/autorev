@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import Link from 'next/link';
 import Button from '@/components/Button';
 import styles from './page.module.css';
@@ -17,6 +17,8 @@ const interests = [
   { id: 'general', label: 'General Question' },
 ];
 
+// Email validation regex (matches server-side Zod pattern)
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -29,14 +31,63 @@ export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const [errors, setErrors] = useState({});
+  const formRef = useRef(null);
+
+  // Client-side validation matching server schema (lib/schemas/index.js)
+  const validate = () => {
+    const errs = {};
+    
+    // Name: required, min 2 chars (server: min 1, but UX better with 2)
+    if (!formData.name || formData.name.trim().length < 2) {
+      errs.name = 'Please enter your name (at least 2 characters)';
+    } else if (formData.name.length > 100) {
+      errs.name = 'Name is too long (max 100 characters)';
+    }
+    
+    // Email: required, valid format
+    if (!formData.email) {
+      errs.email = 'Please enter your email address';
+    } else if (!EMAIL_REGEX.test(formData.email)) {
+      errs.email = 'Please enter a valid email address';
+    } else if (formData.email.length > 255) {
+      errs.email = 'Email is too long';
+    }
+    
+    // Message: required, min 10 chars
+    if (!formData.message || formData.message.trim().length < 10) {
+      errs.message = 'Message must be at least 10 characters';
+    } else if (formData.message.length > 5000) {
+      errs.message = 'Message is too long (max 5000 characters)';
+    }
+    
+    return errs;
+  };
 
   const handleContactFormChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    // Clear field error when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: undefined }));
+    }
   };
 
   const handleContactSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate before submission
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      // Focus first error field for accessibility
+      const firstErrorField = Object.keys(validationErrors)[0];
+      const fieldElement = formRef.current?.querySelector(`[name="${firstErrorField}"]`);
+      fieldElement?.focus();
+      return;
+    }
+    
+    setErrors({});
     setIsSubmitting(true);
     setSubmitError(null);
     
@@ -126,7 +177,7 @@ export default function Contact() {
       // Success if at least ONE database save succeeded
       // (leads OR feedback - email doesn't count as it's just notification)
       if (saveResults.leads || saveResults.feedback) {
-        console.log('[Contact] Submission saved successfully:', saveResults);
+        console.info('[Contact] Submission saved successfully:', saveResults);
         setSubmitted(true);
       } else {
         console.error('[Contact] All database saves failed:', saveResults);
@@ -162,20 +213,17 @@ export default function Contact() {
                   <h2 className={styles.successTitle}>Message Sent!</h2>
                   <p className={styles.successText}>
                     Thanks for reaching out. We&apos;ll get back to you within 48 hours.
-                    In the meantime, explore your garage or ask AL anything.
+                    In the meantime, explore your garage.
                   </p>
                   <div className={styles.successLinks}>
                     <Button href="/garage" variant="secondary" size="lg">
                       My Garage
                       <Icons.arrowRight size={16} />
                     </Button>
-                    <Button href="/al" variant="outlineLight" size="lg">
-                      Ask AL
-                    </Button>
                   </div>
                 </div>
               ) : (
-                <form onSubmit={handleContactSubmit} className={styles.form}>
+                <form ref={formRef} onSubmit={handleContactSubmit} className={styles.form} noValidate>
                   <div className={styles.formHeader}>
                     <h2 className={styles.formTitle}>Send Us a Message</h2>
                     <p className={styles.formDescription}>
@@ -190,13 +238,20 @@ export default function Contact() {
                         type="text"
                         id="name"
                         name="name"
-                        className={styles.input}
+                        className={`${styles.input} ${errors.name ? styles.inputError : ''}`}
                         placeholder="Your name"
                         value={formData.name}
                         onChange={handleContactFormChange}
                         required
                         autoComplete="name"
+                        aria-invalid={!!errors.name}
+                        aria-describedby={errors.name ? 'name-error' : undefined}
                       />
+                      {errors.name && (
+                        <span id="name-error" className={styles.fieldError} role="alert">
+                          {errors.name}
+                        </span>
+                      )}
                     </div>
                     <div className={styles.formGroup}>
                       <label htmlFor="email" className={styles.label}>Email *</label>
@@ -205,18 +260,25 @@ export default function Contact() {
                         inputMode="email"
                         id="email"
                         name="email"
-                        className={styles.input}
+                        className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
                         placeholder="your@email.com"
                         value={formData.email}
                         onChange={handleContactFormChange}
                         required
                         autoComplete="email"
+                        aria-invalid={!!errors.email}
+                        aria-describedby={errors.email ? 'email-error' : undefined}
                       />
+                      {errors.email && (
+                        <span id="email-error" className={styles.fieldError} role="alert">
+                          {errors.email}
+                        </span>
+                      )}
                     </div>
                   </div>
 
-                  <div className={styles.formGroup}>
-                    <label className={styles.label}>What are you interested in?</label>
+                  <fieldset className={styles.formGroup}>
+                    <legend className={styles.label}>What are you interested in?</legend>
                     <div className={styles.interestGrid}>
                       {interests.map(item => (
                         <label key={item.id} className={styles.interestItem}>
@@ -232,7 +294,7 @@ export default function Contact() {
                         </label>
                       ))}
                     </div>
-                  </div>
+                  </fieldset>
 
                   <div className={styles.formGroup}>
                     <label htmlFor="car" className={styles.label}>Your Car (optional)</label>
@@ -252,13 +314,20 @@ export default function Contact() {
                     <textarea
                       id="message"
                       name="message"
-                      className={styles.textarea}
+                      className={`${styles.textarea} ${errors.message ? styles.inputError : ''}`}
                       placeholder="Tell us what you're looking for..."
                       rows="5"
                       value={formData.message}
                       onChange={handleContactFormChange}
                       required
+                      aria-invalid={!!errors.message}
+                      aria-describedby={errors.message ? 'message-error' : undefined}
                     />
+                    {errors.message && (
+                      <span id="message-error" className={styles.fieldError} role="alert">
+                        {errors.message}
+                      </span>
+                    )}
                   </div>
 
                   {submitError && (

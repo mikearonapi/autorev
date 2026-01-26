@@ -374,7 +374,10 @@
   transform: translateZ(0);
 }
 
+/* CF-001: Touch target compliance - minimum 44px even for small variant */
 .quickBtnSmall {
+  min-width: 44px;
+  min-height: 44px;
   padding: 6px 8px;
   font-size: 12px;
   border-radius: 6px;
@@ -452,34 +455,34 @@
    CF-001: Ensure 44px minimum touch targets
    =========================================== */
 
-/* Small mobile: extra compact for 2-column grid */
+/* CF-001: Maintain 44px touch targets across all breakpoints */
 @media (min-width: 480px) {
   .compactBtn {
-    width: 24px;
-    height: 24px;
-    border-radius: 4px;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
   }
   
   .compactBtn svg {
-    width: 10px;
-    height: 10px;
+    width: 16px;
+    height: 16px;
   }
   
   .compactMenu {
-    gap: 2px;
+    gap: 4px;
   }
 }
 
 @media (min-width: 768px) {
-  /* Compact buttons on mobile - slightly smaller for tight spaces */
+  /* Compact buttons maintain 44px touch target */
   .compactBtn {
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
   }
   
   .compactMenu {
-    gap: 3px;
+    gap: 4px;
   }
 
   /* Ensure action buttons meet touch target */

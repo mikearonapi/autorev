@@ -13,7 +13,7 @@
 
 import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
-import { isAdminEmail } from '@/lib/adminAccess';
+import { requireAdmin, isAdminEmail } from '@/lib/adminAccess';
 import { createClient } from '@supabase/supabase-js';
 import { 
   SUBSCRIPTION_TIERS, 
@@ -149,14 +149,12 @@ function categorizePayments(paymentIntents, charges) {
 }
 
 async function handleGet(request) {
+  // Verify admin access
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
+
   const { searchParams } = new URL(request.url);
   const range = searchParams.get('range') || 'month';
-
-  // Verify admin access
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
 
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
@@ -174,14 +172,6 @@ async function handleGet(request) {
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
   try {
-    // Verify user is admin
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-
-    if (authError || !user || !isAdminEmail(user.email)) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-    }
-
     const { startTime, endTime } = getDateRange(range);
 
     // Fetch data from Stripe in parallel
@@ -450,7 +440,7 @@ async function handleGet(request) {
   } catch (err) {
     console.error('[Stripe Admin API] Error:', err);
     return NextResponse.json(
-      { error: 'Failed to fetch Stripe data', details: err.message },
+      { error: 'Failed to fetch Stripe data' },
       { status: 500 }
     );
   }

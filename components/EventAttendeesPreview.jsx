@@ -8,6 +8,7 @@
  */
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import styles from './EventAttendeesPreview.module.css';
 import { useEventAttendees } from '@/hooks/useEventsData';
@@ -71,11 +72,13 @@ function AttendeeAvatar({ attendee, size = 32, showStatus = false }) {
   return (
     <div className={styles.avatarWrapper} title={attendee.displayName}>
       {attendee.avatarUrl ? (
-        <img 
+        <Image 
           src={attendee.avatarUrl} 
           alt={attendee.displayName}
+          width={size}
+          height={size}
           className={styles.avatar}
-          style={{ width: size, height: size }}
+          style={{ objectFit: 'cover' }}
         />
       ) : (
         <DefaultAvatar name={attendee.displayName} size={size} />

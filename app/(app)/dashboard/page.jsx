@@ -14,6 +14,10 @@ import styles from './page.module.css';
 export const metadata = {
   title: 'Dashboard | AutoRev',
   description: 'Track your AutoRev progress, achievements, and engagement.',
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function DashboardPage() {

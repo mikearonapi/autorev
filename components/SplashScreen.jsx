@@ -3,7 +3,7 @@
 /**
  * SplashScreen - Full-screen branded loading screen shown after login
  * 
- * Displays the AUTOREV logo centered on a navy background for ~1.5 seconds.
+ * Displays the AUTOREV logo centered on a navy/dark background for ~2 seconds.
  * Acts as a loading buffer to let content prefetch in the background,
  * resulting in a snappier experience when the dashboard appears.
  * 
@@ -11,13 +11,16 @@
  * - Full-screen coverage including safe areas (notch, home indicator)
  * - Smooth fade-out animation
  * - Blocks interaction during display
+ * - Uses actual AR logo image (transparent on dark background)
  */
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { LOGO_TRANSPARENT } from '@/lib/brandLogos';
 import styles from './SplashScreen.module.css';
 
 export default function SplashScreen({ 
-  duration = 1500, // How long to show before fading out (ms)
+  duration = 2000, // How long to show before fading out (ms)
   onComplete,      // Callback when splash is fully hidden
 }) {
   const [isExiting, setIsExiting] = useState(false);
@@ -55,10 +58,15 @@ export default function SplashScreen({
       data-testid="splash-screen"
     >
       <div className={styles.logoContainer}>
-        <h1 className={styles.logo}>
-          <span className={styles.auto}>AUTO</span>
-          <span className={styles.rev}>REV</span>
-        </h1>
+        <Image
+          src={LOGO_TRANSPARENT}
+          alt="AutoRev"
+          width={420}
+          height={280}
+          className={styles.logoImage}
+          priority
+          unoptimized // CDN-hosted, already optimized
+        />
       </div>
     </div>
   );

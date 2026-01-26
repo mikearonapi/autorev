@@ -181,7 +181,7 @@ async function handleGet(request, { params }) {
   } catch (err) {
     console.error('[Pricing API] Error:', err);
     return NextResponse.json(
-      { error: 'Failed to fetch pricing data', message: err.message },
+      { error: 'Failed to fetch pricing data' },
       { status: 500 }
     );
   }

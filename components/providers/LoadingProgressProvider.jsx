@@ -16,7 +16,7 @@
  * @module components/providers/LoadingProgressProvider
  */
 
-import { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
+import { createContext, useContext, useState, useCallback, useRef, useEffect, useMemo } from 'react';
 
 /**
  * Step status types
@@ -441,7 +441,7 @@ export function LoadingProgressProvider({ children }) {
     };
   }, [clearAllStepTimeouts]);
 
-  const value = {
+  const value = useMemo(() => ({
     loadingStates,
     isShowingProgress,
     markStarted,
@@ -456,7 +456,19 @@ export function LoadingProgressProvider({ children }) {
     StepStatus,
     isStepDone,
     isStepCompleted,
-  };
+  }), [
+    loadingStates,
+    isShowingProgress,
+    markStarted,
+    markComplete,
+    markFailed,
+    retryStep,
+    startProgress,
+    endProgress,
+    dismissProgress,
+    resetProgress,
+    getStepCounts,
+  ]);
 
   return (
     <LoadingProgressContext.Provider value={value}>

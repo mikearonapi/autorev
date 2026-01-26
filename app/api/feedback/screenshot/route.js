@@ -1,6 +1,7 @@
 import { put } from '@vercel/blob';
 import { errors } from '@/lib/apiErrors';
 import { NextResponse } from 'next/server';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * Feedback Screenshot Upload API
@@ -17,7 +18,7 @@ export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 30; // 30 second timeout for upload
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const body = await request.json();
     const { screenshot, metadata = {} } = body;
@@ -109,7 +110,7 @@ export async function POST(request) {
 /**
  * Health check / capabilities endpoint
  */
-export async function GET() {
+async function handleGet() {
   // Check if blob storage is configured
   const hasBlobToken = !!process.env.BLOB_READ_WRITE_TOKEN;
   
@@ -120,3 +121,5 @@ export async function GET() {
   });
 }
 
+export const POST = withErrorLogging(handlePost, { route: 'feedback/screenshot', feature: 'feedback' });
+export const GET = withErrorLogging(handleGet, { route: 'feedback/screenshot', feature: 'feedback' });

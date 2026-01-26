@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import CarImage from '@/components/CarImage';
 import styles from './CarPickerFullscreen.module.css';
+import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
 
 /**
  * CarPickerFullscreen - Full-screen car selection experience
@@ -29,6 +30,9 @@ export default function CarPickerFullscreen({
   cars = [],
   recentCars = [],
 }) {
+  // Set safe area color to match overlay background when modal is open
+  useSafeAreaColor(SAFE_AREA_COLORS.OVERLAY, { enabled: isOpen });
+  
   const [mounted, setMounted] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   
@@ -99,7 +103,7 @@ export default function CarPickerFullscreen({
   if (!mounted || !isOpen) return null;
   
   const content = (
-    <div className={styles.overlay}>
+    <div className={styles.overlay} data-overlay-modal>
       <div className={styles.picker}>
         {/* Header */}
         <header className={styles.header}>

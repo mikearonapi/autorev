@@ -4,14 +4,16 @@
    ========================================================================== */
 
 /* Full Screen Container */
+/* Level 3: Overlay background for focused build detail experience */
+/* z-index 1100: Above Header (1050) to ensure fullscreen experience */
 .fullScreen {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: calc(env(safe-area-inset-bottom, 0px) + 70px); /* Stop above bottom nav */
-  background: var(--color-bg-base, #0d1b2a);
-  z-index: 300;
+  background: var(--brand-bg-overlay, #1a1a1a);
+  z-index: 1100;
   display: flex;
   flex-direction: column;
   animation: fadeIn 0.25s ease;
@@ -168,30 +170,6 @@
   letter-spacing: 0.02em;
   margin: 0;
   line-height: 1.2;
-}
-
-/* Build Status Badge - shows completion status */
-.statusBadge {
-  flex-shrink: 0;
-  font-size: 0.625rem;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-
-.statusBadge[data-status="complete"] {
-  background: rgba(16, 185, 129, 0.15);
-  color: var(--color-accent-teal, #10b981);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-.statusBadge[data-status="progress"] {
-  background: rgba(251, 191, 36, 0.15);
-  color: #fbbf24;
-  border: 1px solid rgba(251, 191, 36, 0.3);
 }
 
 /* ==========================================================================

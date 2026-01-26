@@ -34,7 +34,7 @@ export default function KnowledgeIngestPage() {
     loadCars();
   }, []);
 
-  async function handleSubmit(e) {
+  async function handleKnowledgeBaseSubmit(e) {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
@@ -79,7 +79,7 @@ export default function KnowledgeIngestPage() {
         </p>
       </header>
 
-      <form className={styles.form} onSubmit={handleSubmit}>
+      <form className={styles.form} onSubmit={handleKnowledgeBaseSubmit}>
         <div className={styles.grid}>
           <div className={styles.formGroup}>
             <label>Admin Key</label>

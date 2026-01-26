@@ -12,11 +12,12 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { createNotification, NOTIFICATION_CATEGORIES } from '@/lib/notificationService';
 import { getStreakReminderCopy, STREAK_MILESTONES } from '@/lib/engagementService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Minimum streak length to send reminders (don't spam new users)
 const MIN_STREAK_FOR_REMINDER = 3;
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     // Verify cron secret
     const authHeader = request.headers.get('authorization');
@@ -124,10 +125,13 @@ export async function POST(request) {
 }
 
 // Also support GET for testing
-export async function GET(request) {
+async function handleGet(request) {
   // For testing - show status without sending
   return NextResponse.json({
     message: 'Streak reminders cron job endpoint',
     method: 'Use POST with Authorization: Bearer CRON_SECRET to trigger',
   });
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'cron/streak-reminders', feature: 'cron-jobs' });
+export const GET = withErrorLogging(handleGet, { route: 'cron/streak-reminders', feature: 'cron-jobs' });

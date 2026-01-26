@@ -80,7 +80,7 @@ export default function QuestionCard({
     }
   }, [question.id, question.maxSelections, localValue, onChange, disabled]);
   
-  const handleSubmit = useCallback(async () => {
+  const handleQuestionAnswerSubmit = useCallback(async () => {
     if (disabled || isSubmitting) return;
     if (!localValue || (question.type === 'multi' && (!localValue.values || localValue.values.length === 0))) {
       return;
@@ -169,7 +169,7 @@ export default function QuestionCard({
         <button
           type="button"
           className={styles.submitBtn}
-          onClick={handleSubmit}
+          onClick={handleQuestionAnswerSubmit}
           disabled={disabled || isSubmitting || !hasSelection}
         >
           {isSubmitting ? 'Saving...' : 'Save Answer'}

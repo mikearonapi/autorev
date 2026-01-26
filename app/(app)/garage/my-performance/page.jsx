@@ -13,7 +13,7 @@ import React, { useState, useEffect, useMemo, Suspense, useCallback } from 'reac
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import styles from './page.module.css';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import { Skeleton } from '@/components/ui';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { MyGarageSubNav, GarageVehicleSelector } from '@/components/garage';
 import { useAuth } from '@/components/providers/AuthProvider';
@@ -24,7 +24,6 @@ import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
 import ShareBuildButton from '@/components/ShareBuildButton';
 import { getPerformanceProfile } from '@/lib/performanceCalculator';
-import { useAIChat } from '@/components/AIChatContext';
 import { Icons } from '@/components/ui/Icons';
 
 // ============================================================================
@@ -145,7 +144,6 @@ function MyPerformanceContent() {
   const authModal = useAuthModal();
   const { builds, isLoading: buildsLoading, getBuildById } = useSavedBuilds();
   const { vehicles } = useOwnedVehicles();
-  const { openChatWithPrompt } = useAIChat();
   
   // Use cached cars data from React Query hook
   const { data: allCars = [], isLoading: carsLoading } = useCarsList();
@@ -154,9 +152,11 @@ function MyPerformanceContent() {
   const buildIdParam = searchParams.get('build');
   const carSlugParam = searchParams.get('car');
   
-  // Fallback: fetch single car if not in list
+  // Fallback: fetch single car in parallel with full list
+  // This provides faster data when the full list is slow or unavailable
+  const carFromList = carSlugParam ? allCars.find(c => c.slug === carSlugParam) : null;
   const { data: fallbackCar, isLoading: fallbackLoading } = useCarBySlug(carSlugParam, {
-    enabled: !!carSlugParam && allCars.length === 0 && !carsLoading,
+    enabled: !!carSlugParam && !carFromList && !selectedCar,
   });
   
   // Get user's hero image for this car
@@ -208,13 +208,26 @@ function MyPerformanceContent() {
     return currentBuild.upgrades.map(u => typeof u === 'string' ? u : u.key).filter(Boolean);
   }, [currentBuild]);
 
+  // Normalize modification keys - handles both string keys and object formats
+  // Database may store full objects or just keys depending on how the build was saved
+  const normalizeModKeys = useCallback((mods) => {
+    if (!mods || !Array.isArray(mods)) return [];
+    return mods.map(mod => {
+      if (typeof mod === 'string') return mod;
+      if (typeof mod === 'object' && mod !== null) {
+        return mod.upgrade_key || mod.key || mod.id || null;
+      }
+      return null;
+    }).filter(Boolean);
+  }, []);
+
   // SOURCE OF TRUTH:
   // - For OWNED vehicles, calculate from vehicle.installedModifications (what's actually installed)
   // - Only fall back to build upgrades when there is no owned vehicle record / no installed mods
   const calculationModules = useMemo(() => {
-    const installed = userVehicle?.installedModifications || [];
+    const installed = normalizeModKeys(userVehicle?.installedModifications);
     return installed.length > 0 ? installed : effectiveModules;
-  }, [userVehicle?.installedModifications, effectiveModules]);
+  }, [normalizeModKeys, userVehicle?.installedModifications, effectiveModules]);
   
   // SOURCE OF TRUTH: Calculate performance profile dynamically
   // getPerformanceProfile internally uses calculateSmartHpGain for consistent HP calculations
@@ -241,58 +254,49 @@ function MyPerformanceContent() {
     router.push('/garage');
   };
   
-  // Create contextualized AL prompt handlers for performance sections
-  const askALAboutPerformance = useCallback((section) => {
-    if (!selectedCar) return;
-    
-    const carName = selectedCar.name;
-    const upgradeCount = calculationModules.length;
-    const hasUpgrades = upgradeCount > 0 || hpGain > 0;
-    
-    // Detailed prompts sent to AL
-    const prompts = {
-      metrics: hasUpgrades 
-        ? `I have a ${carName} with ${upgradeCount} upgrades making +${hpGain} HP. How can I improve my performance numbers further? What upgrades give the best gains for 0-60, braking, and grip?`
-        : `Tell me about the performance metrics of my stock ${carName}. What are realistic goals for 0-60, braking, and grip improvements with modifications?`,
-      experience: hasUpgrades
-        ? `I have a ${carName} with upgrades. How will these modifications affect comfort, reliability, and sound? Are there tradeoffs I should expect?`
-        : `For my ${carName}, how do different types of upgrades (power, suspension, exhaust) typically affect comfort, reliability, and sound? What's the best balance?`,
-    };
-    
-    // Short, clear questions shown to user in the confirmation card
-    const displayMessages = {
-      metrics: hasUpgrades 
-        ? `With +${hpGain} HP, how can I improve 0-60, braking, and grip even more?`
-        : `What are realistic performance goals for my ${carName} with mods?`,
-      experience: hasUpgrades
-        ? `How will my upgrades affect daily driving, reliability, and sound?`
-        : `How do different mods affect comfort, reliability, and sound on my ${carName}?`,
-    };
-    
-    const prompt = prompts[section] || `Tell me about ${section} for my ${carName}`;
-    const displayMessage = displayMessages[section] || prompt;
-    
-    openChatWithPrompt(prompt, {
-      category: section === 'metrics' ? 'Performance Metrics' : 'Experience Scores',
-      carSlug: selectedCar.slug,
-      carName: carName,
-      upgradeCount,
-      hpGain,
-    }, displayMessage);
-  }, [selectedCar, calculationModules, hpGain, openChatWithPrompt]);
-  
-  // Loading state
-  const isLoading = authLoading || buildsLoading || carsLoading;
+  // Loading state - only block on auth and builds, NOT carsLoading
+  // The fallbackCar mechanism ensures we have car data when needed
+  const isLoading = authLoading || buildsLoading;
   
   if (isLoading) {
     return (
       <div className={styles.page}>
-        <LoadingSpinner 
-          variant="branded" 
-          text="Loading Performance" 
-          subtext="Calculating your numbers..."
-          fullPage 
-        />
+        <div className={styles.loadingSkeleton}>
+          {/* Nav skeleton */}
+          <div className={styles.navSkeleton}>
+            <Skeleton width={40} height={40} variant="rounded" />
+            <Skeleton width={180} height={24} variant="rounded" />
+            <Skeleton width={40} height={40} variant="rounded" />
+          </div>
+          
+          {/* Vehicle selector skeleton */}
+          <div className={styles.vehicleSelectorSkeleton}>
+            <Skeleton width="100%" height={56} variant="rounded" />
+          </div>
+          
+          {/* Performance card skeleton */}
+          <div className={styles.contentSkeleton}>
+            <div className={styles.cardSkeleton}>
+              <Skeleton width={160} height={20} variant="rounded" />
+              <div className={styles.metricsSkeleton}>
+                <Skeleton width="100%" height={48} variant="rounded" />
+                <Skeleton width="100%" height={48} variant="rounded" />
+                <Skeleton width="100%" height={48} variant="rounded" />
+                <Skeleton width="100%" height={48} variant="rounded" />
+              </div>
+            </div>
+            
+            {/* Experience scores skeleton */}
+            <div className={styles.cardSkeleton}>
+              <Skeleton width={140} height={20} variant="rounded" />
+              <div className={styles.metricsSkeleton}>
+                <Skeleton width="100%" height={40} variant="rounded" />
+                <Skeleton width="100%" height={40} variant="rounded" />
+                <Skeleton width="100%" height={40} variant="rounded" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -342,14 +346,6 @@ function MyPerformanceContent() {
         <div className={styles.performanceCard}>
           <div className={styles.performanceHeader}>
             <h3 className={styles.performanceTitle}>Performance Metrics</h3>
-            <button 
-              className={styles.askAlBtn}
-              onClick={() => askALAboutPerformance('metrics')}
-              title="Ask AL about performance metrics"
-            >
-              <Icons.sparkle size={12} />
-              Ask AL
-            </button>
           </div>
           <div className={styles.performanceMetrics}>
             <MetricRow 
@@ -389,14 +385,6 @@ function MyPerformanceContent() {
         <div className={styles.section}>
           <div className={styles.sectionHeader}>
             <h4 className={styles.sectionTitle}>Experience Scores</h4>
-            <button 
-              className={styles.askAlBtn}
-              onClick={() => askALAboutPerformance('experience')}
-              title="Ask AL about experience scores"
-            >
-              <Icons.sparkle size={12} />
-              Ask AL
-            </button>
           </div>
           <ScoreBar label="Comfort" stockScore={profile?.stockScores?.drivability ?? 7} upgradedScore={profile?.upgradedScores?.drivability ?? 7} />
           <ScoreBar label="Reliability" stockScore={profile?.stockScores?.reliabilityHeat ?? 7.5} upgradedScore={profile?.upgradedScores?.reliabilityHeat ?? 7.5} />
@@ -446,12 +434,42 @@ function MyPerformanceContent() {
 function MyPerformanceLoading() {
   return (
     <div className={styles.page}>
-      <LoadingSpinner 
-        variant="branded" 
-        text="Loading Performance" 
-        subtext="Calculating your numbers..."
-        fullPage 
-      />
+      <div className={styles.loadingSkeleton}>
+        {/* Nav skeleton */}
+        <div className={styles.navSkeleton}>
+          <Skeleton width={40} height={40} variant="rounded" />
+          <Skeleton width={180} height={24} variant="rounded" />
+          <Skeleton width={40} height={40} variant="rounded" />
+        </div>
+        
+        {/* Vehicle selector skeleton */}
+        <div className={styles.vehicleSelectorSkeleton}>
+          <Skeleton width="100%" height={56} variant="rounded" />
+        </div>
+        
+        {/* Performance card skeleton */}
+        <div className={styles.contentSkeleton}>
+          <div className={styles.cardSkeleton}>
+            <Skeleton width={160} height={20} variant="rounded" />
+            <div className={styles.metricsSkeleton}>
+              <Skeleton width="100%" height={48} variant="rounded" />
+              <Skeleton width="100%" height={48} variant="rounded" />
+              <Skeleton width="100%" height={48} variant="rounded" />
+              <Skeleton width="100%" height={48} variant="rounded" />
+            </div>
+          </div>
+          
+          {/* Experience scores skeleton */}
+          <div className={styles.cardSkeleton}>
+            <Skeleton width={140} height={20} variant="rounded" />
+            <div className={styles.metricsSkeleton}>
+              <Skeleton width="100%" height={40} variant="rounded" />
+              <Skeleton width="100%" height={40} variant="rounded" />
+              <Skeleton width="100%" height={40} variant="rounded" />
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

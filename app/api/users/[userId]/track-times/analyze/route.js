@@ -1,13 +1,14 @@
 import { NextResponse } from 'next/server';
 import { errors } from '@/lib/apiErrors';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * POST /api/users/[userId]/track-times/analyze
  * Request AL analysis of user's track times
  * Returns insights, recommendations, and skill assessment
  */
-export async function POST(request, { params }) {
+async function handlePost(request, { params }) {
   try {
     const { userId } = await params;
     
@@ -40,10 +41,12 @@ export async function POST(request, { params }) {
     const body = await request.json();
     const { carSlug, trackName } = body;
     
+    const TRACK_TIME_COLS = 'id, user_id, user_vehicle_id, car_slug, track_name, track_slug, session_date, best_lap_seconds, average_lap_seconds, conditions, tires, mods_at_time, notes, video_url, created_at';
+    
     // Fetch user's track times for analysis
     let query = supabase
       .from('user_track_times')
-      .select('*')
+      .select(TRACK_TIME_COLS)
       .eq('user_id', userId)
       .order('session_date', { ascending: true });
     
@@ -93,6 +96,8 @@ export async function POST(request, { params }) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'users/track-times/analyze', feature: 'lap-times' });
 
 /**
  * Generate comprehensive analysis of track times

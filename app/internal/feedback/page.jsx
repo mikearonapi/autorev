@@ -13,6 +13,7 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
+import Image from 'next/image';
 import styles from './page.module.css';
 import { Icons } from '@/components/ui/Icons';
 import EmptyState from '@/components/ui/EmptyState';
@@ -590,11 +591,13 @@ export default function FeedbackAdminPage() {
                       rel="noopener noreferrer"
                       className={styles.screenshotLink}
                     >
-                      <img 
+                      <Image 
                         src={item.screenshot_url} 
                         alt="Feedback screenshot" 
+                        width={200}
+                        height={150}
                         className={styles.screenshotThumbnail}
-                        loading="lazy"
+                        style={{ objectFit: 'cover' }}
                       />
                       <span className={styles.screenshotOverlayText}>Click to view full size</span>
                     </a>

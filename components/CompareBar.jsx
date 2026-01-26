@@ -17,16 +17,12 @@ import { useCompare } from '@/components/providers/CompareProvider';
 import { getCarHeroImage } from '@/lib/images';
 import { fetchCars } from '@/lib/carsClient';
 import CompareModal from './CompareModal';
-import { useAIChat } from '@/components/AIChatContext';
 import { Icons } from '@/components/ui/Icons';
 
 export default function CompareBar() {
   const { cars, count, maxCars, removeFromCompare, clearAll, isHydrated, showCompareModal, setShowCompareModal } = useCompare();
   const [isExpanded, setIsExpanded] = useState(false);
   const [allCars, setAllCars] = useState([]);
-  
-  // AL chat integration for decision help
-  const { openChatWithPrompt } = useAIChat();
 
   // Fetch car data from database on mount
   useEffect(() => {
@@ -93,29 +89,12 @@ export default function CompareBar() {
 
         <div className={styles.actions}>
           {count >= 2 && (
-            <>
-              <button 
-                onClick={() => {
-                  const carNames = carsWithImages.map(c => c.name).join(' vs ');
-                  openChatWithPrompt(
-                    `Compare ${carNames} - help me decide which is the better choice for my needs. Consider performance, reliability, ownership costs, and driving experience.`,
-                    { category: 'Comparison' },
-                    `Help me choose between ${carsWithImages.map(c => c.name).join(' and ')}`
-                  );
-                }}
-                className={styles.askAlButton}
-                title="Ask AL to help decide"
-              >
-                <Icons.sparkle size={14} />
-                <span className={styles.askAlText}>Ask AL</span>
-              </button>
-              <button 
-                onClick={() => setShowCompareModal(true)}
-                className={styles.compareButton}
-              >
-                Compare Now
-              </button>
-            </>
+            <button 
+              onClick={() => setShowCompareModal(true)}
+              className={styles.compareButton}
+            >
+              Compare Now
+            </button>
           )}
           <button 
             onClick={clearAll}

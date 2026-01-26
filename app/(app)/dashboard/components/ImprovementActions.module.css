@@ -124,6 +124,31 @@
   font-weight: 700;
 }
 
+/* Category color classes - using CSS custom properties from styles/tokens/colors.css */
+.categoryColorGrowth {
+  color: var(--color-accent-amber);
+}
+
+.categoryColorCommunity {
+  color: var(--color-accent-blue);
+}
+
+.categoryColorData {
+  color: var(--color-accent-teal);
+}
+
+.categoryColorGarage {
+  color: var(--color-accent-lime);
+}
+
+.categoryColorAl {
+  color: var(--color-accent-purple);
+}
+
+.categoryColorProfile {
+  color: var(--color-accent-pink);
+}
+
 /* Referral action - clickable row */
 .actionItemReferral {
   display: flex;
@@ -187,12 +212,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #f59e0b;
+  color: var(--color-accent-amber, #f59e0b);
   flex-shrink: 0;
 }
 
 .referralButtonCopied .referralIcon {
-  color: #10b981;
+  color: var(--color-accent-teal, #10b981);
 }
 
 .referralLabel {
@@ -203,7 +228,7 @@
 
 .referralHint {
   font-size: var(--text-xs);
-  color: #10b981;
+  color: var(--color-accent-teal, #10b981);
   line-height: 1.4;
   padding: 0 4px;
   animation: fadeSlideIn 0.2s ease-out;

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/components/providers/AuthProvider';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import { ListSkeleton } from '@/components/ui/Skeleton';
 import { TITLES } from '@/app/(app)/dashboard/components/UserGreeting';
 import PointsExplainerModal from '@/app/(app)/dashboard/components/PointsExplainerModal';
 import styles from './LeaderboardView.module.css';
@@ -15,36 +15,25 @@ import styles from './LeaderboardView.module.css';
  * monthly (current month) and all-time leaderboards.
  */
 
-// Simple, premium rank indicators for top 3
+// Medal emojis for top 3 ranks
+const MEDALS = {
+  1: '🥇',
+  2: '🥈', 
+  3: '🥉',
+};
+
+// Premium rank indicators for top 3 with medals
+// Uses CSS classes to avoid hardcoded hex colors per SOURCE_OF_TRUTH.md
 const RankBadge = ({ rank }) => {
-  const styles = {
-    1: { color: '#FFD700', border: '1px solid #FFD700' }, // Gold
-    2: { color: '#C0C0C0', border: '1px solid #C0C0C0' }, // Silver
-    3: { color: '#CD7F32', border: '1px solid #CD7F32' }, // Bronze
-  };
-
-  const style = styles[rank];
-
-  if (!style) {
-    return <span className="text-gray-400 font-mono text-sm">#{rank}</span>;
+  if (rank > 3) {
+    return <span className={styles.rankNumber}>#{rank}</span>;
   }
 
+  const rankClass = rank === 1 ? styles.rankGold : rank === 2 ? styles.rankSilver : styles.rankBronze;
+
   return (
-    <div 
-      style={{
-        width: '24px',
-        height: '24px',
-        borderRadius: '50%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '12px',
-        fontWeight: 'bold',
-        fontFamily: 'var(--font-mono)',
-        ...style
-      }}
-    >
-      {rank}
+    <div className={`${styles.rankBadge} ${rankClass}`} aria-label={`Rank ${rank}`}>
+      <span className={styles.medal} role="img" aria-hidden="true">{MEDALS[rank]}</span>
     </div>
   );
 };
@@ -76,6 +65,8 @@ const PERIOD_OPTIONS = [
   { value: 'all-time', label: 'All Time' },
 ];
 
+const ITEMS_PER_PAGE = 20;
+
 export default function LeaderboardView() {
   const { user } = useAuth();
   const [leaderboard, setLeaderboard] = useState([]);
@@ -83,29 +74,46 @@ export default function LeaderboardView() {
   const [period, setPeriod] = useState('monthly');
   const [currentUserRank, setCurrentUserRank] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [error, setError] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showPointsModal, setShowPointsModal] = useState(false);
+  const [hasMore, setHasMore] = useState(false);
+  const [total, setTotal] = useState(0);
 
-  const fetchLeaderboard = useCallback(async (selectedPeriod) => {
+  const fetchLeaderboard = useCallback(async (selectedPeriod, offset = 0, append = false) => {
     try {
-      setIsLoading(true);
+      if (append) {
+        setIsLoadingMore(true);
+      } else {
+        setIsLoading(true);
+      }
       setError(null);
-      const res = await fetch(`/api/community/leaderboard?limit=20&period=${selectedPeriod}`);
+      
+      const res = await fetch(`/api/community/leaderboard?limit=${ITEMS_PER_PAGE}&offset=${offset}&period=${selectedPeriod}`);
       
       if (!res.ok) {
         throw new Error('Failed to fetch leaderboard');
       }
       
       const data = await res.json();
-      setLeaderboard(data.leaderboard || []);
+      
+      if (append) {
+        setLeaderboard(prev => [...prev, ...(data.leaderboard || [])]);
+      } else {
+        setLeaderboard(data.leaderboard || []);
+      }
+      
       setPeriodLabel(data.periodLabel || '');
       setCurrentUserRank(data.currentUserRank);
+      setHasMore(data.hasMore || false);
+      setTotal(data.total || 0);
     } catch (err) {
       console.error('[LeaderboardView] Error:', err);
       setError('Unable to load leaderboard');
     } finally {
       setIsLoading(false);
+      setIsLoadingMore(false);
     }
   }, []);
 
@@ -115,7 +123,14 @@ export default function LeaderboardView() {
 
   const handlePeriodChange = (newPeriod) => {
     setPeriod(newPeriod);
+    setLeaderboard([]); // Reset list on period change
     setIsDropdownOpen(false);
+  };
+  
+  const handleLoadMore = () => {
+    if (!isLoadingMore && hasMore) {
+      fetchLeaderboard(period, leaderboard.length, true);
+    }
   };
 
   // Format points with commas
@@ -132,11 +147,7 @@ export default function LeaderboardView() {
   if (isLoading) {
     return (
       <div className={styles.loadingContainer}>
-        <LoadingSpinner 
-          variant="branded" 
-          text="Loading Leaderboard" 
-          subtext="Fetching top performers..."
-        />
+        <ListSkeleton count={10} hasAvatar={true} />
       </div>
     );
   }
@@ -221,14 +232,21 @@ export default function LeaderboardView() {
           <span>Be the first to earn points!</span>
         </div>
       ) : (
-        <div className={styles.list}>
+        <div 
+          className={styles.list} 
+          role="list" 
+          aria-label={`${period === 'monthly' ? 'Monthly' : 'All-time'} leaderboard rankings`}
+        >
           {leaderboard.map((entry, index) => {
             const isCurrentUser = user?.id === entry.userId;
             const isTopThree = entry.rank <= 3;
+            const firstName = getFirstName(entry.displayName);
             
             return (
               <div 
                 key={entry.userId}
+                role="listitem"
+                aria-label={`Rank ${entry.rank}: ${firstName}, ${formatPoints(entry.points)} points${isCurrentUser ? ' (You)' : ''}`}
                 className={`${styles.entry} ${isCurrentUser ? styles.currentUser : ''} ${isTopThree ? styles.topThree : ''}`}
               >
                 {/* Rank */}
@@ -245,13 +263,13 @@ export default function LeaderboardView() {
                   {entry.avatarUrl ? (
                     <Image 
                       src={entry.avatarUrl} 
-                      alt={entry.displayName} 
+                      alt={`Avatar for ${firstName}`}
                       width={36} 
                       height={36}
                       className={styles.avatarImage}
                     />
                   ) : (
-                    <span className={styles.avatarFallback}>
+                    <span className={styles.avatarFallback} aria-hidden="true">
                       {entry.displayName?.charAt(0)?.toUpperCase() || '?'}
                     </span>
                   )}
@@ -260,7 +278,7 @@ export default function LeaderboardView() {
                 {/* User Info */}
                 <div className={styles.userInfo}>
                   <div className={styles.nameRow}>
-                    <span className={styles.displayName}>{getFirstName(entry.displayName)}</span>
+                    <span className={styles.displayName}>{firstName}</span>
                     {isCurrentUser && <span className={styles.youBadge}>You</span>}
                   </div>
                   {entry.selectedTitle && TITLES[entry.selectedTitle] && (
@@ -278,6 +296,19 @@ export default function LeaderboardView() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Load More Button */}
+      {hasMore && leaderboard.length > 0 && (
+        <div className={styles.loadMoreContainer}>
+          <button 
+            className={styles.loadMoreBtn}
+            onClick={handleLoadMore}
+            disabled={isLoadingMore}
+          >
+            {isLoadingMore ? 'Loading...' : `Load More (${leaderboard.length} of ${total})`}
+          </button>
         </div>
       )}
 

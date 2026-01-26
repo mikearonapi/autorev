@@ -19,13 +19,14 @@ import { NextResponse } from 'next/server';
 import Stripe from 'stripe';
 import { getUser } from '@/lib/auth';
 import { supabaseServiceRole } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
   apiVersion: '2024-12-18.acacia',
 });
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     // Authenticate user
     const user = await getUser();
@@ -78,8 +79,9 @@ export async function POST(request) {
     
     // Handle specific Stripe errors
     if (error instanceof Stripe.errors.StripeError) {
+      console.error('[Stripe Portal] Stripe error details:', error.message);
       return NextResponse.json(
-        { error: error.message },
+        { error: 'Unable to access billing portal. Please try again.' },
         { status: 400 }
       );
     }
@@ -90,3 +92,5 @@ export async function POST(request) {
     );
   }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'stripe/customer-portal', feature: 'payments' });

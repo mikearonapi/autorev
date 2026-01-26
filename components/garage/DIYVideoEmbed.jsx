@@ -9,6 +9,7 @@
  */
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { Icons } from '@/components/ui/Icons';
 import styles from './DIYVideoEmbed.module.css';
 
@@ -72,11 +73,12 @@ export default function DIYVideoEmbed({
             onClick={handlePlay}
             aria-label={`Play ${title}`}
           >
-            <img 
+            <Image 
               src={thumbnail}
               alt={title}
+              fill
               className={styles.thumbnail}
-              loading="lazy"
+              sizes="(max-width: 768px) 100vw, 400px"
             />
             <div className={styles.playOverlay}>
               <div className={styles.playIcon}>

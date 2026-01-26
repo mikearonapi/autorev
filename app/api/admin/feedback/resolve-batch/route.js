@@ -21,8 +21,9 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { isAdminEmail } from '@/lib/adminAccess';
+import { requireAdmin } from '@/lib/adminAccess';
 import { sendFeedbackResponseEmail } from '@/lib/emailService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 export const dynamic = 'force-dynamic';
 
@@ -33,30 +34,6 @@ const supabaseAdmin = createClient(
 );
 
 /**
- * Verify admin access via Bearer token
- */
-async function verifyAdmin(request) {
-  try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return { error: 'Missing authorization header', status: 401 };
-    }
-
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
-
-    if (authError || !user || !isAdminEmail(user.email)) {
-      return { error: 'Admin access required', status: 403 };
-    }
-
-    return { user };
-  } catch (err) {
-    console.error('[Admin/Feedback/ResolveBatch] Auth check error:', err);
-    return { error: 'Authentication failed', status: 500 };
-  }
-}
-
-/**
  * Extract a user-friendly name from email
  */
 function extractNameFromEmail(email) {
@@ -65,13 +42,16 @@ function extractNameFromEmail(email) {
   return localPart.split(/[._]/)[0];
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     // Verify admin access
-    const auth = await verifyAdmin(request);
-    if (auth.error) {
-      return NextResponse.json({ error: auth.error }, { status: auth.status });
-    }
+    const denied = await requireAdmin(request);
+    if (denied) return denied;
+
+    // Get user for audit trail
+    const authHeader = request.headers.get('authorization');
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user: authUser } } = await supabaseAdmin.auth.getUser(token);
 
     const body = await request.json();
     const { 
@@ -96,10 +76,12 @@ export async function POST(request) {
       const searchTerms = carSlug.replace(/-/g, ' ').toLowerCase();
       const carNameSearch = carName?.toLowerCase() || '';
       
+      const FEEDBACK_COLS = 'id, user_id, category, feedback_type, severity, title, description, page_url, status, resolved_at, created_at';
+      
       // Find unresolved car_request feedback that might match
       const { data: matches, error: matchError } = await supabaseAdmin
         .from('user_feedback')
-        .select('*')
+        .select(FEEDBACK_COLS)
         .eq('feedback_type', 'car_request')
         .is('resolved_at', null)
         .not('status', 'eq', 'resolved');
@@ -131,9 +113,11 @@ export async function POST(request) {
         return NextResponse.json({ error: 'feedbackIds array is required' }, { status: 400 });
       }
 
+      const FEEDBACK_DETAIL_COLS = 'id, user_id, category, feedback_type, severity, title, description, page_url, status, resolved_at, resolution_notes, created_at';
+      
       const { data: feedbacks, error: fetchError } = await supabaseAdmin
         .from('user_feedback')
-        .select('*')
+        .select(FEEDBACK_DETAIL_COLS)
         .in('id', feedbackIds);
 
       if (fetchError) {
@@ -153,29 +137,44 @@ export async function POST(request) {
       });
     }
 
-    // Resolve all feedback items
+    // Resolve all feedback items using batch RPC (replaces N sequential updates)
     const resolvedIds = feedbackToResolve.map(f => f.id);
     const resolutionNote = `\n\n[Batch resolved ${new Date().toISOString()}] Car added: ${carName || carSlug}`;
     
-    // Update each feedback item (need to handle internal_notes concatenation individually)
-    for (const feedback of feedbackToResolve) {
-      await supabaseAdmin
-        .from('user_feedback')
-        .update({
-          status: 'resolved',
-          resolved_at: new Date().toISOString(),
-          resolved_by: auth.user.id,
-          car_slug: carSlug || feedback.car_slug,
-          internal_notes: (feedback.internal_notes || '') + resolutionNote,
-        })
-        .eq('id', feedback.id);
-    }
+    // Use RPC for batch update with notes concatenation
+    const { data: updatedCount, error: rpcError } = await supabaseAdmin.rpc('batch_resolve_feedback', {
+      p_feedback_ids: resolvedIds,
+      p_resolved_by: authUser.id,
+      p_car_slug: carSlug || null,
+      p_resolution_note: resolutionNote,
+    });
     
-    const updateError = null; // Errors handled individually above
+    let updateError = rpcError;
+    
+    // Fallback to loop method if RPC doesn't exist yet
+    if (rpcError && (rpcError.code === '42883' || rpcError.message?.includes('does not exist'))) {
+      console.warn('[Admin/Feedback/ResolveBatch] RPC not available, using fallback loop');
+      updateError = null;
+      for (const feedback of feedbackToResolve) {
+        const { error: loopError } = await supabaseAdmin
+          .from('user_feedback')
+          .update({
+            status: 'resolved',
+            resolved_at: new Date().toISOString(),
+            resolved_by: authUser.id,
+            car_slug: carSlug || feedback.car_slug,
+            internal_notes: (feedback.internal_notes || '') + resolutionNote,
+          })
+          .eq('id', feedback.id);
+        if (loopError) updateError = loopError;
+      }
+    }
 
     if (updateError) {
       console.error('[Admin/Feedback/ResolveBatch] Update error:', updateError);
       // Continue anyway to try to send emails for ones that might have updated
+    } else {
+      console.log(`[Admin/Feedback/ResolveBatch] Updated ${updatedCount || resolvedIds.length} feedback items`);
     }
 
     // Send emails
@@ -227,12 +226,13 @@ export async function POST(request) {
             });
           }
         } catch (err) {
+          console.error('[Admin/Feedback/ResolveBatch] Email send error:', err);
           emailResults.failed++;
           emailResults.details.push({
             feedbackId: feedback.id,
             email: feedback.email,
             status: 'failed',
-            error: err.message,
+            error: 'Failed to send email',
           });
         }
 
@@ -258,12 +258,10 @@ export async function POST(request) {
 /**
  * GET - Preview which feedback would be auto-matched
  */
-export async function GET(request) {
+async function handleGet(request) {
   try {
-    const auth = await verifyAdmin(request);
-    if (auth.error) {
-      return NextResponse.json({ error: auth.error }, { status: auth.status });
-    }
+    const denied = await requireAdmin(request);
+    if (denied) return denied;
 
     const { searchParams } = new URL(request.url);
     const carSlug = searchParams.get('carSlug');
@@ -320,3 +318,6 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'admin/feedback/resolve-batch', feature: 'admin' });
+export const GET = withErrorLogging(handleGet, { route: 'admin/feedback/resolve-batch', feature: 'admin' });

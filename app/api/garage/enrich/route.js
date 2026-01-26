@@ -74,10 +74,12 @@ async function handlePost(request) {
     const userId = user.id;
     const serviceClient = getServiceClient();
 
+    const VEHICLE_COLS = 'id, user_id, vin, year, make, model, trim, matched_car_id, matched_car_slug, matched_car_variant_key, nickname, color, mileage, purchase_date, is_primary, enrichment_id, created_at';
+    
     // Fetch the vehicle and verify ownership
     const { data: vehicle, error: vehicleError } = await serviceClient
       .from('user_vehicles')
-      .select('*')
+      .select(VEHICLE_COLS)
       .eq('id', vehicleId)
       .eq('user_id', userId)
       .single();
@@ -91,10 +93,12 @@ async function handlePost(request) {
 
     // Check if vehicle already has enrichment
     if (vehicle.enrichment_status === 'enriched' && vehicle.enrichment_id) {
+      const ENRICHMENT_COLS = 'id, lookup_key, year, make, model, maintenance_specs, service_intervals, known_issues, image_url, status, created_at';
+      
       // Fetch the existing enrichment
       const { data: existingEnrichment } = await serviceClient
         .from('daily_driver_enrichments')
-        .select('*')
+        .select(ENRICHMENT_COLS)
         .eq('id', vehicle.enrichment_id)
         .single();
 

@@ -18,6 +18,10 @@ import styles from './page.module.css';
 export const metadata = {
   title: 'Insights | AutoRev',
   description: 'Your daily briefing for vehicle modifications - performance recommendations, platform insights, and build progress.',
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function InsightsPage() {

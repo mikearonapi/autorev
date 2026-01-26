@@ -6,8 +6,9 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabaseServer';
 import { markAllAsRead } from '@/lib/notificationService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const supabase = await createServerSupabaseClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -41,3 +42,5 @@ export async function POST(request) {
     );
   }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'notifications-read-all', feature: 'notifications' });

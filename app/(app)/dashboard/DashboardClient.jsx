@@ -32,6 +32,20 @@ export default function DashboardClient() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
+  const [loadingTimedOut, setLoadingTimedOut] = useState(false);
+
+  // Safety timeout to prevent infinite loading
+  useEffect(() => {
+    if (!loading && !authLoading) {
+      setLoadingTimedOut(false);
+      return;
+    }
+    const timeout = setTimeout(() => {
+      console.warn('[Dashboard] Loading timeout - showing content');
+      setLoadingTimedOut(true);
+    }, 6000);
+    return () => clearTimeout(timeout);
+  }, [loading, authLoading]);
 
   // Fetch questionnaire profile summary for the button
   const { summary: questionnaireSummary } = useProfileSummary(user?.id, {
@@ -110,8 +124,8 @@ export default function DashboardClient() {
     );
   }
 
-  // Loading
-  if (loading || authLoading) {
+  // Loading - with safety timeout to prevent stuck state
+  if ((loading || authLoading) && !loadingTimedOut) {
     return (
       <LoadingSpinner
         variant="branded"
@@ -211,24 +225,6 @@ export default function DashboardClient() {
         />
       </section>
 
-      {/* Answer Questions Button - Opens immersive questionnaire */}
-      <button 
-        onClick={() => setShowQuestionnaire(true)} 
-        className={styles.questionnaireButton}
-      >
-        <span className={styles.questionnaireButtonIcon}><MessageIcon size={20} /></span>
-        <span className={styles.questionnaireButtonText}>
-          <span className={styles.questionnaireButtonTitle}>Answer some questions</span>
-          <span className={styles.questionnaireButtonHint}>
-            Help AL understand you better
-            {(questionnaireSummary?.profileCompletenessPct || 0) > 0 && (
-              <> · {questionnaireSummary.profileCompletenessPct}% complete</>
-            )}
-          </span>
-        </span>
-        <span className={styles.questionnaireButtonArrow}>→</span>
-      </button>
-
       {/* Weekly Activity - Swipeable weekly/monthly/yearly views */}
       <section className={styles.engagementSection}>
         <WeeklyEngagement
@@ -244,7 +240,10 @@ export default function DashboardClient() {
 
       {/* Lifetime Achievements - Core feature metrics */}
       <section className={styles.achievementsSection}>
-        <LifetimeAchievements achievements={mappedAchievements} />
+        <LifetimeAchievements 
+          achievements={mappedAchievements} 
+          profileCompleteness={questionnaireSummary?.profileCompletenessPct || 0}
+        />
       </section>
 
       {/* How to Earn Points - Ways to earn points */}

@@ -4,6 +4,7 @@ import { analyzeScenario } from '@/lib/dependencyChecker';
 import InfoTooltip from './ui/InfoTooltip';
 import styles from './UpgradeDetailModal.module.css';
 import { Icons } from '@/components/ui/Icons';
+import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
 
 /**
  * Determine which scenario explanation applies to an upgrade
@@ -58,6 +59,9 @@ export default function UpgradeDetailModal({
   carName = null,
   carSlug = null,
 }) {
+  // Set safe area color to match overlay background
+  useSafeAreaColor(SAFE_AREA_COLORS.OVERLAY, { enabled: !!upgrade });
+  
   if (!upgrade) return null;
 
   // Handle keyboard escape
@@ -73,6 +77,7 @@ export default function UpgradeDetailModal({
       className={styles.overlay} 
       onClick={onClose}
       onKeyDown={handleKeyDown}
+      data-overlay-modal
       role="dialog"
       aria-modal="true"
       aria-labelledby="upgrade-modal-title"

@@ -1,0 +1,41 @@
+---
+description: "Tech Lead - Coordinates specialists for complex tasks. Invoke with @tech-lead when unsure."
+globs: []
+alwaysApply: false
+---
+
+# Tech Lead
+
+Coordinates the right specialists for your task.
+
+## Task Routing
+
+| Task | Workflow | Key Specialists |
+|------|----------|-----------------|
+| New feature | `@feature-workflow` | frontend, database, ui-quality |
+| Bug/issue | `@debug-workflow` | Depends on bug type |
+| Before ship | `@review-workflow` | code-review, security |
+| UI component | Direct | frontend, ui-quality |
+| API endpoint | Direct | database, security |
+| Performance | Direct | performance |
+
+## Specialist Quick Reference
+
+| Specialist | When |
+|------------|------|
+| `@frontend-agent` | React components, hooks, state |
+| `@database-agent` | Queries, car_id resolution |
+| `@ui-quality-agent` | Colors, touch targets, accessibility |
+| `@security-agent` | Auth, webhooks, validation |
+| `@performance-agent` | Core Web Vitals, optimization |
+| `@code-review-agent` | Quality gate before completion |
+| `@testing-agent` | Writing tests |
+
+## Response Format
+
+```
+🎯 TASK: [Summary]
+📋 TYPE: [Feature/Bug/Review]
+👥 SPECIALISTS: [List with reasons]
+⚠️ KEY PATTERNS: [From SOURCE_OF_TRUTH.md]
+```

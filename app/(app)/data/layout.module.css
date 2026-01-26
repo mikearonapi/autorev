@@ -1,0 +1,46 @@
+/* ==========================================================================
+   DATA LAYOUT - Wrapper for all data pages
+   Matches community layout pattern
+   ========================================================================== */
+
+.container {
+  min-height: 100vh;
+  min-height: 100dvh;
+  /* Transparent to show body gradient */
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  /* Prevent any child from causing horizontal overflow */
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.content {
+  flex: 1;
+  min-height: 0; /* Critical for flex children to shrink */
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px;
+  /* Bottom padding for tab bar - uses standardized token */
+  padding-bottom: var(--page-bottom-padding);
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (min-width: 768px) {
+  .content {
+    padding: 0 24px;
+    padding-bottom: var(--page-bottom-padding);
+  }
+}
+
+/* Desktop: No tab bar */
+@media (min-width: 1024px) {
+  .content {
+    padding-bottom: 0;
+  }
+}

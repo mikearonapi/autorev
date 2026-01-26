@@ -104,6 +104,21 @@ const Icons = {
       <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
     </svg>
   ),
+  profile: ({ size = 18 }) => (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+      <circle cx="12" cy="7" r="4" />
+    </svg>
+  ),
   copy: ({ size = 16 }) => (
     <svg
       width={size}
@@ -137,17 +152,18 @@ const Icons = {
 
 // Points configuration by category - MUST match lib/pointsService.js POINTS_CONFIG
 // 5-tier system: Growth (250) > Community (100) > Real Data (50) > Engagement (10) > Participation (5)
+// Colors use CSS custom property names from styles/tokens/colors.css
 const POINTS_BY_CATEGORY = {
   growth: {
     label: 'Growth',
     icon: Icons.growth,
-    color: '#f59e0b',
+    colorClass: 'categoryColorGrowth',
     actions: [{ label: 'Refer a friend', points: 250, isReferral: true }],
   },
   community: {
     label: 'Community',
     icon: Icons.community,
-    color: '#3b82f6',
+    colorClass: 'categoryColorCommunity',
     actions: [
       { label: 'Share your build', points: 100, href: '/community' },
       { label: 'Post a comment', points: 10, href: '/community' },
@@ -157,7 +173,7 @@ const POINTS_BY_CATEGORY = {
   data: {
     label: 'Data',
     icon: Icons.data,
-    color: '#10b981',
+    colorClass: 'categoryColorData',
     actions: [
       { label: 'Log dyno data', points: 50, href: '/data' },
       { label: 'Log track time', points: 50, href: '/data' },
@@ -166,7 +182,7 @@ const POINTS_BY_CATEGORY = {
   garage: {
     label: 'Garage',
     icon: Icons.garage,
-    color: '#d4ff00',
+    colorClass: 'categoryColorGarage',
     actions: [
       { label: 'Install an upgrade', points: 50, href: '/garage' },
       { label: 'Add a vehicle', points: 10, href: '/garage' },
@@ -177,10 +193,20 @@ const POINTS_BY_CATEGORY = {
   al: {
     label: 'AL',
     icon: Icons.al,
-    color: '#a855f7',
+    colorClass: 'categoryColorAl',
     actions: [
       { label: 'Ask AL a question', points: 10, href: '/al' },
-      { label: 'Answer a profile question', points: 5, href: '/insights' },
+    ],
+  },
+  profile: {
+    label: 'Profile',
+    icon: Icons.profile,
+    colorClass: 'categoryColorProfile',
+    actions: [
+      { label: '100% Profile Complete', points: 100, href: '/questionnaire' },
+      { label: '50% Profile Complete', points: 50, href: '/questionnaire' },
+      { label: 'Complete a category', points: 25, href: '/questionnaire' },
+      { label: 'Answer a question', points: 5, href: '/questionnaire' },
     ],
   },
 };
@@ -223,7 +249,7 @@ export default function ImprovementActions({ title = 'How to Earn Points', showI
           return (
             <div key={key} className={styles.category}>
               <div className={styles.categoryHeader}>
-                <div className={styles.categoryIcon} style={{ color: category.color }}>
+                <div className={`${styles.categoryIcon} ${styles[category.colorClass]}`}>
                   <IconComponent size={18} />
                 </div>
                 <span className={styles.categoryLabel}>{category.label}</span>
@@ -252,7 +278,7 @@ export default function ImprovementActions({ title = 'How to Earn Points', showI
                               {referralCopied ? 'Link copied!' : action.label}
                             </span>
                           </div>
-                          <span className={styles.actionPoints} style={{ color: category.color }}>
+                          <span className={`${styles.actionPoints} ${styles[category.colorClass]}`}>
                             +{action.points}
                           </span>
                         </button>
@@ -271,7 +297,7 @@ export default function ImprovementActions({ title = 'How to Earn Points', showI
                       <li key={idx} className={styles.actionItem}>
                         <Link href={action.href} className={styles.actionLink}>
                           <span className={styles.actionLabel}>{action.label}</span>
-                          <span className={styles.actionPoints} style={{ color: category.color }}>
+                          <span className={`${styles.actionPoints} ${styles[category.colorClass]}`}>
                             +{action.points}
                           </span>
                         </Link>
@@ -283,7 +309,7 @@ export default function ImprovementActions({ title = 'How to Earn Points', showI
                   return (
                     <li key={idx} className={styles.actionItem}>
                       <span className={styles.actionLabel}>{action.label}</span>
-                      <span className={styles.actionPoints} style={{ color: category.color }}>
+                      <span className={`${styles.actionPoints} ${styles[category.colorClass]}`}>
                         +{action.points}
                       </span>
                     </li>

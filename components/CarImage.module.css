@@ -279,3 +279,8 @@
   animation: none;
 }
 
+/* Stop shimmer animation when image has errored (no longer loading) */
+.placeholder.error::before {
+  animation: none;
+}
+

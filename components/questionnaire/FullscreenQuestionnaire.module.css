@@ -13,11 +13,13 @@
    Container - Full page immersive experience
    ========================================================================== */
 
+/* Level 3: Overlay background for focused questionnaire experience */
+/* z-index 1100: Above Header (1050) to ensure fullscreen experience */
 .container {
   position: fixed;
   inset: 0;
-  z-index: 1000;
-  background: linear-gradient(180deg, #0d1117 0%, #010409 100%);
+  z-index: 1100;
+  background: var(--brand-bg-overlay, #1a1a1a);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -60,11 +62,11 @@
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: #d4ff00;
+  background: var(--color-accent-lime, #d4ff00);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #0a1628;
+  color: var(--color-bg-base, #0a1628);
   margin-bottom: 24px;
   animation: successPop 0.5s ease;
 }
@@ -114,7 +116,7 @@
 
 .successProgressFill {
   height: 100%;
-  background: #d4ff00;
+  background: var(--color-accent-lime, #d4ff00);
   border-radius: 4px;
   transition: width 0.6s ease;
 }
@@ -172,7 +174,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 8px 20px 16px;
+  padding: 8px 20px 24px;
   overflow-y: auto;
   /* Don't center - let content start from top and scroll if needed */
 }
@@ -192,13 +194,20 @@
 /* Question text - Clear and always visible */
 .question {
   font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: 22px;
+  font-size: 18px; /* Mobile-first: extra small screens */
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
   line-height: 1.3;
   margin: 0 0 8px;
   text-align: center;
   letter-spacing: -0.01em;
+}
+
+/* Regular phones and up */
+@media (min-width: 375px) {
+  .question {
+    font-size: 22px;
+  }
 }
 
 /* Selection hint for multi-select */
@@ -216,8 +225,15 @@
 .options {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px; /* Mobile-first: extra small screens */
   margin-top: 40px;
+}
+
+/* Regular phones and up */
+@media (min-width: 375px) {
+  .options {
+    gap: 10px;
+  }
 }
 
 .option {
@@ -225,13 +241,20 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 14px 20px;
+  padding: 12px 14px; /* Mobile-first: extra small screens */
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 10px;
   cursor: pointer;
   text-align: center;
   transition: all 0.2s ease;
+}
+
+/* Regular phones and up */
+@media (min-width: 375px) {
+  .option {
+    padding: 14px 20px;
+  }
 }
 
 .option:hover:not(:disabled) {
@@ -260,10 +283,17 @@
 
 /* Option label - Clean text */
 .optionLabel {
-  font-size: 15px;
+  font-size: 14px; /* Mobile-first: extra small screens */
   font-weight: 500;
   color: var(--color-text-primary, #ffffff);
   line-height: 1.3;
+}
+
+/* Regular phones and up */
+@media (min-width: 375px) {
+  .optionLabel {
+    font-size: 15px;
+  }
 }
 
 /* ==========================================================================
@@ -276,9 +306,10 @@
   flex-direction: column;
   gap: 12px;
   padding: 16px 20px;
-  /* Critical: Add extra padding for PWA navigation bar */
-  padding-bottom: max(20px, calc(env(safe-area-inset-bottom) + 90px));
+  /* Position button just above PWA navigation bar */
+  padding-bottom: max(16px, calc(env(safe-area-inset-bottom) + 16px));
   flex-shrink: 0;
+  margin-top: auto;
 }
 
 .explanatoryText {
@@ -293,22 +324,30 @@
 /* CTA Button - Bright yellow, always visible */
 .submitBtn {
   width: 100%;
-  padding: 16px 24px;
+  padding: 14px 18px; /* Mobile-first: extra small screens */
   /* Use explicit color - not CSS variable - to ensure bright yellow */
-  background: #d4ff00;
+  background: var(--color-accent-lime, #d4ff00);
   border: none;
   border-radius: 10px;
-  font-size: 15px;
+  font-size: 14px; /* Mobile-first: extra small screens */
   font-weight: 600;
-  color: #0a1628;
+  color: var(--color-bg-base, #0a1628);
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
+/* Regular phones and up */
+@media (min-width: 375px) {
+  .submitBtn {
+    padding: 16px 24px;
+    font-size: 15px;
+  }
+}
+
 .submitBtn:hover:not(:disabled) {
-  background: #c2e600;
+  background: var(--color-accent-lime-dark, #bfe600);
 }
 
 .submitBtn:active:not(:disabled) {
@@ -326,12 +365,12 @@
   width: 100%;
   max-width: 300px;
   padding: 16px 28px;
-  background: #d4ff00;
+  background: var(--color-accent-lime, #d4ff00);
   border: none;
   border-radius: 10px;
   font-size: 15px;
   font-weight: 600;
-  color: #0a1628;
+  color: var(--color-bg-base, #0a1628);
   cursor: pointer;
   transition: all 0.2s ease;
   text-transform: uppercase;
@@ -339,7 +378,7 @@
 }
 
 .primaryBtn:hover {
-  background: #c2e600;
+  background: var(--color-accent-lime-dark, #bfe600);
 }
 
 .primaryBtn:active {
@@ -356,7 +395,7 @@
   }
   
   .main {
-    padding: 16px 32px 24px;
+    padding: 16px 32px 32px;
   }
   
   .question {
@@ -365,9 +404,10 @@
   
   .footer {
     padding: 20px 32px;
-    padding-bottom: max(24px, calc(env(safe-area-inset-bottom) + 90px));
+    padding-bottom: max(20px, calc(env(safe-area-inset-bottom) + 20px));
     max-width: 520px;
     margin: 0 auto;
+    margin-top: auto;
     width: 100%;
   }
   
@@ -391,26 +431,4 @@
   }
 }
 
-/* Extra small screens - even more compact */
-@media (max-width: 374px) {
-  .question {
-    font-size: 18px;
-  }
-  
-  .option {
-    padding: 12px 14px;
-  }
-  
-  .optionLabel {
-    font-size: 14px;
-  }
-  
-  .submitBtn {
-    padding: 14px 18px;
-    font-size: 14px;
-  }
-  
-  .options {
-    gap: 8px;
-  }
-}
+/* Mobile-first responsive styles are now in base selectors with min-width: 375px enhancements */

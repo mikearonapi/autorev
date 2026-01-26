@@ -14,6 +14,7 @@
 
 import { useEffect, useState } from 'react';
 import styles from './BuildProgressRings.module.css';
+import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
 
 // Info icon component
 const InfoIcon = ({ size = 12 }) => (
@@ -33,11 +34,13 @@ const CloseIcon = ({ size = 20 }) => (
 );
 
 // Ring info content
+// Colors use CSS custom property values for design system consistency
 const RING_INFO = {
   power: {
     title: 'Power',
     icon: '⚡',
-    color: '#ef4444',
+    colorVar: '--color-error',
+    colorFallback: '#ef4444',
     description: 'How much of your vehicle\'s performance potential you\'ve unlocked through modifications.',
     breakdown: [
       { label: '0%', desc: 'Stock power - no modifications' },
@@ -51,7 +54,8 @@ const RING_INFO = {
   handling: {
     title: 'Handling',
     icon: '🎯',
-    color: '#22c55e',
+    colorVar: '--color-accent-teal',
+    colorFallback: '#10b981',
     description: 'Your vehicle\'s cornering and control capability compared to its full potential.',
     breakdown: [
       { label: '50%', desc: 'Stock - your car handles fine from the factory' },
@@ -65,7 +69,8 @@ const RING_INFO = {
   reliability: {
     title: 'Reliability',
     icon: '🛡️',
-    color: '#3b82f6',
+    colorVar: '--color-accent-blue',
+    colorFallback: '#3b82f6',
     description: 'How well-supported your power modifications are. More power without support = more stress.',
     breakdown: [
       { label: '100%', desc: 'Stock or well-supported build' },
@@ -77,15 +82,20 @@ const RING_INFO = {
   },
 };
 
+// Helper to get CSS variable value with fallback
+const getCssColor = (colorVar, fallback) => `var(${colorVar}, ${fallback})`;
+
 // Info Modal Component
 const RingInfoModal = ({ ring, onClose, data }) => {
   if (!ring) return null;
   
   const info = RING_INFO[ring];
   if (!info) return null;
+  
+  const color = getCssColor(info.colorVar, info.colorFallback);
 
   return (
-    <div className={styles.modalOverlay} onClick={onClose}>
+    <div className={styles.modalOverlay} onClick={onClose} data-overlay-modal>
       <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
         <button className={styles.modalClose} onClick={onClose}>
           <CloseIcon />
@@ -93,8 +103,8 @@ const RingInfoModal = ({ ring, onClose, data }) => {
         
         <div className={styles.modalHeader}>
           <span className={styles.modalIcon}>{info.icon}</span>
-          <h3 className={styles.modalTitle} style={{ color: info.color }}>{info.title}</h3>
-          <span className={styles.modalPercent} style={{ color: info.color }}>
+          <h3 className={styles.modalTitle} style={{ color }}>{info.title}</h3>
+          <span className={styles.modalPercent} style={{ color }}>
             {data?.percent || 0}%
           </span>
         </div>
@@ -105,7 +115,7 @@ const RingInfoModal = ({ ring, onClose, data }) => {
           <h4 className={styles.breakdownTitle}>What the percentages mean:</h4>
           {info.breakdown.map((item, idx) => (
             <div key={idx} className={styles.breakdownItem}>
-              <span className={styles.breakdownLabel} style={{ color: info.color }}>{item.label}</span>
+              <span className={styles.breakdownLabel} style={{ color }}>{item.label}</span>
               <span className={styles.breakdownDesc}>{item.desc}</span>
             </div>
           ))}
@@ -122,19 +132,20 @@ const RingInfoModal = ({ ring, onClose, data }) => {
 
 // Ring configuration - outer to inner
 // Colors are semantic: Power (red/energy), Handling (green/control), Reliability (blue/trust)
+// Using CSS custom properties with fallbacks for design system consistency
 const RINGS = [
-  { key: 'power', label: 'Power', color: '#ef4444', baselineColor: null },       // Red - no baseline
-  { key: 'handling', label: 'Handling', color: '#22c55e', baselineColor: '#22c55e40' }, // Green with baseline
-  { key: 'reliability', label: 'Reliable', color: '#3b82f6', baselineColor: null }, // Blue - dynamic
+  { key: 'power', label: 'Power', colorVar: '--color-error', colorFallback: '#ef4444', baselineColor: null },
+  { key: 'handling', label: 'Handling', colorVar: '--color-accent-teal', colorFallback: '#10b981', baselineColorVar: '--color-accent-teal', baselineOpacity: '40' },
+  { key: 'reliability', label: 'Reliable', colorVar: '--color-accent-blue', colorFallback: '#3b82f6', baselineColor: null },
 ];
 
-// Reliability status colors
+// Reliability status colors - using CSS custom properties
 const RELIABILITY_COLORS = {
-  'excellent': '#22c55e', // Green - well balanced
-  'good': '#3b82f6',      // Blue - healthy
-  'monitor': '#f59e0b',   // Amber - needs attention
-  'at-risk': '#ef4444',   // Red - risky
-  'stock': '#3b82f6',     // Blue - stock
+  'excellent': { colorVar: '--color-accent-teal', fallback: '#10b981' },  // Green - well balanced
+  'good': { colorVar: '--color-accent-blue', fallback: '#3b82f6' },       // Blue - healthy
+  'monitor': { colorVar: '--color-accent-amber', fallback: '#f59e0b' },   // Amber - needs attention
+  'at-risk': { colorVar: '--color-error', fallback: '#ef4444' },          // Red - risky
+  'stock': { colorVar: '--color-accent-blue', fallback: '#3b82f6' },      // Blue - stock
 };
 
 export default function BuildProgressRings({
@@ -151,6 +162,9 @@ export default function BuildProgressRings({
   );
   const [animatedTotalHp, setAnimatedTotalHp] = useState(animated ? stockHp : totalHp);
   const [activeInfoModal, setActiveInfoModal] = useState(null);
+  
+  // Set safe area color when info modal is open
+  useSafeAreaColor(SAFE_AREA_COLORS.OVERLAY, { enabled: !!activeInfoModal });
 
   // Get ring data for modal
   const getRingData = (key) => {
@@ -235,16 +249,25 @@ export default function BuildProgressRings({
   };
 
   // Get the appropriate color for reliability based on status
-  const getReliabilityColor = () => {
-    return RELIABILITY_COLORS[reliability.status] || RELIABILITY_COLORS['good'];
+  // Returns both CSS variable form and hex fallback for SVG opacity manipulation
+  const getReliabilityColorConfig = () => {
+    const colorConfig = RELIABILITY_COLORS[reliability.status] || RELIABILITY_COLORS['good'];
+    return {
+      cssVar: getCssColor(colorConfig.colorVar, colorConfig.fallback),
+      hex: colorConfig.fallback,
+    };
   };
 
-  // Get ring color (dynamic for reliability)
-  const getRingColor = (ring) => {
+  // Get ring color config (dynamic for reliability)
+  // Returns both CSS variable form and hex fallback for SVG opacity manipulation
+  const getRingColorConfig = (ring) => {
     if (ring.key === 'reliability') {
-      return getReliabilityColor();
+      return getReliabilityColorConfig();
     }
-    return ring.color;
+    return {
+      cssVar: getCssColor(ring.colorVar, ring.colorFallback),
+      hex: ring.colorFallback,
+    };
   };
 
   // Calculate max potential HP (stock + max gain)
@@ -270,23 +293,22 @@ export default function BuildProgressRings({
               const { radius, circumference } = getRingProps(index);
               const progress = getProgress(ring.key);
               const offset = circumference - (progress / 100) * circumference;
-              const ringColor = getRingColor(ring);
+              const colorConfig = getRingColorConfig(ring);
               
               // For handling, calculate baseline and upgrade portions separately
               const isHandling = ring.key === 'handling';
               const baselineProgress = isHandling ? HANDLING_BASELINE : 0;
               const baselineOffset = circumference - (baselineProgress / 100) * circumference;
-              const upgradeProgress = isHandling ? Math.max(0, progress - HANDLING_BASELINE) : progress;
               
               return (
                 <g key={ring.key}>
-                  {/* Background ring */}
+                  {/* Background ring - use hex with opacity suffix for SVG */}
                   <circle
                     cx={size / 2}
                     cy={size / 2}
                     r={radius}
                     fill="none"
-                    stroke={`${ringColor}15`}
+                    stroke={`${colorConfig.hex}15`}
                     strokeWidth={strokeWidth}
                   />
                   
@@ -297,7 +319,7 @@ export default function BuildProgressRings({
                       cy={size / 2}
                       r={radius}
                       fill="none"
-                      stroke={`${ringColor}50`}
+                      stroke={`${colorConfig.hex}50`}
                       strokeWidth={strokeWidth}
                       strokeLinecap="round"
                       strokeDasharray={circumference}
@@ -306,19 +328,19 @@ export default function BuildProgressRings({
                     />
                   )}
                   
-                  {/* Progress ring (full for non-handling, upgrade-only for handling) */}
+                  {/* Progress ring - use CSS variable for main stroke */}
                   <circle
                     cx={size / 2}
                     cy={size / 2}
                     r={radius}
                     fill="none"
-                    stroke={ringColor}
+                    stroke={colorConfig.cssVar}
                     strokeWidth={strokeWidth}
                     strokeLinecap="round"
                     strokeDasharray={circumference}
                     strokeDashoffset={offset}
                     className={styles.ringProgress}
-                    style={{ filter: progress > 0 ? `drop-shadow(0 0 4px ${ringColor}40)` : 'none' }}
+                    style={{ filter: progress > 0 ? `drop-shadow(0 0 4px ${colorConfig.hex}40)` : 'none' }}
                   />
                 </g>
               );
@@ -338,12 +360,12 @@ export default function BuildProgressRings({
         <div className={styles.legendRow}>
           {RINGS.map((ring) => {
             const progress = Math.round(getProgress(ring.key));
-            const color = getRingColor(ring);
+            const colorConfig = getRingColorConfig(ring);
             return (
               <div key={ring.key} className={styles.legendItem}>
-                <span className={styles.legendDot} style={{ background: color }} />
+                <span className={styles.legendDot} style={{ background: colorConfig.cssVar }} />
                 <span className={styles.legendLabel}>{ring.label}</span>
-                <span className={styles.legendPercent} style={{ color }}>
+                <span className={styles.legendPercent} style={{ color: colorConfig.cssVar }}>
                   {progress}%
                 </span>
                 <button 
@@ -366,19 +388,19 @@ export default function BuildProgressRings({
           </div>
           <span className={styles.metricArrow}>+</span>
           <div className={styles.metric}>
-            <span className={styles.metricValue} style={{ color: hpGain > 0 ? '#ef4444' : '#64748b' }}>{hpGain}</span>
+            <span className={styles.metricValue} style={{ color: hpGain > 0 ? 'var(--color-error)' : 'var(--color-text-tertiary)' }}>{hpGain}</span>
             <span className={styles.metricLabel}>Gained</span>
           </div>
           <span className={styles.metricArrow}>=</span>
           <div className={styles.metric}>
-            <span className={styles.metricValue} style={{ color: '#10b981' }}>{totalHp}</span>
+            <span className={styles.metricValue} style={{ color: 'var(--color-accent-teal)' }}>{totalHp}</span>
             <span className={styles.metricLabel}>Current</span>
           </div>
           {remainingPotential > 0 && (
             <>
               <span className={styles.metricDivider}>|</span>
               <div className={styles.metric}>
-                <span className={styles.metricValue} style={{ color: '#64748b' }}>+{remainingPotential}</span>
+                <span className={styles.metricValue} style={{ color: 'var(--color-text-tertiary)' }}>+{remainingPotential}</span>
                 <span className={styles.metricLabel}>Avail</span>
               </div>
             </>

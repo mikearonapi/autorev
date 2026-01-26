@@ -13,6 +13,7 @@ import { NextResponse } from 'next/server';
 import { errors } from '@/lib/apiErrors';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { rateLimit } from '@/lib/rateLimit';
 
 // Allowed battery_status enum values (matches DATABASE.md)
 const BATTERY_STATUS_ENUM = ['good', 'fair', 'weak', 'dead', 'unknown'];
@@ -121,7 +122,7 @@ async function handleGet(request, { params }) {
       }
       console.error('[API/vehicles/[vehicleId]] Error fetching vehicle:', error);
       return NextResponse.json(
-        { error: error.message || 'Failed to fetch vehicle' },
+        { error: 'Failed to fetch vehicle' },
         { status: 500 }
       );
     }
@@ -161,6 +162,9 @@ async function handleGet(request, { params }) {
  * - next_oil_due_mileage: Computed when last_oil_change_mileage is updated
  */
 async function handlePatch(request, { params }) {
+  const limited = rateLimit(request, 'api');
+  if (limited) return limited;
+
   const { userId, vehicleId } = await params;
     
     if (!userId || !vehicleId) {
@@ -347,7 +351,7 @@ async function handlePatch(request, { params }) {
       }
       console.error('[API/vehicles/[vehicleId]] Error updating vehicle:', error);
       return NextResponse.json(
-        { error: error.message || 'Failed to update vehicle' },
+        { error: 'Failed to update vehicle' },
         { status: 500 }
       );
     }
@@ -374,6 +378,9 @@ async function handlePatch(request, { params }) {
  * Remove vehicle from user's garage
  */
 async function handleDelete(request, { params }) {
+  const limited = rateLimit(request, 'api');
+  if (limited) return limited;
+
   const { userId, vehicleId } = await params;
     
     if (!userId || !vehicleId) {
@@ -425,7 +432,7 @@ async function handleDelete(request, { params }) {
     if (error) {
       console.error('[API/vehicles/[vehicleId]] Error deleting vehicle:', error);
       return NextResponse.json(
-        { error: error.message || 'Failed to delete vehicle' },
+        { error: 'Failed to delete vehicle' },
         { status: 500 }
       );
     }

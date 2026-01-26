@@ -416,6 +416,7 @@ function CarRecommendations({ car, selectedModules, onAddToModule, onUpgradeClic
                   className={styles.recAddBtn}
                   onClick={() => onAddToModule(upgrade.key)}
                   title="Add to build"
+                  aria-label={`Add ${upgrade.name} to build`}
                 >
                   <Icons.check size={12} />
                 </button>
@@ -445,6 +446,7 @@ function CarRecommendations({ car, selectedModules, onAddToModule, onUpgradeClic
                   className={styles.recAddBtn}
                   onClick={() => onAddToModule(upgrade.key)}
                   title="Add to build"
+                  aria-label={`Add ${upgrade.name} to build`}
                 >
                   <Icons.check size={12} />
                 </button>
@@ -1593,9 +1595,6 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
         
         {/* Footer Links */}
         <div className={styles.hubFooter}>
-          <Link href="/al" className={styles.footerLink}>
-            Ask AL About Modifications <Icons.chevronRight size={14} />
-          </Link>
           <Link href="/community" className={styles.footerLink}>
             Browse Community Builds <Icons.chevronRight size={14} />
           </Link>
@@ -1626,6 +1625,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
               <button 
                 className={styles.saveModalClose}
                 onClick={() => setShowSaveModal(false)}
+                aria-label="Close save build modal"
               >
                 <Icons.x size={20} />
               </button>

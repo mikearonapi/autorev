@@ -8,6 +8,7 @@
  * - Community shares
  * - Data logs
  * - Garage vehicles
+ * - Profile completion (questionnaire)
  */
 
 import Link from 'next/link';
@@ -35,12 +36,30 @@ const ALMascotIcon = ({ size = 18 }) => (
   />
 );
 
+// Profile icon component
+const ProfileIcon = ({ size = 18 }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+  >
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+    <circle cx="12" cy="7" r="4" />
+  </svg>
+);
+
 // Achievement configuration - matches core app features
-// Order matches ConcentricRings: AL (outer) → Community → Data → Garage (inner)
+// Order matches ConcentricRings: AL (outer) → Community → Data → Garage (inner) + Profile
+// Colors use CSS custom properties from styles/tokens/colors.css
 const ACHIEVEMENT_CONFIG = {
   al: { 
     Icon: ALMascotIcon, 
-    color: '#a855f7',
+    colorVar: '--color-accent-purple',
     label: 'AL',
     emptyLabel: 'Ask AL',
     href: '/al',
@@ -48,7 +67,7 @@ const ACHIEVEMENT_CONFIG = {
   },
   community: { 
     Icon: GridIcon, 
-    color: '#3b82f6',
+    colorVar: '--color-accent-blue',
     label: 'Community',
     emptyLabel: 'Share build',
     href: '/community',
@@ -56,7 +75,7 @@ const ACHIEVEMENT_CONFIG = {
   },
   data: { 
     Icon: DataIcon, 
-    color: '#10b981',
+    colorVar: '--color-accent-teal',
     label: 'Log Data',
     emptyLabel: 'Log data',
     href: '/data',
@@ -64,19 +83,36 @@ const ACHIEVEMENT_CONFIG = {
   },
   garage: { 
     Icon: GarageIcon, 
-    color: '#d4ff00',
+    colorVar: '--color-accent-lime',
     label: 'Garage',
     emptyLabel: 'Add car',
     href: '/garage',
     achievementType: 'vehicle_count',
   },
+  profile: {
+    Icon: ProfileIcon,
+    colorVar: '--color-accent-pink',
+    label: 'Profile',
+    emptyLabel: 'Complete profile',
+    href: '/questionnaire',
+    achievementType: 'profile_completion',
+  },
 };
 
-export default function LifetimeAchievements({ achievements = [] }) {
+export default function LifetimeAchievements({ achievements = [], profileCompleteness = 0 }) {
   // Map achievements array to lookup by type
   const achievementMap = {};
   for (const a of achievements) {
     achievementMap[a.achievement_type] = a;
+  }
+  
+  // Add profile completion as a synthetic achievement
+  if (profileCompleteness > 0) {
+    achievementMap['profile_completion'] = {
+      achievement_type: 'profile_completion',
+      value: profileCompleteness,
+      display_value: `${profileCompleteness}%`,
+    };
   }
 
   return (
@@ -93,19 +129,15 @@ export default function LifetimeAchievements({ achievements = [] }) {
               key={key} 
               href={config.href}
               className={`${styles.achievementCard} ${!hasValue ? styles.achievementCardEmpty : ''}`}
+              style={{ '--achievement-color': `var(${config.colorVar})` }}
             >
               <div 
-                className={styles.achievementIcon}
-                style={{ 
-                  background: hasValue ? `${config.color}20` : 'rgba(255,255,255,0.04)',
-                  color: hasValue ? config.color : 'var(--color-text-tertiary, #64748b)',
-                }}
+                className={`${styles.achievementIcon} ${hasValue ? styles.achievementIconActive : ''}`}
               >
                 <IconComponent size={18} />
               </div>
               <span 
-                className={styles.achievementValue} 
-                style={{ color: hasValue ? config.color : 'var(--color-text-tertiary)' }}
+                className={`${styles.achievementValue} ${hasValue ? styles.achievementValueActive : ''}`}
               >
                 {hasValue ? achievement.display_value : '—'}
               </span>

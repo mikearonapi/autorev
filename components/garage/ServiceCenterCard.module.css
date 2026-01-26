@@ -57,7 +57,7 @@
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   font-size: var(--text-xs, 11px);
   font-weight: 600;
-  color: #10b981;
+  color: var(--color-accent-teal, #10b981);
   white-space: nowrap;
 }
 
@@ -102,13 +102,13 @@
 
 .reviewLink {
   font-size: var(--text-sm, 13px);
-  color: #10b981;
+  color: var(--color-accent-teal, #10b981);
   text-decoration: none;
   transition: color 0.15s ease;
 }
 
 .reviewLink:hover {
-  color: #34d399;
+  color: var(--color-accent-teal-light, #34d399);
   text-decoration: underline;
 }
 
@@ -130,7 +130,7 @@
 /* Highlighted badge for performance/tuning shops */
 .performanceBadge {
   background: rgba(16, 185, 129, 0.15);
-  color: #10b981;
+  color: var(--color-accent-teal, #10b981);
   border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
@@ -172,12 +172,12 @@
 
 .directionsBtn {
   background: var(--color-accent-teal, #10b981);
-  color: #ffffff;
+  color: var(--color-text-primary, #ffffff);
 }
 
 .directionsBtn:hover {
-  background: #059669;
-  color: #ffffff;
+  background: var(--color-accent-teal, #059669);
+  color: var(--color-text-primary, #ffffff);
 }
 
 /* ==========================================================================

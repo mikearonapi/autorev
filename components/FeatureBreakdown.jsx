@@ -18,69 +18,45 @@ const AlIcon = ({ size = 18 }) => (
   />
 );
 
-// Use shared constant from lib/marketingStats.js
-const CAR_COUNT = CAR_COUNT_DISPLAY;
-
-// Detailed feature breakdown - audited 2024-12-15 for 100% accuracy
+// Detailed feature breakdown - SIMPLIFIED MODEL (Jan 2026)
+// Core principle: Full app for everyone, gate on AL usage & car count
 const featureCategories = [
-  {
-    id: 'discovery',
-    name: 'Browse Cars & Find Your Match',
-    icon: Icons.search,
-    features: [
-      { name: `Full ${CAR_COUNT}-car sports car database`, free: true, collector: true, tuner: true },
-      { name: 'Car Selector quiz with personalized matches', free: true, collector: true, tuner: true },
-      { name: 'Specs, known issues & buying guides', free: true, collector: true, tuner: true },
-      { name: 'Expert video reviews & safety ratings', free: true, collector: true, tuner: true },
-      { name: 'Side-by-side comparison (up to 4 cars)', free: true, collector: true, tuner: true },
-    ],
-  },
   {
     id: 'garage',
     name: 'My Garage',
     icon: Icons.garage,
     features: [
-      { name: 'Save favorite cars', free: true, collector: true, tuner: true },
-      { name: 'Save cars you own', free: true, collector: true, tuner: true },
-      { name: 'VIN Decode — identify your exact variant', free: false, collector: true, tuner: true, subsection: 'My Garage Intelligence' },
-      { name: "Owner's Reference — oil specs, capacities, fluids", free: false, collector: true, tuner: true },
-      { name: 'Maintenance schedules & service intervals', free: false, collector: true, tuner: true },
-      { name: 'Service log — track your maintenance history', free: false, collector: true, tuner: true },
-      { name: 'Recall alerts — active recalls for your VIN', free: false, collector: true, tuner: true },
-      { name: 'Price guides & market position', free: false, collector: true, tuner: true },
+      { name: 'Cars in garage', free: '1', collector: '3', tuner: 'Unlimited' },
+      { name: 'VIN Decode — identify your exact variant', free: true, collector: true, tuner: true },
+      { name: 'My Specs — full vehicle specifications', free: true, collector: true, tuner: true },
+      { name: 'My Build — plan your upgrades', free: true, collector: true, tuner: true },
+      { name: 'My Performance — HP/metric gains', free: true, collector: true, tuner: true },
+      { name: 'My Parts — research specific parts', free: true, collector: true, tuner: true },
+      { name: 'My Install — track installation progress', free: true, collector: true, tuner: true },
+      { name: 'My Photos — upload vehicle photos', free: true, collector: true, tuner: true },
     ],
   },
   {
-    id: 'builds',
-    name: 'Tuning Shop',
-    icon: Icons.tool,
+    id: 'insights',
+    name: 'Insights & Data',
+    icon: Icons.analytics,
     features: [
-      { name: 'Browse upgrade packages & mod tiers', free: true, collector: true, tuner: true },
-      { name: 'Performance projections (HP/torque gains)', free: true, collector: true, tuner: true },
-      { name: 'Popular parts preview', free: true, collector: true, tuner: true },
-      { name: 'Full parts catalog with car-specific fitments', free: false, collector: false, tuner: true },
-      { name: 'Save & organize build projects', free: false, collector: false, tuner: true },
-      { name: 'Build cost calculator', free: false, collector: false, tuner: true },
+      { name: 'Insights — health scores & recommendations', free: false, collector: true, tuner: true },
+      { name: 'Virtual Dyno — HP/TQ curves', free: false, collector: true, tuner: true },
+      { name: 'Lap Time Estimator — track time estimates', free: false, collector: true, tuner: true },
+      { name: 'Dyno & Track logging', free: false, collector: true, tuner: true },
     ],
   },
   {
     id: 'community',
-    name: 'Community',
+    name: 'Community & Events',
     icon: Icons.users,
     features: [
+      { name: 'Browse community builds', free: true, collector: true, tuner: true },
+      { name: 'Share your build publicly', free: true, collector: true, tuner: true },
+      { name: 'Leaderboard & rankings', free: true, collector: true, tuner: true },
       { name: 'Browse & submit car events', free: true, collector: true, tuner: true },
-      { name: 'Map & calendar views', free: false, collector: true, tuner: true },
-      { name: 'Save events & export to calendar', free: false, collector: true, tuner: true },
-    ],
-  },
-  {
-    id: 'encyclopedia',
-    name: 'Encyclopedia',
-    icon: Icons.book,
-    features: [
-      { name: 'Automotive systems education', free: true, collector: true, tuner: true },
-      { name: 'Modification guides & explanations', free: true, collector: true, tuner: true },
-      { name: 'Build paths & learning guides', free: true, collector: true, tuner: true },
+      { name: 'Save events & export to calendar', free: true, collector: true, tuner: true },
     ],
   },
   {
@@ -88,10 +64,19 @@ const featureCategories = [
     name: 'AL — Your AI Co-Pilot',
     icon: AlIcon,
     features: [
-      { name: 'Monthly conversations', free: '~25', collector: '~75', tuner: '~150' },
-      { name: 'Car search & basic questions', free: true, collector: true, tuner: true },
-      { name: 'Reviews, reliability & maintenance lookup', free: false, collector: true, tuner: true },
-      { name: 'Build recommendations & parts search', free: false, collector: false, tuner: true },
+      { name: 'Monthly AL budget', free: '$0.25', collector: '$2.00', tuner: '$5.00' },
+      { name: 'Estimated chats (AL responses)', free: '~15', collector: '~130', tuner: '~350' },
+      { name: 'Build planning assistance', free: true, collector: true, tuner: true },
+      { name: 'Parts recommendations', free: true, collector: true, tuner: true },
+    ],
+  },
+  {
+    id: 'support',
+    name: 'Support',
+    icon: Icons.support,
+    features: [
+      { name: 'Community support', free: true, collector: true, tuner: true },
+      { name: 'Priority support', free: false, collector: false, tuner: true },
     ],
   },
 ];
@@ -115,11 +100,11 @@ export default function FeatureBreakdown() {
             </div>
             <div className={`${styles.tableHeaderCell} ${styles.tableTierHeader} ${styles.tierHeaderCollector}`}>
               <span className={styles.tierHeaderName}>Enthusiast</span>
-              <span className={styles.tierHeaderPrice}>$4.99/mo</span>
+              <span className={styles.tierHeaderPrice}>$9.99/mo</span>
             </div>
             <div className={`${styles.tableHeaderCell} ${styles.tableTierHeader} ${styles.tierHeaderTuner}`}>
-              <span className={styles.tierHeaderName}>Tuner</span>
-              <span className={styles.tierHeaderPrice}>$9.99/mo</span>
+              <span className={styles.tierHeaderName}>Pro</span>
+              <span className={styles.tierHeaderPrice}>$19.99/mo</span>
             </div>
           </div>
 

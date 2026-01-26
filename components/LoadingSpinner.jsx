@@ -1,15 +1,16 @@
 import React from 'react';
 import Image from 'next/image';
+import { LOGO_TRANSPARENT } from '@/lib/brandLogos';
 import styles from './LoadingSpinner.module.css';
 
 /**
  * Branded AutoRev Logo Loader
- * Teal perimeter ring with AutoRev logo in the center
+ * Lime perimeter ring with AutoRev logo in the center
  */
-function BrandedLogoLoader({ size = 120 }) {
+function BrandedLogoLoader({ size = 140 }) {
   return (
     <div className={styles.brandedLoaderWrapper} style={{ width: size, height: size }}>
-      {/* Teal perimeter ring SVG */}
+      {/* Lime perimeter ring SVG */}
       <svg 
         width={size} 
         height={size} 
@@ -21,51 +22,52 @@ function BrandedLogoLoader({ size = 120 }) {
         {/* Outer subtle ring */}
         <circle 
           cx="50" cy="50" r="48" 
-          stroke="rgba(16, 185, 129, 0.1)" 
+          stroke="rgba(212, 255, 0, 0.1)" 
           strokeWidth="1" 
           fill="none"
         />
         
-        {/* Main teal ring - animated */}
+        {/* Main lime ring - animated */}
         <circle 
           cx="50" cy="50" r="44" 
-          stroke="#10b981" 
+          stroke="#d4ff00" 
           strokeWidth="2" 
           fill="none"
           strokeDasharray="200 276"
           strokeLinecap="round"
-          className={styles.tealRingAnimated}
+          className={styles.limeRingAnimated}
         />
         
-        {/* Secondary teal ring - counter rotate */}
+        {/* Secondary lime ring - counter rotate */}
         <circle 
           cx="50" cy="50" r="38" 
-          stroke="rgba(16, 185, 129, 0.4)" 
+          stroke="rgba(212, 255, 0, 0.4)" 
           strokeWidth="1.5" 
           fill="none"
           strokeDasharray="120 238"
           strokeLinecap="round"
-          className={styles.tealRingCounter}
+          className={styles.limeRingCounter}
         />
         
         {/* Inner subtle ring */}
         <circle 
           cx="50" cy="50" r="32" 
-          stroke="rgba(16, 185, 129, 0.15)" 
+          stroke="rgba(212, 255, 0, 0.15)" 
           strokeWidth="1" 
           fill="none"
         />
       </svg>
       
-      {/* AutoRev logo in center */}
+      {/* AutoRev logo in center (from Vercel Blob CDN) */}
       <div className={styles.logoCenter}>
         <Image
-          src="/images/autorev-logo-white.png"
+          src={LOGO_TRANSPARENT}
           alt="AutoRev"
-          width={60}
-          height={60}
+          width={70}
+          height={47}
           className={styles.logoImage}
           priority
+          unoptimized
         />
       </div>
     </div>
@@ -77,10 +79,10 @@ function BrandedLogoLoader({ size = 120 }) {
  * 
  * Two variants:
  * - 'simple' (default): Clean spinner rings for inline/component loading
- * - 'branded': AutoRev gauge icon with animations for full-page loading
+ * - 'branded': AutoRev wordmark logo with lime rings for full-page loading
  * 
  * Brand colors:
- * - Teal (#10b981) for all loading indicators
+ * - Lime (#d4ff00) for branded loading indicators
  * 
  * @param {Object} props
  * @param {string} [props.text] - Primary loading text (e.g., "Loading your garage...")

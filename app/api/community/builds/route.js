@@ -155,11 +155,15 @@ async function handleGet(request) {
     builds.map(async (build) => {
       try {
         // Fetch car specs (stock values) for the stats display
+        // IMPORTANT: Include ALL fields needed by performanceCalculator, especially:
+        // - slug: Used by getPlatformDownpipeGain() for platform-specific HP gains
+        // - engine: Used by detectAspiration() and getEngineType()
+        // - drivetrain: Used by metrics calculator for 0-60 physics
         let carData = null;
         if (build.car_slug) {
           const { data: fetchedCarData, error: carError } = await supabaseAdmin
             .from('cars')
-            .select('image_hero_url, hp, torque, engine, zero_to_sixty, top_speed, name, braking_60_0, lateral_g, quarter_mile, curb_weight')
+            .select('slug, image_hero_url, hp, torque, engine, drivetrain, zero_to_sixty, top_speed, name, braking_60_0, lateral_g, quarter_mile, curb_weight')
             .eq('slug', build.car_slug)
             .single();
           
@@ -223,27 +227,30 @@ async function handleGet(request) {
         // =======================================================================
         // COMPUTED PERFORMANCE (SOURCE OF TRUTH)
         // 
-        // Use installed_modifications from the linked vehicle as PRIMARY source.
-        // This matches what the Garage page shows and ensures live sync.
+        // ALWAYS calculate dynamically from the linked vehicle's installed_modifications.
+        // This ensures Community builds show the SAME values as the user's Garage.
         // 
-        // Fallback to selected_upgrades only if no vehicle is linked.
-        // =======================================================================
-        // ARCHITECTURE: Use PRE-CALCULATED values from user_vehicles
-        // The garage calculates performance when mods are installed and stores
-        // total_hp_gain in user_vehicles. We just READ that value here.
+        // NEVER use stored values like build_data.final_hp or user_projects.total_hp_gain
+        // - those become stale when calculation logic improves or mods change.
+        // 
+        // If no vehicle is linked, show STOCK values (not planned values from user_projects).
         // =======================================================================
         if (carData) {
           const isOwnBuild = userId && postData?.user_id === userId;
           
-          // Get vehicle data with pre-calculated performance
+          // Get vehicle data for live performance calculation
           let vehicleData = null;
           if (postData?.user_vehicle_id) {
             const { data: vehicle } = await supabaseAdmin
               .from('user_vehicles')
-              .select('installed_modifications, total_hp_gain')
+              .select('installed_modifications')
               .eq('id', postData.user_vehicle_id)
               .single();
             vehicleData = vehicle;
+          } else {
+            // Log missing vehicle link - this means performance will show stock values
+            // The ShareBuildModal should always link to the vehicle
+            console.warn(`[CommunityBuilds] Build ${build.id} has no user_vehicle_id - showing stock values`);
           }
           
           const installedMods = vehicleData?.installed_modifications || [];

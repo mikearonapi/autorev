@@ -14,6 +14,7 @@ import { errors } from '@/lib/apiErrors';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { awardPoints } from '@/lib/pointsService';
+import { rateLimit } from '@/lib/rateLimit';
 
 /**
  * POST /api/users/[userId]/vehicles/[vehicleId]/modifications
@@ -25,6 +26,9 @@ import { awardPoints } from '@/lib/pointsService';
  * - buildId?: string - Optional user_projects.id if applying from a build
  */
 async function handlePost(request, { params }) {
+  const limited = rateLimit(request, 'api');
+  if (limited) return limited;
+
   const { userId, vehicleId } = await params;
     
     if (!userId || !vehicleId) {
@@ -112,7 +116,7 @@ async function handlePost(request, { params }) {
     if (error) {
       console.error('[API/vehicles/modifications] Error applying mods:', error);
       return NextResponse.json(
-        { error: error.message || 'Failed to apply modifications' },
+        { error: 'Failed to apply modifications' },
         { status: 500 }
       );
     }
@@ -157,6 +161,9 @@ async function handlePut(request, context) {
  * Clear all modifications from a vehicle
  */
 async function handleDelete(request, { params }) {
+  const limited = rateLimit(request, 'api');
+  if (limited) return limited;
+
   const { userId, vehicleId } = await params;
     
     if (!userId || !vehicleId) {
@@ -215,7 +222,7 @@ async function handleDelete(request, { params }) {
     if (error) {
       console.error('[API/vehicles/modifications] Error clearing mods:', error);
       return NextResponse.json(
-        { error: error.message || 'Failed to clear modifications' },
+        { error: 'Failed to clear modifications' },
         { status: 500 }
       );
     }
@@ -298,7 +305,7 @@ async function handleGet(request, { params }) {
     if (error) {
       console.error('[API/vehicles/modifications] Error fetching mods:', error);
       return NextResponse.json(
-        { error: error.message || 'Failed to fetch modifications' },
+        { error: 'Failed to fetch modifications' },
         { status: 500 }
       );
     }

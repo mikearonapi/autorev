@@ -4,11 +4,16 @@
  * GET - Fetch all user responses + profile summary
  * POST - Save one or more responses
  * 
+ * Auth: User must be authenticated and can only access their own questionnaire
+ * 
  * @route /api/users/[userId]/questionnaire
  */
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { createServerSupabaseClient, getBearerToken, createAuthenticatedClient } from '@/lib/supabaseServer';
+import { errors } from '@/lib/apiErrors';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { 
   QUESTIONNAIRE_LIBRARY,
   QUESTION_CATEGORIES,
@@ -33,12 +38,35 @@ function getSupabase() {
  * 
  * Fetch all questionnaire data for a user
  */
-export async function GET(request, { params }) {
+async function handleGet(request, { params }) {
   try {
     const { userId } = await params;
     
     if (!userId) {
-      return NextResponse.json({ error: 'User ID required' }, { status: 400 });
+      return errors.missingField('userId');
+    }
+
+    // Get authenticated user
+    const bearerToken = getBearerToken(request);
+    const authSupabase = bearerToken 
+      ? createAuthenticatedClient(bearerToken) 
+      : await createServerSupabaseClient();
+
+    if (!authSupabase) {
+      return errors.serviceUnavailable('Authentication service');
+    }
+
+    const { data: { user }, error: authError } = bearerToken
+      ? await authSupabase.auth.getUser(bearerToken)
+      : await authSupabase.auth.getUser();
+    
+    if (authError || !user) {
+      return errors.unauthorized();
+    }
+    
+    // Verify the authenticated user matches the userId param (IDOR protection)
+    if (user.id !== userId) {
+      return errors.forbidden('Not authorized to access this user\'s questionnaire');
     }
     
     const supabase = getSupabase();
@@ -52,14 +80,14 @@ export async function GET(request, { params }) {
         .order('answered_at', { ascending: false }),
       supabase
         .from('user_profile_summary')
-        .select('*')
+        .select('user_id, summary_json, total_responses, completeness_score, last_updated')
         .eq('user_id', userId)
         .single(),
     ]);
     
     if (responsesResult.error && responsesResult.error.code !== 'PGRST116') {
       console.error('[Questionnaire API] Error fetching responses:', responsesResult.error);
-      return NextResponse.json({ error: 'Failed to fetch responses' }, { status: 500 });
+      return errors.database('Failed to fetch responses');
     }
     
     // Build responses map
@@ -114,7 +142,7 @@ export async function GET(request, { params }) {
     });
   } catch (error) {
     console.error('[Questionnaire API] GET error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return errors.internal('Failed to fetch questionnaire data');
   }
 }
 
@@ -130,19 +158,42 @@ export async function GET(request, { params }) {
  *   }
  * }
  */
-export async function POST(request, { params }) {
+async function handlePost(request, { params }) {
   try {
     const { userId } = await params;
     
     if (!userId) {
-      return NextResponse.json({ error: 'User ID required' }, { status: 400 });
+      return errors.missingField('userId');
+    }
+
+    // Get authenticated user
+    const bearerToken = getBearerToken(request);
+    const authSupabase = bearerToken 
+      ? createAuthenticatedClient(bearerToken) 
+      : await createServerSupabaseClient();
+
+    if (!authSupabase) {
+      return errors.serviceUnavailable('Authentication service');
+    }
+
+    const { data: { user }, error: authError } = bearerToken
+      ? await authSupabase.auth.getUser(bearerToken)
+      : await authSupabase.auth.getUser();
+    
+    if (authError || !user) {
+      return errors.unauthorized();
+    }
+    
+    // Verify the authenticated user matches the userId param (IDOR protection)
+    if (user.id !== userId) {
+      return errors.forbidden('Not authorized to modify this user\'s questionnaire');
     }
     
     const body = await request.json();
     const { responses } = body;
     
     if (!responses || typeof responses !== 'object') {
-      return NextResponse.json({ error: 'Responses object required' }, { status: 400 });
+      return errors.badRequest('Responses object required');
     }
     
     const supabase = getSupabase();
@@ -193,7 +244,7 @@ export async function POST(request, { params }) {
     
     if (upsertError) {
       console.error('[Questionnaire API] Upsert error:', upsertError);
-      return NextResponse.json({ error: 'Failed to save responses' }, { status: 500 });
+      return errors.database('Failed to save responses');
     }
     
     // Award points for new responses (non-blocking)
@@ -234,7 +285,7 @@ export async function POST(request, { params }) {
     // Fetch updated summary (trigger auto-updates it)
     const { data: updatedSummary } = await supabase
       .from('user_profile_summary')
-      .select('*')
+      .select('user_id, summary_json, total_responses, completeness_score, last_updated')
       .eq('user_id', userId)
       .single();
     
@@ -269,6 +320,10 @@ export async function POST(request, { params }) {
     });
   } catch (error) {
     console.error('[Questionnaire API] POST error:', error);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return errors.internal('Failed to save questionnaire responses');
   }
 }
+
+// Export wrapped handlers with error logging
+export const GET = withErrorLogging(handleGet, { route: 'users/questionnaire', feature: 'questionnaire' });
+export const POST = withErrorLogging(handlePost, { route: 'users/questionnaire', feature: 'questionnaire' });

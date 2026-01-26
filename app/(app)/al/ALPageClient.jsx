@@ -22,12 +22,8 @@ import { usePointsNotification } from '@/components/providers/PointsNotification
 import { useCarSelection } from '@/components/providers/CarSelectionProvider';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import { UI_IMAGES } from '@/lib/images';
-import { 
-  loadALPreferences, 
-  saveALPreferences, 
-  loadALBookmarks,
-  addKnownCar
-} from '@/lib/stores/alPreferencesStore';
+// NOTE: alPreferencesStore functions (loadALPreferences, saveALPreferences, loadALBookmarks, addKnownCar) 
+// are available for future use but currently preferences are managed via useALPreferences hook
 import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
 import { trackALConversationStart } from '@/lib/ga4';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -37,7 +33,8 @@ import { getPendingALPrompt } from '@/components/AskALButton';
 import FeedbackDimensionsModal from '@/components/FeedbackDimensionsModal';
 import { useUserConversations, useUserConversation } from '@/hooks/useUserData';
 import ALSourcesList from '@/components/ALSourcesList';
-import { parseALResponseWithCitations, collectSourcesFromToolResults } from '@/lib/alCitationParser';
+// NOTE: Citation parsing functions available for future enhanced source display
+// import { parseALResponseWithCitations, collectSourcesFromToolResults } from '@/lib/alCitationParser';
 import PullToRefresh from '@/components/ui/PullToRefresh';
 import SwipeableRow from '@/components/ui/SwipeableRow';
 
@@ -129,12 +126,13 @@ const ALMascot = ({ size = 80 }) => (
     alt="AL - AutoRev AI"
     width={size} 
     height={size}
+    className="alMascotImage"
     style={{ 
       width: size, 
       height: size, 
       borderRadius: '50%',
       objectFit: 'cover',
-      border: '3px solid #10b981', // Brand teal
+      border: '3px solid var(--color-accent-teal, #10b981)',
       boxShadow: '0 4px 20px rgba(16, 185, 129, 0.3)',
     }}
   />
@@ -256,7 +254,8 @@ const getSourceLabelFromTool = (toolName) => {
 };
 
 // Helper to get real-time activity label for tool (shown during streaming)
-const getToolActivityLabel = (toolName) => {
+// NOTE: Reserved for future use when showing per-tool status during streaming
+const _getToolActivityLabel = (toolName) => {
   const labels = {
     get_car_ai_context: 'Loading vehicle data...',
     search_cars: 'Searching car database...',
@@ -303,7 +302,8 @@ const ALQueryCounter = ({ queriesToday, isBeta, isUnlimited }) => {
 };
 
 export default function ALPageClient() {
-  const router = useRouter();
+  // NOTE: router available for future navigation needs
+  const _router = useRouter();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -331,7 +331,7 @@ export default function ALPageClient() {
   
   // Preferences state
   const [showPreferences, setShowPreferences] = useState(false);
-  const { preferences: alPreferences, updatePreferences } = useALPreferences();
+  const { preferences: _alPreferences, updatePreferences } = useALPreferences();
   
   // Feedback state
   const [feedbackGiven, setFeedbackGiven] = useState({}); // { messageIndex: 'positive' | 'negative' }
@@ -359,6 +359,20 @@ export default function ALPageClient() {
   const { selectedCar } = useCarSelection();
   const authModal = useAuthModal();
   const { trackEvent } = useAnalytics();
+  const [loadingTimedOut, setLoadingTimedOut] = useState(false);
+
+  // Safety timeout to prevent infinite loading
+  useEffect(() => {
+    if (!authLoading) {
+      setLoadingTimedOut(false);
+      return;
+    }
+    const timeout = setTimeout(() => {
+      console.warn('[AL] Loading timeout - showing content');
+      setLoadingTimedOut(true);
+    }, 6000);
+    return () => clearTimeout(timeout);
+  }, [authLoading]);
   
   // React Query hooks for conversations
   const { 
@@ -774,8 +788,9 @@ export default function ALPageClient() {
       const decoder = new TextDecoder();
       let fullContent = '';
       let newConversationId = currentConversationId;
-      let collectedToolResults = []; // Track tool results for sources
-      let toolsUsed = []; // Track which tools were used
+      // NOTE: Tool result tracking for future enhanced source display
+      const _collectedToolResults = []; // Track tool results for sources
+      const _toolsUsed = []; // Track which tools were used
       
       while (true) {
         const { done, value } = await reader.read();
@@ -970,16 +985,30 @@ export default function ALPageClient() {
     
     setFeedbackGiven(prev => ({ ...prev, [messageIndex]: rating }));
     
-    // Submit basic feedback immediately
+    // Map rating to feedbackType expected by alFeedbackService
+    const feedbackType = rating === 'positive' ? 'thumbs_up' : 'thumbs_down';
+    
+    // Find the preceding user message for context
+    let queryText = null;
+    for (let i = messageIndex - 1; i >= 0; i--) {
+      if (messages[i].role === 'user') {
+        queryText = messages[i].content;
+        break;
+      }
+    }
+    
+    // Submit feedback to the proper AL feedback route
     try {
-      await fetch('/api/ai-mechanic/feedback', {
+      await fetch('/api/al/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          messageId: `${currentConversationId}-${messageIndex}`, // Composite ID for tracking
           conversationId: currentConversationId,
-          messageIndex,
-          rating,
-          userId: user?.id,
+          feedbackType,
+          queryText,
+          responseText: message.content?.substring(0, 2000), // Truncate for storage
+          toolsUsed: message.toolsUsed || [],
         }),
       });
     } catch (err) {
@@ -1001,18 +1030,34 @@ export default function ALPageClient() {
       return;
     }
     
+    const message = messages[messageIndex];
+    const feedbackType = type === 'positive' ? 'thumbs_up' : 'thumbs_down';
+    
+    // Find the preceding user message for context
+    let queryText = null;
+    for (let i = messageIndex - 1; i >= 0; i--) {
+      if (messages[i].role === 'user') {
+        queryText = messages[i].content;
+        break;
+      }
+    }
+    
+    // Map tags to feedbackCategory (use first tag as primary category)
+    const feedbackCategory = tags.length > 0 ? tags[0] : null;
+    
     try {
-      await fetch('/api/ai-mechanic/feedback', {
+      await fetch('/api/al/feedback', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          messageId: `${currentConversationId}-${messageIndex}`,
           conversationId: currentConversationId,
-          messageIndex,
-          rating: type,
-          feedbackText,
-          tags,
-          dimensions,
-          userId: user?.id,
+          feedbackType,
+          feedbackCategory,
+          feedbackReason: feedbackText,
+          queryText,
+          responseText: message?.content?.substring(0, 2000),
+          toolsUsed: message?.toolsUsed || [],
         }),
       });
     } catch (err) {
@@ -1045,8 +1090,8 @@ export default function ALPageClient() {
     );
   }
   
-  // Loading auth
-  if (authLoading) {
+  // Loading auth - with safety timeout to prevent stuck state
+  if (authLoading && !loadingTimedOut) {
     return (
       <div className={styles.container}>
         <LoadingSpinner 
@@ -1351,11 +1396,14 @@ export default function ALPageClient() {
                     <div className={styles.messageAttachments}>
                       {msg.attachments.map((att, idx) => (
                         att.file_type?.startsWith('image/') ? (
-                          <img 
+                          <Image 
                             key={idx}
                             src={att.public_url}
                             alt={att.file_name}
+                            width={80}
+                            height={80}
                             className={styles.attachmentThumbnail}
+                            style={{ objectFit: 'cover' }}
                           />
                         ) : (
                           <div key={idx} className={styles.attachmentDoc}>

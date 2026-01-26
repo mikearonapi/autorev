@@ -14,7 +14,6 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import AskALButton from './AskALButton';
 import InfoTooltip from './ui/InfoTooltip';
 import styles from './LapTimeEstimator.module.css';
 import { Icons } from '@/components/ui/Icons';
@@ -236,23 +235,6 @@ export default function LapTimeEstimator({
             <Icons.info size={14} />
           </button>
         </div>
-        <AskALButton
-          category="Lap Time Estimator"
-          prompt={lapTimePrompt}
-          displayMessage={lapTimeDisplayMessage}
-          carName={carName}
-          carSlug={carSlug}
-          variant="header"
-          metadata={{
-            section: 'lap-time-estimator',
-            trackName: selectedTrack?.name,
-            trackSlug: selectedTrack?.slug,
-            stockLapTime,
-            moddedLapTime,
-            timeImprovement: realizedTotal,
-            driverSkill,
-          }}
-        />
       </div>
 
       {/* Info Panel - How it works */}

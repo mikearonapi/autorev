@@ -25,6 +25,12 @@
   min-height: 60vh;
 }
 
+/* Objective Banner Container */
+.objectiveBannerContainer {
+  padding: 0 var(--space-4, 16px);
+  margin-bottom: var(--space-2, 8px);
+}
+
 /* Upgrade Center Container */
 .upgradeContainer {
   flex: 1;
@@ -130,7 +136,7 @@
 }
 
 .emptyActionPrimary:hover {
-  background: var(--brand-lime-dark, #bfe600);
+  background: var(--brand-lime-dark);
   transform: translateY(-2px);
   box-shadow: 0 8px 24px rgba(var(--brand-lime-rgb), 0.25);
 }
@@ -197,12 +203,12 @@
 .ctaTitle {
   font-size: var(--text-body, 16px);
   font-weight: 600;
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary);
 }
 
 .ctaSubtitle {
   font-size: var(--text-sm, 14px);
-  color: var(--color-accent-teal, #10b981);
+  color: var(--color-accent-teal);
 }
 
 .ctaAction {
@@ -211,12 +217,12 @@
   gap: var(--space-2, 8px);
   padding: var(--space-2, 8px) var(--space-3, 12px);
   
-  background: var(--color-accent-teal, #10b981);
+  background: var(--color-accent-teal);
   border-radius: var(--radius-md, 8px);
   
   font-size: var(--text-sm, 14px);
   font-weight: 600;
-  color: var(--color-text-primary, #ffffff);
+  color: var(--color-text-primary);
   white-space: nowrap;
 }
 
@@ -250,4 +256,57 @@
     justify-content: center;
     width: 100%;
   }
+}
+
+/* ==========================================================================
+   LOADING SKELETON STATES
+   ========================================================================== */
+
+.loadingSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4, 16px);
+  padding: var(--space-4, 16px);
+  padding-bottom: var(--page-bottom-padding);
+}
+
+/* Nav skeleton - mimics MyGarageSubNav layout */
+.navSkeleton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-2, 8px) 0;
+}
+
+/* Vehicle selector skeleton */
+.vehicleSelectorSkeleton {
+  padding: 0;
+}
+
+/* Build recommendations skeleton */
+.buildRecsSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 12px);
+  padding: var(--space-4, 16px);
+  background: var(--color-surface-elevated, rgba(255, 255, 255, 0.03));
+  border-radius: var(--radius-lg, 12px);
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.08));
+}
+
+.buildRecsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-2, 8px);
+}
+
+/* Categories skeleton */
+.categoriesSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3, 12px);
+  padding: var(--space-4, 16px);
+  background: var(--color-surface-elevated, rgba(255, 255, 255, 0.03));
+  border-radius: var(--radius-lg, 12px);
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.08));
 }

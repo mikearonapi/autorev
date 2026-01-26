@@ -198,13 +198,13 @@ External references, cost analyses, and guides.
 
 ---
 
-## Membership Tiers
+## Membership Tiers (Jan 2026)
 
 | Tier | Price | Key Value |
 |------|-------|-----------|
-| **Free** | $0 | Car research & discovery |
-| **Collector** | $4.99/mo | Ownership intelligence |
-| **Tuner** | $9.99/mo | Performance data & builds |
+| **Free** | $0 | 1 car, full garage, community & events, ~15 AL chats |
+| **Enthusiast** | $9.99/mo | 3 cars, Insights, Data tabs, ~130 AL chats |
+| **Pro** | $19.99/mo | Unlimited cars, priority support, ~350 AL chats |
 
 Currently **beta** - all features unlocked for authenticated users.
 

@@ -1,54 +1,15 @@
 /* ==========================================================================
-   COMMUNITY FEED - Fixed Viewport Layout (No Scroll)
+   COMMUNITY BUILDS FEED - Fills Layout Content Area
    Everything scales to fit the screen, swipe for next build
+   Tab bar is in the layout (CommunityNav component)
    ========================================================================== */
 
 .container {
-  position: fixed;
-  inset: 0;
-  /* Transparent to show body gradient */
-  background: transparent;
+  flex: 1;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-}
-
-/* ==========================================================================
-   HEADER - Tab Bar (Fixed Height)
-   ========================================================================== */
-
-.header {
-  flex-shrink: 0;
-  padding: calc(env(safe-area-inset-top, 0px) + 8px) 16px 8px;
-  display: flex;
-  justify-content: center;
-}
-
-.tabBar {
-  display: flex;
-  gap: 6px;
-  padding: 3px;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 18px;
-}
-
-.tab {
-  padding: 6px 20px;
-  font-size: 0.8125rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
-  background: transparent;
-  border: none;
-  border-radius: 15px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.tab.tabActive {
-  color: var(--color-text-primary);
-  background: var(--color-accent-teal);
+  min-height: 0; /* Critical for flex children to shrink */
 }
 
 /* ==========================================================================
@@ -198,30 +159,6 @@
   text-overflow: ellipsis;
 }
 
-/* Build Status Badge - shows completion status */
-.statusBadge {
-  flex-shrink: 0;
-  font-size: 0.5625rem;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  white-space: nowrap;
-}
-
-.statusBadge[data-status="complete"] {
-  background: rgba(16, 185, 129, 0.15);
-  color: var(--color-accent-teal);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-.statusBadge[data-status="progress"] {
-  background: rgba(251, 191, 36, 0.15);
-  color: #fbbf24;
-  border: 1px solid rgba(251, 191, 36, 0.3);
-}
-
 .carName {
   font-size: 0.6875rem;
   font-weight: 500;
@@ -250,29 +187,26 @@
 }
 
 .statValue {
-  font-family: var(--font-mono);
-  font-size: 1.5rem;
-  font-weight: 800;
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 1.75rem;
+  font-weight: 700;
   line-height: 1;
   letter-spacing: -0.02em;
-  background: linear-gradient(180deg, var(--color-text-primary, #ffffff) 0%, rgba(255, 255, 255, 0.85) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--color-text-primary, #ffffff);
 }
 
 .statSuffix {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--color-accent-teal);
+  color: var(--color-text-primary, #ffffff);
 }
 
 .statLabel {
-  font-size: 0.625rem;
+  font-size: 10px;
   font-weight: 600;
-  color: var(--color-accent-teal);
+  color: var(--brand-teal);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.08em;
   margin-top: 2px;
 }
 
@@ -546,15 +480,6 @@
    ========================================================================== */
 
 @media (min-width: 768px) {
-  .header {
-    padding: calc(env(safe-area-inset-top, 0px) + 12px) 24px 12px;
-  }
-  
-  .tab {
-    padding: 8px 28px;
-    font-size: 0.875rem;
-  }
-  
   .feedContent {
     padding: 0 24px;
     padding-bottom: var(--page-bottom-padding);
@@ -578,11 +503,7 @@
   }
   
   .statValue {
-    font-size: 1.625rem;
-  }
-  
-  .statLabel {
-    font-size: 0.6875rem;
+    font-size: 2rem;
   }
   
   .imageCard {

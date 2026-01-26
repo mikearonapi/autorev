@@ -7,9 +7,10 @@
  * - User identification and reset functions work
  * - Pre-built trackers call with correct event names
  * 
- * Run with: npm test -- tests/unit/analytics.test.js
+ * Run with: npm run test:unit -- tests/unit/analytics.test.js
  */
 
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   EVENTS,
   trackEvent,
@@ -30,18 +31,18 @@ import {
 
 // Mock PostHog
 const mockPosthog = {
-  capture: jest.fn(),
-  identify: jest.fn(),
-  reset: jest.fn(),
+  capture: vi.fn(),
+  identify: vi.fn(),
+  reset: vi.fn(),
 };
 
 // Mock gtag
-const mockGtag = jest.fn();
+const mockGtag = vi.fn();
 
 // Setup global mocks before each test
 beforeEach(() => {
   // Reset all mocks
-  jest.clearAllMocks();
+  vi.clearAllMocks();
   
   // Setup window mocks
   global.window = {
@@ -99,8 +100,8 @@ describe('EVENTS constant', () => {
     const eventNames = Object.values(EVENTS);
     
     eventNames.forEach((eventName) => {
-      // Should be Title Case (each word capitalized)
-      expect(eventName).toMatch(/^[A-Z][a-z]+( [A-Z][a-z]+)*$/);
+      // Should be Title Case (each word capitalized) or uppercase acronyms like "AL", "CTA"
+      expect(eventName).toMatch(/^([A-Z][a-z]+|[A-Z]{2,})( ([A-Z][a-z]+|[A-Z]{2,}))*$/);
       
       // Should end with past tense verb (commonly ends in -ed, -en, -d)
       const lastWord = eventName.split(' ').pop();
@@ -152,7 +153,7 @@ describe('trackEvent', () => {
   });
 
   it('should warn for unknown event names', () => {
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation();
     
     trackEvent('Unknown Event', {});
     
@@ -164,7 +165,7 @@ describe('trackEvent', () => {
   });
 
   it('should not warn for valid event names', () => {
-    const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation();
     
     trackEvent(EVENTS.SIGNUP_COMPLETED, { method: 'email' });
     

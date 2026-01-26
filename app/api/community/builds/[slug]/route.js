@@ -225,9 +225,11 @@ async function handleGet(request, { params }) {
     // Fetch community post parts if available
     let parts = [];
     if (post?.id) {
+      const PARTS_COLS = 'id, community_post_id, category, brand, part_name, part_number, price, notes, link_url, created_at';
+      
       const { data: partsData } = await supabaseAdmin
         .from('community_post_parts')
-        .select('*')
+        .select(PARTS_COLS)
         .eq('community_post_id', post.id)
         .order('category');
       

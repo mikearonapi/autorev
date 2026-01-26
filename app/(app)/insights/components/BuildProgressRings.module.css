@@ -9,8 +9,15 @@
   justify-content: center;
   width: 100%;
   max-width: 100%;
-  padding: 16px;
+  padding: 12px; /* Mobile-first: extra small screens */
   box-sizing: border-box;
+}
+
+/* Regular phones and up */
+@media (min-width: 375px) {
+  .wrapper {
+    padding: 16px;
+  }
 }
 
 /* Center container for rings and legend */
@@ -58,11 +65,18 @@
 
 .centerValue {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: var(--text-h2);
+  font-size: var(--text-h3); /* Mobile-first: extra small screens */
   font-weight: 800;
   color: var(--color-text-primary, #ffffff);
   line-height: 1;
   letter-spacing: -0.02em;
+}
+
+/* Regular phones and up */
+@media (min-width: 375px) {
+  .centerValue {
+    font-size: var(--text-h2);
+  }
 }
 
 .centerLabel {
@@ -79,9 +93,16 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: var(--space-4, 16px);
+  gap: var(--space-2, 8px); /* Mobile-first: extra small screens */
   margin-top: var(--space-3, 12px);
   width: 100%;
+}
+
+/* Regular phones and up */
+@media (min-width: 375px) {
+  .legendRow {
+    gap: var(--space-4, 16px);
+  }
 }
 
 .legendItem {
@@ -102,6 +123,14 @@
   font-size: var(--text-2xs);
   font-weight: 500;
   color: var(--color-text-tertiary, #64748b);
+  display: none; /* Mobile-first: hide on extra small screens */
+}
+
+/* Regular phones and up */
+@media (min-width: 375px) {
+  .legendLabel {
+    display: block;
+  }
 }
 
 .legendPercent {
@@ -115,12 +144,20 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: var(--space-2, 8px);
+  gap: var(--space-1, 4px); /* Mobile-first: extra small screens */
   margin-top: var(--space-2, 8px);
-  padding: var(--space-2, 8px) var(--space-3, 12px);
+  padding: var(--space-2, 8px); /* Mobile-first: extra small screens */
   background: rgba(255, 255, 255, 0.03);
   border-radius: var(--radius-md, 8px);
   border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+/* Regular phones and up */
+@media (min-width: 375px) {
+  .metricsRow {
+    gap: var(--space-2, 8px);
+    padding: var(--space-2, 8px) var(--space-3, 12px);
+  }
 }
 
 .metric {
@@ -132,10 +169,17 @@
 
 .metricValue {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: var(--text-sm);
+  font-size: var(--text-xs); /* Mobile-first: extra small screens */
   font-weight: 700;
   color: var(--color-text-primary, #ffffff);
   line-height: 1;
+}
+
+/* Regular phones and up */
+@media (min-width: 375px) {
+  .metricValue {
+    font-size: var(--text-sm);
+  }
 }
 
 .metricLabel {
@@ -159,40 +203,66 @@
   margin: 0 4px;
 }
 
-/* Info Button */
+/* Info Button - 44px touch target for accessibility */
 .infoButton {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 16px;
-  height: 16px;
+  /* Minimum 44px touch target per WCAG 2.1 */
+  min-width: 44px;
+  min-height: 44px;
+  /* Visual size smaller than touch target */
+  width: 44px;
+  height: 44px;
   border: none;
-  background: rgba(255, 255, 255, 0.1);
+  background: transparent;
   border-radius: 50%;
   color: var(--color-text-tertiary, #64748b);
   cursor: pointer;
   transition: all 0.15s ease;
-  margin-left: 2px;
+  margin-left: -8px; /* Negative margin to keep visual spacing tight while maintaining touch area */
   flex-shrink: 0;
+  /* Visual indicator is just the icon, not the full touch area */
+  position: relative;
+}
+
+.infoButton::before {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  transition: all 0.15s ease;
+}
+
+.infoButton:hover::before {
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .infoButton:hover {
-  background: rgba(255, 255, 255, 0.2);
   color: var(--color-text-secondary, #94a3b8);
 }
 
 .infoButton:active {
-  transform: scale(0.9);
+  transform: scale(0.95);
+}
+
+/* Focus visible for keyboard users */
+.infoButton:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
 }
 
 /* Modal Overlay - Full Screen */
+/* Level 3: Overlay background for focused progress detail experience */
 .modalOverlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--color-bg-primary, #0f1419);
+  background: var(--brand-bg-overlay, #1a1a1a);
   display: flex;
   flex-direction: column;
   z-index: 9999;
@@ -211,13 +281,21 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: var(--space-5, 20px);
-  padding-top: 60px; /* Space for close button */
+  padding: var(--space-4, 16px); /* Mobile-first: extra small screens */
+  padding-top: 56px; /* Mobile-first: extra small screens */
   max-width: 500px;
   width: 100%;
   margin: 0 auto;
   position: relative;
   animation: slideUp 0.25s ease;
+}
+
+/* Regular phones and up */
+@media (min-width: 375px) {
+  .modalContent {
+    padding: var(--space-5, 20px);
+    padding-top: 60px;
+  }
 }
 
 @keyframes slideUp {
@@ -272,10 +350,17 @@
 }
 
 .modalTitle {
-  font-size: var(--text-h2);
+  font-size: var(--text-h3); /* Mobile-first: extra small screens */
   font-weight: 700;
   margin: 0;
   flex: 1;
+}
+
+/* Regular phones and up */
+@media (min-width: 375px) {
+  .modalTitle {
+    font-size: var(--text-h2);
+  }
 }
 
 .modalPercent {
@@ -345,7 +430,7 @@
   padding: var(--space-4, 16px);
   background: rgba(16, 185, 129, 0.1);
   border-radius: var(--radius-lg, 12px);
-  border-left: 4px solid #10b981;
+  border-left: 4px solid var(--color-accent-teal, #10b981);
   margin-top: auto;
 }
 
@@ -360,46 +445,7 @@
   line-height: 1.5;
 }
 
-/* Responsive adjustments */
-@media (max-width: 374px) {
-  .wrapper {
-    padding: 12px;
-  }
-  
-  .centerValue {
-    font-size: var(--text-h3);
-  }
-  
-  .legendRow {
-    gap: var(--space-2, 8px);
-  }
-  
-  .legendLabel {
-    display: none; /* Hide labels on very small screens */
-  }
-  
-  .metricsRow {
-    gap: var(--space-1, 4px);
-    padding: var(--space-2, 8px);
-  }
-  
-  .metricValue {
-    font-size: var(--text-xs);
-  }
-  
-  .modalContent {
-    padding: var(--space-4, 16px);
-    padding-top: 56px;
-  }
-  
-  .modalTitle {
-    font-size: var(--text-h3);
-  }
-  
-  .modalPercent {
-    font-size: var(--text-h3);
-  }
-}
+/* Mobile-first responsive styles are now in base selectors with min-width: 375px enhancements */
 
 /* Safe area padding for notched phones */
 @supports (padding-top: env(safe-area-inset-top)) {

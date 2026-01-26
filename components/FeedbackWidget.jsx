@@ -15,6 +15,7 @@
  */
 
 import { useState, useEffect, useCallback, createContext, useContext, useRef } from 'react';
+import Image from 'next/image';
 import { useAuth } from './providers/AuthProvider';
 import styles from './FeedbackWidget.module.css';
 import html2canvas from 'html2canvas';
@@ -671,10 +672,14 @@ export default function FeedbackWidget({
                     {screenshotPreview && !isUploadingScreenshot && (
                       <>
                         <div className={styles.screenshotPreview}>
-                          <img 
+                          <Image 
                             src={screenshotPreview} 
                             alt="Screenshot preview" 
+                            width={200}
+                            height={150}
                             className={styles.screenshotImage}
+                            style={{ objectFit: 'cover' }}
+                            unoptimized
                           />
                           <div className={styles.screenshotOverlay}>
                             <button

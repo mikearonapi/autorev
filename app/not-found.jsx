@@ -63,9 +63,6 @@ export default function NotFound() {
           <Link href="/garage" className={styles.advisoryLink}>
             🚗 My Garage
           </Link>
-          <Link href="/al" className={styles.browseLink}>
-            🤖 Ask AL
-          </Link>
         </div>
 
         <p className={styles.footer}>

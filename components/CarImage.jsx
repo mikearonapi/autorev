@@ -88,6 +88,30 @@ export default function CarImage({
     setUsingFallback(false);
   }, [car?.slug]);
   
+  // Timeout to catch hung image loads (10s for initial, 5s for fallback)
+  useEffect(() => {
+    // Only set timeout if we have an imageUrl and haven't loaded/errored yet
+    const imageUrl = variant === 'garage' && !usingFallback 
+      ? getCarGarageImage(car)
+      : getCarHeroImage(car);
+    
+    if (!imageUrl || imageLoaded || imageError) return;
+    
+    const timeoutMs = usingFallback ? 5000 : 10000; // Shorter timeout for fallback
+    const timeoutId = setTimeout(() => {
+      if (!imageLoaded) {
+        // Trigger fallback or error
+        if (variant === 'garage' && !usingFallback) {
+          setUsingFallback(true);
+        } else {
+          setImageError(true);
+        }
+      }
+    }, timeoutMs);
+    
+    return () => clearTimeout(timeoutId);
+  }, [car?.slug, variant, usingFallback, imageLoaded, imageError, car]);
+  
   // Get image URL based on variant
   const getImageUrl = () => {
     if (variant === 'thumbnail' || variant === 'card') {
@@ -134,7 +158,7 @@ export default function CarImage({
     <div className={`${styles.container} ${variantClass} ${className}`}>
       {/* Placeholder (always rendered, fades out when image loads) */}
       <div 
-        className={`${styles.placeholder} ${!showPlaceholder && imageLoaded ? styles.hidden : ''}`}
+        className={`${styles.placeholder} ${!showPlaceholder && imageLoaded ? styles.hidden : ''} ${imageError ? styles.error : ''}`}
         style={placeholderStyle}
       >
         {showName && (

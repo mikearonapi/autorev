@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { requireAdmin, getAuthErrorStatus } from '@/lib/adminAuth';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -27,7 +28,7 @@ async function resolveVariantId(variantKey) {
  * - override (raw row)
  * - merged maintenance summary (RPC)
  */
-export async function GET(request) {
+async function handleGet(request) {
   try {
     const auth = requireAdmin(request);
     if (!auth.ok) {
@@ -62,7 +63,7 @@ export async function GET(request) {
     });
   } catch (err) {
     console.error('[internal/maintenance/variant-overrides] GET error:', err);
-    return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to fetch variant overrides' }, { status: 500 });
   }
 }
 
@@ -75,7 +76,7 @@ export async function GET(request) {
  * - confidence? number 0..1
  * - verified? boolean
  */
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const auth = requireAdmin(request);
     if (!auth.ok) {
@@ -128,9 +129,12 @@ export async function POST(request) {
     return NextResponse.json({ success: true, override: data, variant });
   } catch (err) {
     console.error('[internal/maintenance/variant-overrides] POST error:', err);
-    return NextResponse.json({ error: err.message || 'Internal server error' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to save variant overrides' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'internal/maintenance/variant-overrides', feature: 'internal' });
+export const POST = withErrorLogging(handlePost, { route: 'internal/maintenance/variant-overrides', feature: 'internal' });
 
 
 

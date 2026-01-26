@@ -12,6 +12,7 @@ import { createClient } from '@supabase/supabase-js';
 // Force dynamic rendering - this route uses request.headers and request.url
 export const dynamic = 'force-dynamic';
 import { isAdminEmail } from '@/lib/adminAccess';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -52,7 +53,7 @@ function getDateRange(range) {
   return { startDate, endDate };
 }
 
-export async function GET(request) {
+async function handleGet(request) {
   try {
     // Auth check
     const authHeader = request.headers.get('authorization');
@@ -196,3 +197,4 @@ export async function GET(request) {
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'admin/marketing-analytics', feature: 'admin' });

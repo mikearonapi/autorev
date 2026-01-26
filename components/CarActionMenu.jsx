@@ -382,6 +382,7 @@ export default function CarActionMenu({
           className={`${styles.actionBtn} ${isOwned ? styles.active : ''} ${isAdding ? styles.loading : ''}`}
           onClick={handleAddToCollection}
           disabled={isOwned || isAdding}
+          aria-label={isAdding ? 'Adding to collection' : isOwned ? 'In your collection' : 'Add to my collection'}
         >
           {isAdding ? <Icons.spinner size={16} /> : isOwned ? <Icons.check size={16} /> : <Icons.car size={16} />}
           {showLabels && <span>{isAdding ? 'Adding...' : isOwned ? 'Owned' : 'Own'}</span>}
@@ -393,6 +394,7 @@ export default function CarActionMenu({
         <button 
           className={`${styles.actionBtn} ${isFav ? styles.activeFavorite : ''}`}
           onClick={handleToggleFavorite}
+          aria-label={isFav ? 'Remove from favorites' : 'Add to favorites'}
         >
           <Icons.heart size={16} filled={isFav} />
           {showLabels && <span>{isFav ? 'Saved' : 'Save'}</span>}
@@ -405,6 +407,7 @@ export default function CarActionMenu({
           className={`${styles.actionBtn} ${isComparing ? styles.active : ''}`}
           onClick={handleToggleCompare}
           disabled={!canCompare && !isComparing}
+          aria-label={isComparing ? 'Remove from compare' : 'Add to compare'}
         >
           <Icons.compare size={16} />
           {showLabels && <span>Compare</span>}
@@ -416,6 +419,7 @@ export default function CarActionMenu({
         <button 
           className={`${styles.actionBtn} ${styles.modBtn}`}
           onClick={handleMod}
+          aria-label="Mod this car"
         >
           <Icons.wrench size={16} />
           {showLabels && <span>Mod</span>}
@@ -424,7 +428,7 @@ export default function CarActionMenu({
       </div>
 
       <div className={styles.tooltipWrapper}>
-        <Link href={`/browse-cars/${car.slug}`} className={styles.actionBtn}>
+        <Link href={`/browse-cars/${car.slug}`} className={styles.actionBtn} aria-label="View car profile">
           <Icons.arrowRight size={16} />
           {showLabels && <span>Details</span>}
           <span className={styles.tooltip}>View Profile</span>

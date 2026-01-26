@@ -23,7 +23,8 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { isAdminEmail } from '@/lib/adminAccess';
+import { requireAdmin } from '@/lib/adminAccess';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -116,7 +117,11 @@ function parseCronSchedule(schedule) {
   return schedule; // Return raw if no pattern matches
 }
 
-export async function GET(request) {
+async function handleGet(request) {
+  // Verify admin access
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
+
   // Check if Vercel integration is configured
   if (!VERCEL_API_TOKEN || !VERCEL_PROJECT_ID) {
     return NextResponse.json({
@@ -130,26 +135,13 @@ export async function GET(request) {
     });
   }
   
-  // Verify admin access
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
-  
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
   }
   
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
-  
+
   try {
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
-    if (authError || !user || !isAdminEmail(user.email)) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-    }
-    
     // Fetch data from Vercel API in parallel
     const [
       projectData,
@@ -428,10 +420,11 @@ export async function GET(request) {
     console.error('[Vercel Status API] Error:', err);
     return NextResponse.json({ 
       configured: true,
-      error: err.message,
+      error: 'Failed to fetch Vercel status',
       status: 'error',
       statusMessage: 'Failed to fetch Vercel status',
     }, { status: 500 });
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'admin/vercel-status', feature: 'admin' });

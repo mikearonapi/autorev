@@ -9,15 +9,20 @@
   padding: 32px 24px 0;
 }
 
-/* Brand Wordmark - Positioned at top like homepage */
-.brand {
-  font-family: 'Oswald', var(--font-display), system-ui, sans-serif;
-  font-size: 2.5rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
-  line-height: 1;
+/* Brand Logo Container - Positioned at top like homepage */
+.brandContainer {
   margin: 0 0 48px;
   animation: brandEnter 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+/* Brand Logo Image */
+.brandLogo {
+  width: clamp(140px, 35vw, 200px);
+  height: auto;
+  /* Prevent dragging/selection */
+  user-select: none;
+  -webkit-user-select: none;
+  pointer-events: none;
 }
 
 /* Content wrapper - centers the celebration in remaining space */
@@ -41,13 +46,6 @@
   }
 }
 
-.brandAuto {
-  color: var(--color-text-primary, #ffffff);
-}
-
-.brandRev {
-  color: var(--color-accent-lime, #d4ff00);
-}
 
 /* Celebration Section */
 .celebration {
@@ -101,20 +99,26 @@
     padding: 48px 48px 0;
   }
   
-  .brand {
-    font-size: 3.5rem;
+  .brandContainer {
     margin-bottom: 64px;
+  }
+  
+  .brandLogo {
+    width: 240px;
   }
 }
 
 /* Small phones */
-@media (min-width: 381px) {
+@media (max-width: 380px) {
   .container {
     padding: 24px 20px 0;
   }
   
-  .brand {
-    font-size: 2rem;
+  .brandContainer {
     margin-bottom: 40px;
+  }
+  
+  .brandLogo {
+    width: 140px;
   }
 }

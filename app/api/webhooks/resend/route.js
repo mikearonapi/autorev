@@ -14,7 +14,7 @@
 import { NextResponse } from 'next/server';
 import { handleResendWebhook } from '@/lib/emailService';
 import crypto from 'crypto';
-import { logServerError } from '@/lib/serverErrorLogger';
+import { logServerError, withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Resend webhook signing secret (set in Resend dashboard)
 const WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET;
@@ -24,8 +24,14 @@ const WEBHOOK_SECRET = process.env.RESEND_WEBHOOK_SECRET;
  */
 function verifySignature(payload, signature, secret) {
   if (!secret) {
-    console.warn('[Resend Webhook] No webhook secret configured, skipping verification');
-    return true;
+    // SECURITY: Fail closed - require secret in production
+    console.error('[Resend Webhook] RESEND_WEBHOOK_SECRET not configured');
+    return false;
+  }
+
+  if (!signature) {
+    console.error('[Resend Webhook] Missing svix-signature header');
+    return false;
   }
 
   const expectedSignature = crypto
@@ -33,20 +39,25 @@ function verifySignature(payload, signature, secret) {
     .update(payload)
     .digest('hex');
 
-  return crypto.timingSafeEqual(
-    Buffer.from(signature || ''),
-    Buffer.from(expectedSignature)
-  );
+  try {
+    return crypto.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(expectedSignature)
+    );
+  } catch (err) {
+    console.error('[Resend Webhook] Signature comparison failed:', err.message);
+    return false;
+  }
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     // Get raw body for signature verification
     const rawBody = await request.text();
     const signature = request.headers.get('svix-signature');
 
-    // Verify signature (if secret is configured)
-    if (WEBHOOK_SECRET && !verifySignature(rawBody, signature, WEBHOOK_SECRET)) {
+    // SECURITY: Always verify signature
+    if (!verifySignature(rawBody, signature, WEBHOOK_SECRET)) {
       console.error('[Resend Webhook] Invalid signature');
       return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
     }
@@ -74,7 +85,9 @@ export async function POST(request) {
 }
 
 // Resend may send GET requests to verify the endpoint
-export async function GET() {
+async function handleGet() {
   return NextResponse.json({ status: 'Resend webhook endpoint active' });
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'webhooks/resend', feature: 'webhooks' });
+export const POST = withErrorLogging(handlePost, { route: 'webhooks/resend', feature: 'webhooks' });

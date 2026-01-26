@@ -16,7 +16,7 @@
    ========================================================== */
 .header {
   text-align: center;
-  padding: 32px 24px 24px;
+  padding: 20px 16px 12px;
   flex-shrink: 0;
   max-width: 400px;
 }
@@ -52,7 +52,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: var(--space-sm);
+  gap: 6px;
   overflow: hidden;
   opacity: 0;
   transform: translateY(20px);
@@ -67,7 +67,7 @@
 /* Individual row of logos */
 .logoRow {
   display: flex;
-  gap: var(--space-md);
+  gap: var(--space-sm);
   width: max-content;
   animation-duration: 25s;
   animation-timing-function: linear;
@@ -107,8 +107,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 88px;
-  height: 88px;
+  width: 72px;
+  height: 72px;
   /* Lighter background provides contrast for dark logos */
   background: rgba(255, 255, 255, 0.12);
   border: 1px solid rgba(255, 255, 255, 0.15);
@@ -125,8 +125,8 @@
 
 /* Logo image - crisp and clear */
 .brandLogo {
-  width: 56px;
-  height: 56px;
+  width: 36px;
+  height: 36px;
   object-fit: contain;
   opacity: 1;
   /* Light brightness boost only - no blur effects */
@@ -175,30 +175,30 @@
 }
 
 /* ==========================================================
-   SMALLER PHONES (under 380px)
+   MEDIUM PHONES AND UP (381px+)
    ========================================================== */
-@media (max-width: 380px) {
+@media (min-width: 381px) {
   .header {
-    padding: 20px 16px 12px;
+    padding: 32px 24px 24px;
   }
   
   .brandCard {
-    width: 64px;
-    height: 64px;
+    width: 76px;
+    height: 76px;
   }
   
   .brandLogo {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
   }
   
   .brandText {
-    font-size: 9px;
+    font-size: var(--text-2xs);
   }
   
   .gradientLeft,
   .gradientRight {
-    width: 32px;
+    width: 60px;
   }
 }
 
@@ -206,10 +206,6 @@
    TABLET AND DESKTOP
    ========================================================== */
 @media (min-width: 768px) {
-  .header {
-    padding: 32px 24px 24px;
-  }
-  
   .brandCard {
     width: 96px;
     height: 96px;

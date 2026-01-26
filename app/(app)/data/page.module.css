@@ -1,6 +1,6 @@
 /* ==========================================================================
-   DATA PAGE - Performance data hub
-   Vehicle-centric data viewing with synthetic and logged data
+   DATA PAGE (DYNO) - Performance data hub
+   Dyno-specific styles - vehicle selector and tab bar are in layout
    
    Brand Colors:
    - Lime (var(--color-accent-lime, #d4ff00)): CTAs, user actions
@@ -9,368 +9,15 @@
    - Amber (var(--color-accent-amber, #f59e0b)): Warnings only (sparingly)
    ========================================================================== */
 
-.container {
-  min-height: 100vh;
-  min-height: 100dvh;
-  padding: 0 16px;
-  /* Bottom padding for tab bar - uses standardized token */
-  padding-bottom: var(--page-bottom-padding);
-  /* Transparent to show body gradient */
-  background: transparent;
-  color: var(--color-text-primary, #ffffff);
+.pageContent {
+  flex: 1;
   display: flex;
   flex-direction: column;
-  /* Prevent any child from causing horizontal overflow (which triggers zoom on mobile) */
+  /* Prevent any child from causing horizontal overflow */
   overflow-x: hidden;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-}
-
-/* Mobile: Tighter horizontal padding */
-@media (min-width: 768px) {
-  .container {
-    padding: 0 12px;
-    padding-bottom: var(--page-bottom-padding);
-  }
-}
-
-/* Desktop: No tab bar */
-@media (min-width: 1024px) {
-  .container {
-    padding-bottom: 0;
-  }
-}
-
-/* Header - Brand typography with tab bar */
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 16px 0 8px;
-}
-
-.headerLeft {
-  flex-shrink: 0;
-}
-
-.title {
-  font-family: var(--font-display, 'Oswald', sans-serif);
-  font-size: 1.75rem;
-  font-weight: 700;
-  color: var(--color-text-primary, #ffffff);
-  margin: 0;
-  letter-spacing: -0.02em;
-  text-transform: uppercase;
-}
-
-/* Responsive - Larger screens */
-@media (min-width: 768px) {
-  .header {
-    padding: 12px 0 8px;
-  }
-  
-  .title {
-    font-size: 2rem;
-  }
-}
-
-/* ==========================================================================
-   VEHICLE SELECTOR - Full width bar matching garage pages
-   ========================================================================== */
-
-.vehicleSelector {
-  padding: 8px 0 16px;
-  position: relative;
-  z-index: 9000;
-}
-
-.selectorButton {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 14px 18px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 14px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  /* Premium: subtle inner highlight */
-  box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
-}
-
-.selectorButton:hover,
-.selectorButton:focus {
-  background: rgba(255, 255, 255, 0.07);
-  border-color: rgba(255, 255, 255, 0.1);
-  outline: none;
-}
-
-.selectorLeft {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.selectorIcon {
-  width: 20px;
-  height: 20px;
-  color: var(--color-accent-teal, #10b981);
-  flex-shrink: 0;
-}
-
-.selectorValue {
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-text-primary, #ffffff);
-}
-
-.selectorChevron {
-  width: 18px;
-  height: 18px;
-  color: var(--color-text-tertiary, #64748b);
-  transition: transform 0.2s ease;
-  flex-shrink: 0;
-}
-
-.selectorChevronOpen {
-  transform: rotate(180deg);
-}
-
-/* Dropdown Portal - Frosted glass matching garage pages */
-.selectorDropdownPortal {
-  background: rgba(27, 38, 59, 0.95);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
-  overflow: hidden;
-  z-index: 999999;
-  animation: slideDown 0.15s ease;
-  box-shadow: 
-    0 12px 40px rgba(0, 0, 0, 0.5),
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-}
-
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.selectorOption {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  width: 100%;
-  padding: 14px 18px;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  text-align: left;
-  transition: background 0.15s ease;
-}
-
-.selectorOption:hover {
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.selectorOptionActive {
-  background: rgba(16, 185, 129, 0.12);
-}
-
-.selectorOption svg {
-  width: 18px;
-  height: 18px;
-  color: var(--color-text-tertiary, #64748b);
-  flex-shrink: 0;
-}
-
-.selectorOptionActive svg {
-  color: var(--color-accent-teal, #10b981);
-}
-
-.selectorOptionText {
-  font-size: 0.95rem;
-  color: var(--color-text-primary, #ffffff);
-}
-
-.selectorOptionActive .selectorOptionText {
-  color: var(--color-accent-teal, #10b981);
-  font-weight: 600;
-}
-
-/* Legacy Vehicle Dropdown - keeping for potential future use */
-.vehicleDropdown {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 0;
-  right: 0;
-  background: rgba(13, 27, 42, 0.98);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  border-radius: 14px;
-  padding: 8px;
-  z-index: 1000;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(16, 185, 129, 0.15);
-  max-height: 320px;
-  overflow-y: auto;
-  animation: dropdownFadeIn 0.15s ease-out;
-}
-
-@keyframes dropdownFadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.vehicleDropdownItem {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 14px;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  text-align: left;
-  width: 100%;
-}
-
-.vehicleDropdownItem:hover {
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.vehicleDropdownItemActive {
-  background: rgba(16, 185, 129, 0.1);
-  border-color: rgba(16, 185, 129, 0.25);
-}
-
-.vehicleDropdownImage {
-  width: 36px;
-  height: 36px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
-  flex-shrink: 0;
-  overflow: hidden;
-}
-
-.vehicleDropdownImage svg {
-  color: var(--color-text-secondary, #94a3b8);
-}
-
-.vehicleDropdownItemActive .vehicleDropdownImage {
-  border: 2px solid rgba(16, 185, 129, 0.5);
-}
-
-.vehicleDropdownItemActive .vehicleDropdownImage svg {
-  color: var(--color-accent-teal, #10b981);
-}
-
-.vehicleDropdownEmpty {
-  padding: 24px 16px;
-  text-align: center;
-  color: var(--color-text-secondary, #94a3b8);
-  font-size: 0.875rem;
-}
-
-.checkmark {
-  flex-shrink: 0;
-  margin-left: auto;
-}
-
-.vehicleDropdownInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  min-width: 0;
-}
-
-.vehicleDropdownName {
-  font-size: 0.9375rem;
-  font-weight: 500;
-  color: var(--color-text-primary, #ffffff);
-}
-
-.vehicleDropdownNickname {
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary, #94a3b8);
-}
-
-/* Dropdown add link - LIME for CTA */
-.vehicleDropdownAdd {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 14px;
-  margin-top: 4px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  color: var(--color-accent-lime, #d4ff00);
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: all 0.2s ease;
-}
-
-.vehicleDropdownAdd:hover {
-  color: var(--color-accent-lime-dark, #bfe600);
-  background: rgba(212, 255, 0, 0.05);
-}
-
-.vehicleDropdownAdd svg {
-  width: 18px;
-  height: 18px;
-}
-
-/* ==========================================================================
-   TAB BAR - Pill-style toggle matching community page
-   Positioned in header, aligned right
-   ========================================================================== */
-
-.tabBar {
-  display: flex;
-  gap: 6px;
-  padding: 3px;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-radius: 18px;
-  flex-shrink: 0;
-}
-
-.tab {
-  padding: 6px 16px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.6);
-  background: transparent;
-  border: none;
-  border-radius: 15px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.tab.tabActive {
-  color: var(--color-text-primary);
-  background: var(--color-accent-teal);
-}
-
-/* Responsive - Larger screens */
-@media (min-width: 768px) {
-  .tab {
-    padding: 8px 24px;
-    font-size: 0.8125rem;
-  }
 }
 
 /* ==========================================================================
@@ -388,7 +35,6 @@
   font-size: 0.75rem;
   color: var(--color-text-tertiary, #64748b);
   line-height: 1.6;
-  margin-top: 4px;
   margin-bottom: 16px;
 }
 
@@ -422,46 +68,11 @@
 }
 
 /* ==========================================================================
-   SECTION STYLES
-   ========================================================================== */
-
-.sectionIntro {
-  margin-bottom: 20px;
-}
-
-.sectionTitle {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-family: var(--font-display, 'Oswald', sans-serif);
-  font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--color-text-primary, #ffffff);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  margin: 0 0 6px;
-}
-
-.sectionTitle svg {
-  color: var(--color-accent-teal, #10b981);
-  width: 20px;
-  height: 20px;
-}
-
-.sectionDescription {
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary, #94a3b8);
-  margin: 0;
-  line-height: 1.5;
-}
-
-/* ==========================================================================
    SYNTHETIC DATA SECTION
    ========================================================================== */
 
 .syntheticDataSection {
   margin-bottom: 24px;
-  /* Prevent any child from causing horizontal overflow */
   overflow: hidden;
   width: 100%;
   max-width: 100%;
@@ -469,7 +80,6 @@
 
 .dataCard {
   margin-bottom: 12px;
-  /* Prevent chart/component overflow from causing page zoom */
   overflow: hidden;
   width: 100%;
   max-width: 100%;
@@ -526,6 +136,8 @@
   text-decoration: none;
   transition: all 0.2s ease;
   white-space: nowrap;
+  /* 44px min touch target */
+  min-height: 44px;
 }
 
 .buildPromptBtn:hover {
@@ -540,177 +152,68 @@
 }
 
 /* ==========================================================================
-   DATA SOURCES - Feature grid
+   EMPTY & LOADING STATES
    ========================================================================== */
 
-.dataSources {
-  margin-bottom: 32px;
-}
-
-.sourceGrid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
-
-@media (min-width: 480px) {
-  .sourceGrid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-.sourceCard {
+.emptyState {
   display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 12px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-decoration: none;
-  text-align: left;
-  width: 100%;
-  min-height: 44px;
-}
-
-/* Hover uses TEAL since these are data features, not primary CTAs */
-.sourceCard:hover:not(:disabled) {
-  border-color: rgba(16, 185, 129, 0.4);
-  background: rgba(16, 185, 129, 0.08);
-}
-
-.sourceCard:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* Source icons - TEAL for data-related features */
-.sourceIcon {
-  width: 44px;
-  height: 44px;
-  display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(16, 185, 129, 0.1);
-  border-radius: 10px;
-  flex-shrink: 0;
+  text-align: center;
+  min-height: calc(100vh - 300px);
+  padding: 40px 24px;
 }
 
-.sourceIcon svg {
+.emptyState svg {
   color: var(--color-accent-teal, #10b981);
+  margin-bottom: 24px;
+  opacity: 0.8;
 }
 
-.sourceContent {
-  flex: 1;
-  min-width: 0;
-}
-
-.sourceContent h3 {
-  font-size: 0.9375rem;
-  font-weight: 600;
+.emptyState h2 {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
   color: var(--color-text-primary, #ffffff);
-  margin: 0 0 2px;
+  margin: 0 0 8px;
 }
 
-.sourceContent p {
-  font-size: 0.75rem;
-  color: var(--color-text-secondary, #94a3b8);
-  margin: 0;
-  line-height: 1.3;
-}
-
-.sourceCard > svg {
-  color: var(--color-text-secondary, #94a3b8);
-  flex-shrink: 0;
-}
-
-/* Coming Soon - Uses muted text (not a warning, just informational) */
-.comingSoon {
-  font-size: 0.625rem;
-  font-weight: 600;
-  color: var(--color-text-secondary, #94a3b8);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 4px 8px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  flex-shrink: 0;
-}
-
-/* ==========================================================================
-   FUTURE IDEAS SECTION - Clean, minimal styling
-   ========================================================================== */
-
-.futureIdeas {
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 14px;
-  margin-top: 20px;
-}
-
-.futureIdeasTitle {
+.emptyState p {
   font-size: 0.9375rem;
-  font-weight: 600;
-  color: var(--color-text-primary, #ffffff);
-  margin: 0 0 4px;
-}
-
-.futureIdeasDescription {
-  font-size: 0.8125rem;
   color: var(--color-text-secondary, #94a3b8);
-  margin: 0 0 16px;
-  line-height: 1.4;
+  margin: 0 0 24px;
+  max-width: 280px;
 }
 
-.futureIdeasGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  margin-bottom: 16px;
-}
-
-.futureIdea {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 14px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary, #94a3b8);
-}
-
-.futureIdea svg {
-  width: 18px;
-  height: 18px;
-  color: var(--color-accent-teal, #10b981);
-  flex-shrink: 0;
-}
-
-/* Feedback link - LIME for CTA links */
-.feedbackLink {
+.primaryBtn {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 0.8125rem;
-  color: var(--color-accent-lime, #d4ff00);
-  text-decoration: none;
-  font-weight: 600;
+  justify-content: center;
+  padding: 14px 28px;
+  background: var(--color-accent-lime, #d4ff00);
+  color: var(--color-bg-base, #0d1b2a);
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 100px;
+  cursor: pointer;
   transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  /* 44px min touch target */
+  min-height: 48px;
 }
 
-.feedbackLink:hover {
-  color: var(--color-accent-lime-dark, #bfe600);
-  text-decoration: underline;
+.primaryBtn:hover {
+  background: var(--color-accent-lime-dark, #bfe600);
+  box-shadow: 0 8px 30px rgba(212, 255, 0, 0.3);
+  transform: translateY(-2px);
 }
 
 /* ==========================================================================
-   NO VEHICLES CTA
+   NO VEHICLES STATE - Matches original layout
    ========================================================================== */
 
 .noVehicles {
@@ -755,6 +258,8 @@
   transition: all 0.2s ease;
   text-transform: uppercase;
   letter-spacing: 0.02em;
+  /* 44px min touch target */
+  min-height: 44px;
 }
 
 .addVehicleBtn:hover {
@@ -767,80 +272,6 @@
   width: 18px;
   height: 18px;
   color: currentColor;
-}
-
-/* ==========================================================================
-   EMPTY & LOADING STATES
-   ========================================================================== */
-
-.emptyState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  min-height: calc(100vh - 200px);
-  padding: 40px 24px;
-}
-
-/* Empty state icon - TEAL for data-related context */
-.emptyState svg {
-  color: var(--color-accent-teal, #10b981);
-  margin-bottom: 24px;
-  opacity: 0.8;
-}
-
-.emptyState h2 {
-  font-family: var(--font-display, 'Oswald', sans-serif);
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--color-text-primary, #ffffff);
-  margin: 0 0 8px;
-}
-
-.emptyState p {
-  font-size: 0.9375rem;
-  color: var(--color-text-secondary, #94a3b8);
-  margin: 0 0 24px;
-  max-width: 280px;
-}
-
-/* Primary CTA button - LIME for user actions */
-.primaryBtn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 14px 28px;
-  background: var(--color-accent-lime, #d4ff00);
-  color: var(--color-bg-base, #0d1b2a);
-  font-size: 1rem;
-  font-weight: 700;
-  border: none;
-  border-radius: 100px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-}
-
-.primaryBtn:hover {
-  background: var(--color-accent-lime-dark, #bfe600);
-  box-shadow: 0 8px 30px rgba(212, 255, 0, 0.3);
-  transform: translateY(-2px);
-}
-
-.loadingState {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: calc(100vh - 200px);
-  gap: 16px;
-}
-
-.loadingState p {
-  font-size: 0.9375rem;
-  color: var(--color-text-secondary, #94a3b8);
 }
 
 .spinner {
@@ -857,119 +288,7 @@
 }
 
 /* ==========================================================================
-   RESPONSIVE
-   ========================================================================== */
-
-@media (min-width: 768px) {
-  /* Container styles handled by base + mobile media queries above */
-  
-  .futureIdeasGrid {
-    grid-template-columns: repeat(4, 1fr);
-  }
-  
-  .futureIdea {
-    flex-direction: column;
-    text-align: center;
-    padding: 14px;
-  }
-  
-  .futureIdeaIcon {
-    font-size: 1.25rem;
-  }
-}
-
-@media (min-width: 401px) {
-  .futureIdeasGrid {
-    grid-template-columns: 1fr;
-  }
-  
-  .buildPrompt {
-    flex-direction: column;
-    text-align: center;
-  }
-  
-  .buildPromptBtn {
-    width: 100%;
-    justify-content: center;
-  }
-}
-
-/* ==========================================================================
-   TRACK SESSIONS TILE - Consolidated track logging entry point
-   Uses LIME for CTA action
-   ========================================================================== */
-
-.trackSessionsTile {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
-  text-decoration: none;
-  transition: all 0.2s ease;
-  margin-top: 12px;
-}
-
-.trackSessionsTile:hover {
-  border-color: rgba(212, 255, 0, 0.3);
-  background: rgba(212, 255, 0, 0.04);
-}
-
-.trackSessionsHeader {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.trackSessionsHeader svg {
-  width: 20px;
-  height: 20px;
-  color: var(--color-accent-teal, #10b981);
-}
-
-.trackSessionsTitle {
-  font-family: var(--font-display, 'Oswald', sans-serif);
-  font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-text-primary, #ffffff);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.trackSessionsDesc {
-  font-size: 0.8125rem;
-  color: var(--color-text-secondary, #94a3b8);
-  margin: 0;
-  line-height: 1.4;
-}
-
-.trackSessionsCta {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 8px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.trackSessionsCta span {
-  font-size: 0.875rem;
-  font-weight: 700;
-  color: var(--color-accent-lime, #d4ff00);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.trackSessionsCta svg {
-  width: 18px;
-  height: 18px;
-  color: var(--color-accent-lime, #d4ff00);
-}
-
-/* ==========================================================================
-   LOG DATA SECTION - Shared styles for dyno & track time logging
+   LOG DATA SECTION - Dyno logging
    ========================================================================== */
 
 .logDataSection {
@@ -1055,7 +374,6 @@
   color: var(--color-text-tertiary, #64748b);
 }
 
-/* Log Data CTA Button - LIME for user action */
 .logDataCta {
   display: flex;
   align-items: center;
@@ -1073,6 +391,7 @@
   letter-spacing: 0.02em;
   cursor: pointer;
   transition: all 0.2s ease;
+  /* 44px min touch target */
   min-height: 48px;
 }
 
@@ -1208,6 +527,9 @@
   cursor: pointer;
   opacity: 0;
   transition: all 0.2s ease;
+  /* 44px min touch target - expand hit area */
+  min-width: 44px;
+  min-height: 44px;
 }
 
 .dynoResultItem:hover .dynoResultEditBtn {
@@ -1227,118 +549,29 @@
 }
 
 /* ==========================================================================
-   TRACK TIMES LIST
+   RESPONSIVE
    ========================================================================== */
 
-.trackTimesList {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 16px;
+@media (min-width: 401px) {
+  .buildPrompt {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .buildPromptBtn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
-.trackTimeItem {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
-  transition: all 0.2s ease;
-}
-
-.trackTimeItem:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.1);
-}
-
-.trackTimeMain {
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-  flex: 1;
-  min-width: 0;
-}
-
-.trackTimeLap {
-  font-size: 1.25rem;
-  font-weight: 800;
-  font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  color: var(--color-accent-teal, #10b981);
-}
-
-.trackTimeTrack {
-  font-size: 0.875rem;
-  font-weight: 500;
-  color: var(--color-text-primary, #ffffff);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.trackTimeConfig {
-  font-size: 0.75rem;
-  color: var(--color-text-tertiary, #64748b);
-}
-
-.trackTimeMeta {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-left: auto;
-  text-align: right;
-}
-
-.trackTimeDate {
-  font-size: 0.75rem;
-  color: var(--color-text-secondary, #94a3b8);
-}
-
-.trackTimeConditions {
-  font-size: 0.6875rem;
-  color: var(--color-text-tertiary, #64748b);
-  text-transform: capitalize;
-}
-
-.trackTimeDiff {
-  font-size: 0.75rem;
-  font-weight: 600;
-  font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  padding: 4px 8px;
-  border-radius: 6px;
-  white-space: nowrap;
-}
-
-.trackTimeDiff.positive {
-  background: rgba(16, 185, 129, 0.12);
-  color: var(--color-accent-teal, #10b981);
-}
-
-.trackTimeDiff.negative {
-  background: rgba(245, 158, 11, 0.12);
-  color: var(--color-warning, #f59e0b);
-}
-
-.trackTimesMore {
-  text-align: center;
-  font-size: 0.75rem;
-  color: var(--color-text-tertiary, #64748b);
-  padding: 8px;
-}
-
-/* Mobile adjustments for results lists */
 @media (min-width: 481px) {
-  .dynoResultMain,
-  .trackTimeMain {
+  .dynoResultMain {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
   }
   
-  .dynoResultMeta,
-  .trackTimeMeta {
+  .dynoResultMeta {
     flex-direction: row;
     gap: 8px;
     text-align: left;
@@ -1346,8 +579,7 @@
     margin-top: 4px;
   }
   
-  .dynoResultDiff,
-  .trackTimeDiff {
+  .dynoResultDiff {
     width: 100%;
     text-align: center;
     margin-top: 8px;

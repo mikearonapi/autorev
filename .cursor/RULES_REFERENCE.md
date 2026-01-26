@@ -1,75 +1,53 @@
-# Cursor Rules Quick Reference
+# AutoRev Cursor Rules
 
-## PRIMARY SOURCE OF TRUTH
+## Quick Start
 
-**`docs/SOURCE_OF_TRUTH.md`** — The CANONICAL reference for the entire AutoRev codebase.
+| Starting... | Do This |
+|-------------|---------|
+| New feature | `@feature-workflow [description]` |
+| Debugging | `@debug-workflow [problem]` |
+| Before shipping | `@review-workflow` |
+| Unsure | `@tech-lead [task]` |
 
-Contains:
-- 10 Cardinal Rules (violating them WILL cause bugs)
-- Anti-Patterns & Common Mistakes (with fixes)
-- Service file locations and responsibilities
-- Component registry by feature
-- "I need to..." quick reference table
-- Database table source of truth matrix
+## The Three Mandatory Steps (Every Task)
 
-**RULE: If it's not in SOURCE_OF_TRUTH.md, check before creating.**
+1. **Read SOURCE_OF_TRUTH.md** — Cardinal rules, anti-patterns, existing code
+2. **Search before creating** — Check `components/`, `lib/`, `hooks/`
+3. **Verify with evidence** — Prove it works
 
-## Which Rule Applies When?
+## Specialists
 
-| Task | Rule File | Source Docs to Read |
-|------|-----------|---------------------|
-| **Any task** | 00-core-workflow | `docs/SOURCE_OF_TRUTH.md` first |
-| **Database/API work** | 01-database | `docs/SOURCE_OF_TRUTH.md`, `docs/DATABASE.md` |
-| **UI/Components/Styling** | 02-ui-design | `docs/SOURCE_OF_TRUTH.md`, `docs/BRAND_GUIDELINES.md` |
-| **Feature logic/Tiers** | 03-domain-logic | `docs/SOURCE_OF_TRUTH.md`, `docs/TIER_ACCESS_MATRIX.md` |
-| **AI/AL features** | 03-domain-logic | `docs/SOURCE_OF_TRUTH.md`, `docs/AL.md` |
+| Invoke | For |
+|--------|-----|
+| `@frontend-agent` | React components, hooks, state |
+| `@database-agent` | Queries, car_id resolution |
+| `@ui-quality-agent` | Colors, touch targets, accessibility |
+| `@security-agent` | Auth, webhooks, validation |
+| `@performance-agent` | Core Web Vitals, images |
+| `@code-review-agent` | Quality gate |
+| `@testing-agent` | Writing tests |
 
-## The Workflow (Every Time)
+## Cardinal Rules
 
-1. **UNDERSTAND** → What's the goal?
-2. **RESEARCH** → Search code + `docs/SOURCE_OF_TRUTH.md`
-3. **PLAN** → Propose using existing patterns
-4. **BUILD** → Minimal changes only
+1. **car_id** — Resolve slug first, query by car_id
+2. **Design tokens** — `var(--color-*)`, never hardcode
+3. **Touch targets** — 44px minimum (`h-11`)
+4. **Skeletons** — Not spinners for data loading
+5. **Domain naming** — Not `handleClick`, `formatData`
 
-## Golden Rule
+## Colors
 
-**Search before creating. Reuse before building. SOURCE_OF_TRUTH.md before guessing.**
+| Color | Variable | Use |
+|-------|----------|-----|
+| Lime | `--color-accent-lime` | CTAs |
+| Teal | `--color-accent-teal` | Gains |
+| Blue | `--color-accent-blue` | Stock |
 
-## Key Docs Quick Reference
-
-| Doc | Contains |
-|-----|----------|
-| `docs/SOURCE_OF_TRUTH.md` | **CANONICAL** - Everything, check this first |
-| `docs/DATABASE.md` | Tables, schemas, relationships |
-| `docs/BRAND_GUIDELINES.md` | Brand colors (lime/teal/blue/amber), typography |
-| `docs/CSS_ARCHITECTURE.md` | Design tokens, component CSS classes |
-| `docs/AL.md` | AI assistant tools, prompts, constraints |
-| `docs/TIER_ACCESS_MATRIX.md` | Feature gating (free/collector/tuner/admin) |
-| `docs/API.md` | API routes, response shapes |
-
-## Color Quick Reference
-
-| Color | Hex | Use For |
-|-------|-----|---------|
-| Lime | `#d4ff00` | CTAs, buttons, user actions |
-| Teal | `#10b981` | Gains, improvements, positive data |
-| Blue | `#3b82f6` | Stock values, baseline data |
-| Amber | `#f59e0b` | Warnings only (sparingly) |
-
-## Key Service Files
+## Key Files
 
 | Need | Check |
 |------|-------|
 | Car resolution | `lib/carResolver.js` |
 | Car data | `lib/carsClient.js` |
-| User data | `lib/userDataService.js` |
-| AL/AI | `lib/alTools.js` |
+| Performance | `lib/performanceCalculator/` |
 | Errors | `lib/apiErrors.js` |
-
-## Verification Protocol
-
-Before marking ANY task complete:
-1. STATE success criteria
-2. RUN verification
-3. SHOW evidence
-4. THEN mark complete

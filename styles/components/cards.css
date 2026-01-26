@@ -92,7 +92,7 @@
 .card-title {
   font-size: var(--text-label-lg, 12px);
   font-weight: var(--text-label-weight, 600);
-  color: var(--color-accent-gold, #d4a84b);
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.6));
   text-transform: uppercase;
   letter-spacing: var(--text-label-tracking, 0.08em);
   margin: 0;

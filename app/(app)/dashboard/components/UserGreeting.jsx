@@ -61,6 +61,74 @@ export const CATEGORIES = {
 // - Aspirational but not cringe
 // =============================================================================
 
+/**
+ * Get CSS variable name for callsign color based on tier and category
+ * Colors are defined in styles/tokens/colors.css
+ * 
+ * Tier-based color progression:
+ * - Tier 0: Muted (secondary/tertiary text)
+ * - Tier 1: Entry (teal for garage, blue for community, purple for al)
+ * - Tier 2: Active (amber, teal, purple)
+ * - Tier 3: Veteran (lime, purple, red)
+ * - Tier 4: Legendary (lime)
+ */
+export function getCallsignColorVar(tier, category) {
+  // Tier 0 - starter/muted
+  if (tier === 0) {
+    return '--color-text-secondary';
+  }
+  
+  // Tier 4 - legendary (always lime)
+  if (tier === 4) {
+    return '--color-accent-lime';
+  }
+  
+  // Category-based for tiers 1-3
+  const categoryColors = {
+    garage: {
+      1: '--color-accent-teal',
+      2: '--color-accent-amber',
+      3: '--color-accent-lime',
+    },
+    community: {
+      1: '--color-accent-blue',
+      2: '--color-accent-blue',
+      3: '--color-accent-purple',
+    },
+    al: {
+      1: '--color-accent-purple',
+      2: '--color-accent-purple',
+      3: '--color-accent-red',
+    },
+    legendary: {
+      1: '--color-accent-lime',
+      2: '--color-accent-lime',
+      3: '--color-accent-lime',
+    },
+  };
+  
+  return categoryColors[category]?.[tier] || '--color-accent-teal';
+}
+
+// Get computed color value from CSS variable (for use in inline styles)
+export function getCallsignColor(tier, category) {
+  const colorVar = getCallsignColorVar(tier, category);
+  if (typeof window === 'undefined') {
+    // SSR fallback
+    const fallbacks = {
+      '--color-text-secondary': '#94a3b8',
+      '--color-accent-teal': '#10b981',
+      '--color-accent-blue': '#3b82f6',
+      '--color-accent-purple': '#a855f7',
+      '--color-accent-amber': '#f59e0b',
+      '--color-accent-lime': '#d4ff00',
+      '--color-accent-red': '#ef4444',
+    };
+    return fallbacks[colorVar] || '#94a3b8';
+  }
+  return getComputedStyle(document.documentElement).getPropertyValue(colorVar).trim() || '#94a3b8';
+}
+
 export const CALLSIGNS = {
   // =========================================================================
   // STARTER CALLSIGNS (Tier 0) - Unlocked for everyone!
@@ -72,7 +140,6 @@ export const CALLSIGNS = {
     description: 'Fresh off the lot',
     category: 'garage',
     tier: 0,
-    color: '#94a3b8',
     requirement: 'Default',
     unlockCheck: () => true,
   },
@@ -81,7 +148,6 @@ export const CALLSIGNS = {
     description: 'Just here for the vibes',
     category: 'community',
     tier: 0,
-    color: '#94a3b8',
     requirement: 'Default',
     unlockCheck: () => true,
   },
@@ -90,7 +156,6 @@ export const CALLSIGNS = {
     description: 'Asking all the questions',
     category: 'al',
     tier: 0,
-    color: '#94a3b8',
     requirement: 'Default',
     unlockCheck: () => true,
   },
@@ -99,7 +164,6 @@ export const CALLSIGNS = {
     description: '"I\'ll mod it eventually..."',
     category: 'garage',
     tier: 0,
-    color: '#64748b',
     requirement: 'Default',
     unlockCheck: () => true,
   },
@@ -114,7 +178,6 @@ export const CALLSIGNS = {
     description: 'Has a ride in the garage',
     category: 'garage',
     tier: 1,
-    color: '#10b981',
     requirement: 'Add 1 vehicle',
     unlockCheck: (stats) => stats.vehicles >= 1,
   },
@@ -123,7 +186,6 @@ export const CALLSIGNS = {
     description: '"Just looking" (for now)',
     category: 'garage',
     tier: 1,
-    color: '#3b82f6',
     requirement: 'Browse 5 cars',
     unlockCheck: (stats) => stats.carsViewed >= 5,
   },
@@ -132,7 +194,6 @@ export const CALLSIGNS = {
     description: 'Taking the scenic route',
     category: 'garage',
     tier: 1,
-    color: '#3b82f6',
     requirement: 'Add 1 vehicle',
     unlockCheck: (stats) => stats.vehicles >= 1,
   },
@@ -141,7 +202,6 @@ export const CALLSIGNS = {
     description: 'Easy gains only',
     category: 'garage',
     tier: 1,
-    color: '#10b981',
     requirement: 'Install 1 mod',
     unlockCheck: (stats) => stats.modsInstalled >= 1,
   },
@@ -152,7 +212,6 @@ export const CALLSIGNS = {
     description: 'Gets their hands dirty',
     category: 'garage',
     tier: 2,
-    color: '#f59e0b',
     requirement: 'Install 3 mods',
     unlockCheck: (stats) => stats.modsInstalled >= 3,
   },
@@ -161,7 +220,6 @@ export const CALLSIGNS = {
     description: 'Born in the shop',
     category: 'garage',
     tier: 2,
-    color: '#f59e0b',
     requirement: 'Install 5 mods',
     unlockCheck: (stats) => stats.modsInstalled >= 5,
   },
@@ -170,7 +228,6 @@ export const CALLSIGNS = {
     description: '"I can fix her"',
     category: 'garage',
     tier: 2,
-    color: '#ef4444',
     requirement: '2 vehicles',
     unlockCheck: (stats) => stats.vehicles >= 2,
   },
@@ -179,7 +236,6 @@ export const CALLSIGNS = {
     description: 'Junkyard treasure hunter',
     category: 'garage',
     tier: 2,
-    color: '#a855f7',
     requirement: 'Install 8 mods',
     unlockCheck: (stats) => stats.modsInstalled >= 8,
   },
@@ -188,7 +244,6 @@ export const CALLSIGNS = {
     description: 'Saturdays are for wrenching',
     category: 'garage',
     tier: 2,
-    color: '#10b981',
     requirement: 'Install 5 mods',
     unlockCheck: (stats) => stats.modsInstalled >= 5,
   },
@@ -199,7 +254,6 @@ export const CALLSIGNS = {
     description: 'Multiple projects completed',
     category: 'garage',
     tier: 3,
-    color: '#a855f7',
     requirement: 'Complete 3 builds',
     unlockCheck: (stats) => stats.builds >= 3,
   },
@@ -208,7 +262,6 @@ export const CALLSIGNS = {
     description: '"I might need this someday"',
     category: 'garage',
     tier: 3,
-    color: '#10b981',
     requirement: 'Install 15 mods',
     unlockCheck: (stats) => stats.modsInstalled >= 15,
   },
@@ -217,7 +270,6 @@ export const CALLSIGNS = {
     description: 'The shop never sleeps',
     category: 'garage',
     tier: 3,
-    color: '#d4ff00',
     requirement: '3 vehicles + 5 builds',
     unlockCheck: (stats) => stats.vehicles >= 3 && stats.builds >= 5,
   },
@@ -226,7 +278,6 @@ export const CALLSIGNS = {
     description: 'RIP savings account',
     category: 'garage',
     tier: 3,
-    color: '#ef4444',
     requirement: 'Install 20 mods',
     unlockCheck: (stats) => stats.modsInstalled >= 20,
   },
@@ -235,7 +286,6 @@ export const CALLSIGNS = {
     description: 'Running out of garage space',
     category: 'garage',
     tier: 3,
-    color: '#d4ff00',
     requirement: '5+ vehicles',
     unlockCheck: (stats) => stats.vehicles >= 5,
   },
@@ -250,7 +300,6 @@ export const CALLSIGNS = {
     description: 'Just joined the crew',
     category: 'community',
     tier: 1,
-    color: '#3b82f6',
     requirement: 'Join the community',
     unlockCheck: (stats) => stats.communityJoined,
   },
@@ -259,7 +308,6 @@ export const CALLSIGNS = {
     description: 'Positive vibes only',
     category: 'community',
     tier: 1,
-    color: '#10b981',
     requirement: 'Post 1 comment',
     unlockCheck: (stats) => stats.comments >= 1,
   },
@@ -268,7 +316,6 @@ export const CALLSIGNS = {
     description: 'Breaking the ice',
     category: 'community',
     tier: 1,
-    color: '#3b82f6',
     requirement: 'Create first post',
     unlockCheck: (stats) => stats.posts >= 1,
   },
@@ -277,7 +324,6 @@ export const CALLSIGNS = {
     description: 'No dumb questions here',
     category: 'community',
     tier: 1,
-    color: '#a855f7',
     requirement: 'Post 2 comments',
     unlockCheck: (stats) => stats.comments >= 2,
   },
@@ -288,7 +334,6 @@ export const CALLSIGNS = {
     description: 'A familiar face',
     category: 'community',
     tier: 2,
-    color: '#10b981',
     requirement: '5 posts or 15 comments',
     unlockCheck: (stats) => stats.posts >= 5 || stats.comments >= 15,
   },
@@ -297,7 +342,6 @@ export const CALLSIGNS = {
     description: 'Always there to assist',
     category: 'community',
     tier: 2,
-    color: '#3b82f6',
     requirement: '20 helpful comments',
     unlockCheck: (stats) => stats.comments >= 20,
   },
@@ -306,7 +350,6 @@ export const CALLSIGNS = {
     description: 'Your build looks great, bro',
     category: 'community',
     tier: 2,
-    color: '#f59e0b',
     requirement: '10 posts',
     unlockCheck: (stats) => stats.posts >= 10,
   },
@@ -315,7 +358,6 @@ export const CALLSIGNS = {
     description: 'Reviving dead topics since 2024',
     category: 'community',
     tier: 2,
-    color: '#a855f7',
     requirement: '25 comments',
     unlockCheck: (stats) => stats.comments >= 25,
   },
@@ -324,7 +366,6 @@ export const CALLSIGNS = {
     description: 'Biggest supporter in the crew',
     category: 'community',
     tier: 2,
-    color: '#10b981',
     requirement: 'Give 20 likes',
     unlockCheck: (stats) => stats.likesGiven >= 20,
   },
@@ -335,7 +376,6 @@ export const CALLSIGNS = {
     description: 'Keeps the team running',
     category: 'community',
     tier: 3,
-    color: '#f59e0b',
     requirement: '30 comments helping others',
     unlockCheck: (stats) => stats.comments >= 30,
   },
@@ -344,7 +384,6 @@ export const CALLSIGNS = {
     description: 'A cornerstone of the crew',
     category: 'community',
     tier: 3,
-    color: '#a855f7',
     requirement: '15 posts + 40 comments',
     unlockCheck: (stats) => stats.posts >= 15 && stats.comments >= 40,
   },
@@ -353,7 +392,6 @@ export const CALLSIGNS = {
     description: 'Keeping it civil since day one',
     category: 'community',
     tier: 3,
-    color: '#ef4444',
     requirement: '50 helpful comments',
     unlockCheck: (stats) => stats.comments >= 50,
   },
@@ -362,7 +400,6 @@ export const CALLSIGNS = {
     description: 'Day one for the fam',
     category: 'community',
     tier: 3,
-    color: '#d4ff00',
     requirement: '20 posts + 50 comments',
     unlockCheck: (stats) => stats.posts >= 20 && stats.comments >= 50,
   },
@@ -371,7 +408,6 @@ export const CALLSIGNS = {
     description: 'Bringing the crew together',
     category: 'community',
     tier: 3,
-    color: '#d4ff00',
     requirement: 'Organize events',
     unlockCheck: (stats) => stats.eventsOrganized >= 1,
   },
@@ -386,7 +422,6 @@ export const CALLSIGNS = {
     description: 'Asking the right questions',
     category: 'al',
     tier: 1,
-    color: '#3b82f6',
     requirement: '1 AL conversation',
     unlockCheck: (stats) => stats.alConversations >= 1,
   },
@@ -395,7 +430,6 @@ export const CALLSIGNS = {
     description: 'Dipping toes in the numbers',
     category: 'al',
     tier: 1,
-    color: '#10b981',
     requirement: '3 AL conversations',
     unlockCheck: (stats) => stats.alConversations >= 3,
   },
@@ -404,7 +438,6 @@ export const CALLSIGNS = {
     description: 'Learning from the AI',
     category: 'al',
     tier: 1,
-    color: '#a855f7',
     requirement: '5 AL conversations',
     unlockCheck: (stats) => stats.alConversations >= 5,
   },
@@ -413,7 +446,6 @@ export const CALLSIGNS = {
     description: 'Always comparing numbers',
     category: 'al',
     tier: 1,
-    color: '#3b82f6',
     requirement: 'View 10 car specs',
     unlockCheck: (stats) => stats.carsViewed >= 10,
   },
@@ -424,7 +456,6 @@ export const CALLSIGNS = {
     description: 'Gets the best answers from AL',
     category: 'al',
     tier: 2,
-    color: '#a855f7',
     requirement: '15 AL conversations',
     unlockCheck: (stats) => stats.alConversations >= 15,
   },
@@ -433,7 +464,6 @@ export const CALLSIGNS = {
     description: 'Lives for the spreadsheets',
     category: 'al',
     tier: 2,
-    color: '#10b981',
     requirement: 'Log 1 dyno run',
     unlockCheck: (stats) => stats.dynoRuns >= 1,
   },
@@ -442,7 +472,6 @@ export const CALLSIGNS = {
     description: 'Chasing lap times',
     category: 'al',
     tier: 2,
-    color: '#ef4444',
     requirement: 'Log 3 track times',
     unlockCheck: (stats) => stats.trackTimes >= 3,
   },
@@ -451,7 +480,6 @@ export const CALLSIGNS = {
     description: 'What does it make?',
     category: 'al',
     tier: 2,
-    color: '#f59e0b',
     requirement: 'Log 2 dyno runs',
     unlockCheck: (stats) => stats.dynoRuns >= 2,
   },
@@ -460,7 +488,6 @@ export const CALLSIGNS = {
     description: 'Obsessed with the math',
     category: 'al',
     tier: 2,
-    color: '#3b82f6',
     requirement: '25 AL conversations',
     unlockCheck: (stats) => stats.alConversations >= 25,
   },
@@ -471,7 +498,6 @@ export const CALLSIGNS = {
     description: 'Wisdom of the masters',
     category: 'al',
     tier: 3,
-    color: '#ef4444',
     requirement: '40 AL conversations',
     unlockCheck: (stats) => stats.alConversations >= 40,
   },
@@ -480,7 +506,6 @@ export const CALLSIGNS = {
     description: 'Addicted to the pulls',
     category: 'al',
     tier: 3,
-    color: '#ef4444',
     requirement: '5 dyno runs',
     unlockCheck: (stats) => stats.dynoRuns >= 5,
   },
@@ -489,7 +514,6 @@ export const CALLSIGNS = {
     description: 'Maximum power achieved',
     category: 'al',
     tier: 3,
-    color: '#d4ff00',
     requirement: '1000+ combined HP',
     unlockCheck: (stats) => stats.totalHp >= 1000,
   },
@@ -498,7 +522,6 @@ export const CALLSIGNS = {
     description: 'Every tenth counts',
     category: 'al',
     tier: 3,
-    color: '#ef4444',
     requirement: '10 track times logged',
     unlockCheck: (stats) => stats.trackTimes >= 10,
   },
@@ -507,7 +530,6 @@ export const CALLSIGNS = {
     description: 'Never delete anything',
     category: 'al',
     tier: 3,
-    color: '#a855f7',
     requirement: '50 AL conversations',
     unlockCheck: (stats) => stats.alConversations >= 50,
   },
@@ -516,7 +538,6 @@ export const CALLSIGNS = {
     description: 'Masterless AI warrior',
     category: 'al',
     tier: 3,
-    color: '#d4ff00',
     requirement: 'AL power user',
     unlockCheck: (stats) => stats.alConversations >= 30,
   },
@@ -530,7 +551,6 @@ export const CALLSIGNS = {
     description: 'Dominates all categories',
     category: 'legendary',
     tier: 4,
-    color: '#d4ff00',
     requirement: 'Master all categories',
     unlockCheck: (stats) => 
       stats.vehicles >= 5 && 
@@ -543,7 +563,6 @@ export const CALLSIGNS = {
     description: 'No half measures',
     category: 'legendary',
     tier: 4,
-    color: '#d4ff00',
     requirement: 'Top tier in 2+ categories',
     unlockCheck: (stats) => {
       let topTiers = 0;
@@ -558,7 +577,6 @@ export const CALLSIGNS = {
     description: 'Types faster than they drive',
     category: 'legendary',
     tier: 4,
-    color: '#a855f7',
     requirement: 'Community + AL master',
     unlockCheck: (stats) => stats.comments >= 50 && stats.alConversations >= 40,
   },
@@ -567,7 +585,6 @@ export const CALLSIGNS = {
     description: 'Sees family once a year',
     category: 'legendary',
     tier: 4,
-    color: '#ef4444',
     requirement: 'Garage + Data master',
     unlockCheck: (stats) => stats.modsInstalled >= 20 && stats.dynoRuns >= 5,
   },
@@ -576,7 +593,6 @@ export const CALLSIGNS = {
     description: 'AutoRev hall of famer',
     category: 'legendary',
     tier: 4,
-    color: '#d4ff00',
     requirement: 'Everything maxed',
     unlockCheck: (stats) => 
       stats.vehicles >= 5 &&
@@ -667,7 +683,7 @@ export default function UserGreeting({
       <button
         className={styles.titleButton}
         onClick={() => setShowPicker(!showPicker)}
-        style={{ '--title-color': currentCallsign.color }}
+        style={{ '--title-color': getCallsignColor(currentCallsign.tier, currentCallsign.category) }}
         aria-expanded={showPicker}
         aria-haspopup="listbox"
       >
@@ -720,7 +736,7 @@ export default function UserGreeting({
                       key={key}
                       className={`${styles.callsignOption} ${isSelected ? styles.callsignOptionSelected : ''}`}
                       onClick={() => handleCallsignSelect(key)}
-                      style={{ '--callsign-color': callsign.color }}
+                      style={{ '--callsign-color': getCallsignColor(callsign.tier, callsign.category) }}
                       role="option"
                       aria-selected={isSelected}
                     >

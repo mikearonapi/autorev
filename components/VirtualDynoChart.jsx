@@ -7,19 +7,20 @@
  * Uses physics model to generate RPM-based power curves.
  * 
  * Features:
- * - Shows BOTH HP and Torque curves
+ * - Shows BOTH stock AND modified HP/TQ curves when mods present
  * - Models turbo spool characteristics (big turbo = delayed torque peak)
- * - Simplified display: shows modified OR stock, not both
+ * - Interactive hover/touch to see values at specific RPM points
  * 
  * Note: All values are CRANK HP/TQ for consistency (database stores crank values)
  */
 
-import React, { useMemo } from 'react';
-import AskALButton from './AskALButton';
+import React, { useMemo, useState, useCallback, useRef } from 'react';
 import InfoTooltip from './ui/InfoTooltip';
 import styles from './VirtualDynoChart.module.css';
 
 // Chart colors - matching design system tokens
+// Note: These need to be actual hex values for canvas/SVG rendering
+// Keep in sync with CSS variables: --color-accent-teal, --color-accent-blue
 const CHART_COLORS = {
   hp: '#10b981',      // var(--color-accent-teal) - Horsepower curve
   torque: '#3b82f6',  // var(--color-accent-blue) - Torque curve
@@ -125,6 +126,10 @@ export default function VirtualDynoChart({
   car = null, // Full car object for engine detection
   selectedUpgrades = [], // Selected upgrades for turbo detection
 }) {
+  // Hover state for interactive tooltip
+  const [hoverData, setHoverData] = useState(null);
+  const chartAreaRef = useRef(null);
+  
   // Guard against invalid values
   const safeStockHp = (typeof stockHp === 'number' && !isNaN(stockHp) && stockHp > 0) ? stockHp : 300;
   const safeEstimatedHp = (typeof estimatedHp === 'number' && !isNaN(estimatedHp) && estimatedHp > 0) ? estimatedHp : safeStockHp;
@@ -134,12 +139,19 @@ export default function VirtualDynoChart({
   // Determine if there are modifications
   const hasModifications = safeEstimatedHp > safeStockHp || selectedUpgrades.length > 0;
   
-  // Detect forced induction profile for curve shaping
-  const fiProfile = useMemo(() => {
+  // Detect forced induction profiles for curve shaping
+  // Stock FI profile (without upgrades)
+  const stockFiProfile = useMemo(() => {
+    return detectForcedInductionProfile(car, []);
+  }, [car]);
+  
+  // Modified FI profile (with upgrades)
+  const modFiProfile = useMemo(() => {
     return detectForcedInductionProfile(car, selectedUpgrades);
   }, [car, selectedUpgrades]);
   
-  const fiCharacteristics = FORCED_INDUCTION_PROFILES[fiProfile] || FORCED_INDUCTION_PROFILES['na'];
+  const stockFiCharacteristics = FORCED_INDUCTION_PROFILES[stockFiProfile] || FORCED_INDUCTION_PROFILES['na'];
+  const modFiCharacteristics = FORCED_INDUCTION_PROFILES[modFiProfile] || FORCED_INDUCTION_PROFILES['na'];
   
   /**
    * Generate dyno curve data points with forced induction modeling
@@ -233,39 +245,85 @@ export default function VirtualDynoChart({
     };
   }, [peakRpm]);
 
-  // Generate curves - only the one we'll display
-  const displayCurve = useMemo(() => {
-    if (hasModifications) {
-      return generateCurve(safeEstimatedHp, safeEstimatedTq, fiCharacteristics);
-    } else {
-      // Stock curve uses NA characteristics (or stock turbo if applicable)
-      const stockFiProfile = detectForcedInductionProfile(car, []);
-      const stockFiChar = FORCED_INDUCTION_PROFILES[stockFiProfile] || FORCED_INDUCTION_PROFILES['na'];
-      return generateCurve(safeStockHp, safeStockTq, stockFiChar);
-    }
-  }, [hasModifications, safeEstimatedHp, safeEstimatedTq, safeStockHp, safeStockTq, fiCharacteristics, generateCurve, car]);
+  // Generate BOTH stock AND modified curves for comparison display
+  const stockCurve = useMemo(() => {
+    return generateCurve(safeStockHp, safeStockTq, stockFiCharacteristics);
+  }, [safeStockHp, safeStockTq, stockFiCharacteristics, generateCurve]);
   
-  // Find peak values from the curve
-  const peakHpPoint = useMemo(() => {
-    return displayCurve.reduce((max, p) => p.hp > max.hp ? p : max, displayCurve[0]);
-  }, [displayCurve]);
+  const modCurve = useMemo(() => {
+    return generateCurve(safeEstimatedHp, safeEstimatedTq, modFiCharacteristics);
+  }, [safeEstimatedHp, safeEstimatedTq, modFiCharacteristics, generateCurve]);
   
-  const peakTqPoint = useMemo(() => {
-    return displayCurve.reduce((max, p) => p.tq > max.tq ? p : max, displayCurve[0]);
-  }, [displayCurve]);
+  // Find peak values from the curves
+  const peakStockHpPoint = useMemo(() => {
+    return stockCurve.reduce((max, p) => p.hp > max.hp ? p : max, stockCurve[0]);
+  }, [stockCurve]);
   
-  // Max values for scaling (use higher of HP or TQ for Y axis)
-  const displayHp = hasModifications ? safeEstimatedHp : safeStockHp;
-  const displayTq = hasModifications ? safeEstimatedTq : safeStockTq;
-  const maxValue = Math.max(displayHp, displayTq) * 1.15;
+  const peakStockTqPoint = useMemo(() => {
+    return stockCurve.reduce((max, p) => p.tq > max.tq ? p : max, stockCurve[0]);
+  }, [stockCurve]);
+  
+  const peakModHpPoint = useMemo(() => {
+    return modCurve.reduce((max, p) => p.hp > max.hp ? p : max, modCurve[0]);
+  }, [modCurve]);
+  
+  const peakModTqPoint = useMemo(() => {
+    return modCurve.reduce((max, p) => p.tq > max.tq ? p : max, modCurve[0]);
+  }, [modCurve]);
+  
+  // Max values for scaling (use highest value across all curves)
+  const maxValue = Math.max(
+    safeEstimatedHp, 
+    safeEstimatedTq, 
+    safeStockHp, 
+    safeStockTq
+  ) * 1.15;
+  
+  // Handle hover/touch on chart to show values at specific RPM
+  const handleChartInteraction = useCallback((e) => {
+    if (!chartAreaRef.current) return;
+    
+    const rect = chartAreaRef.current.getBoundingClientRect();
+    const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    const relativeX = x / rect.width;
+    
+    // Convert to RPM (1000-9000 range)
+    const rpm = Math.round(1000 + relativeX * 8000);
+    const clampedRpm = Math.max(1000, Math.min(9000, rpm));
+    
+    // Find closest data points on both curves
+    const findClosest = (curve, targetRpm) => {
+      return curve.reduce((closest, p) => 
+        Math.abs(p.rpm - targetRpm) < Math.abs(closest.rpm - targetRpm) ? p : closest
+      , curve[0]);
+    };
+    
+    const stockPoint = findClosest(stockCurve, clampedRpm);
+    const modPoint = hasModifications ? findClosest(modCurve, clampedRpm) : null;
+    
+    setHoverData({
+      rpm: clampedRpm,
+      x: x,
+      stockHp: stockPoint.hp,
+      stockTq: stockPoint.tq,
+      modHp: modPoint?.hp,
+      modTq: modPoint?.tq,
+    });
+  }, [stockCurve, modCurve, hasModifications]);
+  
+  const handleChartLeave = useCallback(() => {
+    setHoverData(null);
+  }, []);
   
   // HP gain (only shown if modified)
   const hpGain = safeEstimatedHp - safeStockHp;
   const tqGain = safeEstimatedTq - safeStockTq;
 
   // Build contextual prompt for AL
+  const displayHp = hasModifications ? safeEstimatedHp : safeStockHp;
+  const displayTq = hasModifications ? safeEstimatedTq : safeStockTq;
   const alPrompt = carName 
-    ? `Explain my ${carName}'s dyno curve. ${hasModifications ? `I've gained ${hpGain} HP (${safeStockHp}→${safeEstimatedHp}) and ${Math.round(tqGain)} lb-ft torque. The torque curve ${fiProfile.includes('turbo-big') ? 'peaks later due to my big turbo - I lose some low-end response but gain massive top-end power' : fiProfile.includes('turbo') ? 'shows typical turbo characteristics' : fiProfile.includes('supercharged') ? 'shows great low-end response from my supercharger' : 'shows a balanced NA power delivery'}.` : `It's currently stock at ${safeStockHp} HP and ${Math.round(safeStockTq)} lb-ft.`} What does the power curve tell me about how my car delivers power? Where is the powerband and how can I optimize my driving for it?`
+    ? `Explain my ${carName}'s dyno curve. ${hasModifications ? `I've gained ${hpGain} HP (${safeStockHp}→${safeEstimatedHp}) and ${Math.round(tqGain)} lb-ft torque. The torque curve ${modFiProfile.includes('turbo-big') ? 'peaks later due to my big turbo - I lose some low-end response but gain massive top-end power' : modFiProfile.includes('turbo') ? 'shows typical turbo characteristics' : modFiProfile.includes('supercharged') ? 'shows great low-end response from my supercharger' : 'shows a balanced NA power delivery'}.` : `It's currently stock at ${safeStockHp} HP and ${Math.round(safeStockTq)} lb-ft.`} What does the power curve tell me about how my car delivers power? Where is the powerband and how can I optimize my driving for it?`
     : `Explain this dyno curve showing ${displayHp} HP and ${Math.round(displayTq)} lb-ft. What does the curve shape tell me about power delivery?`;
   
   const alDisplayMessage = hasModifications 
@@ -285,37 +343,46 @@ export default function VirtualDynoChart({
             }
           </span>
         </div>
-        <AskALButton
-          category="Virtual Dyno"
-          prompt={alPrompt}
-          displayMessage={alDisplayMessage}
-          carName={carName}
-          carSlug={carSlug}
-          variant="header"
-          metadata={{ 
-            section: 'virtual-dyno',
-            stockHp: safeStockHp,
-            estimatedHp: safeEstimatedHp,
-            hpGain: hpGain,
-            fiProfile,
-          }}
-        />
       </div>
       
-      {/* Legend - HP and TQ */}
+      {/* Legend - HP and TQ with stock/modified indicators */}
       <div className={styles.dynoLegend}>
-        <span className={styles.dynoLegendItem}>
-          <span className={styles.dynoLegendLine} style={{ background: CHART_COLORS.hp }} />
-          <InfoTooltip topicKey="hp" carName={carName} carSlug={carSlug}>
-            <span>HP: {Math.round(displayHp)}</span>
-          </InfoTooltip>
-        </span>
-        <span className={styles.dynoLegendItem}>
-          <span className={styles.dynoLegendLine} style={{ background: CHART_COLORS.torque, borderStyle: 'dashed' }} />
-          <InfoTooltip topicKey="torque" carName={carName} carSlug={carSlug}>
-            <span>TQ: {Math.round(displayTq)} lb-ft</span>
-          </InfoTooltip>
-        </span>
+        {hasModifications && (
+          <>
+            <span className={styles.dynoLegendItem}>
+              <span className={styles.dynoLegendLine} style={{ background: CHART_COLORS.hp, opacity: 0.4 }} />
+              <span style={{ opacity: 0.7 }}>Stock</span>
+            </span>
+            <span className={styles.dynoLegendItem}>
+              <span className={styles.dynoLegendLine} style={{ background: CHART_COLORS.hp }} />
+              <InfoTooltip topicKey="hp" carName={carName} carSlug={carSlug}>
+                <span>HP: {Math.round(safeEstimatedHp)}</span>
+              </InfoTooltip>
+            </span>
+            <span className={styles.dynoLegendItem}>
+              <span className={styles.dynoLegendLine} style={{ background: CHART_COLORS.torque }} />
+              <InfoTooltip topicKey="torque" carName={carName} carSlug={carSlug}>
+                <span>TQ: {Math.round(safeEstimatedTq)} lb-ft</span>
+              </InfoTooltip>
+            </span>
+          </>
+        )}
+        {!hasModifications && (
+          <>
+            <span className={styles.dynoLegendItem}>
+              <span className={styles.dynoLegendLine} style={{ background: CHART_COLORS.hp }} />
+              <InfoTooltip topicKey="hp" carName={carName} carSlug={carSlug}>
+                <span>HP: {Math.round(safeStockHp)}</span>
+              </InfoTooltip>
+            </span>
+            <span className={styles.dynoLegendItem}>
+              <span className={styles.dynoLegendLine} style={{ background: CHART_COLORS.torque }} />
+              <InfoTooltip topicKey="torque" carName={carName} carSlug={carSlug}>
+                <span>TQ: {Math.round(safeStockTq)} lb-ft</span>
+              </InfoTooltip>
+            </span>
+          </>
+        )}
       </div>
 
       {/* Chart Area */}
@@ -329,8 +396,17 @@ export default function VirtualDynoChart({
           <span>0</span>
         </div>
         
-        {/* Chart Area */}
-        <div className={styles.dynoChartArea}>
+        {/* Chart Area with hover interaction */}
+        <div 
+          className={styles.dynoChartArea}
+          ref={chartAreaRef}
+          onMouseMove={handleChartInteraction}
+          onMouseLeave={handleChartLeave}
+          onTouchMove={handleChartInteraction}
+          onTouchEnd={handleChartLeave}
+          role="img"
+          aria-label={`Virtual dyno chart showing ${hasModifications ? `modified power: ${(hasModifications ? peakModHpPoint : peakStockHpPoint)?.hp || safeEstimatedHp} HP peak and ${(hasModifications ? peakModTqPoint : peakStockTqPoint)?.tq || safeEstimatedTq} lb-ft torque` : `stock power: ${safeStockHp} HP and ${Math.round(safeStockTq)} lb-ft torque`}. RPM range from 1000 to 9000.`}
+        >
           {/* Grid lines */}
           <div className={styles.dynoGrid}>
             {[0, 1, 2, 3, 4].map(i => (
@@ -338,35 +414,82 @@ export default function VirtualDynoChart({
             ))}
           </div>
           
-          {/* Area fill under HP curve */}
           <svg className={styles.dynoCurveSvg} viewBox="0 0 100 100" preserveAspectRatio="none">
             <defs>
-              <linearGradient id="hpGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              <linearGradient id="hpGradientMod" x1="0%" y1="0%" x2="0%" y2="100%">
                 <stop offset="0%" stopColor={CHART_COLORS.hp} stopOpacity="0.25" />
                 <stop offset="100%" stopColor={CHART_COLORS.hp} stopOpacity="0.02" />
               </linearGradient>
-              <linearGradient id="tqGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor={CHART_COLORS.torque} stopOpacity="0.15" />
-                <stop offset="100%" stopColor={CHART_COLORS.torque} stopOpacity="0.02" />
+              <linearGradient id="hpGradientStock" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor={CHART_COLORS.hp} stopOpacity="0.08" />
+                <stop offset="100%" stopColor={CHART_COLORS.hp} stopOpacity="0.01" />
               </linearGradient>
             </defs>
-            {/* HP area fill */}
+            
+            {/* Stock HP area fill (shown when mods present, faded) */}
+            {hasModifications && (
+              <path
+                d={
+                  stockCurve.map((p, i) => {
+                    const x = ((p.rpm - 1000) / 8000) * 100;
+                    const y = 100 - (p.hp / maxValue) * 100;
+                    return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+                  }).join(' ') + ' L 100 100 L 0 100 Z'
+                }
+                fill="url(#hpGradientStock)"
+              />
+            )}
+            
+            {/* Modified HP area fill (or stock if no mods) */}
             <path
               d={
-                displayCurve.map((p, i) => {
+                (hasModifications ? modCurve : stockCurve).map((p, i) => {
                   const x = ((p.rpm - 1000) / 8000) * 100;
                   const y = 100 - (p.hp / maxValue) * 100;
                   return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
                 }).join(' ') + ' L 100 100 L 0 100 Z'
               }
-              fill="url(#hpGradient)"
+              fill="url(#hpGradientMod)"
             />
           </svg>
           
-          {/* Torque curve (dashed, blue) */}
+          {/* Stock curves (dashed, faded) - only show when mods present */}
+          {hasModifications && (
+            <svg className={styles.dynoCurveSvg} viewBox="0 0 100 100" preserveAspectRatio="none">
+              {/* Stock HP curve (dashed, faded teal) */}
+              <path
+                d={stockCurve.map((p, i) => {
+                  const x = ((p.rpm - 1000) / 8000) * 100;
+                  const y = 100 - (p.hp / maxValue) * 100;
+                  return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+                }).join(' ')}
+                fill="none"
+                stroke={CHART_COLORS.hp}
+                strokeWidth="1.5"
+                strokeDasharray="4 4"
+                strokeOpacity="0.4"
+              />
+              {/* Stock TQ curve (dashed, faded blue) */}
+              <path
+                d={stockCurve.map((p, i) => {
+                  const x = ((p.rpm - 1000) / 8000) * 100;
+                  const y = 100 - (p.tq / maxValue) * 100;
+                  return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
+                }).join(' ')}
+                fill="none"
+                stroke={CHART_COLORS.torque}
+                strokeWidth="1"
+                strokeDasharray="4 4"
+                strokeOpacity="0.3"
+              />
+            </svg>
+          )}
+          
+          {/* Modified/Primary curves (solid) */}
           <svg className={styles.dynoCurveSvg} viewBox="0 0 100 100" preserveAspectRatio="none">
+            {/* Torque curve (solid blue) */}
             <path
-              d={displayCurve.map((p, i) => {
+              d={(hasModifications ? modCurve : stockCurve).map((p, i) => {
                 const x = ((p.rpm - 1000) / 8000) * 100;
                 const y = 100 - (p.tq / maxValue) * 100;
                 return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
@@ -374,14 +497,10 @@ export default function VirtualDynoChart({
               fill="none"
               stroke={CHART_COLORS.torque}
               strokeWidth="1.5"
-              strokeDasharray="6 3"
             />
-          </svg>
-          
-          {/* HP curve (solid, teal) */}
-          <svg className={styles.dynoCurveSvg} viewBox="0 0 100 100" preserveAspectRatio="none">
+            {/* HP curve (solid teal) */}
             <path
-              d={displayCurve.map((p, i) => {
+              d={(hasModifications ? modCurve : stockCurve).map((p, i) => {
                 const x = ((p.rpm - 1000) / 8000) * 100;
                 const y = 100 - (p.hp / maxValue) * 100;
                 return `${i === 0 ? 'M' : 'L'} ${x} ${y}`;
@@ -392,15 +511,67 @@ export default function VirtualDynoChart({
             />
           </svg>
           
-          {/* HP peak marker */}
+          {/* Hover tooltip */}
+          {hoverData && (
+            <div 
+              className={styles.dynoHoverTooltip}
+              style={{
+                left: hoverData.x,
+                transform: 'translateX(-50%)',
+              }}
+            >
+              <div className={styles.dynoHoverRpm}>{hoverData.rpm.toLocaleString()} RPM</div>
+              {hasModifications ? (
+                <>
+                  <div className={styles.dynoHoverRow}>
+                    <span style={{ color: CHART_COLORS.hp }}>HP:</span>
+                    <span className={styles.dynoHoverStock}>{hoverData.stockHp}</span>
+                    <span className={styles.dynoHoverArrow}>→</span>
+                    <span className={styles.dynoHoverMod}>{hoverData.modHp}</span>
+                    <span className={styles.dynoHoverGain}>+{hoverData.modHp - hoverData.stockHp}</span>
+                  </div>
+                  <div className={styles.dynoHoverRow}>
+                    <span style={{ color: CHART_COLORS.torque }}>TQ:</span>
+                    <span className={styles.dynoHoverStock}>{hoverData.stockTq}</span>
+                    <span className={styles.dynoHoverArrow}>→</span>
+                    <span className={styles.dynoHoverMod}>{hoverData.modTq}</span>
+                    <span className={styles.dynoHoverGain}>+{hoverData.modTq - hoverData.stockTq}</span>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className={styles.dynoHoverRow}>
+                    <span style={{ color: CHART_COLORS.hp }}>HP:</span>
+                    <span>{hoverData.stockHp}</span>
+                  </div>
+                  <div className={styles.dynoHoverRow}>
+                    <span style={{ color: CHART_COLORS.torque }}>TQ:</span>
+                    <span>{hoverData.stockTq}</span>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+          
+          {/* Hover vertical line */}
+          {hoverData && (
+            <div 
+              className={styles.dynoHoverLine}
+              style={{ left: hoverData.x }}
+            />
+          )}
+          
+          {/* Peak markers - show modified peak when mods present */}
           <div
             className={styles.dynoPeakMarkerMod}
             style={{
-              left: `${((peakHpPoint.rpm - 1000) / 8000) * 100}%`,
-              bottom: `${(peakHpPoint.hp / maxValue) * 100}%`
+              left: `${(((hasModifications ? peakModHpPoint : peakStockHpPoint).rpm - 1000) / 8000) * 100}%`,
+              bottom: `${((hasModifications ? peakModHpPoint : peakStockHpPoint).hp / maxValue) * 100}%`
             }}
           >
-            <span className={styles.dynoPeakValueMod}>{peakHpPoint.hp}</span>
+            <span className={styles.dynoPeakValueMod}>
+              {(hasModifications ? peakModHpPoint : peakStockHpPoint).hp}
+            </span>
             <InfoTooltip topicKey="hp" carName={carName} carSlug={carSlug}>
               <span className={styles.dynoPeakLabelMod}>HP</span>
             </InfoTooltip>
@@ -410,13 +581,15 @@ export default function VirtualDynoChart({
           <div
             className={styles.dynoPeakMarkerTq}
             style={{
-              left: `${((peakTqPoint.rpm - 1000) / 8000) * 100}%`,
-              bottom: `${(peakTqPoint.tq / maxValue) * 100}%`
+              left: `${(((hasModifications ? peakModTqPoint : peakStockTqPoint).rpm - 1000) / 8000) * 100}%`,
+              bottom: `${((hasModifications ? peakModTqPoint : peakStockTqPoint).tq / maxValue) * 100}%`
             }}
           >
-            <span className={styles.dynoPeakValueTq}>{peakTqPoint.tq}</span>
+            <span className={styles.dynoPeakValueTq}>
+              {(hasModifications ? peakModTqPoint : peakStockTqPoint).tq}
+            </span>
             <InfoTooltip topicKey="torque" carName={carName} carSlug={carSlug}>
-              <span className={styles.dynoPeakLabelTq}>TQ</span>
+              <span className={styles.dynoPeakLabelTq}>lb-ft</span>
             </InfoTooltip>
           </div>
         </div>

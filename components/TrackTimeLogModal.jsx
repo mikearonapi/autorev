@@ -16,6 +16,7 @@
 
 import { useState, useEffect } from 'react';
 import styles from './TrackTimeLogModal.module.css';
+import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
 
 // SVG Icons
 const FlagIcon = () => (
@@ -139,7 +140,11 @@ export default function TrackTimeLogModal({
   predictedTime,      // Predicted lap time in seconds for comparison
   selectedTrack,      // Pre-selected track if any
   editingResult = null,
+  currentBuildInfo = null, // { upgrades: [], totalHpGain, estimatedHp }
 }) {
+  // Set safe area color to match overlay background when modal is open
+  useSafeAreaColor(SAFE_AREA_COLORS.OVERLAY, { enabled: isOpen });
+  
   const [formData, setFormData] = useState({
     trackName: '',
     trackConfig: '',
@@ -296,7 +301,7 @@ export default function TrackTimeLogModal({
   if (!isOpen) return null;
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    <div className={styles.overlay} onClick={onClose} data-overlay-modal>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
           <div className={styles.titleRow}>
@@ -326,6 +331,16 @@ export default function TrackTimeLogModal({
                   {timeDiff <= 0 ? '' : '+'}{timeDiff.toFixed(3)}s
                 </div>
               )}
+            </div>
+          )}
+          
+          {/* Current Build Snapshot (read-only) */}
+          {currentBuildInfo && currentBuildInfo.upgrades && currentBuildInfo.upgrades.length > 0 && !editingResult && (
+            <div className={styles.buildSnapshot}>
+              <span className={styles.buildSnapshotLabel}>Build at time of lap:</span>
+              <span className={styles.buildSnapshotValue}>
+                {currentBuildInfo.upgrades.length} mods (+{currentBuildInfo.totalHpGain || 0} HP)
+              </span>
             </div>
           )}
 

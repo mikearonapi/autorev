@@ -14,6 +14,18 @@ export const metadata = {
   alternates: {
     canonical: '/privacy',
   },
+  openGraph: {
+    title: 'Privacy Policy | AutoRev',
+    description: 'Learn how AutoRev collects, uses, and protects your personal information.',
+    url: '/privacy',
+    type: 'website',
+    siteName: 'AutoRev',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Privacy Policy | AutoRev',
+    description: 'Learn how AutoRev collects, uses, and protects your personal information.',
+  },
 };
 
 export default function PrivacyPolicy() {
@@ -175,7 +187,7 @@ export default function PrivacyPolicy() {
             <ul>
               <li>
                 <strong>Supabase (PostgreSQL + Auth):</strong> Database storage for all car data, user profiles, and application data. 
-                Handles user authentication. Data stored in [US/EU region - confirm with your setup].
+                Handles user authentication. Data is stored securely in Supabase's infrastructure.
                 <br />Privacy Policy: <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer">https://supabase.com/privacy</a>
               </li>
               <li>
@@ -248,7 +260,7 @@ export default function PrivacyPolicy() {
               <li><strong>Individual items:</strong> Delete favorite cars, build projects, or service logs directly from your garage</li>
               <li><strong>Owned vehicles:</strong> Remove vehicles from your garage using the delete option</li>
               <li><strong>Clear specific data:</strong> Use the "Clear My Data" feature in your profile settings to selectively remove favorites, vehicles, projects, or AL history</li>
-              <li><strong>Full account deletion:</strong> Email us at <strong>contact@autorev.app</strong> with "Delete My Account" in the subject line. 
+              <li><strong>Full account deletion:</strong> Email us at <a href="mailto:contact@autorev.app?subject=Delete%20My%20Account"><strong>contact@autorev.app</strong></a> with "Delete My Account" in the subject line. 
               We will delete your account and all associated data within 30 days.</li>
             </ul>
 
@@ -280,7 +292,7 @@ export default function PrivacyPolicy() {
               <li>Request a copy of your data in a portable format (JSON or CSV)</li>
               <li>View your AL conversation history and credit usage</li>
             </ul>
-            <p>To request a data export, email <strong>contact@autorev.app</strong> with "Data Export Request" in the subject line.</p>
+            <p>To request a data export, email <a href="mailto:contact@autorev.app?subject=Data%20Export%20Request"><strong>contact@autorev.app</strong></a> with "Data Export Request" in the subject line.</p>
 
             <h3>5.2 Correction and Updates</h3>
             <p>You can update your information:</p>
@@ -441,7 +453,7 @@ export default function PrivacyPolicy() {
 
             <h3>9.5 How to Exercise Your Rights</h3>
             <p>
-              To exercise any of these rights, email <strong>contact@autorev.app</strong> with "CCPA Request" 
+              To exercise any of these rights, email <a href="mailto:contact@autorev.app?subject=CCPA%20Request"><strong>contact@autorev.app</strong></a> with "CCPA Request" 
               in the subject line. We will verify your identity and respond within 45 days.
             </p>
           </section>
@@ -472,7 +484,7 @@ export default function PrivacyPolicy() {
               <li><strong>Right to lodge a complaint:</strong> You can file a complaint with your local data protection authority</li>
             </ul>
             <p>
-              To exercise these rights, contact us at <strong>contact@autorev.app</strong>.
+              To exercise these rights, contact us at <a href="mailto:contact@autorev.app"><strong>contact@autorev.app</strong></a>.
             </p>
           </section>
 
@@ -507,9 +519,9 @@ export default function PrivacyPolicy() {
               please contact us:
             </p>
             <div className={styles.contactInfo}>
-              <p><strong>Email:</strong> contact@autorev.app</p>
-              <p><strong>Contact Form:</strong> <a href="/contact">/contact</a></p>
-              <p><strong>Mailing Address:</strong> [Company Legal Address]</p>
+              <p><strong>Email:</strong> <a href="mailto:contact@autorev.app">contact@autorev.app</a></p>
+              <p><strong>Contact Form:</strong> <Link href="/contact">/contact</Link></p>
+              <p><strong>Mailing Address:</strong> Available upon request</p>
             </div>
 
             <h3>12.2 Response Time</h3>
@@ -534,7 +546,7 @@ export default function PrivacyPolicy() {
               periodically for updates.
             </p>
             <p>
-              <strong>Questions?</strong> Contact us at contact@autorev.app
+              <strong>Questions?</strong> Contact us at <a href="mailto:contact@autorev.app">contact@autorev.app</a>
             </p>
           </div>
         </div>

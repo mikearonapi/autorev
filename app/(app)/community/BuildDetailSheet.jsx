@@ -13,12 +13,13 @@
  * before any early returns. The rule incorrectly flags useMemo as conditional.
  */
 
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import Image from 'next/image';
 import { getUpgradeByKey } from '@/lib/upgrades';
 import { useBuildDetail } from '@/hooks/useCommunityData';
 import { TITLES } from '@/app/(app)/dashboard/components/UserGreeting';
 import styles from './BuildDetailSheet.module.css';
+import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
 
 // Icons
 const BackIcon = () => (
@@ -142,16 +143,20 @@ export default function BuildDetailSheet({
   onImageSelect,
   onClose 
 }) {
+  // Set safe area color to match overlay background when sheet is visible
+  useSafeAreaColor(SAFE_AREA_COLORS.OVERLAY, { enabled: !!build });
+  
   // React Query hook for build details - always called (hooks must be unconditional)
   const { data: detailData, isLoading } = useBuildDetail(build?.slug);
   
   // Extract data from query response
   const buildData = detailData?.buildData || null;
   const carData = detailData?.carData || null;
-  const partsData = detailData?.parts || [];
+  // NOTE: partsData and vehicleData available for future parts display enhancement
+  const _partsData = detailData?.parts || [];
   const computedPerformance = detailData?.computedPerformance || null;
-  const vehicleData = detailData?.vehicleData || null;
-  const buildStatus = detailData?.buildStatus || null;
+  const _vehicleData = detailData?.vehicleData || null;
+  // Build status removed - was causing inconsistency between list and detail views
 
   // Get upgrade keys for display (mods list)
   // SOURCE OF TRUTH: Use computedPerformance.upgradeKeys (from vehicle's installed_modifications)
@@ -245,7 +250,8 @@ export default function BuildDetailSheet({
   // Stored buildData final_* fields can become stale as our model improves.
   const stockHp = computedPerformance?.stock?.hp ?? buildData?.stock_hp ?? carData?.hp ?? build.car_specs?.hp ?? 0;
   const finalHp = computedPerformance?.upgraded?.hp ?? buildData?.final_hp ?? stockHp;
-  const hpGain = computedPerformance?.hpGain ?? (buildData?.total_hp_gain || 0);
+  // NOTE: hpGain available for future HP gain badge display
+  const _hpGain = computedPerformance?.hpGain ?? (buildData?.total_hp_gain || 0);
   
   const stockZeroToSixty = computedPerformance?.stock?.zeroToSixty ?? buildData?.stock_zero_to_sixty ?? carData?.zero_to_sixty ?? null;
   const finalZeroToSixty = computedPerformance?.upgraded?.zeroToSixty ?? buildData?.final_zero_to_sixty ?? stockZeroToSixty;
@@ -257,7 +263,7 @@ export default function BuildDetailSheet({
   const finalLateralG = computedPerformance?.upgraded?.lateralG ?? buildData?.final_lateral_g ?? stockLateralG;
 
   return (
-    <div className={styles.fullScreen}>
+    <div className={styles.fullScreen} data-overlay-modal>
       {/* Top Navigation with User Info */}
       <div className={styles.topNav}>
         <button className={styles.backBtn} onClick={onClose}>
@@ -296,12 +302,6 @@ export default function BuildDetailSheet({
       {/* Car Name Header */}
       <div className={styles.carHeader}>
         <h1 className={styles.carName}>{build.car_name}</h1>
-        {buildStatus === 'complete' && (
-          <span className={styles.statusBadge} data-status="complete">Build Complete</span>
-        )}
-        {buildStatus === 'in_progress' && (
-          <span className={styles.statusBadge} data-status="progress">In Progress</span>
-        )}
       </div>
       
       {/* Content */}

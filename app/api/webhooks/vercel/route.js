@@ -1,4 +1,9 @@
 import { NextResponse } from 'next/server';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import crypto from 'crypto';
+
+// Vercel webhook secret for signature verification
+const VERCEL_WEBHOOK_SECRET = process.env.VERCEL_WEBHOOK_SECRET;
 
 // Vercel event types that indicate successful deployment
 const SUCCESS_EVENTS = [
@@ -9,9 +14,53 @@ const SUCCESS_EVENTS = [
   'deployment_ready', // Vercel Integration webhook format
 ];
 
-export async function POST(request) {
+/**
+ * Verify Vercel webhook signature using HMAC-SHA1
+ * @param {string} payload - Raw request body
+ * @param {string} signature - Signature from x-vercel-signature header
+ * @returns {boolean} - True if signature is valid
+ */
+function verifySignature(payload, signature) {
+  if (!VERCEL_WEBHOOK_SECRET) {
+    console.error('[Vercel Webhook] VERCEL_WEBHOOK_SECRET not configured');
+    return false;
+  }
+  
+  if (!signature) {
+    console.error('[Vercel Webhook] Missing x-vercel-signature header');
+    return false;
+  }
+  
+  const expectedSignature = crypto
+    .createHmac('sha1', VERCEL_WEBHOOK_SECRET)
+    .update(payload)
+    .digest('hex');
+  
   try {
-    const payload = await request.json();
+    return crypto.timingSafeEqual(
+      Buffer.from(signature),
+      Buffer.from(expectedSignature)
+    );
+  } catch (err) {
+    console.error('[Vercel Webhook] Signature comparison failed:', err.message);
+    return false;
+  }
+}
+
+async function handlePost(request) {
+  try {
+    // Get raw body for signature verification
+    const rawBody = await request.text();
+    const signature = request.headers.get('x-vercel-signature');
+    
+    // Verify signature BEFORE processing
+    if (!verifySignature(rawBody, signature)) {
+      console.error('[Vercel Webhook] Invalid signature');
+      return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+    }
+    
+    // Parse the verified payload
+    const payload = JSON.parse(rawBody);
     
     // Vercel sends different event types depending on webhook version
     const eventType = payload.type || payload.event;
@@ -104,21 +153,26 @@ export async function POST(request) {
 
   } catch (error) {
     console.error('[Vercel Webhook] Error:', error);
-    return NextResponse.json({ error: error.message, stack: error.stack?.slice(0, 500) }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to process deployment webhook' }, { status: 500 });
   }
 }
 
 // Vercel may send GET to verify endpoint
-export async function GET() {
+async function handleGet() {
   const hasWebhook = !!process.env.DISCORD_WEBHOOK_DEPLOYMENTS;
+  const hasSecret = !!VERCEL_WEBHOOK_SECRET;
   return NextResponse.json({ 
     status: 'ok', 
     endpoint: 'vercel-webhook',
     discordConfigured: hasWebhook,
+    signatureVerification: hasSecret,
     acceptedEvents: SUCCESS_EVENTS,
     timestamp: new Date().toISOString() 
   });
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'webhooks/vercel', feature: 'webhooks' });
+export const POST = withErrorLogging(handlePost, { route: 'webhooks/vercel', feature: 'webhooks' });
 
 
 

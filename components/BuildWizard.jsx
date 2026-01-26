@@ -8,6 +8,7 @@ import styles from './BuildWizard.module.css';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import CarImage from '@/components/CarImage';
+import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
 
 /**
  * BuildWizard - Full-screen onboarding flow for creating a new build
@@ -110,6 +111,9 @@ export default function BuildWizard({
   allCars = [], // For matching vehicles to car database
   onAddVehicle, // Callback to open Add Vehicle modal
 }) {
+  // Set safe area color to match overlay background when modal is open
+  useSafeAreaColor(SAFE_AREA_COLORS.OVERLAY, { enabled: isOpen });
+  
   const router = useRouter();
   const { vehicles } = useOwnedVehicles();
   const { getBuildById } = useSavedBuilds();
@@ -324,7 +328,7 @@ export default function BuildWizard({
   const stepProgress = ((currentStep + 1) / STEPS.length) * 100;
   
   const wizard = (
-    <div className={`${styles.overlay} ${isOpen ? styles.overlayOpen : ''}`}>
+    <div className={`${styles.overlay} ${isOpen ? styles.overlayOpen : ''}`} data-overlay-modal>
       <div className={styles.wizard}>
         {/* Header */}
         <header className={styles.header}>

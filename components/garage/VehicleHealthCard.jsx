@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import AskALButton from '@/components/AskALButton';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import styles from './VehicleHealthCard.module.css';
 import { useUserVehicle, useUpdateVehicle } from '@/hooks/useUserData';
@@ -400,17 +399,9 @@ export default function VehicleHealthCard({
             <span className={styles.statusText}>Saving...</span>
           </div>
         ) : (
-          <>
-            <button className={styles.primaryButton} type="button" onClick={handleSave}>
-              Save Changes
-            </button>
-            <AskALButton
-              variant="header"
-              category="Vehicle Health"
-              prompt={alPrompt}
-              carName={vehicleName}
-            />
-          </>
+          <button className={styles.primaryButton} type="button" onClick={handleSave}>
+            Save Changes
+          </button>
         )}
       </div>
 

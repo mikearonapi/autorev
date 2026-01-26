@@ -140,8 +140,13 @@ const ThumbsDownIcon = ({ size = 18 }) => (
 const WrenchIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
 );
-const FilterIcon = ({ size = 18 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+const SlidersIcon = ({ size = 18 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <line x1="21" y1="4" x2="14" y2="4"/><line x1="10" y1="4" x2="3" y2="4"/>
+    <line x1="21" y1="12" x2="12" y2="12"/><line x1="8" y1="12" x2="3" y2="12"/>
+    <line x1="21" y1="20" x2="16" y2="20"/><line x1="12" y1="20" x2="3" y2="20"/>
+    <circle cx="12" cy="4" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="14" cy="20" r="2"/>
+  </svg>
 );
 const XIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
@@ -151,21 +156,21 @@ const XIcon = ({ size = 18 }) => (
 const FilterPanel = ({ isOpen, onClose, filters, onToggle, onReset }) => {
   const panelRef = useRef(null);
   
-  // Close on outside click
+  // Close filter panel on outside click
   useEffect(() => {
     if (!isOpen) return;
-    const handleClickOutside = (e) => {
+    const handleFilterPanelOutsideClick = (e) => {
       if (panelRef.current && !panelRef.current.contains(e.target)) {
         onClose();
       }
     };
     // Delay to prevent immediate close
     const timeoutId = setTimeout(() => {
-      document.addEventListener('click', handleClickOutside);
+      document.addEventListener('click', handleFilterPanelOutsideClick);
     }, 100);
     return () => {
       clearTimeout(timeoutId);
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('click', handleFilterPanelOutsideClick);
     };
   }, [isOpen, onClose]);
   
@@ -231,11 +236,11 @@ const SmartInsightCard = ({ type, title, body, subtext, action, onFeedback, id }
 
   const getAccentColor = () => {
     switch(type) {
-      case 'PERFORMANCE': return 'var(--color-accent-teal)';
-      case 'RELIABILITY': return 'var(--color-accent-amber)';
-      case 'COMMUNITY': return '#3b82f6';
-      case 'OPPORTUNITY': return '#a855f7'; // Purple for opportunities/deals
-      default: return 'var(--color-text-primary)';
+      case 'PERFORMANCE': return 'var(--color-accent-teal, #10b981)';
+      case 'RELIABILITY': return 'var(--color-accent-amber, #f59e0b)';
+      case 'COMMUNITY': return 'var(--color-accent-blue, #3b82f6)';
+      case 'OPPORTUNITY': return 'var(--color-accent-purple, #a855f7)';
+      default: return 'var(--color-text-primary, #ffffff)';
     }
   };
 
@@ -628,14 +633,14 @@ export default function InsightsClient() {
 
   useEffect(() => {
     if (!dropdownOpen) return;
-    const handleClickOutside = (e) => {
+    const handleVehicleSelectorOutsideClick = (e) => {
       const dropdown = document.getElementById('vehicle-selector-dropdown');
       if (wrapperRef.current && !wrapperRef.current.contains(e.target) && (!dropdown || !dropdown.contains(e.target))) {
         setDropdownOpen(false);
       }
     };
-    document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    document.addEventListener('click', handleVehicleSelectorOutsideClick);
+    return () => document.removeEventListener('click', handleVehicleSelectorOutsideClick);
   }, [dropdownOpen]);
 
   // ==========================================================================
@@ -833,9 +838,9 @@ export default function InsightsClient() {
             <button 
               className={`${styles.filterButton} ${hiddenSectionCount > 0 ? styles.filterButtonActive : ''}`}
               onClick={() => setFilterPanelOpen(prev => !prev)}
-              aria-label="Filter sections"
+              aria-label="Toggle sections"
             >
-              <FilterIcon size={18} />
+              <SlidersIcon size={18} />
               {hiddenSectionCount > 0 && (
                 <span className={styles.filterBadge}>{hiddenSectionCount}</span>
               )}
@@ -848,9 +853,6 @@ export default function InsightsClient() {
               onReset={handleFilterReset}
             />
           </div>
-          <Link href="/dashboard" className={styles.profileLink}>
-            {avatarUrl ? <Image src={avatarUrl} alt="" width={36} height={36} className={styles.profileAvatar} /> : <UserIcon size={20} />}
-          </Link>
         </div>
       </header>
 

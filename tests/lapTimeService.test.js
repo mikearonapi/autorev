@@ -18,24 +18,24 @@ async function runTests() {
   
   const results = { passed: 0, failed: 0 };
   
-  // Test 1: formatLapTime
+  // Test 1: formatLapTime (M:SS.mmm format with 3 decimal places)
   console.log('Test 1: formatLapTime');
   try {
     const formatted = lapTimeService.formatLapTime(95.5);
-    if (formatted === '1:35.50') {
-      console.log('  ✅ formatLapTime(95.5) = "1:35.50"');
+    if (formatted === '1:35.500') {
+      console.log('  ✅ formatLapTime(95.5) = "1:35.500"');
       results.passed++;
     } else {
-      console.log(`  ❌ formatLapTime(95.5) expected "1:35.50", got "${formatted}"`);
+      console.log(`  ❌ formatLapTime(95.5) expected "1:35.500", got "${formatted}"`);
       results.failed++;
     }
     
     const nullFormatted = lapTimeService.formatLapTime(null);
-    if (nullFormatted === '--:--.--') {
-      console.log('  ✅ formatLapTime(null) = "--:--.--"');
+    if (nullFormatted === '--:--.---') {
+      console.log('  ✅ formatLapTime(null) = "--:--.---"');
       results.passed++;
     } else {
-      console.log(`  ❌ formatLapTime(null) expected "--:--.--", got "${nullFormatted}"`);
+      console.log(`  ❌ formatLapTime(null) expected "--:--.---", got "${nullFormatted}"`);
       results.failed++;
     }
   } catch (err) {

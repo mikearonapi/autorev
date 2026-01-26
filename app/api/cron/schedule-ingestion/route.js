@@ -13,6 +13,7 @@
 import { NextResponse } from 'next/server';
 import * as scrapeJobService from '@/lib/scrapeJobService';
 import { notifyCronCompletion, notifyCronFailure } from '@/lib/discord';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -23,7 +24,7 @@ function isAuthorized(request) {
   return vercelCron === 'true';
 }
 
-export async function GET(request) {
+async function handleGet(request) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -94,13 +95,11 @@ export async function GET(request) {
   } catch (err) {
     console.error('[Cron] schedule-ingestion error:', err);
     notifyCronFailure('Schedule Ingestion', err, { phase: 'processing' });
-    return NextResponse.json({ error: 'Failed', message: err.message }, { status: 500 });
+    return NextResponse.json({ error: 'Schedule ingestion cron job failed' }, { status: 500 });
   }
 }
 
-
-
-
+export const GET = withErrorLogging(handleGet, { route: 'cron/schedule-ingestion', feature: 'cron' });
 
 
 

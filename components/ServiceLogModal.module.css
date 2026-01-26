@@ -36,6 +36,7 @@
 }
 
 /* CF-003: Safe area support for notched devices */
+/* Level 3: Overlay background for focused data entry experience */
 .modal {
   position: relative;
   width: 100%;
@@ -43,7 +44,7 @@
   /* Adjusted max-height to account for header/banner spacing (110px + safe area) */
   max-height: calc(100vh - 120px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
   max-height: calc(100dvh - 120px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
-  background: linear-gradient(145deg, rgba(30, 32, 38, 0.98), rgba(20, 22, 28, 0.98));
+  background: var(--brand-bg-overlay, #1a1a1a);
   border-radius: 16px 16px 0 0; /* Bottom sheet on mobile */
   border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;

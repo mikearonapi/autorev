@@ -11,6 +11,7 @@ import { NextResponse } from 'next/server';
 import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * Check if user is admin
@@ -51,7 +52,7 @@ async function isAdmin() {
  * GET /api/internal/car-pipeline
  * List all pipeline runs with optional filters
  */
-export async function GET(request) {
+async function handleGet(request) {
   if (!isSupabaseConfigured || !supabaseServiceRole) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
   }
@@ -69,9 +70,11 @@ export async function GET(request) {
     const status = searchParams.get('status');
     const limit = Math.min(Number(searchParams.get('limit') || 100), 200);
     
+    const PIPELINE_COLS = 'id, car_slug, status, steps_completed, steps_total, current_step, error_message, started_at, completed_at, metadata, created_at';
+    
     let query = supabaseServiceRole
       .from('car_pipeline_runs')
-      .select('*')
+      .select(PIPELINE_COLS)
       .order('created_at', { ascending: false })
       .limit(limit);
     
@@ -97,7 +100,7 @@ export async function GET(request) {
  * POST /api/internal/car-pipeline
  * Create new pipeline run
  */
-export async function POST(request) {
+async function handlePost(request) {
   if (!isSupabaseConfigured || !supabaseServiceRole) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
   }
@@ -164,3 +167,5 @@ export async function POST(request) {
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'internal-car-pipeline', feature: 'internal' });
+export const POST = withErrorLogging(handlePost, { route: 'internal-car-pipeline', feature: 'internal' });

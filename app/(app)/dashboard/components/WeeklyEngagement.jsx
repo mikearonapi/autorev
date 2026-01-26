@@ -33,10 +33,19 @@ const VIEW_TITLES = {
 const DAYS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
 const MONTHS = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
 
+// Category config for legend - CSS class names match module.css
+const CATEGORIES = [
+  { key: 'al', label: 'AL', dotClass: 'legendDotAl' },
+  { key: 'community', label: 'Community', dotClass: 'legendDotCommunity' },
+  { key: 'data', label: 'Data', dotClass: 'legendDotData' },
+  { key: 'garage', label: 'Garage', dotClass: 'legendDotGarage' },
+  { key: 'profile', label: 'Profile', dotClass: 'legendDotProfile' },
+];
+
 export default function WeeklyEngagement({
-  dailyActivity = [], // Array of 7 days, each with { al, community, data } values
-  monthlyActivity = [], // Array of days in current month, each with { day, al, community, data } values
-  yearlyActivity = [], // Array of 12 months, each with { month, al, community, data } values
+  dailyActivity = [], // Array of 7 days, each with { al, community, data, garage?, profile? } values
+  monthlyActivity = [], // Array of days in current month, each with { day, al, community, data, garage?, profile? }
+  yearlyActivity = [], // Array of 12 months, each with { month, al, community, data, garage?, profile? }
   streak = { current: 0, longest: 0 },
   animated = true,
 }) {
@@ -155,33 +164,35 @@ export default function WeeklyEngagement({
                 const isToday = idx === getTodayIndex();
                 
                 // Apply animation progress to bar heights
+                // All 5 categories: AL, Community, Data, Garage, Profile
                 const alHeight = Math.min((day.al / maxPerCategory) * 100, 100) * animationProgress;
                 const communityHeight = Math.min((day.community / maxPerCategory) * 100, 100) * animationProgress;
                 const dataHeight = Math.min((day.data / maxPerCategory) * 100, 100) * animationProgress;
+                const garageHeight = Math.min(((day.garage || 0) / maxPerCategory) * 100, 100) * animationProgress;
+                const profileHeight = Math.min(((day.profile || 0) / maxPerCategory) * 100, 100) * animationProgress;
                 
                 return (
                   <div key={idx} className={styles.weekBarColumn}>
                     <div className={styles.weekBarStack}>
                       <div 
-                        className={styles.barSegment}
-                        style={{ 
-                          height: `${alHeight}%`,
-                          background: '#a855f7',
-                        }}
+                        className={`${styles.barSegment} ${styles.barAl}`}
+                        style={{ height: `${alHeight}%` }}
                       />
                       <div 
-                        className={styles.barSegment}
-                        style={{ 
-                          height: `${communityHeight}%`,
-                          background: '#3b82f6',
-                        }}
+                        className={`${styles.barSegment} ${styles.barCommunity}`}
+                        style={{ height: `${communityHeight}%` }}
                       />
                       <div 
-                        className={styles.barSegment}
-                        style={{ 
-                          height: `${dataHeight}%`,
-                          background: '#10b981',
-                        }}
+                        className={`${styles.barSegment} ${styles.barData}`}
+                        style={{ height: `${dataHeight}%` }}
+                      />
+                      <div 
+                        className={`${styles.barSegment} ${styles.barGarage}`}
+                        style={{ height: `${garageHeight}%` }}
+                      />
+                      <div 
+                        className={`${styles.barSegment} ${styles.barProfile}`}
+                        style={{ height: `${profileHeight}%` }}
                       />
                     </div>
                     <span className={`${styles.barLabel} ${isToday ? styles.barLabelToday : ''}`}>
@@ -205,34 +216,35 @@ export default function WeeklyEngagement({
                 // Show label for: first day, today, and last day
                 const showLabel = dayData.day === 1 || isToday || dayData.day === monthlyData.length;
                 
-                // Apply animation progress to bar heights
+                // Apply animation progress to bar heights - all 5 categories
                 const alHeight = Math.min((dayData.al / maxPerCategory) * 100, 100) * animationProgress;
                 const communityHeight = Math.min((dayData.community / maxPerCategory) * 100, 100) * animationProgress;
                 const dataHeight = Math.min((dayData.data / maxPerCategory) * 100, 100) * animationProgress;
+                const garageHeight = Math.min(((dayData.garage || 0) / maxPerCategory) * 100, 100) * animationProgress;
+                const profileHeight = Math.min(((dayData.profile || 0) / maxPerCategory) * 100, 100) * animationProgress;
                 
                 return (
                   <div key={idx} className={styles.monthBarColumn}>
                     <div className={styles.monthBarStack}>
                       <div 
-                        className={styles.barSegment}
-                        style={{ 
-                          height: `${alHeight}%`,
-                          background: '#a855f7',
-                        }}
+                        className={`${styles.barSegment} ${styles.barAl}`}
+                        style={{ height: `${alHeight}%` }}
                       />
                       <div 
-                        className={styles.barSegment}
-                        style={{ 
-                          height: `${communityHeight}%`,
-                          background: '#3b82f6',
-                        }}
+                        className={`${styles.barSegment} ${styles.barCommunity}`}
+                        style={{ height: `${communityHeight}%` }}
                       />
                       <div 
-                        className={styles.barSegment}
-                        style={{ 
-                          height: `${dataHeight}%`,
-                          background: '#10b981',
-                        }}
+                        className={`${styles.barSegment} ${styles.barData}`}
+                        style={{ height: `${dataHeight}%` }}
+                      />
+                      <div 
+                        className={`${styles.barSegment} ${styles.barGarage}`}
+                        style={{ height: `${garageHeight}%` }}
+                      />
+                      <div 
+                        className={`${styles.barSegment} ${styles.barProfile}`}
+                        style={{ height: `${profileHeight}%` }}
                       />
                     </div>
                     <span className={`${styles.barLabel} ${isToday ? styles.barLabelToday : ''} ${!showLabel ? styles.barLabelHidden : ''}`}>
@@ -255,34 +267,35 @@ export default function WeeklyEngagement({
                 const currentMonth = new Date().getMonth();
                 const isCurrentMonth = idx === currentMonth;
                 
-                // Apply animation progress to bar heights
+                // Apply animation progress to bar heights - all 5 categories
                 const alHeight = Math.min((monthData.al / maxPerCategory) * 100, 100) * animationProgress;
                 const communityHeight = Math.min((monthData.community / maxPerCategory) * 100, 100) * animationProgress;
                 const dataHeight = Math.min((monthData.data / maxPerCategory) * 100, 100) * animationProgress;
+                const garageHeight = Math.min(((monthData.garage || 0) / maxPerCategory) * 100, 100) * animationProgress;
+                const profileHeight = Math.min(((monthData.profile || 0) / maxPerCategory) * 100, 100) * animationProgress;
                 
                 return (
                   <div key={idx} className={styles.yearBarColumn}>
                     <div className={styles.yearBarStack}>
                       <div 
-                        className={styles.barSegment}
-                        style={{ 
-                          height: `${alHeight}%`,
-                          background: '#a855f7',
-                        }}
+                        className={`${styles.barSegment} ${styles.barAl}`}
+                        style={{ height: `${alHeight}%` }}
                       />
                       <div 
-                        className={styles.barSegment}
-                        style={{ 
-                          height: `${communityHeight}%`,
-                          background: '#3b82f6',
-                        }}
+                        className={`${styles.barSegment} ${styles.barCommunity}`}
+                        style={{ height: `${communityHeight}%` }}
                       />
                       <div 
-                        className={styles.barSegment}
-                        style={{ 
-                          height: `${dataHeight}%`,
-                          background: '#10b981',
-                        }}
+                        className={`${styles.barSegment} ${styles.barData}`}
+                        style={{ height: `${dataHeight}%` }}
+                      />
+                      <div 
+                        className={`${styles.barSegment} ${styles.barGarage}`}
+                        style={{ height: `${garageHeight}%` }}
+                      />
+                      <div 
+                        className={`${styles.barSegment} ${styles.barProfile}`}
+                        style={{ height: `${profileHeight}%` }}
                       />
                     </div>
                     <span className={`${styles.barLabel} ${isCurrentMonth ? styles.barLabelToday : ''}`}>
@@ -295,6 +308,16 @@ export default function WeeklyEngagement({
           </div>
         )}
       </div>
+
+      {/* Category legend */}
+      <div className={styles.legend}>
+        {CATEGORIES.map((cat) => (
+          <div key={cat.key} className={styles.legendItem}>
+            <span className={`${styles.legendDot} ${styles[cat.dotClass]}`} />
+            <span className={styles.legendLabel}>{cat.label}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -305,19 +328,19 @@ function getTodayIndex() {
   return day === 0 ? 6 : day - 1; // Convert Sunday=0 to index 6
 }
 
-// Generate empty weekly data (7 days)
+// Generate empty weekly data (7 days) - all 5 categories
 function generateEmptyWeeklyData() {
-  return DAYS.map(() => ({ al: 0, community: 0, data: 0 }));
+  return DAYS.map(() => ({ al: 0, community: 0, data: 0, garage: 0, profile: 0 }));
 }
 
-// Generate empty monthly data (days in current month)
+// Generate empty monthly data (days in current month) - all 5 categories
 function generateEmptyMonthlyData() {
   const now = new Date();
   const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-  return Array(daysInMonth).fill(null).map((_, idx) => ({ day: idx + 1, al: 0, community: 0, data: 0 }));
+  return Array(daysInMonth).fill(null).map((_, idx) => ({ day: idx + 1, al: 0, community: 0, data: 0, garage: 0, profile: 0 }));
 }
 
-// Generate empty yearly data (12 months)
+// Generate empty yearly data (12 months) - all 5 categories
 function generateEmptyYearlyData() {
-  return MONTHS.map((_, idx) => ({ month: idx + 1, al: 0, community: 0, data: 0 }));
+  return MONTHS.map((_, idx) => ({ month: idx + 1, al: 0, community: 0, data: 0, garage: 0, profile: 0 }));
 }

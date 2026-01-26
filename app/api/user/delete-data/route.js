@@ -86,7 +86,7 @@ async function deleteFromPostHog(userId) {
     return { error };
   } catch (error) {
     console.error('[Delete Data] PostHog deletion error:', error);
-    return { error: error.message };
+    return { error: 'PostHog deletion failed' };
   }
 }
 
@@ -108,13 +108,14 @@ async function deleteFromSupabase(userId) {
         } else if (error.message.includes('user_id')) {
           results[table] = { skipped: true, reason: 'no user_id column' };
         } else {
-          results[table] = { error: error.message };
+          results[table] = { error: 'deletion failed' };
         }
       } else {
         results[table] = { deleted: count || 0 };
       }
     } catch (error) {
-      results[table] = { error: error.message };
+      console.error(`[Delete Data] Table ${table} deletion error:`, error);
+      results[table] = { error: 'deletion failed' };
     }
   }
 
@@ -188,17 +189,17 @@ async function handlePost(request) {
     const { error: deleteError } = await supabaseAdmin.auth.admin.deleteUser(userId);
 
     if (deleteError) {
-      results.auth = { error: deleteError.message };
       // eslint-disable-next-line no-console -- Error logging for GDPR audit
       console.error('[Delete Data] Auth deletion failed:', deleteError);
+      results.auth = { error: 'auth deletion failed' };
     } else {
       results.auth = { deleted: true };
       // eslint-disable-next-line no-console -- Audit logging for GDPR compliance
       console.log(`[Delete Data] User deleted: ${userId.slice(0, 8)}...`);
     }
   } catch (error) {
-    results.auth = { error: error.message };
     console.error('[Delete Data] Auth deletion error:', error);
+    results.auth = { error: 'auth deletion failed' };
   }
 
   // Return summary

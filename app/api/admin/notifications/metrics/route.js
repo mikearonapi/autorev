@@ -4,22 +4,15 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabaseServer';
-import { isAdminEmail } from '@/lib/adminAccess';
+import { requireAdmin } from '@/lib/adminAccess';
 import { getFatigueMetrics } from '@/lib/notificationFatigueService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
-export async function GET(request) {
+async function handleGet(request) {
   try {
     // Auth check
-    const supabase = await createServerSupabaseClient();
-    const { data: { user }, error: authError } = await supabase.auth.getUser();
-
-    if (authError || !user || !isAdminEmail(user.email)) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+    const denied = await requireAdmin(request);
+    if (denied) return denied;
 
     const { data, error } = await getFatigueMetrics();
 
@@ -40,3 +33,5 @@ export async function GET(request) {
     );
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'admin/notifications/metrics', feature: 'admin' });

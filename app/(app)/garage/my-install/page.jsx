@@ -31,6 +31,7 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
+import { useGarageScore } from '@/hooks/useGarageScore';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import ShareBuildButton from '@/components/ShareBuildButton';
 import PremiumGate from '@/components/PremiumGate';
@@ -103,6 +104,10 @@ function MyInstallContent() {
   const { builds, isLoading: buildsLoading, updateBuild } = useSavedBuilds();
   const { vehicles } = useOwnedVehicles();
   
+  // Get the vehicle ID for this car to enable garage score updates
+  const vehicleForCar = vehicles?.find(v => v.matchedCarSlug === selectedCar?.slug);
+  const { recalculateScore } = useGarageScore(vehicleForCar?.id);
+  
   // Use cached cars data from React Query hook
   const { data: allCars = [], isLoading: carsLoading } = useCarsList();
   
@@ -110,9 +115,11 @@ function MyInstallContent() {
   const buildIdParam = searchParams.get('build');
   const carSlugParam = searchParams.get('car');
   
-  // Fallback: fetch single car if not in list
+  // Fallback: fetch single car in parallel with full list
+  // This provides faster data when the full list is slow or unavailable
+  const carFromList = carSlugParam ? allCars.find(c => c.slug === carSlugParam) : null;
   const { data: fallbackCar, isLoading: fallbackLoading } = useCarBySlug(carSlugParam, {
-    enabled: !!carSlugParam && allCars.length === 0 && !carsLoading,
+    enabled: !!carSlugParam && !carFromList && !selectedCar,
   });
   
   // Get user's hero image for this car
@@ -180,6 +187,14 @@ function MyInstallContent() {
     const upgradeKeys = currentBuild.upgrades || [];
     const partsData = currentBuild.parts || [];
     
+    // Debug: Log when parts data changes
+    console.log('[MyInstall] buildParts recomputing:', {
+      buildId: currentBuild.id,
+      upgradeKeysCount: upgradeKeys.length,
+      partsDataCount: partsData.length,
+      installedInPartsData: partsData.filter(p => p.status === 'installed').map(p => p.upgradeKey),
+    });
+    
     // Map upgrades to part objects with metadata
     // Handle both formats: string keys (old) and objects with key property (new)
     return upgradeKeys.map((upgrade, index) => {
@@ -244,10 +259,18 @@ function MyInstallContent() {
   // IMPORTANT: Uses the same data format as PartsSelector for sync between pages
   // Sets status: 'installed' and installedAt: timestamp (not metadata.installed_at)
   const handleMarkInstalled = useCallback(async (partId, installedBy = 'self') => {
-    if (!currentBuild || !user?.id) return;
+    if (!currentBuild || !user?.id) {
+      console.warn('[MyInstall] Cannot mark installed - no build or user:', { hasBuild: !!currentBuild, hasUser: !!user?.id });
+      return;
+    }
     
     const part = buildParts.find(p => p.id === partId);
-    if (!part) return;
+    if (!part) {
+      console.warn('[MyInstall] Part not found for id:', partId);
+      return;
+    }
+    
+    console.log('[MyInstall] Marking part as installed:', { partId, upgradeKey: part.upgradeKey, partName: part.name });
     
     const now = new Date().toISOString();
     
@@ -268,6 +291,7 @@ function MyInstallContent() {
     // If part wasn't in the array, add it with proper status format
     // Include upgradeKey both at top level (for client) and in metadata (for DB reconstruction)
     if (!updatedParts.find(p => p.upgradeKey === part.upgradeKey)) {
+      console.log('[MyInstall] Part not in existing parts array, adding new entry');
       updatedParts.push({
         id: `part_${Date.now()}`,
         upgradeKey: part.upgradeKey,
@@ -280,9 +304,25 @@ function MyInstallContent() {
       });
     }
     
+    console.log('[MyInstall] Updating build with parts:', { 
+      buildId: currentBuild.id, 
+      partsCount: updatedParts.length,
+      installedParts: updatedParts.filter(p => p.status === 'installed').map(p => p.upgradeKey),
+    });
+    
     try {
       // Use selectedParts key (matches PartsSelector/Parts page format)
-      await updateBuild(currentBuild.id, { selectedParts: updatedParts });
+      const { error } = await updateBuild(currentBuild.id, { selectedParts: updatedParts });
+      
+      if (error) {
+        console.error('[MyInstall] Failed to save part installation:', error);
+        return;
+      }
+      
+      console.log('[MyInstall] Build updated successfully');
+      
+      // Auto-collapse the expanded item after successful install
+      setExpandedPartId(null);
       
       // Show points notification
       showPointsEarned(50, 'Upgrade installed');
@@ -293,18 +333,26 @@ function MyInstallContent() {
         installedCount: installProgress.installed + 1,
         totalCount: installProgress.total,
       });
+      
+      // Recalculate garage score (non-blocking)
+      if (vehicleForCar?.id) {
+        recalculateScore().catch(err => {
+          console.warn('[MyInstall] Score recalculation failed:', err);
+        });
+      }
     } catch (err) {
-      console.error('Failed to mark part as installed:', err);
+      console.error('[MyInstall] Failed to mark part as installed:', err);
     }
-  }, [currentBuild, buildParts, installProgress, updateBuild, user?.id, showPointsEarned]);
+  }, [currentBuild, buildParts, installProgress, updateBuild, user?.id, showPointsEarned, vehicleForCar?.id, recalculateScore, setExpandedPartId]);
   
   // Handle back button
   const handleBack = useCallback(() => {
     router.push('/garage');
   }, [router]);
   
-  // Loading state
-  if (authLoading || buildsLoading || carsLoading) {
+  // Loading state - only block on auth and builds, NOT carsLoading
+  // The fallbackCar mechanism ensures we have car data when needed
+  if (authLoading || buildsLoading) {
     return (
       <div className={styles.loadingContainer}>
         <LoadingSpinner />

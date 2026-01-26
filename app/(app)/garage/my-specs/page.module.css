@@ -25,6 +25,54 @@
   min-height: 60vh;
 }
 
+/* ==========================================================================
+   Skeleton Loading States
+   Per SOURCE_OF_TRUTH.md: Use skeleton loaders that match content shape
+   ========================================================================== */
+
+.skeletonContent {
+  padding: 16px 16px 24px;
+}
+
+.skeletonGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+@media (min-width: 640px) {
+  .skeletonGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.skeletonCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.skeletonHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.skeletonItems {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.skeletonRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 /* Empty State */
 .emptyState {
   flex: 1;
@@ -107,11 +155,13 @@
   gap: 4px;
 }
 
-/* HP stat value uses teal (positive metric) */
+/* HP stat value uses teal (positive metric) with tabular-nums for alignment */
 .statValue {
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--brand-teal);
+  font-feature-settings: 'tnum';
+  font-variant-numeric: tabular-nums;
 }
 
 .statLabel {
@@ -163,6 +213,9 @@
 
 /* Section titles use TEAL per brand guidelines - LARGER than body content */
 .cardTitle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   font-size: 0.875rem;
   font-weight: 700;
   color: var(--brand-teal);
@@ -171,21 +224,56 @@
   margin: 0;
 }
 
+.cardTitle svg {
+  color: var(--color-accent-teal, #10b981);
+}
+
+/* Edit link for custom specs */
+.editLink {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-accent-teal, #10b981);
+  text-decoration: none;
+  padding: 4px 10px;
+  border-radius: 6px;
+  background: rgba(16, 185, 129, 0.1);
+  transition: all 0.15s ease;
+}
+
+.editLink:hover {
+  background: rgba(16, 185, 129, 0.2);
+  transform: translateY(-1px);
+}
+
+.editLink:focus-visible {
+  outline: 2px solid var(--color-accent-teal, #10b981);
+  outline-offset: 2px;
+}
+
+/* Highlight for user-verified values like dyno results */
+.customSpecHighlight {
+  color: var(--color-accent-teal, #10b981);
+  font-weight: 600;
+}
+
 /* Ask AL CTA button - LIME per brand guidelines
    MUST MATCH: components/AskALButton.module.css .variantHeader exactly */
+/* Ask AL CTA button - LIME per brand guidelines
+   Touch target: 44px minimum per SOURCE_OF_TRUTH.md (NON-NEGOTIABLE) */
 .askAlBtn {
-  /* Fixed dimensions for consistency */
+  /* Fixed dimensions - 44px touch target required */
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 28px;
-  padding: 0 12px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 0 16px;
   
   /* Appearance */
   background: var(--brand-lime, #d4ff00);
   color: var(--brand-bg-primary, #0d1b2a);
   border: none;
-  border-radius: 14px;
+  border-radius: 22px;
   
   /* Typography - use token for consistency */
   font-size: var(--text-xs);
@@ -195,7 +283,7 @@
   line-height: 1;
   
   /* Layout */
-  gap: 4px;
+  gap: 6px;
   flex-shrink: 0;
   
   /* Interaction */
@@ -210,6 +298,12 @@
   box-shadow: 0 4px 12px rgba(212, 255, 0, 0.3);
 }
 
+/* Focus visible for keyboard navigation - per SOURCE_OF_TRUTH.md accessibility */
+.askAlBtn:focus-visible {
+  outline: 2px solid var(--brand-lime, #d4ff00);
+  outline-offset: 2px;
+}
+
 .askAlBtn svg {
   width: 12px;
   height: 12px;
@@ -220,6 +314,128 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+/* ==========================================================================
+   Semantic Table Styles for Accessibility
+   Per SOURCE_OF_TRUTH.md: Use proper semantic HTML for screen readers
+   ========================================================================== */
+
+.specTable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.specTableRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.specTableRow:last-child {
+  border-bottom: none;
+}
+
+.specTableLabel {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: left;
+}
+
+.specTableValue {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--brand-text-primary);
+  text-align: right;
+  font-feature-settings: 'tnum';
+  font-variant-numeric: tabular-nums;
+}
+
+/* Screen reader only - visually hidden but accessible */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Definition list for description-style content */
+.specDescriptionList {
+  margin: 0;
+  padding: 0;
+}
+
+/* ==========================================================================
+   Error State Styles
+   Per SOURCE_OF_TRUTH.md: Error states with retry option
+   ========================================================================== */
+
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 48px 24px;
+  min-height: 50vh;
+}
+
+.errorIcon {
+  color: var(--color-error, #ef4444);
+  margin-bottom: 16px;
+  opacity: 0.8;
+}
+
+.errorTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--brand-text-primary);
+  margin: 0 0 8px;
+}
+
+.errorMessage {
+  font-size: 0.9375rem;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0 0 24px;
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+.retryButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 24px;
+  min-height: 44px;
+  min-width: 44px;
+  background: var(--brand-lime, #d4ff00);
+  color: var(--brand-bg-primary, #0d1b2a);
+  border: none;
+  border-radius: 12px;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.retryButton:hover {
+  background: var(--brand-lime-dark, #bfe600);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(212, 255, 0, 0.25);
+}
+
+.retryButton:focus-visible {
+  outline: 2px solid var(--brand-lime, #d4ff00);
+  outline-offset: 2px;
 }
 
 /* Body content is SMALLER than section headers */
@@ -234,9 +450,12 @@
   color: rgba(255, 255, 255, 0.6);
 }
 
+/* Spec values use tabular-nums for alignment */
 .specItem span:last-child {
   color: var(--brand-text-primary);
   font-weight: 500;
+  font-feature-settings: 'tnum';
+  font-variant-numeric: tabular-nums;
 }
 
 /* Description-style spec item (for longer text like driving character) */
@@ -274,8 +493,9 @@
   gap: 6px;
 }
 
+/* Stock/baseline values use BLUE per DESIGN_SYSTEM.md */
 .stockValue {
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--color-accent-blue, #3b82f6);
   font-weight: 400;
 }
 
@@ -344,12 +564,15 @@
   transition: width 0.3s ease;
 }
 
+/* Rating values use tabular-nums for alignment */
 .ratingValue {
   width: 36px;
   font-size: 0.8rem;
   color: var(--brand-text-primary);
   text-align: right;
   flex-shrink: 0;
+  font-feature-settings: 'tnum';
+  font-variant-numeric: tabular-nums;
 }
 
 /* Pros/Cons */
@@ -476,6 +699,12 @@
   cursor: not-allowed;
 }
 
+/* Focus visible for keyboard navigation */
+.confirmButton:focus-visible {
+  outline: 2px solid var(--brand-lime, #d4ff00);
+  outline-offset: 2px;
+}
+
 .confirmButton .checkIcon {
   font-size: 1.1rem;
 }
@@ -582,6 +811,11 @@
   border-color: rgba(16, 185, 129, 0.5);
   transform: translateY(-2px);
   box-shadow: 0 4px 16px rgba(16, 185, 129, 0.15);
+}
+
+.continueCta:focus-visible {
+  outline: 2px solid var(--color-accent-teal, #10b981);
+  outline-offset: 2px;
 }
 
 .ctaContent {

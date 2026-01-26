@@ -11,7 +11,8 @@
 import { NextResponse } from 'next/server';
 import { getEmailAnalytics, sendTemplateEmail, processEmailQueue } from '@/lib/emailService';
 import { createClient } from '@supabase/supabase-js';
-import { isAdminEmail } from '@/lib/adminAccess';
+import { requireAdmin } from '@/lib/adminAccess';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -24,35 +25,6 @@ const supabaseAdmin = createClient(
 );
 
 /**
- * Verify admin access via Bearer token
- */
-async function verifyAdmin(request) {
-  try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return { error: 'Missing authorization header', status: 401 };
-    }
-
-    if (!supabaseUrl || !supabaseServiceKey) {
-      return { error: 'Database not configured', status: 500 };
-    }
-
-    const token = authHeader.replace('Bearer ', '');
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-
-    if (authError || !user || !isAdminEmail(user.email)) {
-      return { error: 'Admin access required', status: 403 };
-    }
-
-    return { user };
-  } catch (err) {
-    console.error('[Admin/Emails] Auth check error:', err);
-    return { error: 'Authentication failed', status: 500 };
-  }
-}
-
-/**
  * GET /api/admin/emails
  * 
  * Query params:
@@ -61,13 +33,11 @@ async function verifyAdmin(request) {
  * - limit: max logs to return (default 50)
  * - status: filter logs by status
  */
-export async function GET(request) {
+async function handleGet(request) {
   try {
     // Verify admin access
-    const auth = await verifyAdmin(request);
-    if (auth.error) {
-      return NextResponse.json({ error: auth.error }, { status: auth.status });
-    }
+    const denied = await requireAdmin(request);
+    if (denied) return denied;
 
     const { searchParams } = new URL(request.url);
     const view = searchParams.get('view') || 'analytics';
@@ -108,21 +78,25 @@ export async function GET(request) {
         const { data: logs, error } = await query;
         
         if (error) {
-          return NextResponse.json({ error: error.message }, { status: 500 });
+          console.error('[Admin/Emails] Logs query error:', error);
+          return NextResponse.json({ error: 'Failed to fetch email logs' }, { status: 500 });
         }
 
         return NextResponse.json({ logs });
       }
 
       case 'queue': {
+        const QUEUE_COLS = 'id, user_id, email_type, to_email, subject, status, priority, scheduled_for, attempts, last_error, sent_at, created_at';
+        
         const { data: queue, error } = await supabaseAdmin
           .from('email_queue')
-          .select('*')
+          .select(QUEUE_COLS)
           .order('scheduled_for', { ascending: true })
           .limit(limit);
 
         if (error) {
-          return NextResponse.json({ error: error.message }, { status: 500 });
+          console.error('[Admin/Emails] Queue query error:', error);
+          return NextResponse.json({ error: 'Failed to fetch email queue' }, { status: 500 });
         }
 
         // Get queue stats
@@ -142,14 +116,17 @@ export async function GET(request) {
       }
 
       case 'templates': {
+        const TEMPLATE_COLS = 'id, name, category, subject, html_template, text_template, variables, is_active, created_at, updated_at';
+        
         const { data: templates, error } = await supabaseAdmin
           .from('email_templates')
-          .select('*')
+          .select(TEMPLATE_COLS)
           .order('category', { ascending: true })
           .order('name', { ascending: true });
 
         if (error) {
-          return NextResponse.json({ error: error.message }, { status: 500 });
+          console.error('[Admin/Emails] Templates query error:', error);
+          return NextResponse.json({ error: 'Failed to fetch email templates' }, { status: 500 });
         }
 
         return NextResponse.json({ templates });
@@ -209,13 +186,11 @@ export async function GET(request) {
  * - action: 'send_test' | 'process_queue' | 'send_campaign'
  * - ... action-specific params
  */
-export async function POST(request) {
+async function handlePost(request) {
   try {
     // Verify admin access
-    const auth = await verifyAdmin(request);
-    if (auth.error) {
-      return NextResponse.json({ error: auth.error }, { status: auth.status });
-    }
+    const denied = await requireAdmin(request);
+    if (denied) return denied;
 
     const body = await request.json();
     const { action } = body;
@@ -263,3 +238,5 @@ export async function POST(request) {
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'admin/emails', feature: 'admin' });
+export const POST = withErrorLogging(handlePost, { route: 'admin/emails', feature: 'admin' });

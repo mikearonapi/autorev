@@ -23,6 +23,7 @@ import { NextResponse } from 'next/server';
 import { ForumScraperService } from '@/lib/forumScraper/index.js';
 import { InsightExtractor } from '@/lib/forumScraper/insightExtractor.js';
 import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -39,7 +40,7 @@ function isAuthorized(request) {
 /**
  * GET handler for forum scrape cron job
  */
-export async function GET(request) {
+async function handleGet(request) {
   if (!isAuthorized(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -238,11 +239,12 @@ export async function GET(request) {
     notifyCronFailure('Forum Scrape', error, { phase: 'fatal' });
     return NextResponse.json({
       error: 'Forum scrape cron failed',
-      message: error.message,
       stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cron/forum-scrape', feature: 'cron' });
 
 // Route segment config for longer execution time
 // https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config

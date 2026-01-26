@@ -114,7 +114,7 @@ export function CostInputForm({ onSubmit, onCancel, glAccounts = [], editEntry =
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
   
-  const handleChange = (e) => {
+  const handleCostInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
@@ -123,7 +123,7 @@ export function CostInputForm({ onSubmit, onCancel, glAccounts = [], editEntry =
     setError(null);
   };
   
-  const handleSubmit = async (e) => {
+  const handleCostEntrySubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
@@ -218,7 +218,7 @@ export function CostInputForm({ onSubmit, onCancel, glAccounts = [], editEntry =
         </div>
       )}
       
-      <form onSubmit={handleSubmit} className={styles.form}>
+      <form onSubmit={handleCostEntrySubmit} className={styles.form}>
         <div className={styles.row}>
           <div className={styles.field}>
             <label>Date</label>
@@ -226,7 +226,7 @@ export function CostInputForm({ onSubmit, onCancel, glAccounts = [], editEntry =
               type="date"
               name="entryDate"
               value={formData.entryDate}
-              onChange={handleChange}
+              onChange={handleCostInputChange}
               required
             />
           </div>
@@ -238,7 +238,7 @@ export function CostInputForm({ onSubmit, onCancel, glAccounts = [], editEntry =
               inputMode="decimal"
               name="amount"
               value={formData.amount}
-              onChange={handleChange}
+              onChange={handleCostInputChange}
               placeholder="0.00"
               step="0.01"
               min="0"
@@ -253,7 +253,7 @@ export function CostInputForm({ onSubmit, onCancel, glAccounts = [], editEntry =
           <select 
             name="glAccountCode" 
             value={formData.glAccountCode} 
-            onChange={handleChange}
+            onChange={handleCostInputChange}
             required
           >
             <option value="">Select GL Account...</option>
@@ -275,7 +275,7 @@ export function CostInputForm({ onSubmit, onCancel, glAccounts = [], editEntry =
         <div className={styles.row}>
           <div className={styles.field}>
             <label>Cost Type</label>
-            <select name="costType" value={formData.costType} onChange={handleChange}>
+            <select name="costType" value={formData.costType} onChange={handleCostInputChange}>
               {COST_TYPES.map(type => (
                 <option key={type.value} value={type.value}>{type.label}</option>
               ))}
@@ -288,7 +288,7 @@ export function CostInputForm({ onSubmit, onCancel, glAccounts = [], editEntry =
               type="text"
               name="vendor"
               value={formData.vendor}
-              onChange={handleChange}
+              onChange={handleCostInputChange}
               placeholder="e.g., Supabase, Vercel, Anthropic"
             />
           </div>
@@ -300,7 +300,7 @@ export function CostInputForm({ onSubmit, onCancel, glAccounts = [], editEntry =
             type="text"
             name="description"
             value={formData.description}
-            onChange={handleChange}
+            onChange={handleCostInputChange}
             placeholder="e.g., Supabase Pro - December 2024"
             required
           />
@@ -312,7 +312,7 @@ export function CostInputForm({ onSubmit, onCancel, glAccounts = [], editEntry =
               type="checkbox"
               name="isRecurring"
               checked={formData.isRecurring}
-              onChange={handleChange}
+              onChange={handleCostInputChange}
             />
             <span>Recurring monthly expense</span>
           </label>

@@ -476,10 +476,10 @@
   }
 }
 
-/* CF-001: Touch target compliance - minimum 44px on larger screens, 36px on compact mobile */
+/* CF-001: Touch target compliance - 44px minimum */
 .actionButton {
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   border-radius: var(--radius-full);
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);

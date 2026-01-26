@@ -13,7 +13,8 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { isAdminEmail } from '@/lib/adminAccess';
+import { requireAdmin } from '@/lib/adminAccess';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -104,7 +105,7 @@ async function fetchAnthropicCosts(startDate, endDate) {
     console.error('[External Costs] Anthropic API error:', err);
     return {
       available: false,
-      reason: err.message,
+      reason: 'Failed to fetch Anthropic cost data',
       error: true,
     };
   }
@@ -185,7 +186,7 @@ async function getInternalUsageEstimates(supabase, startDate, endDate) {
     console.error('[External Costs] Internal tracking error:', err);
     return {
       available: false,
-      reason: err.message,
+      reason: 'Failed to fetch internal usage data',
     };
   }
 }
@@ -231,19 +232,17 @@ async function getManualCostEntries(supabase, startDate, endDate) {
     };
   } catch (err) {
     console.error('[External Costs] Manual entries error:', err);
-    return { available: false, reason: err.message };
+    return { available: false, reason: 'Failed to fetch manual cost entries' };
   }
 }
 
-export async function GET(request) {
+async function handleGet(request) {
+  // Verify admin access
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
+
   const { searchParams } = new URL(request.url);
   const range = searchParams.get('range') || 'month';
-
-  // Verify admin access
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
 
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
@@ -252,13 +251,6 @@ export async function GET(request) {
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
   try {
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-
-    if (authError || !user || !isAdminEmail(user.email)) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-    }
-
     // Calculate date range
     const endDate = new Date();
     let startDate;
@@ -398,6 +390,8 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Failed to fetch external costs' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'admin/external-costs', feature: 'admin' });
 
 
 

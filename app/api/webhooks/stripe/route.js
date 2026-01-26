@@ -791,7 +791,7 @@ export async function POST(request) {
       errorType: 'webhook_verification_failed',
       severity: 'blocking',
     });
-    return NextResponse.json({ error: err.message }, { status: 400 });
+    return NextResponse.json({ error: 'Webhook verification failed' }, { status: 400 });
   }
 
   console.log('[Stripe Webhook] Event received:', event.type, event.id);

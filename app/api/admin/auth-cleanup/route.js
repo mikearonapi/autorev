@@ -12,8 +12,9 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient, getAuthenticatedUserWithProfile } from '@/lib/supabaseServer';
 import { supabaseServiceRole } from '@/lib/supabase';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     // Verify admin access
     const { user, profile, error: authError } = await getAuthenticatedUserWithProfile();
@@ -95,7 +96,7 @@ export async function POST(request) {
   } catch (err) {
     console.error('[Auth Cleanup] Error:', err);
     return NextResponse.json(
-      { error: 'Cleanup failed', message: err.message },
+      { error: 'Cleanup failed' },
       { status: 500 }
     );
   }
@@ -104,7 +105,7 @@ export async function POST(request) {
 /**
  * GET endpoint for checking auth health
  */
-export async function GET(request) {
+async function handleGet(request) {
   try {
     // Verify admin access
     const { user, profile, error: authError } = await getAuthenticatedUserWithProfile();
@@ -173,7 +174,7 @@ export async function GET(request) {
   } catch (err) {
     console.error('[Auth Health] Error:', err);
     return NextResponse.json(
-      { error: 'Health check failed', message: err.message },
+      { error: 'Health check failed' },
       { status: 500 }
     );
   }
@@ -204,3 +205,5 @@ function getHealthRecommendations({ recentSessionCount, totalUsers, recentLogins
   return recommendations;
 }
 
+export const POST = withErrorLogging(handlePost, { route: 'admin/auth-cleanup', feature: 'admin' });
+export const GET = withErrorLogging(handleGet, { route: 'admin/auth-cleanup', feature: 'admin' });

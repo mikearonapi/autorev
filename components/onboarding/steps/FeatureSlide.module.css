@@ -20,7 +20,7 @@
   text-align: center;
   max-width: 400px;
   flex-shrink: 0;
-  padding: 24px 24px 16px;
+  padding: 12px 16px 6px;
 }
 
 .title {
@@ -55,10 +55,10 @@
   touch-action: pan-y pinch-zoom;
   user-select: none;
   -webkit-user-select: none;
-  /* Scale the phone */
-  transform: scale(0.9);
+  /* Scale the phone - smaller to fit better */
+  transform: scale(0.78);
   transform-origin: top center;
-  margin-top: 4px;
+  margin-top: 0;
 }
 
 /* ==========================================================
@@ -100,7 +100,7 @@
   align-items: center;
   gap: var(--space-xs);
   flex-shrink: 0;
-  margin-top: -24px;
+  margin-top: -48px;
   padding-bottom: 8px;
 }
 
@@ -112,8 +112,8 @@
 }
 
 .dot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.3);
   border: none;
@@ -138,7 +138,7 @@
   align-items: center;
   gap: var(--space-xs);
   color: rgba(255, 255, 255, 0.4);
-  font-size: var(--text-xs);
+  font-size: var(--text-2xs);
   animation: swipeHintPulse 2s ease-in-out infinite;
 }
 
@@ -180,45 +180,45 @@
 }
 
 /* ==========================================================
-   SMALLER PHONES (under 380px)
+   REGULAR MOBILE (381px and up)
    ========================================================== */
-@media (max-width: 380px) {
+@media (min-width: 381px) {
   .header {
-    padding: 12px 16px 6px;
+    padding: 24px 24px 16px;
   }
   
   .phoneWrapper {
-    transform: scale(0.75);
-    margin-top: -8px;
+    transform: scale(0.8);
+    margin-top: 0;
   }
   
   .dot {
-    width: 5px;
-    height: 5px;
+    width: 6px;
+    height: 6px;
   }
   
   .dotActive {
-    width: 14px;
+    width: 18px;
   }
   
   .navigation {
-    margin-top: -32px;
+    margin-top: -40px;
   }
   
   .swipeHint {
-    font-size: var(--text-2xs);
+    font-size: var(--text-xs);
   }
 }
 
 /* Taller phones (iPhone Pro Max, etc.) - more room for content */
-@media (min-height: 800px) and (max-width: 480px) {
+@media (min-height: 800px) {
   .phoneWrapper {
-    transform: scale(0.95);
-    margin-top: 8px;
+    transform: scale(0.85);
+    margin-top: 4px;
   }
   
   .navigation {
-    margin-top: -16px;
+    margin-top: -32px;
   }
 }
 
@@ -235,13 +235,13 @@
   }
   
   .phoneWrapper {
-    transform: scale(1);
+    transform: scale(0.9);
     margin-top: 8px;
   }
   
   .navigation {
     gap: var(--space-sm);
-    margin-top: -8px;
+    margin-top: -16px;
     padding-bottom: 16px;
   }
 }

@@ -1,0 +1,92 @@
+---
+description: "Security Agent - Auth, webhooks, validation. Auto-activates for API routes."
+globs:
+  - "**/api/**"
+  - "**/auth/**"
+  - "**/middleware.*"
+alwaysApply: false
+---
+
+# Security Agent
+
+## Webhook Signature Verification (CRITICAL)
+
+**Verify signature BEFORE parsing body.**
+
+```typescript
+export async function POST(req: NextRequest) {
+  // 1. Get RAW body (required for signature)
+  const body = await req.text();
+  const signature = req.headers.get('stripe-signature');
+
+  // 2. Verify FIRST
+  let event: Stripe.Event;
+  try {
+    event = stripe.webhooks.constructEvent(body, signature!, webhookSecret);
+  } catch (err) {
+    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+  }
+
+  // 3. Idempotency check
+  const { data: existing } = await supabase
+    .from('processed_webhook_events')
+    .select('id')
+    .eq('event_id', event.id)
+    .single();
+
+  if (existing) return NextResponse.json({ received: true });
+
+  // 4. Process, then mark as processed
+  await handleEvent(event);
+  await supabase.from('processed_webhook_events').insert({ event_id: event.id });
+
+  return NextResponse.json({ received: true });
+}
+```
+
+## Authentication
+
+```typescript
+const session = await auth();
+if (!session?.user) {
+  return apiError('Unauthorized', 401);
+}
+```
+
+## Authorization (Resource Ownership)
+
+```typescript
+const { data: car } = await supabase
+  .from('user_cars')
+  .select('user_id')
+  .eq('car_id', carId)
+  .eq('user_id', session.user.id)
+  .single();
+
+if (!car) return apiError('Forbidden', 403);
+```
+
+## Input Validation
+
+```typescript
+import { z } from 'zod';
+
+const Schema = z.object({
+  carId: z.string().uuid(),
+  nickname: z.string().min(1).max(50),
+});
+
+const result = Schema.safeParse(body);
+if (!result.success) {
+  return apiError('Validation failed', 400, result.error.flatten());
+}
+```
+
+## Checklist
+
+- [ ] Auth checked on protected routes
+- [ ] Resource ownership verified
+- [ ] Inputs validated with Zod
+- [ ] Webhook signatures verified before parsing
+- [ ] Idempotency for webhooks
+- [ ] No sensitive data in logs/responses

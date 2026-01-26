@@ -21,31 +21,7 @@ import {
   getFailedResults,
 } from '@/lib/alEvaluationRunner';
 import { getEvalDatasetStats } from '@/lib/alEvaluations';
-
-// Admin check helper (reused from other admin routes)
-async function isAdmin(request) {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return false;
-  }
-  
-  const token = authHeader.slice(7);
-  const supabase = getServiceClient();
-  
-  const { data: { user }, error } = await supabase.auth.getUser(token);
-  if (error || !user) {
-    return false;
-  }
-  
-  // Check if user is admin
-  const { data: profile } = await supabase
-    .from('profiles')
-    .select('tier')
-    .eq('id', user.id)
-    .single();
-  
-  return profile?.tier === 'admin';
-}
+import { requireAdmin } from '@/lib/adminAccess';
 
 /**
  * GET /api/admin/al-evaluations
@@ -58,10 +34,8 @@ async function isAdmin(request) {
  */
 async function handleGet(request) {
   // Check admin access
-  const admin = await isAdmin(request);
-  if (!admin) {
-    return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-  }
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
   
   const { searchParams } = new URL(request.url);
   const runId = searchParams.get('runId');
@@ -83,10 +57,12 @@ async function handleGet(request) {
       : await getRunResults(runId);
     
     // Also get run metadata
+    const RUN_COLS = 'id, prompt_version_id, test_set_name, total_cases, passed_cases, failed_cases, avg_quality_score, avg_response_time_ms, started_at, completed_at, status, metadata, created_at';
+    
     const supabase = getServiceClient();
     const { data: run } = await supabase
       .from('al_evaluation_runs')
-      .select('*')
+      .select(RUN_COLS)
       .eq('id', runId)
       .single();
     
@@ -120,10 +96,8 @@ async function handleGet(request) {
  */
 async function handlePost(request) {
   // Check admin access
-  const admin = await isAdmin(request);
-  if (!admin) {
-    return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-  }
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
   
   const body = await request.json();
   const {
@@ -170,7 +144,7 @@ async function handlePost(request) {
   } catch (error) {
     console.error('[AL Evaluations] Error running evaluation:', error);
     return NextResponse.json({
-      error: error.message || 'Failed to run evaluation',
+      error: 'Failed to run evaluation',
     }, { status: 500 });
   }
 }

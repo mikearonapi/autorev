@@ -130,7 +130,7 @@
 .complexityValue.difficultymoderate { color: var(--color-accent-blue, #3b82f6); }
 .complexityValue.difficultydifficult { color: var(--color-accent-amber, #f59e0b); }
 .complexityValue.difficultyexpert { color: var(--color-error, #ef4444); }
-.complexityValue.difficultyshop-only { color: #a855f7; } /* Purple */
+.complexityValue.difficultyshop-only { color: var(--color-info, #8b5cf6); } /* Purple - premium tier color */
 
 .complexityValue.feasible { color: var(--color-accent-teal, #10b981); }
 .complexityValue.notFeasible { color: var(--color-error, #ef4444); }

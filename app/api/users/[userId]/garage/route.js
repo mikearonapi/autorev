@@ -100,7 +100,7 @@ async function handleGet(request, { params }) {
 
     if (error) {
       console.error('[API/users/garage] Error fetching vehicles:', error);
-      return errors.database(error.message || 'Failed to fetch garage');
+      return errors.database('Failed to fetch garage');
     }
 
     // Transform to client-friendly format

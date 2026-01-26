@@ -164,8 +164,8 @@
   }
 }
 
-/* iPad/Tablet */
-@media (min-width: 481px) and (max-width: 1024px) {
+/* Tablet and up - mobile-first (min-width: 481px) */
+@media (min-width: 481px) {
   .feedbackCorner {
     bottom: calc(92px + env(safe-area-inset-bottom, 0px));
     right: 24px;

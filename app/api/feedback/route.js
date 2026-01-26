@@ -5,6 +5,7 @@ import { resolveCarId } from '@/lib/carResolver';
 import { errors } from '@/lib/apiErrors';
 import { rateLimit } from '@/lib/rateLimit';
 import { feedbackSchema, validateWithSchema, validationErrorResponse } from '@/lib/schemas';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * Feedback API - Handles TWO separate concerns:
@@ -16,7 +17,7 @@ import { feedbackSchema, validateWithSchema, validationErrorResponse } from '@/l
  *    - Automatic client-side and server-side errors
  *    - NOT stored in user_feedback (clean separation)
  */
-export async function POST(request) {
+async function handlePost(request) {
   // Rate limit: 5 requests per minute for form submissions
   const rateLimited = rateLimit(request, 'form');
   if (rateLimited) return rateLimited;
@@ -228,7 +229,7 @@ export async function POST(request) {
   }
 }
 
-export async function GET(request) {
+async function handleGet(request) {
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
@@ -242,9 +243,11 @@ export async function GET(request) {
       return Response.json({ error: 'Database not configured' }, { status: 503 });
     }
 
+    const FEEDBACK_COLS = 'id, user_id, category, severity, title, description, page_url, browser_info, screenshot_url, status, resolved_at, resolution_notes, al_conversation_id, al_message_id, created_at';
+    
     let query = supabase
       .from('user_feedback')
-      .select('*')
+      .select(FEEDBACK_COLS)
       .order('created_at', { ascending: false })
       .limit(limit);
 
@@ -285,3 +288,6 @@ export async function GET(request) {
     return Response.json({ error: 'Unexpected error' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'feedback', feature: 'feedback' });
+export const POST = withErrorLogging(handlePost, { route: 'feedback', feature: 'feedback' });

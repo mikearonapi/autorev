@@ -21,7 +21,8 @@
 
 /* Variant: Compact */
 .compact .rsvpBtn {
-  padding: 8px 12px;
+  min-height: 44px;
+  padding: 10px 14px;
   font-size: var(--font-size-sm);
 }
 
@@ -33,7 +34,8 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 16px;
+  min-height: 44px;
+  padding: 12px 16px;
   background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
   border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.07));
   border-radius: var(--radius-md);
@@ -75,16 +77,16 @@
   border-color: var(--color-accent-teal-light, #34d399);
 }
 
-/* Going State - Teal accent (positive action) */
+/* Going State - Lime accent (primary CTA action per brand guidelines) */
 .rsvpBtn.going {
-  background: var(--color-accent-teal, #10b981);
-  border-color: var(--color-accent-teal, #10b981);
-  color: var(--color-text-primary, #ffffff);
+  background: var(--color-accent-lime, #d4ff00);
+  border-color: var(--color-accent-lime, #d4ff00);
+  color: var(--color-bg-base, #0d1b2a);
 }
 
 .rsvpBtn.going:hover:not(:disabled) {
-  background: var(--color-accent-teal-light, #34d399);
-  border-color: var(--color-accent-teal-light, #34d399);
+  background: var(--color-accent-lime-dark, #bfe600);
+  border-color: var(--color-accent-lime-dark, #bfe600);
 }
 
 /* Interested State - Blue accent (informational) */
@@ -122,7 +124,7 @@
   position: absolute;
   top: calc(100% + 8px);
   left: 0;
-  min-width: 220px;
+  min-width: 240px;
   background: var(--color-bg-elevated, #1b263b);
   border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.07));
   border-radius: var(--radius-lg);
@@ -150,7 +152,8 @@
   align-items: flex-start;
   gap: 12px;
   width: 100%;
-  padding: 12px 16px;
+  padding: 14px 16px;
+  min-height: 48px;
   background: transparent;
   border: none;
   text-align: left;
@@ -221,28 +224,28 @@
 }
 
 /* ===========================================
-   MOBILE OPTIMIZATION
-   CF-001: Touch target compliance
+   DESKTOP OPTIMIZATION
    =========================================== */
 
-@media (max-width: 767px) {
+/* CF-001: Maintain 44px touch targets even on desktop for accessibility */
+@media (min-width: 768px) {
   .rsvpBtn {
     min-height: 44px;
-    padding: 12px 16px;
+    padding: 10px 16px;
   }
   
   .compact .rsvpBtn {
-    min-height: 36px;
+    min-height: 44px;
     padding: 8px 12px;
   }
   
   .menu {
-    min-width: 240px;
+    min-width: 220px;
   }
   
   .menuItem {
-    padding: 14px 16px;
-    min-height: 48px;
+    padding: 12px 16px;
+    min-height: 44px;
   }
 }
 

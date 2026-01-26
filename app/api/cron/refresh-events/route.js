@@ -23,7 +23,7 @@ import { deduplicateBatch } from '@/lib/eventDeduplication';
 import { batchGeocodeEvents } from '@/lib/geocodingService';
 import { buildEventRows } from '@/lib/eventsIngestion/buildEventRows';
 import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
-import { logCronError } from '@/lib/serverErrorLogger';
+import { logCronError, withErrorLogging } from '@/lib/serverErrorLogger';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -59,7 +59,7 @@ function isAuthorized(request) {
   return vercelCron === 'true';
 }
 
-export async function GET(request) {
+async function handleGet(request) {
   // Auth check
   if (!isAuthorized(request)) {
     console.error('[refresh-events] Unauthorized request. CRON_SECRET set:', Boolean(CRON_SECRET), 'x-vercel-cron header:', request.headers.get('x-vercel-cron'));
@@ -113,7 +113,8 @@ export async function GET(request) {
       
       return NextResponse.json(diagnostics);
     } catch (err) {
-      return NextResponse.json({ error: err.message, code: 'DIAGNOSTIC_FAILED' }, { status: 500 });
+      console.error('[refresh-events] Diagnostic failed:', err);
+      return NextResponse.json({ error: 'Diagnostic check failed', code: 'DIAGNOSTIC_FAILED' }, { status: 500 });
     }
   }
   
@@ -171,10 +172,12 @@ export async function GET(request) {
     const eventTypeIdBySlug = new Map((eventTypes || []).map((t) => [t.slug, t.id]));
     const otherTypeId = eventTypeIdBySlug.get('other') || null;
 
+    const SOURCE_COLS = 'id, name, slug, source_type, source_url, fetch_config, is_active, last_fetched_at, created_at';
+    
     // 1. Get active event sources
     let sourcesQuery = supabaseServiceRole
       .from('event_sources')
-      .select('*')
+      .select(SOURCE_COLS)
       .eq('is_active', true);
     
     if (sourceFilter) {
@@ -560,9 +563,10 @@ export async function GET(request) {
     return NextResponse.json({
       ...results,
       success: false,
-      error: err.message,
+      error: 'Event refresh failed',
       durationMs: Date.now() - startedAt,
     }, { status: 500 });
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'cron/refresh-events', feature: 'cron' });

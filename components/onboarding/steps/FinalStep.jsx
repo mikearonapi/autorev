@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { LOGO_TRANSPARENT } from '@/lib/brandLogos';
 import styles from './FinalStep.module.css';
 
 /**
@@ -37,10 +39,15 @@ export default function FinalStep({
     <div className={`${className || ''} ${styles.container}`}>
       {/* Centered Brand Logo */}
       <div className={styles.brandContainer}>
-        <h1 className={styles.brandTitle}>
-          <span className={styles.brandAuto}>AUTO</span>
-          <span className={styles.brandRev}>REV</span>
-        </h1>
+        <Image
+          src={LOGO_TRANSPARENT}
+          alt="AutoRev"
+          width={240}
+          height={160}
+          className={styles.brandLogo}
+          priority
+          unoptimized // CDN-hosted, already optimized
+        />
       </div>
 
       {/* CTA to Garage */}

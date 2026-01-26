@@ -216,6 +216,7 @@ export default function EventRSVPButton({
         onClick={handleButtonClick}
         disabled={isLoading}
         aria-label={isActive ? `RSVP: ${buttonLabel}` : 'RSVP to this event'}
+        aria-pressed={isActive}
         type="button"
       >
         {isLoading ? (

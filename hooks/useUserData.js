@@ -297,6 +297,35 @@ export function useAnalyzeTrackTimes() {
 }
 
 /**
+ * Hook to delete a track time
+ */
+export function useDeleteTrackTime() {
+  const queryClient = useQueryClient();
+  
+  return useMutation({
+    mutationFn: async ({ userId, trackTimeId }) => {
+      const res = await fetch(`/api/users/${userId}/track-times?id=${trackTimeId}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) {
+        const error = new Error('Failed to delete track time');
+        try {
+          const body = await res.json();
+          error.message = body.error || error.message;
+        } catch {}
+        throw error;
+      }
+      return res.json();
+    },
+    onSuccess: (data, { userId }) => {
+      // Invalidate all track times caches for this user
+      queryClient.invalidateQueries({ queryKey: userKeys.trackTimes(userId, null) });
+      queryClient.invalidateQueries({ queryKey: [...userKeys.all, userId, 'track-times'] });
+    },
+  });
+}
+
+/**
  * Hook to clear user data
  */
 export function useClearUserData() {

@@ -8,11 +8,12 @@
    - Recent cars section
    ========================================================================== */
 
+/* Level 3: Overlay background for focused car selection experience */
 .overlay {
   position: fixed;
   inset: 0;
   z-index: 1300;
-  background: var(--bg-primary, var(--brand-bg-primary-dark));
+  background: var(--brand-bg-overlay, #1a1a1a);
   
   animation: fadeIn 0.2s ease;
 }

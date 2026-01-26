@@ -6,8 +6,9 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabaseServer';
 import { getUnreadCount } from '@/lib/notificationService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
-export async function GET(request) {
+async function handleGet(request) {
   try {
     const supabase = await createServerSupabaseClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -38,3 +39,5 @@ export async function GET(request) {
     );
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'notifications-unread-count', feature: 'notifications' });

@@ -48,21 +48,23 @@ NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 
 ## Products & Pricing
 
-### Subscription Tiers
+### Subscription Tiers (Jan 2026)
 
-| Tier | Name | Price | Stripe Price ID | Product ID |
-|------|------|-------|----------------|------------|
+| Tier | Name | Monthly | Annual | Product ID |
+|------|------|---------|--------|------------|
 | Free | Free | $0 | N/A | N/A |
-| Collector | Enthusiast | $4.99/mo | `price_1Sj5QuPAhBIL8qL1G5vd4Etd` | `prod_TgSLD2pSfYbAxn` |
-| Tuner | Tuner | $9.99/mo | `price_1Sj5QvPAhBIL8qL1EWLZKRFL` | `prod_TgSL5Mwritjx3a` |
+| Collector | Enthusiast | $9.99/mo | $79/yr | `prod_TrPhpLD2oMkK1f` |
+| Tuner | Pro | $19.99/mo | $149/yr | `prod_TrPidceOekU45N` |
 
-### AL Credit Packs
+See `lib/stripe.js` for current Stripe Price IDs.
 
-| Pack | Credits | Price | Stripe Price ID | Product ID |
-|------|---------|-------|----------------|------------|
-| Small | 25 | $2.99 | `price_1Sj5QwPAhBIL8qL1Yy2WePeo` | `prod_TgSLBnNu7vZKFf` |
-| Medium | 75 | $4.99 | `price_1Sj5QwPAhBIL8qL1HrLcIGno` | `prod_TgSLNEp9npYwhJ` |
-| Large | 200 | $9.99 | `price_1Sj5QxPAhBIL8qL1XUyXgK7N` | `prod_TgSLScSMXxy5nm` |
+### AL Credit Packs (Jan 2026)
+
+| Pack | AL Budget | Price | Est. Chats | Product ID |
+|------|-----------|-------|------------|------------|
+| Boost | $0.50 | $1.99 | ~35 | `prod_TrPiGMeYJdDO05` |
+| Power | $1.50 | $4.99 | ~100 | `prod_TrPisEEPlFQZiL` |
+| Turbo | $3.50 | $9.99 | ~230 | `prod_TrPi8Jrbx1yKCL` |
 
 ### Donation Presets
 

@@ -251,7 +251,7 @@ async function handleGet(request) {
         .lte('created_at', dateRange.previousEnd) : Promise.resolve({ data: [] }),
       
       // AL credit balances
-      supabase.from('al_credit_balances').select('*'),
+      supabase.from('al_credit_balances').select('id, user_id, balance, lifetime_earned, lifetime_spent, last_activity_at, created_at'),
       
       // Events - use count queries instead of fetching all rows (can be 7000+)
       supabase.from('events').select('id', { count: 'exact', head: true }).eq('status', 'approved'),

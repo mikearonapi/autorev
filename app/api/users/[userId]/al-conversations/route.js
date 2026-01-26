@@ -3,9 +3,12 @@
  * 
  * GET /api/users/[userId]/al-conversations
  * Returns the user's conversation history
+ * 
+ * Auth: User must be authenticated and can only access their own conversations
  */
 
 import { NextResponse } from 'next/server';
+import { createServerSupabaseClient, getBearerToken, createAuthenticatedClient } from '@/lib/supabaseServer';
 import { errors } from '@/lib/apiErrors';
 import { getUserConversations } from '@/lib/alConversationService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
@@ -16,10 +19,30 @@ async function handleGet(request, { params }) {
     const { searchParams } = new URL(request.url);
     
     if (!userId) {
-      return NextResponse.json(
-        { error: 'User ID is required' },
-        { status: 400 }
-      );
+      return errors.missingField('userId');
+    }
+
+    // Get authenticated user
+    const bearerToken = getBearerToken(request);
+    const authSupabase = bearerToken 
+      ? createAuthenticatedClient(bearerToken) 
+      : await createServerSupabaseClient();
+
+    if (!authSupabase) {
+      return errors.serviceUnavailable('Authentication service');
+    }
+
+    const { data: { user }, error: authError } = bearerToken
+      ? await authSupabase.auth.getUser(bearerToken)
+      : await authSupabase.auth.getUser();
+    
+    if (authError || !user) {
+      return errors.unauthorized();
+    }
+    
+    // Verify the authenticated user matches the userId param (IDOR protection)
+    if (user.id !== userId) {
+      return errors.forbidden('Not authorized to access this user\'s conversations');
     }
 
     const limit = parseInt(searchParams.get('limit') || '20', 10);
@@ -41,10 +64,7 @@ async function handleGet(request, { params }) {
     });
   } catch (err) {
     console.error('[AL Conversations API] Error:', err);
-    return NextResponse.json(
-      { error: 'Failed to fetch conversations' },
-      { status: 500 }
-    );
+    return errors.internal('Failed to fetch conversations');
   }
 }
 

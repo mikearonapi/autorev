@@ -1,4 +1,9 @@
-/* NotificationPreferences Component Styles */
+/**
+ * NotificationPreferences Component Styles
+ * 
+ * Dark theme optimized - uses AutoRev design tokens
+ * Per UI Quality Agent: dark theme with proper contrast
+ */
 
 .container {
   max-width: 640px;
@@ -6,43 +11,44 @@
 }
 
 .header {
-  margin-bottom: 24px;
+  margin-bottom: 20px;
 }
 
 .title {
-  margin: 0 0 8px 0;
-  font-size: 20px;
+  margin: 0 0 6px 0;
+  font-size: var(--text-h3, 18px);
   font-weight: 600;
-  color: var(--color-text-primary, #1e293b);
+  color: var(--color-text-primary, #ffffff);
 }
 
 .subtitle {
   margin: 0;
-  font-size: 14px;
-  color: var(--color-text-secondary, #64748b);
+  font-size: var(--text-sm, 14px);
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 /* Section */
 .section {
-  padding: 24px 0;
-  border-bottom: 1px solid var(--color-border, #e2e8f0);
+  padding: 20px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .section:last-of-type {
   border-bottom: none;
+  padding-bottom: 0;
 }
 
 .sectionTitle {
-  margin: 0 0 8px 0;
-  font-size: 16px;
+  margin: 0 0 4px 0;
+  font-size: var(--text-body, 15px);
   font-weight: 600;
-  color: var(--color-text-primary, #1e293b);
+  color: var(--color-text-primary, #ffffff);
 }
 
 .sectionDescription {
   margin: 0 0 16px 0;
-  font-size: 14px;
-  color: var(--color-text-secondary, #64748b);
+  font-size: var(--text-sm, 14px);
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 /* Toggle Row */
@@ -61,68 +67,68 @@
 
 .toggleLabel {
   display: block;
-  font-size: 14px;
+  font-size: var(--text-body, 15px);
   font-weight: 500;
-  color: var(--color-text-primary, #1e293b);
+  color: var(--color-text-primary, #ffffff);
 }
 
 .toggleDescription {
   display: block;
-  font-size: 13px;
-  color: var(--color-text-secondary, #64748b);
+  font-size: var(--text-xs, 13px);
+  color: var(--color-text-secondary, #94a3b8);
   margin-top: 2px;
 }
 
-/* Toggle Switch */
+/* Toggle Switch - Dark theme optimized */
 .toggle {
   position: relative;
-  width: 44px;
-  height: 24px;
+  width: 50px;
+  height: 28px;
   padding: 0;
-  background-color: var(--color-surface-alt, #e2e8f0);
+  background-color: rgba(255, 255, 255, 0.12);
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease;
   flex-shrink: 0;
 }
 
 .toggle:hover:not(.toggleDisabled) {
-  background-color: var(--color-border, #cbd5e1);
+  background-color: rgba(255, 255, 255, 0.18);
 }
 
 .toggle:focus-visible {
-  outline: 2px solid var(--color-primary, #3b82f6);
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
   outline-offset: 2px;
 }
 
 .toggleChecked {
-  background-color: var(--color-primary, #3b82f6);
+  background-color: var(--color-accent-teal, #10b981);
 }
 
 .toggleChecked:hover:not(.toggleDisabled) {
-  background-color: var(--color-primary-dark, #2563eb);
+  background-color: var(--color-accent-teal-dark, #0d9668);
 }
 
 .toggleDisabled {
-  opacity: 0.5;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 .toggleThumb {
   position: absolute;
-  top: 2px;
-  left: 2px;
-  width: 20px;
-  height: 20px;
-  background-color: white;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  background-color: #ffffff;
   border-radius: 50%;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  transition: transform 0.2s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s ease;
 }
 
 .toggleChecked .toggleThumb {
-  transform: translateX(20px);
+  transform: translateX(22px);
 }
 
 /* Category List */
@@ -137,8 +143,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 16px 0;
-  border-bottom: 1px solid var(--color-border-light, #f1f5f9);
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .categoryRow:last-child {
@@ -171,27 +177,29 @@
 
 .categoryLabel {
   display: block;
-  font-size: 14px;
+  font-size: var(--text-body, 15px);
   font-weight: 500;
-  color: var(--color-text-primary, #1e293b);
+  color: var(--color-text-primary, #ffffff);
 }
 
 .categoryDescription {
   display: block;
-  font-size: 12px;
-  color: var(--color-text-secondary, #64748b);
+  font-size: var(--text-xs, 12px);
+  color: var(--color-text-secondary, #94a3b8);
   margin-top: 2px;
 }
 
-/* Quiet Hours Config */
+/* Quiet Hours Config - Dark theme */
 .quietHoursConfig {
   display: flex;
+  flex-direction: column;
   flex-wrap: wrap;
   gap: 16px;
   margin-top: 16px;
   padding: 16px;
-  background-color: var(--color-surface-alt, #f8fafc);
-  border-radius: var(--radius-md, 8px);
+  background-color: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
 }
 
 .timeInputGroup,
@@ -199,45 +207,59 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  width: 100%;
 }
 
 .timeLabel {
-  font-size: 13px;
+  font-size: var(--text-xs, 13px);
   font-weight: 500;
-  color: var(--color-text-secondary, #64748b);
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 .timeInput,
 .timezoneSelect {
-  padding: 8px 12px;
-  font-size: 14px;
-  border: 1px solid var(--color-border, #e2e8f0);
-  border-radius: var(--radius-sm, 6px);
-  background-color: var(--color-surface, #ffffff);
-  color: var(--color-text-primary, #1e293b);
+  padding: 10px 12px;
+  font-size: max(16px, var(--text-body, 15px));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: var(--color-text-primary, #ffffff);
+  width: 100%;
 }
 
 .timeInput:focus,
 .timezoneSelect:focus {
   outline: none;
-  border-color: var(--color-primary, #3b82f6);
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+  border-color: var(--color-accent-lime, #d4ff00);
+  box-shadow: 0 0 0 3px rgba(212, 255, 0, 0.15);
 }
 
 .timezoneSelect {
   min-width: 160px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 36px;
+}
+
+.timezoneSelect option {
+  background-color: var(--color-bg-elevated, #1b263b);
+  color: var(--color-text-primary, #ffffff);
 }
 
 .quietHoursConfig .toggleRow {
   width: 100%;
   margin-top: 8px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 /* Loading & Error States */
 .loading {
   padding: 48px 24px;
   text-align: center;
-  color: var(--color-text-secondary, #64748b);
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 .error {
@@ -251,67 +273,76 @@
 }
 
 .retryButton {
-  padding: 8px 16px;
-  font-size: 14px;
+  padding: 10px 20px;
+  min-height: 44px;
+  font-size: var(--text-sm, 14px);
   font-weight: 500;
-  color: var(--color-primary, #3b82f6);
+  color: var(--color-accent-teal, #10b981);
   background: transparent;
-  border: 1px solid var(--color-primary, #3b82f6);
-  border-radius: var(--radius-sm, 6px);
+  border: 1px solid var(--color-accent-teal, #10b981);
+  border-radius: 10px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s ease;
 }
 
 .retryButton:hover {
-  background-color: var(--color-primary-light, #eff6ff);
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.retryButton:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
 }
 
 /* Saving Indicator */
 .savingIndicator {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: calc(var(--nav-height, 64px) + 16px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
   padding: 12px 20px;
-  font-size: 14px;
+  font-size: var(--text-sm, 14px);
   font-weight: 500;
-  color: white;
-  background-color: var(--color-text-primary, #1e293b);
-  border-radius: var(--radius-md, 8px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  color: var(--color-text-primary, #ffffff);
+  background-color: var(--color-bg-elevated, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   z-index: 1000;
 }
 
 .errorMessage {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: calc(var(--nav-height, 64px) + 16px + env(safe-area-inset-bottom, 0px));
+  left: 50%;
+  transform: translateX(-50%);
   padding: 12px 20px;
-  font-size: 14px;
+  font-size: var(--text-sm, 14px);
   font-weight: 500;
-  color: white;
+  color: var(--color-text-primary, #ffffff);
   background-color: var(--color-error, #ef4444);
-  border-radius: var(--radius-md, 8px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   z-index: 1000;
 }
 
-/* Mobile Responsive */
-@media (max-width: 640px) {
+/* Desktop Responsive */
+@media (min-width: 641px) {
   .categoryRow {
-    padding: 14px 0;
+    padding: 16px 0;
   }
 
   .quietHoursConfig {
-    flex-direction: column;
+    flex-direction: row;
   }
 
   .timeInputGroup,
   .timezoneGroup {
-    width: 100%;
+    width: auto;
   }
 
   .timeInput,
   .timezoneSelect {
-    width: 100%;
+    width: auto;
   }
 }

@@ -132,7 +132,7 @@
 }
 
 .fullBtn:hover {
-  background: #0d9668;
+  background: var(--color-accent-teal, #0d9668);
   transform: translateY(-1px);
 }
 

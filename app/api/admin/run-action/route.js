@@ -9,7 +9,8 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { isAdminEmail } from '@/lib/adminAccess';
+import { requireAdmin } from '@/lib/adminAccess';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -168,12 +169,10 @@ const ALLOWED_ACTIONS = {
   },
 };
 
-export async function POST(request) {
+async function handlePost(request) {
   // Verify admin access
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
   
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
@@ -182,14 +181,6 @@ export async function POST(request) {
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
   
   try {
-    // Verify user is admin
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
-    if (authError || !user || !isAdminEmail(user.email)) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-    }
-    
     // Get action from body
     const body = await request.json();
     const { action } = body;
@@ -213,8 +204,9 @@ export async function POST(request) {
     console.error('[Admin Run Action] Error:', err);
     return NextResponse.json({
       success: false,
-      error: err.message,
+      error: 'Action failed',
     }, { status: 500 });
   }
 }
 
+export const POST = withErrorLogging(handlePost, { route: 'admin/run-action', feature: 'admin' });

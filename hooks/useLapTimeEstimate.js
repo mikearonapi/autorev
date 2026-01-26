@@ -122,7 +122,7 @@ export function useLapTimeEstimate(params, options = {}) {
     }),
     enabled,
     staleTime: 5 * 60 * 1000, // 5 minutes
-    cacheTime: 30 * 60 * 1000, // 30 minutes
+    gcTime: 30 * 60 * 1000, // 30 minutes (React Query v5: gcTime replaces cacheTime)
     ...options,
   });
 }
@@ -141,18 +141,19 @@ export function useTrackStats(trackSlug, options = {}) {
     queryFn: () => fetchTrackStats(trackSlug),
     enabled,
     staleTime: 10 * 60 * 1000, // 10 minutes
-    cacheTime: 60 * 60 * 1000, // 1 hour
+    gcTime: 60 * 60 * 1000, // 1 hour (React Query v5: gcTime replaces cacheTime)
     ...options,
   });
 }
 
 /**
- * Format seconds to lap time string
+ * Format seconds to lap time string (M:SS.mmm)
+ * Uses 3 decimal places for millisecond precision
  */
 export function formatLapTime(seconds) {
-  if (!seconds || isNaN(seconds)) return '--:--.--';
+  if (!seconds || isNaN(seconds)) return '--:--.---';
   const mins = Math.floor(seconds / 60);
-  const secs = (seconds % 60).toFixed(2).padStart(5, '0');
+  const secs = (seconds % 60).toFixed(3).padStart(6, '0');
   return `${mins}:${secs}`;
 }
 

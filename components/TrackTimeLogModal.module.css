@@ -10,10 +10,11 @@
    =========================================== */
 
 /* CF-003: Mobile-first modal overlay - full screen coverage */
+/* Level 3: Overlay background for focused data entry experience */
 .overlay {
   position: fixed;
   inset: 0;
-  background: var(--color-bg-base, #0d1b2a);
+  background: var(--brand-bg-overlay, #1a1a1a);
   display: flex;
   align-items: stretch;
   justify-content: center;
@@ -40,6 +41,7 @@
 }
 
 /* CF-003: Full-screen modal on mobile - positioned above PWA menu */
+/* Level 3: Overlay background for focused data entry experience */
 .modal {
   position: relative;
   width: 100%;
@@ -49,7 +51,7 @@
   height: 100dvh;
   /* Account for PWA bottom nav (80px) + safe area */
   padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
-  background: var(--color-bg-base, #0d1b2a);
+  background: var(--brand-bg-overlay, #1a1a1a);
   border-radius: 0;
   border: none;
   overflow: hidden;
@@ -314,6 +316,28 @@
   color: var(--color-warning, #f59e0b);
 }
 
+/* Build Snapshot - Shows current modifications at time of logging */
+.buildSnapshot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  font-size: var(--text-sm);
+}
+
+.buildSnapshotLabel {
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.buildSnapshotValue {
+  color: var(--color-text-primary, #ffffff);
+  font-weight: 600;
+}
+
 /* Sections - Compact spacing on mobile */
 .section {
   margin-bottom: 12px;
@@ -403,7 +427,7 @@
   align-items: center;
   gap: 4px;
   font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: 9px; /* Sub-minimum decorative label */
+  font-size: 10px; /* Minimum accessible label size */
   font-weight: 600;
   color: rgba(255, 255, 255, 0.5);
   text-transform: uppercase;

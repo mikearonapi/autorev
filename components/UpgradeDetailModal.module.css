@@ -22,9 +22,9 @@
   to { opacity: 1; }
 }
 
-/* Panel */
+/* Panel - Level 3: Overlay background for focused modal experience */
 .panel {
-  background: var(--surface-elevated, var(--brand-bg-card-dark));
+  background: var(--brand-bg-overlay, #1a1a1a);
   width: 100%;
   height: 100%; /* Full screen on mobile */
   max-width: none;

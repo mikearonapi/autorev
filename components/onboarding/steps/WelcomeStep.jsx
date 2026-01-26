@@ -1,5 +1,7 @@
 'use client';
 
+import Image from 'next/image';
+import { LOGO_TRANSPARENT } from '@/lib/brandLogos';
 import styles from './WelcomeStep.module.css';
 
 /**
@@ -12,11 +14,18 @@ import styles from './WelcomeStep.module.css';
 export default function WelcomeStep({ className }) {
   return (
     <div className={`${className || ''} ${styles.container}`}>
-      {/* Brand Wordmark - At top like homepage */}
-      <h1 className={styles.brand}>
-        <span className={styles.brandAuto}>AUTO</span>
-        <span className={styles.brandRev}>REV</span>
-      </h1>
+      {/* Brand Logo - At top like homepage */}
+      <div className={styles.brandContainer}>
+        <Image
+          src={LOGO_TRANSPARENT}
+          alt="AutoRev"
+          width={200}
+          height={133}
+          className={styles.brandLogo}
+          priority
+          unoptimized // CDN-hosted, already optimized
+        />
+      </div>
       
       {/* Content centered in remaining space */}
       <div className={styles.content}>

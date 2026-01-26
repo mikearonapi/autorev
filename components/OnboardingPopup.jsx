@@ -203,7 +203,7 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
               <ul className={styles.featureList}>
                 {step.features.map((feature, i) => (
                   <li key={i} className={styles.featureItem}>
-                    <span className={styles.featureIcon} style={{ color: '#10b981' }}><CheckIcon size={14} /></span>
+                    <span className={styles.featureIcon} style={{ color: 'var(--color-accent-teal)' }}><CheckIcon size={16} /></span>
                     <span>{feature}</span>
                   </li>
                 ))}
@@ -222,7 +222,7 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
                 className={`${styles.dot} ${index === currentStep ? styles.dotActive : ''}`}
                 onClick={() => handleDotClick(index)}
                 aria-label={`Go to step ${index + 1}`}
-                style={index === currentStep ? { backgroundColor: '#10b981' } : {}}
+                style={index === currentStep ? { backgroundColor: 'var(--color-accent-teal)' } : {}}
               />
             ))}
           </div>
@@ -262,7 +262,7 @@ export default function OnboardingPopup({ storageKey, steps, accentColor = 'var(
             />
             <span className={styles.checkmark}>
               {dontShowAgain && (
-                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round">
                   <polyline points="20 6 9 17 4 12"/>
                 </svg>
               )}

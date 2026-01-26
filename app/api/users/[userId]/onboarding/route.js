@@ -88,7 +88,7 @@ async function handleGet(request, { params }) {
     if (error) {
       console.error('[API/users/onboarding] Error fetching profile:', error);
       return NextResponse.json(
-        { error: error.message || 'Failed to fetch onboarding status' },
+        { error: 'Failed to fetch onboarding status' },
         { status: 500 }
       );
     }
@@ -213,7 +213,7 @@ async function handlePatch(request, { params }) {
     if (error) {
       console.error('[API/users/onboarding] Error updating progress:', error);
       return NextResponse.json(
-        { error: error.message || 'Failed to save progress' },
+        { error: 'Failed to save progress' },
         { status: 500 }
       );
     }
@@ -316,7 +316,7 @@ async function handlePost(request, { params }) {
     if (error) {
       console.error('[API/users/onboarding] Error completing onboarding:', error);
       return NextResponse.json(
-        { error: error.message || 'Failed to complete onboarding' },
+        { error: 'Failed to complete onboarding' },
         { status: 500 }
       );
     }

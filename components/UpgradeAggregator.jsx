@@ -188,7 +188,7 @@ export default function UpgradeAggregator({
       <div className={styles.statsGrid}>
         {/* Power - Stock → Projected format */}
         <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ '--stat-color': '#e74c3c' }}>
+          <div className={styles.statIcon} style={{ '--stat-color': 'var(--color-error, #ef4444)' }}>
             <Icons.zap size={20} />
           </div>
           <div className={styles.statContent}>
@@ -211,7 +211,7 @@ export default function UpgradeAggregator({
 
         {/* Cost */}
         <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ '--stat-color': '#3498db' }}>
+          <div className={styles.statIcon} style={{ '--stat-color': 'var(--color-accent-blue, #3b82f6)' }}>
             <Icons.dollar size={20} />
           </div>
           <div className={styles.statContent}>
@@ -225,7 +225,7 @@ export default function UpgradeAggregator({
 
         {/* Efficiency */}
         <div className={styles.statCard}>
-          <div className={styles.statIcon} style={{ '--stat-color': '#2ecc71' }}>
+          <div className={styles.statIcon} style={{ '--stat-color': 'var(--color-accent-teal, #10b981)' }}>
             <Icons.trendingUp size={20} />
           </div>
           <div className={styles.statContent}>

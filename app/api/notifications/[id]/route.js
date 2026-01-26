@@ -7,8 +7,9 @@
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabaseServer';
 import { markAsRead, deleteNotification } from '@/lib/notificationService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
-export async function PATCH(request, { params }) {
+async function handlePatch(request, { params }) {
   try {
     const supabase = await createServerSupabaseClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -49,7 +50,7 @@ export async function PATCH(request, { params }) {
   }
 }
 
-export async function DELETE(request, { params }) {
+async function handleDelete(request, { params }) {
   try {
     const supabase = await createServerSupabaseClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();
@@ -89,3 +90,6 @@ export async function DELETE(request, { params }) {
     );
   }
 }
+
+export const PATCH = withErrorLogging(handlePatch, { route: 'notifications-id', feature: 'notifications' });
+export const DELETE = withErrorLogging(handleDelete, { route: 'notifications-id', feature: 'notifications' });

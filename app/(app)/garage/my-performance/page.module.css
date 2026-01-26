@@ -19,6 +19,50 @@
 }
 
 /* ===========================================
+   SKELETON LOADING STATES
+   =========================================== */
+
+.loadingSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px;
+}
+
+.navSkeleton {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+
+.vehicleSelectorSkeleton {
+  margin-bottom: 8px;
+}
+
+.contentSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cardSkeleton {
+  background: rgba(13, 27, 42, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.metricsSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* ===========================================
    CONTENT
    =========================================== */
 
@@ -138,10 +182,12 @@
   gap: 6px;
   font-size: 0.875rem;
   font-weight: 600;
+  font-family: var(--font-mono, 'JetBrains Mono', 'SF Mono', monospace);
 }
 
 .stockVal {
   color: rgba(255, 255, 255, 0.5);
+  font-family: var(--font-mono, 'JetBrains Mono', 'SF Mono', monospace);
 }
 
 .arrow {
@@ -151,10 +197,12 @@
 
 .upgradedVal {
   color: var(--brand-teal);
+  font-family: var(--font-mono, 'JetBrains Mono', 'SF Mono', monospace);
 }
 
 .currentVal {
   color: rgba(255, 255, 255, 0.7);
+  font-family: var(--font-mono, 'JetBrains Mono', 'SF Mono', monospace);
 }
 
 .gain {
@@ -167,6 +215,7 @@
   font-weight: 700;
   color: var(--brand-teal);
   margin-left: 4px;
+  font-family: var(--font-mono, 'JetBrains Mono', 'SF Mono', monospace);
 }
 
 /* Track bars */
@@ -306,6 +355,7 @@
   gap: 6px;
   font-size: 0.875rem;
   font-weight: 600;
+  font-family: var(--font-mono, 'JetBrains Mono', 'SF Mono', monospace);
 }
 
 /* ===========================================

@@ -17,6 +17,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import styles from './DynoLogModal.module.css';
+import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
 
 // SVG Icons
 const ChartIcon = () => (
@@ -98,7 +99,11 @@ export default function DynoLogModal({
   vehicleInfo,
   predictedWhp,
   editingResult = null,
+  currentBuildInfo = null, // { upgrades: [], totalHpGain, estimatedHp }
 }) {
+  // Set safe area color to match overlay background when modal is open
+  useSafeAreaColor(SAFE_AREA_COLORS.OVERLAY, { enabled: isOpen });
+  
   const [formData, setFormData] = useState({
     whp: '',
     wtq: '',
@@ -260,7 +265,7 @@ export default function DynoLogModal({
   if (!isOpen) return null;
 
   return (
-    <div className={styles.overlay} onClick={onClose}>
+    <div className={styles.overlay} onClick={onClose} data-overlay-modal>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         <div className={styles.header}>
           <div className={styles.titleRow}>
@@ -290,6 +295,16 @@ export default function DynoLogModal({
                   {whpDiff >= 0 ? '+' : ''}{whpDiff} WHP
                 </div>
               )}
+            </div>
+          )}
+          
+          {/* Current Build Snapshot (read-only) */}
+          {currentBuildInfo && currentBuildInfo.upgrades && currentBuildInfo.upgrades.length > 0 && !editingResult && (
+            <div className={styles.buildSnapshot}>
+              <span className={styles.buildSnapshotLabel}>Build at time of dyno:</span>
+              <span className={styles.buildSnapshotValue}>
+                {currentBuildInfo.upgrades.length} mods (+{currentBuildInfo.totalHpGain || 0} HP)
+              </span>
             </div>
           )}
 

@@ -51,7 +51,7 @@ export default function LapTimesPage() {
     loadCars();
   }, []);
 
-  async function handleSubmit(e) {
+  async function handleLapTimeSubmit(e) {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
@@ -112,7 +112,7 @@ export default function LapTimesPage() {
         <p>Manual entry for citeable lap times (with conditions + source URL) to power AL’s track answers.</p>
       </header>
 
-      <form className={styles.form} onSubmit={handleSubmit}>
+      <form className={styles.form} onSubmit={handleLapTimeSubmit}>
         <div className={styles.grid}>
           <div className={styles.formGroup}>
             <label>Admin Key</label>

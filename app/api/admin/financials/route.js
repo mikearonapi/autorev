@@ -10,7 +10,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { isAdminEmail } from '@/lib/adminAccess';
+import { requireAdmin } from '@/lib/adminAccess';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -33,18 +33,18 @@ const DEFAULT_MONTHLY_COSTS = {
   },
 };
 
-// Revenue pricing
+// Revenue pricing (Jan 2026 - simplified model)
 const SUBSCRIPTION_PRICING = {
   free: 0,
-  collector: 499,      // $4.99/mo in cents
-  tuner: 999,          // $9.99/mo in cents
-  enterprise: 4999,    // $49.99/mo in cents
+  collector: 999,      // $9.99/mo in cents (Enthusiast)
+  tuner: 1999,         // $19.99/mo in cents (Pro)
 };
 
+// AL Top-Up Packs (Jan 2026 - simplified model)
 const AL_TOKEN_PRICING = {
-  starter: { credits: 50, price: 499 },
-  plus: { credits: 200, price: 1499 },
-  pro: { credits: 500, price: 2999 },
+  boost: { budgetCents: 50, price: 199 },   // $1.99, ~35 chats
+  power: { budgetCents: 150, price: 499 },  // $4.99, ~100 chats
+  turbo: { budgetCents: 350, price: 999 },  // $9.99, ~230 chats
 };
 
 // Helper: Get date range
@@ -167,16 +167,14 @@ function buildPLStructure(revenue, costs, productDevCosts = 0) {
 }
 
 export async function GET(request) {
+  // Verify admin access
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
+
   const { searchParams } = new URL(request.url);
   const range = searchParams.get('range') || 'month';
   const year = searchParams.get('year') ? parseInt(searchParams.get('year')) : new Date().getFullYear();
   const month = searchParams.get('month') ? parseInt(searchParams.get('month')) : new Date().getMonth() + 1;
-  
-  // Verify admin access
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
   
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
@@ -185,14 +183,6 @@ export async function GET(request) {
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
   
   try {
-    // Verify user is admin
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
-    if (authError || !user || !isAdminEmail(user.email)) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-    }
-    
     const dateRange = getDateRange(range, year, month);
     
     // Fetch data in parallel
@@ -226,7 +216,7 @@ export async function GET(request) {
       
       // Monthly summaries
       supabase.from('monthly_financials')
-        .select('*')
+        .select('id, fiscal_year, fiscal_month, revenue_cents, total_fixed_costs_cents, total_variable_costs_cents, net_income_cents, notes, created_at')
         .order('fiscal_year', { ascending: false })
         .order('fiscal_month', { ascending: false })
         .limit(12),
@@ -530,10 +520,9 @@ export async function GET(request) {
 
 // POST: Add cost entry
 export async function POST(request) {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  // Verify admin access
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
   
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
@@ -542,12 +531,10 @@ export async function POST(request) {
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
   
   try {
+    // Get user for audit trail
+    const authHeader = request.headers.get('authorization');
     const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
-    if (authError || !user || !isAdminEmail(user.email)) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-    }
+    const { data: { user } } = await supabase.auth.getUser(token);
     
     const body = await request.json();
     const {
@@ -601,10 +588,9 @@ export async function POST(request) {
 
 // PATCH: Update cost entry
 export async function PATCH(request) {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  // Verify admin access
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
   
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
@@ -613,13 +599,6 @@ export async function PATCH(request) {
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
   
   try {
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
-    if (authError || !user || !isAdminEmail(user.email)) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-    }
-    
     const body = await request.json();
     const {
       id,
@@ -685,10 +664,9 @@ export async function PATCH(request) {
 
 // DELETE: Remove cost entry
 export async function DELETE(request) {
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  // Verify admin access
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
   
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
@@ -697,13 +675,6 @@ export async function DELETE(request) {
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
   
   try {
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
-    if (authError || !user || !isAdminEmail(user.email)) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-    }
-    
     const { searchParams } = new URL(request.url);
     const id = searchParams.get('id');
     

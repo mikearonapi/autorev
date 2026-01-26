@@ -150,10 +150,12 @@ async function handleGet(request, { params }) {
       });
     }
     
+    const FITMENT_COLS = 'id, car_id, year, trim, suspension, wheel_position, wheel_width, wheel_diameter, wheel_offset, tire_width, tire_aspect_ratio, tire_diameter, is_oem, notes, created_at';
+    
     // Fetch all fitment options for this car
     const { data: fitmentRows, error: fitmentError } = await supabase
       .from('wheel_tire_fitment_options')
-      .select('*')
+      .select(FITMENT_COLS)
       .eq('car_id', carId);
 
     if (fitmentError) {

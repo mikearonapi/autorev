@@ -90,8 +90,8 @@
   }
 }
 
-/* Tablet: Pages handle their own padding */
-@media (min-width: 768px) and (max-width: 1023px) {
+/* Tablet: Pages handle their own padding - min-width: 768px */
+@media (min-width: 768px) {
   .appLayout {
     /* No layout padding - pages handle tab bar space */
   }

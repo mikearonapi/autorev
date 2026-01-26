@@ -9,7 +9,8 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { isAdminEmail } from '@/lib/adminAccess';
+import { requireAdmin } from '@/lib/adminAccess';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -66,12 +67,10 @@ const METRIC_INFO = {
   },
 };
 
-export async function GET(request) {
+async function handleGet(request) {
   // Verify admin access
-  const authHeader = request.headers.get('authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
-  }
+  const denied = await requireAdmin(request);
+  if (denied) return denied;
   
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
@@ -80,13 +79,6 @@ export async function GET(request) {
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
   
   try {
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
-    if (authError || !user || !isAdminEmail(user.email)) {
-      return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
-    }
-    
     // Parse query params
     const { searchParams } = new URL(request.url);
     const days = parseInt(searchParams.get('days') || '7', 10);
@@ -249,9 +241,10 @@ export async function GET(request) {
   } catch (err) {
     console.error('[Web Vitals API] Error:', err);
     return NextResponse.json({ 
-      error: err.message,
+      error: 'Failed to fetch web vitals data',
       configured: false,
     }, { status: 500 });
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'admin/web-vitals', feature: 'admin' });

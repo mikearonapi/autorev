@@ -11,7 +11,7 @@
  * @module components/providers/FavoritesProvider
  */
 
-import { createContext, useContext, useReducer, useEffect, useState, useCallback, useRef } from 'react';
+import { createContext, useContext, useReducer, useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { useAuth } from '@/components/providers/AuthProvider';
 import {
   loadFavorites,
@@ -427,7 +427,7 @@ export function FavoritesProvider({ children }) {
     }
   }, [isAuthenticated]);
 
-  const value = {
+  const value = useMemo(() => ({
     favorites: state.favorites,
     count: state.favorites.length,
     isHydrated,
@@ -437,7 +437,16 @@ export function FavoritesProvider({ children }) {
     toggleFavorite,
     isFavorite,
     clearAll,
-  };
+  }), [
+    state.favorites,
+    isHydrated,
+    isLoading,
+    addFavorite,
+    removeFavorite,
+    toggleFavorite,
+    isFavorite,
+    clearAll,
+  ]);
 
   return (
     <FavoritesContext.Provider value={value}>

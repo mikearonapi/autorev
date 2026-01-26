@@ -71,11 +71,11 @@
 
 .pageTitle {
   font-family: var(--font-display, 'Oswald', sans-serif);
-  font-size: 2rem;
+  font-size: var(--font-size-4xl);
   font-weight: 700;
   color: var(--color-text-primary, #ffffff);
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   text-transform: uppercase;
   flex-shrink: 0;
 }
@@ -91,16 +91,10 @@
 
 .pageSubtitle {
   font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: 0.75rem;
+  font-size: var(--text-sm, 13px);
   color: var(--color-text-tertiary, #64748b);
   margin: 0;
   line-height: 1.4;
-}
-
-@media (min-width: 361px) {
-  .pageSubtitle {
-    font-size: 0.6875rem;
-  }
 }
 
 /* ===========================================
@@ -193,6 +187,34 @@
   transform: scale(0.98);
 }
 
+/* Profile Link Button */
+.profileLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1.5px solid rgba(255, 255, 255, 0.08);
+  color: var(--color-text-secondary, #94a3b8);
+  text-decoration: none;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.profileLink:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.profileAvatar {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 /* ===========================================
    LIST VIEW - Compact Vehicle List
    =========================================== */
@@ -201,6 +223,14 @@
   display: flex;
   flex-direction: column;
   flex: 1;
+}
+
+/* Controls row for list view - matches position of presentation view controls */
+.listViewControls {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 8px 0 12px;
 }
 
 /* List view - removed header since main pageHeader is used */
@@ -233,6 +263,19 @@
 .vehicleListItem:hover {
   background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Keyboard focus state - visible focus indicator for accessibility */
+.vehicleListItem:focus {
+  outline: none;
+  border-color: var(--brand-teal);
+  box-shadow: 0 0 0 2px rgba(var(--brand-teal-rgb), 0.3);
+}
+
+.vehicleListItem:focus-visible {
+  outline: none;
+  border-color: var(--brand-teal);
+  box-shadow: 0 0 0 2px rgba(var(--brand-teal-rgb), 0.3);
 }
 
 .vehicleListItem:active {
@@ -323,8 +366,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 8px;
@@ -338,11 +381,67 @@
   color: rgba(255, 255, 255, 0.9);
 }
 
+/* Drag Handle for reordering */
+.dragHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 44px;
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: grab;
+  touch-action: none;
+  transition: color 0.2s ease;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: -4px;
+}
+
+.dragHandle:hover {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+  color: var(--brand-lime);
+}
+
+/* Dragging state for the item being dragged */
+.vehicleListItemDragging {
+  opacity: 0.5;
+  border-color: var(--brand-teal);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Drag overlay - the floating copy while dragging */
+.vehicleListItemOverlay {
+  background: var(--card-surface-elevated, rgba(30, 40, 50, 0.98));
+  border: 2px solid var(--brand-lime);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  transform: scale(1.02);
+  cursor: grabbing;
+}
+
+.vehicleListItemOverlay .dragHandle {
+  color: var(--brand-lime);
+}
+
+/* Hide drag handle on very small screens to save space */
+@media (max-width: 359px) {
+  .dragHandle {
+    width: 24px;
+  }
+}
+
 /* listViewAddBtn removed - using addVehicleBtn in controls bar */
 
 /* Key Spec Value Modified Indicator - keep white, don't change color */
 .keySpecValueModified {
-  color: #ffffff !important;
+  color: var(--color-text-primary, #ffffff) !important;
 }
 
 /* Key Spec Value Loading State */
@@ -435,8 +534,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 50%;
@@ -996,9 +1095,29 @@
   flex-direction: row !important;
   justify-content: space-between !important;
   align-items: flex-start !important;
+  gap: 12px;
   width: 100%;
-  padding: 8px 12px 16px;
+  padding: 8px 0 12px;
   text-align: left !important;
+}
+
+/* Actions group on the right side */
+.vehicleHeaderActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+/* View toggle when inside vehicleInfoHeader */
+.vehicleInfoHeader .viewToggle {
+  flex-shrink: 0;
+}
+
+/* Smaller add vehicle button in vehicle header */
+.vehicleHeaderActions .addVehicleBtn {
+  padding: 6px 10px;
+  font-size: 0.75rem;
 }
 
 .vehicleInfoText {
@@ -2164,7 +2283,7 @@
   font-family: var(--font-display, 'Oswald', sans-serif);
   font-size: 1.75rem;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--color-text-primary, #ffffff);
   letter-spacing: -0.02em;
   line-height: 1;
 }
@@ -5201,8 +5320,8 @@
   }
 }
 
-/* Tablet-specific adjustments (iPad) */
-@media (min-width: 768px) and (max-width: 1023px) {
+/* Tablet and up - mobile-first (min-width: 768px) */
+@media (min-width: 768px) {
   .headerBar {
     gap: 12px;
   }
@@ -5211,7 +5330,7 @@
     font-size: var(--text-h3);
   }
   
-  /* Ensure tabs are always visible and centered on tablet */
+  /* Ensure tabs are always visible and centered on tablet+ */
   .headerCenter {
     justify-content: center;
   }
@@ -5221,7 +5340,7 @@
     font-size: var(--text-body);
   }
   
-  /* Adjust quick action bar for tablet */
+  /* Adjust quick action bar for tablet+ */
   .quickActionBar {
     right: 24px;
   }
@@ -5602,6 +5721,13 @@
   outline: none;
   font-size: max(16px, var(--text-h4));
   color: var(--brand-text-primary);
+}
+
+/* Focus state handled by parent focusWithin or global focus-visible */
+.carPickerSearch input:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #d4ff00);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 .carPickerSearch input::placeholder {
@@ -6862,4 +6988,62 @@
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
+}
+
+/* ===========================================
+   UTILITY CLASSES - Avoid inline styles
+   =========================================== */
+
+.textCapitalize {
+  text-transform: capitalize;
+}
+
+.flexOne {
+  flex: 1;
+}
+
+.colorSuccess {
+  color: var(--color-accent-teal);
+}
+
+.colorError {
+  color: var(--color-error);
+}
+
+/* ===========================================
+   SKELETON LOADING STATES
+   Per SOURCE_OF_TRUTH.md: Use skeleton loaders matching content shape
+   =========================================== */
+
+.garageLoadingSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 0;
+  flex: 1;
+}
+
+.vehicleCardSkeleton {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.vehicleImageSkeleton {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.vehicleInfoSkeleton {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.vehicleStatsSkeleton {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
 }

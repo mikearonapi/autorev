@@ -7,8 +7,9 @@
 
 import { NextResponse } from 'next/server';
 import lapTimeService from '@/lib/lapTimeService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const body = await request.json();
     
@@ -42,7 +43,7 @@ export async function POST(request) {
   } catch (error) {
     console.error('[API] Lap time estimate error:', error);
     return NextResponse.json(
-      { error: 'Failed to estimate lap time', details: error.message },
+      { error: 'Failed to estimate lap time' },
       { status: 500 }
     );
   }
@@ -53,7 +54,7 @@ export async function POST(request) {
  * 
  * Get track statistics and baseline data
  */
-export async function GET(request) {
+async function handleGet(request) {
   try {
     const { searchParams } = new URL(request.url);
     const trackSlug = searchParams.get('trackSlug');
@@ -79,8 +80,11 @@ export async function GET(request) {
   } catch (error) {
     console.error('[API] Track stats error:', error);
     return NextResponse.json(
-      { error: 'Failed to get track stats', details: error.message },
+      { error: 'Failed to get track stats' },
       { status: 500 }
     );
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'lap-times/estimate', feature: 'performance' });
+export const POST = withErrorLogging(handlePost, { route: 'lap-times/estimate', feature: 'performance' });

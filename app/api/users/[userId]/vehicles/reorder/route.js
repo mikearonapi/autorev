@@ -11,6 +11,7 @@ import { NextResponse } from 'next/server';
 import { errors } from '@/lib/apiErrors';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { rateLimit } from '@/lib/rateLimit';
 
 /**
  * PUT /api/users/[userId]/vehicles/reorder
@@ -24,6 +25,9 @@ import { withErrorLogging } from '@/lib/serverErrorLogger';
  * - message: string
  */
 async function handlePut(request, { params }) {
+  const limited = rateLimit(request, 'api');
+  if (limited) return limited;
+
   const { userId } = await params;
   
   if (!userId) {

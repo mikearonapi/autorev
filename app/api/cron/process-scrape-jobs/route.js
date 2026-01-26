@@ -18,6 +18,7 @@
 import { NextResponse } from 'next/server';
 import * as scrapeJobService from '@/lib/scrapeJobService';
 import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Cron secret for authorization
 const CRON_SECRET = process.env.CRON_SECRET;
@@ -26,7 +27,7 @@ const CRON_SECRET = process.env.CRON_SECRET;
  * GET /api/cron/process-scrape-jobs
  * Process pending scrape jobs
  */
-export async function GET(request) {
+async function handleGet(request) {
   // Verify authorization
   const authHeader = request.headers.get('authorization');
   
@@ -93,7 +94,7 @@ export async function GET(request) {
     console.error('[Cron] Error processing jobs:', err);
     notifyCronFailure('Process Scrape Jobs', err, { phase: 'processing' });
     return NextResponse.json(
-      { error: 'Failed to process jobs', message: err.message },
+      { error: 'Failed to process scrape jobs' },
       { status: 500 }
     );
   }
@@ -103,7 +104,7 @@ export async function GET(request) {
  * POST /api/cron/process-scrape-jobs
  * Schedule stale data refresh
  */
-export async function POST(request) {
+async function handlePost(request) {
   // Verify authorization
   const authHeader = request.headers.get('authorization');
   const vercelCron = request.headers.get('x-vercel-cron');
@@ -207,15 +208,14 @@ export async function POST(request) {
   } catch (err) {
     console.error('[Cron] Error:', err);
     return NextResponse.json(
-      { error: 'Failed', message: err.message },
+      { error: 'Scrape jobs action failed' },
       { status: 500 }
     );
   }
 }
 
-
-
-
+export const GET = withErrorLogging(handleGet, { route: 'cron/process-scrape-jobs', feature: 'cron' });
+export const POST = withErrorLogging(handlePost, { route: 'cron/process-scrape-jobs', feature: 'cron' });
 
 
 

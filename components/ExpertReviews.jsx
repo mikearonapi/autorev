@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import styles from './ExpertReviews.module.css';
 import { getUpgradeSuggestions, formatTag } from '@/lib/expertFeedback';
@@ -277,11 +278,12 @@ export default function ExpertReviews({ carSlug, car }) {
                         onClick={() => setExpandedVideo(video.video_id)}
                         aria-label={`Play ${videoData.title}`}
                       >
-                        <img 
+                        <Image 
                           src={videoData.thumbnail_url || `https://img.youtube.com/vi/${video.video_id}/mqdefault.jpg`}
                           alt={videoData.title}
+                          fill
                           className={styles.thumbnail}
-                          loading="lazy"
+                          sizes="(max-width: 768px) 100vw, 320px"
                         />
                         <div className={styles.playOverlay}>
                           <div className={styles.playIconCircle}>

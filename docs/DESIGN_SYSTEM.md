@@ -33,16 +33,41 @@ A comprehensive reference for design tokens, typography, spacing, component patt
 
 ## Color System
 
-### Background Colors
+### Background Colors — The 6-Level Hierarchy
 
-| Role | Hex | CSS Variable | Usage |
-|------|-----|--------------|-------|
-| **Base** | `#0d1b2a` | `--color-bg-base` | Main page backgrounds |
-| **Elevated** | `#1b263b` | `--color-bg-elevated` | Cards, modals, sheets |
-| **Surface** | `rgba(255,255,255,0.04)` | `--color-bg-surface` | Subtle card fills |
-| **Surface Hover** | `rgba(255,255,255,0.08)` | `--color-bg-surface-hover` | Interactive states |
+AutoRev uses a **6-level background system** for premium visual hierarchy.
+
+| Level | Name | Hex | CSS Variable | Usage |
+|-------|------|-----|--------------|-------|
+| **1** | **Immersive** | `#050a12` | `--color-bg-immersive` | Media galleries, video players, splash |
+| **2** | **Base** | `#0d1b2a` | `--color-bg-base` | Main app pages, navigation |
+| **3** | **Overlay** | `#1a1a1a` | `--color-bg-overlay-solid` | Full-screen modals, onboarding |
+| **4** | **Elevated** | `#1b263b` | `--color-bg-elevated` | Cards, panels, small modals |
+| **5** | **Surface** | `rgba(255,255,255,0.04)` | `--color-bg-surface` | Card fills, grouping |
+| **6** | **Input** | `rgba(255,255,255,0.06)` | `--color-bg-input` | Form fields |
 
 > **RULE:** Never use pure black (`#000000`). Our navy creates depth.
+
+### When to Use Each Background Level
+
+| Scenario | Background Level |
+|----------|------------------|
+| Image gallery (fullscreen) | **Immersive** |
+| Video player (fullscreen) | **Immersive** |
+| Splash screen | **Immersive** |
+| Main app pages (Garage, Data, etc.) | **Base** |
+| Tab bar, navigation | **Base** |
+| Onboarding questionnaires | **Overlay** |
+| Data entry modals (dyno, track) | **Overlay** |
+| Build wizard | **Overlay** |
+| Upgrade detail modal | **Overlay** |
+| Car picker (fullscreen) | **Overlay** |
+| Regular cards on pages | **Elevated** |
+| Small dialog/confirmation | **Elevated** |
+| Bottom sheet content | **Elevated** |
+| Cards within modals | **Surface** |
+| List items | **Surface** |
+| Text inputs, search bars | **Input** |
 
 ### Text Colors
 

@@ -87,13 +87,6 @@ const ProfileIcon = ({ active }) => (
 
 const tabs = [
   { 
-    id: 'insights', 
-    label: 'Insights', 
-    href: '/insights', 
-    Icon: InsightsIcon,
-    matchPaths: ['/insights']
-  },
-  { 
     id: 'garage', 
     label: 'Garage', 
     href: '/garage', 
@@ -106,6 +99,13 @@ const tabs = [
     href: '/data', 
     Icon: DataIcon,
     matchPaths: ['/data', '/track']
+  },
+  { 
+    id: 'insights', 
+    label: 'Insights', 
+    href: '/insights', 
+    Icon: InsightsIcon,
+    matchPaths: ['/insights']
   },
   { 
     id: 'community', 

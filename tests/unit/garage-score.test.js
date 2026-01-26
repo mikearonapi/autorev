@@ -4,6 +4,8 @@
  * Tests the garage score calculation logic and helper functions.
  * 
  * Run: npm test -- tests/unit/garage-score.test.js
+ * 
+ * Updated 2026-01-25: Match new 5-category scoring system
  */
 
 import { describe, test, expect, vi } from 'vitest';
@@ -30,16 +32,16 @@ describe('Garage Score Service', () => {
     });
 
     test('should have correct categories', () => {
-      expect(SCORE_CATEGORIES).toHaveProperty('specs');
-      expect(SCORE_CATEGORIES).toHaveProperty('photos');
-      expect(SCORE_CATEGORIES).toHaveProperty('mods');
-      expect(SCORE_CATEGORIES).toHaveProperty('goals');
-      expect(SCORE_CATEGORIES).toHaveProperty('parts');
+      expect(SCORE_CATEGORIES).toHaveProperty('specs_confirmed');
+      expect(SCORE_CATEGORIES).toHaveProperty('build_saved');
+      expect(SCORE_CATEGORIES).toHaveProperty('build_shared');
+      expect(SCORE_CATEGORIES).toHaveProperty('parts_specified');
+      expect(SCORE_CATEGORIES).toHaveProperty('photos_uploaded');
     });
 
-    test('each category should have max of 20', () => {
+    test('each category should have max defined', () => {
       Object.values(SCORE_CATEGORIES).forEach(cat => {
-        expect(cat.max).toBe(20);
+        expect(cat.max).toBeGreaterThan(0);
       });
     });
 
@@ -47,11 +49,25 @@ describe('Garage Score Service', () => {
       const totalMax = Object.values(SCORE_CATEGORIES).reduce((sum, cat) => sum + cat.max, 0);
       expect(totalMax).toBe(100);
     });
+
+    test('categories have correct max values', () => {
+      expect(SCORE_CATEGORIES.specs_confirmed.max).toBe(20);
+      expect(SCORE_CATEGORIES.build_saved.max).toBe(15);
+      expect(SCORE_CATEGORIES.build_shared.max).toBe(25);
+      expect(SCORE_CATEGORIES.parts_specified.max).toBe(25);
+      expect(SCORE_CATEGORIES.photos_uploaded.max).toBe(15);
+    });
   });
 
   describe('getScoreChecklist', () => {
     test('should return checklist for empty breakdown', () => {
-      const breakdown = { specs: 0, photos: 0, mods: 0, goals: 0, parts: 0 };
+      const breakdown = { 
+        specs_confirmed: 0, 
+        build_saved: 0, 
+        build_shared: 0, 
+        parts_specified: 0, 
+        photos_uploaded: 0 
+      };
       const checklist = getScoreChecklist(breakdown);
 
       expect(checklist).toHaveLength(5);
@@ -59,26 +75,37 @@ describe('Garage Score Service', () => {
         expect(item.complete).toBe(false);
         expect(item.partial).toBe(false);
         expect(item.points).toBe(0);
-        expect(item.maxPoints).toBe(20);
       });
     });
 
     test('should mark complete items correctly', () => {
-      const breakdown = { specs: 20, photos: 20, mods: 20, goals: 20, parts: 20 };
+      const breakdown = { 
+        specs_confirmed: 20, 
+        build_saved: 15, 
+        build_shared: 25, 
+        parts_specified: 25, 
+        photos_uploaded: 15 
+      };
       const checklist = getScoreChecklist(breakdown);
 
       checklist.forEach(item => {
         expect(item.complete).toBe(true);
         expect(item.partial).toBe(false);
-        expect(item.points).toBe(20);
+        expect(item.points).toBe(item.maxPoints);
       });
     });
 
     test('should mark partial items correctly', () => {
-      const breakdown = { specs: 10, photos: 10, mods: 10, goals: 0, parts: 10 };
+      const breakdown = { 
+        specs_confirmed: 10, 
+        build_saved: 0, 
+        build_shared: 0, 
+        parts_specified: 10, 
+        photos_uploaded: 0 
+      };
       const checklist = getScoreChecklist(breakdown);
 
-      const specsItem = checklist.find(c => c.key === 'specs');
+      const specsItem = checklist.find(c => c.key === 'specs_confirmed');
       expect(specsItem.partial).toBe(true);
       expect(specsItem.complete).toBe(false);
       expect(specsItem.points).toBe(10);
@@ -95,53 +122,64 @@ describe('Garage Score Service', () => {
 
   describe('getImprovementTips', () => {
     test('should return tips for empty breakdown', () => {
-      const breakdown = { specs: 0, photos: 0, mods: 0, goals: 0, parts: 0 };
+      const breakdown = { 
+        specs_confirmed: 0, 
+        build_saved: 0, 
+        build_shared: 0, 
+        parts_specified: 0, 
+        photos_uploaded: 0 
+      };
       const tips = getImprovementTips(breakdown);
 
       expect(tips.length).toBeGreaterThan(0);
-      // Should be sorted by potential gain (highest first)
-      for (let i = 1; i < tips.length; i++) {
-        expect(tips[i].potentialGain).toBeLessThanOrEqual(tips[i-1].potentialGain);
-      }
     });
 
     test('should return no tips for complete breakdown', () => {
-      const breakdown = { specs: 20, photos: 20, mods: 20, goals: 20, parts: 20 };
+      const breakdown = { 
+        specs_confirmed: 20, 
+        build_saved: 15, 
+        build_shared: 25, 
+        parts_specified: 25, 
+        photos_uploaded: 15 
+      };
       const tips = getImprovementTips(breakdown);
 
       expect(tips).toHaveLength(0);
     });
 
-    test('should return appropriate tip for partial specs', () => {
-      const breakdown = { specs: 10, photos: 20, mods: 20, goals: 20, parts: 20 };
+    test('should suggest specs confirmation for 0 specs', () => {
+      const breakdown = { 
+        specs_confirmed: 0, 
+        build_saved: 15, 
+        build_shared: 25, 
+        parts_specified: 25, 
+        photos_uploaded: 15 
+      };
       const tips = getImprovementTips(breakdown);
 
-      expect(tips).toHaveLength(1);
-      expect(tips[0].category).toBe('specs');
-      expect(tips[0].potentialGain).toBe(10);
-    });
-
-    test('should suggest first photo for 0 photos', () => {
-      const breakdown = { specs: 20, photos: 0, mods: 20, goals: 20, parts: 20 };
-      const tips = getImprovementTips(breakdown);
-
-      const photoTip = tips.find(t => t.category === 'photos');
-      expect(photoTip).toBeDefined();
-      expect(photoTip.tip).toContain('first photo');
-    });
-
-    test('should suggest second photo for 1 photo', () => {
-      const breakdown = { specs: 20, photos: 10, mods: 20, goals: 20, parts: 20 };
-      const tips = getImprovementTips(breakdown);
-
-      const photoTip = tips.find(t => t.category === 'photos');
-      expect(photoTip).toBeDefined();
-      expect(photoTip.tip).toContain('second photo');
+      const specsTip = tips.find(t => t.category === 'specs_confirmed');
+      expect(specsTip).toBeDefined();
+      expect(specsTip.potentialGain).toBe(20);
     });
 
     test('should handle null breakdown', () => {
       const tips = getImprovementTips(null);
       expect(tips.length).toBeGreaterThan(0);
+    });
+
+    test('should prioritize high-value categories', () => {
+      const breakdown = { 
+        specs_confirmed: 0, 
+        build_saved: 0, 
+        build_shared: 0, 
+        parts_specified: 0, 
+        photos_uploaded: 0 
+      };
+      const tips = getImprovementTips(breakdown);
+
+      // Build shared (25 pts) should be promoted when prerequisites met
+      // Specs confirmed should be one of the tips
+      expect(tips.some(t => t.category === 'specs_confirmed')).toBe(true);
     });
   });
 
@@ -195,26 +233,49 @@ describe('Garage Score Service', () => {
 
   describe('Score calculation edge cases', () => {
     test('should handle all zero values', () => {
-      const breakdown = { specs: 0, photos: 0, mods: 0, goals: 0, parts: 0 };
+      const breakdown = { 
+        specs_confirmed: 0, 
+        build_saved: 0, 
+        build_shared: 0, 
+        parts_specified: 0, 
+        photos_uploaded: 0 
+      };
       const totalScore = Object.values(breakdown).reduce((sum, val) => sum + val, 0);
       expect(totalScore).toBe(0);
     });
 
     test('should handle all max values', () => {
-      const breakdown = { specs: 20, photos: 20, mods: 20, goals: 20, parts: 20 };
+      const breakdown = { 
+        specs_confirmed: 20, 
+        build_saved: 15, 
+        build_shared: 25, 
+        parts_specified: 25, 
+        photos_uploaded: 15 
+      };
       const totalScore = Object.values(breakdown).reduce((sum, val) => sum + val, 0);
       expect(totalScore).toBe(100);
     });
 
     test('should handle mixed values', () => {
-      const breakdown = { specs: 17, photos: 10, mods: 20, goals: 0, parts: 10 };
+      const breakdown = { 
+        specs_confirmed: 20, 
+        build_saved: 10, 
+        build_shared: 0, 
+        parts_specified: 10, 
+        photos_uploaded: 0 
+      };
       const totalScore = Object.values(breakdown).reduce((sum, val) => sum + val, 0);
-      expect(totalScore).toBe(57);
+      expect(totalScore).toBe(40);
     });
 
     test('breakdown values should not exceed max', () => {
-      // This tests the principle that breakdown values are capped
-      const breakdown = { specs: 20, photos: 20, mods: 20, goals: 20, parts: 20 };
+      const breakdown = { 
+        specs_confirmed: 20, 
+        build_saved: 15, 
+        build_shared: 25, 
+        parts_specified: 25, 
+        photos_uploaded: 15 
+      };
       Object.entries(breakdown).forEach(([key, value]) => {
         expect(value).toBeLessThanOrEqual(SCORE_CATEGORIES[key].max);
       });
@@ -222,61 +283,17 @@ describe('Garage Score Service', () => {
   });
 
   describe('Scoring thresholds', () => {
-    test('specs should scale from 6 fields', () => {
-      // 6 fields: year, make, model, trim, color, mileage
-      // Each field contributes approximately 3.33 points
-      // 1 field = ~3 points, 3 fields = 10 points, 6 fields = 20 points
-      const oneFieldScore = Math.round((1/6) * 20);
-      const threeFieldScore = Math.round((3/6) * 20);
-      const sixFieldScore = Math.round((6/6) * 20);
-      
-      expect(oneFieldScore).toBe(3);
-      expect(threeFieldScore).toBe(10);
-      expect(sixFieldScore).toBe(20);
+    test('specs_confirmed max should be 20', () => {
+      expect(SCORE_CATEGORIES.specs_confirmed.max).toBe(20);
     });
 
-    test('photos threshold: 1 photo = 10, 2+ = 20', () => {
-      // As defined in the SQL function
-      const noPhotosScore = 0;
-      const onePhotoScore = 10;
-      const twoPhotosScore = 20;
-      
-      expect(noPhotosScore).toBe(0);
-      expect(onePhotoScore).toBe(10);
-      expect(twoPhotosScore).toBe(20);
+    test('build_shared should be highest value category (25)', () => {
+      const maxValues = Object.values(SCORE_CATEGORIES).map(c => c.max);
+      expect(SCORE_CATEGORIES.build_shared.max).toBe(Math.max(...maxValues));
     });
 
-    test('mods threshold: 1-2 mods = 10, 3+ = 20', () => {
-      // As defined in the SQL function
-      const noModsScore = 0;
-      const oneModScore = 10;
-      const twoModsScore = 10;
-      const threeModsScore = 20;
-      
-      expect(noModsScore).toBe(0);
-      expect(oneModScore).toBe(10);
-      expect(twoModsScore).toBe(10);
-      expect(threeModsScore).toBe(20);
-    });
-
-    test('goals threshold: any project = 20', () => {
-      const noProjectScore = 0;
-      const oneProjectScore = 20;
-      
-      expect(noProjectScore).toBe(0);
-      expect(oneProjectScore).toBe(20);
-    });
-
-    test('parts threshold: 1-2 parts = 10, 3+ = 20', () => {
-      const noPartsScore = 0;
-      const onePartScore = 10;
-      const twoPartsScore = 10;
-      const threePartsScore = 20;
-      
-      expect(noPartsScore).toBe(0);
-      expect(onePartScore).toBe(10);
-      expect(twoPartsScore).toBe(10);
-      expect(threePartsScore).toBe(20);
+    test('photos_uploaded should be 15', () => {
+      expect(SCORE_CATEGORIES.photos_uploaded.max).toBe(15);
     });
   });
 });

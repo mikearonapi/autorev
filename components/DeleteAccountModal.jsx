@@ -49,7 +49,6 @@ export default function DeleteAccountModal({ isOpen, onClose, userId, onDeleted 
       setDetails('');
       setConfirmText('');
       setError('');
-      setIsDeleting(false);
     }
   }, [isOpen]);
 

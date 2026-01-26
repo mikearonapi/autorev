@@ -42,9 +42,11 @@ async function handleGet(request, { params }) {
         return NextResponse.json({ runs: [], message: 'Car not found' }, { status: 200 });
       }
       
+      const DYNO_COLS = 'id, car_id, variant_key, tune_level, peak_whp, peak_wtq, boost_psi, fuel_type, dyno_type, source_url, source_type, notes, created_at';
+      
       const { data: directData, error: directError } = await supabase
         .from('car_dyno_runs')
-        .select('*')
+        .select(DYNO_COLS)
         .eq('car_id', carId)
         .order('peak_whp', { ascending: false, nullsFirst: false });
       

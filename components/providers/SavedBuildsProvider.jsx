@@ -128,6 +128,12 @@ export function SavedBuildsProvider({ children }) {
   const [autoSaveError, setAutoSaveError] = useState(null);
   const autoSaveTimerRef = useRef(null);
   const autoSavePendingRef = useRef(null); // Stores pending save data
+  
+  // Ref to track current builds (avoids stale closure in debounced callbacks)
+  const buildsRef = useRef(builds);
+  useEffect(() => {
+    buildsRef.current = builds;
+  }, [builds]);
 
   // Mark as hydrated immediately since we loaded synchronously
   useEffect(() => {
@@ -600,33 +606,59 @@ useEffect(() => {
     if (isAuthenticated && user?.id) {
       const { data, error } = await updateUserProject(user.id, buildId, updates);
       
-      if (!error && data) {
+      // Update local state if no error
+      // NOTE: data may be null for parts-only updates (no main table changes),
+      // but we still need to update local state with the new parts
+      if (!error) {
+        console.log('[SavedBuildsProvider] updateBuild success, updating local state:', {
+          buildId,
+          hasData: !!data,
+          hasSelectedParts: !!updates?.selectedParts,
+          partsCount: updates?.selectedParts?.length,
+          installedParts: updates?.selectedParts?.filter(p => p.status === 'installed').map(p => p.upgradeKey),
+        });
         setBuilds(prev => prev.map(build => {
           if (build.id === buildId) {
-            return {
-              ...build,
-              name: data.project_name,
-              // Build objective (track, street, show, daily)
-              goal: data.selected_upgrades?.goal || updates?.goal || build.goal || null,
-              // Handle both old format (array) and new format (object)
-              upgrades: Array.isArray(data.selected_upgrades) 
-                ? data.selected_upgrades 
-                : (data.selected_upgrades?.upgrades || []),
-              factoryConfig: data.selected_upgrades?.factoryConfig || updates?.factoryConfig || build.factoryConfig,
-              wheelFitment: data.selected_upgrades?.wheelFitment || updates?.wheelFitment || build.wheelFitment,
-              sizeSelections: data.selected_upgrades?.sizeSelections || updates?.sizeSelections || build.sizeSelections,
-              heroSource: data.selected_upgrades?.heroSource || updates?.heroSource || build.heroSource || 'stock',
-              heroImageId: data.selected_upgrades?.heroImageId || updates?.heroImageId || build.heroImageId || null,
-              parts: updates?.selectedParts ? updates.selectedParts : build.parts,
-              // @deprecated - STALE value. Use useBuildPerformance(build, car) instead.
-              totalHpGain: data.total_hp_gain || 0,
-              totalCostLow: data.total_cost_low || 0,
-              totalCostHigh: data.total_cost_high || 0,
-              finalHp: data.final_hp,
-              notes: data.notes,
-              isFavorite: data.is_favorite || false,
-              updatedAt: data.updated_at,
-            };
+            console.log('[SavedBuildsProvider] Found build to update:', { 
+              buildId, 
+              prevPartsCount: build.parts?.length,
+              newPartsCount: updates?.selectedParts?.length,
+            });
+            // For parts-only updates (data is null), only update parts field
+            // For full updates (data exists), update all fields from response
+            if (data) {
+              return {
+                ...build,
+                name: data.project_name,
+                // Build objective (track, street, show, daily)
+                goal: data.selected_upgrades?.goal || updates?.goal || build.goal || null,
+                // Handle both old format (array) and new format (object)
+                upgrades: Array.isArray(data.selected_upgrades) 
+                  ? data.selected_upgrades 
+                  : (data.selected_upgrades?.upgrades || []),
+                factoryConfig: data.selected_upgrades?.factoryConfig || updates?.factoryConfig || build.factoryConfig,
+                wheelFitment: data.selected_upgrades?.wheelFitment || updates?.wheelFitment || build.wheelFitment,
+                sizeSelections: data.selected_upgrades?.sizeSelections || updates?.sizeSelections || build.sizeSelections,
+                heroSource: data.selected_upgrades?.heroSource || updates?.heroSource || build.heroSource || 'stock',
+                heroImageId: data.selected_upgrades?.heroImageId || updates?.heroImageId || build.heroImageId || null,
+                parts: updates?.selectedParts ? updates.selectedParts : build.parts,
+                // @deprecated - STALE value. Use useBuildPerformance(build, car) instead.
+                totalHpGain: data.total_hp_gain || 0,
+                totalCostLow: data.total_cost_low || 0,
+                totalCostHigh: data.total_cost_high || 0,
+                finalHp: data.final_hp,
+                notes: data.notes,
+                isFavorite: data.is_favorite || false,
+                updatedAt: data.updated_at,
+              };
+            } else {
+              // Parts-only update - just update parts and timestamp
+              return {
+                ...build,
+                parts: updates?.selectedParts ? updates.selectedParts : build.parts,
+                updatedAt: new Date().toISOString(),
+              };
+            }
           }
           return build;
         }));
@@ -718,10 +750,22 @@ useEffect(() => {
       
       try {
         let result;
+        let effectiveId = id;
         
-        if (id) {
+        // FIX: If no build ID provided, check if a build already exists for this car
+        // This prevents duplicate builds when navigating to /garage/my-build?car=<slug>
+        // NOTE: We use buildsRef.current to get the CURRENT state, not the potentially stale closure value
+        if (!effectiveId && data.carSlug) {
+          const existingBuild = buildsRef.current.find(b => b.carSlug === data.carSlug);
+          if (existingBuild) {
+            console.log('[SavedBuildsProvider] Found existing build for car, updating instead of creating new:', existingBuild.id);
+            effectiveId = existingBuild.id;
+          }
+        }
+        
+        if (effectiveId) {
           // Update existing build
-          result = await updateBuildHandler(id, data);
+          result = await updateBuildHandler(effectiveId, data);
         } else if (isAuthenticated && user?.id && canSaveBuilds) {
           // Create new build (only for authenticated users with save access)
           result = await saveBuild(data);
@@ -762,6 +806,7 @@ useEffect(() => {
       
       autoSavePendingRef.current = null;
     }, AUTO_SAVE_DEBOUNCE_MS);
+    // NOTE: We removed 'builds' from deps since we use buildsRef.current to avoid stale closure issues
   }, [isAuthenticated, user?.id, canSaveBuilds, updateBuildHandler, saveBuild]);
 
   // Cleanup auto-save timer on unmount
@@ -773,7 +818,7 @@ useEffect(() => {
     };
   }, []);
 
-  const value = {
+  const value = useMemo(() => ({
     builds,
     isLoading,
     canSave: canSaveBuilds, // Tier-gated (Tuner tier required, free during beta)
@@ -789,7 +834,21 @@ useEffect(() => {
     autoSaveError,
     userTier,
     isBeta: IS_BETA,
-  };
+  }), [
+    builds,
+    isLoading,
+    canSaveBuilds,
+    saveBuild,
+    updateBuildHandler,
+    deleteBuildHandler,
+    getBuildById,
+    getBuildsByCarSlug,
+    refreshBuilds,
+    autoSaveBuild,
+    autoSaveStatus,
+    autoSaveError,
+    userTier,
+  ]);
 
   return (
     <SavedBuildsContext.Provider value={value}>

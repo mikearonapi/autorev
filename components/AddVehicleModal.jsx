@@ -3,7 +3,9 @@
 /**
  * Add Vehicle Modal
  * 
- * Modal for adding a performance vehicle to user's garage.
+ * Full-screen modal for adding a performance vehicle to user's garage.
+ * Rendered via React Portal to document.body for proper stacking context.
+ * 
  * Focused on tunable enthusiast cars from our database.
  * 
  * Optimized for quick vehicle identification with:
@@ -13,6 +15,7 @@
  */
 
 import { useState, useMemo, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import styles from './AddVehicleModal.module.css';
 import { fetchCars } from '@/lib/carsClient';
 import { calculateWeightedScore, ENTHUSIAST_WEIGHTS } from '@/lib/scoring';
@@ -25,11 +28,31 @@ export default function AddVehicleModal({ isOpen, onClose, onAdd, existingVehicl
   const [recentlyAdded, setRecentlyAdded] = useState(new Set());
   const [allCars, setAllCars] = useState([]);
   const [addError, setAddError] = useState(null);
+  
+  // Track if component is mounted (for portal - SSR compatibility)
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+    return () => setIsMounted(false);
+  }, []);
 
   // Fetch car data from database on mount
   useEffect(() => {
     fetchCars().then(setAllCars).catch(console.error);
   }, []);
+  
+  // Prevent body scroll when modal is open
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   // Filter and sort cars based on search (from database)
   // Uses ENTHUSIAST_WEIGHTS from lib/scoring.js for consistent scoring across the app
@@ -128,7 +151,7 @@ export default function AddVehicleModal({ isOpen, onClose, onAdd, existingVehicl
     return engine;
   };
 
-  return (
+  const modalContent = (
     <div className={styles.overlay} onClick={handleClose}>
       <div className={styles.modal} onClick={e => e.stopPropagation()}>
         {/* Header */}
@@ -253,4 +276,9 @@ export default function AddVehicleModal({ isOpen, onClose, onAdd, existingVehicl
       </div>
     </div>
   );
+  
+  // Use portal to render at document body level (above all other content)
+  // This ensures the modal is not trapped inside any parent's stacking context
+  if (!isMounted) return null;
+  return createPortal(modalContent, document.body);
 }

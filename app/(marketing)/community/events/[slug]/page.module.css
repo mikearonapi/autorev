@@ -2,12 +2,12 @@
    Community Event Detail Page - Dark Theme On-Brand Styling
    
    Brand Colors:
-   - Background: #0d1b2a (primary), #1b263b (elevated)
+   - Background: var(--color-bg-base, #0d1b2a) (primary), var(--color-bg-elevated, #1b263b) (elevated)
    - Cards: rgba(255,255,255,0.04) with rgba(255,255,255,0.06) border
-   - Lime (#d4ff00): CTAs, primary actions
-   - Teal (#10b981): Positive/success states, featured badges
-   - Blue (#3b82f6): Info, baseline data
-   - Text: #ffffff (primary), #94a3b8 (secondary), #64748b (tertiary)
+   - Lime (var(--color-accent-lime, #d4ff00)): CTAs, primary actions
+   - Teal (var(--color-accent-teal, #10b981)): Positive/success states, featured badges
+   - Blue (var(--color-accent-blue, #3b82f6)): Info, baseline data
+   - Text: var(--color-text-primary, #ffffff) (primary), var(--color-text-secondary, #94a3b8) (secondary), var(--color-text-tertiary, #64748b) (tertiary)
    ========================================================================== */
 
 .page {
@@ -708,4 +708,186 @@
   color: var(--color-text-secondary, #94a3b8);
   margin: 0 0 var(--space-md);
   line-height: 1.5;
+}
+
+/* ==========================================================================
+   Past Event Styles
+   ========================================================================== */
+
+.pastEventBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 6px 12px;
+  background: var(--color-text-tertiary, #64748b);
+  border-radius: var(--radius-full);
+  color: var(--color-text-primary, #ffffff);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.pastEventCard {
+  border-color: var(--color-text-tertiary, #64748b);
+  opacity: 0.8;
+}
+
+.pastEventCard h3 {
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+/* ==========================================================================
+   Skeleton Loading States
+   ========================================================================== */
+
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-card, rgba(255, 255, 255, 0.04)) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    var(--color-bg-card, rgba(255, 255, 255, 0.04)) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+.skeletonTitle {
+  flex: 1;
+  height: 24px;
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-card, rgba(255, 255, 255, 0.04)) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    var(--color-bg-card, rgba(255, 255, 255, 0.04)) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+.skeletonHero {
+  width: 100%;
+  height: 250px;
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-card, rgba(255, 255, 255, 0.04)) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    var(--color-bg-card, rgba(255, 255, 255, 0.04)) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  margin-bottom: var(--space-lg);
+}
+
+@media (min-width: 768px) {
+  .skeletonHero {
+    height: 350px;
+  }
+}
+
+.skeletonHeader {
+  margin-bottom: var(--space-xl);
+}
+
+.skeletonBadges {
+  display: flex;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-md);
+}
+
+.skeletonBadge {
+  width: 100px;
+  height: 28px;
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-card, rgba(255, 255, 255, 0.04)) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    var(--color-bg-card, rgba(255, 255, 255, 0.04)) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-full);
+}
+
+.skeletonActions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.skeletonBtn {
+  width: 100px;
+  height: 44px;
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-card, rgba(255, 255, 255, 0.04)) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    var(--color-bg-card, rgba(255, 255, 255, 0.04)) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-md);
+}
+
+.skeletonSection {
+  margin-bottom: var(--space-lg);
+  padding: var(--space-lg);
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.07));
+  border-radius: var(--radius-lg);
+}
+
+.skeletonSectionTitle {
+  width: 150px;
+  height: 24px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.06) 25%,
+    rgba(255, 255, 255, 0.1) 50%,
+    rgba(255, 255, 255, 0.06) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-md);
+}
+
+.skeletonText {
+  width: 100%;
+  height: 16px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.04) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: var(--radius-sm);
+  margin-bottom: var(--space-sm);
+}
+
+.skeletonCard {
+  height: 180px;
+  background: linear-gradient(
+    90deg,
+    var(--color-bg-card, rgba(255, 255, 255, 0.04)) 25%,
+    rgba(255, 255, 255, 0.08) 50%,
+    var(--color-bg-card, rgba(255, 255, 255, 0.04)) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border: 1px solid var(--color-border-default, rgba(255, 255, 255, 0.07));
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-lg);
 }

@@ -327,5 +327,95 @@ export function CarCardSkeleton({ className = '' }) {
   );
 }
 
+/**
+ * Dyno chart skeleton - specialized for Virtual Dyno chart
+ * Mimics the layout of the actual chart for smooth loading transition
+ */
+export function DynoChartSkeleton({ className = '' }) {
+  return (
+    <div className={`${styles.dynoChart} ${className}`}>
+      {/* Header */}
+      <div className={styles.dynoChartHeader}>
+        <Skeleton height={16} width={100} variant="rounded" />
+        <Skeleton height={14} width={200} variant="rounded" />
+      </div>
+      {/* Legend */}
+      <div className={styles.dynoChartLegend}>
+        <Skeleton height={14} width={60} variant="rounded" />
+        <Skeleton height={14} width={80} variant="rounded" />
+        <Skeleton height={14} width={80} variant="rounded" />
+      </div>
+      {/* Chart area with Y-axis and main area */}
+      <div className={styles.dynoChartBody}>
+        {/* Y-Axis */}
+        <div className={styles.dynoChartYAxis}>
+          <Skeleton height={10} width={30} variant="rounded" />
+          <Skeleton height={10} width={30} variant="rounded" />
+          <Skeleton height={10} width={30} variant="rounded" />
+          <Skeleton height={10} width={30} variant="rounded" />
+          <Skeleton height={10} width={20} variant="rounded" />
+        </div>
+        {/* Main chart area */}
+        <Skeleton 
+          height="100%" 
+          width="100%" 
+          variant="rounded" 
+          className={styles.dynoChartArea}
+        />
+      </div>
+      {/* X-Axis */}
+      <div className={styles.dynoChartXAxis}>
+        <Skeleton height={10} width={20} variant="rounded" />
+        <Skeleton height={10} width={20} variant="rounded" />
+        <Skeleton height={10} width={20} variant="rounded" />
+        <Skeleton height={10} width={20} variant="rounded" />
+        <Skeleton height={10} width={40} variant="rounded" />
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Data page skeleton - full page loading state for /data
+ * Matches the layout of VirtualDynoChart + CalculatedPerformance + PowerBreakdown
+ */
+export function DataPageSkeleton({ className = '' }) {
+  return (
+    <div className={`${styles.dataPageSkeleton} ${className}`}>
+      {/* Estimate explainer */}
+      <Skeleton height={48} width="100%" variant="rounded" style={{ marginBottom: '16px' }} />
+      
+      {/* Virtual Dyno Chart */}
+      <DynoChartSkeleton />
+      
+      {/* Calculated Performance */}
+      <div className={styles.perfSection}>
+        <Skeleton height={18} width={160} variant="rounded" style={{ marginBottom: '12px' }} />
+        <div className={styles.perfGrid}>
+          {Array.from({ length: 6 }).map((_, i) => (
+            <div key={i} className={styles.perfMetric}>
+              <Skeleton height={14} width="60%" variant="rounded" />
+              <Skeleton height={8} width="100%" variant="rounded" style={{ marginTop: '8px' }} />
+            </div>
+          ))}
+        </div>
+      </div>
+      
+      {/* Power Breakdown */}
+      <div className={styles.powerSection}>
+        <Skeleton height={18} width={140} variant="rounded" style={{ marginBottom: '16px' }} />
+        <div className={styles.powerLayout}>
+          <Skeleton height={140} width={140} variant="circular" />
+          <div className={styles.powerLegend}>
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} height={24} width="100%" variant="rounded" />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Default export for convenience
 export default Skeleton;

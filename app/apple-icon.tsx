@@ -9,34 +9,21 @@ export const size = {
 export const contentType = 'image/png';
 
 /**
- * Apple Touch Icon - AUTOREV wordmark style
- * Navy background with white "AUTO" and lime "REV"
+ * Apple Touch Icon - AutoRev AR logo on navy background
+ * Uses the official logo with checkered flag pattern
  * Used for iOS home screen and Safari bookmarks
  */
 export default async function AppleIcon() {
-  return new ImageResponse(
-    (
-      <div
-        style={{
-          width: '100%',
-          height: '100%',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: '#0d1b2a',
-          borderRadius: '27px',
-          fontFamily: 'system-ui, -apple-system, sans-serif',
-          fontWeight: 700,
-          fontSize: '32px',
-          letterSpacing: '-0.5px',
-        }}
-      >
-        <span style={{ color: '#ffffff' }}>AUTO</span>
-        <span style={{ color: '#d4ff00' }}>REV</span>
-      </div>
-    ),
-    {
-      ...size,
-    }
-  );
+  // Fetch the pre-generated apple touch icon with logo
+  const logoUrl = new URL('/apple-touch-icon.png', process.env.NEXT_PUBLIC_SITE_URL || 'https://autorev.app');
+  
+  const logoResponse = await fetch(logoUrl);
+  const logoArrayBuffer = await logoResponse.arrayBuffer();
+  
+  return new Response(logoArrayBuffer, {
+    headers: {
+      'Content-Type': 'image/png',
+      'Cache-Control': 'public, max-age=31536000, immutable',
+    },
+  });
 }

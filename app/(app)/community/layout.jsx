@@ -1,25 +1,43 @@
+import CommunityNav from './CommunityNav';
+import styles from './layout.module.css';
+
+/**
+ * Community Layout - Shared wrapper for all community pages
+ * 
+ * Provides:
+ * - Tab bar navigation (Builds/Events/Leaderboard)
+ * - Consistent container styling
+ * - Base metadata (pages can override with their own)
+ * 
+ * Routes:
+ * - /community → Builds feed (main page)
+ * - /community/events → Events page
+ * - /community/leaderboard → Leaderboard page
+ */
+
 export const metadata = {
-  title: 'Community Builds | Real Builds from Real Enthusiasts | AutoRev',
-  description: 'Explore community builds, get inspired, and share your own. Browse track builds, street builds, drift setups, and more from enthusiasts worldwide.',
+  title: {
+    template: '%s | AutoRev Community',
+    default: 'Community Builds | AutoRev',
+  },
+  description: 'Explore community builds, car events, and see top contributors in the AutoRev community.',
   keywords: [
     'car builds',
     'community builds',
-    'track builds',
-    'street builds',
-    'drift builds',
+    'car events',
+    'car meets',
+    'leaderboard',
     'car modification showcase',
-    'build inspiration',
-    'car project gallery',
   ],
   openGraph: {
-    title: 'Community Builds | AutoRev',
-    description: 'Explore real builds from enthusiasts worldwide. Get inspired for your next project.',
+    title: 'AutoRev Community',
+    description: 'Explore community builds, events, and connect with enthusiasts.',
     url: '/community',
     type: 'website',
   },
   twitter: {
-    title: 'Community Builds | AutoRev',
-    description: 'Explore real builds from enthusiasts worldwide.',
+    title: 'AutoRev Community',
+    description: 'Explore community builds, events, and connect with enthusiasts.',
   },
   alternates: {
     canonical: '/community',
@@ -31,5 +49,12 @@ export const metadata = {
 };
 
 export default function CommunityLayout({ children }) {
-  return children;
+  return (
+    <div className={styles.container}>
+      <CommunityNav />
+      <div className={styles.content}>
+        {children}
+      </div>
+    </div>
+  );
 }

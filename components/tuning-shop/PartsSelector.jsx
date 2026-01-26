@@ -81,7 +81,7 @@ function buildContextSummary(upgrades) {
  * NOTE: On the Parts page, we only allow toggling between planned/purchased
  * The "installed" status is read-only here - managed by the Install page
  */
-function StatusBadge({ status, onClick, disabled }) {
+function StatusBadge({ status, onClick, disabled, upgradeName }) {
   const statusInfo = PART_STATUS[status] || PART_STATUS.planned;
   const canClick = statusInfo.canToggle && statusInfo.next && !disabled;
   
@@ -91,8 +91,9 @@ function StatusBadge({ status, onClick, disabled }) {
       <span
         className={`${styles.statusBadge} ${styles[`status${statusInfo.color}`]} ${styles.statusComplete}`}
         title="Part installed - tracked on Install page"
+        aria-label={`${upgradeName}: ${statusInfo.label}`}
       >
-        <Icons.check size={10} />
+        <Icons.check size={10} aria-hidden="true" />
         {statusInfo.label}
       </span>
     );
@@ -107,8 +108,13 @@ function StatusBadge({ status, onClick, disabled }) {
         ? `Click to mark as ${PART_STATUS[statusInfo.next]?.label}` 
         : statusInfo.label
       }
+      aria-label={canClick 
+        ? `Mark ${upgradeName} as ${PART_STATUS[statusInfo.next]?.label}` 
+        : `${upgradeName}: ${statusInfo.label}`
+      }
+      aria-pressed={status === 'purchased'}
     >
-      {status === 'purchased' && <Icons.shoppingCart size={10} />}
+      {status === 'purchased' && <Icons.shoppingCart size={10} aria-hidden="true" />}
       {statusInfo.label}
     </button>
   );
@@ -189,7 +195,11 @@ function ShoppingListItem({
   };
 
   return (
-    <div className={`${styles.listItem} ${hasPartDetails ? styles.hasDetails : ''} ${styles[`item${statusInfo.color}`]}`}>
+    <div 
+      className={`${styles.listItem} ${hasPartDetails ? styles.hasDetails : ''} ${styles[`item${statusInfo.color}`]}`}
+      role="listitem"
+      aria-label={`${upgrade.name}: ${statusInfo.label}`}
+    >
       <div className={styles.itemHeader}>
         {/* Top row: Name + Status (Swapped for better hierarchy) */}
         <div className={styles.itemTopRow}>
@@ -203,7 +213,7 @@ function ShoppingListItem({
           </div>
           
           <div className={styles.itemStatus}>
-            <StatusBadge status={status} onClick={handleStatusToggle} />
+            <StatusBadge status={status} onClick={handleStatusToggle} upgradeName={upgrade.name} />
           </div>
         </div>
         
@@ -216,8 +226,9 @@ function ShoppingListItem({
                 className={styles.addPartBtn}
                 onClick={() => setIsEditing(true)}
                 title="Add part manually"
+                aria-label={`Add part details for ${upgrade.name}`}
               >
-                <Icons.plus size={12} />
+                <Icons.plus size={14} aria-hidden="true" />
               </button>
             )}
             {hasPartDetails ? (
@@ -243,8 +254,9 @@ function ShoppingListItem({
                 className={styles.findPartBtn}
                 onClick={handleFindWithAL}
                 title="Find part with AL"
+                aria-label={`Find ${upgrade.name} part with AL assistant`}
               >
-                <ALAvatar size={16} />
+                <ALAvatar size={18} />
                 <span>Find Part</span>
               </button>
             )}
@@ -257,16 +269,18 @@ function ShoppingListItem({
                     rel="noopener noreferrer"
                     className={styles.viewLinkBtn}
                     title="View product"
+                    aria-label={`View ${partDetails.brandName || ''} ${partDetails.partName || upgrade.name} product page (opens in new tab)`}
                   >
-                    <Icons.externalLink size={12} />
+                    <Icons.externalLink size={14} aria-hidden="true" />
                   </a>
                 )}
                 <button
                   className={styles.editPartInline}
                   onClick={() => setIsEditing(true)}
                   title="Edit part details"
+                  aria-label={`Edit ${upgrade.name} part details`}
                 >
-                  <Icons.edit size={12} />
+                  <Icons.edit size={14} aria-hidden="true" />
                 </button>
               </>
             )}
@@ -540,11 +554,12 @@ Be specific to my ${carName} and this exact build configuration.`;
   }
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} role="region" aria-label="Parts Shopping List">
       {/* AL Parts Recommendations CTA - Premium Card */}
       <button
         className={styles.alRecommendationsBtn}
         onClick={handleALBuildReview}
+        aria-label="Get AL parts recommendations - compatibility checks, suggestions, and find best parts for your build"
       >
         <ALAvatar size={42} />
         <div className={styles.alRecommendationsText}>

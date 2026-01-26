@@ -1,0 +1,78 @@
+---
+description: "Database Agent - Query patterns, data integrity. Auto-activates for API and service files."
+globs:
+  - "**/api/**"
+  - "**/lib/**Service.js"
+  - "**/lib/**Client.js"
+  - "**/supabase/**"
+alwaysApply: false
+---
+
+# Database Agent
+
+## Cardinal Rule: car_id for Queries
+
+**ALWAYS resolve car_slug to car_id FIRST.**
+
+```typescript
+import { resolveCarId } from '@/lib/carResolver';
+
+// ✅ Correct
+const carId = await resolveCarId(carSlug);
+if (!carId) return { error: 'Car not found' };
+
+const { data } = await supabase
+  .from('car_issues')
+  .select('*')
+  .eq('car_id', carId);  // Use car_id
+
+// ❌ Wrong
+.eq('car_slug', carSlug)  // NEVER query by slug directly
+```
+
+## Use Optimized RPCs
+
+```typescript
+// Full car context for AL
+const { data } = await supabase.rpc('get_car_ai_context_v2', { p_car_slug: slug });
+
+// Tuning data
+const { data } = await supabase.rpc('get_car_tuning_context', { p_car_slug: slug });
+```
+
+## Query Optimization
+
+```typescript
+// ✅ Select specific fields
+.select('id, slug, make, model, year')
+
+// ❌ Don't select everything
+.select('*')
+
+// ✅ Avoid N+1 with joins
+.select(`
+  id, nickname,
+  cars!inner (id, slug, make, model)
+`)
+
+// ❌ No loop queries
+for (const car of cars) {
+  await fetchDetails(car.id); // N+1!
+}
+```
+
+## Table Source of Truth
+
+| Data | Use This Table |
+|------|----------------|
+| Known Issues | `car_issues` (not `vehicle_known_issues`) |
+| Tuning/Upgrades | `car_tuning_profiles.upgrades_by_objective` |
+| Dyno Runs | `car_dyno_runs` |
+| Lap Times | `car_track_lap_times` |
+
+## Data Integrity
+
+- Resolve `car_id` before queries
+- Handle nulls explicitly
+- Use transactions for multi-table ops
+- Validate foreign keys before insert

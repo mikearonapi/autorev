@@ -34,11 +34,21 @@ const categoryIcons = {
       <circle cx="12" cy="12" r="3"/>
     </svg>
   ),
+  // forcedInduction (camelCase) - canonical key from upgradeCategories.js
+  forcedInduction: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10"/>
+      <path d="M12 2a10 10 0 0 1 10 10"/>
+      <path d="M12 12l4-4"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+  ),
+  // Legacy alias - kept for backward compatibility
   forced_induction: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="10"/>
-      <path d="M12 16V8"/>
-      <path d="M8 12h8"/>
+      <path d="M12 2a10 10 0 0 1 10 10"/>
+      <path d="M12 12l4-4"/>
       <circle cx="12" cy="12" r="3"/>
     </svg>
   ),
@@ -162,6 +172,14 @@ const categoryIcons = {
       <path d="M8 19h8"/>
     </svg>
   ),
+  // Aero - wind/airflow icon
+  aero: (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9.59 4.59A2 2 0 1 1 11 8H2"/>
+      <path d="M12.59 19.41A2 2 0 1 0 14 16H2"/>
+      <path d="M17.73 7.73A2.5 2.5 0 1 1 19.5 12H2"/>
+    </svg>
+  ),
   other: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
       <circle cx="12" cy="12" r="1"/>
@@ -175,6 +193,9 @@ const categoryIcons = {
 const categoryNames = {
   power: 'Power',
   turbo: 'Turbo',
+  // forcedInduction (camelCase) - canonical key from upgradeCategories.js
+  forcedInduction: 'Forced Induction',
+  // Legacy alias - kept for backward compatibility
   forced_induction: 'Forced Induction',
   chassis: 'Chassis',
   suspension: 'Suspension',
@@ -190,6 +211,7 @@ const categoryNames = {
   wheels_tires: 'Wheels',
   exterior: 'Exterior',
   interior: 'Interior',
+  aero: 'Aero',
   other: 'Other',
 };
 
@@ -283,7 +305,7 @@ export default function CategoryNav({
               <div className={styles.listRowContent}>
                 <span className={styles.listRowName}>
                   {getName(category)}
-                  {isRecommended && <span style={{ marginLeft: '6px', color: '#fbbf24' }}>★</span>}
+                  {isRecommended && <span style={{ marginLeft: '6px', color: 'var(--color-accent-amber-light)' }}>★</span>}
                 </span>
                 {count > 0 && <span className={styles.listRowSubtext}>{count} upgrades selected</span>}
               </div>

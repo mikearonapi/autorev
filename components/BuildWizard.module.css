@@ -8,11 +8,12 @@
    - Smooth transitions
    ========================================================================== */
 
+/* Level 3: Overlay background for focused build wizard experience */
 .overlay {
   position: fixed;
   inset: 0;
   z-index: 1300;
-  background: var(--bg-primary, var(--brand-bg-primary-dark));
+  background: var(--brand-bg-overlay, #1a1a1a);
   
   /* Hidden state */
   opacity: 0;

@@ -252,23 +252,15 @@
 }
 
 /* Mobile: 1 column */
+/* Mobile-first: progressive column enhancement */
 @media (min-width: 480px) {
-  .prioritiesGrid {
-    grid-template-columns: 1fr;
-    gap: 6px;
-  }
-}
-
-/* Tablet: 2 columns */
-@media (min-width: 480px) and (max-width: 767px) {
   .prioritiesGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 6px;
   }
 }
 
-/* Desktop: flexible grid */
-@media (min-width: 768px) and (max-width: 1199px) {
+@media (min-width: 768px) {
   .prioritiesGrid {
     grid-template-columns: repeat(3, 1fr);
     gap: 8px;
@@ -449,16 +441,17 @@
   margin-bottom: var(--space-sm);
 }
 
+/* Mobile-first: progressive column enhancement */
 @media (min-width: 768px) {
   .requirementsGrid {
-    grid-template-columns: repeat(7, 1fr);
+    grid-template-columns: repeat(4, 1fr);
     gap: 8px;
   }
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (min-width: 1024px) {
   .requirementsGrid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(7, 1fr);
   }
 }
 

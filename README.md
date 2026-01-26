@@ -84,9 +84,9 @@ All documentation is in the `docs/` folder:
 
 | Tier | Price | Key Features |
 |------|-------|--------------|
-| **Free** | $0 | Car research, selector, expert reviews |
-| **Collector** | $4.99/mo | VIN decode, service logs, market values |
-| **Tuner** | $9.99/mo | Dyno data, lap times, parts catalog, builds |
+| **Free** | $0 | 1 car, full garage features, community & events, ~15 AL chats |
+| **Enthusiast** | $9.99/mo | 3 cars, Insights dashboard, Data (Dyno & Track), ~130 AL chats |
+| **Pro** | $19.99/mo | Unlimited cars, everything in Enthusiast, ~350 AL chats, priority support |
 
 ## Development
 

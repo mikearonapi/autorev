@@ -6,10 +6,19 @@
  * Everything visible, well-organized sections, no accordions.
  * Key info at top, settings below.
  * 
+ * Features:
+ * - Avatar upload
+ * - Display name
+ * - Location for events
+ * - Plan management
+ * - Data export
+ * - Notification preferences
+ * - Account deletion
+ * 
  * Formerly /profile - now accessed via gear icon on Dashboard.
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -18,39 +27,77 @@ import styles from './page.module.css';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { AL_PLANS, AL_TOPUP_PACKAGES } from '@/lib/alConfig';
 import { useCheckout } from '@/hooks/useCheckout';
-import { IS_BETA } from '@/lib/tierAccess';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import { IS_BETA, getEffectiveTier, getTrialStatus, TIER_CONFIG } from '@/lib/tierAccess';
+import { isAdminEmail } from '@/lib/adminAccess';
 import usePWAInstall from '@/hooks/usePWAInstall';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import DeleteAccountModal from '@/components/DeleteAccountModal';
 import NotificationPreferences from '@/components/NotificationPreferences';
 import { useUserCredits, useClearUserData, useZipLookup, useSaveLocation, useBillingPortal } from '@/hooks/useUserData';
+import { 
+  XIcon, 
+  LogoutIcon, 
+  CheckIcon, 
+  CopyIcon, 
+  ExternalLinkIcon, 
+  GiftIcon, 
+  StarIcon, 
+  DownloadIcon,
+  CameraIcon
+} from '@/components/ui/Icons';
 
-// Compact Icons
-const Icon = {
-  close: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>,
-  logout: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>,
-  check: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>,
-  copy: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>,
-  external: <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>,
-  gift: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>,
-  star: <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>,
-  install: <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>,
-};
+const PLAN_NAMES = { free: 'Free', collector: 'Enthusiast', tuner: 'Pro', admin: 'Admin' };
 
-const PLAN_NAMES = { free: 'Free', collector: 'Enthusiast', tuner: 'Tuner', admin: 'Admin' };
+/**
+ * Skeleton loader that matches the settings page content shape
+ * Per SOURCE_OF_TRUTH.md: "Always match the content shape"
+ */
+function SettingsSkeleton() {
+  return (
+    <div className={styles.skeleton}>
+      {/* Header skeleton */}
+      <div className={styles.skeletonHeader}>
+        <div className={styles.skeletonAvatar} />
+        <div className={styles.skeletonHeaderInfo}>
+          <div className={styles.skeletonTitle} />
+          <div className={styles.skeletonSubtitle} />
+          <div className={styles.skeletonBadges}>
+            <div className={styles.skeletonBadge} />
+            <div className={styles.skeletonBadge} />
+          </div>
+        </div>
+        <div className={styles.skeletonCloseBtn} />
+      </div>
+      
+      {/* Sign out skeleton */}
+      <div className={styles.skeletonSignOut} />
+      
+      {/* Fuel card skeleton */}
+      <div className={styles.skeletonFuelCard} />
+      
+      {/* Referral card skeleton */}
+      <div className={styles.skeletonReferralCard} />
+      
+      {/* Sections skeleton */}
+      <div className={styles.skeletonSection} />
+      <div className={styles.skeletonSection} />
+      <div className={styles.skeletonSection} />
+    </div>
+  );
+}
 
-// Tier features for display
+// Tier features for display - SIMPLIFIED MODEL (Jan 2026)
+// Note: "chats" = AL responses. "conversations" = threads with multiple chats.
 const TIER_FEATURES = {
-  free: ['Browse car database', 'Basic garage', '25 AL chats/mo'],
-  collector: ['VIN decoding', 'Service tracking', 'Maintenance reminders', '75 AL chats/mo'],
-  tuner: ['Dyno data access', 'Full parts catalog', 'Build projects', '150 AL chats/mo'],
+  free: ['1 car in garage', 'Full garage features', 'Community & Events', '~15 AL chats/mo'],
+  collector: ['3 cars in garage', 'Insights dashboard', 'Data (Dyno & Track)', '~130 AL chats/mo'],
+  tuner: ['Unlimited cars', 'Everything in Enthusiast', '~350 AL chats/mo', 'Priority support'],
 };
 
 const TIER_PRICES = {
   free: { amount: 'Free', period: 'forever' },
-  collector: { amount: '$4.99', period: '/month' },
-  tuner: { amount: '$9.99', period: '/month' },
+  collector: { amount: '$9.99', period: '/month', annual: '$79/year' },
+  tuner: { amount: '$19.99', period: '/month', annual: '$149/year' },
 };
 
 // Tier order for upgrade/downgrade logic
@@ -69,6 +116,20 @@ export default function SettingsPage() {
   const [showPWAModal, setShowPWAModal] = useState(false);
   const [isInstalling, setIsInstalling] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [loadingTimedOut, setLoadingTimedOut] = useState(false);
+
+  // Safety timeout to prevent infinite loading
+  useEffect(() => {
+    if (!isLoading) {
+      setLoadingTimedOut(false);
+      return;
+    }
+    const timeout = setTimeout(() => {
+      console.warn('[Settings] Loading timeout - showing content');
+      setLoadingTimedOut(true);
+    }, 6000);
+    return () => clearTimeout(timeout);
+  }, [isLoading]);
   
   // Handle PWA install
   const handleInstallApp = async () => {
@@ -105,7 +166,6 @@ export default function SettingsPage() {
   const [displayName, setDisplayName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
-  const [notifications, setNotifications] = useState({ email: true, maintenance: true });
   const [locationZip, setLocationZip] = useState('');
   const [locationCity, setLocationCity] = useState('');
   const [locationState, setLocationState] = useState('');
@@ -114,6 +174,14 @@ export default function SettingsPage() {
   const [copied, setCopied] = useState(false);
   const [showClearModal, setShowClearModal] = useState(null);
   
+  // Avatar upload state
+  const [avatarPreview, setAvatarPreview] = useState(null);
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+  const avatarInputRef = useRef(null);
+  
+  // Data export state
+  const [isExporting, setIsExporting] = useState(false);
+  
   // React Query hooks
   const { data: alBalance = { fuel: 0, isUnlimited: false } } = useUserCredits(user?.id);
   const clearUserData = useClearUserData();
@@ -121,8 +189,13 @@ export default function SettingsPage() {
   const saveLocationMutation = useSaveLocation();
   const billingPortalMutation = useBillingPortal();
 
-  const currentTier = profile?.subscription_tier || 'free';
-  const planName = PLAN_NAMES[currentTier] || 'Free';
+  // Use effective tier (considers trial status)
+  const baseTier = profile?.subscription_tier || 'free';
+  const effectiveTier = getEffectiveTier(profile);
+  const trialStatus = getTrialStatus(profile);
+  const planName = trialStatus 
+    ? `${PLAN_NAMES[effectiveTier]} Trial`
+    : PLAN_NAMES[effectiveTier] || 'Free';
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) router.push('/garage');
@@ -138,6 +211,111 @@ export default function SettingsPage() {
     }
     if (profile?.referral_code) setReferralCode(profile.referral_code);
   }, [profile, user]);
+
+  // ============================================================================
+  // AVATAR UPLOAD HANDLERS
+  // ============================================================================
+  
+  const handleAvatarClick = () => {
+    avatarInputRef.current?.click();
+  };
+  
+  const handleAvatarChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!validTypes.includes(file.type)) {
+      alert('Please upload a JPG, PNG, or WebP image');
+      return;
+    }
+    
+    // Validate file size (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('Image must be under 5MB');
+      return;
+    }
+    
+    // Show preview immediately
+    const previewUrl = URL.createObjectURL(file);
+    setAvatarPreview(previewUrl);
+    setIsUploadingAvatar(true);
+    
+    try {
+      // Upload to blob storage via API
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', 'avatar');
+      
+      const response = await fetch('/api/uploads', {
+        method: 'POST',
+        body: formData,
+      });
+      
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+      
+      const { url } = await response.json();
+      
+      // Update profile with new avatar URL
+      const { error } = await updateProfile({ avatar_url: url });
+      
+      if (error) {
+        throw error;
+      }
+      
+    } catch (err) {
+      console.error('[Settings] Avatar upload failed:', err);
+      // Revert preview on error
+      setAvatarPreview(null);
+      alert('Failed to upload avatar. Please try again.');
+    } finally {
+      setIsUploadingAvatar(false);
+      // Clear the input so the same file can be selected again
+      if (avatarInputRef.current) {
+        avatarInputRef.current.value = '';
+      }
+    }
+  };
+
+  // ============================================================================
+  // DATA EXPORT HANDLER
+  // ============================================================================
+  
+  const handleExportData = async () => {
+    setIsExporting(true);
+    try {
+      // Trigger download by opening in new tab/initiating download
+      const response = await fetch('/api/user/export-data?format=download');
+      
+      if (!response.ok) {
+        throw new Error('Export failed');
+      }
+      
+      // Get filename from content-disposition header
+      const contentDisposition = response.headers.get('Content-Disposition');
+      const filename = contentDisposition?.match(/filename="(.+)"/)?.[1] || `autorev-data-export-${new Date().toISOString().split('T')[0]}.json`;
+      
+      // Create blob and download
+      const blob = await response.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+    } catch (err) {
+      console.error('[Settings] Data export failed:', err);
+      alert('Failed to export data. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
 
   // Optimistic UI: Show success immediately, save in background
@@ -216,10 +394,12 @@ export default function SettingsPage() {
     } catch (e) { alert('Failed'); }
   };
 
-  if (isLoading) return <div className={styles.loading}><LoadingSpinner variant="branded" text="Loading" fullPage /></div>;
+  // Loading - with safety timeout to prevent stuck state
+  // Using skeleton loader per SOURCE_OF_TRUTH.md guidelines
+  if (isLoading && !loadingTimedOut) return <SettingsSkeleton />;
   if (!isAuthenticated || !user) return null;
 
-  const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url;
+  const avatarUrl = avatarPreview || profile?.avatar_url || user?.user_metadata?.avatar_url;
   const initials = (displayName || user?.email || 'U').charAt(0).toUpperCase();
   const memberSince = new Date(user.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
 
@@ -227,23 +407,58 @@ export default function SettingsPage() {
     <div className={styles.page}>
       {/* Header */}
       <header className={styles.header}>
-        <div className={styles.avatar}>
-          {avatarUrl ? <Image src={avatarUrl} alt="" width={56} height={56} className={styles.avatarImg} /> : <span>{initials}</span>}
-        </div>
+        <button 
+          type="button"
+          onClick={handleAvatarClick} 
+          className={styles.avatarButton}
+          aria-label="Change profile photo"
+          disabled={isUploadingAvatar}
+        >
+          <div className={styles.avatar}>
+            {avatarUrl ? (
+              <Image src={avatarUrl} alt="" width={56} height={56} className={styles.avatarImg} />
+            ) : (
+              <span>{initials}</span>
+            )}
+          </div>
+          <div className={styles.avatarOverlay}>
+            {isUploadingAvatar ? (
+              <span className={styles.avatarUploading}>...</span>
+            ) : (
+              <CameraIcon size={18} />
+            )}
+          </div>
+          <input
+            ref={avatarInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={handleAvatarChange}
+            className={styles.avatarInput}
+            aria-hidden="true"
+          />
+        </button>
         <div className={styles.headerInfo}>
           <h1>{displayName || 'Settings'}</h1>
           <p>{user.email}</p>
           <div className={styles.badges}>
-            <span className={styles.planBadge}>{planName}</span>
+            {isAdminEmail(user.email) ? (
+              <Link href="/admin" className={`${styles.planBadge} ${styles.adminBadgeLink}`}>
+                {planName}
+              </Link>
+            ) : (
+              <span className={styles.planBadge}>{planName}</span>
+            )}
             <span className={styles.sinceBadge}>Since {memberSince}</span>
           </div>
         </div>
-        <button onClick={() => router.back()} className={styles.closeBtn} title="Close">{Icon.close}</button>
+        <button onClick={() => router.back()} className={styles.closeBtn} aria-label="Close settings">
+          <XIcon size={18} />
+        </button>
       </header>
 
       {/* Sign Out Button - thin, above fuel card */}
       <button onClick={handleSignOut} className={styles.signOutThin}>
-        {Icon.logout}
+        <LogoutIcon size={18} />
         <span>Sign out</span>
       </button>
 
@@ -254,7 +469,7 @@ export default function SettingsPage() {
           <div className={styles.fuelInfo}>
             <span className={styles.fuelLabel}>AL Fuel</span>
             <span className={styles.fuelValue}>
-              {alBalance.isUnlimited ? '∞' : alBalance.fuel}
+              {alBalance.isUnlimited ? '∞' : alBalance.fuel.toLocaleString()}
               {!alBalance.isUnlimited && <span className={styles.fuelUnit}> available</span>}
             </span>
           </div>
@@ -267,9 +482,10 @@ export default function SettingsPage() {
         )}
         {!alBalance.isUnlimited && (
           <div className={styles.topupRow}>
-            {AL_TOPUP_PACKAGES.slice(0, 3).map(p => (
+            {AL_TOPUP_PACKAGES.map(p => (
               <button key={p.id} onClick={() => checkoutCredits(p.id)} disabled={checkoutLoading} className={styles.topupBtn}>
-                <span className={styles.topupFuel}>+{p.cents}</span>
+                <span className={styles.topupLabel}>{p.label}</span>
+                <span className={styles.topupDesc}>{p.description}</span>
                 <span className={styles.topupPrice}>${p.price}</span>
               </button>
             ))}
@@ -280,13 +496,13 @@ export default function SettingsPage() {
       {/* Referral Card */}
       <section className={styles.referralCard}>
         <div className={styles.referralHeader}>
-          {Icon.gift}
+          <GiftIcon size={18} />
           <span>Refer friends, both get <strong>200 fuel</strong></span>
         </div>
         <div className={styles.referralLink}>
           <span>autorev.app/?ref={referralCode || '...'}</span>
-          <button onClick={handleCopyReferral} className={styles.copyBtn}>
-            {copied ? Icon.check : Icon.copy}
+          <button onClick={handleCopyReferral} className={styles.copyBtn} aria-label={copied ? 'Copied!' : 'Copy referral link'}>
+            {copied ? <CheckIcon size={16} /> : <CopyIcon size={16} />}
           </button>
         </div>
       </section>
@@ -297,47 +513,54 @@ export default function SettingsPage() {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Account</h2>
           <div className={styles.field}>
-            <label>Display Name</label>
+            <label htmlFor="display-name">Display Name</label>
             <div className={styles.inputRow}>
-              <input type="text" value={displayName} onChange={e => setDisplayName(e.target.value)} placeholder="Your name" />
+              <input 
+                id="display-name"
+                type="text" 
+                value={displayName} 
+                onChange={e => setDisplayName(e.target.value)} 
+                placeholder="Your name"
+                autoComplete="name"
+              />
               <button onClick={handleSave} disabled={isSaving || !displayName.trim()} className={styles.inlineSaveBtn}>
-                {saveSuccess ? Icon.check : 'Save'}
+                {saveSuccess ? <CheckIcon size={14} /> : 'Save'}
               </button>
             </div>
           </div>
           <div className={styles.field}>
-            <label>Email</label>
-            <input type="email" value={user.email} disabled />
-          </div>
-        </section>
-
-        {/* Notifications */}
-        <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>Notifications</h2>
-          <div className={styles.toggleRow}>
-            <span>Email updates</span>
-            <label className={styles.toggle}>
-              <input type="checkbox" checked={notifications.email} onChange={e => setNotifications({...notifications, email: e.target.checked})} />
-              <span></span>
-            </label>
-          </div>
-          <div className={styles.toggleRow}>
-            <span>Maintenance reminders</span>
-            <label className={styles.toggle}>
-              <input type="checkbox" checked={notifications.maintenance} onChange={e => setNotifications({...notifications, maintenance: e.target.checked})} />
-              <span></span>
-            </label>
+            <label htmlFor="email">Email</label>
+            <input id="email" type="email" value={user.email} disabled autoComplete="email" />
           </div>
         </section>
 
         {/* Location */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Location</h2>
-          <p className={styles.sectionHint}>For local event recommendations</p>
+          <p className={styles.sectionHint} id="location-hint">For local event recommendations</p>
           <div className={styles.locationRow}>
             <div className={styles.locationInputs}>
-              <input type="text" inputMode="numeric" autoComplete="postal-code" value={locationZip} onChange={e => handleZipLookup(e.target.value.replace(/\D/g,'').slice(0,5))} placeholder="ZIP" maxLength={5} className={styles.zipInput} />
-              <input type="text" value={isLookingUpZip ? '...' : (locationCity && locationState ? `${locationCity}, ${locationState}` : '')} disabled placeholder="City, State" className={styles.cityInput} />
+              <input 
+                id="zip-code"
+                type="text" 
+                inputMode="numeric" 
+                autoComplete="postal-code" 
+                value={locationZip} 
+                onChange={e => handleZipLookup(e.target.value.replace(/\D/g,'').slice(0,5))} 
+                placeholder="ZIP" 
+                maxLength={5} 
+                className={styles.zipInput}
+                aria-describedby="location-hint"
+                aria-label="ZIP code"
+              />
+              <input 
+                type="text" 
+                value={isLookingUpZip ? '...' : (locationCity && locationState ? `${locationCity}, ${locationState}` : '')} 
+                disabled 
+                placeholder="City, State" 
+                className={styles.cityInput}
+                aria-label="City and state"
+              />
             </div>
             <button onClick={handleSaveLocation} disabled={!/^\d{5}$/.test(locationZip)} className={styles.locationSaveBtn}>Save</button>
           </div>
@@ -347,22 +570,44 @@ export default function SettingsPage() {
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Your Plan</h2>
           
+          {/* Trial Banner */}
+          {trialStatus && (
+            <div className={styles.trialBanner}>
+              <div className={styles.trialBannerContent}>
+                <span className={styles.trialTag}>PRO TRIAL</span>
+                <span className={styles.trialText}>
+                  {trialStatus.daysRemaining} day{trialStatus.daysRemaining !== 1 ? 's' : ''} remaining
+                </span>
+              </div>
+              <p className={styles.trialSubtext}>
+                You have full Pro access. Upgrade now to keep all features!
+              </p>
+            </div>
+          )}
+
           {/* Current Plan Hero */}
           <div className={styles.currentPlanHero}>
             <div className={styles.currentPlanBadge}>
-              {Icon.star}
+              <StarIcon size={16} filled />
               <span className={styles.currentPlanLabel}>Current Plan</span>
             </div>
-            <h3 className={styles.currentPlanName}>{PLAN_NAMES[currentTier]}</h3>
+            <h3 className={styles.currentPlanName}>
+              {trialStatus ? `${PLAN_NAMES[effectiveTier]} (Trial)` : PLAN_NAMES[effectiveTier]}
+            </h3>
             {IS_BETA ? (
               <p className={styles.betaBanner}>
                 <span className={styles.betaTag}>BETA</span>
                 All features unlocked free during beta!
               </p>
+            ) : trialStatus ? (
+              <p className={styles.currentPlanPrice}>
+                <span className={styles.priceAmount}>Free</span>
+                <span className={styles.pricePeriod}> for {trialStatus.daysRemaining} more day{trialStatus.daysRemaining !== 1 ? 's' : ''}</span>
+              </p>
             ) : (
               <p className={styles.currentPlanPrice}>
-                <span className={styles.priceAmount}>{TIER_PRICES[currentTier].amount}</span>
-                <span className={styles.pricePeriod}>{TIER_PRICES[currentTier].period}</span>
+                <span className={styles.priceAmount}>{TIER_PRICES[effectiveTier]?.amount || 'Free'}</span>
+                <span className={styles.pricePeriod}>{TIER_PRICES[effectiveTier]?.period || ''}</span>
               </p>
             )}
           </div>
@@ -374,9 +619,9 @@ export default function SettingsPage() {
             </p>
             <div className={styles.planGrid}>
               {TIER_ORDER.map(tier => {
-                const isCurrent = currentTier === tier;
+                const isCurrent = effectiveTier === tier;
                 const tierIndex = TIER_ORDER.indexOf(tier);
-                const currentIndex = TIER_ORDER.indexOf(currentTier);
+                const currentIndex = TIER_ORDER.indexOf(effectiveTier);
                 const isUpgrade = tierIndex > currentIndex;
                 const isDowngrade = tierIndex < currentIndex;
                 
@@ -393,12 +638,12 @@ export default function SettingsPage() {
                     </span>
                     <ul className={styles.planFeatures}>
                       {TIER_FEATURES[tier].map((feature, i) => (
-                        <li key={i}>{Icon.check} {feature}</li>
+                        <li key={i}><CheckIcon size={12} /> {feature}</li>
                       ))}
                     </ul>
                     {isCurrent ? (
                       <span className={styles.currentPlanTag}>
-                        {Icon.check} Active
+                        <CheckIcon size={12} /> Active
                       </span>
                     ) : (
                       <button 
@@ -426,7 +671,7 @@ export default function SettingsPage() {
               }} 
               className={styles.billingLink}
             >
-              Manage billing {Icon.external}
+              Manage billing <ExternalLinkIcon size={14} />
             </button>
           )}
         </section>
@@ -440,11 +685,23 @@ export default function SettingsPage() {
         {/* Data & Privacy */}
         <section className={styles.section}>
           <h2 className={styles.sectionTitle}>Data & Privacy</h2>
+          
+          {/* Export Data Button */}
+          <button 
+            onClick={handleExportData} 
+            disabled={isExporting}
+            className={styles.exportBtn}
+          >
+            <DownloadIcon size={18} />
+            {isExporting ? 'Exporting...' : 'Export My Data'}
+            <span className={styles.exportHint}>Download all your data as JSON</span>
+          </button>
+          
           <div className={styles.dataRow}>
             <button onClick={() => setShowClearModal('vehicles')} className={styles.clearBtn}>Clear garage data</button>
             <button onClick={() => setShowClearModal('al_history')} className={styles.clearBtn}>Clear AL history</button>
           </div>
-          <Link href="/privacy" className={styles.privacyLink}>Privacy Policy {Icon.external}</Link>
+          <Link href="/privacy" className={styles.privacyLink}>Privacy Policy <ExternalLinkIcon size={14} /></Link>
         </section>
 
         {/* App */}
@@ -457,14 +714,14 @@ export default function SettingsPage() {
               className={styles.installBtn}
               disabled={isInstalling}
             >
-              {Icon.install} 
+              <DownloadIcon size={18} />
               {isInstalling ? 'Installing...' : 'Install App'}
               <span className={styles.installHint}>Add to home screen</span>
             </button>
           )}
           {isInstalled && (
             <div className={styles.installedBadge}>
-              {Icon.check} App installed
+              <CheckIcon size={16} /> App installed
             </div>
           )}
           <button onClick={triggerOnboarding} className={styles.tourBtn}>Relaunch Onboarding</button>
@@ -474,9 +731,15 @@ export default function SettingsPage() {
 
       {/* Clear Data Modal */}
       {showClearModal && (
-        <div className={styles.modalOverlay} onClick={() => setShowClearModal(null)}>
+        <div 
+          className={styles.modalOverlay} 
+          onClick={() => setShowClearModal(null)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="clear-modal-title"
+        >
           <div className={styles.modal} onClick={e => e.stopPropagation()}>
-            <h3>Clear {showClearModal === 'vehicles' ? 'Garage' : 'AL History'}?</h3>
+            <h3 id="clear-modal-title">Clear {showClearModal === 'vehicles' ? 'Garage' : 'AL History'}?</h3>
             <p>This cannot be undone.</p>
             <div className={styles.modalBtns}>
               <button onClick={() => setShowClearModal(null)} className={styles.cancelBtn}>Cancel</button>

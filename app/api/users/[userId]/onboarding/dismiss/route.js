@@ -75,7 +75,7 @@ async function handlePost(request, { params }) {
     if (fetchError) {
       console.error('[API/onboarding/dismiss] Error fetching profile:', fetchError);
       return NextResponse.json(
-        { error: fetchError.message || 'Failed to fetch profile' },
+        { error: 'Failed to fetch profile' },
         { status: 500 }
       );
     }
@@ -115,7 +115,7 @@ async function handlePost(request, { params }) {
     if (error) {
       console.error('[API/onboarding/dismiss] Error updating profile:', error);
       return NextResponse.json(
-        { error: error.message || 'Failed to track dismissal' },
+        { error: 'Failed to track dismissal' },
         { status: 500 }
       );
     }

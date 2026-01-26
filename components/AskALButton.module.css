@@ -71,9 +71,9 @@
    CANONICAL DEFINITION - All Ask AL buttons should match these exact values
    MUST MATCH: app/(app)/garage/my-specs/page.module.css .askAlBtn */
 .variantHeader {
-  /* Fixed dimensions for consistency - compact pill appearance */
-  min-height: 28px;
-  padding: 0 12px;
+  /* CF-001: Touch target compliance - 44px minimum */
+  min-height: 44px;
+  padding: 0 16px;
   
   /* Appearance */
   background: var(--brand-lime, #d4ff00);
@@ -150,9 +150,9 @@
     height: 18px;
   }
   
-  /* Header variant keeps compact appearance - touch target via parent padding */
+  /* CF-001: Header variant maintains 44px touch target on mobile */
   .variantHeader {
-    min-height: 28px;
+    min-height: 44px;
     min-width: auto;
   }
 }

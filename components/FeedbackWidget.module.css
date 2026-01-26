@@ -794,8 +794,8 @@
   }
 }
 
-/* iPad/Tablet (portrait and landscape) */
-@media (min-width: 481px) and (max-width: 1024px) {
+/* Tablet and up - mobile-first (min-width: 481px) */
+@media (min-width: 481px) {
   .overlay {
     padding: 24px;
   }

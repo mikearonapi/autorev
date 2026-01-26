@@ -11,7 +11,7 @@
 import { NextResponse } from 'next/server';
 import { getAggregatesReadyToFlush, formatAggregateForDiscord } from '@/lib/errorAggregator';
 import { notifyAggregatedError } from '@/lib/discord';
-import { logCronError } from '@/lib/serverErrorLogger';
+import { logCronError, withErrorLogging } from '@/lib/serverErrorLogger';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
@@ -66,17 +66,12 @@ async function handleFlush(request) {
     await logCronError('flush-error-aggregates', error, { phase: 'flush' });
     return NextResponse.json({
       error: 'Failed to flush error aggregates',
-      details: error.message,
     }, { status: 500 });
   }
 }
 
-export async function GET(request) {
-  return handleFlush(request);
-}
+export const GET = withErrorLogging(handleFlush, { route: 'cron/flush-error-aggregates', feature: 'cron' });
 
 // Also support POST for manual triggers
-export async function POST(request) {
-  return handleFlush(request);
-}
+export const POST = withErrorLogging(handleFlush, { route: 'cron/flush-error-aggregates', feature: 'cron' });
 

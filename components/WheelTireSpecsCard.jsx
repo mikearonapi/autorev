@@ -12,7 +12,6 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import styles from './WheelTireSpecsCard.module.css';
-import AskALButton from './AskALButton';
 import { Icons } from '@/components/ui/Icons';
 
 /**
@@ -157,12 +156,6 @@ export default function WheelTireSpecsCard({
         <div className={styles.header}>
           <h4 className={styles.title}>
             <span>Tires & Wheels</span>
-            <AskALButton 
-              variant="header"
-              category="Tires & Wheels"
-              prompt={`What are the best tire and wheel options for my ${carName || 'car'}? Include sizes, recommended brands, and any fitment considerations.`}
-              carName={carName}
-            />
           </h4>
         </div>
         <div className={styles.emptyState}>
@@ -193,12 +186,6 @@ export default function WheelTireSpecsCard({
               Tires & Wheels
               {hasAnyCustom && <span className={styles.customBadge}>Your Specs</span>}
             </span>
-            <AskALButton 
-              variant="header"
-              category="Tires & Wheels"
-              prompt={`What are the best tire and wheel options for my ${carName || 'car'}? Include sizes, recommended brands, and any fitment considerations.`}
-              carName={carName}
-            />
           </h4>
           {onUpdateCustomSpecs && (
             <button 

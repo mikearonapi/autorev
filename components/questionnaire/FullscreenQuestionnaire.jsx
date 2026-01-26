@@ -14,7 +14,7 @@
  * - PWA-safe footer spacing
  */
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import styles from './FullscreenQuestionnaire.module.css';
 import { useQuestionnaire } from '@/hooks/useQuestionnaire';
@@ -24,6 +24,7 @@ import {
 } from '@/data/questionnaireLibrary';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
+import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
 
 export default function FullscreenQuestionnaire({ userId, onComplete, onClose }) {
   const router = useRouter();
@@ -31,6 +32,15 @@ export default function FullscreenQuestionnaire({ userId, onComplete, onClose })
   const [localSelection, setLocalSelection] = useState(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  
+  // Set safe area color to match overlay background (charcoal)
+  // This ensures the iOS status bar area matches the modal background
+  useSafeAreaColor(SAFE_AREA_COLORS.OVERLAY);
+  
+  // Ref to prevent race condition with rapid clicks
+  // This is checked synchronously before any async work, preventing double-submits
+  // even when React state updates are batched
+  const isProcessingRef = useRef(false);
   
   // Points notification hook
   const { showPointsEarned } = usePointsNotification();
@@ -54,10 +64,14 @@ export default function FullscreenQuestionnaire({ userId, onComplete, onClose })
   // Calculate progress percentage (used only in success state)
   const progressPercent = Math.round((completedCount / totalLibraryCount) * 100);
   
-  // Reset local selection when question changes
+  // Reset local selection when the current question changes
+  // NOTE: We use currentQuestion?.id instead of currentQuestionIndex because
+  // the index stays at 0 while questions rotate through (answered questions
+  // are filtered out by getAvailableQuestions). This ensures selection is
+  // cleared when the optimistic update causes a new question to appear.
   useEffect(() => {
     setLocalSelection(null);
-  }, [currentQuestionIndex]);
+  }, [currentQuestion?.id]);
   
   // Handle single-select option click
   const handleSingleSelect = useCallback((optionValue) => {
@@ -87,7 +101,11 @@ export default function FullscreenQuestionnaire({ userId, onComplete, onClose })
   }, [localSelection, currentQuestion, isSubmitting, isTransitioning]);
   
   // Submit current answer and advance
-  const handleSubmit = useCallback(async () => {
+  const handleQuestionnaireAnswerSubmit = useCallback(async () => {
+    // Use ref to prevent race condition with rapid clicks
+    // React state (isSubmitting, isTransitioning) can have stale values in the callback
+    // closure due to batched renders, but ref check is synchronous and immediate
+    if (isProcessingRef.current) return;
     if (!currentQuestion || isSubmitting || isTransitioning) return;
     
     // Validate selection exists
@@ -97,8 +115,15 @@ export default function FullscreenQuestionnaire({ userId, onComplete, onClose })
       if (!localSelection?.value) return;
     }
     
+    // Set processing flag immediately to block any subsequent clicks
+    isProcessingRef.current = true;
+    
+    // Capture the question ID we're answering before any async work
+    // This ensures we track the correct question even if state changes during async
+    const questionIdBeingAnswered = currentQuestion.id;
+    
     try {
-      await submitResponse(currentQuestion.id, localSelection);
+      await submitResponse(questionIdBeingAnswered, localSelection);
       
       // Show points earned notification
       showPointsEarned(5, 'Profile question');
@@ -121,12 +146,19 @@ export default function FullscreenQuestionnaire({ userId, onComplete, onClose })
           setShowSuccess(true);
         }
         // Clear selection for the next question (which is now at the same index)
+        // Note: This is a backup clear - the useEffect on currentQuestion?.id
+        // should have already cleared it when the question changed
         setLocalSelection(null);
         setIsTransitioning(false);
+        
+        // Reset processing flag after transition completes
+        isProcessingRef.current = false;
       }, 300);
       
     } catch (err) {
       console.error('[FullscreenQuestionnaire] Submit error:', err);
+      // Reset processing flag on error so user can retry
+      isProcessingRef.current = false;
     }
   }, [currentQuestion, localSelection, submitResponse, showPointsEarned, currentQuestionIndex, totalQuestions, isSubmitting, isTransitioning]);
   
@@ -169,7 +201,7 @@ export default function FullscreenQuestionnaire({ userId, onComplete, onClose })
   // Loading state
   if (isLoading) {
     return (
-      <div className={styles.container}>
+      <div className={styles.container} data-overlay-modal>
         <div className={styles.loadingState}>
           <LoadingSpinner size="medium" />
           <span>Loading your profile...</span>
@@ -181,7 +213,7 @@ export default function FullscreenQuestionnaire({ userId, onComplete, onClose })
   // Error state
   if (isError) {
     return (
-      <div className={styles.container}>
+      <div className={styles.container} data-overlay-modal>
         <div className={styles.errorState}>
           <span>Something went wrong. Please try again.</span>
           <button onClick={handleClose} className={styles.primaryBtn}>
@@ -195,7 +227,7 @@ export default function FullscreenQuestionnaire({ userId, onComplete, onClose })
   // All questions answered or success state
   if (showSuccess || totalQuestions === 0) {
     return (
-      <div className={styles.container}>
+      <div className={styles.container} data-overlay-modal>
         <div className={styles.successState}>
           <div className={styles.successIcon}>
             <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -229,7 +261,7 @@ export default function FullscreenQuestionnaire({ userId, onComplete, onClose })
   }
   
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-overlay-modal>
       {/* Header - minimal with close button */}
       <header className={styles.header}>
         <div className={styles.headerSpacer} />
@@ -286,7 +318,7 @@ export default function FullscreenQuestionnaire({ userId, onComplete, onClose })
         </p>
         
         <button
-          onClick={handleSubmit}
+          onClick={handleQuestionnaireAnswerSubmit}
           className={styles.submitBtn}
           disabled={!canSubmit || isSubmitting || isTransitioning}
         >

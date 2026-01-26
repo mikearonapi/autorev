@@ -9,6 +9,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { awardPoints } from '@/lib/pointsService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -20,7 +21,7 @@ const supabase = supabaseUrl && supabaseServiceKey
 // Points awarded for providing feedback
 const FEEDBACK_POINTS = 2;
 
-export async function POST(request) {
+async function handlePost(request) {
   if (!supabase) {
     return NextResponse.json(
       { error: 'Database not configured' },
@@ -73,7 +74,7 @@ export async function POST(request) {
     if (error) {
       console.error('[Feedback API] Database error:', error);
       return NextResponse.json(
-        { error: 'Failed to save feedback', details: error.message },
+        { error: 'Failed to save feedback' },
         { status: 500 }
       );
     }
@@ -101,8 +102,10 @@ export async function POST(request) {
   } catch (error) {
     console.error('[Feedback API] Error:', error);
     return NextResponse.json(
-      { error: 'Failed to process feedback', details: error.message },
+      { error: 'Failed to process feedback' },
       { status: 500 }
     );
   }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'insights/feedback', feature: 'feedback' });

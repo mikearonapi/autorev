@@ -14,6 +14,18 @@ export const metadata = {
   alternates: {
     canonical: '/terms',
   },
+  openGraph: {
+    title: 'Terms of Service | AutoRev',
+    description: 'Read the terms and conditions for using the AutoRev platform.',
+    url: '/terms',
+    type: 'website',
+    siteName: 'AutoRev',
+  },
+  twitter: {
+    card: 'summary',
+    title: 'Terms of Service | AutoRev',
+    description: 'Read the terms and conditions for using the AutoRev platform.',
+  },
 };
 
 export default function TermsOfService() {
@@ -432,9 +444,9 @@ export default function TermsOfService() {
               AL assistant usage is billed based on credits (token usage). Each tier has monthly credit limits:
             </p>
             <ul>
-              <li><strong>Free:</strong> $0.25/month (~15-20 conversations)</li>
-              <li><strong>Enthusiast:</strong> $1.00/month (~70-80 conversations)</li>
-              <li><strong>Tuner:</strong> $2.50/month (~175-200 conversations)</li>
+              <li><strong>Free:</strong> $0.25/month AL budget (~15 chats)</li>
+              <li><strong>Enthusiast:</strong> $2.00/month AL budget (~130 chats)</li>
+              <li><strong>Pro:</strong> $5.00/month AL budget (~350 chats)</li>
             </ul>
             <p>
               When monthly limits are exceeded, AL access is suspended until the next billing period or 
@@ -616,7 +628,7 @@ export default function TermsOfService() {
             <h2>13. Governing Law</h2>
             
             <p>
-              These Terms are governed by the laws of the State of [STATE], United States, without regard 
+              These Terms are governed by the laws of the State of Delaware, United States, without regard 
               to its conflict of law principles. The United Nations Convention on Contracts for the International 
               Sale of Goods does not apply.
             </p>
@@ -624,7 +636,7 @@ export default function TermsOfService() {
             <h3>13.1 Jurisdiction</h3>
             <p>
               You agree that any legal action or proceeding related to these Terms or the Platform shall be 
-              brought exclusively in the state or federal courts located in [COUNTY, STATE]. You consent to 
+              brought exclusively in the state or federal courts located in New Castle County, Delaware. You consent to 
               the jurisdiction of such courts and waive any objections based on inconvenient forum.
             </p>
           </section>
@@ -692,9 +704,9 @@ export default function TermsOfService() {
             
             <h3>16.1 General Inquiries</h3>
             <div className={styles.contactInfo}>
-              <p><strong>Email:</strong> contact@autorev.app</p>
+              <p><strong>Email:</strong> <a href="mailto:contact@autorev.app">contact@autorev.app</a></p>
               <p><strong>Contact Form:</strong> <a href="/contact">/contact</a></p>
-              <p><strong>Mailing Address:</strong> [Company Legal Address]</p>
+              <p><strong>Mailing Address:</strong> [Delaware Registered Agent Address - TBD]</p>
             </div>
 
             <h3>16.2 Legal Notices</h3>
@@ -703,8 +715,8 @@ export default function TermsOfService() {
             </p>
             <div className={styles.contactInfo}>
               <p><strong>Legal Department</strong></p>
-              <p>[Company Legal Address]</p>
-              <p>Email: legal@autorev.app (if separate legal email)</p>
+              <p>[Delaware Registered Agent Address - TBD]</p>
+              <p>Email: <a href="mailto:legal@autorev.app">legal@autorev.app</a></p>
             </div>
 
             <h3>16.3 DMCA Copyright Agent</h3>

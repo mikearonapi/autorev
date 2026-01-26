@@ -376,7 +376,7 @@
   border: none;
   color: rgba(255, 255, 255, 0.8);
   font-size: 0.8125rem;
-  font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+  font-family: var(--font-mono);
   min-width: 0;
 }
 

@@ -15,9 +15,10 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { isAdminEmail } from '@/lib/adminAccess';
+import { requireAdmin } from '@/lib/adminAccess';
 import { sendFeedbackResponseEmail } from '@/lib/emailService';
 import { resolveCarId } from '@/lib/carResolver';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,30 +27,6 @@ const supabaseAdmin = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY,
   { auth: { persistSession: false } }
 );
-
-/**
- * Verify admin access via Bearer token
- */
-async function verifyAdmin(request) {
-  try {
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader?.startsWith('Bearer ')) {
-      return { error: 'Missing authorization header', status: 401 };
-    }
-
-    const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
-
-    if (authError || !user || !isAdminEmail(user.email)) {
-      return { error: 'Admin access required', status: 403 };
-    }
-
-    return { user };
-  } catch (err) {
-    console.error('[Admin/Feedback/Resolve] Auth check error:', err);
-    return { error: 'Authentication failed', status: 500 };
-  }
-}
 
 /**
  * Map feedback types to email template feedback types
@@ -70,13 +47,16 @@ function extractNameFromEmail(email) {
   return localPart.split(/[._]/)[0];
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   try {
     // Verify admin access
-    const auth = await verifyAdmin(request);
-    if (auth.error) {
-      return NextResponse.json({ error: auth.error }, { status: auth.status });
-    }
+    const denied = await requireAdmin(request);
+    if (denied) return denied;
+
+    // Get user for audit trail
+    const authHeader = request.headers.get('authorization');
+    const token = authHeader.replace('Bearer ', '');
+    const { data: { user: authUser } } = await supabaseAdmin.auth.getUser(token);
 
     const body = await request.json();
     const { 
@@ -91,10 +71,12 @@ export async function POST(request) {
       return NextResponse.json({ error: 'feedbackId is required' }, { status: 400 });
     }
 
+    const FEEDBACK_COLS = 'id, user_id, category, severity, title, description, page_url, browser_info, screenshot_url, status, resolved_at, resolution_notes, created_at';
+    
     // Fetch the feedback record
     const { data: feedback, error: fetchError } = await supabaseAdmin
       .from('user_feedback')
-      .select('*')
+      .select(FEEDBACK_COLS)
       .eq('id', feedbackId)
       .single();
 
@@ -112,7 +94,7 @@ export async function POST(request) {
       .update({
         status: 'resolved',
         resolved_at: new Date().toISOString(),
-        resolved_by: auth.user.id,
+        resolved_by: authUser.id,
         internal_notes: feedback.internal_notes 
           ? `${feedback.internal_notes}\n\n[Resolved ${new Date().toISOString()}]${resolutionNotes ? `: ${resolutionNotes}` : ''}`
           : resolutionNotes || `Resolved at ${new Date().toISOString()}`,
@@ -180,12 +162,10 @@ export async function POST(request) {
 /**
  * GET - Get resolution status for a feedback item
  */
-export async function GET(request) {
+async function handleGet(request) {
   try {
-    const auth = await verifyAdmin(request);
-    if (auth.error) {
-      return NextResponse.json({ error: auth.error }, { status: auth.status });
-    }
+    const denied = await requireAdmin(request);
+    if (denied) return denied;
 
     const { searchParams } = new URL(request.url);
     const feedbackId = searchParams.get('id');
@@ -210,3 +190,6 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'admin/feedback/resolve', feature: 'admin' });
+export const GET = withErrorLogging(handleGet, { route: 'admin/feedback/resolve', feature: 'admin' });

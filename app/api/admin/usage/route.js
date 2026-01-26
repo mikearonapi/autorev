@@ -9,6 +9,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { isAdminEmail } from '@/lib/adminAccess';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -37,7 +38,7 @@ const TOKEN_ESTIMATES = {
   AVG_EMBEDDING_TOKENS_PER_DOC: 500,   // Knowledge base documents
 };
 
-export async function GET(request) {
+async function handleGet(request) {
   const { searchParams } = new URL(request.url);
   const range = searchParams.get('range') || 'month';
   
@@ -109,7 +110,7 @@ export async function GET(request) {
       
       // Service rates
       supabase.from('service_rates')
-        .select('*')
+        .select('id, service_name, rate_per_unit, unit_type, is_current, effective_date, notes, created_at')
         .eq('is_current', true),
       
       // We'll fetch content metrics directly below
@@ -370,3 +371,4 @@ export async function GET(request) {
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'admin/usage', feature: 'admin' });

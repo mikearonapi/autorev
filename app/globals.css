@@ -82,11 +82,30 @@ a[href="#main-content"]:focus {
      These are the PRIMARY colors that define AutoRev's visual identity
      ======================================================================= */
   
-  /* Background Colors - Deep navy for premium automotive feel */
+  /* =======================================================================
+     BACKGROUND COLORS - 6-Level Hierarchy (Premium Dark Theme)
+     See docs/BRAND_GUIDELINES.md for full documentation
+     ======================================================================= */
+  
+  /* Level 1: Immersive - Deepest black for cinematic moments */
+  --brand-bg-immersive: var(--color-bg-immersive, #050a12);  /* Media galleries, video, splash */
+  
+  /* Level 2: Base - Main app foundation */
   --brand-bg-primary: var(--color-bg-base, #0d1b2a);
+  
+  /* Level 3: Overlay - Focused modal experiences (CHARCOAL) */
+  --brand-bg-overlay: var(--color-bg-overlay-solid, #1a1a1a);  /* Questionnaires, modals, onboarding */
+  
+  /* Level 4: Elevated - Cards and panels */
   --brand-bg-secondary: var(--color-bg-elevated, #1b263b);
+  
+  /* Level 5: Surface - Subtle card fills */
+  --brand-bg-surface: var(--color-bg-surface, rgba(255, 255, 255, 0.04));
   --brand-bg-card: rgba(255, 255, 255, 0.04);
   --brand-bg-card-hover: rgba(255, 255, 255, 0.08);
+  
+  /* Level 6: Input - Form fields */
+  --brand-bg-input: var(--color-bg-input, rgba(255, 255, 255, 0.06));
   
   /* Text Colors - Optimized for dark backgrounds with better contrast */
   --brand-text-primary: var(--color-text-primary, #ffffff);
@@ -476,6 +495,19 @@ body {
   color: var(--text-primary, #ffffff);
   
   /* =======================================================================
+     SAFE AREA BACKGROUND SYSTEM (Jan 2026)
+     
+     iOS PWAs with black-translucent status bar show page content behind 
+     the status bar/notch. This system allows modals to dynamically set
+     the safe area color to match their background.
+     
+     Usage: Set --safe-area-top-bg on body or a parent element when opening
+     a modal with a different background color.
+     ======================================================================= */
+  --safe-area-top-bg: var(--color-bg-base, #0d1b2a);
+  --safe-area-bottom-bg: var(--pwa-nav-bg, #0d1b2a);
+  
+  /* =======================================================================
      PREMIUM GRADIENT BACKGROUND (Jan 2026)
      Subtle gradient: lighter navy at top, deeper navy at bottom
      Creates depth and polish without being obvious
@@ -487,7 +519,7 @@ body {
     var(--color-bg-base, #0d1b2a) 65%,
     var(--color-bg-deep, #060d14) 100%
   );
-  background-color: #0d1b2a; /* Fallback for older browsers */
+  background-color: var(--color-bg-base, #0d1b2a); /* Fallback for older browsers */
   background-attachment: fixed; /* Gradient stays fixed while content scrolls */
   min-height: 100vh;
   min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
@@ -536,6 +568,173 @@ body {
 }
 
 /* ==========================================================================
+   SAFE AREA BACKGROUND FILLS (iOS PWA + Android Display Cutouts)
+   
+   These pseudo-elements fill the device safe areas (notch, Dynamic Island,
+   home indicator, camera cutouts) with the appropriate background color.
+   
+   PLATFORM SUPPORT:
+   - iOS: Uses env(safe-area-inset-*) with black-translucent status bar
+   - Android: Uses env(safe-area-inset-*) with viewport-fit=cover
+   
+   AUTOMATIC DETECTION: Uses CSS :has() to detect when an overlay modal
+   (marked with data-overlay-modal attribute) is present and changes
+   the safe area color to match the overlay background (charcoal).
+   
+   FALLBACK: For browsers without :has() support (Samsung Internet 18-),
+   the SafeAreaFallback component adds .has-overlay-modal / .has-immersive-modal
+   classes to <body> via MutationObserver.
+   
+   This is fully automatic - no JavaScript needed in modern browsers. Just add
+   data-overlay-modal to any fullscreen modal container that uses the overlay background.
+   ========================================================================== */
+
+/* Top safe area fill (behind Dynamic Island / notch / camera cutout) - DEFAULT (base navy) */
+/* Extends above viewport to cover any gaps Safari may show */
+body::before {
+  content: '';
+  position: fixed;
+  top: -50px;
+  left: 0;
+  right: 0;
+  /* Safe area height + 50px extension, with 47px fallback for iPhone notch */
+  height: calc(env(safe-area-inset-top, 47px) + 50px);
+  background: var(--safe-area-top-bg, var(--color-bg-base, #0d1b2a));
+  z-index: 10000;
+  pointer-events: none;
+  transition: background-color 0.15s ease;
+}
+
+/* Bottom safe area fill (behind home indicator) - DEFAULT (base navy) */
+/* Extends below viewport to cover any gaps Safari may show */
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -50px;
+  left: 0;
+  right: 0;
+  /* Safe area height + 50px extension, with 34px fallback for home indicator */
+  height: calc(env(safe-area-inset-bottom, 34px) + 50px);
+  background: var(--safe-area-bottom-bg, var(--color-bg-base, #0d1b2a));
+  z-index: 10000;
+  pointer-events: none;
+  transition: background-color 0.15s ease;
+}
+
+/* AUTOMATIC: When an overlay modal is present, change everything to charcoal */
+/* This ensures ANY area showing through (safe areas, gaps) uses the overlay color */
+/* Apply to both html and body to cover all edge cases */
+/* Must override the gradient background, so we explicitly set all background properties */
+html:has([data-overlay-modal]),
+body:has([data-overlay-modal]) {
+  background: #1a1a1a !important;
+  background-color: #1a1a1a !important;
+  background-image: none !important;
+}
+
+body:has([data-overlay-modal])::before {
+  background: #1a1a1a !important;
+}
+
+body:has([data-overlay-modal])::after {
+  background: #1a1a1a !important;
+}
+
+/* AUTOMATIC: When an immersive element is present (galleries, video), use deep black */
+body:has([data-immersive-modal])::before {
+  background: var(--color-bg-immersive, #050a12);
+}
+
+body:has([data-immersive-modal])::after {
+  background: var(--color-bg-immersive, #050a12);
+}
+
+/* ==========================================================================
+   CSS :has() FALLBACK CLASSES
+   
+   For browsers without :has() support (Samsung Internet 18 and older),
+   the SafeAreaFallback component adds these classes via MutationObserver.
+   ========================================================================== */
+
+/* Fallback: Overlay modal class (added by SafeAreaFallback.jsx) */
+html.has-overlay-modal,
+body.has-overlay-modal {
+  background: #1a1a1a !important;
+  background-color: #1a1a1a !important;
+  background-image: none !important;
+}
+
+body.has-overlay-modal::before {
+  background: #1a1a1a !important;
+}
+
+body.has-overlay-modal::after {
+  background: #1a1a1a !important;
+}
+
+/* Fallback: Immersive modal class (added by SafeAreaFallback.jsx) */
+body.has-immersive-modal::before {
+  background: var(--color-bg-immersive, #050a12);
+}
+
+body.has-immersive-modal::after {
+  background: var(--color-bg-immersive, #050a12);
+}
+
+/* ==========================================================================
+   HORIZONTAL SAFE AREA FILLS (Landscape Mode + Side Cutouts)
+   
+   Some Android devices have camera cutouts on the left or right edge.
+   In landscape mode, the top/bottom insets become left/right.
+   
+   These use additional pseudo-elements on a wrapper to handle horizontal
+   safe areas without conflicting with body::before/after.
+   ========================================================================== */
+
+/* Left safe area fill (landscape mode, left-side camera cutout) */
+.safe-area-horizontal::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: env(safe-area-inset-left, 0px);
+  background: var(--safe-area-left-bg, var(--color-bg-base, #0d1b2a));
+  z-index: 10000;
+  pointer-events: none;
+  transition: background-color 0.15s ease;
+}
+
+/* Right safe area fill (landscape mode, right-side camera cutout) */
+.safe-area-horizontal::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: env(safe-area-inset-right, 0px);
+  background: var(--safe-area-right-bg, var(--color-bg-base, #0d1b2a));
+  z-index: 10000;
+  pointer-events: none;
+  transition: background-color 0.15s ease;
+}
+
+/* Update horizontal safe areas when modals are open */
+body:has([data-overlay-modal]) .safe-area-horizontal::before,
+body:has([data-overlay-modal]) .safe-area-horizontal::after,
+body.has-overlay-modal .safe-area-horizontal::before,
+body.has-overlay-modal .safe-area-horizontal::after {
+  background: #1a1a1a !important;
+}
+
+body:has([data-immersive-modal]) .safe-area-horizontal::before,
+body:has([data-immersive-modal]) .safe-area-horizontal::after,
+body.has-immersive-modal .safe-area-horizontal::before,
+body.has-immersive-modal .safe-area-horizontal::after {
+  background: var(--color-bg-immersive, #050a12);
+}
+
+/* ==========================================================================
    ANDROID-SPECIFIC OPTIMIZATIONS
    
    Android Chrome has unique behaviors that can cause issues:
@@ -547,12 +746,10 @@ body {
    These rules address common Android issues.
    ========================================================================== */
 
-/* Prevent Android Chrome's text autosizing/font boosting */
-@media screen and (max-width: 767px) {
-  /* Force max-height on text containers to prevent font inflation */
-  p, li, td, th, label, span, a {
-    max-height: 1000000px;
-  }
+/* Prevent Android Chrome's text autosizing/font boosting
+   Mobile-first: Apply fix to base, safe for all screens */
+p, li, td, th, label, span, a {
+  max-height: 1000000px;
 }
 
 /* Disable double-tap zoom on interactive elements
@@ -1304,14 +1501,20 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
 /* --------------------------------------------------------------------------
    Tablet-Specific Utilities
    -------------------------------------------------------------------------- */
-/* Show only on tablet (768-1023px) */
+/* Show only on tablet (768-1023px) - mobile-first approach */
 .show-tablet-only {
   display: none;
 }
 
-@media (min-width: 768px) and (max-width: 1023px) {
+@media (min-width: 768px) {
   .show-tablet-only {
     display: block;
+  }
+}
+
+@media (min-width: 1024px) {
+  .show-tablet-only {
+    display: none;
   }
 }
 
@@ -1443,10 +1646,14 @@ section:not(:first-child) {
 /* DEPRECATED: Use .text-brand-amber instead */
 .text-brand-gold { color: var(--brand-amber) !important; }
 
-/* Background Colors */
-.bg-brand-primary { background-color: var(--brand-bg-primary) !important; }
-.bg-brand-secondary { background-color: var(--brand-bg-secondary) !important; }
+/* Background Colors - 6-Level Hierarchy */
+.bg-brand-immersive { background-color: var(--brand-bg-immersive) !important; }  /* Media, galleries, splash */
+.bg-brand-primary { background-color: var(--brand-bg-primary) !important; }      /* Main app pages */
+.bg-brand-overlay { background-color: var(--brand-bg-overlay) !important; }      /* Full-screen modals, onboarding */
+.bg-brand-secondary { background-color: var(--brand-bg-secondary) !important; }  /* Cards, panels */
+.bg-brand-surface { background-color: var(--brand-bg-surface) !important; }      /* Card fills */
 .bg-brand-card { background-color: var(--brand-bg-card) !important; }
+.bg-brand-input { background-color: var(--brand-bg-input) !important; }          /* Form fields */
 
 /* Stat Value Styling - "Metallic Silver" Effect for hero stats */
 .stat-value-hero {

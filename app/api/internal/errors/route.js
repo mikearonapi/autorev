@@ -62,7 +62,7 @@ async function handleGet(request) {
   } catch (error) {
     console.error('[API/internal/errors] Error:', error);
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: 'Failed to fetch error data' },
       { status: 500 }
     );
   }
@@ -102,7 +102,7 @@ async function handlePost(request) {
   } catch (error) {
     console.error('[API/internal/errors] Error marking fixed:', error);
     return NextResponse.json(
-      { success: false, error: error.message },
+      { success: false, error: 'Failed to mark errors as fixed' },
       { status: 500 }
     );
   }

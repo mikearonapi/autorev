@@ -8,18 +8,30 @@
  * 
  * Features:
  * - Clickable "Refer a friend" row that copies referral link instantly
+ * - Clickable action items that navigate to the relevant page
  * - Categories organized by point value (highest to lowest)
  */
 
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
+import { useRouter } from 'next/navigation';
 import { CloseIcon, GarageIcon, DataIcon, CommunityIcon, MessageIcon, FlameIcon } from './DashboardIcons';
 import { useReferralData } from '@/hooks/useUserData';
 import { platform } from '@/lib/platform';
 import styles from './PointsExplainerModal.module.css';
+import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
+
+// Profile icon for questionnaire category
+const ProfileIcon = ({ size }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+    <circle cx="12" cy="7" r="4"/>
+  </svg>
+);
 
 // Points configuration - matches lib/pointsService.js
 // 5-tier system: Growth (250) > Community (100) > Real Data (50) > Engagement (10) > Participation (5)
+// Each action includes a path for navigation when clicked
 const POINTS_BY_CATEGORY = {
   growth: {
     label: 'Growth',
@@ -31,48 +43,58 @@ const POINTS_BY_CATEGORY = {
         <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
       </svg>
     ),
-    color: '#f59e0b',
+    colorClass: 'categoryColorGrowth',
     actions: [
-      { label: 'Refer a friend', points: 250 },
+      { label: 'Refer a friend', points: 250, isReferral: true },
     ],
   },
   community: {
     label: 'Community',
     icon: CommunityIcon,
-    color: '#3b82f6',
+    colorClass: 'categoryColorCommunity',
     actions: [
-      { label: 'Share your build', points: 100 },
-      { label: 'Post a comment', points: 10 },
-      { label: 'Like a build', points: 5 },
+      { label: 'Share your build', points: 100, path: '/garage/my-build' },
+      { label: 'Post a comment', points: 10, path: '/community' },
+      { label: 'Like a build', points: 5, path: '/community' },
     ],
   },
   data: {
     label: 'Data',
     icon: DataIcon,
-    color: '#10b981',
+    colorClass: 'categoryColorData',
     actions: [
-      { label: 'Log dyno data', points: 50 },
-      { label: 'Log track time', points: 50 },
+      { label: 'Log dyno data', points: 50, path: '/data?action=log' },
+      { label: 'Log track time', points: 50, path: '/data/track?action=log' },
     ],
   },
   garage: {
     label: 'Garage',
     icon: GarageIcon,
-    color: '#d4ff00',
+    colorClass: 'categoryColorGarage',
     actions: [
-      { label: 'Install an upgrade', points: 50 },
-      { label: 'Add a vehicle', points: 10 },
-      { label: 'Plan an upgrade', points: 10 },
-      { label: 'Upload a photo', points: 5 },
+      { label: 'Install an upgrade', points: 50, path: '/garage/my-install' },
+      { label: 'Add a vehicle', points: 10, path: '/garage?action=add' },
+      { label: 'Plan an upgrade', points: 10, path: '/garage' },
+      { label: 'Upload a photo', points: 5, path: '/garage/my-photos' },
     ],
   },
   al: {
     label: 'AL',
     icon: MessageIcon,
-    color: '#a855f7',
+    colorClass: 'categoryColorAl',
     actions: [
-      { label: 'Ask AL a question', points: 10 },
-      { label: 'Answer a profile question', points: 5 },
+      { label: 'Ask AL a question', points: 10, path: '/al' },
+    ],
+  },
+  profile: {
+    label: 'Profile',
+    icon: ProfileIcon,
+    colorClass: 'categoryColorProfile',
+    actions: [
+      { label: '100% Profile Complete', points: 100, path: '/questionnaire' },
+      { label: '50% Profile Complete', points: 50, path: '/questionnaire' },
+      { label: 'Complete a category', points: 25, path: '/questionnaire' },
+      { label: 'Answer a question', points: 5, path: '/questionnaire' },
     ],
   },
 };
@@ -101,7 +123,18 @@ const CheckIcon = ({ size = 16 }) => (
   </svg>
 );
 
+// Chevron icon for clickable items
+const ChevronRightIcon = ({ size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="9 18 15 12 9 6"/>
+  </svg>
+);
+
 export default function PointsExplainerModal({ isOpen, onClose }) {
+  // Set safe area color to match overlay background when modal is open
+  useSafeAreaColor(SAFE_AREA_COLORS.OVERLAY, { enabled: isOpen });
+  
+  const router = useRouter();
   const modalRef = useRef(null);
   const previousActiveElement = useRef(null);
   const [referralCopied, setReferralCopied] = useState(false);
@@ -161,6 +194,16 @@ export default function PointsExplainerModal({ isOpen, onClose }) {
       setTimeout(() => setReferralCopied(false), 4000);
     }
   };
+  
+  // Handle navigation to action page
+  const handleActionClick = (path) => {
+    if (!path) return;
+    onClose();
+    // Small delay to allow modal close animation
+    setTimeout(() => {
+      router.push(path);
+    }, 150);
+  };
 
   if (!isOpen) return null;
 
@@ -169,6 +212,7 @@ export default function PointsExplainerModal({ isOpen, onClose }) {
       className={styles.backdrop} 
       onClick={handleBackdropClick}
       role="dialog"
+      data-overlay-modal
       aria-modal="true"
       aria-labelledby="points-modal-title"
     >
@@ -206,20 +250,15 @@ export default function PointsExplainerModal({ isOpen, onClose }) {
               return (
                 <div key={key} className={styles.category}>
                   <div className={styles.categoryHeader}>
-                    <div 
-                      className={styles.categoryIcon}
-                      style={{ color: category.color }}
-                    >
+                    <div className={`${styles.categoryIcon} ${styles[category.colorClass]}`}>
                       <IconComponent size={18} />
                     </div>
                     <span className={styles.categoryLabel}>{category.label}</span>
                   </div>
                   <ul className={styles.actionList}>
                     {category.actions.map((action, idx) => {
-                      // Make "Refer a friend" clickable
-                      const isReferralAction = isGrowthCategory && action.label === 'Refer a friend';
-                      
-                      if (isReferralAction) {
+                      // Special handling for referral action
+                      if (action.isReferral) {
                         return (
                           <li key={idx} className={styles.actionItemReferral}>
                             <button
@@ -235,10 +274,7 @@ export default function PointsExplainerModal({ isOpen, onClose }) {
                                   {referralCopied ? 'Link copied!' : action.label}
                                 </span>
                               </div>
-                              <span 
-                                className={styles.actionPoints}
-                                style={{ color: category.color }}
-                              >
+                              <span className={`${styles.actionPoints} ${styles[category.colorClass]}`}>
                                 +{action.points}
                               </span>
                             </button>
@@ -251,13 +287,33 @@ export default function PointsExplainerModal({ isOpen, onClose }) {
                         );
                       }
                       
+                      // Clickable action items with navigation
+                      if (action.path) {
+                        return (
+                          <li key={idx} className={styles.actionItemClickable}>
+                            <button
+                              className={styles.actionButton}
+                              onClick={() => handleActionClick(action.path)}
+                            >
+                              <span className={styles.actionLabel}>{action.label}</span>
+                              <div className={styles.actionRight}>
+                                <span className={`${styles.actionPoints} ${styles[category.colorClass]}`}>
+                                  +{action.points}
+                                </span>
+                                <span className={styles.actionChevron}>
+                                  <ChevronRightIcon size={14} />
+                                </span>
+                              </div>
+                            </button>
+                          </li>
+                        );
+                      }
+                      
+                      // Non-clickable action items (fallback)
                       return (
                         <li key={idx} className={styles.actionItem}>
                           <span className={styles.actionLabel}>{action.label}</span>
-                          <span 
-                            className={styles.actionPoints}
-                            style={{ color: category.color }}
-                          >
+                          <span className={`${styles.actionPoints} ${styles[category.colorClass]}`}>
                             +{action.points}
                           </span>
                         </li>
@@ -271,10 +327,7 @@ export default function PointsExplainerModal({ isOpen, onClose }) {
             {/* Streak Bonuses */}
             <div className={styles.category}>
               <div className={styles.categoryHeader}>
-                <div 
-                  className={styles.categoryIcon}
-                  style={{ color: '#f59e0b' }}
-                >
+                <div className={`${styles.categoryIcon} ${styles.categoryColorAmber}`}>
                   <FlameIcon size={18} />
                 </div>
                 <span className={styles.categoryLabel}>Streak Bonuses</span>
@@ -286,10 +339,7 @@ export default function PointsExplainerModal({ isOpen, onClose }) {
                 {STREAK_BONUSES.map((bonus, idx) => (
                   <li key={idx} className={styles.actionItem}>
                     <span className={styles.actionLabel}>{bonus.weeks} week streak</span>
-                    <span 
-                      className={styles.actionPoints}
-                      style={{ color: '#f59e0b' }}
-                    >
+                    <span className={`${styles.actionPoints} ${styles.categoryColorAmber}`}>
                       +{bonus.points}
                     </span>
                   </li>

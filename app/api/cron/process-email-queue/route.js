@@ -12,11 +12,13 @@
 
 import { NextResponse } from 'next/server';
 import { processEmailQueue } from '@/lib/emailService';
+import { withErrorLogging, logCronError } from '@/lib/serverErrorLogger';
+import { notifyCronEnrichment } from '@/lib/discord';
 
 // Verify cron secret to prevent unauthorized access
 const CRON_SECRET = process.env.CRON_SECRET;
 
-export async function GET(request) {
+async function handleGet(request) {
   try {
     // Verify authorization
     const authHeader = request.headers.get('authorization');
@@ -31,10 +33,28 @@ export async function GET(request) {
     }
 
     console.log('[Cron/Email Queue] Starting queue processing...');
+    const startTime = Date.now();
     
     const result = await processEmailQueue(50);
+    const duration = Date.now() - startTime;
     
     console.log(`[Cron/Email Queue] Completed: ${result.processed} sent, ${result.errors} errors`);
+
+    // Send Discord notification if any emails were processed
+    if (result.processed > 0) {
+      notifyCronEnrichment('Email Queue', {
+        duration,
+        table: 'email_queue',
+        recordsProcessed: result.processed,
+        errors: result.errors,
+        details: [
+          { label: '📧 Sent', value: result.processed },
+          { label: '❌ Errors', value: result.errors },
+        ],
+        skipped: result.processed === 0,
+        skipReason: result.processed === 0 ? 'empty_queue' : undefined,
+      }).catch(() => {}); // Don't fail if Discord fails
+    }
 
     return NextResponse.json({
       success: true,
@@ -44,13 +64,18 @@ export async function GET(request) {
 
   } catch (err) {
     console.error('[Cron/Email Queue] Error:', err);
+    
+    // Log to error tracking and Discord
+    await logCronError('process-email-queue', err, { phase: 'queue_processing' });
+    
     return NextResponse.json(
-      { error: 'Queue processing failed', message: err.message },
+      { error: 'Email queue processing failed' },
       { status: 500 }
     );
   }
 }
 
+export const GET = withErrorLogging(handleGet, { route: 'cron/process-email-queue', feature: 'cron' });
 // POST is also allowed for flexibility
-export { GET as POST };
+export const POST = withErrorLogging(handleGet, { route: 'cron/process-email-queue', feature: 'cron' });
 

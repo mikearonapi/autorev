@@ -319,7 +319,7 @@
   }
 }
 
-/* Error Message */
+/* Error Message (form-level) */
 .errorMessage {
   padding: var(--space-md);
   background: rgba(239, 68, 68, 0.1);
@@ -329,4 +329,37 @@
   font-size: var(--font-size-sm);
   margin-bottom: var(--space-md);
   text-align: center;
+}
+
+/* Field-level error message */
+.fieldError {
+  display: block;
+  margin-top: var(--space-xs);
+  font-size: var(--font-size-sm);
+  color: var(--color-warning, #f59e0b);
+  line-height: 1.4;
+}
+
+/* Input error state */
+.inputError {
+  border-color: var(--color-warning, #f59e0b) !important;
+}
+
+.inputError:focus {
+  border-color: var(--color-warning, #f59e0b) !important;
+  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2) !important;
+}
+
+/* Fieldset reset for accessibility */
+fieldset.formGroup {
+  border: none;
+  padding: 0;
+  margin: 0;
+  margin-bottom: var(--space-md);
+}
+
+@media (min-width: 768px) {
+  fieldset.formGroup {
+    margin-bottom: var(--space-lg);
+  }
 }

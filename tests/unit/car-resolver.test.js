@@ -1,49 +1,29 @@
 /**
  * Unit Tests: Car Resolver
  * 
- * Tests the car slug → ID resolution with caching.
+ * Tests the car slug → ID resolution with caching logic.
  * 
- * Run: node --test tests/unit/car-resolver.test.js
+ * Run: npm run test:unit -- tests/unit/car-resolver.test.js
  */
 
-import { describe, it, mock, beforeEach } from 'node:test';
-import assert from 'node:assert';
-
-// Mock Supabase before importing
-const mockSupabase = {
-  from: () => mockSupabase,
-  select: () => mockSupabase,
-  eq: () => mockSupabase,
-  in: () => mockSupabase,
-  single: async () => ({ data: { id: 'mock-uuid-123' }, error: null }),
-};
-
-// Store mock module state
-let mockIsConfigured = true;
-
-// Create a simple mock for the module
-const mockModule = {
-  supabase: mockSupabase,
-  isSupabaseConfigured: true,
-};
+import { describe, it, expect } from 'vitest';
 
 // Tests for the resolver logic patterns (without actual database)
 describe('Car Resolver Logic', () => {
   describe('Input Validation', () => {
     it('should handle null slug', () => {
-      // Test that null input returns null
       const slug = null;
-      assert.strictEqual(slug, null);
+      expect(slug).toBeNull();
     });
 
     it('should handle empty string slug', () => {
       const slug = '';
-      assert.strictEqual(slug.length, 0);
+      expect(slug.length).toBe(0);
     });
 
     it('should handle undefined slug', () => {
       const slug = undefined;
-      assert.strictEqual(slug, undefined);
+      expect(slug).toBeUndefined();
     });
   });
 
@@ -58,9 +38,9 @@ describe('Car Resolver Logic', () => {
       ];
       
       validSlugs.forEach(slug => {
-        assert.ok(typeof slug === 'string');
-        assert.ok(slug.length > 0);
-        assert.ok(/^[a-z0-9-]+$/.test(slug), `Slug should match pattern: ${slug}`);
+        expect(typeof slug).toBe('string');
+        expect(slug.length).toBeGreaterThan(0);
+        expect(/^[a-z0-9-]+$/.test(slug)).toBe(true);
       });
     });
 
@@ -75,7 +55,7 @@ describe('Car Resolver Logic', () => {
       invalidSlugs.forEach(slug => {
         // Valid slugs should be lowercase with hyphens only
         const isValid = /^[a-z0-9-]+$/.test(slug);
-        assert.strictEqual(isValid, false, `Slug should be invalid: ${slug}`);
+        expect(isValid).toBe(false);
       });
     });
   });
@@ -83,21 +63,21 @@ describe('Car Resolver Logic', () => {
   describe('Cache Logic', () => {
     it('should respect cache TTL constant', () => {
       const CACHE_TTL_MS = 5 * 60 * 1000; // 5 minutes
-      assert.strictEqual(CACHE_TTL_MS, 300000);
+      expect(CACHE_TTL_MS).toBe(300000);
     });
 
     it('should detect expired cache entries', () => {
       const CACHE_TTL_MS = 5 * 60 * 1000;
       const timestamp = Date.now() - (6 * 60 * 1000); // 6 minutes ago
       const isExpired = (Date.now() - timestamp) >= CACHE_TTL_MS;
-      assert.strictEqual(isExpired, true);
+      expect(isExpired).toBe(true);
     });
 
     it('should detect valid cache entries', () => {
       const CACHE_TTL_MS = 5 * 60 * 1000;
       const timestamp = Date.now() - (2 * 60 * 1000); // 2 minutes ago
       const isExpired = (Date.now() - timestamp) >= CACHE_TTL_MS;
-      assert.strictEqual(isExpired, false);
+      expect(isExpired).toBe(false);
     });
   });
 
@@ -112,7 +92,7 @@ describe('Car Resolver Logic', () => {
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       
       validUUIDs.forEach(uuid => {
-        assert.ok(uuidRegex.test(uuid), `Should be valid UUID: ${uuid}`);
+        expect(uuidRegex.test(uuid)).toBe(true);
       });
     });
 
@@ -127,7 +107,7 @@ describe('Car Resolver Logic', () => {
       const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
       
       invalidUUIDs.forEach(uuid => {
-        assert.strictEqual(uuidRegex.test(uuid), false, `Should be invalid UUID: ${uuid}`);
+        expect(uuidRegex.test(uuid)).toBe(false);
       });
     });
   });
@@ -135,18 +115,18 @@ describe('Car Resolver Logic', () => {
   describe('Batch Resolution Logic', () => {
     it('should handle empty array', () => {
       const slugs = [];
-      assert.strictEqual(slugs.length, 0);
+      expect(slugs.length).toBe(0);
     });
 
     it('should deduplicate slugs', () => {
       const slugs = ['bmw-m3-e46', 'porsche-911', 'bmw-m3-e46', 'porsche-911'];
       const unique = [...new Set(slugs)];
-      assert.strictEqual(unique.length, 2);
+      expect(unique.length).toBe(2);
     });
 
     it('should handle large batches', () => {
       const slugs = Array.from({ length: 100 }, (_, i) => `car-${i}`);
-      assert.strictEqual(slugs.length, 100);
+      expect(slugs.length).toBe(100);
     });
   });
 
@@ -154,13 +134,13 @@ describe('Car Resolver Logic', () => {
     it('should handle PGRST116 (not found) gracefully', () => {
       const error = { code: 'PGRST116', message: 'No rows returned' };
       const isNotFoundError = error.code === 'PGRST116';
-      assert.strictEqual(isNotFoundError, true);
+      expect(isNotFoundError).toBe(true);
     });
 
     it('should treat other errors differently', () => {
       const error = { code: 'PGRST500', message: 'Database error' };
       const isNotFoundError = error.code === 'PGRST116';
-      assert.strictEqual(isNotFoundError, false);
+      expect(isNotFoundError).toBe(false);
     });
   });
 });
@@ -168,7 +148,7 @@ describe('Car Resolver Logic', () => {
 describe('resolveCarIds Map Logic', () => {
   it('should create empty Map for empty input', () => {
     const result = new Map();
-    assert.strictEqual(result.size, 0);
+    expect(result.size).toBe(0);
   });
 
   it('should correctly map slug to id', () => {
@@ -176,9 +156,9 @@ describe('resolveCarIds Map Logic', () => {
     result.set('bmw-m3-e46', 'uuid-123');
     result.set('porsche-911', 'uuid-456');
     
-    assert.strictEqual(result.get('bmw-m3-e46'), 'uuid-123');
-    assert.strictEqual(result.get('porsche-911'), 'uuid-456');
-    assert.strictEqual(result.get('nonexistent'), undefined);
+    expect(result.get('bmw-m3-e46')).toBe('uuid-123');
+    expect(result.get('porsche-911')).toBe('uuid-456');
+    expect(result.get('nonexistent')).toBeUndefined();
   });
 
   it('should handle partial cache hits', () => {
@@ -187,8 +167,6 @@ describe('resolveCarIds Map Logic', () => {
     const requested = ['slug1', 'slug2', 'slug3'];
     const uncached = requested.filter(slug => !cached.has(slug));
     
-    assert.deepStrictEqual(uncached, ['slug2', 'slug3']);
+    expect(uncached).toEqual(['slug2', 'slug3']);
   });
 });
-
-console.log('Car Resolver tests defined successfully.');

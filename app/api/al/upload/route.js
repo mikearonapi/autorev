@@ -14,6 +14,7 @@
 import { NextResponse } from 'next/server';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { errors } from '@/lib/apiErrors';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * Create Supabase client for route handlers (supports both cookie and Bearer token)
@@ -43,7 +44,7 @@ const ALLOWED_TYPES = {
  * POST /api/al/upload
  * Upload file for AL analysis
  */
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const { supabase, bearerToken } = await createSupabaseClient(request);
     
@@ -188,7 +189,7 @@ export async function POST(request) {
  * GET /api/al/upload?conversation_id=xxx
  * Get attachments for a conversation
  */
-export async function GET(request) {
+async function handleGet(request) {
   try {
     const supabase = await createSupabaseClient();
     
@@ -205,10 +206,12 @@ export async function GET(request) {
     const { searchParams } = new URL(request.url);
     const conversationId = searchParams.get('conversation_id');
     
+    const ATTACH_COLS = 'id, user_id, conversation_id, file_name, file_type, file_size, public_url, storage_path, created_at';
+    
     // Build query
     let query = supabase
       .from('al_attachments')
-      .select('*')
+      .select(ATTACH_COLS)
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
     
@@ -235,3 +238,6 @@ export async function GET(request) {
     );
   }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'al/upload', feature: 'al' });
+export const GET = withErrorLogging(handleGet, { route: 'al/upload', feature: 'al' });

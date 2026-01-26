@@ -24,6 +24,7 @@ import { MyGarageSubNav, GarageVehicleSelector } from '@/components/garage';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
+import { useGarageScore } from '@/hooks/useGarageScore';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
@@ -33,6 +34,7 @@ import { getPerformanceProfile } from '@/lib/performanceCalculator';
 import { calculateTotalCost } from '@/lib/performance.js';
 import { Icons } from '@/components/ui/Icons';
 import EmptyState from '@/components/ui/EmptyState';
+import { Skeleton, ListSkeleton } from '@/components/ui/Skeleton';
 
 // Empty State - no vehicle selected  
 function NoVehicleSelectedState() {
@@ -82,6 +84,10 @@ function MyPartsContent() {
   const { builds, isLoading: buildsLoading, updateBuild } = useSavedBuilds();
   const { vehicles } = useOwnedVehicles();
   
+  // Get the vehicle ID for this car to enable garage score updates
+  const vehicleForCar = vehicles?.find(v => v.matchedCarSlug === selectedCar?.slug);
+  const { recalculateScore } = useGarageScore(vehicleForCar?.id);
+  
   // Use cached cars data from React Query hook
   const { data: allCars = [], isLoading: carsLoading } = useCarsList();
   
@@ -90,9 +96,11 @@ function MyPartsContent() {
   const carSlugParam = searchParams.get('car');
   const actionParam = searchParams.get('action');
   
-  // Fallback: fetch single car if not in list
+  // Fallback: fetch single car in parallel with full list
+  // This provides faster data when the full list is slow or unavailable
+  const carFromList = carSlugParam ? allCars.find(c => c.slug === carSlugParam) : null;
   const { data: fallbackCar, isLoading: fallbackLoading } = useCarBySlug(carSlugParam, {
-    enabled: !!carSlugParam && allCars.length === 0 && !carsLoading,
+    enabled: !!carSlugParam && !carFromList && !selectedCar,
   });
   
   // Get user's hero image for this car
@@ -110,11 +118,6 @@ function MyPartsContent() {
             setCurrentBuildId(build.id);
             // Load saved parts from build
             const partsToLoad = build.parts || build.selectedParts || [];
-            console.log('[MyParts] Loading parts from build:', {
-              buildId: build.id,
-              partsCount: partsToLoad.length,
-              partsWithStatus: partsToLoad.filter(p => p.status).map(p => ({ upgradeKey: p.upgradeKey, status: p.status })),
-            });
             setSelectedParts(partsToLoad);
           }
         }
@@ -128,11 +131,6 @@ function MyPartsContent() {
             const latestBuild = carBuilds[carBuilds.length - 1];
             setCurrentBuildId(latestBuild.id);
             const partsToLoad = latestBuild.parts || latestBuild.selectedParts || [];
-            console.log('[MyParts] Loading parts from latest build:', {
-              buildId: latestBuild.id,
-              partsCount: partsToLoad.length,
-              partsWithStatus: partsToLoad.filter(p => p.status).map(p => ({ upgradeKey: p.upgradeKey, status: p.status })),
-            });
             setSelectedParts(partsToLoad);
           }
         }
@@ -189,30 +187,28 @@ function MyPartsContent() {
   
   // Handle parts change - save to build with auto-save
   const handlePartsChange = useCallback(async (newParts) => {
-    console.log('[MyParts] handlePartsChange called:', {
-      partsCount: newParts.length,
-      partsWithStatus: newParts.filter(p => p.status).map(p => ({ upgradeKey: p.upgradeKey, status: p.status })),
-      currentBuildId,
-    });
-    
     setSelectedParts(newParts);
     
     // Auto-save to build if we have a build ID
     if (currentBuildId && updateBuild) {
       try {
-        const result = await updateBuild(currentBuildId, {
+        await updateBuild(currentBuildId, {
           selectedParts: newParts,
         });
-        console.log('[MyParts] Parts save result:', { 
-          success: !result?.error, 
-          error: result?.error?.message,
-          dataReturned: !!result?.data,
-        });
+        
+        // Recalculate garage score if parts have brand/model details (parts_specified category)
+        const partsWithDetails = newParts.filter(p => p.brandName || p.partName);
+        if (partsWithDetails.length > 0 && vehicleForCar?.id) {
+          // Non-blocking score recalculation
+          recalculateScore().catch(err => {
+            console.warn('[MyParts] Score recalculation failed:', err);
+          });
+        }
       } catch (err) {
         console.error('[MyParts] Failed to save parts:', err);
       }
     }
-  }, [currentBuildId, updateBuild]);
+  }, [currentBuildId, updateBuild, vehicleForCar?.id, recalculateScore]);
   
   // Handle action=add to scroll to and highlight parts selector
   useEffect(() => {
@@ -257,8 +253,9 @@ function MyPartsContent() {
     };
   }, [selectedParts, totalCost, effectiveModules.length]);
   
-  // Loading state
-  const isLoading = authLoading || buildsLoading || carsLoading;
+  // Loading state - only block on auth and builds, NOT carsLoading
+  // The fallbackCar mechanism ensures we have car data when needed
+  const isLoading = authLoading || buildsLoading;
   
   if (isLoading) {
     return (
@@ -394,15 +391,46 @@ function MyPartsContent() {
   );
 }
 
+// Parts List Skeleton - matches content shape
+function PartsListSkeleton() {
+  return (
+    <div className={styles.skeletonContainer} aria-label="Loading parts list" role="status">
+      {/* Cost Summary Skeleton */}
+      <div className={styles.costSummary}>
+        <div className={styles.costRow}>
+          <div className={styles.costItem}>
+            <Skeleton height={12} width={80} variant="rounded" />
+            <Skeleton height={18} width={120} variant="rounded" />
+          </div>
+        </div>
+      </div>
+      
+      {/* Parts List Skeleton */}
+      <div className={styles.content}>
+        {/* AL Recommendations Button Skeleton */}
+        <Skeleton height={64} width="100%" variant="rounded" />
+        
+        {/* Header Skeleton */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+          <Skeleton height={20} width={20} variant="circular" />
+          <Skeleton height={18} width={140} variant="rounded" />
+        </div>
+        
+        {/* Status Summary Skeleton */}
+        <Skeleton height={36} width={200} variant="rounded" />
+        
+        {/* List Items Skeleton */}
+        <ListSkeleton count={4} hasAvatar={false} />
+      </div>
+      <span className="sr-only">Loading parts shopping list...</span>
+    </div>
+  );
+}
+
 function MyPartsLoading() {
   return (
     <div className={styles.page}>
-      <LoadingSpinner 
-        variant="branded" 
-        text="Loading Parts" 
-        subtext="Fetching your parts list..."
-        fullPage 
-      />
+      <PartsListSkeleton />
     </div>
   );
 }

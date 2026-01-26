@@ -55,6 +55,11 @@ async function handleGet(request, { params }) {
       });
     }
 
+    // Column definitions for queries
+    const FUEL_COLS = 'id, car_id, city_mpg, highway_mpg, combined_mpg, fuel_type, tank_size_gallons, annual_fuel_cost, epa_score, fetched_at';
+    const SAFETY_COLS = 'id, car_id, nhtsa_overall, nhtsa_frontal_driver, nhtsa_frontal_passenger, nhtsa_side_driver, nhtsa_side_passenger, nhtsa_rollover, iihs_overall, iihs_frontal, iihs_side, iihs_roof, iihs_headlights, fetched_at';
+    const PRICING_COLS = 'id, car_id, year, avg_price, price_low, price_high, sample_count, source, fetched_at';
+
     // Fetch all enriched data in parallel using car_id
     const [
       efficiencyResult,
@@ -65,21 +70,21 @@ async function handleGet(request, { params }) {
       // Fuel economy (uses car_id)
       supabase
         .from('car_fuel_economy')
-        .select('*')
+        .select(FUEL_COLS)
         .eq('car_id', carId)
         .single(),
       
       // Safety ratings (uses car_id)
       supabase
         .from('car_safety_data')
-        .select('*')
+        .select(SAFETY_COLS)
         .eq('car_id', carId)
         .single(),
       
       // Price by year (uses car_id)
       supabase
         .from('car_market_pricing_years')
-        .select('*')
+        .select(PRICING_COLS)
         .eq('car_id', carId)
         .order('year', { ascending: false }),
       

@@ -1,25 +1,47 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo, Suspense } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import BuildDetailSheet from './BuildDetailSheet';
 import CommentsSheet from './CommentsSheet';
-import LoadingSpinner from '@/components/LoadingSpinner';
 import EmptyState from '@/components/ui/EmptyState';
+import { Skeleton, AvatarSkeleton } from '@/components/ui/Skeleton';
 import { Icons } from '@/components/ui/Icons';
 import { useFeedTracking } from '@/hooks/useFeedTracking';
-import { useCommunityBuilds, useToggleLike } from '@/hooks/useCommunityData';
+import { useCommunityBuildsInfinite, useToggleLike, communityKeys } from '@/hooks/useCommunityData';
 import { TITLES } from '@/app/(app)/dashboard/components/UserGreeting';
-import LeaderboardView from './LeaderboardView';
-import EventsView from './EventsView';
 import styles from './page.module.css';
 
 /**
- * Community Page - Card-based Feed with Aspect Ratio Toggle
+ * Legacy URL redirect handler - wrapped in Suspense for useSearchParams
+ */
+function LegacyTabRedirect() {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  
+  useEffect(() => {
+    const tabParam = searchParams.get('tab');
+    if (tabParam === 'events') {
+      router.replace('/community/events');
+    } else if (tabParam === 'leaderboard') {
+      router.replace('/community/leaderboard');
+    }
+  }, [searchParams, router]);
+  
+  return null;
+}
+
+/**
+ * Community Builds Page - Card-based Feed with Aspect Ratio Toggle
  * Clean, content-first design optimized for viewing builds
+ * 
+ * This is the primary /community experience.
+ * Events and Leaderboard are now separate routes.
  * 
  * Features:
  * - 4:5 default aspect ratio with 3:2 horizontal toggle
@@ -89,11 +111,59 @@ const AspectRatioIcon = ({ isWide }) => (
 
 const PLACEHOLDER_IMAGE = '/images/placeholder-car.jpg';
 
-export default function CommunityPage() {
+/**
+ * Skeleton loader for build feed - matches the build card layout
+ */
+function BuildFeedSkeleton() {
+  return (
+    <div className={styles.feedContent}>
+      {/* Build Info Card Skeleton */}
+      <div className={styles.buildCard} style={{ cursor: 'default' }}>
+        <div className={styles.cardHeader}>
+          <AvatarSkeleton size={36} />
+          <div className={styles.headerText} style={{ flex: 1 }}>
+            <Skeleton height={16} width="40%" variant="rounded" />
+            <Skeleton height={20} width="70%" variant="rounded" style={{ marginTop: 4 }} />
+            <Skeleton height={14} width="50%" variant="rounded" style={{ marginTop: 4 }} />
+          </div>
+        </div>
+        {/* Stats Row Skeleton */}
+        <div className={styles.statsRow}>
+          <div className={styles.stat}>
+            <Skeleton height={24} width={50} variant="rounded" />
+            <Skeleton height={12} width={30} variant="rounded" style={{ marginTop: 2 }} />
+          </div>
+          <div className={styles.stat}>
+            <Skeleton height={24} width={50} variant="rounded" />
+            <Skeleton height={12} width={30} variant="rounded" style={{ marginTop: 2 }} />
+          </div>
+          <div className={styles.stat}>
+            <Skeleton height={24} width={50} variant="rounded" />
+            <Skeleton height={12} width={30} variant="rounded" style={{ marginTop: 2 }} />
+          </div>
+        </div>
+      </div>
+      
+      {/* Image Card Skeleton */}
+      <div className={styles.imageCard}>
+        <Skeleton height="100%" width="100%" variant="rectangular" />
+      </div>
+      
+      {/* Actions Row Skeleton */}
+      <div className={styles.actionsRow}>
+        <Skeleton height={36} width={70} variant="rounded" />
+        <Skeleton height={36} width={70} variant="rounded" />
+        <Skeleton height={36} width={70} variant="rounded" />
+      </div>
+    </div>
+  );
+}
+
+export default function CommunityBuildsPage() {
   const { user } = useAuth();
   const { showPointsEarned } = usePointsNotification();
+  const queryClient = useQueryClient();
   
-  const [activeTab, setActiveTab] = useState('builds');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [likedItems, setLikedItems] = useState(new Map()); // Map of postId -> { liked, count }
@@ -132,16 +202,23 @@ export default function CommunityPage() {
     trackImageSwipe,
   } = useFeedTracking(sessionSeed);
   
-  // React Query hooks for community data
+  // React Query hooks for community data - infinite loading
   const { 
     data: buildsData, 
     isLoading, 
     error: queryError,
-  } = useCommunityBuilds(
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useCommunityBuildsInfinite(
     { limit: 20, sort: 'algorithm', seed: sessionSeed },
-    { enabled: activeTab === 'builds' }
+    { enabled: true }
   );
-  const builds = useMemo(() => buildsData?.builds || [], [buildsData?.builds]);
+  // Flatten pages into single builds array
+  const builds = useMemo(() => {
+    if (!buildsData?.pages) return [];
+    return buildsData.pages.flatMap(page => page.builds || []);
+  }, [buildsData?.pages]);
   const error = queryError ? 'Unable to load builds' : null;
   
   const toggleLikeMutation = useToggleLike();
@@ -208,20 +285,27 @@ export default function CommunityPage() {
     setCurrentImageIndex(0);
   }, [currentIndex]);
   
-  // Navigation - loops at boundaries
+  // Navigation - fetch more when near end, loop only when no more to load
   const goToNext = useCallback(() => {
     if (builds.length === 0) return;
     
     setCurrentIndex(prev => {
-      // If at the last build, loop back to the first
-      if (prev >= builds.length - 1) {
-        return 0;
+      const nextIndex = prev + 1;
+      
+      // If near the end (3 builds away), fetch more
+      if (nextIndex >= builds.length - 3 && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
       }
-      return prev + 1;
+      
+      // If at the last build and no more to load, loop back to the first
+      if (nextIndex >= builds.length) {
+        return hasNextPage ? prev : 0; // Stay on current if loading, else loop
+      }
+      return nextIndex;
     });
     setShowDetails(false);
     setShowComments(false);
-  }, [builds.length]);
+  }, [builds.length, hasNextPage, isFetchingNextPage, fetchNextPage]);
   
   const goToPrev = useCallback(() => {
     if (builds.length === 0) return;
@@ -256,13 +340,6 @@ export default function CommunityPage() {
       }
     }
   }, [currentImageIndex, currentBuild, currentIndex, trackImageSwipe]);
-  
-  useEffect(() => {
-    setCurrentIndex(0);
-    setCurrentImageIndex(0);
-    setShowDetails(false);
-    setShowComments(false);
-  }, [activeTab]);
   
   // Keyboard
   useEffect(() => {
@@ -411,13 +488,23 @@ export default function CommunityPage() {
       trackComment(currentBuild, currentIndex);
     }
     
-    // Update the comment count in the builds array
-    setBuilds(prev => prev.map(build => 
-      build.id === currentBuild?.id 
-        ? { ...build, comment_count: (build.comment_count || 0) + 1 }
-        : build
-    ));
-  }, [currentBuild, currentIndex, trackComment]);
+    // Optimistically update the comment count in React Query cache (infinite query format)
+    const queryKey = communityKeys.buildsList({ limit: 20, sort: 'algorithm', seed: sessionSeed, infinite: true });
+    queryClient.setQueryData(queryKey, (oldData) => {
+      if (!oldData?.pages) return oldData;
+      return {
+        ...oldData,
+        pages: oldData.pages.map(page => ({
+          ...page,
+          builds: page.builds.map(build =>
+            build.id === currentBuild?.id
+              ? { ...build, comment_count: (build.comment_count || 0) + 1 }
+              : build
+          ),
+        })),
+      };
+    });
+  }, [currentBuild, currentIndex, trackComment, queryClient, sessionSeed]);
   
   // Format number helper
   const formatNumber = (num) => {
@@ -436,61 +523,15 @@ export default function CommunityPage() {
     return { liked: false, count: build?.like_count || 0 };
   };
 
-  // Events tab
-  if (activeTab === 'events') {
-    return (
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <div className={styles.tabBar}>
-            <button className={`${styles.tab} ${activeTab === 'builds' ? styles.tabActive : ''}`} onClick={() => setActiveTab('builds')}>Builds</button>
-            <button className={`${styles.tab} ${activeTab === 'events' ? styles.tabActive : ''}`} onClick={() => setActiveTab('events')}>Events</button>
-            <button className={`${styles.tab} ${activeTab === 'leaderboard' ? styles.tabActive : ''}`} onClick={() => setActiveTab('leaderboard')}>Leaderboard</button>
-          </div>
-        </div>
-        <EventsView />
-      </div>
-    );
-  }
-
-  // Leaderboard tab
-  if (activeTab === 'leaderboard') {
-    return (
-      <div className={styles.container}>
-        <div className={styles.header}>
-          <div className={styles.tabBar}>
-            <button className={`${styles.tab} ${activeTab === 'builds' ? styles.tabActive : ''}`} onClick={() => setActiveTab('builds')}>Builds</button>
-            <button className={`${styles.tab} ${activeTab === 'events' ? styles.tabActive : ''}`} onClick={() => setActiveTab('events')}>Events</button>
-            <button className={`${styles.tab} ${activeTab === 'leaderboard' ? styles.tabActive : ''}`} onClick={() => setActiveTab('leaderboard')}>Leaderboard</button>
-          </div>
-        </div>
-        <LeaderboardView />
-      </div>
-    );
-  }
-
   return (
     <div className={styles.container} ref={containerRef} onTouchStart={handleTouchStart} onTouchMove={handleTouchMove} onTouchEnd={handleTouchEnd}>
+      {/* Handle legacy ?tab= URLs - wrapped in Suspense for useSearchParams */}
+      <Suspense fallback={null}>
+        <LegacyTabRedirect />
+      </Suspense>
       
-      {/* Header - Tab Bar */}
-      <div className={styles.header}>
-        <div className={styles.tabBar}>
-          <button className={`${styles.tab} ${activeTab === 'builds' ? styles.tabActive : ''}`} onClick={() => setActiveTab('builds')}>Builds</button>
-          <button className={`${styles.tab} ${activeTab === 'events' ? styles.tabActive : ''}`} onClick={() => setActiveTab('events')}>Events</button>
-          <button className={`${styles.tab} ${activeTab === 'leaderboard' ? styles.tabActive : ''}`} onClick={() => setActiveTab('leaderboard')}>Leaderboard</button>
-        </div>
-      </div>
-      
-      {/* Loading */}
-      {isLoading && (
-        <div className={styles.centerState}>
-          <LoadingSpinner 
-            variant="branded" 
-            text="Loading Community" 
-            subtext="Fetching builds..."
-            fullPage 
-          />
-        </div>
-      )}
+      {/* Loading - Skeleton that matches build feed layout */}
+      {isLoading && <BuildFeedSkeleton />}
       
       {/* Error/Empty */}
       {!isLoading && (error || builds.length === 0) && (
@@ -537,46 +578,45 @@ export default function CommunityPage() {
                 </div>
                   <div className={styles.buildTitleRow}>
                     <h2 className={styles.buildTitle}>{currentBuild.title}</h2>
-                    {currentBuild.buildStatus === 'complete' && (
-                      <span className={styles.statusBadge} data-status="complete">Build Complete</span>
-                    )}
-                    {currentBuild.buildStatus === 'in_progress' && (
-                      <span className={styles.statusBadge} data-status="progress">In Progress</span>
-                    )}
                   </div>
                   <span className={styles.carName}>{currentBuild.car_name}</span>
                 </div>
                 <ChevronIcon />
               </div>
               
-              {/* Stats Row - SOURCE OF TRUTH: Use computedPerformance when available */}
-              {(currentBuild.computedPerformance?.upgraded?.hp || currentBuild.build_data?.final_hp || 
-                currentBuild.car_specs?.hp || currentBuild.car_specs?.torque || 
-                currentBuild.car_specs?.zero_to_sixty || currentBuild.car_specs?.top_speed) && (
+              {/* Stats Row - SOURCE OF TRUTH: Only use computedPerformance (dynamically calculated)
+                  NEVER use build_data.final_hp etc. - those are stale stored values that don't
+                  reflect the user's current installed modifications. Always calculate from
+                  the linked vehicle's installed_modifications via computedPerformance. */}
+              {(currentBuild.computedPerformance?.upgraded?.hp || currentBuild.car_specs?.hp || 
+                currentBuild.car_specs?.torque || currentBuild.car_specs?.zero_to_sixty || 
+                currentBuild.car_specs?.top_speed) && (
                 <div className={styles.statsRow}>
-                  {(currentBuild.computedPerformance?.upgraded?.hp || currentBuild.build_data?.final_hp || currentBuild.car_specs?.hp) && (
+                  {(currentBuild.computedPerformance?.upgraded?.hp || currentBuild.car_specs?.hp) && (
                     <div className={styles.stat}>
                       <span className={styles.statValue}>
-                        {/* SOURCE OF TRUTH: Prefer computedPerformance over stored values */}
-                        {Math.round(currentBuild.computedPerformance?.upgraded?.hp || currentBuild.build_data?.final_hp || currentBuild.car_specs?.hp)}
+                        {/* SOURCE OF TRUTH: computedPerformance (live) > car_specs (stock) 
+                            Never use build_data.final_hp - it's stale! */}
+                        {Math.round(currentBuild.computedPerformance?.upgraded?.hp || currentBuild.car_specs?.hp)}
                       </span>
                       <span className={styles.statLabel}>HP</span>
                     </div>
                   )}
                   
-                  {(currentBuild.computedPerformance?.upgraded?.torque || currentBuild.build_data?.final_torque || currentBuild.car_specs?.torque) && (
+                  {(currentBuild.computedPerformance?.upgraded?.torque || currentBuild.car_specs?.torque) && (
                     <div className={styles.stat}>
                       <span className={styles.statValue}>
-                        {Math.round(currentBuild.computedPerformance?.upgraded?.torque || currentBuild.build_data?.final_torque || currentBuild.car_specs?.torque)}
+                        {Math.round(currentBuild.computedPerformance?.upgraded?.torque || currentBuild.car_specs?.torque)}
                       </span>
                       <span className={styles.statLabel}>LB-FT</span>
                     </div>
                   )}
                   
-                  {(currentBuild.computedPerformance?.upgraded?.zeroToSixty || currentBuild.build_data?.final_zero_to_sixty || currentBuild.car_specs?.zero_to_sixty) && (
+                  {(currentBuild.computedPerformance?.upgraded?.zeroToSixty || currentBuild.car_specs?.zero_to_sixty) && (
                     <div className={styles.stat}>
                       <span className={styles.statValue}>
-                        {(currentBuild.computedPerformance?.upgraded?.zeroToSixty || currentBuild.build_data?.final_zero_to_sixty || currentBuild.car_specs?.zero_to_sixty)?.toFixed?.(1) || currentBuild.computedPerformance?.upgraded?.zeroToSixty || currentBuild.build_data?.final_zero_to_sixty || currentBuild.car_specs?.zero_to_sixty}
+                        {(currentBuild.computedPerformance?.upgraded?.zeroToSixty || currentBuild.car_specs?.zero_to_sixty)?.toFixed?.(1) || 
+                          currentBuild.computedPerformance?.upgraded?.zeroToSixty || currentBuild.car_specs?.zero_to_sixty}
                         <span className={styles.statSuffix}>s</span>
                       </span>
                       <span className={styles.statLabel}>0-60</span>
@@ -640,8 +680,14 @@ export default function CommunityPage() {
               {/* Scroll Hint - Bottom */}
               {builds.length > 1 && (
                 <div className={styles.scrollHint}>
-                  <ScrollHintIcon />
-                  <span>Swipe</span>
+                  {isFetchingNextPage ? (
+                    <span>Loading more...</span>
+                  ) : (
+                    <>
+                      <ScrollHintIcon />
+                      <span>Swipe</span>
+                    </>
+                  )}
                 </div>
               )}
             </div>
@@ -652,12 +698,18 @@ export default function CommunityPage() {
                 className={`${styles.actionBtn} ${getLikeData(currentBuild.id).liked ? styles.liked : ''}`} 
                 onClick={() => toggleLike(currentBuild.id)}
                 disabled={isLikeProcessing}
+                aria-label={getLikeData(currentBuild.id).liked ? 'Unlike this build' : 'Like this build'}
+                aria-pressed={getLikeData(currentBuild.id).liked}
               >
                 <HeartIcon filled={getLikeData(currentBuild.id).liked} />
                 <span>{formatNumber(getLikeData(currentBuild.id).count)}</span>
               </button>
               
-              <button className={styles.actionBtn} onClick={openComments}>
+              <button 
+                className={styles.actionBtn} 
+                onClick={openComments}
+                aria-label={`View comments (${currentBuild.comment_count || 0})`}
+              >
                 <CommentIcon />
                 <span>{formatNumber(currentBuild.comment_count || 0)}</span>
               </button>
@@ -665,6 +717,7 @@ export default function CommunityPage() {
               <button 
                 className={`${styles.actionBtn} ${showCopied ? styles.copied : ''}`} 
                 onClick={() => shareBuild(currentBuild)}
+                aria-label="Share this build"
               >
                 <ShareIcon />
                 <span>{showCopied ? 'Copied!' : 'Share'}</span>

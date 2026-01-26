@@ -95,7 +95,7 @@ async function handleGet(request) {
       // Historical snapshots
       supabase
         .from('daily_metrics_snapshot')
-        .select('*')
+        .select('id, snapshot_date, total_users, active_users, new_users, total_cars, total_parts, total_posts, revenue_cents, created_at')
         .order('snapshot_date', { ascending: false })
         .limit(7),
       
@@ -237,7 +237,6 @@ async function handleGet(request) {
     console.error('[beta-dashboard] Error:', error);
     return NextResponse.json({ 
       error: 'Failed to load dashboard',
-      details: error.message,
     }, { status: 500 });
   }
 }

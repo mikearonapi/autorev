@@ -5,10 +5,17 @@
    =========================================== */
 
 .sourcesContainer {
-  margin-top: 16px;
+  margin-top: 12px; /* Mobile-first */
   padding: 0;
   background: transparent;
   border: none;
+}
+
+/* Larger phones and up */
+@media (min-width: 481px) {
+  .sourcesContainer {
+    margin-top: 16px;
+  }
 }
 
 .sourcesHeader {
@@ -41,13 +48,20 @@
 .sourceItem {
   display: inline-flex;
   align-items: center;
-  padding: 6px 10px;
+  padding: 5px 8px; /* Mobile-first */
   background: rgba(255, 255, 255, 0.04);
   border: none;
   border-radius: 8px;
   font-size: 12px;
   color: var(--color-text-tertiary, #64748b);
   transition: all 0.15s ease;
+}
+
+/* Larger phones and up */
+@media (min-width: 481px) {
+  .sourceItem {
+    padding: 6px 10px;
+  }
 }
 
 .sourceItemLink {
@@ -71,7 +85,7 @@
 }
 
 .sourceNumber {
-  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 500;
   color: var(--color-text-tertiary, #64748b);
@@ -84,11 +98,19 @@
 
 .sourceLabel {
   font-weight: 400;
+  font-size: 11px; /* Mobile-first */
   color: var(--color-text-tertiary, #64748b);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   transition: color 0.15s ease;
+}
+
+/* Larger phones and up */
+@media (min-width: 481px) {
+  .sourceLabel {
+    font-size: inherit;
+  }
 }
 
 .sourceDomain,
@@ -129,7 +151,7 @@
   margin: 0 1px;
   background: rgba(255, 255, 255, 0.06);
   color: var(--color-text-tertiary, #64748b);
-  font-family: 'JetBrains Mono', 'SF Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 9px;
   font-weight: 500;
   border-radius: 3px;
@@ -143,17 +165,4 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* Mobile */
-@media (max-width: 480px) {
-  .sourcesContainer {
-    margin-top: 12px;
-  }
-  
-  .sourceItem {
-    padding: 5px 8px;
-  }
-  
-  .sourceLabel {
-    font-size: 11px;
-  }
-}
+/* Mobile-first responsive styles are now in base selectors with min-width: 481px enhancements */

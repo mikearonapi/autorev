@@ -9,7 +9,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { logCronError } from '@/lib/serverErrorLogger';
+import { logCronError, withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -17,22 +17,29 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
-// Verify cron secret to prevent unauthorized access
-function verifyCronSecret(request) {
+const CRON_SECRET = process.env.CRON_SECRET;
+
+/**
+ * Check if request is authorized via CRON_SECRET or Vercel cron header
+ * SECURITY: Requires either valid secret or Vercel cron header
+ */
+function isAuthorized(request) {
   const authHeader = request.headers.get('authorization');
-  const cronSecret = process.env.CRON_SECRET;
+  const vercelCron = request.headers.get('x-vercel-cron');
   
-  if (!cronSecret) {
-    console.warn('[daily-metrics] CRON_SECRET not set, allowing request');
-    return true;
-  }
+  // Accept Vercel's automatic cron header
+  if (vercelCron === 'true') return true;
   
-  return authHeader === `Bearer ${cronSecret}`;
+  // Accept Bearer token with CRON_SECRET
+  if (CRON_SECRET && authHeader === `Bearer ${CRON_SECRET}`) return true;
+  
+  return false;
 }
 
-export async function GET(request) {
+async function handleGet(request) {
   // Verify authorization
-  if (!verifyCronSecret(request)) {
+  if (!isAuthorized(request)) {
+    console.error('[daily-metrics] Unauthorized request. CRON_SECRET set:', Boolean(CRON_SECRET), 'x-vercel-cron:', request.headers.get('x-vercel-cron'));
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -52,14 +59,16 @@ export async function GET(request) {
       console.error('[daily-metrics] Failed to generate snapshot:', error);
       return NextResponse.json({ 
         success: false, 
-        error: error.message 
+        error: 'Failed to generate metrics snapshot' 
       }, { status: 500 });
     }
+    
+    const SNAPSHOT_COLS = 'id, snapshot_date, total_users, active_users, new_users, total_cars, total_parts, total_posts, revenue_cents, created_at';
     
     // Get the generated snapshot for logging
     const { data: snapshot } = await supabase
       .from('daily_metrics_snapshot')
-      .select('*')
+      .select(SNAPSHOT_COLS)
       .order('snapshot_date', { ascending: false })
       .limit(1)
       .single();
@@ -98,7 +107,9 @@ export async function GET(request) {
     await logCronError('daily-metrics', err, { phase: 'snapshot-generation' });
     return NextResponse.json({ 
       success: false, 
-      error: err.message 
+      error: 'Daily metrics cron job failed' 
     }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cron/daily-metrics', feature: 'cron' });

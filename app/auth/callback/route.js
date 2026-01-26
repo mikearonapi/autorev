@@ -35,9 +35,9 @@ const VERIFICATION_RETRY_DELAY = 200; // ms
 
 /**
  * Default post-login destination
- * Users land on Insights after login to see personalized vehicle insights
+ * Users land on Garage after login - their home base for managing vehicles and builds
  */
-const DEFAULT_POST_LOGIN_PATH = '/insights';
+const DEFAULT_POST_LOGIN_PATH = '/garage';
 
 /**
  * Validate and sanitize the `next` redirect parameter to prevent open redirect attacks.

@@ -242,6 +242,10 @@ export default function ImageUploader({
   };
 
   const handleRemove = async (imageId) => {
+    // Confirm before deleting
+    const confirmed = window.confirm('Delete this photo? This cannot be undone.');
+    if (!confirmed) return;
+
     try {
       const response = await fetch(`/api/uploads?id=${imageId}`, {
         method: 'DELETE',

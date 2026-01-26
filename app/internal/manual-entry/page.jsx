@@ -87,7 +87,7 @@ export default function ManualEntryPage() {
     }
   }
   
-  async function handleSubmit(e) {
+  async function handleManualCarEntrySubmit(e) {
     e.preventDefault();
     setLoading(true);
     setMessage(null);
@@ -138,7 +138,7 @@ export default function ManualEntryPage() {
       </header>
       
       <div className={styles.content}>
-        <form className={styles.form} onSubmit={handleSubmit}>
+        <form className={styles.form} onSubmit={handleManualCarEntrySubmit}>
           <div className={styles.formGroup}>
             <label htmlFor="car">Select Car</label>
             <select

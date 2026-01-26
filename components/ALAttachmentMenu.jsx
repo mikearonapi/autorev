@@ -12,6 +12,7 @@
  */
 
 import { useState, useRef, useCallback } from 'react';
+import Image from 'next/image';
 import styles from './ALAttachmentMenu.module.css';
 import { Icons } from '@/components/ui/Icons';
 
@@ -243,10 +244,13 @@ export function ALAttachmentPreview({ attachment, onRemove, compact = false }) {
   return (
     <div className={`${styles.preview} ${compact ? styles.previewCompact : ''}`}>
       {isImage ? (
-        <img 
+        <Image 
           src={attachment.public_url} 
           alt={attachment.file_name}
+          width={compact ? 40 : 60}
+          height={compact ? 40 : 60}
           className={styles.previewImage}
+          style={{ objectFit: 'cover' }}
         />
       ) : (
         <div className={styles.previewDocument}>

@@ -22,16 +22,154 @@
 
 AutoRev uses a **4-color accent system** with clear, non-overlapping semantic purposes. Each color has ONE job — this creates instant user comprehension and a cohesive visual language.
 
-### Background Colors
+### Background Colors — The 6-Level Hierarchy
 
-| Role | Hex | CSS Variable | Usage |
-|------|-----|--------------|-------|
-| **Background Primary** | `#0d1b2a` | `--brand-bg-primary` | Main page backgrounds, app shell |
-| **Background Secondary** | `#1b263b` | `--brand-bg-elevated` | Cards, elevated surfaces |
-| **Card Background** | `rgba(255,255,255,0.04)` | `--brand-bg-card` | Card fills, subtle surfaces |
-| **Card Hover** | `rgba(255,255,255,0.08)` | `--brand-bg-card-hover` | Interactive card states |
+AutoRev uses a **6-level background system** inspired by premium apps like WHOOP and Apple Health. Each level creates distinct visual hierarchy and helps users understand their context within the app.
 
-> **RULE:** Never use pure black (`#000000`). Our navy creates depth and premium feel.
+| Level | Name | Hex | CSS Variable | Usage |
+|-------|------|-----|--------------|-------|
+| **1** | **Immersive** | `#050a12` | `--brand-bg-immersive` | Media galleries, video players, splash screens |
+| **2** | **Base** | `#0d1b2a` | `--brand-bg-primary` | Main app shell, page backgrounds |
+| **3** | **Overlay** | `#1a1a1a` | `--brand-bg-overlay` | Full-screen modals, questionnaires, onboarding |
+| **4** | **Elevated** | `#1b263b` | `--brand-bg-secondary` | Cards, panels, bottom sheets, small modals |
+| **5** | **Surface** | `rgba(255,255,255,0.04)` | `--brand-bg-surface` | Card fills, subtle grouping |
+| **6** | **Input** | `rgba(255,255,255,0.06)` | `--brand-bg-input` | Form fields, search bars |
+
+> **RULE:** Never use pure black (`#000000`). Our navy family creates depth and premium feel.
+
+---
+
+### Level 1: Immersive (`--brand-bg-immersive`)
+
+**"Cinematic moments that demand full attention"**
+
+The deepest background (`#050a12`) for maximum immersion. Optimized for OLED displays.
+
+✅ **USE FOR:**
+- Image galleries (fullscreen view)
+- Video players (fullscreen)
+- Splash screens
+- Car hero galleries (full-bleed)
+- Any cinematic/media-focused experience
+
+❌ **DON'T USE FOR:**
+- Regular app pages
+- Modals or sheets
+- Forms or data entry
+
+---
+
+### Level 2: Base (`--brand-bg-primary`)
+
+**"The foundation of the app experience"**
+
+The main app background (`#0d1b2a`) that users see on all primary pages.
+
+✅ **USE FOR:**
+- Garage page
+- Data/Dyno page
+- Insights page
+- Community page
+- Dashboard page
+- Tab bar background
+- Navigation areas
+
+❌ **DON'T USE FOR:**
+- Modal content
+- Media viewers
+
+---
+
+### Level 3: Overlay (`--brand-bg-overlay`)
+
+**"Focused, temporary experiences that demand attention"**
+
+The overlay background (`#1a1a1a`) signals users they're in a focused state.
+
+✅ **USE FOR:**
+- Onboarding questionnaires (goals, experience level)
+- Data entry modals (log dyno data, log track data)
+- Full-screen bottom sheets
+- Multi-step flows (build wizard)
+- Upgrade detail modals
+- Car picker (fullscreen)
+- Any focused experience needing visual separation
+
+❌ **DON'T USE FOR:**
+- Regular page backgrounds (use Base)
+- Small confirmation dialogs (use Elevated)
+- Media viewers (use Immersive)
+
+---
+
+### Level 4: Elevated (`--brand-bg-secondary`)
+
+**"Distinct surfaces that lift content"**
+
+The elevated background (`#1b263b`) for cards and panels.
+
+✅ **USE FOR:**
+- Cards within pages
+- Small dialogs/confirmations
+- Bottom sheet content
+- Settings sections
+- Grouped content areas
+- Dropdown menus
+
+❌ **DON'T USE FOR:**
+- Full-screen modals (use Overlay)
+- Page backgrounds (use Base)
+
+---
+
+### Level 5: Surface (`--brand-bg-surface`)
+
+**"Subtle distinction within elevated contexts"**
+
+Semi-transparent (`rgba(255,255,255,0.04)`) for subtle grouping.
+
+✅ **USE FOR:**
+- Cards within modals
+- List items
+- Interactive card fills
+- Subtle content grouping
+
+---
+
+### Level 6: Input (`--brand-bg-input`)
+
+**"Interactive form elements"**
+
+Slightly brighter (`rgba(255,255,255,0.06)`) for form fields.
+
+✅ **USE FOR:**
+- Text inputs
+- Search bars
+- Dropdowns
+- Textarea fields
+- Select inputs
+
+---
+
+### Background Decision Tree
+
+```
+Is this media/gallery content?
+  → YES: Use IMMERSIVE (#050a12)
+  → NO: Continue...
+
+Is this a full-screen modal, onboarding, or data entry?
+  → YES: Use OVERLAY (#1a1a1a)
+  → NO: Continue...
+
+Is this a card, panel, or small modal?
+  → YES: Use ELEVATED (#1b263b)
+  → NO: Continue...
+
+Is this a form field or input?
+  → YES: Use INPUT (rgba 6%)
+  → NO: Use BASE (#0d1b2a)
+```
 
 ### Text Colors
 
@@ -625,9 +763,13 @@ Is this a genuine warning/caution?
 
 ```css
 :root {
-  /* Brand Backgrounds */
-  --brand-bg-primary: #0d1b2a;
-  --brand-bg-elevated: #1b263b;
+  /* Brand Backgrounds - 6-Level Hierarchy */
+  --brand-bg-immersive: #050a12;        /* Level 1: Media, galleries, splash */
+  --brand-bg-primary: #0d1b2a;          /* Level 2: Main app pages */
+  --brand-bg-overlay: #1a1a1a;          /* Level 3: Full-screen modals, onboarding */
+  --brand-bg-secondary: #1b263b;        /* Level 4: Cards, panels, sheets */
+  --brand-bg-surface: rgba(255, 255, 255, 0.04);  /* Level 5: Card fills */
+  --brand-bg-input: rgba(255, 255, 255, 0.06);    /* Level 6: Form fields */
   --brand-bg-card: rgba(255, 255, 255, 0.04);
   
   /* Brand Text */

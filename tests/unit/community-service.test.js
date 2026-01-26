@@ -3,11 +3,10 @@
  * 
  * Tests community post management and sharing utilities.
  * 
- * Run: node --test tests/unit/community-service.test.js
+ * Run: npm run test:unit -- tests/unit/community-service.test.js
  */
 
-import { describe, it } from 'node:test';
-import assert from 'node:assert';
+import { describe, it, expect } from 'vitest';
 
 // Import pure utility functions that don't require database
 import {
@@ -17,7 +16,7 @@ import {
   getTwitterShareUrl,
   getInstagramShareInfo,
   getNativeShareData,
-} from '../../lib/communityService.js';
+} from '@/lib/communityService.js';
 
 // =============================================================================
 // SHARE URL TESTS
@@ -26,33 +25,32 @@ import {
 describe('getPostShareUrl', () => {
   it('should generate correct URL for a post slug', () => {
     const url = getPostShareUrl('my-awesome-build');
-    assert.ok(url.includes('/community/builds/my-awesome-build'));
+    expect(url).toContain('/community/builds/my-awesome-build');
   });
 
   it('should handle slugs with hyphens', () => {
     const url = getPostShareUrl('2023-bmw-m3-competition-build');
-    assert.ok(url.includes('/community/builds/2023-bmw-m3-competition-build'));
+    expect(url).toContain('/community/builds/2023-bmw-m3-competition-build');
   });
 
   it('should return a valid URL format', () => {
     const url = getPostShareUrl('test-slug');
-    // URL should be a valid path
-    assert.ok(typeof url === 'string');
-    assert.ok(url.length > 0);
+    expect(typeof url).toBe('string');
+    expect(url.length).toBeGreaterThan(0);
   });
 });
 
 describe('getGarageShareUrl', () => {
   it('should generate correct URL for a public garage slug', () => {
     const url = getGarageShareUrl('mike-builds');
-    assert.ok(url.includes('/garage/mike-builds'));
+    expect(url).toContain('/garage/mike-builds');
   });
 
   it('should handle various slug formats', () => {
     const slugs = ['user123', 'the-car-guy', 'bmw-enthusiast-99'];
     slugs.forEach(slug => {
       const url = getGarageShareUrl(slug);
-      assert.ok(url.includes(`/garage/${slug}`));
+      expect(url).toContain(`/garage/${slug}`);
     });
   });
 });
@@ -60,49 +58,49 @@ describe('getGarageShareUrl', () => {
 describe('getFacebookShareUrl', () => {
   it('should generate correct Facebook share URL', () => {
     const url = getFacebookShareUrl('https://autorev.app/community/builds/my-build');
-    assert.ok(url.includes('facebook.com/sharer'));
-    assert.ok(url.includes(encodeURIComponent('https://autorev.app/community/builds/my-build')));
+    expect(url).toContain('facebook.com/sharer');
+    expect(url).toContain(encodeURIComponent('https://autorev.app/community/builds/my-build'));
   });
 
   it('should properly encode the URL parameter', () => {
     const url = getFacebookShareUrl('https://autorev.app/test?param=value');
-    assert.ok(url.includes(encodeURIComponent('https://autorev.app/test?param=value')));
+    expect(url).toContain(encodeURIComponent('https://autorev.app/test?param=value'));
   });
 });
 
 describe('getTwitterShareUrl', () => {
   it('should generate correct Twitter/X share URL', () => {
     const url = getTwitterShareUrl('https://autorev.app/builds/test', 'Check out my build!');
-    assert.ok(url.includes('twitter.com/intent/tweet') || url.includes('x.com/intent/tweet'));
-    assert.ok(url.includes('url='));
-    assert.ok(url.includes('text='));
+    expect(url.includes('twitter.com/intent/tweet') || url.includes('x.com/intent/tweet')).toBe(true);
+    expect(url).toContain('url=');
+    expect(url).toContain('text=');
   });
 
   it('should encode both URL and text', () => {
     const shareUrl = 'https://autorev.app/builds/test';
     const text = 'Check out my BMW M3 build!';
     const url = getTwitterShareUrl(shareUrl, text);
-    assert.ok(url.includes(encodeURIComponent(shareUrl)));
-    assert.ok(url.includes(encodeURIComponent(text)));
+    expect(url).toContain(encodeURIComponent(shareUrl));
+    expect(url).toContain(encodeURIComponent(text));
   });
 
   it('should work without text parameter', () => {
     const url = getTwitterShareUrl('https://autorev.app/builds/test');
-    assert.ok(typeof url === 'string');
-    assert.ok(url.includes('url='));
+    expect(typeof url).toBe('string');
+    expect(url).toContain('url=');
   });
 });
 
 describe('getInstagramShareInfo', () => {
   it('should return share info object', () => {
     const info = getInstagramShareInfo('https://autorev.app/builds/test');
-    assert.ok(typeof info === 'object');
+    expect(typeof info).toBe('object');
   });
 
   it('should include instructions for sharing', () => {
     const info = getInstagramShareInfo('https://autorev.app/builds/test');
     // Instagram doesn't support direct URL sharing, so it should provide instructions
-    assert.ok(info.message || info.instructions || info.url);
+    expect(info.message || info.instructions || info.url).toBeTruthy();
   });
 });
 
@@ -114,10 +112,10 @@ describe('getNativeShareData', () => {
       url: 'https://autorev.app/builds/test',
     });
     
-    assert.ok(typeof data === 'object');
-    assert.ok(data.title === 'My BMW M3 Build');
-    assert.ok(data.text === 'Check out my track build!');
-    assert.ok(data.url === 'https://autorev.app/builds/test');
+    expect(typeof data).toBe('object');
+    expect(data.title).toBe('My BMW M3 Build');
+    expect(data.text).toBe('Check out my track build!');
+    expect(data.url).toBe('https://autorev.app/builds/test');
   });
 
   it('should handle missing optional fields', () => {
@@ -125,8 +123,8 @@ describe('getNativeShareData', () => {
       url: 'https://autorev.app/builds/test',
     });
     
-    assert.ok(typeof data === 'object');
-    assert.ok(data.url === 'https://autorev.app/builds/test');
+    expect(typeof data).toBe('object');
+    expect(data.url).toBe('https://autorev.app/builds/test');
   });
 });
 
@@ -145,9 +143,8 @@ describe('Slug Format Validation', () => {
     ];
     
     validSlugs.forEach(slug => {
-      // Valid slugs should be lowercase with hyphens and numbers only
       const isValid = /^[a-z0-9-]+$/.test(slug) && slug.length > 0;
-      assert.strictEqual(isValid, true, `Slug should be valid: ${slug}`);
+      expect(isValid).toBe(true);
     });
   });
 
@@ -162,7 +159,7 @@ describe('Slug Format Validation', () => {
     
     invalidSlugs.forEach(slug => {
       const isValid = /^[a-z0-9-]+$/.test(slug) && slug.length > 0;
-      assert.strictEqual(isValid, false, `Slug should be invalid: ${slug}`);
+      expect(isValid).toBe(false);
     });
   });
 });
@@ -176,9 +173,9 @@ describe('Fetch Options Logic', () => {
     const defaultLimit = 10;
     const maxLimit = 50;
     
-    assert.ok(defaultLimit > 0);
-    assert.ok(maxLimit >= defaultLimit);
-    assert.ok(maxLimit <= 100); // Reasonable upper bound
+    expect(defaultLimit).toBeGreaterThan(0);
+    expect(maxLimit).toBeGreaterThanOrEqual(defaultLimit);
+    expect(maxLimit).toBeLessThanOrEqual(100);
   });
 
   it('should validate sort options', () => {
@@ -186,11 +183,11 @@ describe('Fetch Options Logic', () => {
     const validDirections = ['asc', 'desc'];
     
     validSortOptions.forEach(sort => {
-      assert.ok(typeof sort === 'string');
+      expect(typeof sort).toBe('string');
     });
     
     validDirections.forEach(dir => {
-      assert.ok(typeof dir === 'string');
+      expect(typeof dir).toBe('string');
     });
   });
 });
@@ -214,7 +211,7 @@ describe('Post Data Structure', () => {
     ];
     
     expectedFields.forEach(field => {
-      assert.ok(typeof field === 'string');
+      expect(typeof field).toBe('string');
     });
   });
 
@@ -227,7 +224,7 @@ describe('Post Data Structure', () => {
     ];
     
     expectedProfileFields.forEach(field => {
-      assert.ok(typeof field === 'string');
+      expect(typeof field).toBe('string');
     });
   });
 });
@@ -239,11 +236,10 @@ describe('Post Data Structure', () => {
 describe('Most Viewed Builds Logic', () => {
   it('should use correct default limit', () => {
     const defaultLimit = 10;
-    assert.strictEqual(defaultLimit, 10);
+    expect(defaultLimit).toBe(10);
   });
 
   it('should sort by view_count descending', () => {
-    // Simulate sorting logic
     const builds = [
       { name: 'Build A', view_count: 100 },
       { name: 'Build B', view_count: 500 },
@@ -252,14 +248,14 @@ describe('Most Viewed Builds Logic', () => {
     
     const sorted = [...builds].sort((a, b) => b.view_count - a.view_count);
     
-    assert.strictEqual(sorted[0].name, 'Build B'); // Highest views
-    assert.strictEqual(sorted[1].name, 'Build C');
-    assert.strictEqual(sorted[2].name, 'Build A'); // Lowest views
+    expect(sorted[0].name).toBe('Build B');
+    expect(sorted[1].name).toBe('Build C');
+    expect(sorted[2].name).toBe('Build A');
   });
 
   it('should handle empty results', () => {
     const builds = [];
-    assert.strictEqual(builds.length, 0);
+    expect(builds.length).toBe(0);
   });
 
   it('should respect limit parameter', () => {
@@ -267,8 +263,6 @@ describe('Most Viewed Builds Logic', () => {
     const limit = 5;
     const limited = builds.slice(0, limit);
     
-    assert.strictEqual(limited.length, 5);
+    expect(limited.length).toBe(5);
   });
 });
-
-console.log('Community Service tests defined successfully.');

@@ -27,9 +27,9 @@ import FetchInterceptor from '@/components/FetchInterceptor';
 import Footer from '@/components/Footer';
 import GlobalErrorHandler from '@/components/GlobalErrorHandler';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
-import Header from '@/components/Header';
 import MetaPixel from '@/components/MetaPixel';
 import PageViewTracker from '@/components/PageViewTracker';
+import SafeAreaFallback from '@/components/SafeAreaFallback';
 import { AuthProvider } from '@/components/providers/AuthProvider';
 import { BannerProvider } from '@/components/providers/BannerProvider';
 import { PointsNotificationProvider } from '@/components/providers/PointsNotificationProvider';
@@ -387,7 +387,7 @@ export default function RootLayout({ children }) {
                     var splash = document.createElement('div');
                     splash.id = 'oauth-splash';
                     splash.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100vh;height:100dvh;background:#0d1b2a;display:flex;align-items:center;justify-content:center;z-index:999999;opacity:1;transition:opacity 0.5s ease-out;overflow:hidden;';
-                    splash.innerHTML = '<div style="font-family:Oswald,sans-serif;font-size:clamp(48px,12vw,72px);font-weight:700;letter-spacing:-0.02em;text-transform:uppercase;animation:logoEnter 0.4s ease-out;"><span style="color:#fff;">AUTO</span><span style="color:#d4ff00;">REV</span></div><style>@keyframes logoEnter{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}</style>';
+                    splash.innerHTML = '<img src="/autorev-logo-transparent.png" alt="AutoRev" style="width:clamp(270px,75vw,420px);height:auto;animation:logoEnter 0.4s ease-out;" /><style>@keyframes logoEnter{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}</style>';
                     document.body.appendChild(splash);
                     
                     // Global function for AuthProvider to dismiss splash
@@ -415,6 +415,17 @@ export default function RootLayout({ children }) {
         {/* Skip to main content link - WCAG 2.1 AA compliance */}
         <SkipLink />
 
+        {/* 
+          Android/Samsung Internet :has() fallback + dynamic theme-color
+          This component uses MutationObserver to detect overlay modals and:
+          1. Adds fallback classes for browsers without CSS :has() support
+          2. Updates the theme-color meta tag for Android status bar color
+        */}
+        <SafeAreaFallback />
+
+        {/* Horizontal safe area fills for landscape mode (left/right camera cutouts) */}
+        <div className="safe-area-horizontal" aria-hidden="true" />
+
         <ThemeProvider>
           <GlobalErrorHandler>
             <FetchInterceptor>
@@ -437,7 +448,6 @@ export default function RootLayout({ children }) {
                                           <ScrollToTop />
                                           <PageViewTracker />
                                         </Suspense>
-                                        <Header />
 
                                         {/* Beta banner - DISABLED (launch mode) */}
                                         <BetaBanner visible={false} />

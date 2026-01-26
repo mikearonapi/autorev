@@ -19,24 +19,49 @@
      These are the CANONICAL token definitions. Do not use circular refs.
      ======================================================================= */
   
-  /* Background Hierarchy (Dark Theme) - Premium Polish Jan 2026 */
-  --color-bg-base: #0d1b2a;           /* Page backgrounds (base navy) */
+  /* =======================================================================
+     BACKGROUND HIERARCHY (Dark Theme) - 6-Level System
+     Premium Polish Jan 2026 - Inspired by WHOOP & Apple Health
+     
+     Level 1: IMMERSIVE  (#050a12) - Media galleries, video, splash screens
+     Level 2: BASE       (#0d1b2a) - Main app shell, page backgrounds
+     Level 3: OVERLAY    (#1a1a1a) - Full-screen modals, onboarding, data entry (charcoal)
+     Level 4: ELEVATED   (#1b263b) - Cards, panels, bottom sheets
+     Level 5: SURFACE    (rgba 4-5%) - Card fills, subtle grouping
+     Level 6: INPUT      (rgba 6%) - Form fields, interactive inputs
+     ======================================================================= */
+  
+  /* Level 1: Immersive - Deepest black for cinematic moments */
+  --color-bg-immersive: #050a12;      /* Media galleries, video players, splash screens */
+  
+  /* Level 2: Base - Main app foundation */
+  --color-bg-base: var(--color-bg-base, #0d1b2a);           /* Page backgrounds (base navy) */
   --color-bg-deep: #060d14;           /* Deepest navy - for gradient bottom */
   --color-bg-light: #152535;          /* Lighter navy - for gradient top */
-  --color-bg-elevated: #1b263b;       /* Cards, modals, elevated surfaces */
-  --color-bg-muted: #0a1628;          /* Slightly darker variant */
-  --color-bg-overlay: rgba(10, 21, 32, 0.85);  /* Navy-tinted overlay with blur */
-  --color-bg-card: rgba(255, 255, 255, 0.05);  /* Slightly lighter for separation */
+  --color-bg-muted: var(--color-bg-base, #0a1628);          /* Slightly darker variant */
+  
+  /* Level 3: Overlay - Focused modal experiences (CHARCOAL - distinct from navy base) */
+  --color-bg-overlay: rgba(26, 26, 26, 0.85);  /* Charcoal overlay with blur (backdrop) */
+  --color-bg-overlay-solid: #1a1a1a;  /* Solid charcoal - questionnaires, data entry, onboarding */
+  
+  /* Level 4: Elevated - Cards and panels */
+  --color-bg-elevated: var(--color-bg-elevated, #1b263b);   /* Cards, modals, elevated surfaces */
+  
+  /* Level 5: Surface - Subtle card fills */
+  --color-bg-surface: rgba(255, 255, 255, 0.04);  /* Card fills within elevated contexts */
+  --color-bg-card: rgba(255, 255, 255, 0.05);     /* Slightly lighter for separation */
   --color-bg-card-hover: rgba(255, 255, 255, 0.09);
+  
+  /* Level 6: Input - Form fields */
   --color-bg-input: rgba(255, 255, 255, 0.06);
   --color-bg-input-focus: rgba(255, 255, 255, 0.12);
   
   /* Text Hierarchy */
-  --color-text-primary: #ffffff;
-  --color-text-secondary: #94a3b8;     /* Slate-400 */
-  --color-text-tertiary: #64748b;      /* Slate-500 */
-  --color-text-muted: #475569;         /* Slate-600 */
-  --color-text-inverted: #0a1628;      /* For light backgrounds */
+  --color-text-primary: var(--color-text-primary, #ffffff);
+  --color-text-secondary: var(--color-text-secondary, #94a3b8);     /* Slate-400 */
+  --color-text-tertiary: var(--color-text-tertiary, #64748b);      /* Slate-500 */
+  --color-text-muted: var(--color-text-muted, #475569);         /* Slate-600 */
+  --color-text-inverted: var(--color-bg-base, #0a1628);      /* For light backgrounds */
   
   /* =======================================================================
      ACCENT COLORS - Each has ONE specific purpose
@@ -44,38 +69,61 @@
   
   /* LIME - User Actions & CTAs
      Use when you want user to DO something (buttons, CTAs) */
-  --color-accent-lime: #d4ff00;
-  --color-accent-lime-dark: #bfe600;
+  --color-accent-lime: var(--color-accent-lime, #d4ff00);
+  --color-accent-lime-dark: var(--color-accent-lime-dark, #bfe600);
   --color-accent-lime-muted: rgba(212, 255, 0, 0.1);
   --color-accent-lime-border: rgba(212, 255, 0, 0.3);
   
   /* TEAL - Improvements & Positive Data
      Use for gains, upgrades, modified values, active selections */
-  --color-accent-teal: #10b981;
-  --color-accent-teal-light: #34d399;
+  --color-accent-teal: var(--color-accent-teal, #10b981);
+  --color-accent-teal-light: var(--color-accent-teal-light, #34d399);
   --color-accent-teal-muted: rgba(16, 185, 129, 0.15);
   --color-accent-teal-border: rgba(16, 185, 129, 0.3);
   
   /* BLUE - Baseline & Stock Data
      Use for original/factory values, informational content */
-  --color-accent-blue: #3b82f6;
-  --color-accent-blue-light: #60a5fa;
+  --color-accent-blue: var(--color-accent-blue, #3b82f6);
+  --color-accent-blue-light: var(--color-accent-blue-light, #60a5fa);
   --color-accent-blue-muted: rgba(59, 130, 246, 0.15);
   --color-accent-blue-border: rgba(59, 130, 246, 0.3);
   
   /* AMBER - Warnings Only (USE SPARINGLY)
      Only for genuine caution/warning states */
-  --color-accent-amber: #f59e0b;
-  --color-accent-amber-light: #fbbf24;
+  --color-accent-amber: var(--color-accent-amber, #f59e0b);
+  --color-accent-amber-light: var(--color-accent-amber-light, #fbbf24);
   --color-accent-amber-muted: rgba(245, 158, 11, 0.1);
   --color-accent-amber-border: rgba(245, 158, 11, 0.2);
+  
+  /* =======================================================================
+     EXTENDED CATEGORY COLORS - Dashboard & Gamification
+     Used for engagement categories (AL, Profile) that need distinct colors
+     ======================================================================= */
+  
+  /* PURPLE - AL Assistant Category */
+  --color-accent-purple: #a855f7;
+  --color-accent-purple-light: #c084fc;
+  --color-accent-purple-muted: rgba(168, 85, 247, 0.15);
+  --color-accent-purple-border: rgba(168, 85, 247, 0.3);
+  
+  /* PINK - Profile Category */
+  --color-accent-pink: #ec4899;
+  --color-accent-pink-light: #f472b6;
+  --color-accent-pink-muted: rgba(236, 72, 153, 0.15);
+  --color-accent-pink-border: rgba(236, 72, 153, 0.3);
+  
+  /* RED - Errors & Danger States */
+  --color-accent-red: #ef4444;
+  --color-accent-red-light: #f87171;
+  --color-accent-red-muted: rgba(239, 68, 68, 0.15);
+  --color-accent-red-border: rgba(239, 68, 68, 0.3);
   
   /* =======================================================================
      SEMANTIC COLORS - Status & Feedback
      ======================================================================= */
   
-  --color-success: #22c55e;
-  --color-success-light: #4ade80;
+  --color-success: var(--color-success, #22c55e);
+  --color-success-light: var(--color-success-light, #4ade80);
   --color-success-muted: rgba(34, 197, 94, 0.15);
   --color-success-border: rgba(34, 197, 94, 0.3);
   
@@ -84,7 +132,7 @@
   --color-warning-muted: var(--color-accent-amber-muted);
   --color-warning-border: var(--color-accent-amber-border);
   
-  --color-error: #ef4444;
+  --color-error: var(--color-error, #ef4444);
   --color-error-muted: rgba(239, 68, 68, 0.15);
   --color-error-border: rgba(239, 68, 68, 0.3);
   

@@ -44,7 +44,7 @@
 .ringsGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 8px;
   margin-bottom: 24px;
 }
 
@@ -82,7 +82,7 @@
 }
 
 .gaugeValue {
-  font-size: 1.25rem;
+  font-size: 1rem;
   font-weight: 700;
   line-height: 1;
   margin-bottom: 2px;
@@ -145,13 +145,13 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* Mobile Responsive */
-@media (max-width: 640px) {
+/* Desktop Responsive */
+@media (min-width: 641px) {
   .ringsGrid {
-    gap: 8px;
+    gap: 16px;
   }
   
   .gaugeValue {
-    font-size: 1rem;
+    font-size: 1.25rem;
   }
 }

@@ -20,7 +20,7 @@ import {
   getPriceIdForTier,
   getTierPricing,
 } from '@/lib/stripe';
-import { logServerError } from '@/lib/serverErrorLogger';
+import { logServerError, withErrorLogging } from '@/lib/serverErrorLogger';
 import { errors } from '@/lib/apiErrors';
 import { rateLimit } from '@/lib/rateLimit';
 import { checkTrialEligibility } from '@/lib/fraudPreventionService';
@@ -60,7 +60,7 @@ async function getOrCreateStripeCustomer(supabase, user) {
   return customer.id;
 }
 
-export async function POST(request) {
+async function handlePost(request) {
   // Rate limit: 5 requests per minute for checkout
   const rateLimited = rateLimit(request, 'checkout');
   if (rateLimited) return rateLimited;
@@ -389,11 +389,13 @@ export async function POST(request) {
     });
     
     return NextResponse.json(
-      { error: err.message || 'Checkout failed' },
+      { error: 'Checkout failed. Please try again or contact support.' },
       { status: 500 }
     );
   }
 }
+
+export const POST = withErrorLogging(handlePost, { route: 'checkout', feature: 'payments' });
 
 
 

@@ -49,7 +49,7 @@ const TrashIcon = () => (
   </svg>
 );
 
-export default function CommentsSheet({ postId, postTitle, commentCount = 0, onClose, onCommentAdded }) {
+export default function CommentsSheet({ postId, postTitle: _postTitle, commentCount = 0, onClose, onCommentAdded }) {
   const { user } = useAuth();
   const { showPointsEarned } = usePointsNotification();
   const [newComment, setNewComment] = useState('');
@@ -73,7 +73,8 @@ export default function CommentsSheet({ postId, postTitle, commentCount = 0, onC
   } = usePostComments(postId);
   
   const comments = commentsData?.comments || [];
-  const guidance = commentsData?.guidance;
+  // NOTE: guidance available for future community guidelines display
+  const _guidance = commentsData?.guidance;
   const error = queryError ? 'Unable to load comments' : null;
   
   const addCommentMutation = useAddComment();

@@ -16,6 +16,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { generateEmbedding, toPgVectorLiteral, chunkText, isEmbeddingConfigured } from '@/lib/embeddingUtils';
 import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -27,7 +28,7 @@ export const dynamic = 'force-dynamic';
 /**
  * GET handler for cron job
  */
-export async function GET(request) {
+async function handleGet(request) {
   const startTime = Date.now();
   
   // Auth check
@@ -327,9 +328,11 @@ export async function GET(request) {
 
     return NextResponse.json({
       success: false,
-      error: error.message,
+      error: 'AL optimization cron job failed',
       partialResults: results
     }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'cron/al-optimization', feature: 'cron' });
 

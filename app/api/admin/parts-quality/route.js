@@ -11,6 +11,7 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { headers } from 'next/headers';
 import { getQualitySummary } from '@/lib/partsQualityService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Create admin client
 const supabaseAdmin = createClient(
@@ -54,7 +55,7 @@ async function verifyAdmin(request) {
   return user;
 }
 
-export async function GET(request) {
+async function handleGet(request) {
   try {
     // For now, allow access without strict auth for dashboard
     // In production, uncomment the admin verification below:
@@ -88,3 +89,5 @@ export async function GET(request) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'admin/parts-quality', feature: 'admin' });

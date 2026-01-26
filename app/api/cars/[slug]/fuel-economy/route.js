@@ -129,7 +129,7 @@ async function handleGet(request, { params }) {
   } catch (err) {
     console.error('[Fuel Economy API] Error:', err);
     return NextResponse.json(
-      { error: 'Failed to fetch fuel economy data', message: err.message },
+      { error: 'Failed to fetch fuel economy data' },
       { status: 500 }
     );
   }

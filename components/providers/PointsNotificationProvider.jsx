@@ -15,7 +15,7 @@
  * showPointsEarned(5, 'Profile question');
  */
 
-import { createContext, useContext, useState, useCallback, useRef } from 'react';
+import { createContext, useContext, useState, useCallback, useRef, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 
 // Lazy load the toast component
@@ -82,9 +82,9 @@ export function PointsNotificationProvider({ children }) {
     }
   }, [processQueue]);
   
-  const value = {
+  const value = useMemo(() => ({
     showPointsEarned,
-  };
+  }), [showPointsEarned]);
   
   return (
     <PointsNotificationContext.Provider value={value}>

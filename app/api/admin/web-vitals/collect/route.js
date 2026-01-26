@@ -14,6 +14,7 @@
 
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Service role client for data storage
 const supabase = createClient(
@@ -71,7 +72,7 @@ function getRating(metric, value) {
  *   deviceType?: string
  * }
  */
-export async function POST(request) {
+async function handlePost(request) {
   try {
     const body = await request.json();
     
@@ -155,7 +156,7 @@ export async function POST(request) {
  * - days: Number of days to look back (default: 7)
  * - path: Filter by specific page path
  */
-export async function GET(request) {
+async function handleGet(request) {
   const { searchParams } = new URL(request.url);
   const days = parseInt(searchParams.get('days') || '7', 10);
   const path = searchParams.get('path');
@@ -246,3 +247,6 @@ export async function GET(request) {
     );
   }
 }
+
+export const GET = withErrorLogging(handleGet, { route: 'admin/web-vitals/collect', feature: 'analytics' });
+export const POST = withErrorLogging(handlePost, { route: 'admin/web-vitals/collect', feature: 'analytics' });

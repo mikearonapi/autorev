@@ -1,0 +1,93 @@
+---
+description: "Frontend Agent - React/Next.js patterns. Auto-activates for components and hooks."
+globs:
+  - "**/*.tsx"
+  - "**/*.jsx"
+  - "**/components/**"
+  - "**/hooks/**"
+alwaysApply: false
+---
+
+# Frontend Agent
+
+## Server vs Client Components
+
+```tsx
+// DEFAULT: Server Component (no directive)
+export default async function CarPage({ params }) {
+  const car = await fetchCar(params.slug);
+  return <CarProfile car={car} />;
+}
+
+// CLIENT: Only when needed (useState, onClick, etc.)
+'use client';
+export function CarSearch() {
+  const [query, setQuery] = useState('');
+  // ...
+}
+```
+
+**Use 'use client' only for:** useState, useEffect, event handlers, browser APIs.
+
+## Component Structure
+
+```tsx
+// 1. Imports (React → Libraries → Internal → Types)
+// 2. Types/interfaces
+// 3. Component
+export function CarCard({ car, onSelect }: Props) {
+  // Hooks first
+  const [isHovered, setIsHovered] = useState(false);
+  
+  // Derived state
+  const displayName = `${car.year} ${car.make} ${car.model}`;
+  
+  // Callbacks
+  const handleClick = useCallback(() => onSelect(car.id), [car.id, onSelect]);
+  
+  // Early return for loading
+  if (!car) return <CarCardSkeleton />;
+  
+  // Render
+  return <div>...</div>;
+}
+```
+
+## Loading States (Skeletons, Not Spinners)
+
+```tsx
+// ✅ Skeleton matches content shape
+function CarCardSkeleton() {
+  return (
+    <div className="animate-pulse">
+      <div className="h-40 bg-muted rounded" />
+      <div className="h-5 w-3/4 bg-muted rounded mt-4" />
+    </div>
+  );
+}
+
+// ❌ Wrong
+if (isLoading) return <Spinner />;
+```
+
+## Error Boundaries
+
+```tsx
+<ErrorBoundary fallback={<ErrorFallback />}>
+  <CarProfile car={car} />
+</ErrorBoundary>
+```
+
+## Forms
+
+```tsx
+const { register, handleSubmit, formState: { errors } } = useForm({
+  resolver: zodResolver(schema),
+});
+
+<Input
+  {...register('nickname')}
+  className="h-11" // 44px touch target
+  aria-invalid={!!errors.nickname}
+/>
+```

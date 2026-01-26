@@ -187,7 +187,7 @@ async function handleGet(request, { params }) {
   } catch (err) {
     console.error('[Safety API] Error:', err);
     return NextResponse.json(
-      { error: 'Failed to fetch safety data', message: err.message },
+      { error: 'Failed to fetch safety data' },
       { status: 500 }
     );
   }

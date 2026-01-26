@@ -14,7 +14,7 @@
  * @module components/providers/OwnedVehiclesProvider
  */
 
-import { createContext, useContext, useReducer, useEffect, useState, useCallback, useRef } from 'react';
+import { createContext, useContext, useReducer, useEffect, useState, useCallback, useRef, useMemo } from 'react';
 import { useAuth } from '@/components/providers/AuthProvider';
 import {
   fetchUserVehicles,
@@ -28,7 +28,7 @@ import {
   updateVehicleCustomSpecsSection,
   clearVehicleCustomSpecs,
 } from '@/lib/userDataService';
-import { getPrefetchedData } from '@/lib/prefetch';
+import { getPrefetchedData, invalidatePrefetchCache } from '@/lib/prefetch';
 import { useLoadingProgress } from './LoadingProgressProvider';
 
 // LocalStorage key for guest vehicles
@@ -109,6 +109,26 @@ const ActionTypes = {
 const defaultState = {
   vehicles: [],
 };
+
+/**
+ * Sort vehicles by display order
+ * - Vehicles with displayOrder > 0 come first (user's custom order)
+ * - Vehicles with displayOrder = 0 come after (sorted by createdAt, newest first)
+ */
+function sortVehiclesByDisplayOrder(vehicles) {
+  return [...vehicles].sort((a, b) => {
+    // Both have custom order (displayOrder > 0)
+    if (a.displayOrder > 0 && b.displayOrder > 0) {
+      return a.displayOrder - b.displayOrder;
+    }
+    // Only a has custom order - a comes first
+    if (a.displayOrder > 0) return -1;
+    // Only b has custom order - b comes first
+    if (b.displayOrder > 0) return 1;
+    // Neither has custom order - sort by createdAt descending (newest first)
+    return new Date(b.createdAt) - new Date(a.createdAt);
+  });
+}
 
 /**
  * Transform Supabase row to client format
@@ -244,7 +264,7 @@ export function OwnedVehiclesProvider({ children }) {
     const prefetchedVehicles = getPrefetchedData('vehicles', userId);
     if (prefetchedVehicles) {
       console.log('[OwnedVehiclesProvider] Using prefetched data (instant)');
-      const vehicles = prefetchedVehicles.map(transformVehicle);
+      const vehicles = sortVehiclesByDisplayOrder(prefetchedVehicles.map(transformVehicle));
       dispatch({ type: ActionTypes.SET, payload: vehicles });
       syncedRef.current = true;
       // Clear localStorage - server data is source of truth for authenticated users
@@ -295,7 +315,7 @@ export function OwnedVehiclesProvider({ children }) {
       }
       
       if (data) {
-        const vehicles = data.map(transformVehicle);
+        const vehicles = sortVehiclesByDisplayOrder(data.map(transformVehicle));
         console.log('[OwnedVehiclesProvider] Fetched', vehicles.length, 'vehicles from server');
         dispatch({ type: ActionTypes.SET, payload: vehicles });
         syncedRef.current = true;
@@ -896,6 +916,9 @@ export function OwnedVehiclesProvider({ children }) {
         return { success: false, error: result.error || 'Failed to reorder vehicles' };
       }
 
+      // Invalidate prefetch cache so fresh data is fetched on next page load
+      invalidatePrefetchCache('vehicles');
+      
       return { success: true, error: null };
     } catch (err) {
       console.error('[OwnedVehiclesProvider] Reorder error:', err);
@@ -931,7 +954,7 @@ export function OwnedVehiclesProvider({ children }) {
     await fetchVehicles(user.id);
   }, [user?.id, fetchVehicles]);
 
-  const value = {
+  const value = useMemo(() => ({
     vehicles: state.vehicles,
     count: state.vehicles.length,
     isHydrated,
@@ -958,7 +981,26 @@ export function OwnedVehiclesProvider({ children }) {
     getVehiclesByCarSlug,
     // Refresh
     refresh,
-  };
+  }), [
+    state.vehicles,
+    isHydrated,
+    isLoading,
+    addVehicle,
+    updateVehicle,
+    removeVehicle,
+    getPrimaryVehicle,
+    setPrimaryVehicle,
+    reorderVehicles,
+    applyModifications,
+    clearModifications,
+    applyBuild,
+    updateCustomSpecs,
+    updateCustomSpecsSection,
+    clearCustomSpecs,
+    getVehicleById,
+    getVehiclesByCarSlug,
+    refresh,
+  ]);
 
   return (
     <OwnedVehiclesContext.Provider value={value}>
