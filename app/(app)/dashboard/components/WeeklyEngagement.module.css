@@ -209,7 +209,7 @@
 .weekBarStack {
   max-width: 28px;
   border-radius: 4px;
-  gap: 2px;
+  gap: 0;
 }
 
 /* Monthly bars: thinnest */
@@ -266,7 +266,7 @@
   .barSegment {
     transition: none;
   }
-  
+
   .dot {
     transition: none;
   }
@@ -363,7 +363,7 @@
     width: 7px;
     height: 7px;
   }
-  
+
   .legendLabel {
     font-size: 11px;
   }
@@ -389,7 +389,9 @@
   gap: 6px;
   text-align: center;
   text-decoration: none;
-  transition: background 0.2s ease, border-color 0.2s ease;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease;
 }
 
 .achievementCard:hover {
@@ -430,11 +432,11 @@
   .achievementsContainer {
     gap: 10px;
   }
-  
+
   .achievementValue {
     font-size: var(--text-body);
   }
-  
+
   .achievementLabel {
     font-size: var(--text-2xs);
   }
