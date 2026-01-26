@@ -78,7 +78,7 @@ export default async function Image() {
   const heroImageData = readFileSync(join(process.cwd(), 'public/images/pages/home-hero.jpg'));
   const heroImageBase64 = heroImageData.toString('base64');
 
-  const logoData = readFileSync(join(process.cwd(), 'public/images/autorev-logo-white.png'));
+  const logoData = readFileSync(join(process.cwd(), 'public/autorev-logo-transparent.png'));
   const logoBase64 = logoData.toString('base64');
 
   return new ImageResponse(

@@ -1,3 +1,6 @@
+// Force dynamic to prevent static prerendering (uses headers)
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { postDailyDigest, postALIntelligence } from '@/lib/discord';

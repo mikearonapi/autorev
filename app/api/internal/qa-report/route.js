@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
+// Force dynamic to prevent static prerendering
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/internal/qa-report
  * 
@@ -39,11 +42,12 @@ async function handleGet() {
       throw carsError;
     }
 
-    // Fetch all video-car links with sentiment data
+    // Fetch all video-car links with sentiment data (joining with cars to get slug)
     const { data: links, error: linksError } = await supabase
       .from('youtube_video_car_links')
       .select(`
-        car_slug,
+        car_id,
+        cars!youtube_video_car_links_car_id_fkey(slug),
         sentiment_sound,
         sentiment_interior,
         sentiment_track,
@@ -62,8 +66,11 @@ async function handleGet() {
     // Aggregate sentiment per car
     const carSentiments = {};
     for (const link of (links || [])) {
-      if (!carSentiments[link.car_slug]) {
-        carSentiments[link.car_slug] = {
+      const carSlug = link.cars?.slug;
+      if (!carSlug) continue;
+      
+      if (!carSentiments[carSlug]) {
+        carSentiments[carSlug] = {
           reviewCount: 0,
           sentiments: {},
           strengths: {},
@@ -71,7 +78,7 @@ async function handleGet() {
         };
       }
       
-      const cs = carSentiments[link.car_slug];
+      const cs = carSentiments[carSlug];
       cs.reviewCount++;
       
       // Aggregate category sentiments

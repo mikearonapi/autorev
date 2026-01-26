@@ -3,6 +3,9 @@
  * GET /api/notifications - Fetch user's notifications
  */
 
+// Force dynamic to prevent static prerendering (uses cookies/auth)
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabaseServer';
 import { getNotifications } from '@/lib/notificationService';

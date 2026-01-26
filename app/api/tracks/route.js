@@ -4,6 +4,9 @@
  * Fetch all tracks from the database for lap time estimator
  */
 
+// Force dynamic to prevent static prerendering
+export const dynamic = 'force-dynamic';
+
 import { createClient } from '@supabase/supabase-js';
 import { errors } from '@/lib/apiErrors';
 import { NextResponse } from 'next/server';

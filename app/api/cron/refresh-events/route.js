@@ -16,6 +16,9 @@
  * - skipGeocode: If 'true', skip geocoding step
  */
 
+// Force dynamic to prevent static prerendering (uses headers)
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
 import { fetchFromSource, getFetcher } from '@/lib/eventSourceFetchers';

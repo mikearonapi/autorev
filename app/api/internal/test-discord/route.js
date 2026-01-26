@@ -16,6 +16,9 @@
  * Usage: GET /api/internal/test-discord?secret=CRON_SECRET
  */
 
+// Force dynamic to prevent static prerendering (uses headers)
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import {
   notifyFeedback,

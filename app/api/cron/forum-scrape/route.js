@@ -19,6 +19,9 @@
  * @module app/api/cron/forum-scrape/route
  */
 
+// Force dynamic to prevent static prerendering (uses headers)
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { ForumScraperService } from '@/lib/forumScraper/index.js';
 import { InsightExtractor } from '@/lib/forumScraper/insightExtractor.js';

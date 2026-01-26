@@ -6,6 +6,9 @@
  * @route GET /api/admin/retention
  */
 
+// Force dynamic to prevent static prerendering (uses cookies/headers)
+export const dynamic = 'force-dynamic';
+
 import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
 import { isAdminEmail } from '@/lib/adminAccess';

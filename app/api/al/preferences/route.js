@@ -12,6 +12,9 @@
  * - event_search_enabled: boolean
  */
 
+// Force dynamic to prevent static prerendering (uses cookies/headers)
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { errors } from '@/lib/apiErrors';

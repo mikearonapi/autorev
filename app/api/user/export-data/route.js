@@ -12,6 +12,9 @@
  * @module app/api/user/export-data
  */
 
+// Force dynamic to prevent static prerendering (uses cookies/auth)
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 
 import { createClient } from '@supabase/supabase-js';

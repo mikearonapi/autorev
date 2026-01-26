@@ -10,6 +10,9 @@
  * - Authorization: Bearer <CRON_SECRET> OR x-vercel-cron: true
  */
 
+// Force dynamic to prevent static prerendering (uses headers)
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import * as scrapeJobService from '@/lib/scrapeJobService';
 import { notifyCronCompletion, notifyCronFailure } from '@/lib/discord';

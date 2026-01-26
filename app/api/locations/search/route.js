@@ -7,6 +7,9 @@
  * GET /api/locations/search?q=leesburg&limit=5
  */
 
+// Force dynamic to prevent static prerendering (uses request.url)
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 import { errors } from '@/lib/apiErrors';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
