@@ -7,7 +7,7 @@
 // - Offline page fallback
 // - Separate caches by data type
 
-const CACHE_VERSION = 'v4';
+const CACHE_VERSION = 'v5';
 const STATIC_CACHE = `autorev-static-${CACHE_VERSION}`;
 const API_CACHE = `autorev-api-${CACHE_VERSION}`;
 const OFFLINE_URL = '/offline.html';
@@ -16,9 +16,9 @@ const OFFLINE_URL = '/offline.html';
 const PRECACHE_URLS = [
   '/',
   '/offline.html',
-  '/apple-touch-icon.png',
-  '/icon-192x192.png',
-  '/icon-512x512.png',
+  '/apple-touch-icon-v2.png',
+  '/icon-192x192-v2.png',
+  '/icon-512x512-v2.png',
   '/manifest.json',
 ];
 

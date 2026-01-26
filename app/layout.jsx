@@ -29,19 +29,19 @@ import GlobalErrorHandler from '@/components/GlobalErrorHandler';
 import GoogleAnalytics from '@/components/GoogleAnalytics';
 import MetaPixel from '@/components/MetaPixel';
 import PageViewTracker from '@/components/PageViewTracker';
-import SafeAreaFallback from '@/components/SafeAreaFallback';
 import { AuthProvider } from '@/components/providers/AuthProvider';
 import { BannerProvider } from '@/components/providers/BannerProvider';
-import { PointsNotificationProvider } from '@/components/providers/PointsNotificationProvider';
 import { CarSelectionProvider } from '@/components/providers/CarSelectionProvider';
 import { CompareProvider } from '@/components/providers/CompareProvider';
 import { FavoritesProvider } from '@/components/providers/FavoritesProvider';
 import { LoadingProgressProvider } from '@/components/providers/LoadingProgressProvider';
 import { OwnedVehiclesProvider } from '@/components/providers/OwnedVehiclesProvider';
+import { PointsNotificationProvider } from '@/components/providers/PointsNotificationProvider';
 import { PostHogProvider } from '@/components/providers/PostHogProvider';
 import { QueryProvider } from '@/components/providers/QueryProvider';
 import { SavedBuildsProvider } from '@/components/providers/SavedBuildsProvider';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import SafeAreaFallback from '@/components/SafeAreaFallback';
 import ScrollToTop from '@/components/ScrollToTop';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 import SkipLink from '@/components/SkipLink';
@@ -327,8 +327,8 @@ export default function RootLayout({ children }) {
         <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
 
         {/* Apple Touch Icons - REQUIRED for "Add to Home Screen" on iOS */}
-        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon-v2.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-v2.png" />
 
         {/* PWA manifest - REQUIRED for "Add to Home Screen" prompt */}
         <link rel="manifest" href="/manifest.json" />
@@ -435,46 +435,46 @@ export default function RootLayout({ children }) {
                     <LoadingProgressProvider>
                       <AuthProvider>
                         <PointsNotificationProvider>
-                        <PostHogProvider>
-                          <AppConfigProvider>
-                            <CarSelectionProvider>
-                              <FavoritesProvider>
-                                <CompareProvider>
-                                  <SavedBuildsProvider>
-                                    <OwnedVehiclesProvider>
-                                      <BannerProvider>
-                                        {/* Scroll to top on route change + Analytics tracking */}
-                                        <Suspense fallback={null}>
-                                          <ScrollToTop />
-                                          <PageViewTracker />
-                                        </Suspense>
+                          <PostHogProvider>
+                            <AppConfigProvider>
+                              <CarSelectionProvider>
+                                <FavoritesProvider>
+                                  <CompareProvider>
+                                    <SavedBuildsProvider>
+                                      <OwnedVehiclesProvider>
+                                        <BannerProvider>
+                                          {/* Scroll to top on route change + Analytics tracking */}
+                                          <Suspense fallback={null}>
+                                            <ScrollToTop />
+                                            <PageViewTracker />
+                                          </Suspense>
 
-                                        {/* Beta banner - DISABLED (launch mode) */}
-                                        <BetaBanner visible={false} />
+                                          {/* Beta banner - DISABLED (launch mode) */}
+                                          <BetaBanner visible={false} />
 
-                                        {/* AI Chat removed - AL now uses dedicated /al page */}
+                                          {/* AI Chat removed - AL now uses dedicated /al page */}
 
-                                        <main id="main-content" tabIndex={-1}>
-                                          {children}
-                                        </main>
+                                          <main id="main-content" tabIndex={-1}>
+                                            {children}
+                                          </main>
 
-                                        <Footer />
+                                          <Footer />
 
-                                        {/* Floating Compare Bar - shows when cars added to compare */}
-                                        <Suspense fallback={null}>
-                                          <CompareBar />
-                                        </Suspense>
+                                          {/* Floating Compare Bar - shows when cars added to compare */}
+                                          <Suspense fallback={null}>
+                                            <CompareBar />
+                                          </Suspense>
 
-                                        {/* Mobile sticky CTA bar - shows on scroll */}
-                                        <MobileBottomCta />
-                                      </BannerProvider>
-                                    </OwnedVehiclesProvider>
-                                  </SavedBuildsProvider>
-                                </CompareProvider>
-                              </FavoritesProvider>
-                            </CarSelectionProvider>
-                          </AppConfigProvider>
-                        </PostHogProvider>
+                                          {/* Mobile sticky CTA bar - shows on scroll */}
+                                          <MobileBottomCta />
+                                        </BannerProvider>
+                                      </OwnedVehiclesProvider>
+                                    </SavedBuildsProvider>
+                                  </CompareProvider>
+                                </FavoritesProvider>
+                              </CarSelectionProvider>
+                            </AppConfigProvider>
+                          </PostHogProvider>
                         </PointsNotificationProvider>
                       </AuthProvider>
                     </LoadingProgressProvider>
