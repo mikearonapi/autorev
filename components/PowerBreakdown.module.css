@@ -38,16 +38,20 @@
 
 /* ===========================================
    DONUT CHART LAYOUT
+   Vertical stack: donut on top, legend below
    =========================================== */
 
 .donutLayout {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 20px;
 }
 
 .donutContainer {
   flex-shrink: 0;
+  display: flex;
+  justify-content: center;
 }
 
 .donutSvg {
@@ -65,6 +69,7 @@
     opacity: 0;
     stroke-dashoffset: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -89,14 +94,14 @@
 
 /* ===========================================
    LEGEND
+   Full width below donut chart
    =========================================== */
 
 .legendContainer {
-  flex: 1;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  min-width: 0;
+  gap: 8px;
 }
 
 .legendItem {
@@ -134,9 +139,6 @@
   font-size: var(--text-sm);
   font-weight: 500;
   color: rgba(255, 255, 255, 0.8);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .legendRight {
@@ -205,59 +207,19 @@
 }
 
 /* ===========================================
-   RESPONSIVE - Mobile
+   RESPONSIVE
    =========================================== */
 
-@media (min-width: 481px) {
-  .powerBreakdown {
-    padding: 16px;
-  }
-
+/* On larger screens, allow horizontal layout if preferred */
+@media (min-width: 600px) {
   .donutLayout {
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .donutContainer {
-    display: flex;
-    justify-content: center;
+    flex-direction: row;
+    align-items: center;
+    gap: 32px;
   }
 
   .legendContainer {
-    width: 100%;
-  }
-
-  .legendItem {
-    padding: 10px 12px;
-  }
-
-  .legendLabel {
-    font-size: var(--text-xs);
-  }
-
-  .legendPercent {
-    font-size: var(--text-xs);
-  }
-
-  .legendGain {
-    font-size: var(--text-xs);
-  }
-
-  .donutCenterValue {
-    font-size: var(--text-h2);
-  }
-}
-
-@media (min-width: 361px) {
-  .legendRight {
-    gap: 8px;
-  }
-
-  .legendPercent {
-    min-width: 28px;
-  }
-
-  .legendGain {
-    min-width: 32px;
+    flex: 1;
+    min-width: 0;
   }
 }
