@@ -10,8 +10,10 @@
  */
 
 import React, { useState } from 'react';
-import styles from './ObjectiveBanner.module.css';
+
 import { GOAL_CATEGORY_MAP } from '@/lib/upgradeCategories';
+
+import styles from './ObjectiveBanner.module.css';
 
 // Goal icons
 const GOAL_ICONS = {

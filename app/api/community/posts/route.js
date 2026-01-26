@@ -10,16 +10,18 @@
  * @route /api/community/posts
  */
 
-import { NextResponse } from 'next/server';
 import { revalidatePath } from 'next/cache';
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
-import { resolveCarId } from '@/lib/carResolver';
+
 import { errors } from '@/lib/apiErrors';
+import { resolveCarId } from '@/lib/carResolver';
 import { trackActivity } from '@/lib/dashboardScoreService';
 import { awardPoints } from '@/lib/pointsService';
 import { communityPostSchema, communityPostUpdateSchema, validateWithSchema, validationErrorResponse } from '@/lib/schemas';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,

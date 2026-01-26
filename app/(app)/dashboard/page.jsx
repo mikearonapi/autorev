@@ -8,6 +8,7 @@
  */
 
 import { Suspense } from 'react';
+
 import DashboardClient from './DashboardClient';
 import styles from './page.module.css';
 

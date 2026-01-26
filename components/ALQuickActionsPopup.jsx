@@ -8,10 +8,14 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { createPortal } from 'react-dom';
+
 import Image from 'next/image';
+
+import { createPortal } from 'react-dom';
+
 import { useAIChat } from '@/components/AIChatContext';
 import { UI_IMAGES } from '@/lib/images';
+
 import styles from './ALQuickActionsPopup.module.css';
 
 /**

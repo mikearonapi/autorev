@@ -11,8 +11,10 @@
  */
 
 import { useState, useCallback, useMemo } from 'react';
-import styles from './UpgradeConfigPanel.module.css';
+
 import { Icons } from '@/components/ui/Icons';
+
+import styles from './UpgradeConfigPanel.module.css';
 
 // Local volume icons (not in shared lib)
 const LocalIcons = {

@@ -15,8 +15,10 @@
  */
 
 import React, { useState } from 'react';
-import GapAnalysis from './GapAnalysis';
+
 import { formatDateSimple } from '@/lib/dateUtils';
+
+import GapAnalysis from './GapAnalysis';
 import styles from './PredictedVsActual.module.css';
 
 // Icons

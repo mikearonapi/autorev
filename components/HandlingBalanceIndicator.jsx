@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+
 import styles from './HandlingBalanceIndicator.module.css';
 
 // Icons

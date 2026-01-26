@@ -13,6 +13,7 @@
  */
 
 import { useMemo } from 'react';
+
 import styles from './CostBreakdown.module.css';
 
 // Single-hue blue progression for cost categories (Rule 3.3)

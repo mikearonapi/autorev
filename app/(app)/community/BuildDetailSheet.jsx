@@ -9,17 +9,24 @@
  * - Performance Metrics
  * - Modifications/Parts list
  * 
+ * Rendered via React Portal to document.body for proper stacking context.
+ * 
  * Note: ESLint rule disabled due to false positive - all hooks are called unconditionally
  * before any early returns. The rule incorrectly flags useMemo as conditional.
  */
 
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+
 import Image from 'next/image';
-import { getUpgradeByKey } from '@/lib/upgrades';
-import { useBuildDetail } from '@/hooks/useCommunityData';
+
 import { TITLES } from '@/app/(app)/dashboard/components/UserGreeting';
-import styles from './BuildDetailSheet.module.css';
+import { useBuildDetail } from '@/hooks/useCommunityData';
 import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
+import { getUpgradeByKey } from '@/lib/upgrades';
+
+import styles from './BuildDetailSheet.module.css';
+
 
 // Icons
 const BackIcon = () => (
@@ -146,6 +153,12 @@ export default function BuildDetailSheet({
   // Set safe area color to match overlay background when sheet is visible
   useSafeAreaColor(SAFE_AREA_COLORS.OVERLAY, { enabled: !!build });
   
+  // Portal mounting - required for SSR compatibility
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+  
   // React Query hook for build details - always called (hooks must be unconditional)
   const { data: detailData, isLoading } = useBuildDetail(build?.slug);
   
@@ -244,7 +257,7 @@ export default function BuildDetailSheet({
     }
   };
 
-  if (!build) return null;
+  if (!build || !isMounted) return null;
 
   // SOURCE OF TRUTH: Use computed performance from API when available.
   // Stored buildData final_* fields can become stale as our model improves.
@@ -262,7 +275,7 @@ export default function BuildDetailSheet({
   const stockLateralG = computedPerformance?.stock?.lateralG ?? buildData?.stock_lateral_g ?? carData?.lateral_g ?? null;
   const finalLateralG = computedPerformance?.upgraded?.lateralG ?? buildData?.final_lateral_g ?? stockLateralG;
 
-  return (
+  const sheetContent = (
     <div className={styles.fullScreen} data-overlay-modal>
       {/* Top Navigation with User Info */}
       <div className={styles.topNav}>
@@ -407,4 +420,7 @@ export default function BuildDetailSheet({
       </div>
     </div>
   );
+
+  // Use portal to render at document body level
+  return createPortal(sheetContent, document.body);
 }

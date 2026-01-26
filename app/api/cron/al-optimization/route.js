@@ -13,9 +13,11 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { generateEmbedding, toPgVectorLiteral, chunkText, isEmbeddingConfigured } from '@/lib/embeddingUtils';
+
 import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
+import { generateEmbedding, toPgVectorLiteral, chunkText, isEmbeddingConfigured } from '@/lib/embeddingUtils';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

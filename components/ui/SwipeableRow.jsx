@@ -17,6 +17,7 @@
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+
 import styles from './SwipeableRow.module.css';
 
 // Default threshold to reveal actions (pixels)

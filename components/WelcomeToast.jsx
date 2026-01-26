@@ -8,6 +8,7 @@
  */
 
 import { useState, useEffect } from 'react';
+
 import styles from './WelcomeToast.module.css';
 
 export default function WelcomeToast({ 

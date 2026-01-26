@@ -7,7 +7,9 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
+
 import { awardPoints } from '@/lib/pointsService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 

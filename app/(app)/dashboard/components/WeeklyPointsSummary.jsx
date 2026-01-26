@@ -11,6 +11,7 @@
  */
 
 import { useEffect, useState } from 'react';
+
 import { FlameIcon } from './DashboardIcons';
 import PointsExplainerModal from './PointsExplainerModal';
 import styles from './WeeklyPointsSummary.module.css';

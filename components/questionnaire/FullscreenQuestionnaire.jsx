@@ -16,14 +16,19 @@
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { createPortal } from 'react-dom';
+
 import { useRouter } from 'next/navigation';
-import styles from './FullscreenQuestionnaire.module.css';
-import { useQuestionnaire } from '@/hooks/useQuestionnaire';
-import { QUESTIONNAIRE_LIBRARY, getAvailableQuestions } from '@/data/questionnaireLibrary';
+
+import { createPortal } from 'react-dom';
+
+
 import LoadingSpinner from '@/components/LoadingSpinner';
 import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
+import { QUESTIONNAIRE_LIBRARY, getAvailableQuestions } from '@/data/questionnaireLibrary';
+import { useQuestionnaire } from '@/hooks/useQuestionnaire';
 import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
+
+import styles from './FullscreenQuestionnaire.module.css';
 
 export default function FullscreenQuestionnaire({ userId, onComplete, onClose }) {
   const router = useRouter();

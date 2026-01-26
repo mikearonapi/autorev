@@ -13,10 +13,10 @@
  */
 
 import { NextResponse } from 'next/server';
-import { errors } from '@/lib/apiErrors';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
+
 import { awardPoints } from '@/lib/pointsService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 
 /**
  * Helper to clean custom specs object - remove empty strings and nulls

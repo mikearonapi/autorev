@@ -8,10 +8,12 @@
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+
+import { useSetEventRsvp, useRemoveEventRsvp, useEventRsvp } from '@/hooks/useEventsData';
+
+import { useAuthModal } from './AuthModal';
 import styles from './EventRSVPButton.module.css';
 import { useAuth } from './providers/AuthProvider';
-import { useAuthModal } from './AuthModal';
-import { useSetEventRsvp, useRemoveEventRsvp, useEventRsvp } from '@/hooks/useEventsData';
 
 // Icons
 const CheckIcon = ({ size = 14 }) => (

@@ -6,6 +6,7 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Force dynamic rendering - this route uses request.url

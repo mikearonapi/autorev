@@ -8,6 +8,7 @@
  */
 
 import { useState, useRef, useEffect } from 'react';
+
 import styles from './Tooltip.module.css';
 
 // Info icon for tooltips

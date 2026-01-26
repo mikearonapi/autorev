@@ -12,7 +12,12 @@
  */
 
 import { createContext, useContext, useReducer, useEffect, useState, useCallback, useRef, useMemo } from 'react';
+
 import { useAuth } from '@/components/providers/AuthProvider';
+import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
+import { trackFavorite, trackUnfavorite } from '@/lib/activityTracker';
+import { trackAddToGarage } from '@/lib/ga4';
+import { getPrefetchedData } from '@/lib/prefetch';
 import {
   loadFavorites,
   saveFavorites,
@@ -26,11 +31,9 @@ import {
   removeUserFavorite,
   syncFavoritesToSupabase,
 } from '@/lib/userDataService';
-import { getPrefetchedData } from '@/lib/prefetch';
+
 import { useLoadingProgress } from './LoadingProgressProvider';
-import { trackFavorite, trackUnfavorite } from '@/lib/activityTracker';
-import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
-import { trackAddToGarage } from '@/lib/ga4';
+
 
 /**
  * @typedef {Object} FavoriteCar

@@ -8,8 +8,9 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken, getPublicClient } from '@/lib/supabaseServer';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken, getPublicClient } from '@/lib/supabaseServer';
 
 /**
  * GET - Get event attendees

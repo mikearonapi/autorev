@@ -13,6 +13,7 @@
  */
 
 import { useMemo } from 'react';
+
 import styles from './FunnelChart.module.css';
 
 // Single-hue blue progression for 4 categories (Rule 3.3)

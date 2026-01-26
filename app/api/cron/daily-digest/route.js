@@ -2,9 +2,11 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { postDailyDigest, postALIntelligence } from '@/lib/discord';
+
 import { generateALIntelligence } from '@/lib/alIntelligence';
+import { postDailyDigest, postALIntelligence } from '@/lib/discord';
 import { logCronError, withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabase = createClient(

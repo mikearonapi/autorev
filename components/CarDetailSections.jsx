@@ -14,9 +14,11 @@
  */
 
 import React from 'react';
-import styles from './CarDetailSections.module.css';
-import { useCarEfficiency, useCarSafety, useCarPriceByYear } from '@/hooks/useCarData';
+
 import { Icons } from '@/components/ui/Icons';
+import { useCarEfficiency, useCarSafety, useCarPriceByYear } from '@/hooks/useCarData';
+
+import styles from './CarDetailSections.module.css';
 
 /**
  * Star rating display

@@ -1,9 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { createPortal } from 'react-dom';
-import styles from './StreakMilestoneModal.module.css';
+
 import { getStreakDisplayInfo, STREAK_MILESTONES } from '@/lib/engagementService';
+
+import styles from './StreakMilestoneModal.module.css';
 
 /**
  * StreakMilestoneModal Component

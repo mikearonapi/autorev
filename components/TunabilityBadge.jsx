@@ -10,9 +10,11 @@
  */
 
 import { useMemo, useState } from 'react';
-import styles from './TunabilityBadge.module.css';
-import { calculateTunability, getTunabilityColor } from '@/lib/tunabilityCalculator';
+
 import { Icons } from '@/components/ui/Icons';
+import { calculateTunability, getTunabilityColor } from '@/lib/tunabilityCalculator';
+
+import styles from './TunabilityBadge.module.css';
 
 /**
  * TunabilityBadge Component

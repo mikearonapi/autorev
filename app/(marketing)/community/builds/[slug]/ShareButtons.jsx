@@ -8,7 +8,9 @@
  */
 
 import { useState } from 'react';
+
 import { getFacebookShareUrl, getTwitterShareUrl, getInstagramShareInfo, getNativeShareData } from '@/lib/communityService';
+
 import styles from './page.module.css';
 
 export default function ShareButtons({ shareUrl, title, carName }) {

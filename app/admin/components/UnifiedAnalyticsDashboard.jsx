@@ -14,13 +14,14 @@
  */
 
 import { useState, useMemo } from 'react';
-import styles from './UnifiedAnalyticsDashboard.module.css';
+
 import { 
   useAdminSiteAnalytics, 
   useAdminMarketingAnalytics, 
   useAdminAdvancedAnalytics, 
   useAdminDashboard 
 } from '@/hooks/useAdminData';
+
 import {
   UsersIcon,
   FileTextIcon,
@@ -37,6 +38,7 @@ import {
   ZapIcon,
   InfoIcon,
 } from './Icons';
+import styles from './UnifiedAnalyticsDashboard.module.css';
 
 // SVG Icons for the dashboard
 function EyeIcon({ size = 20, className = '' }) {

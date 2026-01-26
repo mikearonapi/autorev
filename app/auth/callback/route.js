@@ -12,14 +12,16 @@
  * UPDATE 2024-12-28: Added session verification and auth timestamp for reliability
  */
 
-import { createServerClient } from '@supabase/ssr';
-import { createClient } from '@supabase/supabase-js';
 import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
+
+import { createServerClient } from '@supabase/ssr';
+import { createClient } from '@supabase/supabase-js';
+
 import { notifySignup } from '@/lib/discord';
 import { sendWelcomeEmail } from '@/lib/emailService';
-import { processReferralSignup } from '@/lib/referralService';
 import { sendLeadEvent } from '@/lib/metaConversionsApi';
+import { processReferralSignup } from '@/lib/referralService';
 
 // Admin client for analytics tracking
 const supabaseAdmin = createClient(

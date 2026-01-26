@@ -16,8 +16,10 @@
  */
 
 import { useRef, useCallback, useEffect } from 'react';
-import styles from './CategoryNav.module.css';
+
 import { Icons } from '@/components/ui/Icons';
+
+import styles from './CategoryNav.module.css';
 
 // Category icons (inline SVGs for performance)
 const categoryIcons = {

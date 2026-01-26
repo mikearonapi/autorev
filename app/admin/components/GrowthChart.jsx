@@ -13,6 +13,7 @@
  */
 
 import { useMemo, useState } from 'react';
+
 import styles from './GrowthChart.module.css';
 
 // Generate interpretive title based on data

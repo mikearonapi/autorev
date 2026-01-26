@@ -23,7 +23,7 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
-import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
+
 import {
   fetchComplaintRowsForCar,
   upsertComplaintRows,
@@ -31,6 +31,7 @@ import {
 } from '@/lib/complaintService';
 import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
 import { logCronError, withErrorLogging } from '@/lib/serverErrorLogger';
+import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 

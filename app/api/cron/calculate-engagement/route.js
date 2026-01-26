@@ -12,7 +12,9 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
+
 import { logCronError, withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Use service role for admin operations

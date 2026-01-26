@@ -19,21 +19,16 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { UI_IMAGES } from '@/lib/images';
-import styles from './page.module.css';
-import { useAuth } from '@/components/providers/AuthProvider';
-import { AL_PLANS, AL_TOPUP_PACKAGES } from '@/lib/alConfig';
-import { useCheckout } from '@/hooks/useCheckout';
-import { IS_BETA, getEffectiveTier, getTrialStatus, TIER_CONFIG } from '@/lib/tierAccess';
-import { isAdminEmail } from '@/lib/adminAccess';
-import usePWAInstall from '@/hooks/usePWAInstall';
-import PWAInstallPrompt from '@/components/PWAInstallPrompt';
+import { useRouter } from 'next/navigation';
+
+
 import DeleteAccountModal from '@/components/DeleteAccountModal';
 import NotificationPreferences from '@/components/NotificationPreferences';
-import { useUserCredits, useClearUserData, useZipLookup, useSaveLocation, useBillingPortal } from '@/hooks/useUserData';
+import { useAuth } from '@/components/providers/AuthProvider';
+import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import { 
   XIcon, 
   LogoutIcon, 
@@ -45,6 +40,15 @@ import {
   DownloadIcon,
   CameraIcon
 } from '@/components/ui/Icons';
+import { useCheckout } from '@/hooks/useCheckout';
+import usePWAInstall from '@/hooks/usePWAInstall';
+import { useUserCredits, useClearUserData, useZipLookup, useSaveLocation, useBillingPortal } from '@/hooks/useUserData';
+import { isAdminEmail } from '@/lib/adminAccess';
+import { AL_PLANS, AL_TOPUP_PACKAGES } from '@/lib/alConfig';
+import { UI_IMAGES } from '@/lib/images';
+import { IS_BETA, getEffectiveTier, getTrialStatus, TIER_CONFIG } from '@/lib/tierAccess';
+
+import styles from './page.module.css';
 
 const PLAN_NAMES = { free: 'Free', collector: 'Enthusiast', tuner: 'Pro', admin: 'Admin' };
 

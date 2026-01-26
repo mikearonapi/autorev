@@ -13,8 +13,10 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import styles from './CookieConsent.module.css';
+
 import posthog from 'posthog-js';
+
+import styles from './CookieConsent.module.css';
 
 // =============================================================================
 // CONSTANTS

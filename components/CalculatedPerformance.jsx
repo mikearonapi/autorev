@@ -8,8 +8,10 @@
  */
 
 import React from 'react';
-import styles from './CalculatedPerformance.module.css';
+
 import { Icons } from '@/components/ui/Icons';
+
+import styles from './CalculatedPerformance.module.css';
 
 // ============================================================================
 // METRIC ROW - With progress bar (same as Performance tab)

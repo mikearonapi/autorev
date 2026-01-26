@@ -10,8 +10,30 @@
  */
 
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+
 import Image from 'next/image';
 import Link from 'next/link';
+
+import { Icons } from '@/components/ui/Icons';
+import {
+  checkUpgradeConflict,
+  resolveConflicts,
+  getConflictingUpgrades,
+} from '@/data/upgradeConflicts.js';
+import { getPlatformDownpipeGain } from '@/data/upgradePackages.js';
+import { useLinkedPost } from '@/hooks/useCommunityData';
+import { 
+  useTuningProfile, 
+  // Unused imports after hiding Vehicle-Specific Tuning section:
+  // getFormattedStages, getFormattedPlatforms, getFormattedPowerLimits, 
+  // getFormattedBrands, getDataQualityInfo, getTotalUpgradeCount,
+  // getUpgradesByObjective, getPlatformInsights, hasObjectiveData - moved to Insights page
+} from '@/hooks/useTuningProfile';
+import { 
+  getFocusLabel 
+} from '@/lib/carRecommendations.js';
+import { useTierConfig } from '@/lib/hooks/useAppConfig.js';
+
 import styles from './UpgradeCenter.module.css';
 
 // Upgrade category colors - matching design system tokens
@@ -30,39 +52,28 @@ import {
   getAvailableUpgrades,
   calculateTotalCost,
 } from '@/lib/performance.js';
-import { getPlatformDownpipeGain } from '@/data/upgradePackages.js';
 import { getUpgradeByKey } from '@/lib/upgrades.js';
-import { useTierConfig } from '@/lib/hooks/useAppConfig.js';
-import { 
-  getFocusLabel 
-} from '@/lib/carRecommendations.js';
 import { 
   calculateTunability, 
   getTunabilityColor 
 } from '@/lib/tunabilityCalculator.js';
 import {
-  checkUpgradeConflict,
-  resolveConflicts,
-  getConflictingUpgrades,
-} from '@/data/upgradeConflicts.js';
-import {
   validateUpgradeSelection,
   getRequiredUpgrades,
   SEVERITY,
 } from '@/lib/dependencyChecker.js';
+
 // carUpgradeRecommendations imports removed - recommendations moved to Insights page
 import CarImage from './CarImage';
+import UpgradeConfigPanel, { 
+  calculateConfigHpModifier, 
+  getDefaultConfig 
+} from './UpgradeConfigPanel';
 import UpgradeDetailModal from './UpgradeDetailModal';
 import { useSavedBuilds } from './providers/SavedBuildsProvider';
 import { useAuth } from './providers/AuthProvider';
 import { useOwnedVehicles } from './providers/OwnedVehiclesProvider';
-import { 
-  useTuningProfile, 
-  // Unused imports after hiding Vehicle-Specific Tuning section:
-  // getFormattedStages, getFormattedPlatforms, getFormattedPowerLimits, 
-  // getFormattedBrands, getDataQualityInfo, getTotalUpgradeCount,
-  // getUpgradesByObjective, getPlatformInsights, hasObjectiveData - moved to Insights page
-} from '@/hooks/useTuningProfile';
+
 // Import shared upgrade category definitions (single source of truth)
 import { 
   UPGRADE_CATEGORIES as SHARED_UPGRADE_CATEGORIES,
@@ -77,16 +88,13 @@ import {
 // Mobile-first tuning shop components
 import { CategoryNav, FactoryConfig, WheelTireConfigurator } from './tuning-shop';
 import PartsSelector from './tuning-shop/PartsSelector';
-import { useLinkedPost } from '@/hooks/useCommunityData';
+
+
 // Image management moved to Garage Photos section for cleaner UX
 import VideoPlayer from './VideoPlayer';
-import UpgradeConfigPanel, { 
-  calculateConfigHpModifier, 
-  getDefaultConfig 
-} from './UpgradeConfigPanel';
+
 // BuildDashboard removed per product decision to focus on upgrade selection flow
 // import BuildDashboard from './tuning-shop/BuildDashboard';
-import { Icons } from '@/components/ui/Icons';
 
 // Add swap alias to Icons (not in shared library)
 Icons.swap = ({ size = 16 }) => (

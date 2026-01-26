@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
-import { errors } from '@/lib/apiErrors';
+
 import { createClient } from '@supabase/supabase-js';
-import { decodeVIN, isValidVIN, cleanVIN } from '@/lib/vinDecoder';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { decodeVIN, isValidVIN, cleanVIN } from '@/lib/vinDecoder';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

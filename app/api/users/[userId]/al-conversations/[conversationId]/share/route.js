@@ -10,13 +10,17 @@
  * Auth: User must be authenticated and can only share their own conversations
  */
 
-import { NextResponse } from 'next/server';
-import { createServerSupabaseClient, getBearerToken, createAuthenticatedClient } from '@/lib/supabaseServer';
-import { errors } from '@/lib/apiErrors';
-import { getConversation } from '@/lib/alConversationService';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
-import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
+
+import { NextResponse } from 'next/server';
+
+import { createClient } from '@supabase/supabase-js';
+
+import { getConversation } from '@/lib/alConversationService';
+import { errors } from '@/lib/apiErrors';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createServerSupabaseClient, getBearerToken, createAuthenticatedClient } from '@/lib/supabaseServer';
+
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

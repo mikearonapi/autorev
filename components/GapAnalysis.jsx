@@ -15,6 +15,7 @@
  */
 
 import React, { useMemo } from 'react';
+
 import styles from './GapAnalysis.module.css';
 
 // Icons

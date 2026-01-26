@@ -17,10 +17,11 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
-import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
-import { fetchRecallRowsForCar, upsertRecallRows } from '@/lib/recallService';
+
 import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
+import { fetchRecallRowsForCar, upsertRecallRows } from '@/lib/recallService';
 import { logCronError, withErrorLogging } from '@/lib/serverErrorLogger';
+import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 

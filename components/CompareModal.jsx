@@ -11,17 +11,21 @@
  */
 
 import { useMemo, useEffect, useState } from 'react';
-import Link from 'next/link';
+
 import Image from 'next/image';
-import Modal from '@/components/ui/Modal';
-import styles from './CompareModal.module.css';
+import Link from 'next/link';
+
 import { useCompare } from '@/components/providers/CompareProvider';
-import { getCarHeroImage } from '@/lib/images';
-import { fetchCars } from '@/lib/carsClient';
-import { loadPreferences, hasUserPreferences, checkCarAgainstPreferences } from '@/lib/stores/userPreferencesStore';
-import { calculateWeightedScore } from '@/lib/scoring';
-import { Icons } from '@/components/ui/Icons';
 import EmptyState from '@/components/ui/EmptyState';
+import { Icons } from '@/components/ui/Icons';
+import Modal from '@/components/ui/Modal';
+import { fetchCars } from '@/lib/carsClient';
+import { getCarHeroImage } from '@/lib/images';
+import { calculateWeightedScore } from '@/lib/scoring';
+import { loadPreferences, hasUserPreferences, checkCarAgainstPreferences } from '@/lib/stores/userPreferencesStore';
+
+import styles from './CompareModal.module.css';
+
 
 // Comparison attributes with formatting and scoring
 const COMPARE_ATTRIBUTES = [

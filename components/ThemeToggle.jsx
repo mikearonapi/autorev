@@ -9,8 +9,10 @@
  * @module components/ThemeToggle
  */
 
-import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
+
+import { useTheme } from 'next-themes';
+
 import styles from './ThemeToggle.module.css';
 
 /**

@@ -1,10 +1,13 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+
 import Link from 'next/link';
+
+import { Icons } from '@/components/ui/Icons';
+
 import styles from './EventMap.module.css';
 import PremiumGate from './PremiumGate';
-import { Icons } from '@/components/ui/Icons';
 
 /**
  * Format date for tooltip

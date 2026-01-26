@@ -10,8 +10,10 @@
  * @route GET /api/admin/ai-cost-summary
  */
 
-import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+
+import { createClient } from '@supabase/supabase-js';
+
 import { requireAdmin } from '@/lib/adminAccess';
 import { ANTHROPIC_PRICING, calculateTokenCost } from '@/lib/alConfig';
 import { withErrorLogging } from '@/lib/serverErrorLogger';

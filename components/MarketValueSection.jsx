@@ -10,11 +10,13 @@
  */
 
 import React from 'react';
-import PremiumGate, { usePremiumAccess } from './PremiumGate';
-import styles from './MarketValueSection.module.css';
+
 import { Icons } from '@/components/ui/Icons';
 import { useCarMarketValue, useCarPriceByYear } from '@/hooks/useCarData';
 import { formatMonthYear } from '@/lib/dateUtils';
+
+import styles from './MarketValueSection.module.css';
+import PremiumGate, { usePremiumAccess } from './PremiumGate';
 
 /**
  * Format price as currency

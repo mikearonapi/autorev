@@ -18,6 +18,7 @@
  */
 
 import { useMemo } from 'react';
+
 import { calculateAllModificationGains } from '@/lib/performanceCalculator';
 
 /**

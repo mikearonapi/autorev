@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+
 import Image from 'next/image';
+
 import { useAuth } from '@/components/providers/AuthProvider';
-import { usePostComments, useAddComment, useUpdateComment, useDeleteComment } from '@/hooks/useCommunityData';
 import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import SwipeableRow from '@/components/ui/SwipeableRow';
+import { usePostComments, useAddComment, useUpdateComment, useDeleteComment } from '@/hooks/useCommunityData';
+
 import styles from './CommentsSheet.module.css';
 
 /**

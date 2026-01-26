@@ -15,25 +15,27 @@
  */
 
 import React, { useState, useEffect, Suspense, useRef } from 'react';
+
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 
-import styles from './page.module.css';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import AuthModal, { useAuthModal } from '@/components/AuthModal';
+import BuildMediaGallery from '@/components/BuildMediaGallery';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { MyGarageSubNav, GarageVehicleSelector } from '@/components/garage';
-import { useAuth } from '@/components/providers/AuthProvider';
-import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
-import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
-import { useGarageScore } from '@/hooks/useGarageScore';
-import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import ImageUploader from '@/components/ImageUploader';
-import BuildMediaGallery from '@/components/BuildMediaGallery';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import { useAuth } from '@/components/providers/AuthProvider';
+import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
+import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import ShareBuildButton from '@/components/ShareBuildButton';
-import { useCarImages } from '@/hooks/useCarImages';
-import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
-import { Icons } from '@/components/ui/Icons';
 import EmptyState from '@/components/ui/EmptyState';
+import { Icons } from '@/components/ui/Icons';
+import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
+import { useCarImages } from '@/hooks/useCarImages';
+import { useGarageScore } from '@/hooks/useGarageScore';
+
+import styles from './page.module.css';
 
 function MyPhotosContent() {
   const searchParams = useSearchParams();

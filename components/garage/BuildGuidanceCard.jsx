@@ -17,9 +17,11 @@
  */
 
 import React from 'react';
-import styles from './BuildGuidanceCard.module.css';
-import { GOAL_CATEGORY_MAP } from '@/lib/upgradeCategories';
+
 import { Icons } from '@/components/ui/Icons';
+import { GOAL_CATEGORY_MAP } from '@/lib/upgradeCategories';
+
+import styles from './BuildGuidanceCard.module.css';
 
 // Local icons for trust signals with YouTube and chart that don't exist in shared lib
 const LocalIcons = {

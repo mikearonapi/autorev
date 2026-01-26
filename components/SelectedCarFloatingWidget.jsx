@@ -10,11 +10,14 @@
  */
 
 import { useState, useEffect } from 'react';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+
 import { useCarSelection, useHasSelectedCar } from '@/components/providers/CarSelectionProvider';
-import styles from './SelectedCarFloatingWidget.module.css';
 import { Icons } from '@/components/ui/Icons';
+
+import styles from './SelectedCarFloatingWidget.module.css';
 
 /**
  * Selected Car Floating Widget

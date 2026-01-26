@@ -8,6 +8,7 @@
  */
 
 import { useState } from 'react';
+
 import styles from './CategoryProgress.module.css';
 
 // Category icons

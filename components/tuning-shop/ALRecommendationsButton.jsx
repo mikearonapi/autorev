@@ -12,11 +12,14 @@
  */
 
 import { useState, useCallback, useRef } from 'react';
+
 import Image from 'next/image';
+
 import { useAIChat } from '@/components/AIChatContext';
-import { UI_IMAGES } from '@/lib/images';
-import { Icons } from '@/components/ui/Icons';
 import ALQuickActionsPopup, { generatePartsPageActions, defaultPartsPageActions } from '@/components/ALQuickActionsPopup';
+import { Icons } from '@/components/ui/Icons';
+import { UI_IMAGES } from '@/lib/images';
+
 import styles from './ALRecommendationsButton.module.css';
 
 /**

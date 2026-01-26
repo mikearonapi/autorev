@@ -11,8 +11,9 @@
  */
 
 import { NextResponse } from 'next/server';
-import { searchNearbyShops } from '@/lib/serviceCenterService';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { searchNearbyShops } from '@/lib/serviceCenterService';
 
 async function handlePost(request) {
   try {

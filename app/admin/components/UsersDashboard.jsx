@@ -11,8 +11,9 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+
 import Image from 'next/image';
-import styles from './UsersDashboard.module.css';
+
 import {
   UsersIcon,
   SearchIcon,
@@ -20,6 +21,7 @@ import {
   ChevronUpIcon,
   ExternalLinkIcon,
 } from './Icons';
+import styles from './UsersDashboard.module.css';
 
 // Tier badge colors - Dark theme compatible
 const TIER_COLORS = {

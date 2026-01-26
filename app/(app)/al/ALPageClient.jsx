@@ -14,9 +14,12 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { createPortal } from 'react-dom';
+
 import Image from 'next/image';
-import styles from './page.module.css';
+import { useRouter } from 'next/navigation';
+
+
 import ALAttachmentMenu, { ALAttachmentsBar } from '@/components/ALAttachmentMenu';
 import ALPreferencesPanel, { useALPreferences } from '@/components/ALPreferencesPanel';
 import ALSourcesList from '@/components/ALSourcesList';
@@ -33,6 +36,8 @@ import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
 import { useUserConversations, useUserConversation } from '@/hooks/useUserData';
 import { trackALConversationStart } from '@/lib/ga4';
 import { UI_IMAGES } from '@/lib/images';
+
+import styles from './page.module.css';
 
 // Simple markdown formatter for AL responses
 const FormattedMessage = ({ content }) => {
@@ -335,6 +340,12 @@ export default function ALPageClient() {
   // Preferences state
   const [showPreferences, setShowPreferences] = useState(false);
   const { preferences: _alPreferences, updatePreferences } = useALPreferences();
+  
+  // Portal mounting - required for SSR compatibility
+  const [isMounted, setIsMounted] = useState(false);
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   // Feedback state
   const [feedbackGiven, setFeedbackGiven] = useState({}); // { messageIndex: 'positive' | 'negative' }
@@ -1365,8 +1376,8 @@ export default function ALPageClient() {
         </div>
       </div>
 
-      {/* Preferences Panel */}
-      {showPreferences && (
+      {/* Preferences Panel - Rendered via Portal */}
+      {showPreferences && isMounted && createPortal(
         <div className={styles.preferencesOverlay} data-overlay-modal>
           <ALPreferencesPanel
             isOpen={showPreferences}
@@ -1374,7 +1385,8 @@ export default function ALPageClient() {
             userTier={user?.tier || 'free'}
             onPreferencesChange={updatePreferences}
           />
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Messages Area */}

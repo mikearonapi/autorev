@@ -1,12 +1,15 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { createPortal } from 'react-dom';
-import { analyzeScenario } from '@/lib/dependencyChecker';
-import InfoTooltip from './ui/InfoTooltip';
-import styles from './UpgradeDetailModal.module.css';
+
 import { Icons } from '@/components/ui/Icons';
 import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
+import { analyzeScenario } from '@/lib/dependencyChecker';
+
+import InfoTooltip from './ui/InfoTooltip';
+import styles from './UpgradeDetailModal.module.css';
 
 /**
  * Determine which scenario explanation applies to an upgrade

@@ -7,7 +7,9 @@
  */
 
 import { useState, useCallback, useEffect } from 'react';
+
 import Image from 'next/image';
+
 import styles from './ImageGallery.module.css';
 
 export default function ImageGallery({ images = [], title = 'Gallery', heroImageId = null }) {

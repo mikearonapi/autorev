@@ -9,8 +9,10 @@
  * https://nextjs.org/docs/app/building-your-application/routing/error-handling
  */
 
-import * as Sentry from '@sentry/nextjs';
 import { useEffect } from 'react';
+
+import * as Sentry from '@sentry/nextjs';
+
 import styles from './error.module.css';
 
 export default function Error({ error, reset }) {

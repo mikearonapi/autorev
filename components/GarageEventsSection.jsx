@@ -1,12 +1,15 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+
 import Link from 'next/link';
-import styles from './GarageEventsSection.module.css';
-import PremiumGate from '@/components/PremiumGate';
+
 import { EventTypeIcon, TrackEventBadgeIcon, CategoryIcons } from '@/components/icons/EventIcons';
+import PremiumGate from '@/components/PremiumGate';
 import { useEvents } from '@/hooks/useEventsData';
 import { getMonthAbbrev, getDayOfMonth, formatEventDateShort } from '@/lib/dateUtils';
+
+import styles from './GarageEventsSection.module.css';
 
 /**
  * GarageEventsSection - Shows upcoming events for user's owned vehicles or favorites

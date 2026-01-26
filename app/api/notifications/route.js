@@ -7,9 +7,10 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabaseServer';
+
 import { getNotifications } from '@/lib/notificationService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createServerSupabaseClient } from '@/lib/supabaseServer';
 
 async function handleGet(request) {
   try {

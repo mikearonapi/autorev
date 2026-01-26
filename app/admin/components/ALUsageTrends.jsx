@@ -13,8 +13,10 @@
  */
 
 import { useState, useMemo } from 'react';
-import styles from './ALUsageTrends.module.css';
+
 import { useAdminALTrends } from '@/hooks/useAdminData';
+
+import styles from './ALUsageTrends.module.css';
 
 // SVG Icons
 const BrainIcon = ({ size = 20 }) => (
@@ -277,7 +279,7 @@ function BreakdownSection({ breakdown }) {
 }
 
 // Main component
-export function ALUsageTrends({ token }) {
+export function ALUsageTrends({ token: _token }) {
   const [days, setDays] = useState(30);
   const [selectedMetric, setSelectedMetric] = useState('tokens');
   

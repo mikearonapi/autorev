@@ -11,13 +11,15 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
+
+import { answersToDbFields, POINTS_PER_QUESTION } from '@/data/insightQuestions';
 import { errors } from '@/lib/apiErrors';
 import { awardPoints } from '@/lib/pointsService';
-import { answersToDbFields, POINTS_PER_QUESTION } from '@/data/insightQuestions';
 import { preferencesQuestionnaireSchema, validateWithSchema, validationErrorResponse } from '@/lib/schemas/index.js';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

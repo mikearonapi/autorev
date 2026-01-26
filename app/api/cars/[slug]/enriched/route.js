@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
-import { errors } from '@/lib/apiErrors';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
+
 import { resolveCarId } from '@/lib/carResolver';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 /**
  * GET /api/cars/[slug]/enriched

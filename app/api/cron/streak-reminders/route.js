@@ -9,9 +9,11 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { createNotification, NOTIFICATION_CATEGORIES } from '@/lib/notificationService';
+
 import { getStreakReminderCopy, STREAK_MILESTONES } from '@/lib/engagementService';
+import { createNotification, NOTIFICATION_CATEGORIES } from '@/lib/notificationService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Minimum streak length to send reminders (don't spam new users)

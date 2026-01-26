@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+
 import { logError } from '@/lib/errorLogger';
 
 // Debounce resource errors to avoid flooding on pages with many broken assets

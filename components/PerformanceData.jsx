@@ -9,12 +9,17 @@
  */
 
 import React from 'react';
+
 import Link from 'next/link';
-import PremiumGate, { TeaserPrompt, usePremiumAccess } from './PremiumGate';
-import { TEASER_LIMITS } from '@/lib/tierAccess';
-import { useCarDynoRuns, useCarLapTimes } from '@/hooks/useCarData';
-import styles from './PerformanceData.module.css';
+
 import { Icons } from '@/components/ui/Icons';
+import { useCarDynoRuns, useCarLapTimes } from '@/hooks/useCarData';
+import { TEASER_LIMITS } from '@/lib/tierAccess';
+
+import styles from './PerformanceData.module.css';
+import PremiumGate, { TeaserPrompt, usePremiumAccess } from './PremiumGate';
+
+
 
 /**
  * Dyno Data Section

@@ -1,11 +1,15 @@
 'use client';
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
-import { createPortal } from 'react-dom';
+
 import Image from 'next/image';
+
+import { createPortal } from 'react-dom';
+
 import CarImage from '@/components/CarImage';
-import styles from './CarPickerFullscreen.module.css';
 import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
+
+import styles from './CarPickerFullscreen.module.css';
 
 /**
  * CarPickerFullscreen - Full-screen car selection experience

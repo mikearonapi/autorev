@@ -17,6 +17,7 @@
  */
 
 import { useState } from 'react';
+
 import styles from './GarageScoreCard.module.css';
 
 // Score categories with icons and labels

@@ -21,6 +21,7 @@
  */
 
 import { useEffect } from 'react';
+
 import { ErrorLogger, logError } from '@/lib/errorLogger';
 
 // Track if we've already patched fetch

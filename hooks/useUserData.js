@@ -12,9 +12,11 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+
 import apiClient from '@/lib/apiClient';
-import { CACHE_TIMES } from './useCarData';
 import { getPrefetchedData } from '@/lib/prefetch';
+
+import { CACHE_TIMES } from './useCarData';
 
 // =============================================================================
 // QUERY KEY FACTORIES

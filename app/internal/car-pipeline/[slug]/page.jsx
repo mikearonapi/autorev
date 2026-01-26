@@ -13,8 +13,10 @@
  */
 
 import { useState, useEffect, use } from 'react';
+
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+
 import styles from './page.module.css';
 
 // Phase configuration with detailed checklist items

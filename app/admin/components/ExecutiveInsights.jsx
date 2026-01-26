@@ -13,6 +13,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+
 import styles from './ExecutiveInsights.module.css';
 
 // SVG Icons

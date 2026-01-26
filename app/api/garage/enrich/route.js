@@ -20,17 +20,19 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+
+import { calculateTokenCost } from '@/lib/alConfig';
+import { deductUsage, getUserBalance } from '@/lib/alUsageService';
+import { errors } from '@/lib/apiErrors';
 import { 
   enrichDailyDriver, 
   getExistingEnrichment, 
   linkEnrichmentToVehicle 
 } from '@/lib/dailyDriverEnrichmentService';
-import { deductUsage, getUserBalance } from '@/lib/alUsageService';
-import { calculateTokenCost } from '@/lib/alConfig';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
-import { errors } from '@/lib/apiErrors';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 
 // Service role client for database operations
 function getServiceClient() {

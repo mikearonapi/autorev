@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useLayoutEffect } from 'react';
+
 import { usePathname } from 'next/navigation';
 
 // Use useLayoutEffect on client, useEffect for SSR safety

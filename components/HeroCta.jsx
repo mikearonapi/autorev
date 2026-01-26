@@ -8,6 +8,7 @@
  */
 
 import { useState, useEffect } from 'react';
+
 import styles from '@/app/(marketing)/page.module.css';
 
 // Brand suffix rotation: Revival → Revelation → Revolution

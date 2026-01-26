@@ -1,9 +1,12 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
 import { Suspense } from 'react';
+
+import Image from 'next/image';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+
+
 import { UI_IMAGES } from '@/lib/images';
 
 /**

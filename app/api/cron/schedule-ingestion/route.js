@@ -14,8 +14,9 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
-import * as scrapeJobService from '@/lib/scrapeJobService';
+
 import { notifyCronCompletion, notifyCronFailure } from '@/lib/discord';
+import * as scrapeJobService from '@/lib/scrapeJobService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const CRON_SECRET = process.env.CRON_SECRET;

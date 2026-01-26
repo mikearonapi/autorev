@@ -15,15 +15,18 @@
  */
 
 import { useMemo } from 'react';
+
 import Link from 'next/link';
+
+import { Icons } from '@/components/ui/Icons';
+import { getToolsForBuild, calculateBuildComplexity, difficultyLevels, toolCategories } from '@/data/upgradeTools.js';
+import { formatEventDate } from '@/lib/dateUtils';
+import { validateUpgradeSelection, getSystemImpactOverview, SEVERITY } from '@/lib/dependencyChecker.js';
+import { getUpgradeByKey, getCanonicalCategories, getCanonicalCategoryKey } from '@/lib/upgrades.js';
+
+import styles from './BuildDetailView.module.css';
 import CarImage from './CarImage';
 import InfoTooltip, { InfoTooltipIcon } from './ui/InfoTooltip';
-import { getUpgradeByKey, getCanonicalCategories, getCanonicalCategoryKey } from '@/lib/upgrades.js';
-import { validateUpgradeSelection, getSystemImpactOverview, SEVERITY } from '@/lib/dependencyChecker.js';
-import { getToolsForBuild, calculateBuildComplexity, difficultyLevels, toolCategories } from '@/data/upgradeTools.js';
-import { Icons } from '@/components/ui/Icons';
-import { formatEventDate } from '@/lib/dateUtils';
-import styles from './BuildDetailView.module.css';
 
 /**
  * Build Summary Header Card

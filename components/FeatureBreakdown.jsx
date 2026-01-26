@@ -1,11 +1,14 @@
 'use client';
 
 import React from 'react';
+
 import Image from 'next/image';
-import { UI_IMAGES } from '@/lib/images';
-import styles from './FeatureBreakdown.module.css';
+
 import { Icons } from '@/components/ui/Icons';
+import { UI_IMAGES } from '@/lib/images';
 import { CAR_COUNT_DISPLAY } from '@/lib/marketingStats';
+
+import styles from './FeatureBreakdown.module.css';
 
 const AlIcon = ({ size = 18 }) => (
   <Image

@@ -12,6 +12,7 @@
  */
 
 import { Suspense } from 'react';
+
 import InsightsClient from './InsightsClient';
 import styles from './page.module.css';
 

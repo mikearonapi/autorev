@@ -16,9 +16,10 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+
 import { errors } from '@/lib/apiErrors';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 
 /**
  * Create Supabase client for route handlers (supports both cookie and Bearer token)

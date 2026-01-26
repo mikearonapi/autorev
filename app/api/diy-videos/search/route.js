@@ -11,8 +11,9 @@
  */
 
 import { NextResponse } from 'next/server';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 const EXA_API_KEY = process.env.EXA_API_KEY;
 const CACHE_TTL_DAYS = 7;

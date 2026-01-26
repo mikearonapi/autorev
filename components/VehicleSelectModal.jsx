@@ -1,9 +1,12 @@
 'use client';
 
 import { useEffect, forwardRef } from 'react';
-import { createPortal } from 'react-dom';
+
 import Image from 'next/image';
 import Link from 'next/link';
+
+import { createPortal } from 'react-dom';
+
 import styles from './VehicleSelectModal.module.css';
 
 const VehicleSelectModal = forwardRef(function VehicleSelectModal({ vehicles, selectedId, onSelect, onClose }, ref) {

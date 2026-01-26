@@ -11,10 +11,12 @@
  */
 
 import { useCallback } from 'react';
+
 import { useQueryClient } from '@tanstack/react-query';
+
 import { useAuth } from '@/components/providers/AuthProvider';
-import { userKeys, carKeys, communityKeys, alKeys } from '@/lib/queryKeys';
 import apiClient from '@/lib/apiClient';
+import { userKeys, carKeys, communityKeys, alKeys } from '@/lib/queryKeys';
 
 // Cache times (aligned with useCarData.js)
 const CACHE_TIMES = {

@@ -16,8 +16,10 @@
  */
 
 import React, { useMemo } from 'react';
-import { PARTS_VENDOR_SHORTLIST } from '@/lib/partsVendors';
+
 import { Icons } from '@/components/ui/Icons';
+import { PARTS_VENDOR_SHORTLIST } from '@/lib/partsVendors';
+
 import styles from './VendorBadge.module.css';
 
 // Build a lookup map of all trusted vendors

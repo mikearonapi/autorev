@@ -7,12 +7,14 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
+
 import { recordFeedback } from '@/lib/alFeedbackService';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
-import { rateLimit } from '@/lib/rateLimit';
 import { errors } from '@/lib/apiErrors';
+import { rateLimit } from '@/lib/rateLimit';
 import { alFeedbackSchema, validateWithSchema, validationErrorResponse } from '@/lib/schemas/index.js';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * Get authenticated user from request

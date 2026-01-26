@@ -7,13 +7,14 @@
  * @route GET /api/admin/beta-dashboard
  */
 
-import { createServerSupabaseClient } from '@/lib/supabaseServer';
 import { NextResponse } from 'next/server';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createServerSupabaseClient } from '@/lib/supabaseServer';
 
 export const dynamic = 'force-dynamic';
 
-async function handleGet(request) {
+async function handleGet(_request) {
   try {
     const supabase = await createServerSupabaseClient();
     

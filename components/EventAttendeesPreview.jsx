@@ -8,10 +8,13 @@
  */
 
 import { useState } from 'react';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import styles from './EventAttendeesPreview.module.css';
+
 import { useEventAttendees } from '@/hooks/useEventsData';
+
+import styles from './EventAttendeesPreview.module.css';
 import { useAuth } from './providers/AuthProvider';
 
 // Icons

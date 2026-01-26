@@ -7,9 +7,11 @@
  * GET /api/admin/parts-quality
  */
 
-import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import { headers } from 'next/headers';
+import { NextResponse } from 'next/server';
+
+import { createClient } from '@supabase/supabase-js';
+
 import { getQualitySummary } from '@/lib/partsQualityService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 

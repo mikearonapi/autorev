@@ -18,13 +18,15 @@
  */
 
 import { NextResponse } from 'next/server';
-import { put, del } from '@vercel/blob';
+
 import { createClient } from '@supabase/supabase-js';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
-import { compressFile, isCompressible } from '@/lib/tinify';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { put, del } from '@vercel/blob';
+
 import { errors } from '@/lib/apiErrors';
 import { awardPoints } from '@/lib/pointsService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+import { compressFile, isCompressible } from '@/lib/tinify';
 
 // File size limits
 // NOTE: Vercel serverless has 4.5MB body limit, so this route can't handle large files
@@ -115,7 +117,7 @@ async function handlePost(request) {
 
     // Compress image with TinyPNG before uploading (skip for videos)
     let fileToUpload = file;
-    let originalFileSize = file.size;
+    const originalFileSize = file.size;
     let compressionApplied = false;
     let compressionSavings = 0;
 

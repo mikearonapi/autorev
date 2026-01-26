@@ -24,12 +24,15 @@
  */
 
 import { useState, useMemo, useCallback } from 'react';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import { getUpgradeByKey } from '@/lib/upgrades';
+
 import { useAIChat } from '@/components/AIChatContext';
-import { UI_IMAGES } from '@/lib/images';
 import { Icons } from '@/components/ui/Icons';
+import { UI_IMAGES } from '@/lib/images';
+import { getUpgradeByKey } from '@/lib/upgrades';
+
 import styles from './PartsSelector.module.css';
 
 // Status definitions

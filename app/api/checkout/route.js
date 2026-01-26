@@ -10,8 +10,13 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import Stripe from 'stripe';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+
+import { errors } from '@/lib/apiErrors';
+import { checkTrialEligibility } from '@/lib/fraudPreventionService';
+import { rateLimit } from '@/lib/rateLimit';
+import { logServerError, withErrorLogging } from '@/lib/serverErrorLogger';
 import {
   SUBSCRIPTION_TIERS,
   AL_CREDIT_PACKS,
@@ -20,10 +25,7 @@ import {
   getPriceIdForTier,
   getTierPricing,
 } from '@/lib/stripe';
-import { logServerError, withErrorLogging } from '@/lib/serverErrorLogger';
-import { errors } from '@/lib/apiErrors';
-import { rateLimit } from '@/lib/rateLimit';
-import { checkTrialEligibility } from '@/lib/fraudPreventionService';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 

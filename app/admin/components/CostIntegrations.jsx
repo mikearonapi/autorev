@@ -14,8 +14,10 @@
  */
 
 import { useState } from 'react';
-import styles from './CostIntegrations.module.css';
+
 import { useAdminExternalCosts } from '@/hooks/useAdminData';
+
+import styles from './CostIntegrations.module.css';
 
 // Icons
 const CheckCircleIcon = ({ size = 16 }) => (

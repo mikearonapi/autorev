@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
+
 import { useSearchParams } from 'next/navigation';
+
 import styles from './page.module.css';
 
 /**

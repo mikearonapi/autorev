@@ -11,9 +11,11 @@
  * Set this URL in your Resend dashboard: /api/webhooks/resend
  */
 
-import { NextResponse } from 'next/server';
-import { handleResendWebhook } from '@/lib/emailService';
 import crypto from 'crypto';
+
+import { NextResponse } from 'next/server';
+
+import { handleResendWebhook } from '@/lib/emailService';
 import { logServerError, withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Resend webhook signing secret (set in Resend dashboard)

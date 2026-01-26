@@ -11,9 +11,11 @@
  * - Profile completion (questionnaire)
  */
 
-import Link from 'next/link';
 import Image from 'next/image';
+import Link from 'next/link';
+
 import { UI_IMAGES } from '@/lib/images';
+
 import { 
   GarageIcon,
   DataIcon,

@@ -7,8 +7,9 @@
  * Shows persona type, key traits, and how well AL knows them.
  */
 
-import styles from './PersonaSummary.module.css';
 import { PERSONA_TYPES, KNOWLEDGE_LEVELS } from '@/data/questionnaireLibrary';
+
+import styles from './PersonaSummary.module.css';
 
 export default function PersonaSummary({
   drivingPersona,

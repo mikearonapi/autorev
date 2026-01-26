@@ -9,12 +9,15 @@
  */
 
 import React, { useState, useEffect } from 'react';
+
 import Image from 'next/image';
-import Modal from '@/components/ui/Modal';
+
+import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import { Icons } from '@/components/ui/Icons';
+import Modal from '@/components/ui/Modal';
 import { getFacebookShareUrl, getTwitterShareUrl, getInstagramShareInfo, getNativeShareData } from '@/lib/communityService';
 import { platform } from '@/lib/platform';
-import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
+
 import styles from './ShareBuildModal.module.css';
 
 export default function ShareBuildModal({

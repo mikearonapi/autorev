@@ -8,9 +8,9 @@
  */
 
 import { NextResponse } from 'next/server';
-import { errors } from '@/lib/apiErrors';
-import { createAuthenticatedClient, getBearerToken, createServerSupabaseClient } from '@/lib/supabaseServer';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createAuthenticatedClient, getBearerToken, createServerSupabaseClient } from '@/lib/supabaseServer';
 
 const MAX_DISMISSALS = 3;
 

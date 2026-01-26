@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
-import { getPublicClient } from '@/lib/supabaseServer';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
+
 import { errors } from '@/lib/apiErrors';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { getPublicClient } from '@/lib/supabaseServer';
 
 export const dynamic = 'force-dynamic';
 

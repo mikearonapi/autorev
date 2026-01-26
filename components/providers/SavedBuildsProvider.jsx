@@ -11,16 +11,19 @@
  */
 
 import { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from 'react';
+
 import { useAuth } from '@/components/providers/AuthProvider';
+import { getPrefetchedData } from '@/lib/prefetch';
+import { hasAccess, IS_BETA } from '@/lib/tierAccess';
 import {
   fetchUserProjects,
   saveUserProject,
   updateUserProject,
   deleteUserProject,
 } from '@/lib/userDataService';
-import { getPrefetchedData } from '@/lib/prefetch';
+
 import { useLoadingProgress } from './LoadingProgressProvider';
-import { hasAccess, IS_BETA } from '@/lib/tierAccess';
+
 
 // Auto-save debounce delay (milliseconds)
 const AUTO_SAVE_DEBOUNCE_MS = 500;

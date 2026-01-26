@@ -8,10 +8,12 @@
  * @route POST /api/admin/insights - Force regenerate insights
  */
 
-import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
-import { requireAdmin } from '@/lib/adminAccess';
+
 import Anthropic from '@anthropic-ai/sdk';
+import { createClient } from '@supabase/supabase-js';
+
+import { requireAdmin } from '@/lib/adminAccess';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

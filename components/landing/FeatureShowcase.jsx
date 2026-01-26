@@ -1,5 +1,7 @@
 import Image from 'next/image';
+
 import IPhoneFrame from '@/components/IPhoneFrame';
+
 import styles from './FeatureShowcase.module.css';
 
 const CheckIcon = ({ size = 16 }) => (

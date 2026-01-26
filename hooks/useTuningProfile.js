@@ -8,7 +8,9 @@
  */
 
 import { useMemo, useCallback } from 'react';
+
 import { useQuery } from '@tanstack/react-query';
+
 import { supabase } from '@/lib/supabase';
 
 // Cache time for tuning profiles (5 minutes)

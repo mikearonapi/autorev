@@ -8,9 +8,10 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { requireAdmin, getAuthErrorStatus } from '@/lib/adminAuth';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 /**
  * Generate a slug from event name

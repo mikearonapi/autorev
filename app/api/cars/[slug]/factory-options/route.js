@@ -12,9 +12,9 @@
  */
 
 import { NextResponse } from 'next/server';
-import { errors } from '@/lib/apiErrors';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 async function handleGet(request, { params }) {
   const { slug } = await params;

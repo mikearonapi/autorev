@@ -1,11 +1,15 @@
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+
 import Link from 'next/link';
-import { supabase } from '@/lib/supabase';
-import styles from './page.module.css';
+import { useSearchParams, useRouter } from 'next/navigation';
+
 import { Icons } from '@/components/ui/Icons';
+import { supabase } from '@/lib/supabase';
+
+import styles from './page.module.css';
+
 
 /**
  * Password validation

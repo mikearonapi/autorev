@@ -13,20 +13,23 @@
  */
 
 import { useState, useMemo, useEffect, useCallback, Suspense } from 'react';
+
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useAuth } from '@/components/providers/AuthProvider';
-import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
-import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
-import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
-import { useCarsList } from '@/hooks/useCarData';
+
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import LapTimeEstimator from '@/components/LapTimeEstimator';
-import TrackTimeLogModal from '@/components/TrackTimeLogModal';
-import { useUserTrackTimes, useAddTrackTime, useDeleteTrackTime } from '@/hooks/useUserData';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import OnboardingPopup, { dataOnboardingSteps } from '@/components/OnboardingPopup';
+import { useAuth } from '@/components/providers/AuthProvider';
+import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
+import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
+import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
+import TrackTimeLogModal from '@/components/TrackTimeLogModal';
+import { useCarsList } from '@/hooks/useCarData';
+import { useUserTrackTimes, useAddTrackTime, useDeleteTrackTime } from '@/hooks/useUserData';
 import { calculateAllModificationGains } from '@/lib/performanceCalculator';
+
 import styles from './page.module.css';
 
 // Icons

@@ -9,8 +9,9 @@
  * model improves, so we compute from (car specs + selected upgrades).
  */
 
-import styles from './PerformanceComparison.module.css';
 import { getPerformanceProfile } from '@/lib/performanceCalculator';
+
+import styles from './PerformanceComparison.module.css';
 
 // SVG Icons matching the Tuning Shop style
 const Icons = {

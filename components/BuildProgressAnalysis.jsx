@@ -9,9 +9,10 @@
  */
 
 import React, { useMemo } from 'react';
+
+import styles from './BuildProgressAnalysis.module.css';
 import InfoTooltip from './ui/InfoTooltip';
 import InsightFeedback from './ui/InsightFeedback';
-import styles from './BuildProgressAnalysis.module.css';
 
 // Icons
 const RocketIcon = ({ size = 16 }) => (

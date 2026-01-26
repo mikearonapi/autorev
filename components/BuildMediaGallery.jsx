@@ -14,9 +14,12 @@
  */
 
 import React, { useState, useCallback } from 'react';
+
 import Image from 'next/image';
-import { getCarHeroImage } from '@/lib/images';
+
 import { Icons } from '@/components/ui/Icons';
+import { getCarHeroImage } from '@/lib/images';
+
 import styles from './BuildMediaGallery.module.css';
 
 /**

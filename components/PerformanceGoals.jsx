@@ -17,7 +17,9 @@
  */
 
 import { useState, useCallback } from 'react';
+
 import { formatDateSimple } from '@/lib/dateUtils';
+
 import styles from './PerformanceGoals.module.css';
 
 // Icons

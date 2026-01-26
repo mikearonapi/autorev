@@ -6,9 +6,9 @@
  */
 
 import { NextResponse } from 'next/server';
-import { errors } from '@/lib/apiErrors';
-import { decodeVIN, isValidVIN, cleanVIN } from '@/lib/vinDecoder';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { decodeVIN, isValidVIN, cleanVIN } from '@/lib/vinDecoder';
 
 async function handleGet(request) {
   const { searchParams } = new URL(request.url);

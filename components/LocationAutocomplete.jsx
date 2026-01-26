@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+
 import styles from './LocationAutocomplete.module.css';
 
 // US State name to abbreviation mapping

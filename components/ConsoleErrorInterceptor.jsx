@@ -13,6 +13,7 @@
  */
 
 import { useEffect } from 'react';
+
 import { logError } from '@/lib/errorLogger';
 
 let isPatched = false;

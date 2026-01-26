@@ -17,14 +17,16 @@
  */
 
 import { useState, useMemo } from 'react';
-import styles from './ConsolidatedAnalytics.module.css';
-import { Tooltip, METRIC_DEFINITIONS } from './Tooltip';
+
 import { 
   useAdminSiteAnalytics, 
   useAdminMarketingAnalytics, 
   useAdminAdvancedAnalytics, 
   useAdminDashboard 
 } from '@/hooks/useAdminData';
+
+import styles from './ConsolidatedAnalytics.module.css';
+import { Tooltip, METRIC_DEFINITIONS } from './Tooltip';
 
 // NOTE: "Visitors" must be unique visitors. Do NOT sum per-page visitors (double counts).
 

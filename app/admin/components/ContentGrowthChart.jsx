@@ -13,8 +13,10 @@
  */
 
 import { useState, useMemo } from 'react';
-import styles from './ContentGrowthChart.module.css';
+
 import { useAdminContentGrowth } from '@/hooks/useAdminData';
+
+import styles from './ContentGrowthChart.module.css';
 
 // SVG Icons
 const TrendUpIcon = ({ size = 14 }) => (
@@ -278,7 +280,7 @@ function SummaryStats({ summary, growth, selectedType }) {
 }
 
 // Main component
-export function ContentGrowthChart({ token }) {
+export function ContentGrowthChart({ token: _token }) {
   const [days, setDays] = useState(30);
   const [selectedType, setSelectedType] = useState('vehicles');
   

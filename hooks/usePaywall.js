@@ -12,6 +12,7 @@
  */
 
 import { useState, useCallback, useMemo } from 'react';
+
 import { useSubscription } from '@/hooks/useSubscription';
 import { trackActivity } from '@/lib/activityTracker';
 

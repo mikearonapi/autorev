@@ -8,12 +8,16 @@
  */
 
 import { useState, useCallback, useEffect, useRef } from 'react';
+
 import Link from 'next/link';
-import styles from './SaveEventButton.module.css';
-import { useAuth } from './providers/AuthProvider';
-import { useAuthModal } from './AuthModal';
-import { hasAccess, getUpgradeCTA, IS_BETA } from '@/lib/tierAccess';
+
 import { useSaveEvent } from '@/hooks/useEventsData';
+import { hasAccess, getUpgradeCTA, IS_BETA } from '@/lib/tierAccess';
+
+import { useAuthModal } from './AuthModal';
+import { useAuth } from './providers/AuthProvider';
+import styles from './SaveEventButton.module.css';
+
 
 // Heart Icon - matches CarActionMenu exactly
 const HeartIcon = ({ filled, size = 14 }) => (

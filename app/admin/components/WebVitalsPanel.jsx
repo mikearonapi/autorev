@@ -13,6 +13,7 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
+
 import styles from './WebVitalsPanel.module.css';
 
 // Icons

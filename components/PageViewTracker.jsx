@@ -15,7 +15,9 @@
  */
 
 import { useEffect, useRef, useCallback } from 'react';
+
 import { usePathname, useSearchParams } from 'next/navigation';
+
 import { useAuth } from '@/components/providers/AuthProvider';
 
 // Generate a unique session ID
@@ -44,7 +46,7 @@ function getVisitorId() {
 
 // Convert pathname to route pattern
 function getRoutePattern(pathname) {
-  let route = pathname
+  const route = pathname
     .replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, '[id]')
     .replace(/\/\d+(?=\/|$)/g, '/[id]')
     .replace(/\/\d{4}-[a-z0-9-]+-[a-z0-9-]+/gi, '/[slug]');

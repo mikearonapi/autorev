@@ -6,8 +6,10 @@
  * @route GET /api/admin/system-health
  */
 
-import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+
+import { createClient } from '@supabase/supabase-js';
+
 import { requireAdmin } from '@/lib/adminAccess';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 

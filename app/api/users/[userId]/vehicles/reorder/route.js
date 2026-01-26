@@ -8,10 +8,10 @@
  */
 
 import { NextResponse } from 'next/server';
-import { errors } from '@/lib/apiErrors';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
+
 import { rateLimit } from '@/lib/rateLimit';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 
 /**
  * PUT /api/users/[userId]/vehicles/reorder
@@ -143,7 +143,7 @@ async function handlePut(request, { params }) {
     // Check for any errors
     const errors = results.filter(r => r.error);
     if (errors.length > 0) {
-      console.error('[API/vehicles/reorder] Update errors:', errors.map(e => e.error));
+      console.error('[API/vehicles/reorder] Update errors:'.map(e => e.error));
       return NextResponse.json(
         { error: 'Failed to update some vehicles' },
         { status: 500 }

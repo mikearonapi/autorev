@@ -8,9 +8,11 @@
  */
 
 import { useMemo } from 'react';
+
 import { mapCarToPerformanceScores } from '@/data/performanceCategories';
 import { applyUpgradeDeltas } from '@/lib/performanceCalculator';
 import { getUpgradeByKey } from '@/lib/upgrades';
+
 import styles from './ExperienceScores.module.css';
 
 function ScoreBar({ label, stockScore, upgradedScore }) {

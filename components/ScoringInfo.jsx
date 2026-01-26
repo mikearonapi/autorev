@@ -8,6 +8,7 @@
 'use client';
 
 import { useState } from 'react';
+
 import styles from './ScoringInfo.module.css';
 
 // Icons

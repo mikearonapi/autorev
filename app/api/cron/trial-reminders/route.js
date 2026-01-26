@@ -17,9 +17,10 @@
  */
 
 import { NextResponse } from 'next/server';
-import { supabaseServiceRole } from '@/lib/supabase';
+
 import { sendTrialEndingEmail } from '@/lib/emailService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { supabaseServiceRole } from '@/lib/supabase';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 

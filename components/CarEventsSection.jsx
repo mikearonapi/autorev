@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+
 import Link from 'next/link';
-import styles from './CarEventsSection.module.css';
+
 import { EventTypeIcon, TrackEventBadgeIcon, CategoryIcons } from '@/components/icons/EventIcons';
 import { useEvents } from '@/hooks/useEventsData';
 import { getMonthAbbrev, getDayOfMonth } from '@/lib/dateUtils';
+
+import styles from './CarEventsSection.module.css';
 
 /**
  * CarEventsSection - Shows upcoming events for a specific car on its detail page

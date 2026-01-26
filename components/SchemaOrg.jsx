@@ -11,7 +11,15 @@
  * @module components/SchemaOrg
  */
 
-import { serializeSchema } from '@/lib/seoUtils';
+import { serializeSchema ,
+  generateBreadcrumbSchema,
+  generateVehicleSchema,
+  generateEventSchema,
+  generateArticleSchema,
+  generateFAQSchema,
+  generateItemListSchema,
+  generateWebApplicationSchema,
+} from '@/lib/seoUtils';
 
 /**
  * Injects a single JSON-LD schema or multiple schemas into the page.
@@ -55,15 +63,6 @@ export default function SchemaOrg({ schema, schemas }) {
  * These use the seoUtils generators internally.
  */
 
-import {
-  generateBreadcrumbSchema,
-  generateVehicleSchema,
-  generateEventSchema,
-  generateArticleSchema,
-  generateFAQSchema,
-  generateItemListSchema,
-  generateWebApplicationSchema,
-} from '@/lib/seoUtils';
 
 /**
  * Breadcrumb schema component.

@@ -11,10 +11,14 @@
  */
 
 import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
-import { createPortal } from 'react-dom';
+
 import { useRouter, usePathname } from 'next/navigation';
+
+import { createPortal } from 'react-dom';
+
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import { useCarsList } from '@/hooks/useCarData';
+
 import styles from './GarageVehicleSelector.module.css';
 
 // Icons

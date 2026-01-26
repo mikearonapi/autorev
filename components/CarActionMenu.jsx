@@ -12,12 +12,14 @@
  */
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+
 import styles from './CarActionMenu.module.css';
+import { useCompare } from './providers/CompareProvider';
 import { useFavorites } from './providers/FavoritesProvider';
 import { useOwnedVehicles } from './providers/OwnedVehiclesProvider';
-import { useCompare } from './providers/CompareProvider';
 
 // Minimum time to show loading state (prevents flickering on fast operations)
 const MIN_LOADING_DURATION_MS = 400;

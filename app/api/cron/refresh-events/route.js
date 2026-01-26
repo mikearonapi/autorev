@@ -20,13 +20,14 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
-import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
-import { fetchFromSource, getFetcher } from '@/lib/eventSourceFetchers';
-import { deduplicateBatch } from '@/lib/eventDeduplication';
-import { batchGeocodeEvents } from '@/lib/geocodingService';
-import { buildEventRows } from '@/lib/eventsIngestion/buildEventRows';
+
 import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
+import { deduplicateBatch } from '@/lib/eventDeduplication';
+import { buildEventRows } from '@/lib/eventsIngestion/buildEventRows';
+import { fetchFromSource, getFetcher } from '@/lib/eventSourceFetchers';
+import { batchGeocodeEvents } from '@/lib/geocodingService';
 import { logCronError, withErrorLogging } from '@/lib/serverErrorLogger';
+import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 

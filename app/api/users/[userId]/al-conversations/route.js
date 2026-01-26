@@ -8,10 +8,11 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient, getBearerToken, createAuthenticatedClient } from '@/lib/supabaseServer';
-import { errors } from '@/lib/apiErrors';
+
 import { getUserConversations } from '@/lib/alConversationService';
+import { errors } from '@/lib/apiErrors';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createServerSupabaseClient, getBearerToken, createAuthenticatedClient } from '@/lib/supabaseServer';
 
 async function handleGet(request, { params }) {
   try {

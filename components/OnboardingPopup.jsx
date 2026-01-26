@@ -1,7 +1,9 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+
 import { createPortal } from 'react-dom';
+
 import styles from './OnboardingPopup.module.css';
 
 // Check icon for feature list

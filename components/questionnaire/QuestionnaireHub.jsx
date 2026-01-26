@@ -10,14 +10,17 @@
  */
 
 import { useState, useMemo } from 'react';
-import styles from './QuestionnaireHub.module.css';
-import ProgressRing from './ProgressRing';
-import QuestionCard from './QuestionCard';
+
+import LoadingSpinner from '@/components/LoadingSpinner';
+import { QUESTION_CATEGORIES } from '@/data/questionnaireLibrary';
+import { useQuestionnaire } from '@/hooks/useQuestionnaire';
+
 import CategoryProgress from './CategoryProgress';
 import PersonaSummary from './PersonaSummary';
-import { useQuestionnaire } from '@/hooks/useQuestionnaire';
-import { QUESTION_CATEGORIES } from '@/data/questionnaireLibrary';
-import LoadingSpinner from '@/components/LoadingSpinner';
+import ProgressRing from './ProgressRing';
+import QuestionCard from './QuestionCard';
+import styles from './QuestionnaireHub.module.css';
+
 
 export default function QuestionnaireHub({
   userId,

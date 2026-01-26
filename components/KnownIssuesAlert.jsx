@@ -9,8 +9,9 @@
  */
 
 import React, { useMemo, useState } from 'react';
-import InsightFeedback from './ui/InsightFeedback';
+
 import styles from './KnownIssuesAlert.module.css';
+import InsightFeedback from './ui/InsightFeedback';
 
 // Icons
 const AlertTriangleIcon = ({ size = 16 }) => (

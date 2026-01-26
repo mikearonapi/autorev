@@ -9,11 +9,13 @@
 // Force dynamic to prevent static prerendering (uses cookies/headers)
 export const dynamic = 'force-dynamic';
 
-import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+
+import { createClient } from '@supabase/supabase-js';
+
 import { isAdminEmail } from '@/lib/adminAccess';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { rateLimit } from '@/lib/rateLimit';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;

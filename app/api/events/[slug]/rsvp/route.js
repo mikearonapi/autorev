@@ -9,9 +9,10 @@
  */
 
 import { NextResponse } from 'next/server';
+
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 import { hasTierAccess, IS_BETA } from '@/lib/tierAccess';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Valid RSVP statuses
 const VALID_STATUSES = ['going', 'interested'];

@@ -1,6 +1,9 @@
 import React from 'react';
+
 import Image from 'next/image';
+
 import { LOGO_TRANSPARENT } from '@/lib/brandLogos';
+
 import styles from './LoadingSpinner.module.css';
 
 /**

@@ -1,7 +1,9 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+
+import dynamic from 'next/dynamic';
+
 import { 
   signInWithGoogle,
   signInWithFacebook, 
@@ -12,12 +14,14 @@ import {
   getUserProfile,
   updateUserProfile,
 } from '@/lib/auth';
+import { trackSignUp as ga4TrackSignUp, trackLogin as ga4TrackLogin } from '@/lib/ga4';
 import { prefetchAllUserData, clearPrefetchCache } from '@/lib/prefetch';
 import { getSessionEarly, clearSessionCache } from '@/lib/sessionCache';
-import { useLoadingProgress } from './LoadingProgressProvider';
-import { trackSignUp as ga4TrackSignUp, trackLogin as ga4TrackLogin } from '@/lib/ga4';
-import dynamic from 'next/dynamic';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { TRIAL_CONFIG, calculateTrialEndDate } from '@/lib/tierAccess';
+
+import { useLoadingProgress } from './LoadingProgressProvider';
+
 
 // Dynamically import OnboardingFlow to avoid SSR issues
 const OnboardingFlow = dynamic(() => import('@/components/onboarding/OnboardingFlow'), {

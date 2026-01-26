@@ -1,8 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { createBrowserClient } from '@supabase/ssr';
+
 import Image from 'next/image';
+
+import { createBrowserClient } from '@supabase/ssr';
+
 import styles from './page.module.css';
 
 export default function ImageQAPage() {

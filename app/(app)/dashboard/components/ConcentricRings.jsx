@@ -16,9 +16,10 @@
  */
 
 import { useEffect, useState } from 'react';
+
+import styles from './ConcentricRings.module.css';
 import { FlameIcon, InfoIcon } from './DashboardIcons';
 import PointsExplainerModal from './PointsExplainerModal';
-import styles from './ConcentricRings.module.css';
 
 // Ring configuration - outer to inner
 // Profile is innermost as it represents one-time completion progress

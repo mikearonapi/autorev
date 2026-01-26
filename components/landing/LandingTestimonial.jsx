@@ -1,4 +1,5 @@
 import Image from 'next/image';
+
 import styles from './LandingTestimonial.module.css';
 
 const QuoteIcon = ({ size = 32 }) => (

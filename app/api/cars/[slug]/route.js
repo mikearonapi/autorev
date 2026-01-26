@@ -6,9 +6,10 @@
  */
 
 import { NextResponse } from 'next/server';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
+
 import { errors } from '@/lib/apiErrors';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 // Cache for 5 minutes
 export const revalidate = 300;

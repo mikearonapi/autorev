@@ -12,8 +12,10 @@
  */
 
 import React from 'react';
+
 import { Icons } from '@/components/ui/Icons';
 import { calculateDistanceMiles } from '@/lib/geocodingService';
+
 import styles from './ServiceCenterCard.module.css';
 
 /**

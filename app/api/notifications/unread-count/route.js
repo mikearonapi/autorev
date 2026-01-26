@@ -7,11 +7,12 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabaseServer';
+
 import { getUnreadCount } from '@/lib/notificationService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createServerSupabaseClient } from '@/lib/supabaseServer';
 
-async function handleGet(request) {
+async function handleGet(_request) {
   try {
     const supabase = await createServerSupabaseClient();
     const { data: { user }, error: authError } = await supabase.auth.getUser();

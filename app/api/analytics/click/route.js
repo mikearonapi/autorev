@@ -7,9 +7,10 @@
  * Records element info and position data.
  */
 
-import { createClient } from '@supabase/supabase-js';
-import { errors } from '@/lib/apiErrors';
 import { headers } from 'next/headers';
+
+import { createClient } from '@supabase/supabase-js';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabase = createClient(

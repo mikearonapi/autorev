@@ -1,9 +1,9 @@
 import { Resend } from 'resend';
-import { errors } from '@/lib/apiErrors';
+
 import { notifyContact } from '@/lib/discord';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { rateLimit } from '@/lib/rateLimit';
 import { contactSchema, validateWithSchema, validationErrorResponse } from '@/lib/schemas';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const CONTACT_EMAIL = 'contact@autorev.app';
 
@@ -106,7 +106,7 @@ async function handlePost(request) {
     }
 
     // Calculate lead quality score
-    let leadQuality = { score: 'cold' };
+    const leadQuality = { score: 'cold' };
     try {
       const { createClient } = await import('@supabase/supabase-js');
       const supabase = createClient(

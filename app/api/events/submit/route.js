@@ -6,12 +6,13 @@
  */
 
 import { NextResponse } from 'next/server';
-import { errors } from '@/lib/apiErrors';
+
+import { z } from 'zod';
+
 import { notifyEventSubmission } from '@/lib/discord';
+import { rateLimit } from '@/lib/rateLimit';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { createServerSupabaseClient } from '@/lib/supabaseServer';
-import { rateLimit } from '@/lib/rateLimit';
-import { z } from 'zod';
 
 // Event submission schema
 const eventSubmitSchema = z.object({

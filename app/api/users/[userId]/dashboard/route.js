@@ -11,10 +11,9 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
-import { rateLimit } from '@/lib/rateLimit';
+
 import { errors } from '@/lib/apiErrors';
 import { 
   getUserDashboardData, 
@@ -22,6 +21,9 @@ import {
   updateUserTitle,
 } from '@/lib/dashboardScoreService';
 import { getUserPoints, getWeeklyPoints, getMonthlyPoints, checkStreakBonus } from '@/lib/pointsService';
+import { rateLimit } from '@/lib/rateLimit';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 
 // Initialize Supabase client for internal operations
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

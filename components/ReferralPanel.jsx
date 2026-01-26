@@ -1,15 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import { createPortal } from 'react-dom';
-import styles from './ReferralPanel.module.css';
+
 import {
   useReferralData,
   useSendReferralInvite,
   useResendReferralInvite,
 } from '@/hooks/useUserData';
-import { platform } from '@/lib/platform';
 import { formatEventDate } from '@/lib/dateUtils';
+import { platform } from '@/lib/platform';
+
+import styles from './ReferralPanel.module.css';
 
 /**
  * ReferralPanel Component

@@ -7,11 +7,13 @@
  * Auth: Admin only (via service role or admin tier)
  */
 
-import { NextResponse } from 'next/server';
-import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
-import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
+
+import { createServerClient } from '@supabase/ssr';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
 
 /**
  * Check if user is admin

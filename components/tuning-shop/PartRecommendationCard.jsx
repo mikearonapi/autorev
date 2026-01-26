@@ -13,8 +13,10 @@
  */
 
 import React, { useState, useCallback } from 'react';
+
 import { Icons } from '@/components/ui/Icons';
 import { PARTS_VENDOR_SHORTLIST } from '@/lib/partsVendors';
+
 import styles from './PartRecommendationCard.module.css';
 
 // Get all vendor keys for trust badge lookup

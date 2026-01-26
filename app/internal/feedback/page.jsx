@@ -13,10 +13,13 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
+
 import Image from 'next/image';
-import styles from './page.module.css';
-import { Icons } from '@/components/ui/Icons';
+
 import EmptyState from '@/components/ui/EmptyState';
+import { Icons } from '@/components/ui/Icons';
+
+import styles from './page.module.css';
 
 // Status colors
 const statusColors = {

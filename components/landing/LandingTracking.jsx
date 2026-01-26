@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+
 import { trackEvent, trackPageView } from '@/lib/ga4';
 
 /**

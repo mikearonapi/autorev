@@ -8,9 +8,11 @@
  */
 
 import React, { useState, useCallback } from 'react';
+
 import LocationAutocomplete from '@/components/LocationAutocomplete';
-import ServiceCenterCard from './ServiceCenterCard';
 import { Icons } from '@/components/ui/Icons';
+
+import ServiceCenterCard from './ServiceCenterCard';
 import styles from './ServiceCenterFinder.module.css';
 
 /**

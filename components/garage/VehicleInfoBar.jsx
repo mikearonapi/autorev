@@ -14,10 +14,13 @@
  */
 
 import React from 'react';
+
 import Image from 'next/image';
+
 import CarImage from '@/components/CarImage';
-import styles from './VehicleInfoBar.module.css';
 import { Icons } from '@/components/ui/Icons';
+
+import styles from './VehicleInfoBar.module.css';
 
 /**
  * VehicleInfoBar

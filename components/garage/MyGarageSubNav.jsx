@@ -15,8 +15,10 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
+
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+
 import styles from './MyGarageSubNav.module.css';
 
 // Navigation options - in display order

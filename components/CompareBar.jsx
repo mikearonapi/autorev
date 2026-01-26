@@ -10,14 +10,18 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
-import Link from 'next/link';
+
 import Image from 'next/image';
-import styles from './CompareBar.module.css';
+import Link from 'next/link';
+
 import { useCompare } from '@/components/providers/CompareProvider';
-import { getCarHeroImage } from '@/lib/images';
-import { fetchCars } from '@/lib/carsClient';
-import CompareModal from './CompareModal';
 import { Icons } from '@/components/ui/Icons';
+import { fetchCars } from '@/lib/carsClient';
+import { getCarHeroImage } from '@/lib/images';
+
+import styles from './CompareBar.module.css';
+import CompareModal from './CompareModal';
+
 
 export default function CompareBar() {
   const { cars, count, maxCars, removeFromCompare, clearAll, isHydrated, showCompareModal, setShowCompareModal } = useCompare();

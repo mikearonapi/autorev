@@ -12,9 +12,11 @@
  */
 
 import React, { useState, useCallback } from 'react';
-import { Icons } from '@/components/ui/Icons';
+
 import ShareBuildModal from '@/components/ShareBuildModal';
+import { Icons } from '@/components/ui/Icons';
 import { useLinkedPost } from '@/hooks/useCommunityData';
+
 import styles from './ShareBuildButton.module.css';
 
 export default function ShareBuildButton({

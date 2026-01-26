@@ -15,7 +15,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { errors } from '@/lib/apiErrors';
+
 import { fetchCarBySlug } from '@/lib/carsClient';
 import * as epaService from '@/lib/epaFuelEconomyService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';

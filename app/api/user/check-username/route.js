@@ -12,7 +12,9 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { createServerSupabaseClient } from '@/lib/supabaseServer';
 

@@ -18,23 +18,25 @@
  */
 
 import { useState, useMemo, useEffect, useCallback, Suspense } from 'react';
+
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { redirect } from 'next/navigation';
-import { useAuth } from '@/components/providers/AuthProvider';
-import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
-import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
-import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
-import { useCarsList } from '@/hooks/useCarData';
+import { useRouter, useSearchParams , redirect } from 'next/navigation';
+
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
-import VirtualDynoChart from '@/components/VirtualDynoChart';
 import CalculatedPerformance from '@/components/CalculatedPerformance';
-import PowerBreakdown from '@/components/PowerBreakdown';
 import DynoLogModal from '@/components/DynoLogModal';
-import { useDynoResults } from '@/hooks/useUserData';
-import { DataPageSkeleton } from '@/components/ui/Skeleton';
 import OnboardingPopup, { dataOnboardingSteps } from '@/components/OnboardingPopup';
+import PowerBreakdown from '@/components/PowerBreakdown';
+import { useAuth } from '@/components/providers/AuthProvider';
+import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
+import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
+import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
+import { DataPageSkeleton } from '@/components/ui/Skeleton';
+import VirtualDynoChart from '@/components/VirtualDynoChart';
+import { useCarsList } from '@/hooks/useCarData';
+import { useDynoResults } from '@/hooks/useUserData';
 import { calculateAllModificationGains } from '@/lib/performanceCalculator';
+
 import styles from './page.module.css';
 
 // Icons

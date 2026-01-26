@@ -1,10 +1,10 @@
 import { NextResponse } from 'next/server';
-import { errors } from '@/lib/apiErrors';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+
 import { awardPoints } from '@/lib/pointsService';
-import { trackTimeSchema, validateWithSchema, validationErrorResponse } from '@/lib/schemas';
 import { rateLimit } from '@/lib/rateLimit';
+import { trackTimeSchema, validateWithSchema, validationErrorResponse } from '@/lib/schemas';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 
 /**
  * GET /api/users/[userId]/track-times

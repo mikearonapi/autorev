@@ -13,14 +13,18 @@
  */
 
 import { useState, useMemo, useEffect, useRef, useLayoutEffect, useCallback, Suspense } from 'react';
-import { createPortal } from 'react-dom';
+
 import Link from 'next/link';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+
+import { createPortal } from 'react-dom';
+
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import { useCarsList } from '@/hooks/useCarData';
-import DataNav from './DataNav';
+
 import styles from './DataHeader.module.css';
+import DataNav from './DataNav';
 
 // Icons
 const CarIcon = ({ size = 20 }) => (

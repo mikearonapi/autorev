@@ -9,9 +9,12 @@
  * @module components/PrefetchCarLink
  */
 
-import Link from 'next/link';
 import { useCallback } from 'react';
+
+import Link from 'next/link';
+
 import { useQueryClient } from '@tanstack/react-query';
+
 import { carKeys } from '@/hooks/useCarData';
 
 /**

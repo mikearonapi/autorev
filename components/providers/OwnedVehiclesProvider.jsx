@@ -15,7 +15,9 @@
  */
 
 import { createContext, useContext, useReducer, useEffect, useState, useCallback, useRef, useMemo } from 'react';
+
 import { useAuth } from '@/components/providers/AuthProvider';
+import { getPrefetchedData, invalidatePrefetchCache } from '@/lib/prefetch';
 import {
   fetchUserVehicles,
   addUserVehicle,
@@ -28,7 +30,7 @@ import {
   updateVehicleCustomSpecsSection,
   clearVehicleCustomSpecs,
 } from '@/lib/userDataService';
-import { getPrefetchedData, invalidatePrefetchCache } from '@/lib/prefetch';
+
 import { useLoadingProgress } from './LoadingProgressProvider';
 
 // LocalStorage key for guest vehicles

@@ -8,6 +8,7 @@
  */
 
 import { useState, useMemo } from 'react';
+
 import styles from './CostEntriesTable.module.css';
 import { 
   EditIcon, 

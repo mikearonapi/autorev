@@ -1,6 +1,8 @@
 import { Suspense } from 'react';
-import ALPageClient from './ALPageClient';
+
 import { getPlatformStats } from '@/lib/statsService';
+
+import ALPageClient from './ALPageClient';
 
 /**
  * AL Chat Page

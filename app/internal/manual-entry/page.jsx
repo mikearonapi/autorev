@@ -12,6 +12,7 @@
  */
 
 import { useState, useEffect } from 'react';
+
 import styles from './page.module.css';
 
 const DATA_TYPES = ['pricing', 'review', 'safety', 'specs'];

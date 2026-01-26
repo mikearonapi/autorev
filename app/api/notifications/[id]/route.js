@@ -5,9 +5,10 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabaseServer';
+
 import { markAsRead, deleteNotification } from '@/lib/notificationService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createServerSupabaseClient } from '@/lib/supabaseServer';
 
 async function handlePatch(request, { params }) {
   try {

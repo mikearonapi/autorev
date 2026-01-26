@@ -13,6 +13,7 @@
  */
 
 import { useMemo } from 'react';
+
 import styles from './KPICard.module.css';
 import { Tooltip } from './Tooltip';
 

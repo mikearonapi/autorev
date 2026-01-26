@@ -14,6 +14,7 @@
  */
 
 import { useState, useCallback, useRef, useEffect } from 'react';
+
 import styles from './WeeklyEngagement.module.css';
 
 // Minimum swipe distance to trigger view change (in pixels)

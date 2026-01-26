@@ -13,8 +13,10 @@
  */
 
 import { useEffect, useState } from 'react';
-import styles from './BuildProgressRings.module.css';
+
 import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
+
+import styles from './BuildProgressRings.module.css';
 
 // Info icon component
 const InfoIcon = ({ size = 12 }) => (

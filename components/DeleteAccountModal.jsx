@@ -14,10 +14,12 @@
  */
 
 import { useState, useEffect } from 'react';
-import Modal from '@/components/ui/Modal';
-import styles from './DeleteAccountModal.module.css';
+
 import { Icons } from '@/components/ui/Icons';
+import Modal from '@/components/ui/Modal';
 import { useDeleteAccount } from '@/hooks/useUserData';
+
+import styles from './DeleteAccountModal.module.css';
 
 // Deletion reason options
 const DELETION_REASONS = [

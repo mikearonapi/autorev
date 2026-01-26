@@ -14,10 +14,11 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { ForumScraperService } from '@/lib/forumScraper/index.js';
 import { InsightExtractor } from '@/lib/forumScraper/insightExtractor.js';
-import { supabaseServiceRole } from '@/lib/supabase.js';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { supabaseServiceRole } from '@/lib/supabase.js';
 
 const CRON_SECRET = process.env.CRON_SECRET;
 

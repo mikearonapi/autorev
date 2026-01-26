@@ -6,8 +6,8 @@
  * Status grid showing health of key system components.
  */
 
-import styles from './SystemHealth.module.css';
 import { DatabaseIcon, ZapIcon, ClockIcon } from './Icons';
+import styles from './SystemHealth.module.css';
 
 const STATUS_CONFIG = {
   healthy: { color: '#22c55e', label: 'Healthy' },

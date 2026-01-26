@@ -18,6 +18,7 @@
 import AppDataPrefetcher from '@/components/AppDataPrefetcher';
 import BottomTabBar from '@/components/BottomTabBar';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
+
 import styles from './layout.module.css';
 
 export default function AppLayout({ children }) {

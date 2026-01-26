@@ -24,6 +24,7 @@
  */
 
 import { useMemo, useCallback, useState } from 'react';
+
 import { useAuth } from '@/components/providers/AuthProvider';
 
 // =============================================================================

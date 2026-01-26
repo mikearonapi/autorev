@@ -10,8 +10,8 @@
  */
 
 import { NextResponse } from 'next/server';
-import { getServiceClient } from '@/lib/supabaseServer';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
+
+import { requireAdmin } from '@/lib/adminAccess';
 import { 
   ALEvaluationRunner, 
   runSpotCheck, 
@@ -21,7 +21,8 @@ import {
   getFailedResults,
 } from '@/lib/alEvaluationRunner';
 import { getEvalDatasetStats } from '@/lib/alEvaluations';
-import { requireAdmin } from '@/lib/adminAccess';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { getServiceClient } from '@/lib/supabaseServer';
 
 /**
  * GET /api/admin/al-evaluations

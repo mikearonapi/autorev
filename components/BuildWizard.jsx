@@ -1,14 +1,19 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { createPortal } from 'react-dom';
-import { useRouter } from 'next/navigation';
+
 import Image from 'next/image';
-import styles from './BuildWizard.module.css';
+import { useRouter } from 'next/navigation';
+
+import { createPortal } from 'react-dom';
+
+
+import CarImage from '@/components/CarImage';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
-import CarImage from '@/components/CarImage';
 import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
+
+import styles from './BuildWizard.module.css';
 
 /**
  * BuildWizard - Full-screen onboarding flow for creating a new build

@@ -6,6 +6,7 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import lapTimeService from '@/lib/lapTimeService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 

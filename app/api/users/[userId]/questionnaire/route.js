@@ -10,17 +10,19 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { createServerSupabaseClient, getBearerToken, createAuthenticatedClient } from '@/lib/supabaseServer';
-import { errors } from '@/lib/apiErrors';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
+
 import { 
   QUESTIONNAIRE_LIBRARY,
   QUESTION_CATEGORIES,
   getNextQuestions,
   calculateCategoryCompletion,
 } from '@/data/questionnaireLibrary';
+import { errors } from '@/lib/apiErrors';
 import { awardPoints } from '@/lib/pointsService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createServerSupabaseClient, getBearerToken, createAuthenticatedClient } from '@/lib/supabaseServer';
 
 // Initialize Supabase client with service role for secure operations
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

@@ -1,9 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+
 import { LOGO_TRANSPARENT } from '@/lib/brandLogos';
+
 import styles from './FinalStep.module.css';
 
 /**

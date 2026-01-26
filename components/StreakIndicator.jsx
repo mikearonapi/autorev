@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import styles from './StreakIndicator.module.css';
+
 import { getStreakStatus, getStreakDisplayInfo, STREAK_MILESTONES } from '@/lib/engagementService';
+
 import { useAuth } from './providers/AuthProvider';
+import styles from './StreakIndicator.module.css';
 
 /**
  * StreakIndicator Component

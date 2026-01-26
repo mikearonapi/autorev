@@ -13,6 +13,7 @@
  */
 
 import { useState, useRef, useCallback, useEffect } from 'react';
+
 import styles from './PullToRefresh.module.css';
 
 // Default threshold to trigger refresh (pixels pulled down)

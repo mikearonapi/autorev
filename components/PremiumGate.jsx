@@ -18,8 +18,11 @@
  */
 
 import React from 'react';
+
 import Link from 'next/link';
+
 import { useAuth } from '@/components/providers/AuthProvider';
+import { Icons } from '@/components/ui/Icons';
 import {
   hasAccess,
   shouldShowUpgradePrompt,
@@ -28,8 +31,8 @@ import {
   TIER_CONFIG,
   IS_BETA,
 } from '@/lib/tierAccess';
+
 import styles from './PremiumGate.module.css';
-import { Icons } from '@/components/ui/Icons';
 
 /**
  * Default upgrade prompt shown when user doesn't have access

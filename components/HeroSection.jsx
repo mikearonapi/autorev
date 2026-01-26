@@ -17,6 +17,7 @@
  */
 
 import Image from 'next/image';
+
 import styles from '@/app/(marketing)/page.module.css';
 import HeroCta from '@/components/HeroCta';
 import ScrollIndicator from '@/components/ScrollIndicator';

@@ -13,10 +13,12 @@
  */
 
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { getToolsForUpgrade, difficultyLevels } from '@/data/upgradeTools';
-import InfoTooltip from '@/components/ui/InfoTooltip';
-import { Icons } from '@/components/ui/Icons';
+
 import { DIYVideoList } from '@/components/garage/DIYVideoEmbed';
+import { Icons } from '@/components/ui/Icons';
+import InfoTooltip from '@/components/ui/InfoTooltip';
+import { getToolsForUpgrade, difficultyLevels } from '@/data/upgradeTools';
+
 import styles from './InstallChecklistItem.module.css';
 
 // Difficulty colors matching brand guidelines

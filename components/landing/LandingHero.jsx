@@ -1,10 +1,13 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+
+import Image from 'next/image';
+
 import Button from '@/components/Button';
 import IPhoneFrame from '@/components/IPhoneFrame';
-import Image from 'next/image';
 import { trackEvent } from '@/lib/ga4';
+
 import styles from './LandingHero.module.css';
 
 const SparkleIcon = ({ size = 14 }) => (

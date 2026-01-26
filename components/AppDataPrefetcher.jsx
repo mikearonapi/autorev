@@ -18,10 +18,12 @@
  */
 
 import { useEffect, useRef } from 'react';
+
 import { useQueryClient } from '@tanstack/react-query';
+
 import { useAuth } from '@/components/providers/AuthProvider';
-import { userKeys, carKeys } from '@/lib/queryKeys';
 import { getPrefetchedData } from '@/lib/prefetch';
+import { userKeys, carKeys } from '@/lib/queryKeys';
 
 // Cache times (aligned with useCarData.js and providers)
 const CACHE_TIMES = {

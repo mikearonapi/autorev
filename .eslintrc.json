@@ -77,6 +77,18 @@
       "rules": {
         "no-console": "off"
       }
+    },
+    {
+      "files": ["app/api/**/*.js", "lib/**/*.js", "hooks/**/*.js"],
+      "rules": {
+        "no-console": ["warn", { "allow": ["warn", "error", "info", "log"] }]
+      }
+    },
+    {
+      "files": ["app/**/*.jsx", "components/**/*.jsx"],
+      "rules": {
+        "no-console": ["warn", { "allow": ["warn", "error", "info", "log"] }]
+      }
     }
   ],
   "settings": {

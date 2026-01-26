@@ -5,20 +5,22 @@
  * detailed mods/parts list, image gallery, and social sharing.
  */
 
-import { notFound } from 'next/navigation';
-import Link from 'next/link';
 import Image from 'next/image';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+
 import { fetchCommunityPostBySlug, getPostShareUrl } from '@/lib/communityService';
-import { supabase } from '@/lib/supabase';
 import { getPerformanceProfile } from '@/lib/performanceCalculator';
-import ShareButtons from './ShareButtons';
+import { supabase } from '@/lib/supabase';
+
 import BuildModsList from './BuildModsList';
-import ImageGallery from './ImageGallery';
-import ViewTracker from './ViewTracker';
-import OwnerActions from './OwnerActions';
-import PerformanceComparison from './PerformanceComparison';
 import ExperienceScores from './ExperienceScores';
+import ImageGallery from './ImageGallery';
+import OwnerActions from './OwnerActions';
 import styles from './page.module.css';
+import PerformanceComparison from './PerformanceComparison';
+import ShareButtons from './ShareButtons';
+import ViewTracker from './ViewTracker';
 
 // Fetch full car data for performance comparison and experience scores
 async function getCarData(carSlug) {

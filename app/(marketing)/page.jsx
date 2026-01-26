@@ -1,13 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+
 import Image from 'next/image';
+
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import IPhoneFrame from '@/components/IPhoneFrame';
-import { SITE_DESIGN_IMAGES, UI_IMAGES } from '@/lib/images';
-import usePWAInstall from '@/hooks/usePWAInstall';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 import { Icons } from '@/components/ui/Icons';
+import usePWAInstall from '@/hooks/usePWAInstall';
+import { SITE_DESIGN_IMAGES, UI_IMAGES } from '@/lib/images';
+
 import styles from './page.module.css';
 
 /**

@@ -15,8 +15,8 @@
  * - KPI cards with context (Rule 2)
  */
 
-import styles from './UnitEconomics.module.css';
 import { Tooltip } from './Tooltip';
+import styles from './UnitEconomics.module.css';
 
 function formatCurrency(amount) {
   if (amount === null || amount === undefined || isNaN(amount)) return '$0.00';

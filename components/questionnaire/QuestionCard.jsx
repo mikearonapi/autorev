@@ -8,6 +8,7 @@
  */
 
 import { useState, useCallback } from 'react';
+
 import styles from './QuestionCard.module.css';
 
 // Category icons

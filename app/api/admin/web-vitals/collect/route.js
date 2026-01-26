@@ -13,7 +13,9 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Service role client for data storage

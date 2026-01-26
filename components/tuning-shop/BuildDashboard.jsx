@@ -17,8 +17,10 @@
  */
 
 import React from 'react';
-import styles from './BuildDashboard.module.css';
+
 import { Icons } from '@/components/ui/Icons';
+
+import styles from './BuildDashboard.module.css';
 
 function RingGauge({ value, max = 100, label, sublabel, color = '#10b981', size = 120, numericValue = null }) {
   const radius = (size - 10) / 2;

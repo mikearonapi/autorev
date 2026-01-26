@@ -10,8 +10,9 @@
  */
 
 import { useState, useCallback } from 'react';
-import { useAuth } from '@/components/providers/AuthProvider';
+
 import { useAuthModal } from '@/components/AuthModal';
+import { useAuth } from '@/components/providers/AuthProvider';
 
 /**
  * Hook for handling Stripe checkout flows

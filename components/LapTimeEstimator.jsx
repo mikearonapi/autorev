@@ -14,13 +14,15 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import InfoTooltip from './ui/InfoTooltip';
-import styles from './LapTimeEstimator.module.css';
+
 import { Icons } from '@/components/ui/Icons';
-import { useUserTrackTimes, useAddTrackTime, useAnalyzeTrackTimes } from '@/hooks/useUserData';
 import { useTracks } from '@/hooks/useEventsData';
 import { useLapTimeEstimate, useTrackStats, DRIVER_SKILLS, formatLapTime } from '@/hooks/useLapTimeEstimate';
+import { useUserTrackTimes, useAddTrackTime, useAnalyzeTrackTimes } from '@/hooks/useUserData';
 import { formatDateSimple } from '@/lib/dateUtils';
+
+import styles from './LapTimeEstimator.module.css';
+import InfoTooltip from './ui/InfoTooltip';
 
 export default function LapTimeEstimator({
   stockHp,

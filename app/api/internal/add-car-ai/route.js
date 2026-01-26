@@ -10,13 +10,16 @@
  * Auth: Admin only
  */
 
-import { NextResponse } from 'next/server';
-import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
 import { exec } from 'child_process';
 import { promisify } from 'util';
+
+import { cookies } from 'next/headers';
+import { NextResponse } from 'next/server';
+
+import { createServerClient } from '@supabase/ssr';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
 
 const execAsync = promisify(exec);
 

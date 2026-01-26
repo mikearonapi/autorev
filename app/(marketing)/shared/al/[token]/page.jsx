@@ -16,12 +16,16 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import { useParams } from 'next/navigation';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import styles from './page.module.css';
-import { UI_IMAGES } from '@/lib/images';
+import { useParams } from 'next/navigation';
+
+
 import { Skeleton, SkeletonText } from '@/components/ui/Skeleton';
+import { UI_IMAGES } from '@/lib/images';
+
+import styles from './page.module.css';
 
 // =============================================================================
 // SKELETON LOADER

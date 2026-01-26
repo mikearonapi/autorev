@@ -7,9 +7,10 @@
 // Force dynamic to prevent static prerendering
 export const dynamic = 'force-dynamic';
 
-import { createClient } from '@supabase/supabase-js';
-import { errors } from '@/lib/apiErrors';
 import { NextResponse } from 'next/server';
+
+import { createClient } from '@supabase/supabase-js';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Create Supabase client

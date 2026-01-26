@@ -15,9 +15,11 @@
  * - Gray vs Orange for COGS vs OpEx comparison ✓
  */
 
-import { useState } from 'react';
-import styles from './AICostSummary.module.css';
+// useState removed - not currently used
+
 import { useAdminAICostSummary } from '@/hooks/useAdminData';
+
+import styles from './AICostSummary.module.css';
 
 // SVG Icons
 const DollarIcon = ({ size = 18 }) => (
@@ -151,7 +153,7 @@ function CostCard({ title, icon: Icon, costCents, tokens, calls, color, subtitle
 }
 
 // Purpose Breakdown Row
-function PurposeRow({ purpose, costCents, tokens, maxCost }) {
+function PurposeRow({ purpose, costCents, tokens: _tokens, maxCost }) {
   const percentage = maxCost > 0 ? (costCents / maxCost) * 100 : 0;
   const label = PURPOSE_LABELS[purpose] || purpose;
   const isUserChat = purpose === 'user_chat';
@@ -180,7 +182,7 @@ function PurposeRow({ purpose, costCents, tokens, maxCost }) {
 }
 
 // Main Component
-export function AICostSummary({ token, range = 'month', loading: externalLoading }) {
+export function AICostSummary({ token: _token, range = 'month', loading: externalLoading }) {
   // Use React Query hook for AI cost summary
   const { 
     data, 

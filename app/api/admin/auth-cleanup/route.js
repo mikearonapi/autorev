@@ -10,9 +10,10 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient, getAuthenticatedUserWithProfile } from '@/lib/supabaseServer';
-import { supabaseServiceRole } from '@/lib/supabase';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { supabaseServiceRole } from '@/lib/supabase';
+import { createServerSupabaseClient, getAuthenticatedUserWithProfile } from '@/lib/supabaseServer';
 
 async function handlePost(request) {
   try {

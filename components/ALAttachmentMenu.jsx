@@ -12,9 +12,12 @@
  */
 
 import { useState, useRef, useCallback } from 'react';
+
 import Image from 'next/image';
-import styles from './ALAttachmentMenu.module.css';
+
 import { Icons } from '@/components/ui/Icons';
+
+import styles from './ALAttachmentMenu.module.css';
 
 // Supported file types
 const ACCEPTED_FILE_TYPES = {

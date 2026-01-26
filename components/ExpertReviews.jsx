@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+
 import Image from 'next/image';
 import Link from 'next/link';
-import styles from './ExpertReviews.module.css';
-import { getUpgradeSuggestions, formatTag } from '@/lib/expertFeedback';
+
 import { useCarExpertReviews } from '@/hooks/useCarData';
+import { getUpgradeSuggestions, formatTag } from '@/lib/expertFeedback';
+
+import styles from './ExpertReviews.module.css';
 
 // Category labels for sentiment display
 const CATEGORY_LABELS = {

@@ -15,12 +15,14 @@
  * @route POST /api/ai-mechanic
  */
 
+import crypto from 'crypto';
+
 import { NextResponse } from 'next/server';
-import { errors } from '@/lib/apiErrors';
-import { rateLimit } from '@/lib/rateLimit';
-import { buildAIContext, formatContextForAI } from '@/lib/aiMechanicService';
-import { executeToolCall } from '@/lib/alTools';
+
+import { createClient } from '@supabase/supabase-js';
+
 import { executeWithCircuitBreaker, isAnthropicHealthy, getAnthropicStats } from '@/lib/aiCircuitBreaker';
+import { buildAIContext, formatContextForAI } from '@/lib/aiMechanicService';
 import { 
   AL_TOOLS, 
   buildALSystemPrompt,
@@ -33,7 +35,14 @@ import {
   selectModelForQuery,
   MODEL_TIERS,
 } from '@/lib/alConfig';
+import {
+  createConversation,
+  getConversation,
+  addMessage,
+  formatMessagesForClaude,
+} from '@/lib/alConversationService';
 import { classifyQueryIntent } from '@/lib/alIntentClassifier';
+import { executeToolCall } from '@/lib/alTools';
 import { 
   getUserBalance, 
   deductUsage, 
@@ -43,14 +52,6 @@ import {
   incrementDailyQuery,
   getDailyUsage,
 } from '@/lib/alUsageService';
-import {
-  createConversation,
-  getConversation,
-  addMessage,
-  formatMessagesForClaude,
-} from '@/lib/alConversationService';
-import { createClient } from '@supabase/supabase-js';
-import crypto from 'crypto';
 import { notifyALConversation } from '@/lib/discord';
 
 // =============================================================================
@@ -91,10 +92,11 @@ async function getUserInfoForNotification(userId) {
     return { displayName: null, email: null };
   }
 }
-import { logServerError, withErrorLogging } from '@/lib/serverErrorLogger';
 import { getAnthropicConfig } from '@/lib/observability';
 import { trackActivity } from '@/lib/dashboardScoreService';
 import { awardPoints } from '@/lib/pointsService';
+import { rateLimit } from '@/lib/rateLimit';
+import { logServerError, withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Stream encoding helper
 const encoder = new TextEncoder();

@@ -8,8 +8,10 @@
  */
 
 import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
 import styles from './MobileBottomCta.module.css';
 
 // Icons

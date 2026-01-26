@@ -21,32 +21,35 @@
  */
 
 import React, { useState, useEffect, useMemo, Suspense, useCallback } from 'react';
+
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import styles from './page.module.css';
-import LoadingSpinner from '@/components/LoadingSpinner';
+
+import AuthModal, { useAuthModal } from '@/components/AuthModal';
+import CelebrationModal from '@/components/CelebrationModal';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { MyGarageSubNav, GarageVehicleSelector } from '@/components/garage';
+import DIYVideoEmbed from '@/components/garage/DIYVideoEmbed';
+import InstallChecklistItem from '@/components/garage/InstallChecklistItem';
+import InstallToolsPanel from '@/components/garage/InstallToolsPanel';
+import ServiceCenterFinder from '@/components/garage/ServiceCenterFinder';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import PremiumGate from '@/components/PremiumGate';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
-import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
-import { useGarageScore } from '@/hooks/useGarageScore';
-import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import ShareBuildButton from '@/components/ShareBuildButton';
-import PremiumGate from '@/components/PremiumGate';
 import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
 import { Icons } from '@/components/ui/Icons';
 import EmptyState from '@/components/ui/EmptyState';
 import { calculateBuildComplexity } from '@/data/upgradeTools';
+import { useGarageScore } from '@/hooks/useGarageScore';
 
 // Placeholder components - will be implemented in subsequent todos
-import InstallChecklistItem from '@/components/garage/InstallChecklistItem';
-import InstallToolsPanel from '@/components/garage/InstallToolsPanel';
-import DIYVideoEmbed from '@/components/garage/DIYVideoEmbed';
-import ServiceCenterFinder from '@/components/garage/ServiceCenterFinder';
-import CelebrationModal from '@/components/CelebrationModal';
+
+import styles from './page.module.css';
 
 // Empty State - no vehicle selected
 function NoVehicleSelectedState() {

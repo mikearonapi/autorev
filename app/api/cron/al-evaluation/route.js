@@ -9,7 +9,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { withErrorLogging, logCronError } from '@/lib/serverErrorLogger';
+
 import { 
   runSpotCheck, 
   runFullEvaluation, 
@@ -17,6 +17,7 @@ import {
 } from '@/lib/alEvaluationRunner';
 import { getEvalDatasetStats } from '@/lib/alEvaluations';
 import { notifyDiscord, notifyCronFailure } from '@/lib/discord';
+import { withErrorLogging, logCronError } from '@/lib/serverErrorLogger';
 
 // Cron secret for authentication
 const CRON_SECRET = process.env.CRON_SECRET;

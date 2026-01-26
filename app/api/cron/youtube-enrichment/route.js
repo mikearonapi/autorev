@@ -16,12 +16,13 @@
  *   SUPABASE_SERVICE_ROLE_KEY
  */
 
+import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
 import { YoutubeTranscript } from 'youtube-transcript';
-import Anthropic from '@anthropic-ai/sdk';
-import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
+
 import { trackBackendAiUsage, AI_PURPOSES, AI_SOURCES } from '@/lib/backendAiLogger';
 import { resolveCarId } from '@/lib/carResolver';
+import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Verify cron secret to prevent unauthorized access

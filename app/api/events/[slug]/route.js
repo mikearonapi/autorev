@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
+
+import { errors } from '@/lib/apiErrors';
 import { getEventBySlug } from '@/lib/eventsService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
-import { errors } from '@/lib/apiErrors';
 
 /**
  * GET /api/events/[slug]

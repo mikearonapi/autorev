@@ -15,9 +15,12 @@
  */
 
 import React, { Component } from 'react';
+
 import * as Sentry from '@sentry/nextjs';
-import styles from './ErrorBoundary.module.css';
+
 import { ErrorLogger } from '@/lib/errorLogger';
+
+import styles from './ErrorBoundary.module.css';
 
 // Fallback UI when no custom fallback provided
 function DefaultFallback({ error, errorInfo, onRetry }) {

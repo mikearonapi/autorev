@@ -12,6 +12,7 @@
  */
 
 import { useState, useEffect } from 'react';
+
 import styles from './ContinuousLearning.module.css';
 
 // Icons

@@ -23,8 +23,10 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useAuth } from '@/components/providers/AuthProvider';
+
 import { usePathname } from 'next/navigation';
+
+import { useAuth } from '@/components/providers/AuthProvider';
 
 // Get or create session ID
 function getSessionId() {

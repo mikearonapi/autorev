@@ -9,9 +9,12 @@
  */
 
 import { useState, useEffect } from 'react';
+
 import { createPortal } from 'react-dom';
-import styles from './ServiceLogModal.module.css';
+
 import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
+
+import styles from './ServiceLogModal.module.css';
 
 // SVG Icons for service categories
 const ServiceIcons = {

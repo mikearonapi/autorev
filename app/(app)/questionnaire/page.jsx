@@ -8,6 +8,7 @@
  */
 
 import { useRouter } from 'next/navigation';
+
 import { useAuth } from '@/components/providers/AuthProvider';
 import FullscreenQuestionnaire from '@/components/questionnaire/FullscreenQuestionnaire';
 

@@ -23,9 +23,10 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
+
+import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
 import { ForumScraperService } from '@/lib/forumScraper/index.js';
 import { InsightExtractor } from '@/lib/forumScraper/insightExtractor.js';
-import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const CRON_SECRET = process.env.CRON_SECRET;

@@ -12,7 +12,9 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
+
 import { sendEmail } from '@/lib/emailService';
 import { logCronError, withErrorLogging } from '@/lib/serverErrorLogger';
 

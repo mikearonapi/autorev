@@ -1,13 +1,17 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import { useCallback } from 'react';
-import Link from 'next/link';
+
 import Image from 'next/image';
-import styles from './BottomTabBar.module.css';
-import { UI_IMAGES } from '@/lib/images';
-import { APP_ROUTES, isAppRoute } from '@/lib/appRoutes';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+
 import { usePrefetchNavigation } from '@/hooks/usePrefetchNavigation';
+import { APP_ROUTES, isAppRoute } from '@/lib/appRoutes';
+import { UI_IMAGES } from '@/lib/images';
+
+import styles from './BottomTabBar.module.css';
 
 /**
  * BottomTabBar - Premium Minimal Tab Navigation

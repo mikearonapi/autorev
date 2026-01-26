@@ -9,8 +9,9 @@
  */
 
 import { NextResponse } from 'next/server';
-import { getAggregatesReadyToFlush, formatAggregateForDiscord } from '@/lib/errorAggregator';
+
 import { notifyAggregatedError } from '@/lib/discord';
+import { getAggregatesReadyToFlush, formatAggregateForDiscord } from '@/lib/errorAggregator';
 import { logCronError, withErrorLogging } from '@/lib/serverErrorLogger';
 
 const CRON_SECRET = process.env.CRON_SECRET;

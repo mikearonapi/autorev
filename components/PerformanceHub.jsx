@@ -14,10 +14,19 @@
 'use client';
 
 import React, { useState, useMemo, useEffect } from 'react';
+
 import Link from 'next/link';
-import styles from './PerformanceHub.module.css';
-import ScoringInfo from './ScoringInfo';
-import UpgradeDetailModal from './UpgradeDetailModal';
+
+import { Icons } from '@/components/ui/Icons';
+import { 
+  hasRecommendations, 
+  getPrimaryFocus, 
+  getCoreUpgrades, 
+  getEnhancementUpgrades,
+  getRecommendationProgress,
+} from '@/lib/carRecommendations.js';
+import { validateUpgradeSelection, getRecommendedUpgrades, SEVERITY } from '@/lib/dependencyChecker.js';
+import { useAppConfig } from '@/lib/hooks/useAppConfig.js';
 import {
   getAvailableUpgrades,
   calculateTotalCost,
@@ -31,22 +40,17 @@ import {
   getConflictSummary,
 } from '@/lib/performanceCalculator';
 import { getUpgradeByKey } from '@/lib/upgrades.js';
-import { useAppConfig } from '@/lib/hooks/useAppConfig.js';
-import { 
-  hasRecommendations, 
-  getPrimaryFocus, 
-  getCoreUpgrades, 
-  getEnhancementUpgrades,
-  getRecommendationProgress,
-} from '@/lib/carRecommendations.js';
-import { validateUpgradeSelection, getRecommendedUpgrades, SEVERITY } from '@/lib/dependencyChecker.js';
+
 import CarImage from './CarImage';
-import UpgradeAggregator from './UpgradeAggregator';
-import { useCarSelection } from './providers/CarSelectionProvider';
-import { useSavedBuilds } from './providers/SavedBuildsProvider';
+import styles from './PerformanceHub.module.css';
 import { useOwnedVehicles } from './providers/OwnedVehiclesProvider';
 import { useAuth } from './providers/AuthProvider';
-import { Icons } from '@/components/ui/Icons';
+import { useCarSelection } from './providers/CarSelectionProvider';
+import { useSavedBuilds } from './providers/SavedBuildsProvider';
+import ScoringInfo from './ScoringInfo';
+import UpgradeAggregator from './UpgradeAggregator';
+import UpgradeDetailModal from './UpgradeDetailModal';
+
 
 // Map icon names to components
 const iconMap = {

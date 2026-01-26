@@ -1,11 +1,15 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+
 import { useRouter } from 'next/navigation';
-import styles from './NotificationCenter.module.css';
+
 import { CATEGORY_CONFIG } from '@/lib/notificationService';
-import { useAuth } from './providers/AuthProvider';
 import { supabase } from '@/lib/supabase';
+
+import styles from './NotificationCenter.module.css';
+import { useAuth } from './providers/AuthProvider';
+
 
 /**
  * NotificationCenter Component

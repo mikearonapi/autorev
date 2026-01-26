@@ -15,12 +15,13 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
+
 import { rankFeed, buildUserContext, getLearnedPreferences } from '@/lib/feedAlgorithm';
-import { getBearerToken, createAuthenticatedClient, createServerSupabaseClient } from '@/lib/supabaseServer';
-import { errors } from '@/lib/apiErrors';
 import { calculateAllModificationGains } from '@/lib/performanceCalculator';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { getBearerToken, createAuthenticatedClient, createServerSupabaseClient } from '@/lib/supabaseServer';
 
 // Mark route as dynamic since it uses request.url
 export const dynamic = 'force-dynamic';

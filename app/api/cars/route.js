@@ -6,9 +6,10 @@
  */
 
 import { NextResponse } from 'next/server';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
+
 import { errors } from '@/lib/apiErrors';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 // Cache for 30 seconds, revalidate in background
 // Shorter cache to pick up new cars faster

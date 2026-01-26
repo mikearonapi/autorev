@@ -14,8 +14,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient, getBearerToken, createAuthenticatedClient } from '@/lib/supabaseServer';
-import { errors } from '@/lib/apiErrors';
+
 import {
   getConversation,
   deleteConversation,
@@ -23,7 +22,9 @@ import {
   archiveConversation,
   pinConversation,
 } from '@/lib/alConversationService';
+import { errors } from '@/lib/apiErrors';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createServerSupabaseClient, getBearerToken, createAuthenticatedClient } from '@/lib/supabaseServer';
 
 /**
  * Helper to authenticate and verify user ownership

@@ -9,9 +9,11 @@
  */
 
 import React, { useMemo } from 'react';
+
 import Link from 'next/link';
-import InsightFeedback from './ui/InsightFeedback';
+
 import styles from './NextUpgradeRecommendation.module.css';
+import InsightFeedback from './ui/InsightFeedback';
 
 // Icons
 const CompassIcon = ({ size = 16 }) => (

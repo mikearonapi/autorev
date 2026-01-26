@@ -15,6 +15,7 @@
  */
 
 import { useMemo, useRef, useSyncExternalStore } from 'react';
+
 import dynamic from 'next/dynamic';
 
 const FeedbackWidget = dynamic(() => import('@/components/FeedbackWidget'), {

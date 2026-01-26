@@ -15,10 +15,12 @@
  */
 
 import { useState } from 'react';
-import Modal from './Modal';
-import { Icons } from './Icons';
+
 import { WHY_CONTENT } from '@/data/whyContent';
+
+import { Icons } from './Icons';
 import styles from './InfoTooltip.module.css';
+import Modal from './Modal';
 
 /**
  * InfoTooltip - Educational tooltip with modal

@@ -1,10 +1,13 @@
 'use client';
 
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+
 import Link from 'next/link';
-import { useAuth } from '@/components/providers/AuthProvider';
-import LoadingSpinner from '@/components/LoadingSpinner';
+
 import EventRSVPButton from '@/components/EventRSVPButton';
+import LoadingSpinner from '@/components/LoadingSpinner';
+import { useAuth } from '@/components/providers/AuthProvider';
+
 import styles from './EventsView.module.css';
 
 /**

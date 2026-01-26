@@ -1,12 +1,16 @@
 'use client';
 
 import { useState, useRef } from 'react';
+
 import Link from 'next/link';
+
 import Button from '@/components/Button';
-import styles from './page.module.css';
-import legalStyles from '@/styles/legal-page.module.css';
-import { submitLead, LEAD_SOURCES } from '@/lib/leadsClient.js';
 import { Icons } from '@/components/ui/Icons';
+import { submitLead, LEAD_SOURCES } from '@/lib/leadsClient.js';
+import legalStyles from '@/styles/legal-page.module.css';
+
+import styles from './page.module.css';
+
 
 
 const interests = [

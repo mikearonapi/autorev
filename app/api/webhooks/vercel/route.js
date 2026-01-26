@@ -1,6 +1,8 @@
-import { NextResponse } from 'next/server';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
 import crypto from 'crypto';
+
+import { NextResponse } from 'next/server';
+
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Vercel webhook secret for signature verification
 const VERCEL_WEBHOOK_SECRET = process.env.VERCEL_WEBHOOK_SECRET;

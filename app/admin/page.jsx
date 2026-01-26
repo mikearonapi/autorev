@@ -18,36 +18,40 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
+
 import { useRouter } from 'next/navigation';
+
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { isAdminEmail } from '@/lib/adminAccess';
-import LoadingSpinner from '@/components/LoadingSpinner';
 
 // Components
+import { AlertsList } from './components/AlertsList';
+import { ALUserUsage } from './components/ALUserUsage';
+import { BreakEvenProgress } from './components/BreakEvenProgress';
+import { ContentInventory } from './components/ContentInventory';
+import { ContentStats } from './components/ContentStats';
+import { CostBreakdown } from './components/CostBreakdown';
+import { FunnelChart } from './components/FunnelChart';
+import { GrowthChart } from './components/GrowthChart';
+import { KPICard } from './components/KPICard';
+import { MonthYearSelector } from './components/MonthYearSelector';
 import { TabNav } from './components/TabNav';
 import { TimeRangeToggle } from './components/TimeRangeToggle';
-import { MonthYearSelector } from './components/MonthYearSelector';
-import { KPICard } from './components/KPICard';
-import { GrowthChart } from './components/GrowthChart';
-import { FunnelChart } from './components/FunnelChart';
-import { CostBreakdown } from './components/CostBreakdown';
-import { BreakEvenProgress } from './components/BreakEvenProgress';
 import { SystemHealth } from './components/SystemHealth';
-import { ContentStats } from './components/ContentStats';
-import { AlertsList } from './components/AlertsList';
 import { PLStatement } from './components/PLStatement';
 import { MonthlyTrend } from './components/MonthlyTrend';
 import { CostInputForm } from './components/CostInputForm';
 import { CostEntriesTable } from './components/CostEntriesTable';
+import { UnifiedAnalyticsDashboard } from './components/UnifiedAnalyticsDashboard';
+import { UnitEconomics } from './components/UnitEconomics';
 import { UsageEstimate } from './components/UsageEstimate';
 import { RetentionMetrics } from './components/RetentionMetrics';
 import { SystemHealthPanel } from './components/SystemHealthPanel';
-import { ContentInventory } from './components/ContentInventory';
 import { QuickActions } from './components/QuickActions';
 import { ExportButtons } from './components/ExportButtons';
 import { ExecutiveInsights } from './components/ExecutiveInsights';
-import { UnitEconomics } from './components/UnitEconomics';
-import { ALUserUsage } from './components/ALUserUsage';
+import { UsersDashboard } from './components/UsersDashboard';
 import { VercelStatus } from './components/VercelStatus';
 import { WebVitalsPanel } from './components/WebVitalsPanel';
 import EmailDashboard from './components/EmailDashboard';
@@ -55,9 +59,7 @@ import { StripeDashboard } from './components/StripeDashboard';
 import { CostIntegrations } from './components/CostIntegrations';
 import { SiteAnalytics } from './components/SiteAnalytics';
 import { MarketingAnalytics } from './components/MarketingAnalytics';
-import { UnifiedAnalyticsDashboard } from './components/UnifiedAnalyticsDashboard';
 import { ConsolidatedAnalytics } from './components/ConsolidatedAnalytics';
-import { UsersDashboard } from './components/UsersDashboard';
 
 // Icons
 import {
@@ -84,7 +86,6 @@ import {
   CheckCircleIcon,
   AlertCircleIcon,
 } from './components/Icons';
-
 import styles from './page.module.css';
 
 // Time range mapping

@@ -12,6 +12,7 @@
  */
 
 import { useMemo } from 'react';
+
 import styles from './RetentionMetrics.module.css';
 import { Tooltip } from './Tooltip';
 

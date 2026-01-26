@@ -19,6 +19,7 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
+
 import styles from './VercelStatus.module.css';
 
 // Icons

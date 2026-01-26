@@ -11,11 +11,12 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
-import { rateLimit } from '@/lib/rateLimit';
+
 import { errors } from '@/lib/apiErrors';
 import { getInsightsForUser } from '@/lib/insightService';
+import { rateLimit } from '@/lib/rateLimit';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 
 async function handleGet(request, { params }) {
   // Rate limit - api preset (60 req/min)

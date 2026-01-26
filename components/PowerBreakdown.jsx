@@ -10,8 +10,10 @@
  */
 
 import React, { useState, useMemo } from 'react';
+
 import { calculateSmartHpGain } from '@/lib/performanceCalculator';
 import { getUpgradeByKey } from '@/lib/upgrades';
+
 import styles from './PowerBreakdown.module.css';
 
 // Color palette for donut segments (high contrast, distinct colors)

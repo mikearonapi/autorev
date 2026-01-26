@@ -1,6 +1,10 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
+
+import { NextResponse } from 'next/server';
+
+import { createClient } from '@supabase/supabase-js';
+
+import { requireAdmin } from '@/lib/adminAuth';
 import { 
   chunkText, 
   generateEmbedding as generateEmbeddingUtil, 
@@ -8,7 +12,6 @@ import {
   getEmbeddingModel,
   isEmbeddingConfigured 
 } from '@/lib/embeddingUtils';
-import { requireAdmin } from '@/lib/adminAuth';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

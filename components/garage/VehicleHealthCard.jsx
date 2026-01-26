@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+
 import LoadingSpinner from '@/components/LoadingSpinner';
-import styles from './VehicleHealthCard.module.css';
 import { useUserVehicle, useUpdateVehicle } from '@/hooks/useUserData';
+
+import styles from './VehicleHealthCard.module.css';
 
 const BATTERY_OPTIONS = ['good', 'fair', 'weak', 'dead', 'unknown'];
 

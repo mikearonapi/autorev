@@ -8,11 +8,14 @@
  */
 
 import { useMemo } from 'react';
-import UpgradeConfigPanel, { getDefaultConfig } from './UpgradeConfigPanel';
-import { getUpgradeDetail } from '@/data/upgradeEducation';
-import styles from './DynamicBuildConfig.module.css';
-import { Icons } from '@/components/ui/Icons';
+
 import EmptyState from '@/components/ui/EmptyState';
+import { Icons } from '@/components/ui/Icons';
+import { getUpgradeDetail } from '@/data/upgradeEducation';
+
+import styles from './DynamicBuildConfig.module.css';
+import UpgradeConfigPanel, { getDefaultConfig } from './UpgradeConfigPanel';
+
 
 /**
  * Get upgrade data by key using the upgradeEducation lookup

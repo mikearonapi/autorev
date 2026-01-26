@@ -15,8 +15,11 @@
  */
 
 import { useState, useEffect } from 'react';
+
 import Image from 'next/image';
+
 import { LOGO_TRANSPARENT } from '@/lib/brandLogos';
+
 import styles from './SplashScreen.module.css';
 
 export default function SplashScreen({ 

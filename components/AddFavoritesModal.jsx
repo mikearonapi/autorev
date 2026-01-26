@@ -11,12 +11,16 @@
  */
 
 import { useState, useMemo, useEffect } from 'react';
+
 import { createPortal } from 'react-dom';
-import styles from './AddFavoritesModal.module.css';
+
+import { Icons } from '@/components/ui/Icons';
 import { fetchCars } from '@/lib/carsClient';
 import { calculateWeightedScore, ENTHUSIAST_WEIGHTS } from '@/lib/scoring';
+
+import styles from './AddFavoritesModal.module.css';
 import CarImage from './CarImage';
-import { Icons } from '@/components/ui/Icons';
+
 
 export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavorites = [] }) {
   const [searchQuery, setSearchQuery] = useState('');

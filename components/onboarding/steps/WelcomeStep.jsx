@@ -1,7 +1,9 @@
 'use client';
 
 import Image from 'next/image';
+
 import { LOGO_TRANSPARENT } from '@/lib/brandLogos';
+
 import styles from './WelcomeStep.module.css';
 
 /**

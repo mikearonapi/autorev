@@ -22,11 +22,14 @@
  */
 
 import { useMemo } from 'react';
+
 import Link from 'next/link';
-import styles from './UpgradeAggregator.module.css';
+
 import { useCarSelection, useBuildSummary } from '@/components/providers/CarSelectionProvider';
-import { calculateSmartHpGain, formatHpDisplay, getConflictSummary } from '@/lib/performanceCalculator';
 import { Icons } from '@/components/ui/Icons';
+import { calculateSmartHpGain, formatHpDisplay, getConflictSummary } from '@/lib/performanceCalculator';
+
+import styles from './UpgradeAggregator.module.css';
 
 /**
  * Format currency for display

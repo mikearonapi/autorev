@@ -16,6 +16,7 @@
  */
 
 import { useState, useMemo, useCallback } from 'react';
+
 import styles from './SizeSelector.module.css';
 
 // Categories that commonly have size variants

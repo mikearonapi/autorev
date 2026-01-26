@@ -16,7 +16,9 @@
  */
 
 import { useState, useEffect, useRef } from 'react';
+
 import { createPortal } from 'react-dom';
+
 import styles from './DynoLogModal.module.css';
 
 // SVG Icons

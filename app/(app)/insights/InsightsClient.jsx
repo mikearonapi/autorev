@@ -21,27 +21,31 @@
  */
 
 import { useState, useEffect, useCallback, useRef, useLayoutEffect, useMemo } from 'react';
-import { createPortal } from 'react-dom';
-import { useAuth } from '@/components/providers/AuthProvider';
+
 import Link from 'next/link';
-import Image from 'next/image';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import BuildProgressRings from './components/BuildProgressRings';
-import KnownIssuesAlert from '@/components/KnownIssuesAlert';
+
+import { createPortal } from 'react-dom';
+
+
 // Analysis components migrated from Data page
 import BuildProgressAnalysis from '@/components/BuildProgressAnalysis';
 import BuildValueAnalysis from '@/components/BuildValueAnalysis';
+import KnownIssuesAlert from '@/components/KnownIssuesAlert';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import NextUpgradeRecommendation from '@/components/NextUpgradeRecommendation';
 import PlatformInsights from '@/components/PlatformInsights';
+import { useAuth } from '@/components/providers/AuthProvider';
+import { useCarBySlug } from '@/hooks/useCarData';
+import { useTuningProfile } from '@/hooks/useTuningProfile';
+import { useUserInsights } from '@/hooks/useUserData';
 import { 
   calculateAllModificationGains, 
   calculateMaxPotential, 
   calculateHandlingScore, 
   calculateReliabilityScore 
 } from '@/lib/performanceCalculator';
-import { useTuningProfile } from '@/hooks/useTuningProfile';
-import { useUserInsights } from '@/hooks/useUserData';
-import { useCarBySlug } from '@/hooks/useCarData';
+
+import BuildProgressRings from './components/BuildProgressRings';
 import styles from './page.module.css';
 
 // ==========================================================================
@@ -97,7 +101,7 @@ const saveFilters = (filters) => {
 };
 
 // --- ICONS ---
-const UserIcon = ({ size = 20 }) => (
+const _UserIcon = ({ size = 20 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1"/></svg>
 );
 const GarageIcon = ({ size = 18 }) => (
@@ -109,7 +113,7 @@ const CarIcon = ({ size = 18 }) => (
 const CheckIcon = ({ size = 16 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
 );
-const CheckCircleIcon = ({ size = 32 }) => (
+const _CheckCircleIcon = ({ size = 32 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
 );
 const ChevronDownIcon = ({ size = 16 }) => (
@@ -137,7 +141,7 @@ const ThumbsUpIcon = ({ size = 18 }) => (
 const ThumbsDownIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"/></svg>
 );
-const WrenchIcon = ({ size = 18 }) => (
+const _WrenchIcon = ({ size = 18 }) => (
   <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
 );
 const SlidersIcon = ({ size = 18 }) => (
@@ -361,7 +365,7 @@ export default function InsightsClient() {
     mods: 0,
   });
 
-  const avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
+  const _avatarUrl = profile?.avatar_url || user?.user_metadata?.avatar_url || user?.user_metadata?.picture;
   const firstName = profile?.display_name?.split(' ')[0] || user?.email?.split('@')[0] || 'there';
 
   const vehicles = insightsData?.vehicles || [];
@@ -378,7 +382,7 @@ export default function InsightsClient() {
     : insights.buildProgress || [];
 
   // Summary Metrics
-  const displaySummary = selectedVehicle ? {
+  const _displaySummary = selectedVehicle ? {
     totalHpGain: rawBuildProgress.find(b => b.vehicleId === selectedVehicle.id)?.currentHpGain || 0,
     totalMods: (selectedVehicle.installed_modifications || []).length,
   } : {
@@ -483,7 +487,7 @@ export default function InsightsClient() {
   // - Any truly unique insights not covered by dedicated sections
   // ==========================================================================
   const generateSmartFeed = useCallback((vehicleId) => {
-    let items = [];
+    const items = [];
     // Default stats use baseline values (50% handling = stock, 100% reliability = stock)
     let stats = {
       power: { current: 0, max: 100, percent: 0 },

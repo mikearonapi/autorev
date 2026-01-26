@@ -16,9 +16,10 @@
  */
 
 import { useQuery, useQueries, useQueryClient } from '@tanstack/react-query';
+
 import apiClient from '@/lib/apiClient';
-import { carKeys, partsKeys } from '@/lib/queryKeys';
 import { getPrefetchedData } from '@/lib/prefetch';
+import { carKeys, partsKeys } from '@/lib/queryKeys';
 
 // Re-export for backwards compatibility with existing imports
 export { carKeys, partsKeys };
@@ -131,7 +132,7 @@ async function fetchLapTimes(slug, options = {}) {
  */
 async function fetchDynoRuns(slug, options = {}) {
   const { limit = 20 } = options;
-  let url = `/api/cars/${slug}/dyno?limit=${limit}`;
+  const url = `/api/cars/${slug}/dyno?limit=${limit}`;
   return fetcher(url);
 }
 

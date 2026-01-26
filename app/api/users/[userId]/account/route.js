@@ -17,9 +17,9 @@
  */
 
 import { NextResponse } from 'next/server';
-import { errors } from '@/lib/apiErrors';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken, getServiceClient } from '@/lib/supabaseServer';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken, getServiceClient } from '@/lib/supabaseServer';
 
 // Deletion reasons for categorization
 const VALID_REASONS = [

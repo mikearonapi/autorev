@@ -12,13 +12,13 @@
  * - Balance information
  */
 
-import { useState } from 'react';
-import styles from './StripeDashboard.module.css';
-import { KPICard } from './KPICard';
 import { useAdminStripe } from '@/hooks/useAdminData';
 
+import { KPICard } from './KPICard';
+import styles from './StripeDashboard.module.css';
+
 // Icons
-const StripeIcon = () => (
+const _StripeIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
     <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2z" />
     <path d="M9 12c0-1.5 1.5-2 3-2s2.5.5 2.5 2c0 1.5-1 2-2.5 2.5" />
@@ -145,7 +145,7 @@ function PaymentTypeBadge({ type }) {
   );
 }
 
-export function StripeDashboard({ token, range = 'month', loading: parentLoading = false }) {
+export function StripeDashboard({ token: _token, range = 'month', loading: parentLoading = false }) {
   // Use React Query hook for Stripe data
   const { 
     data, 

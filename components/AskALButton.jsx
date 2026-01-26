@@ -8,6 +8,7 @@
  */
 
 import { useRouter } from 'next/navigation';
+
 import styles from './AskALButton.module.css';
 
 // Storage key for pending AL prompts

@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { requireAdmin, getAuthErrorStatus } from '@/lib/adminAuth';
+
+import { requireAdmin } from '@/lib/adminAuth';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Force dynamic rendering - this route uses request.headers and request.url

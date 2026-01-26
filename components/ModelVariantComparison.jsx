@@ -15,10 +15,12 @@
  */
 
 import { useState, useMemo, useEffect } from 'react';
-import styles from './ModelVariantComparison.module.css';
-import CarImage from './CarImage';
-import { fetchCars } from '@/lib/carsClient';
+
 import { Icons } from '@/components/ui/Icons';
+import { fetchCars } from '@/lib/carsClient';
+
+import CarImage from './CarImage';
+import styles from './ModelVariantComparison.module.css';
 
 /**
  * Find related variants for a car

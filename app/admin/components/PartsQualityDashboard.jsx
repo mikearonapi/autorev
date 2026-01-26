@@ -8,8 +8,9 @@
  */
 
 import { useState, useEffect } from 'react';
-import styles from './PartsQualityDashboard.module.css';
+
 import { WrenchIcon, AlertIcon, CheckIcon, XIcon } from './Icons';
+import styles from './PartsQualityDashboard.module.css';
 
 // Health score color coding
 function getHealthColor(score) {

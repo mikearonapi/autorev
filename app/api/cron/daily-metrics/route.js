@@ -7,8 +7,10 @@
  * @route GET /api/cron/daily-metrics
  */
 
-import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+
+import { createClient } from '@supabase/supabase-js';
+
 import { logCronError, withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

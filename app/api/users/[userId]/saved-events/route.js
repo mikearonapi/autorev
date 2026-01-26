@@ -9,9 +9,9 @@
  */
 
 import { NextResponse } from 'next/server';
-import { errors } from '@/lib/apiErrors';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 
 async function handleGet(request, { params }) {
   const { userId } = await params;
@@ -60,7 +60,7 @@ async function handleGet(request, { params }) {
     const includeExpired = searchParams.get('includeExpired') === 'true';
     
     // Fetch saved events with full event details
-    let query = supabase
+    const query = supabase
       .from('event_saves')
       .select(`
         id,

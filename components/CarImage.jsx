@@ -13,8 +13,11 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
+
 import Image from 'next/image';
+
 import { getCarHeroImage, getCarThumbnail, getCarGarageImage, getPlaceholderGradient } from '@/lib/images.js';
+
 import styles from './CarImage.module.css';
 
 /**

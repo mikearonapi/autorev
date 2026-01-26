@@ -1,8 +1,11 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
+
+import { usePathname } from 'next/navigation';
+
 import { useBannerSafe, BANNER_TYPES } from '@/components/providers/BannerProvider';
+
 import styles from './BetaBanner.module.css';
 
 /**

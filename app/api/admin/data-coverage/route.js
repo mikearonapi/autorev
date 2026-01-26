@@ -15,11 +15,12 @@
  */
 
 import { NextResponse } from 'next/server';
-import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
+
 import { getUser } from '@/lib/auth';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { supabaseServiceRole, isSupabaseConfigured } from '@/lib/supabase';
 
-async function handleGet(request) {
+async function handleGet(_request) {
   try {
     // Check authentication
     const user = await getUser();

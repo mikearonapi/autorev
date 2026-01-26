@@ -1,20 +1,23 @@
 'use client';
 
 import { useState, useEffect, useCallback, useRef, useMemo, Suspense } from 'react';
+
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+
 import { useQueryClient } from '@tanstack/react-query';
+
+import { TITLES } from '@/app/(app)/dashboard/components/UserGreeting';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
+import EmptyState from '@/components/ui/EmptyState';
+import { Icons } from '@/components/ui/Icons';
+import { Skeleton, AvatarSkeleton } from '@/components/ui/Skeleton';
+import { useCommunityBuildsInfinite, useToggleLike, communityKeys } from '@/hooks/useCommunityData';
+import { useFeedTracking } from '@/hooks/useFeedTracking';
+
 import BuildDetailSheet from './BuildDetailSheet';
 import CommentsSheet from './CommentsSheet';
-import EmptyState from '@/components/ui/EmptyState';
-import { Skeleton, AvatarSkeleton } from '@/components/ui/Skeleton';
-import { Icons } from '@/components/ui/Icons';
-import { useFeedTracking } from '@/hooks/useFeedTracking';
-import { useCommunityBuildsInfinite, useToggleLike, communityKeys } from '@/hooks/useCommunityData';
-import { TITLES } from '@/app/(app)/dashboard/components/UserGreeting';
 import styles from './page.module.css';
 
 /**

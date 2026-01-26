@@ -10,8 +10,10 @@
  */
 
 import React, { useMemo, useState } from 'react';
-import { getToolsForBuild, calculateBuildComplexity, toolCategories, tools } from '@/data/upgradeTools';
+
 import { Icons } from '@/components/ui/Icons';
+import { getToolsForBuild, calculateBuildComplexity, toolCategories, tools } from '@/data/upgradeTools';
+
 import styles from './InstallToolsPanel.module.css';
 
 // Map category keys to icons

@@ -17,13 +17,16 @@
  */
 
 import React, { useState, useEffect, useCallback } from 'react';
+
 import { createPortal } from 'react-dom';
-import { useCheckout } from '@/hooks/useCheckout';
+
+import BillingToggle from '@/components/BillingToggle';
 import { useAuth } from '@/components/providers/AuthProvider';
+import { Icons } from '@/components/ui/Icons';
+import { useCheckout } from '@/hooks/useCheckout';
 import { getTierPricing } from '@/lib/stripe';
 import { IS_BETA } from '@/lib/tierAccess';
-import BillingToggle from '@/components/BillingToggle';
-import { Icons } from '@/components/ui/Icons';
+
 import styles from './PaywallModal.module.css';
 
 /**

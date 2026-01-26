@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+
 import styles from './EmailDashboard.module.css';
 
 /**

@@ -8,6 +8,7 @@
  */
 
 import { useState, useEffect } from 'react';
+
 import styles from './CostInputForm.module.css';
 import { DollarSignIcon, CheckCircleIcon, AlertCircleIcon, EditIcon } from './Icons';
 

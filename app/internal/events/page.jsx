@@ -1,10 +1,13 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
+
 import Link from 'next/link';
-import styles from './page.module.css';
-import { Icons } from '@/components/ui/Icons';
+
 import EmptyState from '@/components/ui/EmptyState';
+import { Icons } from '@/components/ui/Icons';
+
+import styles from './page.module.css';
 
 // Static icon elements for event metadata (pre-rendered at fixed size)
 const StaticIcons = {

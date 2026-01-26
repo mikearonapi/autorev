@@ -14,18 +14,20 @@
  */
 
 import { NextResponse } from 'next/server';
-import Stripe from 'stripe';
+
 import { createClient } from '@supabase/supabase-js';
+import Stripe from 'stripe';
+
+import { notifyPayment } from '@/lib/discord';
+import { sendPaymentFailedEmail, sendTrialEndingEmail } from '@/lib/emailService';
+import { sendSubscribeEvent, sendPurchaseEvent } from '@/lib/metaConversionsApi';
+import { logServerError } from '@/lib/serverErrorLogger';
 import {
   getTierFromPriceId,
   getCreditPackFromPriceId,
   isDonationProduct,
   mapSubscriptionStatus,
 } from '@/lib/stripe';
-import { notifyPayment } from '@/lib/discord';
-import { logServerError } from '@/lib/serverErrorLogger';
-import { sendSubscribeEvent, sendPurchaseEvent } from '@/lib/metaConversionsApi';
-import { sendPaymentFailedEmail, sendTrialEndingEmail } from '@/lib/emailService';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
 const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET;

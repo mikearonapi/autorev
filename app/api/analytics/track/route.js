@@ -8,9 +8,10 @@
  * POST /api/analytics/track
  */
 
-import { createClient } from '@supabase/supabase-js';
-import { errors } from '@/lib/apiErrors';
 import { headers } from 'next/headers';
+
+import { createClient } from '@supabase/supabase-js';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Create admin client for inserting page views (bypasses RLS)

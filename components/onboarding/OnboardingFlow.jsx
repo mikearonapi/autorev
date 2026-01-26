@@ -1,18 +1,23 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { createPortal } from 'react-dom';
+
 import { useRouter } from 'next/navigation';
+
+import { createPortal } from 'react-dom';
+
+import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
+import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
+import { ONBOARDING_IMAGES } from '@/lib/images';
+
 import styles from './OnboardingFlow.module.css';
-import WelcomeStep from './steps/WelcomeStep';
-import NameStep from './steps/NameStep';
 import BrandsStep from './steps/BrandsStep';
 import FeatureSlide from './steps/FeatureSlide';
-import ReferralStep from './steps/ReferralStep';
 import FinalStep from './steps/FinalStep';
-import { useAnalytics, ANALYTICS_EVENTS } from '@/hooks/useAnalytics';
-import { ONBOARDING_IMAGES } from '@/lib/images';
-import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
+import NameStep from './steps/NameStep';
+import ReferralStep from './steps/ReferralStep';
+import WelcomeStep from './steps/WelcomeStep';
+
 
 
 // Feature slides configuration - each becomes its own step

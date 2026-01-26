@@ -10,6 +10,7 @@
  */
 
 import { useState, useCallback, useId } from 'react';
+
 import styles from './CollapsibleSection.module.css';
 
 const ChevronIcon = ({ isOpen }) => (

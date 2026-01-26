@@ -2,6 +2,7 @@
 
 import Button from '@/components/Button';
 import { trackEvent } from '@/lib/ga4';
+
 import styles from './LandingCTA.module.css';
 
 /**

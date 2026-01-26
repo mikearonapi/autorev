@@ -13,6 +13,7 @@
  */
 
 import { useMemo } from 'react';
+
 import styles from './MonthlyTrend.module.css';
 
 function formatCurrency(amount, compact = false) {

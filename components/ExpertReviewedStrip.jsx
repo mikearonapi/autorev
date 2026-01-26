@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
-import styles from './ExpertReviewedStrip.module.css';
-import CarImage from './CarImage';
+
 import { useExpertReviewedCars } from '@/hooks/useCarData';
+
+import CarImage from './CarImage';
+import styles from './ExpertReviewedStrip.module.css';
 
 // Icons
 const VerifiedIcon = ({ size = 16 }) => (

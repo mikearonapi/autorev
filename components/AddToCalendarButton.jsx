@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
+
 import Link from 'next/link';
-import styles from './AddToCalendarButton.module.css';
-import { useAuth } from './providers/AuthProvider';
-import { useAuthModal } from './AuthModal';
+
 import { hasAccess, getUpgradeCTA, IS_BETA } from '@/lib/tierAccess';
+
+import styles from './AddToCalendarButton.module.css';
+import { useAuthModal } from './AuthModal';
+import { useAuth } from './providers/AuthProvider';
 
 /**
  * Calendar Icon with Plus - for adding events to calendar

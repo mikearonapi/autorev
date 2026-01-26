@@ -24,6 +24,7 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+
 import { usePostHog } from '@/components/providers/PostHogProvider';
 
 /**

@@ -15,11 +15,14 @@
  */
 
 import { useState, useMemo, useEffect } from 'react';
+
 import { createPortal } from 'react-dom';
-import styles from './AddVehicleModal.module.css';
+
+import { Icons } from '@/components/ui/Icons';
 import { fetchCars } from '@/lib/carsClient';
 import { calculateWeightedScore, ENTHUSIAST_WEIGHTS } from '@/lib/scoring';
-import { Icons } from '@/components/ui/Icons';
+
+import styles from './AddVehicleModal.module.css';
 
 export default function AddVehicleModal({ isOpen, onClose, onAdd, existingVehicles = [] }) {
   // Search state

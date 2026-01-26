@@ -11,9 +11,10 @@
  */
 
 import { NextResponse } from 'next/server';
+
+import { notifyCronEnrichment } from '@/lib/discord';
 import { processEmailQueue } from '@/lib/emailService';
 import { withErrorLogging, logCronError } from '@/lib/serverErrorLogger';
-import { notifyCronEnrichment } from '@/lib/discord';
 
 // Verify cron secret to prevent unauthorized access
 const CRON_SECRET = process.env.CRON_SECRET;

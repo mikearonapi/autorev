@@ -8,8 +8,10 @@
  */
 
 import { useState } from 'react';
-import styles from './MarketingAnalytics.module.css';
+
 import { useAdminMarketingAnalytics } from '@/hooks/useAdminData';
+
+import styles from './MarketingAnalytics.module.css';
 
 // Funnel visualization component
 function FunnelChart({ funnel }) {

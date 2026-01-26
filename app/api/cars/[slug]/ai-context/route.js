@@ -8,7 +8,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { errors } from '@/lib/apiErrors';
+
 import { getCarAIContext } from '@/lib/alTools';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
@@ -35,7 +35,7 @@ async function handleGet(request, { params }) {
           { status: 404 }
         );
       }
-      // For other errors, return 500
+      // For other return 500
       return NextResponse.json(
         { error: context.error, code: 'SERVER_ERROR', car_slug: slug },
         { status: 500 }

@@ -15,9 +15,12 @@
  */
 
 import { useState, useEffect } from 'react';
+
 import { createPortal } from 'react-dom';
-import styles from './FeedbackDimensionsModal.module.css';
+
 import { Icons } from '@/components/ui/Icons';
+
+import styles from './FeedbackDimensionsModal.module.css';
 
 // Quick feedback tags
 const POSITIVE_TAGS = [

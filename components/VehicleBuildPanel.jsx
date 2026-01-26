@@ -10,9 +10,11 @@
  */
 
 import { useState, useCallback } from 'react';
+
+import { useVehicleBuild, useUpdateVehicleBuild } from '@/hooks/useUserData';
+
 import BuildEditor from './BuildEditor';
 import styles from './VehicleBuildPanel.module.css';
-import { useVehicleBuild, useUpdateVehicleBuild } from '@/hooks/useUserData';
 
 export default function VehicleBuildPanel({
   vehicleId,

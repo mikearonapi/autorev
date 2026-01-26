@@ -4,6 +4,7 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { requireAdmin } from '@/lib/adminAccess';
 import { getFatigueMetrics } from '@/lib/notificationFatigueService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';

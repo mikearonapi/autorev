@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { requireAdmin, getAuthErrorStatus } from '@/lib/adminAuth';
+
+import { requireAdmin } from '@/lib/adminAuth';
 import { resolveCarId } from '@/lib/carResolver';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 

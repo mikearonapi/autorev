@@ -8,7 +8,9 @@
  */
 
 import { useMemo } from 'react';
+
 import Link from 'next/link';
+
 import styles from '@/app/(marketing)/page.module.css';
 
 // Icons

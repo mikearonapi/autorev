@@ -12,9 +12,10 @@
  */
 
 import React, { useEffect, useState } from 'react';
-import Modal from './ui/Modal';
-import { Icons } from './ui/Icons';
+
 import styles from './CelebrationModal.module.css';
+import { Icons } from './ui/Icons';
+import Modal from './ui/Modal';
 
 /**
  * CelebrationModal - Celebrate part installation

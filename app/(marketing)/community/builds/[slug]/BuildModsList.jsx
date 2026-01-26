@@ -15,13 +15,15 @@
  */
 
 import { useState, useMemo } from 'react';
-import { getUpgradeByKey } from '@/lib/upgrades.js';
+
 import {
   CATEGORY_BY_KEY,
   CATEGORY_ICONS,
   CATEGORY_ORDER,
   normalizeCategory,
 } from '@/lib/upgradeCategories.js';
+import { getUpgradeByKey } from '@/lib/upgrades.js';
+
 import styles from './BuildModsList.module.css';
 
 export default function BuildModsList({ parts = [], buildData = null, isOwner = false, onEditPart }) {

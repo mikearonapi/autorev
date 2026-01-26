@@ -15,27 +15,30 @@
  */
 
 import React, { useState, useEffect, useMemo, Suspense, useCallback, useRef } from 'react';
+
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import styles from './page.module.css';
-import LoadingSpinner from '@/components/LoadingSpinner';
+
+import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { MyGarageSubNav, GarageVehicleSelector } from '@/components/garage';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
-import { useGarageScore } from '@/hooks/useGarageScore';
-import AuthModal, { useAuthModal } from '@/components/AuthModal';
-import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
-import { useCarImages } from '@/hooks/useCarImages';
+import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import ShareBuildButton from '@/components/ShareBuildButton';
-import PartsSelector from '@/components/tuning-shop/PartsSelector';
-import { getPerformanceProfile } from '@/lib/performanceCalculator';
-import { calculateTotalCost } from '@/lib/performance.js';
-import { Icons } from '@/components/ui/Icons';
-import EmptyState from '@/components/ui/EmptyState';
-import { Skeleton, ListSkeleton } from '@/components/ui/Skeleton';
 import ALRecommendationsButton from '@/components/tuning-shop/ALRecommendationsButton';
+import PartsSelector from '@/components/tuning-shop/PartsSelector';
+import EmptyState from '@/components/ui/EmptyState';
+import { Icons } from '@/components/ui/Icons';
+import { Skeleton, ListSkeleton } from '@/components/ui/Skeleton';
+import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
+import { useGarageScore } from '@/hooks/useGarageScore';
+import { useCarImages } from '@/hooks/useCarImages';
+import { calculateTotalCost } from '@/lib/performance.js';
+import { getPerformanceProfile } from '@/lib/performanceCalculator';
+
+import styles from './page.module.css';
 
 // Empty State - no vehicle selected  
 function NoVehicleSelectedState() {

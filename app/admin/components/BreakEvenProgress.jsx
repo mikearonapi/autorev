@@ -12,6 +12,7 @@
  */
 
 import { useMemo } from 'react';
+
 import styles from './BreakEvenProgress.module.css';
 import { InfoIcon } from './Icons';
 

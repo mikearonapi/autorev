@@ -8,6 +8,7 @@
  */
 
 import React, { useState, useCallback } from 'react';
+
 import styles from './InsightFeedback.module.css';
 
 // Icons

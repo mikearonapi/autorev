@@ -14,6 +14,7 @@
  */
 
 import { useState, useEffect, useMemo } from 'react';
+
 import styles from './errors.module.css';
 
 // Severity configuration

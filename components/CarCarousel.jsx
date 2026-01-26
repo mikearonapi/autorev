@@ -11,10 +11,13 @@
  */
 
 import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
+
 import Image from 'next/image';
 import Link from 'next/link';
+
 import { useCarsList } from '@/hooks/useCarData';
 import { getCarHeroImage } from '@/lib/images';
+
 import styles from './CarCarousel.module.css';
 
 /**

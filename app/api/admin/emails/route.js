@@ -9,9 +9,11 @@
  */
 
 import { NextResponse } from 'next/server';
-import { getEmailAnalytics, sendTemplateEmail, processEmailQueue } from '@/lib/emailService';
+
 import { createClient } from '@supabase/supabase-js';
+
 import { requireAdmin } from '@/lib/adminAccess';
+import { getEmailAnalytics, sendTemplateEmail, processEmailQueue } from '@/lib/emailService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

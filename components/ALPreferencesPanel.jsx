@@ -11,9 +11,11 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
-import styles from './ALPreferencesPanel.module.css';
+
 import { Icons } from '@/components/ui/Icons';
 import { useALPreferences as useALPreferencesQuery, useUpdateALPreferences } from '@/hooks/useUserData';
+
+import styles from './ALPreferencesPanel.module.css';
 
 // Tool toggle configuration
 // Note: All tools are available to all users during beta (IS_BETA mode)

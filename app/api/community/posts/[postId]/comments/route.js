@@ -10,13 +10,15 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
-import { moderateComment, getModerationGuidance } from '@/lib/commentModerationService';
+
 import { errors } from '@/lib/apiErrors';
+import { moderateComment, getModerationGuidance } from '@/lib/commentModerationService';
 import { trackActivity } from '@/lib/dashboardScoreService';
 import { awardPoints } from '@/lib/pointsService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -88,7 +90,7 @@ async function handleGet(request, context) {
   // Note: user_profiles uses 'id' as the primary key (same as auth.users.id)
   const userIds = [...new Set(comments?.map(c => c.user_id) || [])];
   
-  let usersMap = {};
+  const usersMap = {};
   if (userIds.length > 0) {
     const { data: profiles } = await supabaseAdmin
       .from('user_profiles')

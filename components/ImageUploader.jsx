@@ -12,8 +12,11 @@
  */
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
+
 import Image from 'next/image';
+
 import { upload } from '@vercel/blob/client';
+
 import styles from './ImageUploader.module.css';
 
 // File size limits - can be larger now with client uploads

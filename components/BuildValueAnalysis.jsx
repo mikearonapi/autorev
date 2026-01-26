@@ -9,8 +9,9 @@
  */
 
 import React, { useMemo } from 'react';
-import InsightFeedback from './ui/InsightFeedback';
+
 import styles from './BuildValueAnalysis.module.css';
+import InsightFeedback from './ui/InsightFeedback';
 
 // Efficiency rating colors - matching design system tokens
 const EFFICIENCY_COLORS = {

@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+
 import Image from 'next/image';
-import styles from './NotificationPreferences.module.css';
-import { CATEGORY_CONFIG } from '@/lib/notificationService';
+
 import { Icons } from '@/components/ui/Icons';
 import { UI_IMAGES } from '@/lib/images';
+import { CATEGORY_CONFIG } from '@/lib/notificationService';
+
+import styles from './NotificationPreferences.module.css';
 
 /**
  * NotificationPreferences Component

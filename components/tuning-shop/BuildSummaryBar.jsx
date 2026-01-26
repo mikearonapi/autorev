@@ -15,6 +15,7 @@
  */
 
 import { useState, useCallback, useMemo } from 'react';
+
 import styles from './BuildSummaryBar.module.css';
 
 const ChevronIcon = ({ direction = 'up' }) => (

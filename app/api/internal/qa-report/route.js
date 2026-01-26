@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 // Force dynamic to prevent static prerendering
 export const dynamic = 'force-dynamic';

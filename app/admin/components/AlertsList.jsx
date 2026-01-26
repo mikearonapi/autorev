@@ -7,6 +7,7 @@
  */
 
 import Link from 'next/link';
+
 import styles from './AlertsList.module.css';
 import { InfoIcon, AlertTriangleIcon, AlertCircleIcon, CheckCircleIcon } from './Icons';
 

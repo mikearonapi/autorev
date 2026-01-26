@@ -16,10 +16,12 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import Stripe from 'stripe';
+
 import { getUser } from '@/lib/auth';
-import { supabaseServiceRole } from '@/lib/supabase';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { supabaseServiceRole } from '@/lib/supabase';
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {

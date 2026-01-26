@@ -18,30 +18,33 @@
  */
 
 import React, { useState, useEffect, useLayoutEffect, Suspense, useCallback, useRef } from 'react';
-import { flushSync } from 'react-dom';
+
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 
-import styles from './page.module.css';
-import { Skeleton, ListSkeleton } from '@/components/ui';
+import { flushSync } from 'react-dom';
+
+import AddVehicleModal from '@/components/AddVehicleModal';
+import AuthModal, { useAuthModal } from '@/components/AuthModal';
+import BuildWizard from '@/components/BuildWizard';
+import CarPickerFullscreen from '@/components/CarPickerFullscreen';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { MyGarageSubNav, GarageVehicleSelector } from '@/components/garage';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useFavorites } from '@/components/providers/FavoritesProvider';
-import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
-import AuthModal, { useAuthModal } from '@/components/AuthModal';
-import UpgradeCenter from '@/components/UpgradeCenter';
-import BuildWizard from '@/components/BuildWizard';
-import CarPickerFullscreen from '@/components/CarPickerFullscreen';
-import AddVehicleModal from '@/components/AddVehicleModal';
-import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
-import { useCarImages } from '@/hooks/useCarImages';
+import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import ShareBuildButton from '@/components/ShareBuildButton';
-
-// Tuning shop components
 import { useWheelTireSelection, ALBuildSearchInput } from '@/components/tuning-shop';
 import { Icons } from '@/components/ui/Icons';
+import UpgradeCenter from '@/components/UpgradeCenter';
+import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
+import { useCarImages } from '@/hooks/useCarImages';
+
+// Tuning shop components
+import { Skeleton, ListSkeleton } from '@/components/ui';
+
+import styles from './page.module.css';
 
 // Auto-save Status Indicator - removed per user request
 // function AutoSaveIndicator({ status }) { ... }

@@ -9,8 +9,9 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 
 async function handleGet(request, { params }) {
   const { userId } = await params;

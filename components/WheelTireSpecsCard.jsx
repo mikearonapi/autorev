@@ -11,8 +11,10 @@
  */
 
 import React, { useState, useCallback, useEffect } from 'react';
-import styles from './WheelTireSpecsCard.module.css';
+
 import { Icons } from '@/components/ui/Icons';
+
+import styles from './WheelTireSpecsCard.module.css';
 
 /**
  * Single spec row with inline edit capability

@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+
+import { getMonthAbbrev, getDayOfMonth, getWeekdayAbbrev } from '@/lib/dateUtils';
+
 import styles from './EventCard.module.css';
 import SaveEventButton from './SaveEventButton';
-import { getMonthAbbrev, getDayOfMonth, getWeekdayAbbrev } from '@/lib/dateUtils';
 
 // Skeleton component for loading state
 export function EventCardSkeleton() {

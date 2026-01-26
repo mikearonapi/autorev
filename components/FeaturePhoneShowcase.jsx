@@ -17,10 +17,10 @@
 
 'use client';
 
-import IPhoneFrame from './IPhoneFrame';
-import ImageCarousel from './ImageCarousel';
 import AdvancedImageCarousel from './AdvancedImageCarousel';
 import styles from './FeaturePhoneShowcase.module.css';
+import ImageCarousel from './ImageCarousel';
+import IPhoneFrame from './IPhoneFrame';
 
 // Image paths for each feature (using onboarding screenshots)
 const GARAGE_IMAGES = [

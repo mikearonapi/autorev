@@ -1,12 +1,15 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
+
 import Link from 'next/link';
-import styles from './EventCalendarView.module.css';
-import PremiumGate from './PremiumGate';
+
 import { EventTypeIcon, TrackEventBadgeIcon } from '@/components/icons/EventIcons';
 import { Icons } from '@/components/ui/Icons';
 import { formatEventDateFull, parseDate } from '@/lib/dateUtils';
+
+import styles from './EventCalendarView.module.css';
+import PremiumGate from './PremiumGate';
 
 /**
  * Get days in a month

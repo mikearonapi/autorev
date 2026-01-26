@@ -9,8 +9,9 @@
  */
 
 import React, { useState, useMemo } from 'react';
-import InsightFeedback from './ui/InsightFeedback';
+
 import styles from './PlatformInsights.module.css';
+import InsightFeedback from './ui/InsightFeedback';
 
 // Icons
 const SparklesIcon = ({ size = 16 }) => (

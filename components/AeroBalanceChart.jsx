@@ -6,6 +6,7 @@
  */
 
 import React from 'react';
+
 import styles from './AeroBalanceChart.module.css';
 
 // Icons

@@ -8,11 +8,12 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
-import { errors } from '@/lib/apiErrors';
-import { getUserBalance, getDailyUsage } from '@/lib/alUsageService';
+
 import { formatCentsAsDollars, formatCentsCompact } from '@/lib/alConfig';
+import { getUserBalance, getDailyUsage } from '@/lib/alUsageService';
+import { errors } from '@/lib/apiErrors';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 
 async function handleGet(request, { params }) {
   const { userId } = await params;

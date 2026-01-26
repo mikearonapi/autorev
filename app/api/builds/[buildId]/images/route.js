@@ -9,10 +9,12 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
+
 import { errors } from '@/lib/apiErrors';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
 
 // Service role client for fetching images (user must be authenticated)
 const supabaseAdmin = createClient(
@@ -64,7 +66,7 @@ async function handleGet(request, { params }) {
       return errors.database('Failed to fetch images');
     }
     
-    let allImages = buildImages || [];
+    const allImages = buildImages || [];
     const imageIds = new Set(allImages.map(img => img.id));
     
     // If carSlug provided, also fetch images linked by car_slug (for cross-feature sharing)

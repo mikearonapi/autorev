@@ -14,9 +14,10 @@
  */
 
 import { NextResponse } from 'next/server';
-import { supabase, isSupabaseConfigured } from '@/lib/supabase';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
+
 import { resolveCarId } from '@/lib/carResolver';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 /**
  * Fitment type priority for sorting

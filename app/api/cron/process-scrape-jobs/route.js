@@ -16,8 +16,9 @@
  */
 
 import { NextResponse } from 'next/server';
-import * as scrapeJobService from '@/lib/scrapeJobService';
+
 import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
+import * as scrapeJobService from '@/lib/scrapeJobService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Cron secret for authorization

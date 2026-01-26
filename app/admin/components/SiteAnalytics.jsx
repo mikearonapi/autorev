@@ -9,8 +9,10 @@
  */
 
 import { useState } from 'react';
-import styles from './SiteAnalytics.module.css';
+
 import { useAdminSiteAnalytics } from '@/hooks/useAdminData';
+
+import styles from './SiteAnalytics.module.css';
 
 // Simple chart component for the time series
 function VisitorChart({ data, height = 200 }) {

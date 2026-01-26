@@ -14,8 +14,10 @@
  */
 
 import React, { useMemo } from 'react';
+
 import { Icons } from '@/components/ui/Icons';
 import { getUpgradeByKey } from '@/lib/upgrades';
+
 import styles from './BuildComparisonPanel.module.css';
 
 /**

@@ -5,8 +5,10 @@
  * No caching, no complex logic, just straight DB reads.
  */
 
-import { createClient } from '@supabase/supabase-js';
 import { NextResponse } from 'next/server';
+
+import { createClient } from '@supabase/supabase-js';
+
 import { requireAdmin, isAdminEmail } from '@/lib/adminAccess';
 import { getTotalUsersCount, getUserTierBreakdown } from '@/lib/adminMetricsService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';

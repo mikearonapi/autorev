@@ -4,9 +4,10 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient, createAuthenticatedClient, getBearerToken } from '@/lib/supabaseServer';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
+
 import { errors } from '@/lib/apiErrors';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createServerSupabaseClient, createAuthenticatedClient, getBearerToken } from '@/lib/supabaseServer';
 
 // Simple ZIP code to city/state mapping for common US ZIPs
 // In production, could use a full database or external API
@@ -761,7 +762,7 @@ function lookupZip(zip) {
  * GET /api/user/location?zip=12345
  * Lookup city/state from ZIP code
  */
-async function handleGet(request) {
+async function handleGet(_request) {
   const { searchParams } = new URL(request.url);
   const zip = searchParams.get('zip');
   

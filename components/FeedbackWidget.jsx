@@ -15,11 +15,11 @@
  */
 
 import { useState, useEffect, useCallback, createContext, useContext, useRef } from 'react';
-import { createPortal } from 'react-dom';
+
 import Image from 'next/image';
-import { useAuth } from './providers/AuthProvider';
-import styles from './FeedbackWidget.module.css';
+
 import html2canvas from 'html2canvas';
+import { createPortal } from 'react-dom';
 
 // Feedback category colors - matching design system tokens
 const FEEDBACK_COLORS = {
@@ -126,6 +126,9 @@ export function FeedbackProvider({ children }) {
 // ============================================================================
 
 import { Icons } from '@/components/ui/Icons';
+
+import styles from './FeedbackWidget.module.css';
+import { useAuth } from './providers/AuthProvider';
 
 // ============================================================================
 // CATEGORY & SEVERITY OPTIONS

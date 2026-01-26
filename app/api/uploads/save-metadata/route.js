@@ -17,13 +17,15 @@
  */
 
 import { NextResponse } from 'next/server';
-import { put, del } from '@vercel/blob';
+
 import { createClient } from '@supabase/supabase-js';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
-import { compressImage, isCompressible } from '@/lib/tinify';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { put, del } from '@vercel/blob';
+
 import { errors } from '@/lib/apiErrors';
 import { awardPoints } from '@/lib/pointsService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+import { compressImage, isCompressible } from '@/lib/tinify';
 
 /**
  * Get authenticated user from request (supports both cookie and Bearer token)

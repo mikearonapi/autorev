@@ -13,8 +13,16 @@
  */
 
 import { useEffect, useRef, useState, useMemo } from 'react';
-import { createPortal } from 'react-dom';
+
 import { useRouter } from 'next/navigation';
+
+import { createPortal } from 'react-dom';
+
+import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
+import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
+import { useReferralData } from '@/hooks/useUserData';
+import { platform } from '@/lib/platform';
+
 import {
   CloseIcon,
   GarageIcon,
@@ -23,11 +31,8 @@ import {
   MessageIcon,
   FlameIcon,
 } from './DashboardIcons';
-import { useReferralData } from '@/hooks/useUserData';
-import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
-import { platform } from '@/lib/platform';
 import styles from './PointsExplainerModal.module.css';
-import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
+
 
 // Profile icon for questionnaire category
 const ProfileIcon = ({ size }) => (

@@ -1,9 +1,12 @@
 'use client';
 
 import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
+
 import Link from 'next/link';
-import styles from './SportsCarComparison.module.css';
+
+import { Icons } from '@/components/ui/Icons';
 import { useCarsList } from '@/hooks/useCarData';
+import { trackCarSelectorComplete } from '@/lib/ga4';
 import { useAppConfig, getDescriptorForValueSync } from '@/lib/hooks/useAppConfig.js';
 import { 
   calculateWeightedScore, 
@@ -13,12 +16,14 @@ import {
   getDynamicRecommendationTypes,
   DEFAULT_WEIGHTS,
 } from '@/lib/scoring.js';
-import CarImage from './CarImage';
-import CarActionMenu from './CarActionMenu';
-import ScoringInfo from './ScoringInfo';
 import { savePreferences, loadPreferences } from '@/lib/stores/userPreferencesStore';
-import { trackCarSelectorComplete } from '@/lib/ga4';
-import { Icons } from '@/components/ui/Icons';
+
+import CarActionMenu from './CarActionMenu';
+import CarImage from './CarImage';
+import ScoringInfo from './ScoringInfo';
+import styles from './SportsCarComparison.module.css';
+
+
 
 /**
  * Extract the low price from a price range string

@@ -1,9 +1,11 @@
 'use client';
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+
 import Image from 'next/image';
-import IPhoneFrame from '../../IPhoneFrame';
+
 import styles from './FeatureSlide.module.css';
+import IPhoneFrame from '../../IPhoneFrame';
 
 /**
  * FeatureSlide Component

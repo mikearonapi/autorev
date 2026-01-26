@@ -1,11 +1,14 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+
 import Image from 'next/image';
+
+import PointsExplainerModal from '@/app/(app)/dashboard/components/PointsExplainerModal';
+import { TITLES } from '@/app/(app)/dashboard/components/UserGreeting';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { ListSkeleton } from '@/components/ui/Skeleton';
-import { TITLES } from '@/app/(app)/dashboard/components/UserGreeting';
-import PointsExplainerModal from '@/app/(app)/dashboard/components/PointsExplainerModal';
+
 import styles from './LeaderboardView.module.css';
 
 /**

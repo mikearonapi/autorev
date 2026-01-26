@@ -11,7 +11,9 @@
  */
 
 import { createContext, useContext, useReducer, useEffect, useState, useCallback, useMemo } from 'react';
+
 import { useAuth } from '@/components/providers/AuthProvider';
+import { getPrefetchedData } from '@/lib/prefetch';
 import {
   loadCompare,
   saveCompare,
@@ -23,7 +25,6 @@ import {
   saveUserCompareList,
   deleteUserCompareList,
 } from '@/lib/userDataService';
-import { getPrefetchedData } from '@/lib/prefetch';
 
 const MAX_COMPARE = 4;
 

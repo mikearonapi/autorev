@@ -15,7 +15,9 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
+
 import Image from 'next/image';
+
 import styles from './StickyCarHeader.module.css';
 
 const ChevronIcon = ({ direction = 'down' }) => (

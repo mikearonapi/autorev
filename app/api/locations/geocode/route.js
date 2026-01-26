@@ -11,6 +11,7 @@
  */
 
 import { NextResponse } from 'next/server';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Google API key for server-side geocoding - prioritize GOOGLE_AI_API_KEY

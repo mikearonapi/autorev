@@ -9,8 +9,11 @@
  */
 
 import React, { useState } from 'react';
+
 import Image from 'next/image';
+
 import { Icons } from '@/components/ui/Icons';
+
 import styles from './DIYVideoEmbed.module.css';
 
 /**

@@ -2,6 +2,7 @@
 // before deployment. Placeholders marked with [BRACKETS] must be filled in.
 
 import Link from 'next/link';
+
 import styles from '@/styles/legal-page.module.css';
 
 export const metadata = {

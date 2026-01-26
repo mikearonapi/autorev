@@ -10,8 +10,10 @@
  */
 
 import { useState } from 'react';
-import styles from './ALSourcesList.module.css';
+
 import { extractDomainFromUrl, getSourceIcon } from '@/lib/alCitationParser';
+
+import styles from './ALSourcesList.module.css';
 
 // Source type icons (inline SVG for minimal dependencies)
 const SourceIcons = {

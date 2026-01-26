@@ -10,8 +10,10 @@
  */
 
 import React, { useState, useCallback, useEffect } from 'react';
-import styles from './CustomSpecsEditor.module.css';
+
 import { Icons } from '@/components/ui/Icons';
+
+import styles from './CustomSpecsEditor.module.css';
 
 /**
  * Section header with expand/collapse

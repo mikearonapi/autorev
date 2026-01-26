@@ -11,8 +11,9 @@
  */
 
 import { useEffect, useRef } from 'react';
-import { supabase } from '@/lib/supabase';
+
 import { useAuth } from '@/components/providers/AuthProvider';
+import { supabase } from '@/lib/supabase';
 
 // Generate a session ID that persists for the browser session
 function getSessionId() {

@@ -1,8 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import styles from './ArticleShareButtons.module.css';
+
 import { platform } from '@/lib/platform';
+
+import styles from './ArticleShareButtons.module.css';
 
 /**
  * Social Share Buttons for Articles

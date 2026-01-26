@@ -10,15 +10,20 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import { createPortal } from 'react-dom';
+
 import { useParams, useRouter } from 'next/navigation';
-import styles from './page.module.css';
-import SaveEventButton from '@/components/SaveEventButton';
+
+import { createPortal } from 'react-dom';
+
+
 import AddToCalendarButton from '@/components/AddToCalendarButton';
 import EventAttendeesPreview from '@/components/EventAttendeesPreview';
 import { useAuth } from '@/components/providers/AuthProvider';
+import SaveEventButton from '@/components/SaveEventButton';
 import { useUserSavedEvents } from '@/hooks/useUserData';
 import { isPastDate } from '@/lib/dateUtils';
+
+import styles from './page.module.css';
 
 /**
  * Format date for display

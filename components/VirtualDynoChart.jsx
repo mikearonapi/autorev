@@ -15,6 +15,7 @@
  */
 
 import React, { useMemo, useState, useCallback, useRef } from 'react';
+
 import InfoTooltip from './ui/InfoTooltip';
 import styles from './VirtualDynoChart.module.css';
 

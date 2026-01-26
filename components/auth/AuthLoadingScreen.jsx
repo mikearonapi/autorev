@@ -21,8 +21,11 @@
  */
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
-import { createPortal } from 'react-dom';
+
 import Image from 'next/image';
+
+import { createPortal } from 'react-dom';
+
 import styles from './AuthLoadingScreen.module.css';
 
 // Loading step configuration

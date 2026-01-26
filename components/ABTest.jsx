@@ -28,6 +28,7 @@
  */
 
 import { useEffect, useRef } from 'react';
+
 import { useFeatureFlag } from '@/hooks/useFeatureFlag';
 import { trackEvent, EVENTS } from '@/lib/analytics/events';
 

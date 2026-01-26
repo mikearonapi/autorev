@@ -18,8 +18,8 @@ import { createClient } from '@supabase/supabase-js';
 // Force dynamic rendering - this route uses request.headers and request.url
 export const dynamic = 'force-dynamic';
 import { isAdminEmail } from '@/lib/adminAccess';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { rateLimit } from '@/lib/rateLimit';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,

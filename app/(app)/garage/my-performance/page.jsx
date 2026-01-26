@@ -10,21 +10,24 @@
  */
 
 import React, { useState, useEffect, useMemo, Suspense, useCallback } from 'react';
+
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import styles from './page.module.css';
-import { Skeleton } from '@/components/ui';
+
+import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { MyGarageSubNav, GarageVehicleSelector } from '@/components/garage';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
-import AuthModal, { useAuthModal } from '@/components/AuthModal';
+import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
+import ShareBuildButton from '@/components/ShareBuildButton';
+import { Skeleton } from '@/components/ui';
+import { Icons } from '@/components/ui/Icons';
 import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
-import ShareBuildButton from '@/components/ShareBuildButton';
 import { getPerformanceProfile } from '@/lib/performanceCalculator';
-import { Icons } from '@/components/ui/Icons';
+
+import styles from './page.module.css';
 
 // ============================================================================
 // METRIC ROW - Exact same component as UpgradeCenter

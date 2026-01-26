@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { errors } from '@/lib/apiErrors';
-import { isSupabaseConfigured, supabase } from '@/lib/supabase';
+
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { isSupabaseConfigured, supabase } from '@/lib/supabase';
 
 // Force dynamic rendering - this route uses request.url
 export const dynamic = 'force-dynamic';
