@@ -699,6 +699,7 @@ async function handleStreamingResponse({
             correlationId,
             isInternalEval,
             requestedPlanId: plan?.id,
+            userPreferences, // Pass user's data source preferences to multi-agent
             sendSSE: (event, data) => sendSSE(controller, event, data),
             controller,
           });

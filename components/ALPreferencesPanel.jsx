@@ -2,81 +2,58 @@
 
 /**
  * ALPreferencesPanel Component
- * 
- * Allows users to customize AL's behavior:
- * - Response Mode: Quick / Deep / Database (full AL)
- * - Tool Toggles: Enable/disable web search, forums, YouTube, events
- * 
- * Designed to be embedded in ALPageClient and AIMechanicChat.
+ *
+ * Simple settings for AL's data sources.
+ * Each toggle enables/disables specific tools in the multi-agent system.
+ *
+ * Designed to be embedded in ALPageClient.
  */
 
 import { useState, useEffect, useCallback } from 'react';
 
 import { Icons } from '@/components/ui/Icons';
-import { useALPreferences as useALPreferencesQuery, useUpdateALPreferences } from '@/hooks/useUserData';
+import {
+  useALPreferences as useALPreferencesQuery,
+  useUpdateALPreferences,
+} from '@/hooks/useUserData';
 
 import styles from './ALPreferencesPanel.module.css';
 
-// Tool toggle configuration
-// Note: All tools are available to all users during beta (IS_BETA mode)
-// Tier field is preserved for future gating but not currently enforced in UI
-const TOOL_TOGGLES = [
+// Data source toggles - each maps to specific tools in the backend
+// These are the tools that can be enabled/disabled by the user
+const DATA_SOURCES = [
   {
     key: 'web_search_enabled',
     label: 'Web Research',
-    description: 'Search automotive websites',
+    description: 'Search the web for current info, news, and niche topics',
     icon: Icons.globe,
-    tier: 'free', // Beta: Available to all
+    tool: 'search_web',
   },
   {
     key: 'forum_insights_enabled',
     label: 'Forum Insights',
-    description: 'Owner forums & discussions',
+    description: 'Real owner experiences from enthusiast forums',
     icon: Icons.chat,
-    tier: 'free', // Beta: Available to all
+    tool: 'search_community_insights',
   },
   {
     key: 'youtube_reviews_enabled',
     label: 'Expert Reviews',
-    description: 'YouTube review summaries',
+    description: 'Summaries from expert YouTube reviewers',
     icon: Icons.video,
-    tier: 'free', // Beta: Available to all
+    tool: 'get_expert_reviews',
   },
   {
     key: 'event_search_enabled',
     label: 'Event Search',
-    description: 'Track days & car meets',
+    description: 'Find track days, car meets, and local events',
     icon: Icons.flag,
-    tier: 'free',
+    tool: 'search_events',
   },
 ];
 
-// Response mode configuration
-const RESPONSE_MODES = [
-  {
-    key: 'quick',
-    label: 'Quick',
-    description: 'Fast from existing knowledge',
-    icon: Icons.bolt,
-  },
-  {
-    key: 'deep',
-    label: 'Deep',
-    description: 'Thorough with more sources',
-    icon: Icons.search,
-  },
-  {
-    key: 'database',
-    label: 'Full AL',
-    description: 'All AutoRev data access',
-    icon: Icons.database,
-    recommended: true,
-  },
-];
-
-// Default preferences
+// Default preferences - all sources enabled
 const DEFAULT_PREFERENCES = {
-  response_mode: 'database',
   web_search_enabled: true,
   forum_insights_enabled: true,
   youtube_reviews_enabled: true,
@@ -84,38 +61,30 @@ const DEFAULT_PREFERENCES = {
 };
 
 /**
- * ALPreferencesPanel - User preferences for AL behavior
- * 
+ * ALPreferencesPanel - Simple data source settings for AL
+ *
  * @param {Object} props
  * @param {boolean} props.isOpen - Whether the panel is visible
  * @param {Function} props.onClose - Callback when panel is closed
- * @param {string} props.userTier - User's subscription tier (free, collector, tuner)
  * @param {Object} props.initialPreferences - Initial preference values
  * @param {Function} props.onPreferencesChange - Callback when preferences change
- * @param {boolean} props.compact - Compact mode for floating chat widget
  */
 export default function ALPreferencesPanel({
   isOpen,
   onClose,
-  userTier = 'free',
   initialPreferences = null,
   onPreferencesChange,
-  compact = false,
 }) {
   // Use React Query for fetching preferences
-  const { 
-    data: fetchedPreferences, 
-    isLoading: queryLoading 
-  } = useALPreferencesQuery({ 
-    enabled: isOpen && !initialPreferences 
+  const { data: fetchedPreferences, isLoading: queryLoading } = useALPreferencesQuery({
+    enabled: isOpen && !initialPreferences,
   });
-  
+
   const updatePreferencesMutation = useUpdateALPreferences();
-  
+
   const [preferences, setPreferences] = useState(initialPreferences || DEFAULT_PREFERENCES);
-  const [error, setError] = useState(null);
   const [hasChanges, setHasChanges] = useState(false);
-  
+
   const loading = !initialPreferences && queryLoading;
   const saving = updatePreferencesMutation.isPending;
 
@@ -130,75 +99,53 @@ export default function ALPreferencesPanel({
 
   // Handle toggle change
   const handleToggle = useCallback((key) => {
-    setPreferences(prev => {
+    setPreferences((prev) => {
       const newPrefs = { ...prev, [key]: !prev[key] };
       setHasChanges(true);
       return newPrefs;
     });
   }, []);
 
-  // Handle response mode change
-  const handleModeChange = useCallback((mode) => {
-    setPreferences(prev => {
-      const newPrefs = { ...prev, response_mode: mode };
-      setHasChanges(true);
-      return newPrefs;
-    });
-  }, []);
-
   // Save preferences - optimistic UI pattern
-  // Immediately updates parent and closes, then saves in background
   const handleSave = useCallback(async () => {
-    setError(null);
-    
-    // Store previous preferences for potential rollback
     const previousPreferences = { ...preferences };
-    
+
     // Optimistic: Immediately notify parent and close
     if (onPreferencesChange) {
       onPreferencesChange(preferences);
     }
     setHasChanges(false);
-    
-    // Close panel immediately (don't wait for API)
+
     if (onClose) {
       onClose();
     }
-    
+
     // Save in background
     try {
       await updatePreferencesMutation.mutateAsync(preferences);
     } catch (err) {
       console.error('Failed to save AL preferences:', err);
-      // Revert parent to previous preferences on error
       if (onPreferencesChange) {
         onPreferencesChange(previousPreferences);
       }
-      // Note: Panel is already closed, so we can't show inline error
-      // The mutation error will be caught by React Query and can be displayed elsewhere
     }
   }, [preferences, onPreferencesChange, onClose, updatePreferencesMutation]);
 
-  // Check if a tool is available for the user's tier
-  const isToolAvailable = useCallback((toolTier) => {
-    const tierRank = { free: 0, collector: 1, tuner: 2, admin: 3 };
-    return (tierRank[userTier] || 0) >= (tierRank[toolTier] || 0);
-  }, [userTier]);
+  // Count enabled sources
+  const enabledCount = DATA_SOURCES.filter((s) => preferences[s.key] !== false).length;
 
   if (!isOpen) return null;
 
   return (
-    <div className={`${styles.panel} ${compact ? styles.compact : ''}`}>
+    <div className={styles.panel}>
       <div className={styles.header}>
         <h3 className={styles.title}>
-          <span className={styles.titleIcon}><Icons.settings size={16} /></span>
-          AL Preferences
+          <span className={styles.titleIcon}>
+            <Icons.settings size={16} />
+          </span>
+          AL Settings
         </h3>
-        <button 
-          className={styles.closeButton} 
-          onClick={onClose}
-          aria-label="Close preferences"
-        >
+        <button className={styles.closeButton} onClick={onClose} aria-label="Close settings">
           <Icons.close size={14} />
         </button>
       </div>
@@ -210,94 +157,63 @@ export default function ALPreferencesPanel({
         </div>
       ) : (
         <div className={styles.content}>
-          {/* Response Mode Section */}
+          {/* Data Sources Section */}
           <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>Response Mode</h4>
-            <div className={styles.modeGrid}>
-              {RESPONSE_MODES.map(mode => (
-                <button
-                  key={mode.key}
-                  className={`${styles.modeCard} ${preferences.response_mode === mode.key ? styles.modeCardActive : ''}`}
-                  onClick={() => handleModeChange(mode.key)}
-                >
-                  <span className={styles.modeIcon}>{mode.icon({ size: 18 })}</span>
-                  <div className={styles.modeText}>
-                    <span className={styles.modeLabel}>
-                      {mode.label}
-                      {mode.recommended && <span className={styles.recommended}>Best</span>}
-                    </span>
-                    <span className={styles.modeDescription}>{mode.description}</span>
-                  </div>
-                  {preferences.response_mode === mode.key && (
-                    <span className={styles.modeCheck}>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                        <polyline points="20 6 9 17 4 12"/>
-                      </svg>
-                    </span>
-                  )}
-                </button>
-              ))}
+            <div className={styles.sectionHeader}>
+              <h4 className={styles.sectionTitle}>Data Sources</h4>
+              <span className={styles.enabledCount}>
+                {enabledCount}/{DATA_SOURCES.length} enabled
+              </span>
             </div>
-          </div>
-
-          {/* Tool Toggles Section */}
-          <div className={styles.section}>
-            <h4 className={styles.sectionTitle}>Data Sources</h4>
+            <p className={styles.sectionDescription}>
+              Choose which sources AL can search when answering your questions.
+            </p>
             <div className={styles.toggleList}>
-              {TOOL_TOGGLES.map(toggle => {
-                const available = isToolAvailable(toggle.tier);
-                const enabled = preferences[toggle.key];
-                
+              {DATA_SOURCES.map((source) => {
+                const enabled = preferences[source.key] !== false;
+
                 return (
-                  <div 
-                    key={toggle.key} 
-                    className={`${styles.toggleRow} ${!available ? styles.toggleRowLocked : ''}`}
-                    onClick={available ? () => handleToggle(toggle.key) : undefined}
-                    role={available ? "button" : undefined}
-                    tabIndex={available ? 0 : undefined}
+                  <div
+                    key={source.key}
+                    className={styles.toggleRow}
+                    onClick={() => handleToggle(source.key)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => e.key === 'Enter' && handleToggle(source.key)}
                   >
-                    <span className={styles.toggleIcon}>{toggle.icon({ size: 16 })}</span>
+                    <span className={styles.toggleIcon}>{source.icon({ size: 18 })}</span>
                     <div className={styles.toggleText}>
-                      <span className={styles.toggleLabel}>{toggle.label}</span>
+                      <span className={styles.toggleLabel}>{source.label}</span>
+                      <span className={styles.toggleDescription}>{source.description}</span>
                     </div>
-                    {available ? (
-                      <button
-                        className={`${styles.toggle} ${enabled ? styles.toggleOn : ''}`}
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleToggle(toggle.key);
-                        }}
-                        aria-label={`${enabled ? 'Disable' : 'Enable'} ${toggle.label}`}
-                      >
-                        <span className={styles.toggleKnob} />
-                      </button>
-                    ) : (
-                      <span className={styles.tierBadge}>
-                        {toggle.tier === 'collector' ? 'Enthusiast+' : 'Tuner+'}
-                      </span>
-                    )}
+                    <button
+                      className={`${styles.toggle} ${enabled ? styles.toggleOn : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggle(source.key);
+                      }}
+                      aria-label={`${enabled ? 'Disable' : 'Enable'} ${source.label}`}
+                    >
+                      <span className={styles.toggleKnob} />
+                    </button>
                   </div>
                 );
               })}
             </div>
           </div>
 
-          {/* Error Message */}
-          {error && (
-            <div className={styles.error}>
-              {error}
-            </div>
-          )}
+          {/* Info Note */}
+          <div className={styles.infoNote}>
+            <Icons.info size={14} />
+            <span>AL always has access to the AutoRev database, encyclopedia, and your garage data.</span>
+          </div>
 
           {/* Save Button */}
           <div className={styles.actions}>
-            <button 
-              className={styles.cancelButton}
-              onClick={onClose}
-            >
+            <button className={styles.cancelButton} onClick={onClose}>
               Cancel
             </button>
-            <button 
+            <button
               className={`${styles.saveButton} ${!hasChanges ? styles.saveButtonDisabled : ''}`}
               onClick={handleSave}
               disabled={!hasChanges || saving}
@@ -319,12 +235,15 @@ export default function ALPreferencesPanel({
 export function useALPreferences() {
   const { data: preferences = DEFAULT_PREFERENCES, isLoading: loading } = useALPreferencesQuery();
   const [localOverrides, setLocalOverrides] = useState({});
-  
+
   const mergedPreferences = { ...preferences, ...localOverrides };
 
   const updatePreferences = useCallback((newPrefs) => {
-    setLocalOverrides(prev => ({ ...prev, ...newPrefs }));
+    setLocalOverrides((prev) => ({ ...prev, ...newPrefs }));
   }, []);
 
   return { preferences: mergedPreferences, loading, updatePreferences };
 }
+
+// Export for use in other components
+export { DATA_SOURCES, DEFAULT_PREFERENCES };
