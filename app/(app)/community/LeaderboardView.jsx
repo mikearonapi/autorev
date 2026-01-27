@@ -13,7 +13,7 @@ import styles from './LeaderboardView.module.css';
 
 /**
  * LeaderboardView - Points leaderboard with monthly/all-time toggle
- * 
+ *
  * Shows top users by points earned. Users can toggle between
  * monthly (current month) and all-time leaderboards.
  */
@@ -21,7 +21,7 @@ import styles from './LeaderboardView.module.css';
 // Medal emojis for top 3 ranks
 const MEDALS = {
   1: '🥇',
-  2: '🥈', 
+  2: '🥈',
   3: '🥉',
 };
 
@@ -32,11 +32,14 @@ const RankBadge = ({ rank }) => {
     return <span className={styles.rankNumber}>#{rank}</span>;
   }
 
-  const rankClass = rank === 1 ? styles.rankGold : rank === 2 ? styles.rankSilver : styles.rankBronze;
+  const rankClass =
+    rank === 1 ? styles.rankGold : rank === 2 ? styles.rankSilver : styles.rankBronze;
 
   return (
     <div className={`${styles.rankBadge} ${rankClass}`} aria-label={`Rank ${rank}`}>
-      <span className={styles.medal} role="img" aria-hidden="true">{MEDALS[rank]}</span>
+      <span className={styles.medal} role="img" aria-hidden="true">
+        {MEDALS[rank]}
+      </span>
     </div>
   );
 };
@@ -45,21 +48,21 @@ const RankBadge = ({ rank }) => {
 
 const FireIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>
+    <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z" />
   </svg>
 );
 
 const ChevronDownIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M6 9l6 6 6-6"/>
+    <path d="M6 9l6 6 6-6" />
   </svg>
 );
 
 const InfoIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="12" cy="12" r="10"/>
-    <path d="M12 16v-4"/>
-    <path d="M12 8h.01"/>
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 16v-4" />
+    <path d="M12 8h.01" />
   </svg>
 );
 
@@ -92,21 +95,24 @@ export default function LeaderboardView() {
         setIsLoading(true);
       }
       setError(null);
-      
-      const res = await fetch(`/api/community/leaderboard?limit=${ITEMS_PER_PAGE}&offset=${offset}&period=${selectedPeriod}`);
-      
+
+      // v=2 cache bust for callsign fix (Jan 2026)
+      const res = await fetch(
+        `/api/community/leaderboard?limit=${ITEMS_PER_PAGE}&offset=${offset}&period=${selectedPeriod}&v=2`
+      );
+
       if (!res.ok) {
         throw new Error('Failed to fetch leaderboard');
       }
-      
+
       const data = await res.json();
-      
+
       if (append) {
-        setLeaderboard(prev => [...prev, ...(data.leaderboard || [])]);
+        setLeaderboard((prev) => [...prev, ...(data.leaderboard || [])]);
       } else {
         setLeaderboard(data.leaderboard || []);
       }
-      
+
       setPeriodLabel(data.periodLabel || '');
       setCurrentUserRank(data.currentUserRank);
       setHasMore(data.hasMore || false);
@@ -129,7 +135,7 @@ export default function LeaderboardView() {
     setLeaderboard([]); // Reset list on period change
     setIsDropdownOpen(false);
   };
-  
+
   const handleLoadMore = () => {
     if (!isLoadingMore && hasMore) {
       fetchLeaderboard(period, leaderboard.length, true);
@@ -170,7 +176,7 @@ export default function LeaderboardView() {
         <h2 className={styles.title}>
           {period === 'monthly' ? 'Monthly' : 'All-Time'} Leaderboard
           {/* Info button - inline with title */}
-          <button 
+          <button
             className={styles.infoButtonInline}
             onClick={() => setShowPointsModal(true)}
             aria-label="How to earn points"
@@ -180,28 +186,25 @@ export default function LeaderboardView() {
         </h2>
         <div className={styles.headerControls}>
           <p className={styles.subtitle}>{periodLabel}</p>
-          
+
           {/* Period Dropdown */}
           <div className={styles.dropdownContainer}>
-            <button 
+            <button
               className={styles.dropdownTrigger}
               onClick={() => setIsDropdownOpen(!isDropdownOpen)}
               aria-expanded={isDropdownOpen}
               aria-haspopup="listbox"
             >
-              {PERIOD_OPTIONS.find(opt => opt.value === period)?.label}
+              {PERIOD_OPTIONS.find((opt) => opt.value === period)?.label}
               <ChevronDownIcon />
             </button>
-            
+
             {isDropdownOpen && (
               <>
-                <div 
-                  className={styles.dropdownBackdrop} 
-                  onClick={() => setIsDropdownOpen(false)}
-                />
+                <div className={styles.dropdownBackdrop} onClick={() => setIsDropdownOpen(false)} />
                 <ul className={styles.dropdownMenu} role="listbox">
-                  {PERIOD_OPTIONS.map(option => (
-                    <li 
+                  {PERIOD_OPTIONS.map((option) => (
+                    <li
                       key={option.value}
                       role="option"
                       aria-selected={period === option.value}
@@ -235,18 +238,18 @@ export default function LeaderboardView() {
           <span>Be the first to earn points!</span>
         </div>
       ) : (
-        <div 
-          className={styles.list} 
-          role="list" 
+        <div
+          className={styles.list}
+          role="list"
           aria-label={`${period === 'monthly' ? 'Monthly' : 'All-time'} leaderboard rankings`}
         >
-          {leaderboard.map((entry, index) => {
+          {leaderboard.map((entry, _index) => {
             const isCurrentUser = user?.id === entry.userId;
             const isTopThree = entry.rank <= 3;
             const firstName = getFirstName(entry.displayName);
-            
+
             return (
-              <div 
+              <div
                 key={entry.userId}
                 role="listitem"
                 aria-label={`Rank ${entry.rank}: ${firstName}, ${formatPoints(entry.points)} points${isCurrentUser ? ' (You)' : ''}`}
@@ -264,10 +267,10 @@ export default function LeaderboardView() {
                 {/* Avatar */}
                 <div className={styles.avatar}>
                   {entry.avatarUrl ? (
-                    <Image 
-                      src={entry.avatarUrl} 
+                    <Image
+                      src={entry.avatarUrl}
                       alt={`Avatar for ${firstName}`}
-                      width={36} 
+                      width={36}
                       height={36}
                       className={styles.avatarImage}
                     />
@@ -285,9 +288,7 @@ export default function LeaderboardView() {
                     {isCurrentUser && <span className={styles.youBadge}>You</span>}
                   </div>
                   {entry.selectedTitle && TITLES[entry.selectedTitle] && (
-                    <span className={styles.titleBadge}>
-                      {TITLES[entry.selectedTitle].display}
-                    </span>
+                    <span className={styles.titleBadge}>{TITLES[entry.selectedTitle].display}</span>
                   )}
                 </div>
 
@@ -305,21 +306,14 @@ export default function LeaderboardView() {
       {/* Load More Button */}
       {hasMore && leaderboard.length > 0 && (
         <div className={styles.loadMoreContainer}>
-          <button 
-            className={styles.loadMoreBtn}
-            onClick={handleLoadMore}
-            disabled={isLoadingMore}
-          >
+          <button className={styles.loadMoreBtn} onClick={handleLoadMore} disabled={isLoadingMore}>
             {isLoadingMore ? 'Loading...' : `Load More (${leaderboard.length} of ${total})`}
           </button>
         </div>
       )}
 
       {/* Points Explainer Modal */}
-      <PointsExplainerModal 
-        isOpen={showPointsModal} 
-        onClose={() => setShowPointsModal(false)} 
-      />
+      <PointsExplainerModal isOpen={showPointsModal} onClose={() => setShowPointsModal(false)} />
     </div>
   );
 }
