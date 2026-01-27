@@ -1,10 +1,10 @@
 /**
  * Community Leaderboard API
- * 
+ *
  * GET /api/community/leaderboard - Get points leaderboard
- * 
+ *
  * Returns top users by points earned. Supports both monthly and all-time views.
- * 
+ *
  * @route /api/community/leaderboard
  */
 
@@ -17,7 +17,11 @@ import { createClient } from '@supabase/supabase-js';
 
 import { errors } from '@/lib/apiErrors';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
-import { createServerSupabaseClient, getBearerToken, createAuthenticatedClient } from '@/lib/supabaseServer';
+import {
+  createServerSupabaseClient,
+  getBearerToken,
+  createAuthenticatedClient,
+} from '@/lib/supabaseServer';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL,
@@ -43,7 +47,7 @@ function getCurrentMonthName() {
 /**
  * GET /api/community/leaderboard
  * Get points leaderboard
- * 
+ *
  * Query params:
  * - limit: max users to return (default 20, max 50)
  * - offset: pagination offset (default 0)
@@ -54,7 +58,7 @@ async function handleGet(request) {
   const limit = Math.min(parseInt(searchParams.get('limit') || '20'), 50);
   const offset = parseInt(searchParams.get('offset') || '0');
   const period = searchParams.get('period') || 'monthly';
-  
+
   const isAllTime = period === 'all-time';
   const monthStart = getMonthStart();
 
@@ -108,8 +112,8 @@ async function handleGet(request) {
 
   // Step 4: Build complete sorted list then paginate
   const allUsers = (profiles || [])
-    .filter(p => p.display_name) // Only users with display names
-    .map(profile => ({
+    .filter((p) => p.display_name) // Only users with display names
+    .map((profile) => ({
       userId: profile.id,
       displayName: profile.display_name,
       avatarUrl: profile.avatar_url,
@@ -117,30 +121,36 @@ async function handleGet(request) {
       totalPoints: profile.total_points || 0,
       points: pointsMap.get(profile.id) || 0,
     }))
-    .filter(u => u.points > 0)
+    .filter((u) => u.points > 0)
     .sort((a, b) => b.points - a.points);
-  
+
   const total = allUsers.length;
-  
+
   // Apply pagination with correct rank numbers
-  const finalLeaderboard = allUsers
-    .slice(offset, offset + limit)
-    .map((user, index) => ({
-      ...user,
-      rank: offset + index + 1, // Rank considers offset
-    }));
+  const finalLeaderboard = allUsers.slice(offset, offset + limit).map((user, index) => ({
+    ...user,
+    rank: offset + index + 1, // Rank considers offset
+  }));
 
   // Step 5: Get current user's rank if authenticated
   const currentUserRank = await getCurrentUserRank(request, pointsMap, 'monthly');
 
-  return NextResponse.json({
-    leaderboard: finalLeaderboard,
-    period: 'monthly',
-    periodLabel: getCurrentMonthName(),
-    currentUserRank,
-    hasMore: offset + limit < total,
-    total,
-  });
+  return NextResponse.json(
+    {
+      leaderboard: finalLeaderboard,
+      period: 'monthly',
+      periodLabel: getCurrentMonthName(),
+      currentUserRank,
+      hasMore: offset + limit < total,
+      total,
+    },
+    {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        Pragma: 'no-cache',
+      },
+    }
+  );
 }
 
 /**
@@ -181,50 +191,59 @@ async function handleAllTimeLeaderboard(request, limit, offset) {
 
   // Build points map for current user rank calculation
   const pointsMap = new Map();
-  
+
   // Get all users' total points for accurate ranking
   const { data: allPoints } = await supabaseAdmin
     .from('user_profiles')
     .select('id, total_points')
     .gt('total_points', 0);
-  
+
   for (const row of allPoints || []) {
     pointsMap.set(row.id, row.total_points || 0);
   }
 
   const currentUserRank = await getCurrentUserRank(request, pointsMap, 'all-time');
 
-  return NextResponse.json({
-    leaderboard: finalLeaderboard,
-    period: 'all-time',
-    periodLabel: 'All Time',
-    currentUserRank,
-    hasMore: offset + limit < (total || 0),
-    total: total || 0,
-  });
+  return NextResponse.json(
+    {
+      leaderboard: finalLeaderboard,
+      period: 'all-time',
+      periodLabel: 'All Time',
+      currentUserRank,
+      hasMore: offset + limit < (total || 0),
+      total: total || 0,
+    },
+    {
+      headers: {
+        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        Pragma: 'no-cache',
+      },
+    }
+  );
 }
 
 /**
  * Get current user's rank from the points map
  */
-async function getCurrentUserRank(request, pointsMap, period) {
+async function getCurrentUserRank(request, pointsMap, _period) {
   try {
     const bearerToken = getBearerToken(request);
-    const supabase = bearerToken 
-      ? createAuthenticatedClient(bearerToken) 
+    const supabase = bearerToken
+      ? createAuthenticatedClient(bearerToken)
       : await createServerSupabaseClient();
 
     if (supabase) {
-      const { data: { user } } = bearerToken
-        ? await supabase.auth.getUser(bearerToken)
-        : await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = bearerToken ? await supabase.auth.getUser(bearerToken) : await supabase.auth.getUser();
 
       if (user) {
         const userPoints = pointsMap.get(user.id) || 0;
         if (userPoints > 0) {
           // Count how many users have more points
-          const usersAbove = Array.from(pointsMap.entries())
-            .filter(([_, points]) => points > userPoints).length;
+          const usersAbove = Array.from(pointsMap.entries()).filter(
+            ([_, points]) => points > userPoints
+          ).length;
           return {
             rank: usersAbove + 1,
             points: userPoints,
@@ -240,4 +259,7 @@ async function getCurrentUserRank(request, pointsMap, period) {
 }
 
 // Export wrapped handler with error logging
-export const GET = withErrorLogging(handleGet, { route: 'community/leaderboard', feature: 'gamification' });
+export const GET = withErrorLogging(handleGet, {
+  route: 'community/leaderboard',
+  feature: 'gamification',
+});
