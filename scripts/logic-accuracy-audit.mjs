@@ -89,8 +89,11 @@ async function checkAspirationLogic(car, profile) {
   const engine = (car.engine || '').toLowerCase();
   const allText = getAllText(profile);
   
-  const isTurbo = engine.includes('turbo') || engine.includes('twin-turbo') || engine.includes('biturbo');
-  const isSupercharged = engine.includes('supercharged') || engine.includes('kompressor');
+  // Detect forced induction - including abbreviations like "TT" (twin-turbo) and "SC" (supercharged)
+  const isTurbo = engine.includes('turbo') || engine.includes('twin-turbo') || 
+                  engine.includes('biturbo') || /\btt\b/.test(engine); // TT = Twin-Turbo
+  const isSupercharged = engine.includes('supercharged') || engine.includes('kompressor') ||
+                         /\bsc\b/.test(engine); // SC = Supercharged
   const isNA = !isTurbo && !isSupercharged && !engine.includes('electric');
   
   // NA cars shouldn't have turbo-specific mod recommendations
@@ -128,7 +131,12 @@ async function checkAspirationLogic(car, profile) {
   
   // Supercharged cars shouldn't get turbo-specific advice
   if (isSupercharged && !isTurbo) {
-    if (allText.includes('wastegate') || allText.includes('blow-off') || allText.includes('bov')) {
+    // Use word boundary regex to avoid false positives like "above" matching "bov"
+    const hasWastegate = /\bwastegate\b/i.test(allText);
+    const hasBlowOff = /\bblow-off\b/i.test(allText) || /\bblowoff\b/i.test(allText);
+    const hasBOV = /\bbov\b/i.test(allText);
+    
+    if (hasWastegate || hasBlowOff || hasBOV) {
       addIssue('critical', 'SUPERCHARGED_TURBO_ADVICE', car,
         'Supercharged car has turbo-specific advice (wastegate/BOV)',
         { engine: car.engine }
@@ -184,31 +192,38 @@ async function checkTuningPlatformCompatibility(car, profile) {
   const platforms = profile.tuning_platforms || [];
   
   // Define which tuning platforms work with which brands
+  // Note: Include parent brands (Lexus=Toyota, Infiniti=Nissan, Acura=Honda, etc.)
   const platformBrandMap = {
     'hondata': ['honda', 'acura'],
     'ktuner': ['honda', 'acura'],
     'flashpro': ['honda', 'acura'],
-    'cobb': ['subaru', 'ford', 'mazda', 'volkswagen', 'audi', 'porsche', 'bmw', 'nissan', 'mitsubishi'],
-    'accessport': ['subaru', 'ford', 'mazda', 'volkswagen', 'audi', 'porsche', 'bmw', 'nissan', 'mitsubishi'],
-    'ecutek': ['subaru', 'nissan', 'toyota', 'mazda', 'mitsubishi', 'honda'],
-    'hp tuners': ['gm', 'chevrolet', 'chevy', 'gmc', 'cadillac', 'buick', 'ford', 'dodge', 'chrysler', 'jeep', 'ram'],
-    'sct': ['ford', 'lincoln', 'mercury'],
-    'diablo': ['ford', 'gm', 'chevrolet', 'dodge', 'chrysler'],
+    'cobb': ['subaru', 'ford', 'mazda', 'volkswagen', 'audi', 'porsche', 'bmw', 'nissan', 'infiniti', 'mitsubishi', 'toyota', 'lexus', 'scion', 'honda', 'acura', 'lamborghini', 'kia', 'hyundai', 'genesis'],
+    'accessport': ['subaru', 'ford', 'mazda', 'volkswagen', 'audi', 'porsche', 'bmw', 'nissan', 'infiniti', 'mitsubishi', 'toyota', 'lexus', 'scion', 'honda', 'acura', 'lamborghini', 'kia', 'hyundai', 'genesis'],
+    'ecutek': ['subaru', 'nissan', 'infiniti', 'toyota', 'lexus', 'scion', 'mazda', 'mitsubishi', 'honda', 'acura', 'mclaren', 'lotus', 'aston martin', 'aston', 'ferrari', 'mercedes', 'mercedes-amg', 'lamborghini'], // Broad ECU reflash support
+    'hp tuners': ['gm', 'chevrolet', 'chevy', 'gmc', 'cadillac', 'buick', 'pontiac', 'saturn', 'oldsmobile', 'ford', 'dodge', 'chrysler', 'jeep', 'ram', 'srt'],
+    'sct': ['ford', 'lincoln', 'mercury', 'dodge', 'chrysler', 'jeep', 'ram'], // SCT also supports Mopar
+    'diablo': ['ford', 'gm', 'chevrolet', 'dodge', 'chrysler', 'jeep', 'ram', 'gmc', 'cadillac', 'pontiac', 'buick', 'saturn', 'oldsmobile'],
+    'diablosport': ['ford', 'gm', 'chevrolet', 'dodge', 'chrysler', 'jeep', 'ram', 'gmc', 'cadillac', 'pontiac', 'buick'], // DiabloSport
+    'intune': ['ford', 'gm', 'chevrolet', 'dodge', 'chrysler', 'jeep', 'ram', 'gmc', 'cadillac', 'pontiac', 'buick', 'saturn', 'oldsmobile'], // DiabloSport inTune
     'bimmercode': ['bmw', 'mini'],
     'xhp': ['bmw', 'mini'],
-    'mhd': ['bmw'],
-    'bootmod3': ['bmw'],
-    'jb4': ['bmw', 'audi', 'volkswagen', 'porsche', 'infiniti', 'mercedes', 'kia', 'hyundai', 'genesis'],
+    'mhd': ['bmw', 'mini', 'toyota'], // MINI uses BMW engines, GR Supra has B58
+    'bootmod3': ['bmw', 'mini', 'toyota'], // GR Supra has BMW B58 engine
+    'jb4': ['bmw', 'mini', 'audi', 'volkswagen', 'porsche', 'infiniti', 'mercedes', 'kia', 'hyundai', 'genesis'],
+    'capristo': ['ferrari', 'lamborghini', 'mclaren', 'audi', 'mercedes', 'porsche', 'aston martin', 'bentley', 'rolls-royce'], // Capristo is exhaust specialist for exotics (before apr to avoid substring match)
     'apr': ['audi', 'volkswagen', 'porsche'],
-    'unitronic': ['audi', 'volkswagen'],
+    'unitronic': ['audi', 'volkswagen', 'lamborghini'], // Huracan uses Audi-derived platform
     'revo': ['audi', 'volkswagen', 'ford', 'seat', 'skoda'],
-    'eurocharged': ['mercedes', 'ferrari', 'mclaren', 'porsche', 'bmw', 'audi'],
-    'novitec': ['ferrari', 'lamborghini', 'maserati', 'mclaren', 'rolls-royce'],
-    'apexi': ['toyota', 'nissan', 'honda', 'mitsubishi', 'subaru', 'mazda'],
+    'eurocharged': ['mercedes', 'ferrari', 'mclaren', 'porsche', 'bmw', 'audi', 'lamborghini', 'maserati', 'jaguar', 'land rover', 'bentley', 'alfa romeo', 'alfa', 'aston martin', 'aston'],
+    'novitec': ['ferrari', 'lamborghini', 'maserati', 'mclaren', 'rolls-royce', 'tesla'],
+    'apexi': ['toyota', 'lexus', 'scion', 'nissan', 'infiniti', 'honda', 'acura', 'mitsubishi', 'subaru', 'mazda'],
+    'uprev': ['nissan', 'infiniti'],
     'haltech': ['universal'], // Standalone ECU, works on anything
     'aem': ['universal'],
     'link': ['universal'],
     'motec': ['universal'],
+    'ecu master': ['universal'],
+    'megasquirt': ['universal'],
   };
   
   for (const platform of platforms) {
@@ -351,8 +366,16 @@ async function checkElectricVehicleLogic(car, profile) {
   const engine = (car.engine || '').toLowerCase();
   const allText = getAllText(profile);
   
-  const isEV = engine.includes('electric') || engine.match(/\d+\s*kw\s*motor/i);
-  const isHybrid = engine.includes('hybrid') || engine.includes('+ electric');
+  // Detect hybrids first - they have BOTH gas and electric, so ICE advice IS valid
+  const isHybrid = engine.includes('hybrid') || engine.includes('+ electric') || 
+                   engine.includes('+electric') || engine.includes('electric motor');
+  
+  // Pure EV detection - must be electric ONLY, not hybrid
+  const isEV = !isHybrid && (
+    engine.match(/^(dual |triple |quad )?electric/i) ||
+    engine.match(/^\d+\s*kw/i) ||
+    engine.includes('ultium') // GM's EV platform
+  );
   
   if (isEV && !isHybrid) {
     // Pure EVs shouldn't have ICE-specific recommendations
