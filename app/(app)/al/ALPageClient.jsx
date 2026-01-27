@@ -14,10 +14,12 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { createPortal } from 'react-dom';
+
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+
+import { createPortal } from 'react-dom';
 
 import ALAttachmentMenu, { ALAttachmentsBar } from '@/components/ALAttachmentMenu';
 import ALPreferencesPanel, { useALPreferences } from '@/components/ALPreferencesPanel';
@@ -44,29 +46,103 @@ const FormattedMessage = ({ content }) => {
 
   // Process the content into formatted elements
   const formatContent = (text) => {
-    const lines = text.split('\n');
+    // Strip internal data blocks (parts_to_save, etc.) that shouldn't be shown to users
+    const cleanedText = text.replace(/<parts_to_save>[\s\S]*?<\/parts_to_save>/gi, '').trim();
+
+    const lines = cleanedText.split('\n');
     const elements = [];
     let listItems = [];
     let inList = false;
 
     const processInlineFormatting = (line) => {
-      // Handle bold **text**
+      // Handle bold **text**, links [text](url), and plain URLs
       const parts = [];
       let remaining = line;
       let key = 0;
 
+      // Regex patterns for inline formatting (order matters - more specific first)
+      const patterns = [
+        // Markdown links: [text](url)
+        {
+          regex: /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/,
+          render: (match) => (
+            <a
+              key={key++}
+              href={match[2]}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="alMessageLink"
+              style={{ color: 'var(--color-accent-teal)', textDecoration: 'underline' }}
+            >
+              {match[1]}
+            </a>
+          ),
+        },
+        // Plain URLs (not already in a markdown link)
+        {
+          regex: /(?<!\]\()https?:\/\/[^\s<>)"']+/,
+          render: (match) => {
+            // Clean trailing punctuation that's likely not part of URL
+            let url = match[0];
+            const trailingPunct = url.match(/[.,;:!?)]+$/);
+            if (trailingPunct) {
+              url = url.slice(0, -trailingPunct[0].length);
+            }
+            // Truncate display for long URLs
+            const displayUrl = url.length > 40 ? url.slice(0, 37) + '...' : url;
+            return (
+              <a
+                key={key++}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="alMessageLink"
+                style={{ color: 'var(--color-accent-teal)', textDecoration: 'underline' }}
+              >
+                {displayUrl}
+              </a>
+            );
+          },
+        },
+        // Bold text: **text**
+        {
+          regex: /\*\*(.+?)\*\*/,
+          render: (match) => <strong key={key++}>{match[1]}</strong>,
+        },
+      ];
+
       while (remaining) {
-        const boldMatch = remaining.match(/\*\*(.+?)\*\*/);
-        if (boldMatch) {
-          const beforeBold = remaining.slice(0, boldMatch.index);
-          if (beforeBold) parts.push(<span key={key++}>{beforeBold}</span>);
-          parts.push(<strong key={key++}>{boldMatch[1]}</strong>);
-          remaining = remaining.slice(boldMatch.index + boldMatch[0].length);
+        // Find the earliest match among all patterns
+        let earliestMatch = null;
+        let earliestIndex = Infinity;
+        let matchedPattern = null;
+
+        for (const pattern of patterns) {
+          const match = remaining.match(pattern.regex);
+          if (match && match.index < earliestIndex) {
+            earliestMatch = match;
+            earliestIndex = match.index;
+            matchedPattern = pattern;
+          }
+        }
+
+        if (earliestMatch && matchedPattern) {
+          // Add text before the match
+          const beforeMatch = remaining.slice(0, earliestIndex);
+          if (beforeMatch) parts.push(<span key={key++}>{beforeMatch}</span>);
+
+          // Add the formatted element
+          parts.push(matchedPattern.render(earliestMatch));
+
+          // Continue with remaining text
+          remaining = remaining.slice(earliestIndex + earliestMatch[0].length);
         } else {
+          // No more matches, add remaining text
           if (remaining) parts.push(<span key={key++}>{remaining}</span>);
           break;
         }
       }
+
       return parts.length > 0 ? parts : line;
     };
 
@@ -858,7 +934,7 @@ export default function ALPageClient() {
       let fullContent = '';
       let newConversationId = currentConversationId;
       // Tool result tracking for enhanced source display
-      const collectedToolResults = []; // Track tool results for sources
+      const _collectedToolResults = []; // Track tool results for sources (reserved for future use)
       const toolsUsed = []; // Track which tools were used
 
       while (true) {

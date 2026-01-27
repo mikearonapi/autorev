@@ -42,7 +42,7 @@ import {
 } from '@/lib/alConversationService';
 import { classifyQueryIntent } from '@/lib/alIntentClassifier';
 import { streamWithMultiAgent, MULTI_AGENT_ENABLED } from '@/lib/alOrchestrator';
-import { executeToolCall } from '@/lib/alTools';
+import { executeToolCall, persistResearchResults } from '@/lib/alTools';
 import {
   getUserBalance,
   deductUsage,
@@ -90,6 +90,60 @@ async function getUserInfoForNotification(userId) {
   } catch (err) {
     console.warn('[AL API] Failed to fetch user info for notification:', err?.message);
     return { displayName: null, email: null };
+  }
+}
+
+// =============================================================================
+// PARTS EXTRACTION HELPER (for organic database growth)
+// =============================================================================
+
+/**
+ * Extract parts data from AI response and save to database
+ * Looks for <parts_to_save> JSON block in the response
+ * Runs async (non-blocking) after response is sent
+ *
+ * @param {string} responseText - The full AI response text
+ * @param {string} carId - The car ID for fitment
+ * @param {string} correlationId - For logging
+ */
+async function extractAndSavePartsFromResponse(responseText, carId, correlationId) {
+  if (!responseText || !carId) return;
+
+  try {
+    // Look for <parts_to_save> JSON block
+    const partsMatch = responseText.match(/<parts_to_save>\s*([\s\S]*?)\s*<\/parts_to_save>/i);
+    if (!partsMatch || !partsMatch[1]) return;
+
+    let partsData;
+    try {
+      partsData = JSON.parse(partsMatch[1].trim());
+    } catch (parseErr) {
+      console.warn(`[AL ${correlationId}] Failed to parse parts_to_save JSON:`, parseErr.message);
+      return;
+    }
+
+    if (!Array.isArray(partsData) || partsData.length === 0) return;
+
+    console.log(
+      `[AL ${correlationId}] Extracting ${partsData.length} parts to save for car ${carId}`
+    );
+
+    // Save parts async (don't await - fire and forget)
+    persistResearchResults(carId, partsData)
+      .then((result) => {
+        if (result.saved > 0) {
+          console.log(`[AL ${correlationId}] Saved ${result.saved} new parts to database`);
+        }
+        if (result.errors?.length > 0) {
+          console.warn(`[AL ${correlationId}] Part save errors:`, result.errors);
+        }
+      })
+      .catch((err) => {
+        console.error(`[AL ${correlationId}] Failed to persist parts:`, err.message);
+      });
+  } catch (err) {
+    // Non-critical - don't throw
+    console.warn(`[AL ${correlationId}] Parts extraction error:`, err.message);
   }
 }
 
@@ -928,6 +982,12 @@ async function handleStreamingResponse({
           });
         }
 
+        // Extract and save parts from response (async, non-blocking)
+        // Only if research_parts_live was used and we have a car context
+        if (toolCallsUsed.includes('research_parts_live') && context.car?.id && fullResponse) {
+          extractAndSavePartsFromResponse(fullResponse, context.car.id, correlationId);
+        }
+
         // Send final metadata event
         sendSSE(controller, 'done', {
           conversationId: activeConversationId,
@@ -1636,6 +1696,12 @@ async function handlePost(request) {
         carContextName: context.car?.name,
         dataSources: toolCallsUsed.map((tool) => ({ type: 'tool', name: tool })),
       });
+    }
+
+    // Extract and save parts from response (async, non-blocking)
+    // Only if research_parts_live was used and we have a car context
+    if (toolCallsUsed.includes('research_parts_live') && context.car?.id && aiResponse) {
+      extractAndSavePartsFromResponse(aiResponse, context.car.id, correlationId);
     }
 
     const res = NextResponse.json({

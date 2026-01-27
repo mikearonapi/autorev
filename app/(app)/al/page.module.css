@@ -446,6 +446,35 @@
   color: var(--color-text-primary, #ffffff);
 }
 
+/* Links in AL messages - teal accent for brand consistency */
+.messageContent :global(.alMessageLink) {
+  color: var(--color-accent-teal, #10b981);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  transition:
+    color 0.15s ease,
+    opacity 0.15s ease;
+  word-break: break-word;
+}
+
+.messageContent :global(.alMessageLink:hover) {
+  color: var(--color-accent-lime, #a3e635);
+  opacity: 0.9;
+}
+
+.messageContent :global(.alMessageLink:active) {
+  opacity: 0.7;
+}
+
+/* External link indicator for purchase links */
+.messageContent :global(.alMessageLink[href*='summitracing']),
+.messageContent :global(.alMessageLink[href*='afe']),
+.messageContent :global(.alMessageLink[href*='cobb']),
+.messageContent :global(.alMessageLink[href*='apr-']),
+.messageContent :global(.alMessageLink[href*='034motorsport']) {
+  font-weight: 500;
+}
+
 /* ===========================================
    Error Message
    =========================================== */
