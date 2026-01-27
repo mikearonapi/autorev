@@ -407,89 +407,213 @@
 }
 
 /* ==========================================================================
-   DYNO RESULTS LIST
+   DYNO RESULTS LIST - Redesigned Cards
    ========================================================================== */
 
 .dynoResultsList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 16px;
 }
 
-.dynoResultItem {
+/* New Card Design */
+.dynoResultCard {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
   gap: 12px;
-  padding: 14px 16px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
-  position: relative;
+  padding: 16px;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 12px;
   transition: all 0.2s ease;
 }
 
-.dynoResultItem:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.1);
+.dynoResultCard:hover {
+  border-color: rgba(16, 185, 129, 0.35);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
 }
 
-.dynoResultMain {
+/* Power Display - Prominent */
+.dynoCardPower {
   display: flex;
   align-items: baseline;
-  gap: 16px;
-  flex: 1;
-  min-width: 0;
+  gap: 20px;
 }
 
-.dynoResultPower {
+.dynoCardPowerMain {
   display: flex;
   align-items: baseline;
-  gap: 4px;
+  gap: 6px;
 }
 
-.dynoResultWhp {
-  font-size: 1.5rem;
+.dynoCardWhp {
+  font-size: 2rem;
   font-weight: 800;
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
   color: var(--color-accent-teal, #10b981);
+  line-height: 1;
 }
 
-.dynoResultUnit {
-  font-size: 0.75rem;
+.dynoCardWhpLabel {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-text-tertiary, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.dynoCardTorque {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  padding-left: 16px;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dynoCardWtq {
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  color: var(--color-text-secondary, #94a3b8);
+  line-height: 1;
+}
+
+.dynoCardWtqLabel {
+  font-size: 0.6875rem;
   font-weight: 600;
   color: var(--color-text-tertiary, #64748b);
   text-transform: uppercase;
 }
 
-.dynoResultTorque {
+/* Comparison Row */
+.dynoCardComparison {
   display: flex;
-  align-items: baseline;
-  gap: 4px;
-  font-size: 1rem;
-  font-weight: 600;
+  align-items: center;
+  gap: 8px;
+}
+
+.dynoCardDiff {
+  font-size: 0.875rem;
+  font-weight: 700;
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.dynoCardDiff.positive {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--color-accent-teal, #10b981);
+}
+
+.dynoCardDiff.negative {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--color-warning, #f59e0b);
+}
+
+.dynoCardVs {
+  font-size: 0.8125rem;
+  color: var(--color-text-tertiary, #64748b);
+}
+
+/* Contextual Message */
+.dynoCardMessage {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  padding: 10px 12px;
+  border-radius: 8px;
+  line-height: 1.4;
+}
+
+.dynoCardMessage.exceptional {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--color-accent-teal, #10b981);
+  border-left: 3px solid var(--color-accent-teal, #10b981);
+}
+
+.dynoCardMessage.excellent {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-accent-teal, #10b981);
+  border-left: 3px solid var(--color-accent-teal, #10b981);
+}
+
+.dynoCardMessage.good {
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--color-accent-blue, #3b82f6);
+  border-left: 3px solid var(--color-accent-blue, #3b82f6);
+}
+
+.dynoCardMessage.close {
+  background: rgba(148, 163, 184, 0.1);
   color: var(--color-text-secondary, #94a3b8);
+  border-left: 3px solid var(--color-text-secondary, #94a3b8);
 }
 
-.dynoResultMeta {
+.dynoCardMessage.under {
+  background: rgba(245, 158, 11, 0.1);
+  color: var(--color-warning, #f59e0b);
+  border-left: 3px solid var(--color-warning, #f59e0b);
+}
+
+/* Meta Row */
+.dynoCardMeta {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-left: auto;
-  text-align: right;
+  align-items: center;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.dynoResultDate {
+.dynoCardDate {
   font-size: 0.75rem;
   color: var(--color-text-secondary, #94a3b8);
 }
 
-.dynoResultDyno {
-  font-size: 0.6875rem;
+.dynoCardSeparator {
+  font-size: 0.625rem;
+  color: var(--color-text-tertiary, #64748b);
+}
+
+.dynoCardDynoType {
+  font-size: 0.75rem;
   color: var(--color-text-tertiary, #64748b);
   text-transform: capitalize;
+}
+
+.dynoCardEditBtn {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
+  border-radius: 6px;
+  color: var(--color-text-tertiary, #64748b);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  /* 44px touch target via padding */
+  padding: 8px;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+.dynoCardEditBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.dynoResultsMore {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--color-text-tertiary, #64748b);
+  padding: 8px;
+}
+
+/* Legacy styles kept for backwards compatibility */
+.dynoResultItem {
+  display: none; /* Hide old item style */
 }
 
 .dynoResultDiff {
@@ -511,43 +635,6 @@
   color: var(--color-warning, #f59e0b);
 }
 
-.dynoResultEditBtn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.06);
-  border: none;
-  border-radius: 6px;
-  color: var(--color-text-tertiary, #64748b);
-  cursor: pointer;
-  opacity: 0;
-  transition: all 0.2s ease;
-  /* 44px min touch target - expand hit area */
-  min-width: 44px;
-  min-height: 44px;
-}
-
-.dynoResultItem:hover .dynoResultEditBtn {
-  opacity: 1;
-}
-
-.dynoResultEditBtn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--color-text-secondary, #94a3b8);
-}
-
-.dynoResultsMore {
-  text-align: center;
-  font-size: 0.75rem;
-  color: var(--color-text-tertiary, #64748b);
-  padding: 8px;
-}
-
 /* ==========================================================================
    RESPONSIVE
    ========================================================================== */
@@ -564,24 +651,17 @@
   }
 }
 
-@media (min-width: 481px) {
-  .dynoResultMain {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
+/* Tablet and larger screens - allow side-by-side layout */
+@media (min-width: 600px) {
+  .dynoCardPower {
+    gap: 24px;
   }
   
-  .dynoResultMeta {
-    flex-direction: row;
-    gap: 8px;
-    text-align: left;
-    margin-left: 0;
-    margin-top: 4px;
+  .dynoCardWhp {
+    font-size: 2.25rem;
   }
   
-  .dynoResultDiff {
-    width: 100%;
-    text-align: center;
-    margin-top: 8px;
+  .dynoCardWtq {
+    font-size: 1.5rem;
   }
 }

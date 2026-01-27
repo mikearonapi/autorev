@@ -27,7 +27,17 @@ async function handleGet(request) {
     const region = searchParams.get('region');
     const trackType = searchParams.get('type');
     
-    const TRACK_COLS = 'id, slug, name, location, country, region, track_type, length_miles, lap_record_seconds, lap_record_car, website_url, image_url, is_popular, is_active, popularity_rank, created_at';
+    // Select columns that actually exist in the tracks table
+    const TRACK_COLS = `
+      id, slug, name, short_name, city, state, country, region,
+      track_type, length_miles, corners, elevation_change_ft, longest_straight_ft,
+      surface_type, configuration,
+      pro_reference_time, power_gain_max, grip_gain_max, susp_gain_max,
+      brake_gain_max, aero_gain_max, weight_gain_max,
+      beginner_penalty, intermediate_penalty, advanced_penalty,
+      character_tags, website_url, image_url,
+      is_popular, is_active, popularity_rank, created_at
+    `;
     
     let query = supabase
       .from('tracks')
@@ -63,32 +73,36 @@ async function handleGet(request) {
       id: track.id,
       slug: track.slug,
       name: track.name,
-      shortName: track.short_name || track.name.split(' ')[0],
+      shortName: track.short_name || track.name?.split(' ')[0],
       city: track.city,
       state: track.state,
       country: track.country,
       region: track.region,
-      length: parseFloat(track.length_miles),
+      length: track.length_miles ? parseFloat(track.length_miles) : null,
       corners: track.corners,
       trackType: track.track_type,
       surfaceType: track.surface_type,
+      configuration: track.configuration,
       // Track characteristics
       elevationChange: track.elevation_change_ft,
       longestStraight: track.longest_straight_ft,
       characterTags: track.character_tags || [],
       websiteUrl: track.website_url,
-      // Physics parameters
-      proTime: parseFloat(track.pro_reference_time),
-      powerGainMax: parseFloat(track.power_gain_max),
-      gripGainMax: parseFloat(track.grip_gain_max),
-      suspGainMax: parseFloat(track.susp_gain_max),
-      brakeGainMax: parseFloat(track.brake_gain_max),
-      aeroGainMax: parseFloat(track.aero_gain_max),
-      weightGainMax: parseFloat(track.weight_gain_max),
-      beginnerPenalty: parseFloat(track.beginner_penalty),
-      intermediatePenalty: parseFloat(track.intermediate_penalty),
-      advancedPenalty: parseFloat(track.advanced_penalty),
+      imageUrl: track.image_url,
+      // Physics parameters for lap time estimation
+      proTime: track.pro_reference_time ? parseFloat(track.pro_reference_time) : null,
+      powerGainMax: track.power_gain_max ? parseFloat(track.power_gain_max) : 4.0,
+      gripGainMax: track.grip_gain_max ? parseFloat(track.grip_gain_max) : 5.0,
+      suspGainMax: track.susp_gain_max ? parseFloat(track.susp_gain_max) : 3.5,
+      brakeGainMax: track.brake_gain_max ? parseFloat(track.brake_gain_max) : 2.5,
+      aeroGainMax: track.aero_gain_max ? parseFloat(track.aero_gain_max) : 2.0,
+      weightGainMax: track.weight_gain_max ? parseFloat(track.weight_gain_max) : 2.0,
+      beginnerPenalty: track.beginner_penalty ? parseFloat(track.beginner_penalty) : 25,
+      intermediatePenalty: track.intermediate_penalty ? parseFloat(track.intermediate_penalty) : 10,
+      advancedPenalty: track.advanced_penalty ? parseFloat(track.advanced_penalty) : 3,
       isPopular: track.is_popular,
+      isActive: track.is_active,
+      popularityRank: track.popularity_rank,
     }));
     
     return NextResponse.json({

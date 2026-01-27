@@ -42,7 +42,7 @@ export default function LapTimeEstimator({
   compact = false,
   hideLogging = false,
 }) {
-  const [selectedTrackSlug, setSelectedTrackSlug] = useState('laguna-seca');
+  const [selectedTrackSlug, setSelectedTrackSlug] = useState(null); // No default - user must select
   const [driverSkill, setDriverSkill] = useState('intermediate');
   const [showInfo, setShowInfo] = useState(false);
   const [showLogForm, setShowLogForm] = useState(false);
@@ -83,8 +83,8 @@ export default function LapTimeEstimator({
   const tracks = allTracks;
   const popularTracks = tracks.filter(t => t.isPopular).slice(0, 6);
   
-  // Get currently selected track data
-  const selectedTrack = tracks.find(t => t.slug === selectedTrackSlug) || tracks[0];
+  // Get currently selected track data (null if none selected)
+  const selectedTrack = selectedTrackSlug ? tracks.find(t => t.slug === selectedTrackSlug) : null;
   
   // Filter tracks for search
   const filteredTracks = useMemo(() => {
@@ -280,10 +280,16 @@ export default function LapTimeEstimator({
           <div className={styles.trackSelectedInfo}>
             <span className={styles.trackSelectedName}>{selectedTrack?.name || 'Select Track'}</span>
             <span className={styles.trackSelectedMeta}>
-              {selectedTrack?.city && selectedTrack?.state 
-                ? `${selectedTrack.city}, ${selectedTrack.state}` 
-                : selectedTrack?.state || selectedTrack?.country}
-              {selectedTrack?.length && ` • ${selectedTrack.length} mi • ${selectedTrack.corners} turns`}
+              {selectedTrack ? (
+                <>
+                  {selectedTrack.city && selectedTrack.state 
+                    ? `${selectedTrack.city}, ${selectedTrack.state}` 
+                    : selectedTrack.state || selectedTrack.country}
+                  {selectedTrack.length && ` • ${selectedTrack.length} mi • ${selectedTrack.corners} turns`}
+                </>
+              ) : (
+                'Choose a track to estimate lap times'
+              )}
             </span>
           </div>
           <Icons.chevronDown size={16} />
@@ -382,7 +388,12 @@ export default function LapTimeEstimator({
 
       {/* Lap Time Comparison */}
       <div className={styles.lapTimeBody}>
-        {isEstimateLoading ? (
+        {!selectedTrack ? (
+          <div className={styles.lapTimeNoData}>
+            <p>Select a track above to see lap time estimates</p>
+            <p className={styles.lapTimeNoDataHint}>Choose from {tracks.length > 0 ? `${tracks.length} tracks` : 'popular tracks'} worldwide</p>
+          </div>
+        ) : isEstimateLoading ? (
           <div className={styles.lapTimeLoading}>
             <span>Calculating estimate...</span>
           </div>
@@ -415,7 +426,7 @@ export default function LapTimeEstimator({
         )}
         
         {/* Data source indicator */}
-        {hasRealData && sampleSize > 0 && (
+        {selectedTrack && hasRealData && sampleSize > 0 && (
           <div className={styles.lapTimeDataSource}>
             Based on {sampleSize.toLocaleString()} real lap times
           </div>
@@ -423,14 +434,14 @@ export default function LapTimeEstimator({
       </div>
       
       {/* Contextual tip - only show when there's significant unrealized potential */}
-      {hasRealData && unrealizedGains > 1.5 && driverSkill !== 'professional' && (
+      {selectedTrack && hasRealData && unrealizedGains > 1.5 && driverSkill !== 'professional' && (
         <div className={styles.lapTimeTip}>
           <span>{skill?.tip}</span>
         </div>
       )}
       
-      {/* Track Time Logging Section */}
-      {user && !hideLogging && (
+      {/* Track Time Logging Section - only show when track is selected */}
+      {selectedTrack && user && !hideLogging && (
         <div className={styles.trackTimeLogging}>
           <div className={styles.trackTimeActions}>
             <button 

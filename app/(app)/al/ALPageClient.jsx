@@ -413,12 +413,8 @@ export default function ALPageClient() {
   //   messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   // }, [messages, streamingContent]);
 
-  // Focus input on mount
-  useEffect(() => {
-    if (isAuthenticated && inputRef.current && !pendingPrompt) {
-      inputRef.current.focus();
-    }
-  }, [isAuthenticated, pendingPrompt]);
+  // Auto-focus removed - on iOS PWA, focusing the input shows the keyboard
+  // accessory bar immediately. Users now tap to type instead.
 
   // Check for voice input support
   const speechRecognitionRef = useRef(null);
