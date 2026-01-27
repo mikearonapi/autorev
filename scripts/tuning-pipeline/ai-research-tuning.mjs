@@ -5,6 +5,10 @@
  * Uses Claude AI to research and generate tuning upgrade recommendations
  * for cars that don't have data from other sources.
  * 
+ * IMPORTANT: This script now includes tunability validation to prevent
+ * generating contradictory data (e.g., ECU tune recommendations for
+ * platforms where tuning is impossible like Ferrari/McLaren).
+ * 
  * Usage:
  *   node scripts/tuning-pipeline/ai-research-tuning.mjs --slug bmw-m3-g80
  *   node scripts/tuning-pipeline/ai-research-tuning.mjs --slug bmw-m3-g80 --dry-run
@@ -51,14 +55,114 @@ if (!slug) {
   process.exit(1);
 }
 
+// ============================================================================
+// TUNABILITY VALIDATION
+// Prevents generating contradictory data for platforms with limited tuning
+// ============================================================================
+
+const PLATFORM_AFTERMARKET_SCORES = {
+  'ferrari': 3,
+  'lamborghini': 3,
+  'mclaren': 4,
+  'aston-martin': 4,
+  'bentley': 3,
+  'rolls-royce': 2,
+  'bugatti': 2,
+  'pagani': 2,
+  'koenigsegg': 2,
+  'lexus': 5,
+  'genesis': 5,
+  'alfa-romeo': 5,
+  'lotus': 5,
+  'mercedes-amg': 6,
+  'bmw-m': 8,
+  'audi-rs': 8,
+  'porsche': 7,
+  'nissan-gt-r': 10,
+  'toyota-supra': 9,
+  'subaru-wrx-sti': 9,
+  'mitsubishi-evo': 10,
+  'ford-mustang': 9,
+  'chevrolet-camaro': 9,
+  'mazda-miata': 9,
+};
+
+const LIMITED_TUNING_PLATFORMS = ['ferrari', 'lamborghini', 'mclaren', 'bugatti', 'pagani', 'koenigsegg'];
+
+function calculateTunabilityForScript(car) {
+  const nameLower = (car.name || '').toLowerCase();
+  const brand = (car.brand || '').toLowerCase();
+  
+  let baseScore = 5;
+  
+  // Engine type factor
+  const engine = (car.engine || '').toLowerCase();
+  if (engine.includes('twin-turbo') || engine.includes('twin turbo')) {
+    baseScore += 2;
+  } else if (engine.includes('turbo')) {
+    baseScore += 2;
+  } else if (engine.includes('supercharged')) {
+    baseScore += 1.5;
+  }
+  
+  // Platform aftermarket score
+  for (const [platform, score] of Object.entries(PLATFORM_AFTERMARKET_SCORES)) {
+    if (brand.includes(platform) || nameLower.includes(platform)) {
+      const adjustment = (score - 5) / 2;
+      baseScore += adjustment;
+      break;
+    }
+  }
+  
+  // Check if it's a limited tuning platform
+  const isLimitedPlatform = LIMITED_TUNING_PLATFORMS.some(p => 
+    brand.includes(p) || nameLower.includes(p)
+  );
+  
+  return {
+    score: Math.max(1, Math.min(10, Math.round(baseScore * 10) / 10)),
+    isLimitedPlatform,
+  };
+}
+
+function getTuningContextForPrompt(tunability) {
+  if (tunability.isLimitedPlatform) {
+    return `
+IMPORTANT PLATFORM CONTEXT:
+This is a LIMITED TUNING PLATFORM. The ECU is likely encrypted/locked.
+- DO NOT suggest ECU tuning or flash tuning as primary options
+- Focus recommendations on bolt-on modifications (exhaust, intake, wheels, suspension)
+- If tuning IS possible, mention it comes from specialized shops at premium prices
+- Include "ECU Tuning Constraints" as a weakness explaining the limitations
+- Use phrases like "bolt-on focused" instead of "great tuning potential"
+`;
+  }
+  
+  if (tunability.score < 5) {
+    return `
+PLATFORM CONTEXT:
+This platform has LIMITED aftermarket support (tunability score: ${tunability.score}/10).
+- Be realistic about available modifications
+- Don't oversell tuning potential
+- Focus on bolt-on modifications that are actually available
+`;
+  }
+  
+  return '';
+}
+
 /**
  * Research tuning upgrades using Claude
+ * @param {Object} car - Car object
+ * @param {Object} tunability - Tunability calculation result
  */
-async function researchTuningUpgrades(car) {
+async function researchTuningUpgrades(car, tunability) {
   console.log('   🔬 Researching tuning upgrades with Claude...');
+  
+  const tuningContext = getTuningContextForPrompt(tunability);
 
   const prompt = `You are an automotive tuning expert. Research the most popular and effective aftermarket upgrades for the ${car.name} (${car.years}).
-
+${tuningContext}
 The car has these stock specs:
 - HP: ${car.hp || 'unknown'}
 - Torque: ${car.torque || 'unknown'}
@@ -85,6 +189,7 @@ Structure the response as:
 
 Include 3-8 upgrades per category that are REALISTIC and POPULAR for this specific car.
 Only include upgrades that are actually available and commonly done on this platform.
+For limited tuning platforms, focus on bolt-on modifications and be honest about ECU tuning constraints.
 
 Return ONLY valid JSON, no other text.`;
 
@@ -128,21 +233,27 @@ Return ONLY valid JSON, no other text.`;
 
 /**
  * Research platform insights using Claude
+ * @param {Object} car - Car object
+ * @param {Object} tunability - Tunability calculation result
  */
-async function researchPlatformInsights(car) {
+async function researchPlatformInsights(car, tunability) {
   console.log('   🔬 Researching platform insights...');
+  
+  const tuningContext = getTuningContextForPrompt(tunability);
 
   const prompt = `You are an automotive expert. Provide platform insights for the ${car.name} (${car.years}).
-
+${tuningContext}
 Return a JSON object with:
 {
   "strengths": ["strength 1", "strength 2", ...],  // 3-5 platform strengths
-  "weaknesses": ["weakness 1", "weakness 2", ...], // 3-5 known weaknesses or limitations
+  "weaknesses": [                                   // 3-5 known weaknesses or limitations
+    { "title": "Short title", "description": "Detailed explanation" }
+  ],
   "community_tips": ["tip 1", "tip 2", ...],       // 3-5 tips from the tuning community
-  "tuning_platforms": [                            // Popular tuning software/hardware
+  "tuning_platforms": [                            // Popular tuning software/hardware (leave empty if truly limited)
     { "name": "Platform Name", "notes": "What it's used for" }
   ],
-  "power_limits": {                                // Stock component limits
+  "power_limits": {                                // Stock component limits (if applicable)
     "stock_turbo": "XXX whp",
     "stock_fuel": "XXX whp", 
     "stock_trans": "XXX lb-ft"
@@ -150,6 +261,7 @@ Return a JSON object with:
 }
 
 Be specific to this car's platform. Include real tuning platform names (COBB, APR, Hondata, etc.) if applicable.
+For limited tuning platforms, focus weaknesses on ECU constraints and emphasize bolt-on modifications.
 
 Return ONLY valid JSON, no other text.`;
 
@@ -186,10 +298,10 @@ async function main() {
   console.log('╚═══════════════════════════════════════════════════════════════════════════════╝');
   console.log('');
 
-  // Fetch car
+  // Fetch car (including brand for tunability calculation)
   const { data: car, error: carError } = await supabase
     .from('cars')
-    .select('id, slug, name, years, hp, torque, engine, drivetrain, category')
+    .select('id, slug, name, years, hp, torque, engine, drivetrain, category, brand')
     .eq('slug', slug)
     .single();
 
@@ -198,10 +310,21 @@ async function main() {
     process.exit(1);
   }
 
+  // Calculate tunability FIRST to inform research prompts
+  const tunability = calculateTunabilityForScript(car);
+  
   console.log(`🚗 ${car.name} (${car.years})`);
   console.log(`   HP: ${car.hp || 'unknown'}, Torque: ${car.torque || 'unknown'}`);
+  console.log(`   Tunability: ${tunability.score}/10${tunability.isLimitedPlatform ? ' (LIMITED PLATFORM)' : ''}`);
   console.log(`   Mode: ${dryRun ? 'DRY RUN' : 'LIVE'}`);
   console.log('');
+  
+  if (tunability.isLimitedPlatform) {
+    console.log('   ⚠️  LIMITED TUNING PLATFORM DETECTED');
+    console.log('   → Will focus on bolt-on modifications');
+    console.log('   → ECU tuning will be marked as constrained');
+    console.log('');
+  }
 
   // Check existing profile
   const { data: existingProfile } = await supabase
@@ -216,9 +339,9 @@ async function main() {
   console.log(`   Existing upgrades: ${existingCount}`);
   console.log('');
 
-  // Research upgrades
-  const upgrades = await researchTuningUpgrades(car);
-  const insights = await researchPlatformInsights(car);
+  // Research upgrades (with tunability context)
+  const upgrades = await researchTuningUpgrades(car, tunability);
+  const insights = await researchPlatformInsights(car, tunability);
 
   if (!upgrades) {
     console.log('❌ Failed to generate tuning data');

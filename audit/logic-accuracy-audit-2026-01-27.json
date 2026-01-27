@@ -1,0 +1,1693 @@
+{
+  "timestamp": "2026-01-27T16:08:03.394Z",
+  "summary": {
+    "critical": 116,
+    "warnings": 11,
+    "info": 9
+  },
+  "issues": [
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Jeep Gladiator",
+      "slug": "jeep-gladiator-jt",
+      "message": "\"DiabloSport\" is listed but typically only works with ford/gm/chevrolet/dodge/chrysler, not Jeep",
+      "details": {
+        "platform": "DiabloSport",
+        "carBrand": "Jeep",
+        "validBrands": ["ford", "gm", "chevrolet", "dodge", "chrysler"]
+      }
+    },
+    {
+      "severity": "warning",
+      "category": "SELF_CONTRADICTION",
+      "car": "Subaru BRZ",
+      "slug": "subaru-brz-zc6",
+      "message": "Strengths and weaknesses contradict on reliability",
+      "details": {
+        "topic": "reliability"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Dodge SRT-4",
+      "slug": "dodge-srt-4-2003-2005",
+      "message": "\"SCT X4 Power Flash\" is listed but typically only works with ford/lincoln/mercury, not Dodge",
+      "details": {
+        "platform": "SCT X4 Power Flash",
+        "carBrand": "Dodge",
+        "validBrands": ["ford", "lincoln", "mercury"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Lexus IS-F",
+      "slug": "lexus-is-f-use20",
+      "message": "\"EcuTek\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not Lexus",
+      "details": {
+        "platform": "EcuTek",
+        "carBrand": "Lexus",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "BMW 1 Series M Coupe",
+      "slug": "bmw-1m-coupe-e82",
+      "message": "NA car has \"wastegate\" recommendation without turbo kit context",
+      "details": {
+        "engine": "3.0L TT I6 N54",
+        "foundTerm": "wastegate"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "McLaren 650S",
+      "slug": "mclaren-650s-mp4-12c-successor",
+      "message": "\"Ecutek McLaren Suite\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not McLaren",
+      "details": {
+        "platform": "Ecutek McLaren Suite",
+        "carBrand": "McLaren",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Lotus Elise S2",
+      "slug": "lotus-elise-s2",
+      "message": "\"Hondata FlashPro\" is listed but typically only works with honda/acura, not Lotus",
+      "details": {
+        "platform": "Hondata FlashPro",
+        "carBrand": "Lotus",
+        "validBrands": ["honda", "acura"]
+      }
+    },
+    {
+      "severity": "warning",
+      "category": "SELF_CONTRADICTION",
+      "car": "Honda S2000",
+      "slug": "honda-s2000",
+      "message": "Strengths and weaknesses contradict on reliability",
+      "details": {
+        "topic": "reliability"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "Audi S4 B7",
+      "slug": "audi-s4-b7",
+      "message": "NA car has \"bov\" recommendation without turbo kit context",
+      "details": {
+        "engine": "4.2L Naturally Aspirated V8",
+        "foundTerm": "bov"
+      }
+    },
+    {
+      "severity": "warning",
+      "category": "NA_CAR_BOOST_MENTION",
+      "car": "Chevrolet Corvette C8 Z06",
+      "slug": "chevrolet-corvette-z06-c8",
+      "message": "NA car content mentions \"boost\" without forced induction context",
+      "details": {
+        "engine": "5.5L Naturally Aspirated DOHC V8 (LT6)"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "BMW M4 F82",
+      "slug": "bmw-m4-f82",
+      "message": "NA car has \"intercooler\" recommendation without turbo kit context",
+      "details": {
+        "engine": "3.0L TT I6",
+        "foundTerm": "intercooler"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "BMW M4 F82",
+      "slug": "bmw-m4-f82",
+      "message": "NA car has \"downpipe\" recommendation without turbo kit context",
+      "details": {
+        "engine": "3.0L TT I6",
+        "foundTerm": "downpipe"
+      }
+    },
+    {
+      "severity": "warning",
+      "category": "NA_CAR_BOOST_MENTION",
+      "car": "BMW M4 F82",
+      "slug": "bmw-m4-f82",
+      "message": "NA car content mentions \"boost\" without forced induction context",
+      "details": {
+        "engine": "3.0L TT I6"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Dodge Charger Hellcat",
+      "slug": "dodge-charger-hellcat",
+      "message": "\"SCT\" is listed but typically only works with ford/lincoln/mercury, not Dodge",
+      "details": {
+        "platform": "SCT",
+        "carBrand": "Dodge",
+        "validBrands": ["ford", "lincoln", "mercury"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "BMW M3 F80",
+      "slug": "bmw-m3-f80",
+      "message": "NA car has \"downpipe\" recommendation without turbo kit context",
+      "details": {
+        "engine": "3.0L TT I6 S55",
+        "foundTerm": "downpipe"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Infiniti G37 Coupe",
+      "slug": "infiniti-g37-coupe-cv36",
+      "message": "\"EcuTek\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not Infiniti",
+      "details": {
+        "platform": "EcuTek",
+        "carBrand": "Infiniti",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Toyota GR86",
+      "slug": "toyota-gr86",
+      "message": "\"COBB Accessport V3\" is listed but typically only works with subaru/ford/mazda/volkswagen/audi/porsche/bmw/nissan/mitsubishi, not Toyota",
+      "details": {
+        "platform": "COBB Accessport V3",
+        "carBrand": "Toyota",
+        "validBrands": [
+          "subaru",
+          "ford",
+          "mazda",
+          "volkswagen",
+          "audi",
+          "porsche",
+          "bmw",
+          "nissan",
+          "mitsubishi"
+        ]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Infiniti G35 Coupe",
+      "slug": "infiniti-g35-coupe-v35",
+      "message": "\"EcuTek\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not Infiniti",
+      "details": {
+        "platform": "EcuTek",
+        "carBrand": "Infiniti",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "BMW M5 F10 Competition",
+      "slug": "bmw-m5-f10-competition",
+      "message": "NA car has \"intercooler\" recommendation without turbo kit context",
+      "details": {
+        "engine": "4.4L TT V8 S63",
+        "foundTerm": "intercooler"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "BMW M5 F10 Competition",
+      "slug": "bmw-m5-f10-competition",
+      "message": "NA car has \"downpipe\" recommendation without turbo kit context",
+      "details": {
+        "engine": "4.4L TT V8 S63",
+        "foundTerm": "downpipe"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Dodge Viper",
+      "slug": "dodge-viper",
+      "message": "\"SCT X4/BDX\" is listed but typically only works with ford/lincoln/mercury, not Dodge",
+      "details": {
+        "platform": "SCT X4/BDX",
+        "carBrand": "Dodge",
+        "validBrands": ["ford", "lincoln", "mercury"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "Nissan Z",
+      "slug": "nissan-z-rz34",
+      "message": "NA car has \"downpipe\" recommendation without turbo kit context",
+      "details": {
+        "engine": "3.0L TT V6 VR30DDTT",
+        "foundTerm": "downpipe"
+      }
+    },
+    {
+      "severity": "warning",
+      "category": "NA_CAR_BOOST_MENTION",
+      "car": "Nissan Z",
+      "slug": "nissan-z-rz34",
+      "message": "NA car content mentions \"boost\" without forced induction context",
+      "details": {
+        "engine": "3.0L TT V6 VR30DDTT"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "C7 Corvette Z06",
+      "slug": "c7-corvette-z06",
+      "message": "NA car has \"intercooler\" recommendation without turbo kit context",
+      "details": {
+        "engine": "6.2L SC V8",
+        "foundTerm": "intercooler"
+      }
+    },
+    {
+      "severity": "warning",
+      "category": "NA_CAR_BOOST_MENTION",
+      "car": "GMC Sierra AT4X",
+      "slug": "gmc-sierra-at4x-k2xx",
+      "message": "NA car content mentions \"boost\" without forced induction context",
+      "details": {
+        "engine": "6.2L V8"
+      }
+    },
+    {
+      "severity": "warning",
+      "category": "NA_CAR_BOOST_MENTION",
+      "car": "Lotus Emira",
+      "slug": "lotus-emira",
+      "message": "NA car content mentions \"boost\" without forced induction context",
+      "details": {
+        "engine": "3.5L SC V6"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "Ford Mustang GT Fox Body",
+      "slug": "ford-mustang-gt-fox-body",
+      "message": "NA car has \"bov\" recommendation without turbo kit context",
+      "details": {
+        "engine": "5.0L V8",
+        "foundTerm": "bov"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Jeep Grand Cherokee Trackhawk",
+      "slug": "jeep-grand-cherokee-trackhawk-wk2",
+      "message": "\"DiabloSport\" is listed but typically only works with ford/gm/chevrolet/dodge/chrysler, not Jeep",
+      "details": {
+        "platform": "DiabloSport",
+        "carBrand": "Jeep",
+        "validBrands": ["ford", "gm", "chevrolet", "dodge", "chrysler"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Jeep Grand Cherokee Trackhawk",
+      "slug": "jeep-grand-cherokee-trackhawk-wk2",
+      "message": "\"SCT\" is listed but typically only works with ford/lincoln/mercury, not Jeep",
+      "details": {
+        "platform": "SCT",
+        "carBrand": "Jeep",
+        "validBrands": ["ford", "lincoln", "mercury"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Jeep Wrangler Rubicon 392",
+      "slug": "jeep-wrangler-rubicon-392-jl",
+      "message": "\"DiabloSport\" is listed but typically only works with ford/gm/chevrolet/dodge/chrysler, not Jeep",
+      "details": {
+        "platform": "DiabloSport",
+        "carBrand": "Jeep",
+        "validBrands": ["ford", "gm", "chevrolet", "dodge", "chrysler"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "SUPERCHARGED_TURBO_ADVICE",
+      "car": "Ram 1500 TRX",
+      "slug": "ram-1500-trx-dt",
+      "message": "Supercharged car has turbo-specific advice (wastegate/BOV)",
+      "details": {
+        "engine": "6.2L Supercharged HEMI V8"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Ram 1500 TRX",
+      "slug": "ram-1500-trx-dt",
+      "message": "\"DiabloSport\" is listed but typically only works with ford/gm/chevrolet/dodge/chrysler, not Ram",
+      "details": {
+        "platform": "DiabloSport",
+        "carBrand": "Ram",
+        "validBrands": ["ford", "gm", "chevrolet", "dodge", "chrysler"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Cadillac CTS-V Gen 3",
+      "slug": "cadillac-cts-v-gen3",
+      "message": "\"Diablo Sport\" is listed but typically only works with ford/gm/chevrolet/dodge/chrysler, not Cadillac",
+      "details": {
+        "platform": "Diablo Sport",
+        "carBrand": "Cadillac",
+        "validBrands": ["ford", "gm", "chevrolet", "dodge", "chrysler"]
+      }
+    },
+    {
+      "severity": "info",
+      "category": "TURBO_NO_BOOST_CONTENT",
+      "car": "Toyota Tundra TRD Pro",
+      "slug": "toyota-tundra-trd-pro-xk70",
+      "message": "Turbo car has no boost-related tuning content",
+      "details": {
+        "engine": "3.4L Twin-Turbo V6 Hybrid"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Chevrolet Corvette C6 Z06",
+      "slug": "chevrolet-corvette-c6-z06",
+      "message": "\"SCT X4 Power Flash\" is listed but typically only works with ford/lincoln/mercury, not Chevrolet",
+      "details": {
+        "platform": "SCT X4 Power Flash",
+        "carBrand": "Chevrolet",
+        "validBrands": ["ford", "lincoln", "mercury"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Ram 1500 Rebel",
+      "slug": "ram-1500-rebel-dt",
+      "message": "\"DiabloSport\" is listed but typically only works with ford/gm/chevrolet/dodge/chrysler, not Ram",
+      "details": {
+        "platform": "DiabloSport",
+        "carBrand": "Ram",
+        "validBrands": ["ford", "gm", "chevrolet", "dodge", "chrysler"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Ram 1500 Rebel",
+      "slug": "ram-1500-rebel-dt",
+      "message": "\"SCT\" is listed but typically only works with ford/lincoln/mercury, not Ram",
+      "details": {
+        "platform": "SCT",
+        "carBrand": "Ram",
+        "validBrands": ["ford", "lincoln", "mercury"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Ram 2500 Power Wagon",
+      "slug": "ram-power-wagon-dt",
+      "message": "\"SCT\" is listed but typically only works with ford/lincoln/mercury, not Ram",
+      "details": {
+        "platform": "SCT",
+        "carBrand": "Ram",
+        "validBrands": ["ford", "lincoln", "mercury"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Ram 2500 Power Wagon",
+      "slug": "ram-power-wagon-dt",
+      "message": "\"DiabloSport\" is listed but typically only works with ford/gm/chevrolet/dodge/chrysler, not Ram",
+      "details": {
+        "platform": "DiabloSport",
+        "carBrand": "Ram",
+        "validBrands": ["ford", "gm", "chevrolet", "dodge", "chrysler"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Lexus LC 500",
+      "slug": "lexus-lc-500",
+      "message": "\"Ecutek\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not Lexus",
+      "details": {
+        "platform": "Ecutek",
+        "carBrand": "Lexus",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Maserati GranTurismo",
+      "slug": "maserati-granturismo",
+      "message": "\"Eurocharged\" is listed but typically only works with mercedes/ferrari/mclaren/porsche/bmw/audi, not Maserati",
+      "details": {
+        "platform": "Eurocharged",
+        "carBrand": "Maserati",
+        "validBrands": ["mercedes", "ferrari", "mclaren", "porsche", "bmw", "audi"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Lexus RC F",
+      "slug": "lexus-rc-f",
+      "message": "\"ECUTek\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not Lexus",
+      "details": {
+        "platform": "ECUTek",
+        "carBrand": "Lexus",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "MINI Cooper S R56",
+      "slug": "mini-cooper-s-r56",
+      "message": "\"MHD Flasher\" is listed but typically only works with bmw, not MINI",
+      "details": {
+        "platform": "MHD Flasher",
+        "carBrand": "MINI",
+        "validBrands": ["bmw"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "MINI Cooper S R56",
+      "slug": "mini-cooper-s-r56",
+      "message": "\"Burger Motorsports JB4\" is listed but typically only works with bmw/audi/volkswagen/porsche/infiniti/mercedes/kia/hyundai/genesis, not MINI",
+      "details": {
+        "platform": "Burger Motorsports JB4",
+        "carBrand": "MINI",
+        "validBrands": [
+          "bmw",
+          "audi",
+          "volkswagen",
+          "porsche",
+          "infiniti",
+          "mercedes",
+          "kia",
+          "hyundai",
+          "genesis"
+        ]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Dodge Challenger SRT 392",
+      "slug": "dodge-challenger-srt-392",
+      "message": "\"SCT X4/BDX\" is listed but typically only works with ford/lincoln/mercury, not Dodge",
+      "details": {
+        "platform": "SCT X4/BDX",
+        "carBrand": "Dodge",
+        "validBrands": ["ford", "lincoln", "mercury"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "MINI John Cooper Works F56",
+      "slug": "mini-john-cooper-works-f56",
+      "message": "\"Burger Motorsports JB4\" is listed but typically only works with bmw/audi/volkswagen/porsche/infiniti/mercedes/kia/hyundai/genesis, not MINI",
+      "details": {
+        "platform": "Burger Motorsports JB4",
+        "carBrand": "MINI",
+        "validBrands": [
+          "bmw",
+          "audi",
+          "volkswagen",
+          "porsche",
+          "infiniti",
+          "mercedes",
+          "kia",
+          "hyundai",
+          "genesis"
+        ]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "MINI John Cooper Works F56",
+      "slug": "mini-john-cooper-works-f56",
+      "message": "\"MHD Flasher\" is listed but typically only works with bmw, not MINI",
+      "details": {
+        "platform": "MHD Flasher",
+        "carBrand": "MINI",
+        "validBrands": ["bmw"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Jaguar F-Type V6 S",
+      "slug": "jaguar-f-type-v6-s",
+      "message": "\"Eurocharged\" is listed but typically only works with mercedes/ferrari/mclaren/porsche/bmw/audi, not Jaguar",
+      "details": {
+        "platform": "Eurocharged",
+        "carBrand": "Jaguar",
+        "validBrands": ["mercedes", "ferrari", "mclaren", "porsche", "bmw", "audi"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Toyota GR Corolla",
+      "slug": "toyota-gr-corolla-e210",
+      "message": "\"Cobb Accessport\" is listed but typically only works with subaru/ford/mazda/volkswagen/audi/porsche/bmw/nissan/mitsubishi, not Toyota",
+      "details": {
+        "platform": "Cobb Accessport",
+        "carBrand": "Toyota",
+        "validBrands": [
+          "subaru",
+          "ford",
+          "mazda",
+          "volkswagen",
+          "audi",
+          "porsche",
+          "bmw",
+          "nissan",
+          "mitsubishi"
+        ]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "Lotus Evora GT",
+      "slug": "lotus-evora-gt",
+      "message": "NA car has \"intercooler\" recommendation without turbo kit context",
+      "details": {
+        "engine": "3.5L SC V6",
+        "foundTerm": "intercooler"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Lotus Evora GT",
+      "slug": "lotus-evora-gt",
+      "message": "\"ECUTek\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not Lotus",
+      "details": {
+        "platform": "ECUTek",
+        "carBrand": "Lotus",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "info",
+      "category": "TURBO_NO_BOOST_CONTENT",
+      "car": "Lexus GX 550",
+      "slug": "lexus-gx-550-j460",
+      "message": "Turbo car has no boost-related tuning content",
+      "details": {
+        "engine": "3.4L Twin-Turbo V6"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Toyota Tacoma",
+      "slug": "toyota-tacoma-2024",
+      "message": "\"Hondata FlashPro\" is listed but typically only works with honda/acura, not Toyota",
+      "details": {
+        "platform": "Hondata FlashPro",
+        "carBrand": "Toyota",
+        "validBrands": ["honda", "acura"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Jaguar XE S",
+      "slug": "jaguar-xe-s-x760",
+      "message": "\"Eurocharged ECU Tune\" is listed but typically only works with mercedes/ferrari/mclaren/porsche/bmw/audi, not Jaguar",
+      "details": {
+        "platform": "Eurocharged ECU Tune",
+        "carBrand": "Jaguar",
+        "validBrands": ["mercedes", "ferrari", "mclaren", "porsche", "bmw", "audi"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Jeep Gladiator Rubicon",
+      "slug": "jeep-gladiator-rubicon-jt",
+      "message": "\"DiabloSport Trinity\" is listed but typically only works with ford/gm/chevrolet/dodge/chrysler, not Jeep",
+      "details": {
+        "platform": "DiabloSport Trinity",
+        "carBrand": "Jeep",
+        "validBrands": ["ford", "gm", "chevrolet", "dodge", "chrysler"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Jeep Gladiator Mojave",
+      "slug": "jeep-gladiator-mojave-jt",
+      "message": "\"DiabloSport\" is listed but typically only works with ford/gm/chevrolet/dodge/chrysler, not Jeep",
+      "details": {
+        "platform": "DiabloSport",
+        "carBrand": "Jeep",
+        "validBrands": ["ford", "gm", "chevrolet", "dodge", "chrysler"]
+      }
+    },
+    {
+      "severity": "info",
+      "category": "TURBO_NO_BOOST_CONTENT",
+      "car": "Toyota Sequoia TRD Pro",
+      "slug": "toyota-sequoia-trd-pro-xk80",
+      "message": "Turbo car has no boost-related tuning content",
+      "details": {
+        "engine": "3.4L Twin-Turbo V6 Hybrid"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Toyota Tacoma",
+      "slug": "toyota-tacoma-n300",
+      "message": "\"bootmod3 (bm3)\" is listed but typically only works with bmw, not Toyota",
+      "details": {
+        "platform": "bootmod3 (bm3)",
+        "carBrand": "Toyota",
+        "validBrands": ["bmw"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Toyota Tacoma",
+      "slug": "toyota-tacoma-n300",
+      "message": "\"MHD Flasher\" is listed but typically only works with bmw, not Toyota",
+      "details": {
+        "platform": "MHD Flasher",
+        "carBrand": "Toyota",
+        "validBrands": ["bmw"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Toyota Tacoma",
+      "slug": "toyota-tacoma-n300",
+      "message": "\"Burger Tuning JB4\" is listed but typically only works with bmw/audi/volkswagen/porsche/infiniti/mercedes/kia/hyundai/genesis, not Toyota",
+      "details": {
+        "platform": "Burger Tuning JB4",
+        "carBrand": "Toyota",
+        "validBrands": [
+          "bmw",
+          "audi",
+          "volkswagen",
+          "porsche",
+          "infiniti",
+          "mercedes",
+          "kia",
+          "hyundai",
+          "genesis"
+        ]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "Porsche 911 Turbo 997.2",
+      "slug": "porsche-911-turbo-997-2",
+      "message": "NA car has \"intercooler\" recommendation without turbo kit context",
+      "details": {
+        "engine": "3.8L TT Flat-6",
+        "foundTerm": "intercooler"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "Porsche 911 Turbo 997.2",
+      "slug": "porsche-911-turbo-997-2",
+      "message": "NA car has \"downpipe\" recommendation without turbo kit context",
+      "details": {
+        "engine": "3.8L TT Flat-6",
+        "foundTerm": "downpipe"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "Audi RS5 B9",
+      "slug": "audi-rs5-b9",
+      "message": "NA car has \"intercooler\" recommendation without turbo kit context",
+      "details": {
+        "engine": "2.9L TT V6",
+        "foundTerm": "intercooler"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "Audi RS5 B9",
+      "slug": "audi-rs5-b9",
+      "message": "NA car has \"downpipe\" recommendation without turbo kit context",
+      "details": {
+        "engine": "2.9L TT V6",
+        "foundTerm": "downpipe"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Dodge Challenger Hellcat",
+      "slug": "dodge-challenger-hellcat",
+      "message": "\"SCT\" is listed but typically only works with ford/lincoln/mercury, not Dodge",
+      "details": {
+        "platform": "SCT",
+        "carBrand": "Dodge",
+        "validBrands": ["ford", "lincoln", "mercury"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Pontiac G8 GT",
+      "slug": "pontiac-g8-gt",
+      "message": "\"HP Tuners VCM Suite\" is listed but typically only works with gm/chevrolet/chevy/gmc/cadillac/buick/ford/dodge/chrysler/jeep/ram, not Pontiac",
+      "details": {
+        "platform": "HP Tuners VCM Suite",
+        "carBrand": "Pontiac",
+        "validBrands": [
+          "gm",
+          "chevrolet",
+          "chevy",
+          "gmc",
+          "cadillac",
+          "buick",
+          "ford",
+          "dodge",
+          "chrysler",
+          "jeep",
+          "ram"
+        ]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Pontiac G8 GT",
+      "slug": "pontiac-g8-gt",
+      "message": "\"Diablosport inTune i3\" is listed but typically only works with ford/gm/chevrolet/dodge/chrysler, not Pontiac",
+      "details": {
+        "platform": "Diablosport inTune i3",
+        "carBrand": "Pontiac",
+        "validBrands": ["ford", "gm", "chevrolet", "dodge", "chrysler"]
+      }
+    },
+    {
+      "severity": "info",
+      "category": "TURBO_NO_BOOST_CONTENT",
+      "car": "Ford F-150",
+      "slug": "ford-f150-thirteenth",
+      "message": "Turbo car has no boost-related tuning content",
+      "details": {
+        "engine": "3.5L Twin-Turbo V6 EcoBoost"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Aston Martin DB11",
+      "slug": "aston-martin-db11-db11",
+      "message": "\"ECUTEK\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not Aston Martin",
+      "details": {
+        "platform": "ECUTEK",
+        "carBrand": "Aston Martin",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Aston Martin DBS Superleggera",
+      "slug": "aston-martin-dbs-superleggera-2018",
+      "message": "\"ECUTEK\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not Aston Martin",
+      "details": {
+        "platform": "ECUTEK",
+        "carBrand": "Aston Martin",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "Subaru BRZ (2nd Gen)",
+      "slug": "subaru-brz-zd8",
+      "message": "NA car has \"bov\" recommendation without turbo kit context",
+      "details": {
+        "engine": "2.4L NA H4",
+        "foundTerm": "bov"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "Nissan 240SX S13",
+      "slug": "nissan-240sx-s13",
+      "message": "NA car has \"boost controller\" recommendation without turbo kit context",
+      "details": {
+        "engine": "2.4L DOHC I4 (KA24E/KA24DE)",
+        "foundTerm": "boost controller"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "Ford Mustang SVT Cobra",
+      "slug": "ford-mustang-svt-cobra-sn95",
+      "message": "NA car has \"intercooler\" recommendation without turbo kit context",
+      "details": {
+        "engine": "4.6L DOHC V8",
+        "foundTerm": "intercooler"
+      }
+    },
+    {
+      "severity": "warning",
+      "category": "NA_CAR_BOOST_MENTION",
+      "car": "Ford Mustang SVT Cobra",
+      "slug": "ford-mustang-svt-cobra-sn95",
+      "message": "NA car content mentions \"boost\" without forced induction context",
+      "details": {
+        "engine": "4.6L DOHC V8"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Pontiac G8 GXP",
+      "slug": "pontiac-g8-gxp-2009",
+      "message": "\"HP Tuners\" is listed but typically only works with gm/chevrolet/chevy/gmc/cadillac/buick/ford/dodge/chrysler/jeep/ram, not Pontiac",
+      "details": {
+        "platform": "HP Tuners",
+        "carBrand": "Pontiac",
+        "validBrands": [
+          "gm",
+          "chevrolet",
+          "chevy",
+          "gmc",
+          "cadillac",
+          "buick",
+          "ford",
+          "dodge",
+          "chrysler",
+          "jeep",
+          "ram"
+        ]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Pontiac G8 GXP",
+      "slug": "pontiac-g8-gxp-2009",
+      "message": "\"DiabloSport\" is listed but typically only works with ford/gm/chevrolet/dodge/chrysler, not Pontiac",
+      "details": {
+        "platform": "DiabloSport",
+        "carBrand": "Pontiac",
+        "validBrands": ["ford", "gm", "chevrolet", "dodge", "chrysler"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Toyota 86 / Scion FR-S",
+      "slug": "toyota-86-scion-frs",
+      "message": "\"Cobb Accessport\" is listed but typically only works with subaru/ford/mazda/volkswagen/audi/porsche/bmw/nissan/mitsubishi, not Toyota",
+      "details": {
+        "platform": "Cobb Accessport",
+        "carBrand": "Toyota",
+        "validBrands": [
+          "subaru",
+          "ford",
+          "mazda",
+          "volkswagen",
+          "audi",
+          "porsche",
+          "bmw",
+          "nissan",
+          "mitsubishi"
+        ]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Lexus IS350",
+      "slug": "lexus-is350-xe20",
+      "message": "\"ECUTek\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not Lexus",
+      "details": {
+        "platform": "ECUTek",
+        "carBrand": "Lexus",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "Chevrolet Silverado ZR2",
+      "slug": "chevrolet-silverado-zr2-t1xx",
+      "message": "NA car has \"intercooler\" recommendation without turbo kit context",
+      "details": {
+        "engine": "6.2L V8",
+        "foundTerm": "intercooler"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "BMW M3 E36",
+      "slug": "bmw-m3-e36",
+      "message": "NA car has \"wastegate\" recommendation without turbo kit context",
+      "details": {
+        "engine": "3.2L Naturally Aspirated I6",
+        "foundTerm": "wastegate"
+      }
+    },
+    {
+      "severity": "warning",
+      "category": "SELF_CONTRADICTION",
+      "car": "BMW M3 E36",
+      "slug": "bmw-m3-e36",
+      "message": "Strengths and weaknesses contradict on reliability",
+      "details": {
+        "topic": "reliability"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Ram 2500 Cummins",
+      "slug": "ram-2500-cummins-ds",
+      "message": "\"SCT\" is listed but typically only works with ford/lincoln/mercury, not Ram",
+      "details": {
+        "platform": "SCT",
+        "carBrand": "Ram",
+        "validBrands": ["ford", "lincoln", "mercury"]
+      }
+    },
+    {
+      "severity": "info",
+      "category": "TURBO_NO_BOOST_CONTENT",
+      "car": "Subaru Forester XT",
+      "slug": "subaru-forester-xt-sg",
+      "message": "Turbo car has no boost-related tuning content",
+      "details": {
+        "engine": "2.5L Turbocharged H4"
+      }
+    },
+    {
+      "severity": "info",
+      "category": "TURBO_NO_BOOST_CONTENT",
+      "car": "Subaru Legacy GT Spec.B",
+      "slug": "subaru-legacy-gt-spec-b-bl",
+      "message": "Turbo car has no boost-related tuning content",
+      "details": {
+        "engine": "2.5L Turbocharged H4"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Aston Martin DB9",
+      "slug": "aston-martin-db9-first-generation",
+      "message": "\"Ecutek\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not Aston Martin",
+      "details": {
+        "platform": "Ecutek",
+        "carBrand": "Aston Martin",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "warning",
+      "category": "SELF_CONTRADICTION",
+      "car": "Aston Martin DB9",
+      "slug": "aston-martin-db9-first-generation",
+      "message": "Strengths and weaknesses contradict on reliability",
+      "details": {
+        "topic": "reliability"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Lamborghini Huracán STO",
+      "slug": "lamborghini-huracan-sto",
+      "message": "\"APR\" is listed but typically only works with audi/volkswagen/porsche, not Lamborghini",
+      "details": {
+        "platform": "APR",
+        "carBrand": "Lamborghini",
+        "validBrands": ["audi", "volkswagen", "porsche"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Mercedes-AMG CLA 45",
+      "slug": "mercedes-amg-cla-45-c117",
+      "message": "\"APR\" is listed but typically only works with audi/volkswagen/porsche, not Mercedes-AMG",
+      "details": {
+        "platform": "APR",
+        "carBrand": "Mercedes-AMG",
+        "validBrands": ["audi", "volkswagen", "porsche"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Toyota GR Supra",
+      "slug": "toyota-gr-supra",
+      "message": "\"Bootmod3\" is listed but typically only works with bmw, not Toyota",
+      "details": {
+        "platform": "Bootmod3",
+        "carBrand": "Toyota",
+        "validBrands": ["bmw"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Toyota GR Supra",
+      "slug": "toyota-gr-supra",
+      "message": "\"MHD\" is listed but typically only works with bmw, not Toyota",
+      "details": {
+        "platform": "MHD",
+        "carBrand": "Toyota",
+        "validBrands": ["bmw"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Toyota MR2 Spyder",
+      "slug": "toyota-mr2-spyder-zzw30",
+      "message": "\"Hondata FlashPro\" is listed but typically only works with honda/acura, not Toyota",
+      "details": {
+        "platform": "Hondata FlashPro",
+        "carBrand": "Toyota",
+        "validBrands": ["honda", "acura"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Mercedes-AMG CLA 45 S",
+      "slug": "mercedes-amg-cla-45-s-c118",
+      "message": "\"ECUTEK\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not Mercedes-AMG",
+      "details": {
+        "platform": "ECUTEK",
+        "carBrand": "Mercedes-AMG",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "BMW M2 Competition",
+      "slug": "bmw-m2-competition",
+      "message": "NA car has \"intercooler\" recommendation without turbo kit context",
+      "details": {
+        "engine": "3.0L TT I6",
+        "foundTerm": "intercooler"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "BMW M2 Competition",
+      "slug": "bmw-m2-competition",
+      "message": "NA car has \"downpipe\" recommendation without turbo kit context",
+      "details": {
+        "engine": "3.0L TT I6",
+        "foundTerm": "downpipe"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Jaguar F-Type R",
+      "slug": "jaguar-f-type-r",
+      "message": "\"Eurocharged ECU Tune\" is listed but typically only works with mercedes/ferrari/mclaren/porsche/bmw/audi, not Jaguar",
+      "details": {
+        "platform": "Eurocharged ECU Tune",
+        "carBrand": "Jaguar",
+        "validBrands": ["mercedes", "ferrari", "mclaren", "porsche", "bmw", "audi"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Jeep Wrangler JK",
+      "slug": "jeep-wrangler-jk",
+      "message": "\"DiabloSport\" is listed but typically only works with ford/gm/chevrolet/dodge/chrysler, not Jeep",
+      "details": {
+        "platform": "DiabloSport",
+        "carBrand": "Jeep",
+        "validBrands": ["ford", "gm", "chevrolet", "dodge", "chrysler"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "Mercedes-AMG E63 S W213",
+      "slug": "mercedes-amg-e63s-w213",
+      "message": "NA car has \"intercooler\" recommendation without turbo kit context",
+      "details": {
+        "engine": "4.0L TT V8 M177",
+        "foundTerm": "intercooler"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "Mercedes-AMG E63 S W213",
+      "slug": "mercedes-amg-e63s-w213",
+      "message": "NA car has \"downpipe\" recommendation without turbo kit context",
+      "details": {
+        "engine": "4.0L TT V8 M177",
+        "foundTerm": "downpipe"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Jeep Grand Cherokee",
+      "slug": "jeep-grand-cherokee-wk2",
+      "message": "\"DiabloSport\" is listed but typically only works with ford/gm/chevrolet/dodge/chrysler, not Jeep",
+      "details": {
+        "platform": "DiabloSport",
+        "carBrand": "Jeep",
+        "validBrands": ["ford", "gm", "chevrolet", "dodge", "chrysler"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Jeep Grand Cherokee",
+      "slug": "jeep-grand-cherokee-wk2",
+      "message": "\"SCT\" is listed but typically only works with ford/lincoln/mercury, not Jeep",
+      "details": {
+        "platform": "SCT",
+        "carBrand": "Jeep",
+        "validBrands": ["ford", "lincoln", "mercury"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Ram 1500",
+      "slug": "ram-1500-dt",
+      "message": "\"Diablosport\" is listed but typically only works with ford/gm/chevrolet/dodge/chrysler, not Ram",
+      "details": {
+        "platform": "Diablosport",
+        "carBrand": "Ram",
+        "validBrands": ["ford", "gm", "chevrolet", "dodge", "chrysler"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Ram 1500",
+      "slug": "ram-1500-dt",
+      "message": "\"SCT\" is listed but typically only works with ford/lincoln/mercury, not Ram",
+      "details": {
+        "platform": "SCT",
+        "carBrand": "Ram",
+        "validBrands": ["ford", "lincoln", "mercury"]
+      }
+    },
+    {
+      "severity": "info",
+      "category": "TURBO_NO_BOOST_CONTENT",
+      "car": "Toyota Tundra",
+      "slug": "toyota-tundra-3rd-gen",
+      "message": "Turbo car has no boost-related tuning content",
+      "details": {
+        "engine": "3.5L Twin-Turbo V6 Hybrid"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Toyota Tundra",
+      "slug": "toyota-tundra-3rd-gen",
+      "message": "\"HP Tuners\" is listed but typically only works with gm/chevrolet/chevy/gmc/cadillac/buick/ford/dodge/chrysler/jeep/ram, not Toyota",
+      "details": {
+        "platform": "HP Tuners",
+        "carBrand": "Toyota",
+        "validBrands": [
+          "gm",
+          "chevrolet",
+          "chevy",
+          "gmc",
+          "cadillac",
+          "buick",
+          "ford",
+          "dodge",
+          "chrysler",
+          "jeep",
+          "ram"
+        ]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Toyota Tundra",
+      "slug": "toyota-tundra-3rd-gen",
+      "message": "\"Hondata\" is listed but typically only works with honda/acura, not Toyota",
+      "details": {
+        "platform": "Hondata",
+        "carBrand": "Toyota",
+        "validBrands": ["honda", "acura"]
+      }
+    },
+    {
+      "severity": "info",
+      "category": "TURBO_NO_BOOST_CONTENT",
+      "car": "Chevrolet Colorado ZR2",
+      "slug": "chevrolet-colorado-zr2-2017-2024",
+      "message": "Turbo car has no boost-related tuning content",
+      "details": {
+        "engine": "3.6L V6 or 2.8L Turbo-Diesel I4"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Jeep Wrangler JL",
+      "slug": "jeep-wrangler-jl",
+      "message": "\"DiabloSport Trinity\" is listed but typically only works with ford/gm/chevrolet/dodge/chrysler, not Jeep",
+      "details": {
+        "platform": "DiabloSport Trinity",
+        "carBrand": "Jeep",
+        "validBrands": ["ford", "gm", "chevrolet", "dodge", "chrysler"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "Honda Civic Si EM1",
+      "slug": "honda-civic-si-em1",
+      "message": "NA car has \"blow-off valve\" recommendation without turbo kit context",
+      "details": {
+        "engine": "1.6L DOHC VTEC I4",
+        "foundTerm": "blow-off valve"
+      }
+    },
+    {
+      "severity": "warning",
+      "category": "FWD_DRIFT_MENTION",
+      "car": "Honda Civic Si EM1",
+      "slug": "honda-civic-si-em1",
+      "message": "FWD car mentions drifting without FWD-specific context",
+      "details": {
+        "drivetrain": "FWD"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Honda Civic Type R FK8",
+      "slug": "honda-civic-type-r-fk8",
+      "message": "\"COBB Accessport\" is listed but typically only works with subaru/ford/mazda/volkswagen/audi/porsche/bmw/nissan/mitsubishi, not Honda",
+      "details": {
+        "platform": "COBB Accessport",
+        "carBrand": "Honda",
+        "validBrands": [
+          "subaru",
+          "ford",
+          "mazda",
+          "volkswagen",
+          "audi",
+          "porsche",
+          "bmw",
+          "nissan",
+          "mitsubishi"
+        ]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Hyundai Veloster N",
+      "slug": "hyundai-veloster-n-js",
+      "message": "\"Unitronic\" is listed but typically only works with audi/volkswagen, not Hyundai",
+      "details": {
+        "platform": "Unitronic",
+        "carBrand": "Hyundai",
+        "validBrands": ["audi", "volkswagen"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Dodge Charger SRT 392",
+      "slug": "dodge-charger-srt-392",
+      "message": "\"SCT Performance\" is listed but typically only works with ford/lincoln/mercury, not Dodge",
+      "details": {
+        "platform": "SCT Performance",
+        "carBrand": "Dodge",
+        "validBrands": ["ford", "lincoln", "mercury"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "BMW M5 F90 Competition",
+      "slug": "bmw-m5-f90-competition",
+      "message": "NA car has \"intercooler\" recommendation without turbo kit context",
+      "details": {
+        "engine": "4.4L TT V8 S63",
+        "foundTerm": "intercooler"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "BMW M5 F90 Competition",
+      "slug": "bmw-m5-f90-competition",
+      "message": "NA car has \"downpipe\" recommendation without turbo kit context",
+      "details": {
+        "engine": "4.4L TT V8 S63",
+        "foundTerm": "downpipe"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Ferrari F8 Tributo",
+      "slug": "ferrari-f8-tributo",
+      "message": "\"ECUTEK\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not Ferrari",
+      "details": {
+        "platform": "ECUTEK",
+        "carBrand": "Ferrari",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Ferrari 812 Superfast",
+      "slug": "ferrari-812-superfast",
+      "message": "\"Capristo\" is listed but typically only works with audi/volkswagen/porsche, not Ferrari",
+      "details": {
+        "platform": "Capristo",
+        "carBrand": "Ferrari",
+        "validBrands": ["audi", "volkswagen", "porsche"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Infiniti G37 Sedan",
+      "slug": "infiniti-g37-sedan",
+      "message": "\"EcuTek\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not Infiniti",
+      "details": {
+        "platform": "EcuTek",
+        "carBrand": "Infiniti",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Ferrari 296 GTB",
+      "slug": "ferrari-296-gtb-2022-2024",
+      "message": "\"Capristo\" is listed but typically only works with audi/volkswagen/porsche, not Ferrari",
+      "details": {
+        "platform": "Capristo",
+        "carBrand": "Ferrari",
+        "validBrands": ["audi", "volkswagen", "porsche"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "McLaren 600LT",
+      "slug": "mclaren-600lt-2018-2020",
+      "message": "\"ECUTEK\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not McLaren",
+      "details": {
+        "platform": "ECUTEK",
+        "carBrand": "McLaren",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Lamborghini Huracán LP 610-4",
+      "slug": "lamborghini-huracan-lp610-4",
+      "message": "\"COBB Accessport\" is listed but typically only works with subaru/ford/mazda/volkswagen/audi/porsche/bmw/nissan/mitsubishi, not Lamborghini",
+      "details": {
+        "platform": "COBB Accessport",
+        "carBrand": "Lamborghini",
+        "validBrands": [
+          "subaru",
+          "ford",
+          "mazda",
+          "volkswagen",
+          "audi",
+          "porsche",
+          "bmw",
+          "nissan",
+          "mitsubishi"
+        ]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Lamborghini Huracán LP 610-4",
+      "slug": "lamborghini-huracan-lp610-4",
+      "message": "\"Unitronic\" is listed but typically only works with audi/volkswagen, not Lamborghini",
+      "details": {
+        "platform": "Unitronic",
+        "carBrand": "Lamborghini",
+        "validBrands": ["audi", "volkswagen"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Lamborghini Huracán LP 610-4",
+      "slug": "lamborghini-huracan-lp610-4",
+      "message": "\"APR\" is listed but typically only works with audi/volkswagen/porsche, not Lamborghini",
+      "details": {
+        "platform": "APR",
+        "carBrand": "Lamborghini",
+        "validBrands": ["audi", "volkswagen", "porsche"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Lamborghini Aventador SVJ",
+      "slug": "lamborghini-aventador-svj",
+      "message": "\"ECUTEK\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not Lamborghini",
+      "details": {
+        "platform": "ECUTEK",
+        "carBrand": "Lamborghini",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "NA_CAR_TURBO_MOD",
+      "car": "Mercedes-AMG E63 W212",
+      "slug": "mercedes-amg-e63-w212",
+      "message": "NA car has \"downpipe\" recommendation without turbo kit context",
+      "details": {
+        "engine": "5.5L TT V8 M157",
+        "foundTerm": "downpipe"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Ferrari SF90 Stradale",
+      "slug": "ferrari-sf90-stradale-2019-2024",
+      "message": "\"Capristo\" is listed but typically only works with audi/volkswagen/porsche, not Ferrari",
+      "details": {
+        "platform": "Capristo",
+        "carBrand": "Ferrari",
+        "validBrands": ["audi", "volkswagen", "porsche"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Alfa Romeo Giulia Quadrifoglio",
+      "slug": "alfa-romeo-giulia-quadrifoglio",
+      "message": "\"Eurocharged\" is listed but typically only works with mercedes/ferrari/mclaren/porsche/bmw/audi, not Alfa Romeo",
+      "details": {
+        "platform": "Eurocharged",
+        "carBrand": "Alfa Romeo",
+        "validBrands": ["mercedes", "ferrari", "mclaren", "porsche", "bmw", "audi"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Infiniti Q50 Red Sport 400",
+      "slug": "infiniti-q50-red-sport-400",
+      "message": "\"EcuTek\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not Infiniti",
+      "details": {
+        "platform": "EcuTek",
+        "carBrand": "Infiniti",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "info",
+      "category": "TURBO_NO_BOOST_CONTENT",
+      "car": "Kia Stinger GT",
+      "slug": "kia-stinger-gt-ck",
+      "message": "Turbo car has no boost-related tuning content",
+      "details": {
+        "engine": "3.3L Twin-Turbo V6"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Kia Stinger GT",
+      "slug": "kia-stinger-gt-ck",
+      "message": "\"COBB Accessport\" is listed but typically only works with subaru/ford/mazda/volkswagen/audi/porsche/bmw/nissan/mitsubishi, not Kia",
+      "details": {
+        "platform": "COBB Accessport",
+        "carBrand": "Kia",
+        "validBrands": [
+          "subaru",
+          "ford",
+          "mazda",
+          "volkswagen",
+          "audi",
+          "porsche",
+          "bmw",
+          "nissan",
+          "mitsubishi"
+        ]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Kia Stinger GT",
+      "slug": "kia-stinger-gt-ck",
+      "message": "\"EcuTek\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not Kia",
+      "details": {
+        "platform": "EcuTek",
+        "carBrand": "Kia",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Mercedes-AMG GT Black Series",
+      "slug": "mercedes-amg-gt-black-series-c190",
+      "message": "\"ECUTEK\" is listed but typically only works with subaru/nissan/toyota/mazda/mitsubishi/honda, not Mercedes-AMG",
+      "details": {
+        "platform": "ECUTEK",
+        "carBrand": "Mercedes-AMG",
+        "validBrands": ["subaru", "nissan", "toyota", "mazda", "mitsubishi", "honda"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "INCOMPATIBLE_TUNING_PLATFORM",
+      "car": "Aston Martin Vantage",
+      "slug": "aston-martin-vantage-2018-2024",
+      "message": "\"Eurocharged\" is listed but typically only works with mercedes/ferrari/mclaren/porsche/bmw/audi, not Aston Martin",
+      "details": {
+        "platform": "Eurocharged",
+        "carBrand": "Aston Martin",
+        "validBrands": ["mercedes", "ferrari", "mclaren", "porsche", "bmw", "audi"]
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "EV_ICE_RECOMMENDATION",
+      "car": "Acura NSX NC1",
+      "slug": "acura-nsx-nc1",
+      "message": "Pure EV has ICE-specific recommendation: \"exhaust\"",
+      "details": {
+        "engine": "3.5L Twin-Turbo V6 + 3 Electric Motors",
+        "foundTerm": "exhaust"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "EV_ICE_RECOMMENDATION",
+      "car": "Acura NSX NC1",
+      "slug": "acura-nsx-nc1",
+      "message": "Pure EV has ICE-specific recommendation: \"intake\"",
+      "details": {
+        "engine": "3.5L Twin-Turbo V6 + 3 Electric Motors",
+        "foundTerm": "intake"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "EV_ICE_RECOMMENDATION",
+      "car": "Acura NSX NC1",
+      "slug": "acura-nsx-nc1",
+      "message": "Pure EV has ICE-specific recommendation: \"turbo\"",
+      "details": {
+        "engine": "3.5L Twin-Turbo V6 + 3 Electric Motors",
+        "foundTerm": "turbo"
+      }
+    },
+    {
+      "severity": "critical",
+      "category": "EV_ECU_TUNE_RECOMMENDATION",
+      "car": "Acura NSX NC1",
+      "slug": "acura-nsx-nc1",
+      "message": "Pure EV mentions ECU tuning for performance - EVs cannot be traditionally ECU tuned",
+      "details": {
+        "engine": "3.5L Twin-Turbo V6 + 3 Electric Motors"
+      }
+    }
+  ]
+}

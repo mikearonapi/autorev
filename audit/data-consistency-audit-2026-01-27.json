@@ -1,0 +1,676 @@
+{
+  "timestamp": "2026-01-27T15:37:06.815Z",
+  "summary": {
+    "totalCarsAudited": 310,
+    "contradictionsFound": 0,
+    "criticalIssues": 0,
+    "warnings": 51
+  },
+  "contradictions": [],
+  "warnings": [
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Jeep Grand Cherokee Trackhawk",
+      "carSlug": "jeep-grand-cherokee-trackhawk-wk2",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Ford F-150 Raptor R",
+      "carSlug": "ford-f150-raptor-r-third-generation",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Toyota Tundra TRD Pro",
+      "carSlug": "toyota-tundra-trd-pro-xk70",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Ford F-150 Lightning",
+      "carSlug": "ford-f150-lightning-1st-gen",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Toyota Sequoia TRD Pro",
+      "carSlug": "toyota-sequoia-trd-pro-xk80",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Toyota Tacoma",
+      "carSlug": "toyota-tacoma-n300",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Maserati MC20",
+      "carSlug": "maserati-mc20-2021",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Ford Fusion Sport",
+      "carSlug": "ford-fusion-sport-cd538",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Ford Mustang SVT Cobra Terminator",
+      "carSlug": "ford-mustang-cobra-terminator",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Volkswagen Corrado VR6",
+      "carSlug": "volkswagen-corrado-vr6-53i",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "BMW 135i N54",
+      "carSlug": "bmw-135i-e82",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Toyota Celica GT-Four ST205",
+      "carSlug": "toyota-celica-gt-four-st205",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Volkswagen R32 Mk4",
+      "carSlug": "volkswagen-r32-mk4",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Honda Prelude Si VTEC",
+      "carSlug": "honda-prelude-si-vtec-bb4",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Toyota MR2 Spyder",
+      "carSlug": "toyota-mr2-spyder-zzw30",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Shelby GT350",
+      "carSlug": "shelby-gt350",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Audi A4 2.0T B8",
+      "carSlug": "audi-a4-b8",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Audi A4 2.0T B8.5",
+      "carSlug": "audi-a4-b8-5",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Audi RS6 Avant C8",
+      "carSlug": "audi-rs6-avant-c8",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Jeep Grand Cherokee",
+      "carSlug": "jeep-grand-cherokee-wk2",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Toyota Land Cruiser 200 Series",
+      "carSlug": "toyota-land-cruiser-200-series",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Subaru Crosstrek",
+      "carSlug": "subaru-crosstrek-xv",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "BMW i4 M50",
+      "carSlug": "bmw-i4-m50-g26",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Ford Crown Victoria",
+      "carSlug": "ford-crown-victoria-p71",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Toyota Tundra",
+      "carSlug": "toyota-tundra-3rd-gen",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Ford Ranger T6 Facelift",
+      "carSlug": "ford-ranger-t6-facelift",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Chevrolet Colorado ZR2",
+      "carSlug": "chevrolet-colorado-zr2-2017-2024",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Ford Maverick",
+      "carSlug": "ford-maverick-2022-2024",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Ford Focus ST Mk3",
+      "carSlug": "ford-focus-st-mk3",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Ford Mustang Boss 302",
+      "carSlug": "ford-mustang-boss-302",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Ford Mustang Mach 1",
+      "carSlug": "ford-mustang-mach-1-sn95",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Chevrolet Camaro SS (1969)",
+      "carSlug": "chevrolet-camaro-ss-1969",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Chevrolet Camaro Z28",
+      "carSlug": "chevrolet-camaro-z28-second-generation",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Ford Mustang Fastback",
+      "carSlug": "ford-mustang-fastback-1967-1968",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "McLaren 570S",
+      "carSlug": "mclaren-570s-2015",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "McLaren MP4-12C",
+      "carSlug": "mclaren-mp4-12c-first-generation",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "McLaren 600LT",
+      "carSlug": "mclaren-600lt-2018-2020",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "McLaren Artura",
+      "carSlug": "mclaren-artura-1st-gen",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Audi S4 B9",
+      "carSlug": "audi-s4-b9",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Lamborghini Huracán LP 610-4",
+      "carSlug": "lamborghini-huracan-lp610-4",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Lamborghini Huracán Tecnica",
+      "carSlug": "lamborghini-huracan-tecnica",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Lamborghini Aventador SVJ",
+      "carSlug": "lamborghini-aventador-svj",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Lamborghini Revuelto LP 780-4",
+      "carSlug": "lamborghini-revuelto-lp780-4",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "BMW M3 G80",
+      "carSlug": "bmw-m3-g80",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Kia Stinger GT",
+      "carSlug": "kia-stinger-gt-ck",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Porsche 911 Turbo S 992",
+      "carSlug": "porsche-911-turbo-s-992",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Mercedes-AMG GT Black Series",
+      "carSlug": "mercedes-amg-gt-black-series-c190",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Porsche 911 GT3 RS 992",
+      "carSlug": "porsche-911-gt3-rs-992",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Mercedes-AMG SLS AMG",
+      "carSlug": "mercedes-amg-sls-c197",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "Porsche 718 Cayman GT4 RS",
+      "carSlug": "porsche-718-cayman-gt4-rs-982",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    },
+    {
+      "type": "LOW_QUALITY_WITH_RECOMMENDATIONS",
+      "severity": "warning",
+      "car": "BMW M4 CSL",
+      "carSlug": "bmw-m4-csl-g82",
+      "message": "Data quality is \"skeleton\" but has stage progressions or upgrades - recommendations may be unreliable",
+      "details": {
+        "dataQuality": "skeleton",
+        "hasStageProgressions": true,
+        "hasUpgradesByObjective": false
+      },
+      "fix": "Either improve data quality tier or add disclaimer to recommendations"
+    }
+  ],
+  "recommendations": []
+}

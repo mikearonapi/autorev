@@ -1,0 +1,287 @@
+{
+  "critical": [],
+  "warning": [
+    {
+      "category": "POWER_FIGURE_MISMATCH",
+      "car": "Ferrari 458 Speciale",
+      "slug": "ferrari-458-speciale",
+      "message": "Listed as 597hp but 458 should be 562-570hp",
+      "details": {
+        "listed": 597,
+        "expected": "562-570"
+      }
+    },
+    {
+      "category": "POWER_FIGURE_MISMATCH",
+      "car": "Chevrolet Camaro SS LS1",
+      "slug": "chevrolet-camaro-ss-ls1",
+      "message": "Listed as 325hp but Camaro SS should be 455-460hp",
+      "details": {
+        "listed": 325,
+        "expected": "455-460"
+      }
+    },
+    {
+      "category": "POWER_FIGURE_MISMATCH",
+      "car": "Subaru Impreza WRX STI",
+      "slug": "subaru-wrx-sti-gc8",
+      "message": "Listed as 280hp but WRX STI should be 305-315hp",
+      "details": {
+        "listed": 280,
+        "expected": "305-315"
+      }
+    },
+    {
+      "category": "POWER_FIGURE_MISMATCH",
+      "car": "Volkswagen Golf R Mk7",
+      "slug": "volkswagen-golf-r-mk7",
+      "message": "Listed as 292hp but Golf R should be 315-320hp",
+      "details": {
+        "listed": 292,
+        "expected": "315-320"
+      }
+    },
+    {
+      "category": "POWER_FIGURE_MISMATCH",
+      "car": "Chevrolet Camaro SS (1969)",
+      "slug": "chevrolet-camaro-ss-1969",
+      "message": "Listed as 375hp but Camaro SS should be 455-460hp",
+      "details": {
+        "listed": 375,
+        "expected": "455-460"
+      }
+    },
+    {
+      "category": "PRICE_TOO_HIGH",
+      "car": "fd336f0c-a6a6-4bf2-a252-f714abe3e6c9",
+      "slug": "fd336f0c-a6a6-4bf2-a252-f714abe3e6c9",
+      "message": "Eventuri Intake Systems priced at $2800+ - typical Intake is $100-$1000",
+      "details": {
+        "platform": "Eventuri Intake Systems",
+        "price": 2800,
+        "typical": {
+          "min": 100,
+          "max": 1000,
+          "name": "Intake"
+        }
+      }
+    },
+    {
+      "category": "PRICE_TOO_HIGH",
+      "car": "edd4868f-d52e-45b3-8f6e-51c72d12fb83",
+      "slug": "edd4868f-d52e-45b3-8f6e-51c72d12fb83",
+      "message": "Underground Racing Twin Turbo priced at $50000+ - typical Turbo upgrade is $1000-$15000",
+      "details": {
+        "platform": "Underground Racing Twin Turbo",
+        "price": 50000,
+        "typical": {
+          "min": 1000,
+          "max": 15000,
+          "name": "Turbo upgrade"
+        }
+      }
+    },
+    {
+      "category": "ASPIRATION_MISMATCH",
+      "car": "Porsche 918 Spyder",
+      "slug": "porsche-918-spyder-918",
+      "message": "193 hp/L suggests forced induction but engine listed as \"4.6L V8 + Electric Motors Hybrid\"",
+      "details": {
+        "hp": 887,
+        "displacement": 4.6,
+        "hpPerLiter": "193"
+      }
+    },
+    {
+      "category": "ASPIRATION_MISMATCH",
+      "car": "Mazda RX-8",
+      "slug": "mazda-rx-8-se3p",
+      "message": "178 hp/L suggests forced induction but engine listed as \"1.3L Twin-Rotor Wankel (13B-MSP RENESIS)\"",
+      "details": {
+        "hp": 232,
+        "displacement": 1.3,
+        "hpPerLiter": "178"
+      }
+    },
+    {
+      "category": "ASPIRATION_MISMATCH",
+      "car": "Alfa Romeo Giulia Quadrifoglio",
+      "slug": "alfa-romeo-giulia-quadrifoglio",
+      "message": "174 hp/L suggests forced induction but engine listed as \"2.9L TT V6\"",
+      "details": {
+        "hp": 505,
+        "displacement": 2.9,
+        "hpPerLiter": "174"
+      }
+    }
+  ],
+  "info": [
+    {
+      "category": "POTENTIAL_DUPLICATE",
+      "car": "Ford F-150 Raptor",
+      "slug": "ford-f150-raptor-second-generation",
+      "message": "May be duplicate of \"Ford F-150 Raptor\" (ford-f-150-raptor-2021-2024)",
+      "details": {
+        "existing": "ford-f-150-raptor-2021-2024",
+        "current": "ford-f150-raptor-second-generation"
+      }
+    },
+    {
+      "category": "POTENTIAL_DUPLICATE",
+      "car": "Toyota Tacoma",
+      "slug": "toyota-tacoma-n300",
+      "message": "May be duplicate of \"Toyota Tacoma\" (toyota-tacoma-2024)",
+      "details": {
+        "existing": "toyota-tacoma-2024",
+        "current": "toyota-tacoma-n300"
+      }
+    },
+    {
+      "category": "POTENTIAL_DUPLICATE",
+      "car": "Mitsubishi Lancer Evolution X",
+      "slug": "mitsubishi-lancer-evolution-x",
+      "message": "May be duplicate of \"Mitsubishi Lancer Evolution X\" (mitsubishi-lancer-evo-x)",
+      "details": {
+        "existing": "mitsubishi-lancer-evo-x",
+        "current": "mitsubishi-lancer-evolution-x"
+      }
+    },
+    {
+      "category": "POTENTIAL_DUPLICATE",
+      "car": "Ford F-150",
+      "slug": "ford-f150-fourteenth-generation",
+      "message": "May be duplicate of \"Ford F-150\" (ford-f150-thirteenth)",
+      "details": {
+        "existing": "ford-f150-thirteenth",
+        "current": "ford-f150-fourteenth-generation"
+      }
+    },
+    {
+      "category": "SIMILAR_SPECS",
+      "car": "Jeep Gladiator Rubicon",
+      "slug": "jeep-gladiator-rubicon-jt",
+      "message": "Same HP/brand/year as \"Jeep Gladiator\"",
+      "details": {
+        "existing": "jeep-gladiator-jt"
+      }
+    },
+    {
+      "category": "SIMILAR_SPECS",
+      "car": "Jeep Gladiator Mojave",
+      "slug": "jeep-gladiator-mojave-jt",
+      "message": "Same HP/brand/year as \"Jeep Gladiator\"",
+      "details": {
+        "existing": "jeep-gladiator-jt"
+      }
+    },
+    {
+      "category": "SIMILAR_SPECS",
+      "car": "Hyundai Kona N",
+      "slug": "hyundai-kona-n-2022",
+      "message": "Same HP/brand/year as \"Hyundai Elantra N\"",
+      "details": {
+        "existing": "hyundai-elantra-n-cn7"
+      }
+    },
+    {
+      "category": "SIMILAR_SPECS",
+      "car": "Toyota Tacoma",
+      "slug": "toyota-tacoma-n300",
+      "message": "Same HP/brand/year as \"Toyota Tacoma TRD Pro\"",
+      "details": {
+        "existing": "toyota-tacoma-trd-pro-3rd-gen"
+      }
+    },
+    {
+      "category": "SIMILAR_SPECS",
+      "car": "Mitsubishi Lancer Evolution X",
+      "slug": "mitsubishi-lancer-evolution-x",
+      "message": "Same HP/brand/year as \"Mitsubishi Lancer Evolution X\"",
+      "details": {
+        "existing": "mitsubishi-lancer-evo-x"
+      }
+    },
+    {
+      "category": "SIMILAR_SPECS",
+      "car": "Ram 1500",
+      "slug": "ram-1500-dt",
+      "message": "Same HP/brand/year as \"Ram 1500 Rebel\"",
+      "details": {
+        "existing": "ram-1500-rebel-dt"
+      }
+    },
+    {
+      "category": "SIMILAR_SPECS",
+      "car": "Toyota Tundra",
+      "slug": "toyota-tundra-3rd-gen",
+      "message": "Same HP/brand/year as \"Toyota Tundra TRD Pro\"",
+      "details": {
+        "existing": "toyota-tundra-trd-pro-xk70"
+      }
+    },
+    {
+      "category": "SIMILAR_SPECS",
+      "car": "Rivian R1T",
+      "slug": "rivian-r1t-gen1",
+      "message": "Same HP/brand/year as \"Rivian R1S\"",
+      "details": {
+        "existing": "rivian-r1s-first-generation"
+      }
+    },
+    {
+      "category": "SIMILAR_SPECS",
+      "car": "Audi S4 B9",
+      "slug": "audi-s4-b9",
+      "message": "Same HP/brand/year as \"Audi S5 B9\"",
+      "details": {
+        "existing": "audi-s5-b9"
+      }
+    },
+    {
+      "category": "SIMILAR_SPECS",
+      "car": "Porsche 718 Boxster GTS 4.0",
+      "slug": "porsche-718-boxster-gts-40-982",
+      "message": "Same HP/brand/year as \"718 Cayman GTS 4.0\"",
+      "details": {
+        "existing": "718-cayman-gts-40"
+      }
+    }
+  ],
+  "stats": {
+    "powerFigures": {
+      "checked": 30,
+      "issues": 5
+    },
+    "stageProgressions": {
+      "checked": 310,
+      "issues": 0
+    },
+    "priceRealism": {
+      "checked": 1011,
+      "issues": 2
+    },
+    "duplicates": {
+      "found": 4
+    },
+    "completeness": {
+      "noHp": 0,
+      "noEngine": 0,
+      "noYears": 0,
+      "noPros": 0,
+      "noCons": 0,
+      "noProfile": 0,
+      "emptyProfile": 0
+    },
+    "aspirationIssues": 3,
+    "knownIssues": {
+      "carsWithIssues": 0,
+      "totalIssues": 0,
+      "genericIssues": 0
+    },
+    "urls": {
+      "checked": 319,
+      "invalid": 0,
+      "missing": 719
+    }
+  }
+}

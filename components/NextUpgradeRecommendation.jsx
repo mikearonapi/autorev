@@ -6,11 +6,20 @@
  * EXTREMELY VALUABLE: Users see what modifications make sense next,
  * with context about why and estimated costs. Helps users make informed
  * decisions rather than just adding random parts.
+ *
+ * CONSISTENCY VALIDATION: This component now validates recommendations against
+ * tunability scores and platform insights to prevent contradictions (e.g.,
+ * recommending ECU tune for platforms where tuning is impossible).
  */
 
 import React, { useMemo } from 'react';
 
 import Link from 'next/link';
+
+import {
+  getRecommendationLimitationMessage,
+  validateEcuTuneRecommendation,
+} from '@/lib/dataConsistencyValidator';
 
 import styles from './NextUpgradeRecommendation.module.css';
 import InsightFeedback from './ui/InsightFeedback';
@@ -108,6 +117,23 @@ const AlertIcon = ({ size = 14 }) => (
     <circle cx="12" cy="12" r="10" />
     <path d="M12 8v4" />
     <path d="M12 16h.01" />
+  </svg>
+);
+
+const AlertTriangleIcon = ({ size = 14 }) => (
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+    <line x1="12" y1="9" x2="12" y2="13" />
+    <line x1="12" y1="17" x2="12.01" y2="17" />
   </svg>
 );
 
@@ -383,7 +409,37 @@ export default function NextUpgradeRecommendation({
   carSlug,
   vehicleId,
   onFeedback,
+  // NEW: Consistency validation props
+  car = null, // Car object for tunability calculation
+  tuningProfile = null, // Tuning profile with platform_insights
+  tunabilityScore = null, // Pre-calculated tunability score (1-10)
+  carName = null, // Car name for display in messages
+  dataQualityTier = null, // Data quality tier: 'complete', 'standard', 'skeleton', 'minimal'
 }) {
+  // Check if data quality is low enough to warrant a disclaimer
+  const isLowQualityData = dataQualityTier === 'skeleton' || dataQualityTier === 'minimal';
+  // Validate ECU tune recommendation against all data sources
+  const ecuValidation = useMemo(() => {
+    // Build car object for validation if we have enough data
+    const carForValidation =
+      car || (carName ? { name: carName, brand: carName.split(' ')[0] } : null);
+
+    if (!carForValidation) {
+      return { allowEcuTune: true, confidenceLevel: 100, warnings: [], suppressionReason: null };
+    }
+
+    return validateEcuTuneRecommendation({
+      car: carForValidation,
+      tuningProfile,
+      tunabilityScore,
+    });
+  }, [car, carName, tuningProfile, tunabilityScore]);
+
+  // Get user-friendly limitation message if recommendations are limited
+  const limitationMessage = useMemo(() => {
+    return getRecommendationLimitationMessage(ecuValidation);
+  }, [ecuValidation]);
+
   const recommendations = useMemo(() => {
     const installedKeys = installedUpgrades
       .map((u) => (typeof u === 'string' ? u : u?.key))
@@ -406,6 +462,12 @@ export default function NextUpgradeRecommendation({
       // Prerequisites met
       if (!hasPrerequisites(installedKeys, upgrade.requires)) return false;
 
+      // NEW: ECU tune consistency validation
+      // Skip ECU tune if platform doesn't support it (prevents contradictions)
+      if (upgrade.id === 'tune' && !ecuValidation.allowEcuTune) {
+        return false;
+      }
+
       return true;
     })
       .map((upgrade) => ({
@@ -417,18 +479,23 @@ export default function NextUpgradeRecommendation({
           (upgrade.requires?.length > 0 && hasPrerequisites(installedKeys, upgrade.requires)
             ? 10
             : 0),
+        // NEW: Flag low confidence recommendations
+        lowConfidence: ecuValidation.confidenceLevel < 60,
       }))
       .sort((a, b) => b.adjustedPriority - a.adjustedPriority)
       .slice(0, 3);
 
     return available;
-  }, [installedUpgrades, aspiration]);
+  }, [installedUpgrades, aspiration, ecuValidation]);
 
   // Build link for tuning shop with this upgrade
   const getBuildLink = (_upgradeId) => {
     if (!carSlug) return '/garage?tab=build';
     return `/cars/${carSlug}/build${vehicleId ? `?vehicle=${vehicleId}` : ''}`;
   };
+
+  // Show tuning limitation notice if ECU tuning was suppressed
+  const showTuningLimitation = !ecuValidation.allowEcuTune && limitationMessage;
 
   if (recommendations.length === 0) {
     return (
@@ -446,11 +513,22 @@ export default function NextUpgradeRecommendation({
             />
           )}
         </div>
+        {showTuningLimitation && (
+          <div className={styles.tuningLimitation}>
+            <AlertTriangleIcon size={16} />
+            <div className={styles.tuningLimitationContent}>
+              <span className={styles.tuningLimitationTitle}>Limited Tuning Support</span>
+              <p className={styles.tuningLimitationText}>{limitationMessage}</p>
+            </div>
+          </div>
+        )}
         <div className={styles.completeState}>
           <div className={styles.completeIcon}>🎯</div>
           <p className={styles.completeText}>Your build is well-equipped for this power level!</p>
           <p className={styles.completeSubtext}>
-            Consider track time to refine your setup, or consult a tuner for advanced builds.
+            {showTuningLimitation
+              ? 'Focus on bolt-on modifications like exhaust, intake, and suspension upgrades.'
+              : 'Consider track time to refine your setup, or consult a tuner for advanced builds.'}
           </p>
         </div>
       </div>
@@ -476,8 +554,32 @@ export default function NextUpgradeRecommendation({
         )}
       </div>
 
+      {/* Tuning limitation notice */}
+      {showTuningLimitation && (
+        <div className={styles.tuningLimitation}>
+          <AlertTriangleIcon size={16} />
+          <div className={styles.tuningLimitationContent}>
+            <span className={styles.tuningLimitationTitle}>Limited ECU Tuning</span>
+            <p className={styles.tuningLimitationText}>{limitationMessage}</p>
+          </div>
+        </div>
+      )}
+
+      {/* Low data quality disclaimer */}
+      {isLowQualityData && (
+        <div className={styles.dataQualityDisclaimer}>
+          <AlertIcon size={14} />
+          <span>
+            Limited data available for this platform. Recommendations are generic and may not
+            reflect your specific model.
+          </span>
+        </div>
+      )}
+
       {/* Primary Recommendation */}
-      <div className={styles.primaryRec}>
+      <div
+        className={`${styles.primaryRec} ${primaryRec.lowConfidence ? styles.lowConfidence : ''}`}
+      >
         <div className={styles.primaryHeader}>
           <span className={styles.primaryLabel}>Top Pick</span>
           <span className={styles.primaryCategory}>

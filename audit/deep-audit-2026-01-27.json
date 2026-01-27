@@ -1,0 +1,84 @@
+{
+  "timestamp": "2026-01-27T15:37:25.014Z",
+  "summary": {
+    "critical": 0,
+    "warnings": 7,
+    "info": 0
+  },
+  "issues": {
+    "critical": [],
+    "warning": [
+      {
+        "type": "CONTRADICTORY_PROS_CONS",
+        "car": "McLaren 650S",
+        "slug": "mclaren-650s-mp4-12c-successor",
+        "message": "Pros and cons contradict each other on reliability",
+        "details": {
+          "proMatch": "reliable",
+          "conMatch": "issues"
+        }
+      },
+      {
+        "type": "CONTRADICTORY_PROS_CONS",
+        "car": "Lotus Elise S2",
+        "slug": "lotus-elise-s2",
+        "message": "Pros and cons contradict each other on reliability",
+        "details": {
+          "proMatch": "reliability",
+          "conMatch": "issues"
+        }
+      },
+      {
+        "type": "CONTRADICTORY_PROS_CONS",
+        "car": "Infiniti G35 Coupe",
+        "slug": "infiniti-g35-coupe-v35",
+        "message": "Pros and cons contradict each other on reliability",
+        "details": {
+          "proMatch": "reliability",
+          "conMatch": "issues"
+        }
+      },
+      {
+        "type": "CONTRADICTORY_PROS_CONS",
+        "car": "Toyota Sequoia TRD Pro",
+        "slug": "toyota-sequoia-trd-pro-xk80",
+        "message": "Pros and cons contradict each other on practicality",
+        "details": {
+          "proMatch": "practical",
+          "conMatch": "tight"
+        }
+      },
+      {
+        "type": "CONTRADICTORY_PROS_CONS",
+        "car": "Toyota MR2 Spyder",
+        "slug": "toyota-mr2-spyder-zzw30",
+        "message": "Pros and cons contradict each other on reliability",
+        "details": {
+          "proMatch": "reliability",
+          "conMatch": "issues"
+        }
+      },
+      {
+        "type": "CONTRADICTORY_PROS_CONS",
+        "car": "Hyundai Veloster N",
+        "slug": "hyundai-veloster-n-js",
+        "message": "Pros and cons contradict each other on practicality",
+        "details": {
+          "proMatch": "Practical",
+          "conMatch": "cramped"
+        }
+      },
+      {
+        "type": "CONTRADICTORY_PROS_CONS",
+        "car": "Mazda MX-5 Miata NA",
+        "slug": "mazda-mx5-miata-na",
+        "message": "Pros and cons contradict each other on reliability",
+        "details": {
+          "proMatch": "reliability",
+          "conMatch": "issues"
+        }
+      }
+    ],
+    "info": []
+  }
+}
