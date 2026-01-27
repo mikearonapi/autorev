@@ -2,13 +2,13 @@
 
 /**
  * Build Media Gallery Component
- * 
+ *
  * A beautiful gallery for displaying build photos and videos with:
  * - Single hero image selection via tap/click on gallery images
  * - Grid layout with lightbox view
  * - Video playback support
  * - Mobile-responsive design
- * 
+ *
  * The hero image selected here will display at the top of the Upgrade Center
  * and in Projects/Community Builds.
  */
@@ -34,7 +34,7 @@ function formatDuration(seconds) {
 
 /**
  * BuildMediaGallery Component
- * 
+ *
  * Simplified: Hero selection happens directly in the gallery.
  * Tap any image to set it as your hero (displayed at top of Upgrade Center).
  * Includes stock image option so users can switch back from their uploads.
@@ -45,6 +45,7 @@ export default function BuildMediaGallery({
   onVideoClick,
   onSetPrimary,
   onSetStockHero,
+  onDelete,
   readOnly = false,
 }) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -52,12 +53,12 @@ export default function BuildMediaGallery({
 
   // Get stock image URL
   const stockImageUrl = car ? getCarHeroImage(car) : null;
-  
+
   // Filter images only (not videos)
-  const uploadedImages = media.filter(m => m.media_type !== 'video');
-  
+  const uploadedImages = media.filter((m) => m.media_type !== 'video');
+
   // Check if stock is currently the hero (no uploaded image has is_primary)
-  const isStockHero = !uploadedImages.some(img => img.is_primary);
+  const isStockHero = !uploadedImages.some((img) => img.is_primary);
 
   const handleOpenLightbox = useCallback((index) => {
     setLightboxIndex(index);
@@ -70,7 +71,7 @@ export default function BuildMediaGallery({
 
   // Total items for lightbox (includes stock image if available)
   const lightboxTotal = media.length + (car && getCarHeroImage(car) ? 1 : 0);
-  
+
   const handlePrevious = useCallback(() => {
     setLightboxIndex((prev) => (prev > 0 ? prev - 1 : lightboxTotal - 1));
   }, [lightboxTotal]);
@@ -79,25 +80,50 @@ export default function BuildMediaGallery({
     setLightboxIndex((prev) => (prev < lightboxTotal - 1 ? prev + 1 : 0));
   }, [lightboxTotal]);
 
-  const handleKeyDown = useCallback((e) => {
-    if (e.key === 'Escape') handleCloseLightbox();
-    if (e.key === 'ArrowLeft') handlePrevious();
-    if (e.key === 'ArrowRight') handleNext();
-  }, [handleCloseLightbox, handlePrevious, handleNext]);
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (e.key === 'Escape') handleCloseLightbox();
+      if (e.key === 'ArrowLeft') handlePrevious();
+      if (e.key === 'ArrowRight') handleNext();
+    },
+    [handleCloseLightbox, handlePrevious, handleNext]
+  );
 
   // Set an image as hero (is_primary in DB)
-  const handleSetHero = useCallback((e, imageId) => {
-    e.stopPropagation(); // Don't open lightbox
-    if (readOnly) return;
-    if (onSetPrimary) onSetPrimary(imageId);
-  }, [readOnly, onSetPrimary]);
-  
+  const handleSetHero = useCallback(
+    (e, imageId) => {
+      e.stopPropagation(); // Don't open lightbox
+      if (readOnly) return;
+      if (onSetPrimary) onSetPrimary(imageId);
+    },
+    [readOnly, onSetPrimary]
+  );
+
   // Set stock image as hero (clear is_primary on all uploaded images)
-  const handleSetStockHero = useCallback((e) => {
-    e.stopPropagation();
-    if (readOnly) return;
-    if (onSetStockHero) onSetStockHero();
-  }, [readOnly, onSetStockHero]);
+  const handleSetStockHero = useCallback(
+    (e) => {
+      e.stopPropagation();
+      if (readOnly) return;
+      if (onSetStockHero) onSetStockHero();
+    },
+    [readOnly, onSetStockHero]
+  );
+
+  // Delete a media item
+  const handleDelete = useCallback(
+    async (e, mediaId) => {
+      e.stopPropagation(); // Don't open lightbox
+      if (readOnly) return;
+
+      const confirmed = window.confirm('Delete this photo? This cannot be undone.');
+      if (!confirmed) return;
+
+      if (onDelete) {
+        await onDelete(mediaId);
+      }
+    },
+    [readOnly, onDelete]
+  );
 
   // Don't render if no media and no stock image
   if (media.length === 0 && !stockImageUrl) return null;
@@ -114,11 +140,9 @@ export default function BuildMediaGallery({
           Gallery ({totalCount})
         </h4>
         {!readOnly && (
-          <p className={styles.sectionHint}>
-            Tap an image to set it as your hero (shown at top)
-          </p>
+          <p className={styles.sectionHint}>Tap an image to set it as your hero (shown at top)</p>
         )}
-        
+
         <div className={styles.mediaGrid}>
           {/* Stock Image - Always first */}
           {stockImageUrl && (
@@ -133,39 +157,41 @@ export default function BuildMediaGallery({
                 style={{ objectFit: 'cover' }}
               />
               <span className={styles.stockLabel}>Stock</span>
-              
+
               {/* Hero badge or Set as Hero button */}
               {isStockHero ? (
                 <span className={styles.primaryBadge}>
                   <Icons.star />
                   Hero
                 </span>
-              ) : !readOnly && (
-                <button
-                  type="button"
-                  className={styles.setHeroBtn}
-                  onClick={handleSetStockHero}
-                  title="Use stock image as hero"
-                >
-                  <Icons.star />
-                  Set as Hero
-                </button>
+              ) : (
+                !readOnly && (
+                  <button
+                    type="button"
+                    className={styles.setHeroBtn}
+                    onClick={handleSetStockHero}
+                    title="Use stock image as hero"
+                  >
+                    <Icons.star />
+                    Set as Hero
+                  </button>
+                )
               )}
             </div>
           )}
-          
+
           {/* User Uploaded Media */}
           {media.map((item, index) => {
             const isVideo = item.media_type === 'video';
             const isHero = item.is_primary && !isVideo;
             // Offset lightbox index by 1 if stock image exists
             const lightboxIdx = stockImageUrl ? index + 1 : index;
-            
+
             return (
               <div
                 key={item.id}
                 className={`${styles.mediaItem} ${isVideo ? styles.videoItem : ''} ${isHero ? styles.heroItem : ''}`}
-                onClick={() => isVideo ? onVideoClick?.(item) : handleOpenLightbox(lightboxIdx)}
+                onClick={() => (isVideo ? onVideoClick?.(item) : handleOpenLightbox(lightboxIdx))}
               >
                 {isVideo ? (
                   <div className={styles.videoThumbnail}>
@@ -189,6 +215,19 @@ export default function BuildMediaGallery({
                         {formatDuration(item.duration_seconds)}
                       </span>
                     )}
+
+                    {/* Delete button for videos */}
+                    {!readOnly && onDelete && (
+                      <button
+                        type="button"
+                        className={styles.deleteBtn}
+                        onClick={(e) => handleDelete(e, item.id)}
+                        title="Delete video"
+                        aria-label="Delete video"
+                      >
+                        <Icons.trash />
+                      </button>
+                    )}
                   </div>
                 ) : (
                   <>
@@ -198,22 +237,37 @@ export default function BuildMediaGallery({
                       fill
                       style={{ objectFit: 'cover' }}
                     />
-                    
+
                     {/* Hero badge or Set as Hero button */}
                     {isHero ? (
                       <span className={styles.primaryBadge}>
                         <Icons.star />
                         Hero
                       </span>
-                    ) : !readOnly && (
+                    ) : (
+                      !readOnly && (
+                        <button
+                          type="button"
+                          className={styles.setHeroBtn}
+                          onClick={(e) => handleSetHero(e, item.id)}
+                          title="Set as hero image"
+                        >
+                          <Icons.star />
+                          Set as Hero
+                        </button>
+                      )
+                    )}
+
+                    {/* Delete button - top right */}
+                    {!readOnly && onDelete && (
                       <button
                         type="button"
-                        className={styles.setHeroBtn}
-                        onClick={(e) => handleSetHero(e, item.id)}
-                        title="Set as hero image"
+                        className={styles.deleteBtn}
+                        onClick={(e) => handleDelete(e, item.id)}
+                        title="Delete image"
+                        aria-label="Delete image"
                       >
-                        <Icons.star />
-                        Set as Hero
+                        <Icons.trash />
                       </button>
                     )}
                   </>
@@ -226,8 +280,8 @@ export default function BuildMediaGallery({
 
       {/* Lightbox - includes stock image at index 0 if available */}
       {lightboxOpen && totalCount > 0 && (
-        <div 
-          className={styles.lightbox} 
+        <div
+          className={styles.lightbox}
           onClick={handleCloseLightbox}
           onKeyDown={handleKeyDown}
           tabIndex={0}
@@ -235,24 +289,30 @@ export default function BuildMediaGallery({
           <button className={styles.lightboxClose} onClick={handleCloseLightbox}>
             <Icons.x />
           </button>
-          
+
           {totalCount > 1 && (
             <>
-              <button 
+              <button
                 className={`${styles.lightboxNav} ${styles.lightboxPrev}`}
-                onClick={(e) => { e.stopPropagation(); handlePrevious(); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePrevious();
+                }}
               >
                 <Icons.chevronLeft />
               </button>
-              <button 
+              <button
                 className={`${styles.lightboxNav} ${styles.lightboxNext}`}
-                onClick={(e) => { e.stopPropagation(); handleNext(); }}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleNext();
+                }}
               >
                 <Icons.chevronRight />
               </button>
             </>
           )}
-          
+
           <div className={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
             {/* Stock image is at index 0, user media starts at index 1 */}
             {stockImageUrl && lightboxIndex === 0 ? (
@@ -263,27 +323,24 @@ export default function BuildMediaGallery({
                 style={{ objectFit: 'contain' }}
                 priority
               />
-            ) : (() => {
-              const mediaIdx = stockImageUrl ? lightboxIndex - 1 : lightboxIndex;
-              const item = media[mediaIdx];
-              return item?.media_type === 'video' ? (
-                <video
-                  src={item.blob_url}
-                  controls
-                  autoPlay
-                  className={styles.lightboxVideo}
-                />
-              ) : (
-                <Image
-                  src={item?.blob_url || item?.thumbnail_url}
-                  alt={item?.caption || 'Image'}
-                  fill
-                  style={{ objectFit: 'contain' }}
-                  priority
-                />
-              );
-            })()}
-            
+            ) : (
+              (() => {
+                const mediaIdx = stockImageUrl ? lightboxIndex - 1 : lightboxIndex;
+                const item = media[mediaIdx];
+                return item?.media_type === 'video' ? (
+                  <video src={item.blob_url} controls autoPlay className={styles.lightboxVideo} />
+                ) : (
+                  <Image
+                    src={item?.blob_url || item?.thumbnail_url}
+                    alt={item?.caption || 'Image'}
+                    fill
+                    style={{ objectFit: 'contain' }}
+                    priority
+                  />
+                );
+              })()
+            )}
+
             {/* Counter positioned inside content for image-relative placement */}
             {totalCount > 1 && (
               <div className={styles.lightboxCounter}>

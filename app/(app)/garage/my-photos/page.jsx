@@ -2,7 +2,7 @@
 
 /**
  * My Photos Page - Vehicle Photo Management
- * 
+ *
  * Upload and manage photos for a selected vehicle.
  * Part of the My Garage suite:
  * - Specs: Vehicle specifications
@@ -10,7 +10,7 @@
  * - Performance: See performance impact
  * - Parts: Research and buy parts
  * - Photos: Manage vehicle photos (this page)
- * 
+ *
  * URL: /garage/my-photos?car=<carSlug> or ?build=<buildId>
  */
 
@@ -44,39 +44,39 @@ function MyPhotosContent() {
   const [currentBuildId, setCurrentBuildId] = useState(null);
   const [vehicleId, setVehicleId] = useState(null);
   const uploadSectionRef = useRef(null);
-  
+
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const authModal = useAuthModal();
   const { builds, isLoading: buildsLoading } = useSavedBuilds();
   const { vehicles } = useOwnedVehicles();
-  
+
   // Garage score recalculation hook (uses vehicleId state set in useEffect below)
   const { recalculateScore } = useGarageScore(vehicleId);
-  
+
   // Use cached cars data from React Query hook
   const { data: allCars = [], isLoading: carsLoading } = useCarsList();
-  
+
   // Check for action=upload query param
   const actionParam = searchParams.get('action');
-  
+
   // Get URL params
   const buildIdParam = searchParams.get('build');
   const carSlugParam = searchParams.get('car');
-  
+
   // Fallback: fetch single car in parallel with full list
   // This provides faster data when the full list is slow or unavailable
-  const carFromList = carSlugParam ? allCars.find(c => c.slug === carSlugParam) : null;
+  const carFromList = carSlugParam ? allCars.find((c) => c.slug === carSlugParam) : null;
   const { data: fallbackCar, isLoading: fallbackLoading } = useCarBySlug(carSlugParam, {
     enabled: !!carSlugParam && !carFromList && !selectedCar,
   });
-  
+
   // Get images for this car
-  const { 
+  const {
     images: carImages,
     heroImageUrl,
     refreshImages: refreshCarImages,
     setHeroImage: setCarHeroImage,
-    clearHeroImage: clearCarHeroImage
+    clearHeroImage: clearCarHeroImage,
   } = useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
 
   // Handle URL params - load build or car (with fallback support)
@@ -84,16 +84,16 @@ function MyPhotosContent() {
     if (allCars.length > 0) {
       if (buildIdParam) {
         if (buildsLoading) return;
-        const build = builds.find(b => b.id === buildIdParam);
+        const build = builds.find((b) => b.id === buildIdParam);
         if (build) {
-          const car = allCars.find(c => c.slug === build.carSlug);
+          const car = allCars.find((c) => c.slug === build.carSlug);
           if (car) {
             setSelectedCar(car);
             setCurrentBuildId(buildIdParam);
           }
         }
       } else if (carSlugParam) {
-        const car = allCars.find(c => c.slug === carSlugParam);
+        const car = allCars.find((c) => c.slug === carSlugParam);
         if (car) {
           setSelectedCar(car);
           setCurrentBuildId(null);
@@ -109,13 +109,13 @@ function MyPhotosContent() {
   // Find vehicle ID for this car
   useEffect(() => {
     if (selectedCar && vehicles) {
-      const vehicle = vehicles.find(v => v.matchedCarSlug === selectedCar.slug);
+      const vehicle = vehicles.find((v) => v.matchedCarSlug === selectedCar.slug);
       if (vehicle) {
         setVehicleId(vehicle.id);
       }
     }
   }, [selectedCar, vehicles]);
-  
+
   // Handle action=upload to scroll to and highlight upload section
   useEffect(() => {
     if (actionParam === 'upload' && selectedCar && uploadSectionRef.current) {
@@ -141,34 +141,30 @@ function MyPhotosContent() {
   if (authLoading || isLoadingBuild) {
     return (
       <div className={styles.page}>
-        <LoadingSpinner 
-          variant="branded" 
-          text="Loading Photos" 
+        <LoadingSpinner
+          variant="branded"
+          text="Loading Photos"
           subtext="Fetching your gallery..."
-          fullPage 
+          fullPage
         />
       </div>
     );
   }
 
   // Get current build for display
-  const currentBuild = builds.find(b => b.id === currentBuildId);
+  const currentBuild = builds.find((b) => b.id === currentBuildId);
   const buildName = currentBuild?.name;
 
   // No car selected
   if (!selectedCar) {
     return (
       <div className={styles.page}>
-        <MyGarageSubNav 
-          carSlug={carSlugParam}
-          buildId={buildIdParam}
-          onBack={handleBack}
-        />
+        <MyGarageSubNav carSlug={carSlugParam} buildId={buildIdParam} onBack={handleBack} />
         <EmptyState
           icon={Icons.camera}
           title="Select a Vehicle"
           description="Choose a vehicle from your garage to manage photos"
-          action={{ label: "Go to My Garage", href: "/garage" }}
+          action={{ label: 'Go to My Garage', href: '/garage' }}
           variant="centered"
           size="lg"
         />
@@ -183,26 +179,24 @@ function MyPhotosContent() {
   // Car selected - show photos
   return (
     <div className={styles.page}>
-      <MyGarageSubNav 
+      <MyGarageSubNav
         carSlug={selectedCar.slug}
         buildId={currentBuildId}
         onBack={handleBack}
         rightAction={
-          isAuthenticated && currentBuildId && (
+          isAuthenticated &&
+          currentBuildId && (
             <ShareBuildButton
               build={currentBuild}
-              vehicle={vehicles?.find(v => v.matchedCarSlug === selectedCar?.slug)}
+              vehicle={vehicles?.find((v) => v.matchedCarSlug === selectedCar?.slug)}
               car={selectedCar}
               existingImages={currentBuild?.uploadedImages || []}
             />
           )
         }
       />
-      
-      <GarageVehicleSelector 
-        selectedCarSlug={selectedCar.slug}
-        buildId={currentBuildId}
-      />
+
+      <GarageVehicleSelector selectedCarSlug={selectedCar.slug} buildId={currentBuildId} />
 
       <div className={styles.content}>
         {/* Upload Section */}
@@ -213,7 +207,7 @@ function MyPhotosContent() {
                 refreshCarImages();
                 // Recalculate garage score after photo upload (photos_uploaded category)
                 if (vehicleId) {
-                  recalculateScore().catch(err => {
+                  recalculateScore().catch((err) => {
                     console.warn('[MyPhotos] Score recalculation failed:', err);
                   });
                 }
@@ -233,7 +227,7 @@ function MyPhotosContent() {
               <>
                 <Icons.camera size={32} />
                 <p>Sign in to upload photos of your vehicle</p>
-                <button 
+                <button
                   className={styles.authButton}
                   onClick={() => authModal.open('Sign in to upload photos')}
                 >
@@ -255,7 +249,7 @@ function MyPhotosContent() {
         {/* Gallery Section */}
         <div className={styles.gallerySection}>
           <h3 className={styles.sectionTitle}>Your Photos</h3>
-          {(carImages?.length > 0 || selectedCar) ? (
+          {carImages?.length > 0 || selectedCar ? (
             <BuildMediaGallery
               car={selectedCar}
               media={carImages || []}
@@ -265,6 +259,35 @@ function MyPhotosContent() {
               onSetStockHero={async () => {
                 await clearCarHeroImage();
               }}
+              onDelete={
+                canUpload
+                  ? async (imageId) => {
+                      try {
+                        const response = await fetch(`/api/uploads?id=${imageId}`, {
+                          method: 'DELETE',
+                        });
+
+                        if (!response.ok) {
+                          throw new Error('Failed to delete image');
+                        }
+
+                        // Refresh images after successful delete
+                        refreshCarImages();
+
+                        // Recalculate garage score after photo deletion
+                        if (vehicleId) {
+                          recalculateScore().catch((err) => {
+                            console.warn('[MyPhotos] Score recalculation failed:', err);
+                          });
+                        }
+                      } catch (err) {
+                        console.error('[MyPhotos] Delete error:', err);
+                        // Could add toast notification here
+                      }
+                    }
+                  : undefined
+              }
+              readOnly={!canUpload}
             />
           ) : (
             <div className={styles.noPhotos}>
@@ -275,7 +298,7 @@ function MyPhotosContent() {
           )}
         </div>
       </div>
-      
+
       <AuthModal {...authModal.props} />
     </div>
   );
@@ -284,11 +307,11 @@ function MyPhotosContent() {
 function MyPhotosLoading() {
   return (
     <div className={styles.page}>
-      <LoadingSpinner 
-        variant="branded" 
-        text="Loading Photos" 
+      <LoadingSpinner
+        variant="branded"
+        text="Loading Photos"
         subtext="Fetching your gallery..."
-        fullPage 
+        fullPage
       />
     </div>
   );

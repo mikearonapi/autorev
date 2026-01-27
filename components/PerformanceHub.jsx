@@ -1,13 +1,13 @@
 /**
  * Performance HUB Component
- * 
+ *
  * Redesigned to show meaningful real-world metrics:
  * - Power: Actual HP with HP gains
  * - Acceleration: 0-60 times with improvement in seconds
  * - Braking: 60-0 distance with feet improvement
  * - Grip: Lateral G with improvement
  * - Plus subjective scores for Comfort, Reliability, Sound
- * 
+ *
  * Also shows component breakdown for each upgrade package.
  */
 
@@ -18,14 +18,18 @@ import React, { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 
 import { Icons } from '@/components/ui/Icons';
-import { 
-  hasRecommendations, 
-  getPrimaryFocus, 
-  getCoreUpgrades, 
+import {
+  hasRecommendations,
+  getPrimaryFocus,
+  getCoreUpgrades,
   getEnhancementUpgrades,
   getRecommendationProgress,
 } from '@/lib/carRecommendations.js';
-import { validateUpgradeSelection, getRecommendedUpgrades, SEVERITY } from '@/lib/dependencyChecker.js';
+import {
+  validateUpgradeSelection,
+  getRecommendedUpgrades,
+  SEVERITY,
+} from '@/lib/dependencyChecker.js';
 import { useAppConfig } from '@/lib/hooks/useAppConfig.js';
 import {
   getAvailableUpgrades,
@@ -33,10 +37,10 @@ import {
   getUpgradeSummary,
   performanceCategories,
 } from '@/lib/performance.js';
-import { 
+import {
   getPerformanceProfile,
   getScoreComparison,
-  calculateSmartHpGain, 
+  calculateSmartHpGain,
   getConflictSummary,
 } from '@/lib/performanceCalculator';
 import { getUpgradeByKey } from '@/lib/upgrades.js';
@@ -50,7 +54,6 @@ import { useSavedBuilds } from './providers/SavedBuildsProvider';
 import ScoringInfo from './ScoringInfo';
 import UpgradeAggregator from './UpgradeAggregator';
 import UpgradeDetailModal from './UpgradeDetailModal';
-
 
 // Map icon names to components
 const iconMap = {
@@ -70,42 +73,56 @@ const packageDescriptions = {
   stock: {
     title: 'Stock Configuration',
     shortDesc: 'Factory OEM performance as delivered from the manufacturer.',
-    details: 'The baseline configuration with no modifications. All factory components and calibrations remain intact.'
+    details:
+      'The baseline configuration with no modifications. All factory components and calibrations remain intact.',
   },
   streetSport: {
     title: 'Street Sport',
     shortDesc: 'Enhanced street performance with improved throttle response and sound.',
-    details: 'Bolt-on upgrades that sharpen response and improve the driving experience while maintaining daily drivability. Includes intake, exhaust, tune, and lowering springs.'
+    details:
+      'Bolt-on upgrades that sharpen response and improve the driving experience while maintaining daily drivability. Includes intake, exhaust, tune, and lowering springs.',
   },
   trackPack: {
     title: 'Track Pack',
     shortDesc: 'Serious track capability with upgraded brakes, suspension, and cooling.',
-    details: 'Built for regular HPDE and track days. Adds adjustable coilovers, big brake kit, track pads, oil cooler, and performance exhaust. Maintains street legality.'
+    details:
+      'Built for regular HPDE and track days. Adds adjustable coilovers, big brake kit, track pads, oil cooler, and performance exhaust. Maintains street legality.',
   },
   timeAttack: {
     title: 'Time Attack',
     shortDesc: 'Maximum naturally-aspirated performance with full chassis optimization.',
-    details: 'Competitive time attack build with camshafts, ported heads, full aero, R-compound tires, and comprehensive cooling. Some street comfort compromised.'
+    details:
+      'Competitive time attack build with camshafts, ported heads, full aero, R-compound tires, and comprehensive cooling. Some street comfort compromised.',
   },
   ultimatePower: {
     title: 'Ultimate Power',
     shortDesc: 'Maximum horsepower through forced induction.',
-    details: 'Supercharger or turbo kit with supporting fuel system, cooling, and drivetrain upgrades. Massive power gains for street monsters or drag builds.'
+    details:
+      'Supercharger or turbo kit with supporting fuel system, cooling, and drivetrain upgrades. Massive power gains for street monsters or drag builds.',
   },
   custom: {
     title: 'Custom Build',
     shortDesc: 'Choose your own adventure - select individual upgrades.',
-    details: 'Build your own configuration by selecting individual modules. Mix and match to create the perfect setup for your specific needs.'
-  }
+    details:
+      'Build your own configuration by selecting individual modules. Mix and match to create the perfect setup for your specific needs.',
+  },
 };
 
 /**
  * Package Description Component - Explains what each tier does
  */
-function PackageDescription({ packageKey, packages, showUpgrade, totalCost, hpGain, stockHp, projectedHp }) {
+function PackageDescription({
+  packageKey,
+  packages,
+  showUpgrade,
+  totalCost,
+  hpGain,
+  stockHp,
+  projectedHp,
+}) {
   const desc = packageDescriptions[packageKey] || packageDescriptions.stock;
-  const currentPkg = packages?.find(p => p.key === packageKey);
-  
+  const currentPkg = packages?.find((p) => p.key === packageKey);
+
   return (
     <div className={styles.packageDescriptionCard}>
       <div className={styles.packageDescriptionContent}>
@@ -154,7 +171,9 @@ function formatCategoryName(key) {
     aero: 'Aero',
     drivetrain: 'Drivetrain',
   };
-  return categoryNames[key] || key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
+  return (
+    categoryNames[key] || key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')
+  );
 }
 
 /**
@@ -162,7 +181,7 @@ function formatCategoryName(key) {
  */
 function formatMetricValue(value, unit) {
   if (typeof value !== 'number') return value;
-  
+
   // Handle floating point artifacts
   if (unit === 'g') return value.toFixed(2);
   if (unit === 's') return value.toFixed(1);
@@ -174,70 +193,92 @@ function formatMetricValue(value, unit) {
 /**
  * Real Metric Row - Shows actual values like HP, seconds, feet
  */
-function RealMetricRow({ icon: IconComponent, label, stockValue, upgradedValue, unit, improvement, improvementPrefix = '+', isLowerBetter = false }) {
+function RealMetricRow({
+  icon: IconComponent,
+  label,
+  stockValue,
+  upgradedValue,
+  unit,
+  improvement,
+  improvementPrefix = '+',
+  isLowerBetter = false,
+}) {
   const hasImproved = isLowerBetter ? upgradedValue < stockValue : upgradedValue > stockValue;
   const improvementVal = improvement || Math.abs(upgradedValue - stockValue);
-  
+
   // Format values to prevent floating point artifacts
   const formattedStock = formatMetricValue(stockValue, unit);
   const formattedUpgraded = formatMetricValue(upgradedValue, unit);
   const formattedImprovement = formatMetricValue(improvementVal, unit);
-  
+
   // Calculate percentage for bar (relative to realistic max values)
   // These maxes are set to show headroom - not everything should max out
   const maxValues = {
-    hp: 1200,      // Allows for extreme forced induction builds
-    seconds: 8,    // Slowest 0-60 we'd show (gives range from ~2.5s to 8s)
-    feet: 150,     // Worst braking (gives range from ~80ft to 150ft)
-    g: 1.6,        // Competition slicks territory (gives range from ~0.9g to 1.6g)
+    hp: 1200, // Allows for extreme forced induction builds
+    seconds: 8, // Slowest 0-60 we'd show (gives range from ~2.5s to 8s)
+    feet: 150, // Worst braking (gives range from ~80ft to 150ft)
+    g: 1.6, // Competition slicks territory (gives range from ~0.9g to 1.6g)
   };
-  
+
   let maxValue = 1200; // default for HP
   if (unit === 's') maxValue = maxValues.seconds;
   if (unit === 'ft') maxValue = maxValues.feet;
   if (unit === 'g') maxValue = maxValues.g;
-  
+
   // For time/distance (lower is better), invert the percentage
-  const stockPercent = isLowerBetter 
-    ? ((maxValue - stockValue) / maxValue) * 100 
+  const stockPercent = isLowerBetter
+    ? ((maxValue - stockValue) / maxValue) * 100
     : (stockValue / maxValue) * 100;
-  const upgradedPercent = isLowerBetter 
-    ? ((maxValue - upgradedValue) / maxValue) * 100 
+  const upgradedPercent = isLowerBetter
+    ? ((maxValue - upgradedValue) / maxValue) * 100
     : (upgradedValue / maxValue) * 100;
-  
+
   return (
     <div className={styles.metricRow}>
       <div className={styles.metricHeader}>
         <div className={styles.metricLabel}>
-          <span className={styles.metricIcon}><IconComponent size={18} /></span>
+          <span className={styles.metricIcon}>
+            <IconComponent size={18} />
+          </span>
           <span className={styles.metricName}>{label}</span>
         </div>
         <div className={styles.metricValues}>
           {hasImproved ? (
             <>
-              <span className={styles.stockValueSmall}>{formattedStock}{unit}</span>
+              <span className={styles.stockValueSmall}>
+                {formattedStock}
+                {unit}
+              </span>
               <span className={styles.metricArrow}>→</span>
-              <span className={styles.upgradedValue}>{formattedUpgraded}{unit}</span>
+              <span className={styles.upgradedValue}>
+                {formattedUpgraded}
+                {unit}
+              </span>
               <span className={styles.metricGain}>
-                {improvementPrefix}{formattedImprovement}{unit}
+                {improvementPrefix}
+                {formattedImprovement}
+                {unit}
               </span>
             </>
           ) : (
-            <span className={styles.currentValue}>{formattedStock}{unit}</span>
+            <span className={styles.currentValue}>
+              {formattedStock}
+              {unit}
+            </span>
           )}
         </div>
       </div>
       <div className={styles.metricTrack}>
-        <div 
+        <div
           className={styles.metricFillStock}
           style={{ width: `${Math.min(100, stockPercent)}%` }}
         />
         {hasImproved && (
-          <div 
+          <div
             className={styles.metricFillUpgrade}
-            style={{ 
+            style={{
               left: `${Math.min(100, stockPercent)}%`,
-              width: `${Math.min(100 - stockPercent, upgradedPercent - stockPercent)}%` 
+              width: `${Math.min(100 - stockPercent, upgradedPercent - stockPercent)}%`,
             }}
           />
         )}
@@ -253,7 +294,7 @@ function ScoreBar({ category, stockScore, upgradedScore, showUpgrade }) {
   const IconComponent = iconMap[category.icon] || Icons.flag;
   const hasImproved = upgradedScore > stockScore;
   const delta = upgradedScore - stockScore;
-  
+
   return (
     <div className={styles.performanceBar}>
       <div className={styles.barHeader}>
@@ -277,16 +318,13 @@ function ScoreBar({ category, stockScore, upgradedScore, showUpgrade }) {
         </div>
       </div>
       <div className={styles.barTrack}>
-        <div 
-          className={styles.barFillStock}
-          style={{ width: `${(stockScore / 10) * 100}%` }}
-        />
+        <div className={styles.barFillStock} style={{ width: `${(stockScore / 10) * 100}%` }} />
         {showUpgrade && hasImproved && (
-          <div 
+          <div
             className={styles.barFillUpgrade}
-            style={{ 
+            style={{
               left: `${(stockScore / 10) * 100}%`,
-              width: `${(delta / 10) * 100}%` 
+              width: `${(delta / 10) * 100}%`,
             }}
           />
         )}
@@ -303,28 +341,25 @@ function ScoreBar({ category, stockScore, upgradedScore, showUpgrade }) {
 function RatingBar({ label, stockValue, upgradedValue, maxValue = 10 }) {
   const hasUpgrade = upgradedValue > stockValue;
   const displayValue = hasUpgrade ? upgradedValue : stockValue;
-  
+
   // Calculate percentages for the continuous bar approach
   const stockPercent = (stockValue / maxValue) * 100;
   const upgradedPercent = (upgradedValue / maxValue) * 100;
   const upgradeGainPercent = upgradedPercent - stockPercent;
-  
+
   return (
     <div className={styles.ratingBarRow}>
       <span className={styles.ratingLabel}>{label}</span>
       <div className={styles.ratingBarTrack}>
         {/* Stock fill (gold) */}
-        <div 
-          className={styles.ratingFillStock}
-          style={{ width: `${stockPercent}%` }}
-        />
+        <div className={styles.ratingFillStock} style={{ width: `${stockPercent}%` }} />
         {/* Upgrade gain fill (green) - only if upgraded */}
         {hasUpgrade && (
-          <div 
+          <div
             className={styles.ratingFillUpgrade}
-            style={{ 
+            style={{
               left: `${stockPercent}%`,
-              width: `${upgradeGainPercent}%` 
+              width: `${upgradeGainPercent}%`,
             }}
           />
         )}
@@ -349,19 +384,24 @@ function CarRecommendations({ car, selectedModules, onAddToModule, onUpgradeClic
   const primaryFocus = useMemo(() => getPrimaryFocus(car), [car]);
   const coreUpgrades = useMemo(() => getCoreUpgrades(car), [car]);
   const enhancementUpgrades = useMemo(() => getEnhancementUpgrades(car), [car]);
-  const progress = useMemo(() => getRecommendationProgress(car, selectedModules), [car, selectedModules]);
-  
+  const progress = useMemo(
+    () => getRecommendationProgress(car, selectedModules),
+    [car, selectedModules]
+  );
+
   // Get platform strengths and watch-outs from the car data
   const platformStrengths = car?.upgradeRecommendations?.platformStrengths || [];
   const watchOuts = car?.upgradeRecommendations?.watchOuts || [];
-  
+
   // Filter to show only upgrades not yet selected
-  const coreNotSelected = coreUpgrades.filter(u => !selectedModules.includes(u.key));
-  const enhancementNotSelected = enhancementUpgrades.filter(u => !selectedModules.includes(u.key));
-  
+  const coreNotSelected = coreUpgrades.filter((u) => !selectedModules.includes(u.key));
+  const enhancementNotSelected = enhancementUpgrades.filter(
+    (u) => !selectedModules.includes(u.key)
+  );
+
   // Early return if no recommendations in database
   if (!hasRecommendations(car)) return null;
-  
+
   return (
     <div className={styles.carRecommendations}>
       <div className={styles.recHeader}>
@@ -372,10 +412,7 @@ function CarRecommendations({ car, selectedModules, onAddToModule, onUpgradeClic
         {progress.progress > 0 && progress.progress < 100 && (
           <div className={styles.recProgress}>
             <div className={styles.recProgressBar}>
-              <div 
-                className={styles.recProgressFill} 
-                style={{ width: `${progress.progress}%` }} 
-              />
+              <div className={styles.recProgressFill} style={{ width: `${progress.progress}%` }} />
             </div>
             <span className={styles.recProgressText}>{progress.progress}% complete</span>
           </div>
@@ -386,7 +423,7 @@ function CarRecommendations({ car, selectedModules, onAddToModule, onUpgradeClic
           </span>
         )}
       </div>
-      
+
       {/* Primary Focus Area */}
       {primaryFocus && (
         <div className={styles.recFocusArea}>
@@ -394,12 +431,10 @@ function CarRecommendations({ car, selectedModules, onAddToModule, onUpgradeClic
             <span className={styles.recFocusLabel}>Priority:</span>
             <span className={styles.recFocusValue}>{primaryFocus.label}</span>
           </div>
-          {primaryFocus.reason && (
-            <p className={styles.recNarrative}>{primaryFocus.reason}</p>
-          )}
+          {primaryFocus.reason && <p className={styles.recNarrative}>{primaryFocus.reason}</p>}
         </div>
       )}
-      
+
       {/* Core Upgrades - Essential for this car */}
       {coreNotSelected.length > 0 && (
         <div className={styles.recSection}>
@@ -429,7 +464,7 @@ function CarRecommendations({ car, selectedModules, onAddToModule, onUpgradeClic
           </div>
         </div>
       )}
-      
+
       {/* Enhancement Upgrades - Also Recommended */}
       {enhancementNotSelected.length > 0 && (
         <div className={styles.recSection}>
@@ -437,10 +472,7 @@ function CarRecommendations({ car, selectedModules, onAddToModule, onUpgradeClic
           <div className={styles.recUpgrades}>
             {enhancementNotSelected.map((upgrade) => (
               <div key={upgrade.key} className={styles.recUpgradeItem}>
-                <button
-                  className={styles.recUpgradeChip}
-                  onClick={() => onUpgradeClick(upgrade)}
-                >
+                <button className={styles.recUpgradeChip} onClick={() => onUpgradeClick(upgrade)}>
                   <span className={styles.recUpgradeName}>{upgrade.name}</span>
                   {upgrade.metricChanges?.hpGain > 0 && (
                     <span className={styles.recUpgradeGain}>+{upgrade.metricChanges.hpGain}hp</span>
@@ -459,14 +491,14 @@ function CarRecommendations({ car, selectedModules, onAddToModule, onUpgradeClic
           </div>
         </div>
       )}
-      
+
       {/* All Done Message */}
       {coreNotSelected.length === 0 && enhancementNotSelected.length === 0 && (
         <p className={styles.recComplete}>
           <Icons.check size={14} /> All recommended upgrades are in your build!
         </p>
       )}
-      
+
       {/* Platform Insights - Collapsible */}
       {(platformStrengths.length > 0 || watchOuts.length > 0) && (
         <details className={styles.recInsights}>
@@ -503,6 +535,39 @@ function CarRecommendations({ car, selectedModules, onAddToModule, onUpgradeClic
 }
 
 /**
+ * Equivalent upgrade mappings - some requirements can be satisfied by multiple variants
+ * For example, 'ecu-tune' requirement is satisfied by any tune variant
+ */
+const EQUIVALENT_UPGRADES = {
+  'ecu-tune': [
+    'tune-street',
+    'tune-track',
+    'stage1-tune',
+    'stage2-tune',
+    'stage3-tune',
+    'dct-tune',
+    'piggyback-tuner',
+  ],
+};
+
+/**
+ * Check if a requirement is satisfied by the selected modules
+ * Handles equivalent upgrades (e.g., any tune variant satisfies 'ecu-tune')
+ */
+function isRequirementSatisfied(reqKey, selectedModules) {
+  // Direct match
+  if (selectedModules.includes(reqKey)) return true;
+
+  // Check if any equivalent upgrade is selected
+  const equivalents = EQUIVALENT_UPGRADES[reqKey];
+  if (equivalents) {
+    return equivalents.some((eq) => selectedModules.includes(eq));
+  }
+
+  return false;
+}
+
+/**
  * Dependency Warnings - Shows missing required/recommended upgrades
  * Now powered by the Connected Tissue Matrix for comprehensive dependency checking
  * Soft enforcement: warns but doesn't prevent selection
@@ -513,77 +578,82 @@ function DependencyWarnings({ selectedModules, availableModules, onAddMods, car 
     if (selectedModules.length === 0) return null;
     return validateUpgradeSelection(selectedModules, car);
   }, [selectedModules, car]);
-  
+
   // Get recommended upgrades with full context
   const recommendations = useMemo(() => {
     if (selectedModules.length === 0) return [];
     return getRecommendedUpgrades(selectedModules, car);
   }, [selectedModules, car]);
-  
+
   // Also check simple requires/stronglyRecommended from individual upgrades (fallback)
   const simpleDeps = useMemo(() => {
     const allRequires = new Set();
     const allRecommended = new Set();
-    
-    selectedModules.forEach(modKey => {
+
+    selectedModules.forEach((modKey) => {
       const mod = getUpgradeByKey(modKey);
       if (!mod) return;
-      
+
       if (mod.requires) {
-        mod.requires.forEach(reqKey => {
-          if (!selectedModules.includes(reqKey)) {
+        mod.requires.forEach((reqKey) => {
+          // Use equivalent check - e.g., tune-track satisfies ecu-tune requirement
+          if (!isRequirementSatisfied(reqKey, selectedModules)) {
             allRequires.add(reqKey);
           }
         });
       }
-      
+
       if (mod.stronglyRecommended) {
-        mod.stronglyRecommended.forEach(recKey => {
-          if (!selectedModules.includes(recKey) && !allRequires.has(recKey)) {
+        mod.stronglyRecommended.forEach((recKey) => {
+          if (!isRequirementSatisfied(recKey, selectedModules) && !allRequires.has(recKey)) {
             allRecommended.add(recKey);
           }
         });
       }
     });
-    
-    const availableKeys = Object.values(availableModules).flat().map(m => m.key);
-    
+
+    const availableKeys = Object.values(availableModules)
+      .flat()
+      .map((m) => m.key);
+
     return {
-      required: [...allRequires].filter(k => availableKeys.includes(k)),
-      recommended: [...allRecommended].filter(k => availableKeys.includes(k)),
+      required: [...allRequires].filter((k) => availableKeys.includes(k)),
+      recommended: [...allRecommended].filter((k) => availableKeys.includes(k)),
     };
   }, [selectedModules, availableModules]);
-  
+
   // Merge matrix-based and simple deps
   const criticalIssues = validation?.critical || [];
   const warningIssues = validation?.warnings || [];
   const infoIssues = validation?.info || [];
   const synergies = validation?.synergies || [];
-  
+
   // Combine simple requires with matrix-based critical issues
   const allRequired = new Set(simpleDeps.required);
-  criticalIssues.forEach(issue => {
-    issue.recommendation?.forEach(r => allRequired.add(r));
+  criticalIssues.forEach((issue) => {
+    issue.recommendation?.forEach((r) => allRequired.add(r));
   });
-  
+
   // Combine simple recommended with matrix-based warnings
   const allRecommended = new Set(simpleDeps.recommended);
-  warningIssues.forEach(issue => {
-    issue.recommendation?.forEach(r => {
+  warningIssues.forEach((issue) => {
+    issue.recommendation?.forEach((r) => {
       if (!allRequired.has(r)) allRecommended.add(r);
     });
   });
-  
+
   // Filter to available modules
-  const availableKeys = Object.values(availableModules).flat().map(m => m.key);
-  const filteredRequired = [...allRequired].filter(k => availableKeys.includes(k));
-  const filteredRecommended = [...allRecommended].filter(k => availableKeys.includes(k));
-  
+  const availableKeys = Object.values(availableModules)
+    .flat()
+    .map((m) => m.key);
+  const filteredRequired = [...allRequired].filter((k) => availableKeys.includes(k));
+  const filteredRecommended = [...allRecommended].filter((k) => availableKeys.includes(k));
+
   // Nothing to show
   if (filteredRequired.length === 0 && filteredRecommended.length === 0 && synergies.length === 0) {
     return null;
   }
-  
+
   return (
     <div className={styles.dependencyWarnings}>
       {/* Critical / Required */}
@@ -594,34 +664,27 @@ function DependencyWarnings({ selectedModules, availableModules, onAddMods, car 
             <span>Required Supporting Mods</span>
           </div>
           <p className={styles.depWarningText}>
-            Your selected upgrades need these supporting mods to function properly:
+            These mods are recommended to achieve max performance gains:
           </p>
           <div className={styles.depList}>
-            {filteredRequired.map(key => {
+            {filteredRequired.map((key) => {
               const upgrade = getUpgradeByKey(key);
-              const rec = recommendations.find(r => r.upgradeKey === key);
+              const rec = recommendations.find((r) => r.upgradeKey === key);
               return (
                 <div key={key} className={styles.depTagWrapper}>
-                  <span className={styles.depTag}>
-                    {upgrade?.name || key}
-                  </span>
-                  {rec?.reason && (
-                    <span className={styles.depReason}>{rec.reason}</span>
-                  )}
+                  <span className={styles.depTag}>{upgrade?.name || key}</span>
+                  {rec?.reason && <span className={styles.depReason}>{rec.reason}</span>}
                 </div>
               );
             })}
           </div>
-          <button 
-            className={styles.addDepsBtn}
-            onClick={() => onAddMods(filteredRequired)}
-          >
+          <button className={styles.addDepsBtn} onClick={() => onAddMods(filteredRequired)}>
             <Icons.check size={14} />
             Add Required Mods
           </button>
         </div>
       )}
-      
+
       {/* Warnings / Recommended */}
       {filteredRecommended.length > 0 && (
         <div className={styles.depRecommendBox}>
@@ -633,22 +696,18 @@ function DependencyWarnings({ selectedModules, availableModules, onAddMods, car 
             These mods pair well with your selections for best results:
           </p>
           <div className={styles.depList}>
-            {filteredRecommended.map(key => {
+            {filteredRecommended.map((key) => {
               const upgrade = getUpgradeByKey(key);
-              const rec = recommendations.find(r => r.upgradeKey === key);
+              const rec = recommendations.find((r) => r.upgradeKey === key);
               return (
                 <div key={key} className={styles.depTagWrapper}>
-                  <span className={styles.depTagRecommended}>
-                    {upgrade?.name || key}
-                  </span>
-                  {rec?.reason && (
-                    <span className={styles.depReason}>{rec.reason}</span>
-                  )}
+                  <span className={styles.depTagRecommended}>{upgrade?.name || key}</span>
+                  {rec?.reason && <span className={styles.depReason}>{rec.reason}</span>}
                 </div>
               );
             })}
           </div>
-          <button 
+          <button
             className={styles.addDepsBtnSecondary}
             onClick={() => onAddMods(filteredRecommended)}
           >
@@ -656,7 +715,7 @@ function DependencyWarnings({ selectedModules, availableModules, onAddMods, car 
           </button>
         </div>
       )}
-      
+
       {/* Positive Synergies */}
       {synergies.length > 0 && (
         <div className={styles.depSynergyBox}>
@@ -681,28 +740,26 @@ function DependencyWarnings({ selectedModules, availableModules, onAddMods, car 
  */
 function ComponentBreakdown({ selectedUpgrades, showUpgrade, onUpgradeClick }) {
   // Get main package and modules first (these aren't hooks)
-  const mainPackage = selectedUpgrades.find(u => u.type === 'package');
-  const modules = selectedUpgrades.filter(u => u.type === 'module');
-  
+  const mainPackage = selectedUpgrades.find((u) => u.type === 'package');
+  const modules = selectedUpgrades.filter((u) => u.type === 'module');
+
   // Get resolved upgrade details for the includedUpgradeKeys
   // Must call useMemo before any conditional returns (React hooks rules)
   const resolvedUpgrades = useMemo(() => {
     if (!mainPackage?.includedUpgradeKeys) return [];
-    return mainPackage.includedUpgradeKeys
-      .map(key => getUpgradeByKey(key))
-      .filter(Boolean);
+    return mainPackage.includedUpgradeKeys.map((key) => getUpgradeByKey(key)).filter(Boolean);
   }, [mainPackage]);
-  
+
   // Early return after all hooks
   if (!showUpgrade || selectedUpgrades.length === 0) return null;
-  
+
   return (
     <div className={styles.componentBreakdown}>
       <h4 className={styles.breakdownTitle}>
         <Icons.wrench size={16} />
         What's Included
       </h4>
-      
+
       {/* Clickable upgrade chips using includedUpgradeKeys */}
       {resolvedUpgrades.length > 0 && (
         <div className={styles.upgradeChips}>
@@ -723,7 +780,7 @@ function ComponentBreakdown({ selectedUpgrades, showUpgrade, onUpgradeClick }) {
           ))}
         </div>
       )}
-      
+
       {/* Fallback to plain text includes if no includedUpgradeKeys */}
       {resolvedUpgrades.length === 0 && mainPackage?.includes && (
         <div className={styles.componentList}>
@@ -735,17 +792,17 @@ function ComponentBreakdown({ selectedUpgrades, showUpgrade, onUpgradeClick }) {
           ))}
         </div>
       )}
-      
+
       {/* Additional standalone modules selected by user */}
       {modules.length > 0 && (
         <div className={styles.additionalModules}>
           <span className={styles.modulesLabel}>Additional Modules:</span>
           <div className={styles.modulesList}>
-            {modules.map(mod => {
+            {modules.map((mod) => {
               const modDetails = getUpgradeByKey(mod.key);
               return (
-                <button 
-                  key={mod.key} 
+                <button
+                  key={mod.key}
                   className={styles.moduleBadgeClickable}
                   onClick={() => onUpgradeClick(modDetails || mod)}
                 >
@@ -757,7 +814,7 @@ function ComponentBreakdown({ selectedUpgrades, showUpgrade, onUpgradeClick }) {
           </div>
         </div>
       )}
-      
+
       {mainPackage && mainPackage.considerations && (
         <div className={styles.considerations}>
           <span className={styles.considerationsLabel}>Things to Consider:</span>
@@ -778,30 +835,42 @@ function ComponentBreakdown({ selectedUpgrades, showUpgrade, onUpgradeClick }) {
 function ExpertTrackInsights({ car }) {
   const consensus = car?.externalConsensus || car?.external_consensus;
   const reviewCount = car?.expertReviewCount || car?.expert_review_count || 0;
-  
+
   // Only show if we have track-related feedback
   if (reviewCount === 0) return null;
-  
+
   // Get track-related weaknesses
   const trackWeaknesses = (consensus?.weaknesses || [])
-    .filter(w => {
+    .filter((w) => {
       const tag = (w.tag || w).toLowerCase();
-      return tag.includes('brake') || tag.includes('cool') || tag.includes('heat') || 
-             tag.includes('grip') || tag.includes('traction') || tag.includes('suspension');
+      return (
+        tag.includes('brake') ||
+        tag.includes('cool') ||
+        tag.includes('heat') ||
+        tag.includes('grip') ||
+        tag.includes('traction') ||
+        tag.includes('suspension')
+      );
     })
     .slice(0, 3);
-    
+
   // Get track-related strengths
   const trackStrengths = (consensus?.strengths || [])
-    .filter(s => {
+    .filter((s) => {
       const tag = (s.tag || s).toLowerCase();
-      return tag.includes('handl') || tag.includes('steer') || tag.includes('balance') || 
-             tag.includes('grip') || tag.includes('track') || tag.includes('brake');
+      return (
+        tag.includes('handl') ||
+        tag.includes('steer') ||
+        tag.includes('balance') ||
+        tag.includes('grip') ||
+        tag.includes('track') ||
+        tag.includes('brake')
+      );
     })
     .slice(0, 3);
-    
+
   if (trackWeaknesses.length === 0 && trackStrengths.length === 0) return null;
-  
+
   return (
     <div className={styles.expertTrackInsights}>
       <h4 className={styles.expertInsightsTitle}>
@@ -848,25 +917,30 @@ function ExpertTrackInsights({ car }) {
  * @param {function} onChangeCar - Callback when Change Car is clicked (if null and hideChangeCar is false, redirects to /mod-planner)
  * @param {boolean} hideChangeCar - If true, hides the Change Car button (useful in garage context)
  */
-export default function PerformanceHub({ car, initialBuildId = null, onChangeCar = null, hideChangeCar = false }) {
+export default function PerformanceHub({
+  car,
+  initialBuildId = null,
+  onChangeCar = null,
+  hideChangeCar = false,
+}) {
   // Get configuration from database
   const { tierConfig } = useAppConfig();
-  
+
   // Global car selection integration
   const { selectCar, setUpgrades, clearCar, isHydrated } = useCarSelection();
-  
+
   // Auth and saved builds
   const { isAuthenticated } = useAuth();
   const { saveBuild, updateBuild, getBuildById, getBuildsByCarSlug, canSave } = useSavedBuilds();
-  
+
   // Owned vehicles for "Apply to My Vehicle" feature
   const { vehicles, getVehiclesByCarSlug, applyModifications } = useOwnedVehicles();
-  
+
   // Find user's vehicles that match this car, enriched with build data for accurate HP gain
   const matchingVehicles = useMemo(() => {
     const vehicles = getVehiclesByCarSlug(car.slug);
     // Enrich each vehicle with its active build data for accurate HP gain display
-    return vehicles.map(vehicle => {
+    return vehicles.map((vehicle) => {
       const activeBuild = vehicle.activeBuildId ? getBuildById(vehicle.activeBuildId) : null;
       return {
         ...vehicle,
@@ -882,24 +956,24 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
   const [expandedModules, setExpandedModules] = useState(false);
   const [selectedModules, setSelectedModules] = useState([]);
   const [selectedUpgradeForModal, setSelectedUpgradeForModal] = useState(null);
-  
+
   // Save build modal state
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [buildName, setBuildName] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [currentBuildId, setCurrentBuildId] = useState(initialBuildId);
   const [saveError, setSaveError] = useState(null);
-  
+
   // Apply to vehicle state
   const [isApplyingToVehicle, setIsApplyingToVehicle] = useState(false);
   const [applySuccess, setApplySuccess] = useState(null);
-  
+
   // Get existing builds for this car
-  const existingBuilds = useMemo(() => 
-    getBuildsByCarSlug(car.slug),
+  const existingBuilds = useMemo(
+    () => getBuildsByCarSlug(car.slug),
     [getBuildsByCarSlug, car.slug]
   );
-  
+
   // Reset state when car changes (ensures clean slate when navigating between cars)
   useEffect(() => {
     // Reset to stock when car changes
@@ -928,139 +1002,136 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
       selectCar(car);
     }
   }, [isHydrated, car, selectCar]);
-  
+
   // Get available upgrades for this car
-  const availableUpgrades = useMemo(() => 
-    car ? getAvailableUpgrades(car) : { packages: [], modulesByCategory: {} }, 
+  const availableUpgrades = useMemo(
+    () => (car ? getAvailableUpgrades(car) : { packages: [], modulesByCategory: {} }),
     [car]
   );
-  
+
   // Get all available module keys for this car
   const availableModuleKeys = useMemo(() => {
     return Object.values(availableUpgrades.modulesByCategory || {})
       .flat()
-      .map(m => m.key);
+      .map((m) => m.key);
   }, [availableUpgrades.modulesByCategory]);
-  
+
   // Get the modules included in the currently selected package
   // Filter to only include modules that are actually available for this car
   const packageIncludedModules = useMemo(() => {
     if (selectedPackageKey === 'stock' || selectedPackageKey === 'custom') return [];
-    const pkg = availableUpgrades.packages.find(p => p.key === selectedPackageKey);
+    const pkg = availableUpgrades.packages.find((p) => p.key === selectedPackageKey);
     const packageKeys = pkg?.includedUpgradeKeys || [];
     // Only include keys that are actually available for this car
-    return packageKeys.filter(key => availableModuleKeys.includes(key));
+    return packageKeys.filter((key) => availableModuleKeys.includes(key));
   }, [selectedPackageKey, availableUpgrades.packages, availableModuleKeys]);
-  
+
   // Effective selected modules (package defaults + user modifications)
   // This only includes modules that are actually available for this car
   const effectiveSelectedModules = useMemo(() => {
     if (selectedPackageKey === 'custom' || selectedPackageKey === 'stock') {
       // Filter custom selections to available modules
-      return selectedModules.filter(key => availableModuleKeys.includes(key));
+      return selectedModules.filter((key) => availableModuleKeys.includes(key));
     }
     // For packages, combine package defaults with any additional user selections
     const combined = new Set([...packageIncludedModules, ...selectedModules]);
     // Filter to available modules
-    return Array.from(combined).filter(key => availableModuleKeys.includes(key));
+    return Array.from(combined).filter((key) => availableModuleKeys.includes(key));
   }, [selectedPackageKey, packageIncludedModules, selectedModules, availableModuleKeys]);
-  
+
   // Determine which upgrades are active (for performance calculation)
   const activeUpgradeKeys = useMemo(() => {
     if (selectedPackageKey === 'stock' && selectedModules.length === 0) return [];
     return effectiveSelectedModules;
   }, [selectedPackageKey, selectedModules, effectiveSelectedModules]);
-  
+
   // Get performance profile
-  const profile = useMemo(() => 
-    getPerformanceProfile(car, activeUpgradeKeys),
+  const profile = useMemo(
+    () => getPerformanceProfile(car, activeUpgradeKeys),
     [car, activeUpgradeKeys]
   );
-  
+
   // Smart HP calculation with diminishing returns and overlap detection
-  const smartHp = useMemo(() => 
-    calculateSmartHpGain(car, activeUpgradeKeys),
+  const smartHp = useMemo(
+    () => calculateSmartHpGain(car, activeUpgradeKeys),
     [car, activeUpgradeKeys]
   );
-  
+
   // Conflict summary for UI display
-  const conflictSummary = useMemo(() => 
-    getConflictSummary(smartHp.conflicts),
-    [smartHp.conflicts]
-  );
-  
+  const conflictSummary = useMemo(() => getConflictSummary(smartHp.conflicts), [smartHp.conflicts]);
+
   // Get score comparison for bars
-  const scoreComparison = useMemo(() => 
-    getScoreComparison(profile.stockScores, profile.upgradedScores),
+  const scoreComparison = useMemo(
+    () => getScoreComparison(profile.stockScores, profile.upgradedScores),
     [profile]
   );
-  
+
   // Calculate total cost with brand-specific pricing
-  const totalCost = useMemo(() => 
-    calculateTotalCost(profile.selectedUpgrades, car),
+  const totalCost = useMemo(
+    () => calculateTotalCost(profile.selectedUpgrades, car),
     [profile.selectedUpgrades, car]
   );
-  
+
   // Get summary text
-  const upgradeSummary = useMemo(() => 
-    getUpgradeSummary(profile.selectedUpgrades),
+  const upgradeSummary = useMemo(
+    () => getUpgradeSummary(profile.selectedUpgrades),
     [profile.selectedUpgrades]
   );
-  
+
   const handlePackageSelect = (key) => {
     setSelectedPackageKey(key);
     // Clear custom modules when switching packages
     setSelectedModules([]);
   };
-  
+
   const handleModuleToggle = (moduleKey) => {
     if (selectedPackageKey !== 'custom' && selectedPackageKey !== 'stock') {
       // User is modifying a package - auto-switch to Custom
       // Copy current effective selections first
       const currentSelections = new Set(effectiveSelectedModules);
-      
+
       if (currentSelections.has(moduleKey)) {
         currentSelections.delete(moduleKey);
       } else {
         currentSelections.add(moduleKey);
       }
-      
+
       setSelectedPackageKey('custom');
       setSelectedModules(Array.from(currentSelections));
     } else {
       // Already in Custom or Stock mode - normal toggle
-      setSelectedModules(prev => {
+      setSelectedModules((prev) => {
         if (prev.includes(moduleKey)) {
-          return prev.filter(k => k !== moduleKey);
+          return prev.filter((k) => k !== moduleKey);
         }
         return [...prev, moduleKey];
       });
     }
   };
-  
+
   // Handler for adding required/recommended mods
   const handleAddRequiredMods = (modKeys) => {
-    setSelectedModules(prev => {
-      const newMods = modKeys.filter(k => !prev.includes(k));
+    setSelectedModules((prev) => {
+      const newMods = modKeys.filter((k) => !prev.includes(k));
       return [...prev, ...newMods];
     });
   };
-  
+
   // Handler for saving/updating a build
   const handleSaveBuild = async () => {
     if (!canSave) {
       setSaveError('Please sign in to save builds');
       return;
     }
-    
+
     if (!buildName.trim()) {
       setSaveError('Please enter a build name');
       return;
     }
-    
+
     setIsSaving(true);
     setSaveError(null);
-    
+
     const buildData = {
       carSlug: car.slug,
       carName: car.name,
@@ -1074,7 +1145,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
       // PerformanceHub uses the 'basic' tuner mode calculation
       tunerMode: 'basic',
     };
-    
+
     try {
       let result;
       if (currentBuildId) {
@@ -1087,7 +1158,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
           setCurrentBuildId(result.data.id);
         }
       }
-      
+
       if (result.error) {
         setSaveError(result.error.message || 'Failed to save build');
       } else {
@@ -1101,21 +1172,21 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
       setIsSaving(false);
     }
   };
-  
+
   // Handler for applying modifications to a vehicle
   const handleApplyToVehicle = async (vehicleId) => {
     if (!vehicleId || effectiveSelectedModules.length === 0) return;
-    
+
     setIsApplyingToVehicle(true);
     setApplySuccess(null);
-    
+
     try {
       const { data, error } = await applyModifications(vehicleId, {
         upgrades: effectiveSelectedModules,
         totalHpGain: smartHp.totalGain,
         buildId: currentBuildId || null, // Link to build if one exists
       });
-      
+
       if (error) {
         setSaveError(error.message || 'Failed to apply modifications');
       } else {
@@ -1133,18 +1204,18 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
       setIsApplyingToVehicle(false);
     }
   };
-  
+
   const tierInfo = tierConfig[car.tier] || {};
   const showUpgrade = selectedPackageKey !== 'stock' || selectedModules.length > 0;
-  
+
   // Get the subjective score categories
-  const subjectiveCategories = scoreComparison.filter(cat => 
+  const subjectiveCategories = scoreComparison.filter((cat) =>
     ['drivability', 'reliabilityHeat', 'soundEmotion'].includes(cat.key)
   );
 
   // Format numbers with commas
   const formatNumber = (num) => num?.toLocaleString() || '—';
-  
+
   // Early return AFTER all hooks (React rules of hooks)
   if (!car) {
     return null;
@@ -1152,7 +1223,6 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
 
   return (
     <div className={styles.hubV2}>
-
       {/* ================================================================
           CAR HERO SECTION - GT-Inspired Layout
           ================================================================ */}
@@ -1164,21 +1234,21 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
             {tierInfo.label || car.tier}
           </div>
         </div>
-        
+
         {/* Car Info Panel - GT Style */}
         <div className={styles.carInfoPanel}>
           {/* Header with name and price */}
           <div className={styles.carInfoHeader}>
             <div>
               <h1 className={styles.carName}>{car.name}</h1>
-              <p className={styles.carSubtitle}>{car.years} • {car.brand || 'Sports Car'} • {car.country || ''}</p>
+              <p className={styles.carSubtitle}>
+                {car.years} • {car.brand || 'Sports Car'} • {car.country || ''}
+              </p>
             </div>
             <div className={styles.carInfoHeaderRight}>
-              <div className={styles.priceRange}>
-                {tierInfo.priceRange || '$50-75K'}
-              </div>
+              <div className={styles.priceRange}>{tierInfo.priceRange || '$50-75K'}</div>
               {!hideChangeCar && (
-                <button 
+                <button
                   className={styles.changeCarButton}
                   onClick={() => {
                     clearCar();
@@ -1197,7 +1267,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
               )}
             </div>
           </div>
-          
+
           {/* Hero Specs - Key Stats Prominently Displayed */}
           <div className={styles.heroSpecs}>
             <div className={styles.heroSpecMain}>
@@ -1218,7 +1288,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
               <div className={styles.heroSpecUnit}>lbs</div>
             </div>
           </div>
-          
+
           {/* Secondary Specs Row */}
           <div className={styles.secondarySpecs}>
             <div className={styles.secondarySpec}>
@@ -1227,7 +1297,9 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
             </div>
             <div className={styles.secondarySpec}>
               <span className={styles.secondarySpecLabel}>0-60 mph</span>
-              <span className={styles.secondarySpecValue}>{car.zeroToSixty || '—'} <small>sec</small></span>
+              <span className={styles.secondarySpecValue}>
+                {car.zeroToSixty || '—'} <small>sec</small>
+              </span>
             </div>
             <div className={styles.secondarySpec}>
               <span className={styles.secondarySpecLabel}>Layout</span>
@@ -1235,36 +1307,44 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
             </div>
             <div className={styles.secondarySpec}>
               <span className={styles.secondarySpecLabel}>Transmission</span>
-              <span className={styles.secondarySpecValue}>{car.manualAvailable ? 'Manual' : 'Auto'}</span>
+              <span className={styles.secondarySpecValue}>
+                {car.manualAvailable ? 'Manual' : 'Auto'}
+              </span>
             </div>
           </div>
-          
+
           {/* GT-Style Visual Rating Bars - Connected to Profile */}
           <div className={styles.ratingBars}>
-            <RatingBar 
-              label="Power" 
-              stockValue={profile.stockScores.powerAccel || 7} 
-              upgradedValue={profile.upgradedScores.powerAccel || profile.stockScores.powerAccel || 7}
+            <RatingBar
+              label="Power"
+              stockValue={profile.stockScores.powerAccel || 7}
+              upgradedValue={
+                profile.upgradedScores.powerAccel || profile.stockScores.powerAccel || 7
+              }
             />
-            <RatingBar 
-              label="Handling" 
-              stockValue={profile.stockScores.gripCornering || 7} 
-              upgradedValue={profile.upgradedScores.gripCornering || profile.stockScores.gripCornering || 7}
+            <RatingBar
+              label="Handling"
+              stockValue={profile.stockScores.gripCornering || 7}
+              upgradedValue={
+                profile.upgradedScores.gripCornering || profile.stockScores.gripCornering || 7
+              }
             />
-            <RatingBar 
-              label="Braking" 
-              stockValue={profile.stockScores.braking || 7} 
+            <RatingBar
+              label="Braking"
+              stockValue={profile.stockScores.braking || 7}
               upgradedValue={profile.upgradedScores.braking || profile.stockScores.braking || 7}
             />
-            <RatingBar 
-              label="Track Pace" 
-              stockValue={profile.stockScores.trackPace || 7} 
+            <RatingBar
+              label="Track Pace"
+              stockValue={profile.stockScores.trackPace || 7}
               upgradedValue={profile.upgradedScores.trackPace || profile.stockScores.trackPace || 7}
             />
-            <RatingBar 
-              label="Sound" 
-              stockValue={profile.stockScores.soundEmotion || 7} 
-              upgradedValue={profile.upgradedScores.soundEmotion || profile.stockScores.soundEmotion || 7}
+            <RatingBar
+              label="Sound"
+              stockValue={profile.stockScores.soundEmotion || 7}
+              upgradedValue={
+                profile.upgradedScores.soundEmotion || profile.stockScores.soundEmotion || 7
+              }
             />
           </div>
         </div>
@@ -1280,7 +1360,9 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
           <button
             className={styles.saveBuildButton}
             onClick={() => {
-              setBuildName(currentBuildId ? getBuildById(currentBuildId)?.name || '' : `${car.name} Build`);
+              setBuildName(
+                currentBuildId ? getBuildById(currentBuildId)?.name || '' : `${car.name} Build`
+              );
               setShowSaveModal(true);
             }}
             title={canSave ? 'Save this build to your garage' : 'Sign in to save builds'}
@@ -1295,7 +1377,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
                 <span>My Builds ({existingBuilds.length})</span>
               </button>
               <div className={styles.buildsDropdownMenu}>
-                {existingBuilds.map(build => (
+                {existingBuilds.map((build) => (
                   <button
                     key={build.id}
                     className={styles.buildMenuItem}
@@ -1307,7 +1389,8 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
                   >
                     <span className={styles.buildMenuName}>{build.name}</span>
                     <span className={styles.buildMenuMeta}>
-                      {build.upgrades?.length || 0} upgrades • ${build.totalCostLow?.toLocaleString()}
+                      {build.upgrades?.length || 0} upgrades • $
+                      {build.totalCostLow?.toLocaleString()}
                     </span>
                   </button>
                 ))}
@@ -1315,7 +1398,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
             </div>
           )}
         </div>
-        
+
         {/* Package Selector Row */}
         <div className={styles.packageSelectorRow}>
           <div className={styles.packageSelector}>
@@ -1325,7 +1408,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
             >
               Stock
             </button>
-            {(availableUpgrades.packages || []).map(pkg => (
+            {(availableUpgrades.packages || []).map((pkg) => (
               <button
                 key={pkg.key}
                 className={`${styles.packagePill} ${styles[pkg.tier]} ${selectedPackageKey === pkg.key ? styles.active : ''}`}
@@ -1342,11 +1425,11 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
             </button>
           </div>
         </div>
-        
+
         {/* Package Description */}
         <div className={styles.packageDescription}>
-          <PackageDescription 
-            packageKey={selectedPackageKey} 
+          <PackageDescription
+            packageKey={selectedPackageKey}
             packages={availableUpgrades.packages}
             showUpgrade={showUpgrade}
             totalCost={totalCost}
@@ -1378,10 +1461,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
             </div>
             <div className={styles.overlapList}>
               {smartHp.conflicts.map((conflict, idx) => (
-                <div 
-                  key={idx} 
-                  className={`${styles.overlapItem} ${styles[conflict.severity]}`}
-                >
+                <div key={idx} className={`${styles.overlapItem} ${styles[conflict.severity]}`}>
                   {conflict.severity === 'warning' ? (
                     <Icons.alertTriangle size={14} />
                   ) : (
@@ -1400,7 +1480,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
         {/* Performance Metrics - Full Bar Charts */}
         <div className={styles.performanceSection}>
           <h4 className={styles.sectionTitle}>Performance Metrics</h4>
-          
+
           {/* Power (HP) - Using smart calculation with diminishing returns */}
           <RealMetricRow
             icon={Icons.bolt}
@@ -1410,33 +1490,37 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
             unit=" hp"
             isLowerBetter={false}
           />
-          
+
           {/* 0-60 Time */}
           {profile.stockMetrics.zeroToSixty && (
             <RealMetricRow
               icon={Icons.stopwatch}
               label="0-60 mph"
               stockValue={profile.stockMetrics.zeroToSixty}
-              upgradedValue={profile.upgradedMetrics.zeroToSixty || profile.stockMetrics.zeroToSixty}
+              upgradedValue={
+                profile.upgradedMetrics.zeroToSixty || profile.stockMetrics.zeroToSixty
+              }
               unit="s"
               improvementPrefix="-"
               isLowerBetter={true}
             />
           )}
-          
+
           {/* Braking Distance */}
           {profile.stockMetrics.braking60To0 && (
             <RealMetricRow
               icon={Icons.brake}
               label="60-0 Braking"
               stockValue={profile.stockMetrics.braking60To0}
-              upgradedValue={profile.upgradedMetrics.braking60To0 || profile.stockMetrics.braking60To0}
+              upgradedValue={
+                profile.upgradedMetrics.braking60To0 || profile.stockMetrics.braking60To0
+              }
               unit="ft"
               improvementPrefix="-"
               isLowerBetter={true}
             />
           )}
-          
+
           {/* Lateral G */}
           {profile.stockMetrics.lateralG && (
             <RealMetricRow
@@ -1450,11 +1534,11 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
             />
           )}
         </div>
-        
+
         {/* Experience Scores Section */}
         <div className={styles.scoresSection}>
           <h4 className={styles.sectionTitle}>Experience Scores</h4>
-          {subjectiveCategories.map(cat => (
+          {subjectiveCategories.map((cat) => (
             <ScoreBar
               key={cat.key}
               category={cat}
@@ -1464,7 +1548,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
             />
           ))}
         </div>
-        
+
         {/* ============================================================
            BUILD YOUR CONFIGURATION - Full Width
            Shows for ALL packages with appropriate pre-selections
@@ -1473,30 +1557,25 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
           <div className={styles.buildHeader}>
             <h3 className={styles.buildTitle}>
               <Icons.wrench size={20} />
-              {selectedPackageKey === 'custom' 
-                ? 'Build Your Configuration' 
+              {selectedPackageKey === 'custom'
+                ? 'Build Your Configuration'
                 : selectedPackageKey === 'stock'
                   ? 'Available Upgrades'
-                  : `${availableUpgrades.packages.find(p => p.key === selectedPackageKey)?.name || 'Package'} - What's Included`
-              }
+                  : `${availableUpgrades.packages.find((p) => p.key === selectedPackageKey)?.name || 'Package'} - What's Included`}
             </h3>
             <p className={styles.buildSubtitle}>
-              {selectedPackageKey === 'custom' 
+              {selectedPackageKey === 'custom'
                 ? 'Select upgrades to see real-time performance impact'
                 : selectedPackageKey === 'stock'
                   ? 'Choose upgrades to start building your configuration'
-                  : 'Checkmarks show included items • Click any item to customize'
-              }
+                  : 'Checkmarks show included items • Click any item to customize'}
             </p>
             {effectiveSelectedModules.length > 0 && (
               <div className={styles.selectedCount}>
                 <span className={styles.countBadge}>{effectiveSelectedModules.length}</span>
                 {effectiveSelectedModules.length === 1 ? 'upgrade' : 'upgrades'} selected
                 {selectedPackageKey === 'custom' && (
-                  <button 
-                    className={styles.clearAllBtn}
-                    onClick={() => setSelectedModules([])}
-                  >
+                  <button className={styles.clearAllBtn} onClick={() => setSelectedModules([])}>
                     Clear all
                   </button>
                 )}
@@ -1508,20 +1587,18 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
               </div>
             )}
           </div>
-          
+
           {/* Full-Width Module Grid */}
           <div className={styles.modulesGridFull}>
             {Object.entries(availableUpgrades.modulesByCategory).map(([catKey, modules]) => (
               <div key={catKey} className={styles.moduleCategory}>
-                <h5 className={styles.moduleCategoryTitle}>
-                  {formatCategoryName(catKey)}
-                </h5>
+                <h5 className={styles.moduleCategoryTitle}>{formatCategoryName(catKey)}</h5>
                 <div className={styles.moduleList}>
-                  {modules.map(mod => {
+                  {modules.map((mod) => {
                     const fullDetails = getUpgradeByKey(mod.key) || mod;
                     const isSelected = effectiveSelectedModules.includes(mod.key);
                     const isPackageItem = packageIncludedModules.includes(mod.key);
-                    
+
                     return (
                       <div key={mod.key} className={styles.moduleChipWrapper}>
                         <button
@@ -1534,7 +1611,9 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
                           </span>
                           <span className={styles.moduleName}>{mod.name}</span>
                           {mod.metricChanges?.hpGain && (
-                            <span className={styles.moduleHpGain}>+{mod.metricChanges.hpGain}hp</span>
+                            <span className={styles.moduleHpGain}>
+                              +{mod.metricChanges.hpGain}hp
+                            </span>
                           )}
                         </button>
                         <button
@@ -1555,12 +1634,12 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
             ))}
           </div>
         </div>
-        
+
         {/* About These Estimates - Collapsible */}
         <div className={styles.estimatesInfo}>
           <ScoringInfo variant="performance" />
         </div>
-        
+
         {/* Plan Your Build CTA - Links to detailed build view in Garage */}
         {effectiveSelectedModules.length > 0 && (
           <div className={styles.planBuildCta}>
@@ -1568,14 +1647,12 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
               <div className={styles.planBuildText}>
                 <h4 className={styles.planBuildTitle}>Ready to Execute Your Build?</h4>
                 <p className={styles.planBuildDescription}>
-                  View the complete build plan with tools needed, installation notes, and complexity assessment.
+                  View the complete build plan with tools needed, installation notes, and complexity
+                  assessment.
                 </p>
               </div>
               {currentBuildId ? (
-                <Link 
-                  href={`/garage?build=${currentBuildId}`}
-                  className={styles.planBuildButton}
-                >
+                <Link href={`/garage?build=${currentBuildId}`} className={styles.planBuildButton}>
                   <Icons.folder size={18} />
                   View Full Build Plan
                   <Icons.chevronRight size={16} />
@@ -1596,7 +1673,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
             </div>
           </div>
         )}
-        
+
         {/* Footer Links */}
         <div className={styles.hubFooter}>
           <Link href="/community" className={styles.footerLink}>
@@ -1607,7 +1684,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
           </Link>
         </div>
       </main>
-      
+
       {/* Upgrade Detail Modal */}
       {selectedUpgradeForModal && (
         <UpgradeDetailModal
@@ -1616,17 +1693,17 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
           showAddToBuild={false}
         />
       )}
-      
+
       {/* Save Build Modal */}
       {showSaveModal && (
         <div className={styles.modalOverlay} onClick={() => setShowSaveModal(false)}>
-          <div className={styles.saveModal} onClick={e => e.stopPropagation()}>
+          <div className={styles.saveModal} onClick={(e) => e.stopPropagation()}>
             <div className={styles.saveModalHeader}>
               <h3 className={styles.saveModalTitle}>
                 <Icons.save size={20} />
                 {currentBuildId ? 'Update Build' : 'Save Build'}
               </h3>
-              <button 
+              <button
                 className={styles.saveModalClose}
                 onClick={() => setShowSaveModal(false)}
                 aria-label="Close save build modal"
@@ -1634,24 +1711,29 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
                 <Icons.x size={20} />
               </button>
             </div>
-            
+
             <div className={styles.saveModalBody}>
               <div className={styles.saveModalCarInfo}>
                 <CarImage car={car} variant="thumbnail" className={styles.saveModalCarImage} />
                 <div className={styles.saveModalCarDetails}>
                   <span className={styles.saveModalCarName}>{car.name}</span>
                   <div className={styles.saveModalUpgradeCount}>
-                    <span>{effectiveSelectedModules.length} upgrade{effectiveSelectedModules.length !== 1 ? 's' : ''}</span>
-                    <span>${totalCost.low?.toLocaleString()} - ${totalCost.high?.toLocaleString()}</span>
+                    <span>
+                      {effectiveSelectedModules.length} upgrade
+                      {effectiveSelectedModules.length !== 1 ? 's' : ''}
+                    </span>
+                    <span>
+                      ${totalCost.low?.toLocaleString()} - ${totalCost.high?.toLocaleString()}
+                    </span>
                   </div>
                 </div>
               </div>
-              
+
               <div className={styles.saveModalSummary}>
                 <h4 className={styles.saveModalSummaryTitle}>Selected Upgrades</h4>
                 {effectiveSelectedModules.length > 0 ? (
                   <div className={styles.saveModalUpgradesList}>
-                    {effectiveSelectedModules.map(mod => (
+                    {effectiveSelectedModules.map((mod) => (
                       <span key={mod} className={styles.saveModalUpgradeTag}>
                         <Icons.check size={12} />
                         {mod}
@@ -1659,12 +1741,10 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
                     ))}
                   </div>
                 ) : (
-                  <div className={styles.saveModalEmptyState}>
-                    No upgrades selected yet
-                  </div>
+                  <div className={styles.saveModalEmptyState}>No upgrades selected yet</div>
                 )}
               </div>
-              
+
               <div className={styles.saveModalField}>
                 <label className={styles.saveModalLabel} htmlFor="buildName">
                   Build Name
@@ -1674,19 +1754,19 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
                   type="text"
                   className={styles.saveModalInput}
                   value={buildName}
-                  onChange={e => setBuildName(e.target.value)}
+                  onChange={(e) => setBuildName(e.target.value)}
                   placeholder="e.g., Track Day Setup, Daily Driver+"
                   autoFocus
                 />
               </div>
-              
+
               {saveError && (
                 <div className={styles.saveModalError}>
                   <Icons.alertTriangle size={16} />
                   {saveError}
                 </div>
               )}
-              
+
               {!canSave && (
                 <div className={styles.saveModalSignIn}>
                   <Icons.info size={16} />
@@ -1696,7 +1776,7 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
                   </Link>
                 </div>
               )}
-              
+
               {/* Apply to My Vehicle Section */}
               {hasMatchingVehicle && effectiveSelectedModules.length > 0 && (
                 <div className={styles.applyToVehicleSection}>
@@ -1713,11 +1793,14 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
                   {applySuccess ? (
                     <div className={styles.applySuccess}>
                       <Icons.check size={16} />
-                      Modifications applied to {applySuccess.nickname || `${applySuccess.year} ${applySuccess.make} ${applySuccess.model}`}!
+                      Modifications applied to{' '}
+                      {applySuccess.nickname ||
+                        `${applySuccess.year} ${applySuccess.make} ${applySuccess.model}`}
+                      !
                     </div>
                   ) : (
                     <div className={styles.applyToVehicleList}>
-                      {matchingVehicles.map(vehicle => (
+                      {matchingVehicles.map((vehicle) => (
                         <button
                           key={vehicle.id}
                           className={styles.applyToVehicleButton}
@@ -1726,7 +1809,8 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
                         >
                           <div className={styles.applyVehicleInfo}>
                             <span className={styles.applyVehicleName}>
-                              {vehicle.nickname || `${vehicle.year} ${vehicle.make} ${vehicle.model}`}
+                              {vehicle.nickname ||
+                                `${vehicle.year} ${vehicle.make} ${vehicle.model}`}
                             </span>
                             {vehicle.isModified && (
                               <span className={styles.applyVehicleModified}>
@@ -1735,7 +1819,11 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
                             )}
                           </div>
                           <span className={styles.applyVehicleAction}>
-                            {isApplyingToVehicle ? 'Applying...' : (vehicle.isModified ? 'Update Mods' : 'Apply Mods')}
+                            {isApplyingToVehicle
+                              ? 'Applying...'
+                              : vehicle.isModified
+                                ? 'Update Mods'
+                                : 'Apply Mods'}
                           </span>
                         </button>
                       ))}
@@ -1744,20 +1832,17 @@ export default function PerformanceHub({ car, initialBuildId = null, onChangeCar
                 </div>
               )}
             </div>
-            
+
             <div className={styles.saveModalFooter}>
-              <button 
-                className={styles.saveModalCancel}
-                onClick={() => setShowSaveModal(false)}
-              >
+              <button className={styles.saveModalCancel} onClick={() => setShowSaveModal(false)}>
                 Cancel
               </button>
-              <button 
+              <button
                 className={styles.saveModalSave}
                 onClick={handleSaveBuild}
                 disabled={isSaving || !canSave}
               >
-                {isSaving ? 'Saving...' : (currentBuildId ? 'Update Build' : 'Save to Garage')}
+                {isSaving ? 'Saving...' : currentBuildId ? 'Update Build' : 'Save to Garage'}
               </button>
             </div>
           </div>

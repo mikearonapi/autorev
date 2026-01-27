@@ -19,7 +19,6 @@ import { createPortal } from 'react-dom';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-
 import ALAttachmentMenu, { ALAttachmentsBar } from '@/components/ALAttachmentMenu';
 import ALPreferencesPanel, { useALPreferences } from '@/components/ALPreferencesPanel';
 import ALSourcesList from '@/components/ALSourcesList';
@@ -230,7 +229,6 @@ const getSourceTypeFromTool = (toolName) => {
     get_car_ai_context: 'database',
     get_car_details: 'database',
     search_community_insights: 'forum',
-    search_forums: 'forum',
     search_knowledge: 'reference',
     get_track_lap_times: 'database',
     get_dyno_runs: 'database',
@@ -239,7 +237,11 @@ const getSourceTypeFromTool = (toolName) => {
     get_maintenance_schedule: 'database',
     search_events: 'database',
     search_web: 'web',
+    read_url: 'web',
     compare_cars: 'database',
+    get_user_context: 'database',
+    get_price_history: 'database',
+    calculate_mod_impact: 'database',
   };
   return typeMap[toolName] || 'database';
 };
@@ -252,7 +254,6 @@ const getSourceLabelFromTool = (toolName) => {
     get_car_ai_context: 'AutoRev Database',
     get_car_details: 'Car Specifications',
     search_community_insights: 'Forum Insights',
-    search_forums: 'Forum Search',
     search_knowledge: 'Knowledge Base',
     get_track_lap_times: 'Lap Times Database',
     get_dyno_runs: 'Dyno Database',
@@ -261,10 +262,14 @@ const getSourceLabelFromTool = (toolName) => {
     get_maintenance_schedule: 'Maintenance Database',
     search_events: 'Events Database',
     search_web: 'Web Search',
+    read_url: 'URL Content',
     compare_cars: 'Car Comparison',
     analyze_vehicle_health: 'Vehicle Health Analysis',
     get_upgrade_info: 'Upgrade Information',
     recommend_build: 'Build Recommendations',
+    get_user_context: 'User Context',
+    get_price_history: 'Price History',
+    calculate_mod_impact: 'Performance Calculations',
   };
   return labelMap[toolName] || 'AutoRev';
 };
@@ -340,7 +345,7 @@ export default function ALPageClient() {
   // Preferences state
   const [showPreferences, setShowPreferences] = useState(false);
   const { preferences: _alPreferences, updatePreferences } = useALPreferences();
-  
+
   // Portal mounting - required for SSR compatibility
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
@@ -852,9 +857,9 @@ export default function ALPageClient() {
       const decoder = new TextDecoder();
       let fullContent = '';
       let newConversationId = currentConversationId;
-      // NOTE: Tool result tracking for future enhanced source display
-      const _collectedToolResults = []; // Track tool results for sources
-      const _toolsUsed = []; // Track which tools were used
+      // Tool result tracking for enhanced source display
+      const collectedToolResults = []; // Track tool results for sources
+      const toolsUsed = []; // Track which tools were used
 
       while (true) {
         const { done, value } = await reader.read();
@@ -977,6 +982,16 @@ export default function ALPageClient() {
 
                 // Show points notification for asking AL
                 showPointsEarned(10, 'Asked AL');
+              } else if (currentEventType === 'error') {
+                // Handle server-side streaming errors
+                console.error('[AL] Streaming error from server:', data);
+                setError({
+                  message: data.message || 'Something went wrong. Please try again.',
+                  type: 'server_error',
+                  canRetry: true,
+                });
+                // Don't add a partial response to messages
+                setStreamingContent('');
               }
 
               // Legacy fallback for non-typed events
@@ -1373,17 +1388,19 @@ export default function ALPageClient() {
       </div>
 
       {/* Preferences Panel - Rendered via Portal */}
-      {showPreferences && isMounted && createPortal(
-        <div className={styles.preferencesOverlay} data-overlay-modal>
-          <ALPreferencesPanel
-            isOpen={showPreferences}
-            onClose={() => setShowPreferences(false)}
-            userTier={user?.tier || 'free'}
-            onPreferencesChange={updatePreferences}
-          />
-        </div>,
-        document.body
-      )}
+      {showPreferences &&
+        isMounted &&
+        createPortal(
+          <div className={styles.preferencesOverlay} data-overlay-modal>
+            <ALPreferencesPanel
+              isOpen={showPreferences}
+              onClose={() => setShowPreferences(false)}
+              userTier={user?.tier || 'free'}
+              onPreferencesChange={updatePreferences}
+            />
+          </div>,
+          document.body
+        )}
 
       {/* Messages Area */}
       <div className={styles.messagesArea}>

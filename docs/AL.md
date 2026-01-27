@@ -6,19 +6,19 @@
 
 ## Overview
 
-AL (AutoRev AI) is an AI-powered car research assistant built on Claude. It has access to 23 tools that let it search the AutoRev database, knowledge base, parts catalog, community insights, car events, web search, analyze user vehicle health, access user build projects and performance goals, and process uploaded images.
+AL (AutoRev AI) is an AI-powered car research assistant built on Claude. It has access to 25 tools that let it search the AutoRev database, knowledge base, parts catalog, community insights, car events, web search, read specific URLs, calculate mod impacts, analyze price history, analyze user vehicle health, access user build projects and performance goals, and process uploaded images.
 
-| Attribute | Value |
-|-----------|-------|
-| **Model** | Claude Sonnet 4 (`claude-sonnet-4-20250514`) |
-| **Tools** | 23 |
-| **Knowledge Base** | 7,447 document chunks with vector embeddings |
-| **Encyclopedia** | 136 topics with semantic search (vectorized) |
+| Attribute              | Value                                                 |
+| ---------------------- | ----------------------------------------------------- |
+| **Model**              | Claude Sonnet 4 (`claude-sonnet-4-20250514`)          |
+| **Tools**              | 25                                                    |
+| **Knowledge Base**     | 7,447 document chunks with vector embeddings          |
+| **Encyclopedia**       | 136 topics with semantic search (vectorized)          |
 | **Community Insights** | Forum-extracted insights (Rennlist, Bimmerpost, etc.) |
-| **Events** | Cars & Coffee, track days, car shows, and more |
-| **Pricing** | Token-based (mirrors Anthropic costs) |
+| **Events**             | Cars & Coffee, track days, car shows, and more        |
+| **Pricing**            | Token-based (mirrors Anthropic costs)                 |
 
-> **Last Verified:** January 21, 2026 — Verified against `lib/alConfig.js` and `lib/alTools.js`
+> **Last Verified:** January 26, 2026 — Verified against `lib/alConfig.js` and `lib/alTools.js`
 
 ---
 
@@ -37,60 +37,70 @@ AL_IDENTITY = {
     'Uses real data and specs',
     'Understands both technical and emotional aspects',
   ],
-}
+};
 ```
 
 ---
 
 ## Chat Limits by Tier
 
-| Tier | Monthly AL Budget | Est. Chats |
-|------|-------------------|------------|
-| **Free** | $0.25 | ~15 |
-| **Enthusiast** | $2.00 | ~130 |
-| **Pro** | $5.00 | ~350 |
+| Tier           | Monthly AL Budget | Est. Chats |
+| -------------- | ----------------- | ---------- |
+| **Free**       | $0.25             | ~15        |
+| **Enthusiast** | $2.00             | ~130       |
+| **Pro**        | $5.00             | ~350       |
 
 Cost is based on actual token usage (Claude Sonnet 4 pricing):
+
 - Input: $3.00/1M tokens
 - Output: $15.00/1M tokens
 - Typical conversation: ~$0.01-0.02
 
 ---
 
-## Tools (23 Total)
+## Tools (25 Total)
 
 ### Tool Access by Tier
 
-| Tool | Free | Collector | Tuner |
-|------|------|-----------|-------|
-| `search_cars` | ✓ | ✓ | ✓ |
-| `get_car_details` | ✓ | ✓ | ✓ |
-| `get_car_ai_context` | ✓ | ✓ | ✓ |
-| `search_events` | ✓ | ✓ | ✓ |
-| `get_expert_reviews` | — | ✓ | ✓ |
-| `get_known_issues` | — | ✓ | ✓ |
-| `compare_cars` | — | ✓ | ✓ |
-| `search_encyclopedia` | — | ✓ | ✓ |
-| `get_upgrade_info` | — | ✓ | ✓ |
-| `search_parts` | — | ✓ | ✓ |
-| `get_maintenance_schedule` | — | ✓ | ✓ |
-| `search_knowledge` | — | ✓ | ✓ |
-| `search_web` | — | ✓ | ✓ |
-| `get_track_lap_times` | — | ✓ | ✓ |
-| `get_dyno_runs` | — | ✓ | ✓ |
-| `search_community_insights` | — | ✓ | ✓ |
-| `analyze_vehicle_health` | — | ✓ | ✓ |
-| `recommend_build` | — | — | ✓ |
-| `analyze_uploaded_content` | — | ✓ | ✓ |
-| `get_user_builds` | — | ✓ | ✓ |
-| `get_user_goals` | — | ✓ | ✓ |
-| `get_user_vehicle_details` | — | ✓ | ✓ |
+| Tool                        | Free | Collector | Tuner |
+| --------------------------- | ---- | --------- | ----- |
+| `search_cars`               | ✓    | ✓         | ✓     |
+| `get_car_ai_context`        | ✓    | ✓         | ✓     |
+| `search_events`             | ✓    | ✓         | ✓     |
+| `get_expert_reviews`        | —    | ✓         | ✓     |
+| `get_known_issues`          | —    | ✓         | ✓     |
+| `compare_cars`              | —    | ✓         | ✓     |
+| `search_encyclopedia`       | —    | ✓         | ✓     |
+| `get_upgrade_info`          | —    | ✓         | ✓     |
+| `calculate_mod_impact`      | —    | ✓         | ✓     |
+| `search_parts`              | —    | ✓         | ✓     |
+| `get_maintenance_schedule`  | —    | ✓         | ✓     |
+| `search_knowledge`          | —    | ✓         | ✓     |
+| `search_web`                | —    | ✓         | ✓     |
+| `read_url`                  | —    | ✓         | ✓     |
+| `get_track_lap_times`       | —    | ✓         | ✓     |
+| `get_dyno_runs`             | —    | ✓         | ✓     |
+| `get_price_history`         | —    | ✓         | ✓     |
+| `search_community_insights` | —    | ✓         | ✓     |
+| `analyze_vehicle_health`    | —    | ✓         | ✓     |
+| `recommend_build`           | —    | —         | ✓     |
+| `analyze_uploaded_content`  | —    | ✓         | ✓     |
+| `get_user_builds`           | —    | ✓         | ✓     |
+| `get_user_goals`            | —    | ✓         | ✓     |
+| `get_user_vehicle_details`  | —    | ✓         | ✓     |
+| `get_user_context`          | —    | ✓         | ✓     |
+
+> **Deprecations (2026-01-26):**
+>
+> - `get_car_details` — Use `get_car_ai_context` instead (same data, optimized)
+> - `find_best_parts` — Use `search_parts` with `upgrade_type` parameter instead
 
 ---
 
 ## Tool Reference
 
 ### 1. `search_cars`
+
 Search the car database by criteria.
 
 **Parameters:**
@@ -113,20 +123,14 @@ Search the car database by criteria.
 
 ---
 
-### 2. `get_car_details`
-Get comprehensive details about a specific car.
+### 2. `get_car_details` ⚠️ DEPRECATED
 
-**Parameters:**
-| Param | Type | Required | Description |
-|-------|------|----------|-------------|
-| `car_slug` | string | Yes | Car identifier (e.g., "718-cayman-gt4") |
-| `include` | array | No | What to include: specs, scores, maintenance, known_issues, ownership_costs, buyer_guide |
-
-**Returns:** Full car object with requested sections
+> **Deprecated 2026-01-26** — Use `get_car_ai_context` instead. This tool internally calls `get_car_ai_context` anyway.
 
 ---
 
 ### 3. `get_car_ai_context`
+
 **PREFERRED** - Get AI-optimized context blob (single DB call).
 
 **Parameters:**
@@ -142,6 +146,7 @@ Get comprehensive details about a specific car.
 ---
 
 ### 4. `search_events`
+
 Search for car events like track days, Cars & Coffee, car shows, autocross, and meetups.
 
 **Parameters:**
@@ -159,6 +164,7 @@ Search for car events like track days, Cars & Coffee, car shows, autocross, and 
 **Returns:** Events with name, type, date, location, cost, URL, and car affinities
 
 **Example Queries:**
+
 ```
 "Find track days near 22033" → Track events within radius of ZIP
 "Cars and coffee events in Austin, TX" → Location-based search
@@ -171,6 +177,7 @@ Search for car events like track days, Cars & Coffee, car shows, autocross, and 
 ---
 
 ### 5. `get_expert_reviews`
+
 Get YouTube reviews and AI-processed summaries.
 
 **Parameters:**
@@ -185,6 +192,7 @@ Get YouTube reviews and AI-processed summaries.
 ---
 
 ### 6. `get_known_issues`
+
 Get common problems and reliability concerns.
 
 **Parameters:**
@@ -198,6 +206,7 @@ Get common problems and reliability concerns.
 ---
 
 ### 7. `compare_cars`
+
 Side-by-side comparison of multiple cars.
 
 **Parameters:**
@@ -211,6 +220,7 @@ Side-by-side comparison of multiple cars.
 ---
 
 ### 8. `search_encyclopedia`
+
 Search the AutoRev encyclopedia using **SEMANTIC SEARCH** over 136 comprehensive automotive topics. This is the primary tool for educational questions about how cars work.
 
 **NOW WITH SEMANTIC SEARCH:** Encyclopedia topics are vectorized for natural language queries. Ask questions like "how does a turbo work?" and get relevant results based on meaning, not just keywords.
@@ -233,6 +243,7 @@ Search the AutoRev encyclopedia using **SEMANTIC SEARCH** over 136 comprehensive
 | `components` | Legacy: includes old components + new topics | Keyword |
 
 **Example Queries (Semantic Search):**
+
 ```
 "How does a turbocharger work?" → turbo-fundamentals, boost-control topics
 "What is bore and stroke?" → bore, stroke, displacement topics
@@ -242,6 +253,7 @@ Search the AutoRev encyclopedia using **SEMANTIC SEARCH** over 136 comprehensive
 ```
 
 **Returns:**
+
 - `searchMethod`: "semantic" or "keyword"
 - `similarity`: Match score (for semantic results)
 - `url`: Direct link to encyclopedia topic
@@ -253,6 +265,7 @@ Search the AutoRev encyclopedia using **SEMANTIC SEARCH** over 136 comprehensive
 ---
 
 ### 9. `get_upgrade_info`
+
 Detailed information about a specific modification.
 
 **Parameters:**
@@ -265,8 +278,37 @@ Detailed information about a specific modification.
 
 ---
 
-### 10. `search_parts`
-Search the parts catalog with optional car fitment.
+### 10. `calculate_mod_impact` ⭐ NEW
+
+Calculate performance impact of modifications. Lighter than `recommend_build` — just numbers, no full build plans.
+
+**Parameters:**
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `car_slug` | string | Yes | Car identifier |
+| `mods` | array | Yes | Array of mod keys: "cold-air-intake", "ecu-tune", "downpipe", etc. |
+
+**Returns:**
+
+- Stock HP, projected HP, total gain
+- 0-60 improvement (if calculable)
+- Breakdown by mod with individual gains
+- Confidence level and any conflicts
+
+**Example:**
+
+```
+"How much HP will intake + tune add to my 911?"
+→ calculate_mod_impact({ car_slug: "911-carrera-992", mods: ["cold-air-intake", "ecu-tune"] })
+```
+
+**Best Practice:** Use this for quick "what-if" calculations. For full build plans with parts recommendations, use `recommend_build` instead.
+
+---
+
+### 11. `search_parts`
+
+Search the parts catalog OR get upgrade recommendations.
 
 **Parameters:**
 | Param | Type | Required | Description |
@@ -281,6 +323,7 @@ Search the parts catalog with optional car fitment.
 ---
 
 ### 11. `get_maintenance_schedule`
+
 Get maintenance specs and schedules.
 
 **Parameters:**
@@ -295,6 +338,7 @@ Get maintenance specs and schedules.
 ---
 
 ### 12. `recommend_build`
+
 Get upgrade recommendations for a specific goal.
 
 **Parameters:**
@@ -310,6 +354,7 @@ Get upgrade recommendations for a specific goal.
 ---
 
 ### 13. `search_knowledge`
+
 Search the vector knowledge base with citations.
 
 **Parameters:**
@@ -327,6 +372,7 @@ Search the vector knowledge base with citations.
 ---
 
 ### 14. `search_web` ⭐ NEW - Real-Time Web Search
+
 Search the web using Exa AI for real-time automotive information.
 
 **Parameters:**
@@ -339,6 +385,7 @@ Search the web using Exa AI for real-time automotive information.
 **Returns:** Web search results with title, URL, excerpt, and published date
 
 **When to Use:**
+
 - Recent news about a car model
 - Current market conditions or pricing trends
 - New product announcements
@@ -348,12 +395,39 @@ Search the web using Exa AI for real-time automotive information.
 
 ---
 
-### 15. `search_forums` (Deprecated)
-**Deprecated** — Use `search_community_insights` instead. This tool is a legacy stub that redirects to community insights search.
+### 15. `read_url` ⭐ NEW - Read Any URL
+
+Read and extract content from a specific URL that the user shares.
+
+**Parameters:**
+| Param | Type | Required | Description |
+|-------|------|----------|-------------|
+| `url` | string | Yes | The full URL to read (must be http or https) |
+| `focus` | string | No | Specific topic to focus on when extracting |
+| `include_summary` | boolean | No | Include AI summary (default: true) |
+
+**Returns:** Title, author, full text content, optional summary, word count
+
+**When to Use:**
+
+- User shares an article link and asks for summary
+- User shares a forum thread and asks what it says
+- User wants you to read a specific webpage
+
+**Example Queries:**
+
+```
+"Can you read this article?" + URL
+"What does this forum thread say about IMS bearings?" + URL
+"Summarize this page for me" + URL
+```
+
+**Best Practice:** Always cite the source URL when referencing content. If the user asked about a specific topic, focus your response on that aspect.
 
 ---
 
 ### 16. `get_track_lap_times`
+
 Get citeable track lap times.
 
 **Parameters:**
@@ -367,6 +441,7 @@ Get citeable track lap times.
 ---
 
 ### 17. `get_dyno_runs`
+
 Get citeable dyno data.
 
 **Parameters:**
@@ -381,6 +456,7 @@ Get citeable dyno data.
 ---
 
 ### 18. `search_community_insights` ⭐ PRIMARY FORUM TOOL
+
 Search community-sourced insights extracted from enthusiast forums. **This is the primary tool for forum/community data** — returns 1,252 curated insights from major car forums.
 
 **Parameters:**
@@ -409,14 +485,16 @@ Search community-sourced insights extracted from enthusiast forums. **This is th
 **Data Sources:** Rennlist (Porsche), Bimmerpost (BMW), Miata.net (Mazda), FT86Club (Toyota/Subaru), CorvetteForum (Chevy), VWVortex (VW/Audi)
 
 **Fallback Behavior:** When no indexed insights are found, returns `fallback` object with:
+
 - `suggestedForums`: Brand-specific forum links (Rennlist, Bimmerpost, etc.)
 - `searchTip`: Pre-built search query for manual forum research
 
-**Best Practice:** Use this as the **primary tool** for any forum/community questions. It replaces the old `search_forums` stub. When no results are found, guide users to the suggested forums. Complements `get_known_issues` and `search_knowledge` with forum-sourced data.
+**Best Practice:** Use this as the **primary tool** for any forum/community questions. When no results are found, guide users to the suggested forums. Complements `get_known_issues` and `search_knowledge` with forum-sourced data.
 
 ---
 
 ### 19. `analyze_vehicle_health`
+
 Analyze a user's specific vehicle and provide personalized maintenance recommendations.
 
 **Parameters:**
@@ -427,6 +505,7 @@ Analyze a user's specific vehicle and provide personalized maintenance recommend
 | `user_id` | string | Yes* | User ID (*auto-injected by API route) |
 
 **Returns:**
+
 - `health_score`: Overall health score (0-100)
 - `recommendations`: Prioritized list (URGENT, DUE_SOON, UPCOMING)
 - `model_issues_to_watch`: Relevant known issues for the car's mileage/year
@@ -446,6 +525,7 @@ Analyze a user's specific vehicle and provide personalized maintenance recommend
 ---
 
 ### 20. `analyze_uploaded_content` ⭐ NEW - Image Analysis
+
 Analyze uploaded images using Claude Vision for automotive diagnostics and identification.
 
 **Parameters:**
@@ -472,6 +552,7 @@ Analyze uploaded images using Claude Vision for automotive diagnostics and ident
 ---
 
 ### 21. `get_user_builds` - User Build Projects
+
 Access user's build projects from the Tuning Shop with planned upgrades, costs, and performance projections.
 
 **Parameters:**
@@ -481,6 +562,7 @@ Access user's build projects from the Tuning Shop with planned upgrades, costs, 
 | `include_parts` | boolean | No | Include detailed parts list for each build (default: false) |
 
 **Returns:**
+
 - `builds`: Array of build projects with:
   - `name`, `car`, `car_slug`
   - `stock_hp`, `final_hp`, `total_hp_gain`
@@ -496,6 +578,7 @@ Access user's build projects from the Tuning Shop with planned upgrades, costs, 
 ---
 
 ### 22. `get_user_goals` - Performance Goals
+
 Access user's active performance goals (target lap times, 0-60 times, etc.).
 
 **Parameters:**
@@ -505,6 +588,7 @@ Access user's active performance goals (target lap times, 0-60 times, etc.).
 | `status` | enum | No | `active`, `completed`, or `all` (default: `active`) |
 
 **Returns:**
+
 - `goals`: Array of performance goals with:
   - `goal_type`: Type of goal (lap_time, zero_to_sixty, quarter_mile, etc.)
   - `title`, `description`
@@ -519,6 +603,7 @@ Access user's active performance goals (target lap times, 0-60 times, etc.).
 ---
 
 ### 23. `get_user_vehicle_details` - Detailed Vehicle Info
+
 Get comprehensive details about a user's specific vehicle including installed mods, custom specs, and service history.
 
 **Parameters:**
@@ -528,6 +613,7 @@ Get comprehensive details about a user's specific vehicle including installed mo
 | `include_service_history` | boolean | No | Include recent service logs (default: true) |
 
 **Returns:**
+
 - `vehicle`: Detailed vehicle object with:
   - Basic info: `year`, `make`, `model`, `trim`, `vin`
   - Ownership: `current_mileage`, `purchase_date`, `purchase_price`
@@ -546,20 +632,26 @@ Get comprehensive details about a user's specific vehicle including installed mo
 AL automatically receives enriched context about the user:
 
 ### User Location
+
 If the user has set their location in their profile, AL receives:
+
 - City and state
 - ZIP code
 - Used as default for event searches ("find track days near me")
 
 ### Installed Modifications
+
 For users with garage vehicles, AL sees:
+
 - Number of installed modifications per vehicle
 - Total HP gain from mods
 - Detailed mod list for primary vehicle
 - This enables personalized upgrade recommendations
 
 ### Garage Context
+
 AL always knows:
+
 - All owned vehicles (up to 3 shown, with mod counts)
 - User's favorites (if no owned vehicles)
 - Currently viewed car (page context)
@@ -574,6 +666,7 @@ AL always knows:
 Do NOT define system prompts elsewhere. All AL behavior configuration belongs in this function.
 
 **Key Behavioral Instructions:**
+
 1. **Database-First**: Always use tools before answering car-specific questions
 2. **Source Confidence**: Match language confidence to data quality (4 tiers)
 3. **Specificity**: Use actual numbers from the database, not approximations
@@ -584,10 +677,14 @@ Do NOT define system prompts elsewhere. All AL behavior configuration belongs in
 8. **Attribution**: Always cite sources (AutoRev data, forum name, expert reviewer)
 
 **Source Confidence Tiers:**
+
 - **Tier 1 (AutoRev Verified)**: BE CONFIDENT - direct language, no hedging
 - **Tier 2 (Community Sourced)**: ATTRIBUTE CLEARLY - cite forum/source
-- **Tier 3 (General Knowledge)**: HEDGE + recommend verification
-- **Tier 4 (Insufficient Data)**: ASK, don't guess
+- **Tier 3 (General Knowledge)**: Confident but appropriately scoped
+- **Tier 4 (Beyond Database)**: Answer with expertise - NEVER mention database limitations
+
+**Critical Presentation Rule:**
+NEVER tell users about data source limitations. Present ALL answers—whether from database, web search, or expertise—as confident recommendations. Forbidden phrases: "I don't have that in our database", "AutoRev doesn't have data on...", "Since our database doesn't have..."
 
 ---
 
@@ -595,21 +692,21 @@ Do NOT define system prompts elsewhere. All AL behavior configuration belongs in
 
 AL automatically detects which automotive domain a question relates to and prioritizes relevant tools:
 
-| Domain | Keywords | Priority Tools |
-|--------|----------|----------------|
-| performance | fast, powerful, hp | get_dyno_runs, get_car_ai_context |
-| reliability | reliable, issue, problem | get_known_issues, search_community_insights |
-| modifications | mod, upgrade, tune | search_parts, get_upgrade_info, search_community_insights |
-| buying | buy, price, worth | get_car_ai_context, search_community_insights |
-| maintenance | oil, service, interval | get_maintenance_schedule, analyze_vehicle_health |
-| track | track, lap, HPDE | get_track_lap_times |
-| comparison | vs, compare, better | compare_cars |
-| ownership | long-term, high mileage, costs | search_community_insights |
-| events | meetup, cars and coffee, track day, car show | search_events |
-| **education** | how, what, why, explain, work, learn | **search_encyclopedia**, get_upgrade_info, search_knowledge |
-| vehicle health | my car, health, due, overdue | **analyze_vehicle_health**, get_maintenance_schedule |
-| **user builds** | my build, my project, what's next, upgrade plan | **get_user_builds**, get_user_vehicle_details |
-| **user goals** | my goal, target time, get faster, improve | **get_user_goals**, get_user_builds |
+| Domain          | Keywords                                        | Priority Tools                                              |
+| --------------- | ----------------------------------------------- | ----------------------------------------------------------- |
+| performance     | fast, powerful, hp                              | get_dyno_runs, get_car_ai_context                           |
+| reliability     | reliable, issue, problem                        | get_known_issues, search_community_insights                 |
+| modifications   | mod, upgrade, tune                              | search_parts, get_upgrade_info, search_community_insights   |
+| buying          | buy, price, worth                               | get_car_ai_context, search_community_insights               |
+| maintenance     | oil, service, interval                          | get_maintenance_schedule, analyze_vehicle_health            |
+| track           | track, lap, HPDE                                | get_track_lap_times                                         |
+| comparison      | vs, compare, better                             | compare_cars                                                |
+| ownership       | long-term, high mileage, costs                  | search_community_insights                                   |
+| events          | meetup, cars and coffee, track day, car show    | search_events                                               |
+| **education**   | how, what, why, explain, work, learn            | **search_encyclopedia**, get_upgrade_info, search_knowledge |
+| vehicle health  | my car, health, due, overdue                    | **analyze_vehicle_health**, get_maintenance_schedule        |
+| **user builds** | my build, my project, what's next, upgrade plan | **get_user_builds**, get_user_vehicle_details               |
+| **user goals**  | my goal, target time, get faster, improve       | **get_user_goals**, get_user_builds                         |
 
 ---
 
@@ -617,13 +714,13 @@ AL automatically detects which automotive domain a question relates to and prior
 
 Expensive tools are cached to reduce costs:
 
-| Tool | TTL |
-|------|-----|
-| `get_car_ai_context` | 2 minutes |
-| `search_knowledge` | 5 minutes |
-| `search_community_insights` | 5 minutes |
-| `get_track_lap_times` | 10 minutes |
-| `get_dyno_runs` | 10 minutes |
+| Tool                        | TTL        |
+| --------------------------- | ---------- |
+| `get_car_ai_context`        | 2 minutes  |
+| `search_knowledge`          | 5 minutes  |
+| `search_community_insights` | 5 minutes  |
+| `get_track_lap_times`       | 10 minutes |
+| `get_dyno_runs`             | 10 minutes |
 
 ---
 
@@ -632,6 +729,7 @@ Expensive tools are cached to reduce costs:
 **Route:** `POST /api/ai-mechanic`
 
 **Request:**
+
 ```json
 {
   "message": "What's a good track car under $50k?",
@@ -644,6 +742,7 @@ Expensive tools are cached to reduce costs:
 ```
 
 **Response:**
+
 ```json
 {
   "response": "Based on our database...",
@@ -662,82 +761,80 @@ Expensive tools are cached to reduce costs:
 
 ### AL System Tables
 
-| Table | Purpose |
-|-------|---------|
-| `al_conversations` | Chat session metadata |
-| `al_messages` | Individual messages |
-| `al_user_credits` | User balance in cents |
-| `al_usage_logs` | Detailed usage tracking |
+| Table                 | Purpose                   |
+| --------------------- | ------------------------- |
+| `al_conversations`    | Chat session metadata     |
+| `al_messages`         | Individual messages       |
+| `al_user_credits`     | User balance in cents     |
+| `al_usage_logs`       | Detailed usage tracking   |
 | `al_credit_purchases` | Purchase history (future) |
 
 ### Tool → Database Table Mapping
 
 > **Last Updated:** January 15, 2026
 
-| Tool | Primary RPC/Tables | Source of Truth |
-|------|-------------------|-----------------|
-| `get_car_ai_context` | `get_car_ai_context_v2` RPC → `cars`, `car_fuel_economy`, `car_safety_data`, `car_market_pricing`, `car_recalls`, `car_tuning_profiles`, `youtube_video_car_links` | ✅ Optimized in v2 |
-| `search_cars` | `search_cars_fts` RPC → `cars` | — |
-| `get_car_details` | `cars` + various enrichment tables | — |
-| `get_known_issues` | `car_issues` | ✅ Source of truth (~~`vehicle_known_issues`~~ deprecated) |
-| `get_expert_reviews` | `youtube_video_car_links` + `youtube_videos` | — |
-| `get_maintenance_schedule` | `get_car_maintenance_summary` RPC → `vehicle_maintenance_specs`, `vehicle_service_intervals` | — |
-| `search_parts` | `parts`, `part_fitments`, `part_pricing_snapshots` | — |
-| `recommend_build` | `get_car_tuning_context` RPC → `car_tuning_profiles`, `part_fitments`, `parts`, `car_dyno_runs`, `upgrade_packages` | ✅ New optimized RPC |
-| `search_knowledge` | `search_document_chunks` RPC → `document_chunks` | — |
-| `get_track_lap_times` | `get_car_track_lap_times` RPC → `car_track_lap_times`, `tracks`, `track_layouts` | — |
-| `get_dyno_runs` | `get_car_dyno_runs` RPC → `car_dyno_runs` | — |
-| `search_community_insights` | `search_community_insights` RPC → `community_insights` | — |
-| `search_events` | `events`, `event_types`, `event_car_affinities` | — |
-| `analyze_vehicle_health` | `analyze_vehicle_health_data` RPC → `user_vehicles`, `vehicle_maintenance_specs`, `car_issues`, `user_service_logs` | — |
-| `compare_cars` | `cars` (local in-memory) | — |
-| `search_encyclopedia` | `search_document_chunks` RPC (filtered to encyclopedia) | — |
-| `get_upgrade_info` | Static files: `data/upgradeEducation.js` | — |
-| `analyze_uploaded_content` | `al_attachments` + Claude Vision API | — |
-| `get_user_builds` | `user_projects`, `user_project_parts`, `parts` | User build projects |
-| `get_user_goals` | `user_performance_goals` | Performance targets |
-| `get_user_vehicle_details` | `user_vehicles`, `user_service_logs` | Detailed vehicle info |
+| Tool                        | Primary RPC/Tables                                                                                                                                                 | Source of Truth                                            |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| `get_car_ai_context`        | `get_car_ai_context_v2` RPC → `cars`, `car_fuel_economy`, `car_safety_data`, `car_market_pricing`, `car_recalls`, `car_tuning_profiles`, `youtube_video_car_links` | ✅ Optimized in v2                                         |
+| `search_cars`               | `search_cars_fts` RPC → `cars`                                                                                                                                     | —                                                          |
+| `get_car_details`           | `cars` + various enrichment tables                                                                                                                                 | —                                                          |
+| `get_known_issues`          | `car_issues`                                                                                                                                                       | ✅ Source of truth (~~`vehicle_known_issues`~~ deprecated) |
+| `get_expert_reviews`        | `youtube_video_car_links` + `youtube_videos`                                                                                                                       | —                                                          |
+| `get_maintenance_schedule`  | `get_car_maintenance_summary` RPC → `vehicle_maintenance_specs`, `vehicle_service_intervals`                                                                       | —                                                          |
+| `search_parts`              | `parts`, `part_fitments`, `part_pricing_snapshots`                                                                                                                 | —                                                          |
+| `recommend_build`           | `get_car_tuning_context` RPC → `car_tuning_profiles`, `part_fitments`, `parts`, `car_dyno_runs`, `upgrade_packages`                                                | ✅ New optimized RPC                                       |
+| `search_knowledge`          | `search_document_chunks` RPC → `document_chunks`                                                                                                                   | —                                                          |
+| `get_track_lap_times`       | `get_car_track_lap_times` RPC → `car_track_lap_times`, `tracks`, `track_layouts`                                                                                   | —                                                          |
+| `get_dyno_runs`             | `get_car_dyno_runs` RPC → `car_dyno_runs`                                                                                                                          | —                                                          |
+| `search_community_insights` | `search_community_insights` RPC → `community_insights`                                                                                                             | —                                                          |
+| `search_events`             | `events`, `event_types`, `event_car_affinities`                                                                                                                    | —                                                          |
+| `analyze_vehicle_health`    | `analyze_vehicle_health_data` RPC → `user_vehicles`, `vehicle_maintenance_specs`, `car_issues`, `user_service_logs`                                                | —                                                          |
+| `compare_cars`              | `cars` (local in-memory)                                                                                                                                           | —                                                          |
+| `search_encyclopedia`       | `search_document_chunks` RPC (filtered to encyclopedia)                                                                                                            | —                                                          |
+| `get_upgrade_info`          | Static files: `data/upgradeEducation.js`                                                                                                                           | —                                                          |
+| `analyze_uploaded_content`  | `al_attachments` + Claude Vision API                                                                                                                               | —                                                          |
+| `get_user_builds`           | `user_projects`, `user_project_parts`, `parts`                                                                                                                     | User build projects                                        |
+| `get_user_goals`            | `user_performance_goals`                                                                                                                                           | Performance targets                                        |
+| `get_user_vehicle_details`  | `user_vehicles`, `user_service_logs`                                                                                                                               | Detailed vehicle info                                      |
 
 ### RPC Functions Used by AL
 
-| RPC Function | Primary Table(s) | Notes |
-|--------------|-----------------|-------|
-| `get_car_ai_context_v2` | 8+ tables | **Optimized** - resolves slug→id once, uses car_id for all queries |
-| `get_car_tuning_context` | 5 tables | **NEW** - tuning-focused data for recommend_build |
-| `get_car_maintenance_summary` | 2 tables | Maintenance specs aggregation |
-| `search_document_chunks` | `document_chunks` | Vector similarity search |
-| `search_community_insights` | `community_insights` | Semantic forum search |
-| `get_car_dyno_runs` | `car_dyno_runs` | Dyno data with optional curve |
-| `get_car_track_lap_times` | `car_track_lap_times`, `tracks` | Track times with venue info |
-| `analyze_vehicle_health_data` | Multiple user/car tables | Vehicle health analysis |
+| RPC Function                  | Primary Table(s)                | Notes                                                              |
+| ----------------------------- | ------------------------------- | ------------------------------------------------------------------ |
+| `get_car_ai_context_v2`       | 8+ tables                       | **Optimized** - resolves slug→id once, uses car_id for all queries |
+| `get_car_tuning_context`      | 5 tables                        | **NEW** - tuning-focused data for recommend_build                  |
+| `get_car_maintenance_summary` | 2 tables                        | Maintenance specs aggregation                                      |
+| `search_document_chunks`      | `document_chunks`               | Vector similarity search                                           |
+| `search_community_insights`   | `community_insights`            | Semantic forum search                                              |
+| `get_car_dyno_runs`           | `car_dyno_runs`                 | Dyno data with optional curve                                      |
+| `get_car_track_lap_times`     | `car_track_lap_times`, `tracks` | Track times with venue info                                        |
+| `analyze_vehicle_health_data` | Multiple user/car tables        | Vehicle health analysis                                            |
 
 ### Cache TTLs by Tool
 
-| Tool | Cache TTL | Reason |
-|------|----------|--------|
-| `get_car_ai_context` | 2 min | Car data changes rarely |
-| `search_knowledge` | 5 min | Document chunks are stable |
-| `get_track_lap_times` | 10 min | Track data is semi-static |
-| `get_dyno_runs` | 10 min | Dyno data is semi-static |
-| `search_community_insights` | 5 min | Forum insights update periodically |
+| Tool                        | Cache TTL | Reason                             |
+| --------------------------- | --------- | ---------------------------------- |
+| `get_car_ai_context`        | 2 min     | Car data changes rarely            |
+| `search_knowledge`          | 5 min     | Document chunks are stable         |
+| `get_track_lap_times`       | 10 min    | Track data is semi-static          |
+| `get_dyno_runs`             | 10 min    | Dyno data is semi-static           |
+| `search_community_insights` | 5 min     | Forum insights update periodically |
 
 ---
 
 ## Implementation Files
 
-| File | Purpose |
-|------|---------|
-| `lib/alConfig.js` | Configuration, tools, system prompt |
-| `lib/alTools.js` | Tool implementations |
-| `lib/alUsageService.js` | Credit/balance management |
-| `lib/alConversationService.js` | Conversation CRUD |
-| `lib/alToolCache.js` | Tool response caching |
-| `lib/aiMechanicService.js` | Core AI service |
-| `app/api/ai-mechanic/route.js` | API endpoint |
-| `components/AIMechanicChat.jsx` | Chat UI component |
+| File                            | Purpose                             |
+| ------------------------------- | ----------------------------------- |
+| `lib/alConfig.js`               | Configuration, tools, system prompt |
+| `lib/alTools.js`                | Tool implementations                |
+| `lib/alUsageService.js`         | Credit/balance management           |
+| `lib/alConversationService.js`  | Conversation CRUD                   |
+| `lib/alToolCache.js`            | Tool response caching               |
+| `lib/aiMechanicService.js`      | Core AI service                     |
+| `app/api/ai-mechanic/route.js`  | API endpoint                        |
+| `components/AIMechanicChat.jsx` | Chat UI component                   |
 
 ---
 
-*See [API.md](API.md) for full API documentation.*
-
-
+_See [API.md](API.md) for full API documentation._

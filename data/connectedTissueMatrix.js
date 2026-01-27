@@ -1,20 +1,20 @@
 /**
  * AutoRev - Car Connected Tissue Matrix
- * 
+ *
  * This module defines the fully connected dependency graph between car systems,
  * subsystems, and components. It's used to:
- * 
+ *
  * 1. Validate upgrade selections and flag missing supporting mods
  * 2. Generate intelligent recommendations based on what the user selects
  * 3. Warn about potential safety/reliability issues
  * 4. Help users understand why certain upgrades require others
- * 
+ *
  * ARCHITECTURE:
  * - SYSTEMS: Top-level groupings (powertrain, brakes, suspension, etc.)
  * - NODES: Individual components/attributes that can be modified or stressed
  * - EDGES: Relationships between nodes (requires, stresses, invalidates, etc.)
  * - RULES: Scenario-based dependency checks triggered by upgrade selections
- * 
+ *
  * The matrix is designed to be queried by:
  * - car (some dependencies are car-specific)
  * - upgrade (what does this mod touch?)
@@ -146,7 +146,8 @@ export const nodes = {
     key: 'powertrain.boost_level',
     system: 'powertrain',
     name: 'Boost Level',
-    description: 'How much extra air pressure the turbo or supercharger forces into the engine. More boost = more power, but also more stress on engine components.',
+    description:
+      'How much extra air pressure the turbo or supercharger forces into the engine. More boost = more power, but also more stress on engine components.',
     unit: 'psi',
     applicableEngines: ['Turbo', 'SC'],
   },
@@ -154,56 +155,64 @@ export const nodes = {
     key: 'powertrain.timing_advance',
     system: 'powertrain',
     name: 'Ignition Timing',
-    description: 'When the spark plug fires relative to piston position. Advancing timing can add power but risks engine knock. Tuners optimize this for each setup.',
+    description:
+      'When the spark plug fires relative to piston position. Advancing timing can add power but risks engine knock. Tuners optimize this for each setup.',
     unit: 'degrees',
   },
   'powertrain.air_fuel_ratio': {
     key: 'powertrain.air_fuel_ratio',
     system: 'powertrain',
     name: 'Air/Fuel Ratio',
-    description: 'The mix of air to fuel in combustion. 14.7:1 is "stoich" (ideal for emissions). Richer (lower number) is safer for power; leaner is more efficient but hotter.',
+    description:
+      'The mix of air to fuel in combustion. 14.7:1 is "stoich" (ideal for emissions). Richer (lower number) is safer for power; leaner is more efficient but hotter.',
     unit: 'ratio',
   },
   'powertrain.cylinder_pressure': {
     key: 'powertrain.cylinder_pressure',
     system: 'powertrain',
     name: 'Cylinder Pressure',
-    description: 'The force inside engine cylinders during combustion. Higher boost and compression create more pressure, which requires stronger internals to handle safely.',
+    description:
+      'The force inside engine cylinders during combustion. Higher boost and compression create more pressure, which requires stronger internals to handle safely.',
     unit: 'psi',
   },
   'powertrain.torque_output': {
     key: 'powertrain.torque_output',
     system: 'powertrain',
     name: 'Torque Output',
-    description: 'Rotational force the engine produces—what you feel pushing you back in your seat. More torque = stronger acceleration, especially from low RPM.',
+    description:
+      'Rotational force the engine produces—what you feel pushing you back in your seat. More torque = stronger acceleration, especially from low RPM.',
     unit: 'lb-ft',
   },
   'powertrain.hp_output': {
     key: 'powertrain.hp_output',
     system: 'powertrain',
     name: 'Horsepower Output',
-    description: 'How fast the engine can do work—torque multiplied by RPM. More HP = higher top speed potential. Torque gets you moving; HP keeps you accelerating.',
+    description:
+      'How fast the engine can do work—torque multiplied by RPM. More HP = higher top speed potential. Torque gets you moving; HP keeps you accelerating.',
     unit: 'hp',
   },
   'powertrain.rev_limit': {
     key: 'powertrain.rev_limit',
     system: 'powertrain',
     name: 'Rev Limit',
-    description: 'The maximum RPM the ECU allows before cutting fuel/spark. Higher rev limits let you stay in gear longer but stress valve springs, bearings, and rods more.',
+    description:
+      'The maximum RPM the ECU allows before cutting fuel/spark. Higher rev limits let you stay in gear longer but stress valve springs, bearings, and rods more.',
     unit: 'rpm',
   },
   'powertrain.bottom_end_strength': {
     key: 'powertrain.bottom_end_strength',
     system: 'powertrain',
     name: 'Bottom End Strength',
-    description: 'How much power the pistons, connecting rods, crankshaft, and block can handle. Stock internals have limits—big power builds often need forged parts.',
+    description:
+      'How much power the pistons, connecting rods, crankshaft, and block can handle. Stock internals have limits—big power builds often need forged parts.',
     unit: 'rating',
   },
   'powertrain.oiling_system_margin': {
     key: 'powertrain.oiling_system_margin',
     system: 'powertrain',
     name: 'Oiling System Margin',
-    description: 'How well the engine stays lubricated under hard driving. Track use and high G-forces can starve oil pickup—upgraded pans and coolers help prevent damage.',
+    description:
+      'How well the engine stays lubricated under hard driving. Track use and high G-forces can starve oil pickup—upgraded pans and coolers help prevent damage.',
     unit: 'rating',
   },
 
@@ -214,35 +223,40 @@ export const nodes = {
     key: 'fueling.injector_capacity',
     system: 'fueling',
     name: 'Injector Capacity',
-    description: 'How much fuel the injectors can spray per minute. Bigger power needs bigger injectors—if they max out, the engine runs lean and can be damaged.',
+    description:
+      'How much fuel the injectors can spray per minute. Bigger power needs bigger injectors—if they max out, the engine runs lean and can be damaged.',
     unit: 'cc/min',
   },
   'fueling.lpfp_capacity': {
     key: 'fueling.lpfp_capacity',
     system: 'fueling',
     name: 'Low Pressure Fuel Pump',
-    description: 'The pump in your fuel tank that feeds fuel to the engine. High-power builds need upgraded pumps to maintain flow under heavy load.',
+    description:
+      'The pump in your fuel tank that feeds fuel to the engine. High-power builds need upgraded pumps to maintain flow under heavy load.',
     unit: 'lph',
   },
   'fueling.hpfp_capacity': {
     key: 'fueling.hpfp_capacity',
     system: 'fueling',
     name: 'High Pressure Fuel Pump',
-    description: 'Found in direct-injection cars, this pump pressurizes fuel to extreme levels for precise injection. Often a bottleneck in tuned DI engines.',
+    description:
+      'Found in direct-injection cars, this pump pressurizes fuel to extreme levels for precise injection. Often a bottleneck in tuned DI engines.',
     unit: 'lph',
   },
   'fueling.fuel_pressure': {
     key: 'fueling.fuel_pressure',
     system: 'fueling',
     name: 'Fuel Rail Pressure',
-    description: 'Pressure of fuel waiting to be injected. Higher pressure = finer atomization and potentially more power, but requires supporting upgrades.',
+    description:
+      'Pressure of fuel waiting to be injected. Higher pressure = finer atomization and potentially more power, but requires supporting upgrades.',
     unit: 'psi',
   },
   'fueling.fuel_octane': {
     key: 'fueling.fuel_octane',
     system: 'fueling',
     name: 'Fuel Octane',
-    description: 'Resistance to knock/detonation. Higher octane (91, 93, E85) allows more aggressive timing and boost. Always use what your tune requires.',
+    description:
+      'Resistance to knock/detonation. Higher octane (91, 93, E85) allows more aggressive timing and boost. Always use what your tune requires.',
     unit: 'AKI',
   },
 
@@ -253,28 +267,32 @@ export const nodes = {
     key: 'ignition.spark_energy',
     system: 'ignition',
     name: 'Spark Energy',
-    description: 'How strong the spark is that ignites fuel. Boosted engines with denser air-fuel mixtures need stronger sparks—upgraded coils help here.',
+    description:
+      'How strong the spark is that ignites fuel. Boosted engines with denser air-fuel mixtures need stronger sparks—upgraded coils help here.',
     unit: 'mJ',
   },
   'ignition.plug_heat_range': {
     key: 'ignition.plug_heat_range',
     system: 'ignition',
     name: 'Spark Plug Heat Range',
-    description: 'How quickly the plug sheds heat. "Colder" plugs are needed for boosted/high-power engines to prevent pre-ignition. Match plugs to your build.',
+    description:
+      'How quickly the plug sheds heat. "Colder" plugs are needed for boosted/high-power engines to prevent pre-ignition. Match plugs to your build.',
     unit: 'heat range',
   },
   'ignition.knock_threshold': {
     key: 'ignition.knock_threshold',
     system: 'ignition',
     name: 'Knock Threshold',
-    description: 'How close the engine is to detonation (knock). Knock destroys engines fast. Good tunes maintain safety margin; aggressive tunes push closer.',
+    description:
+      'How close the engine is to detonation (knock). Knock destroys engines fast. Good tunes maintain safety margin; aggressive tunes push closer.',
     unit: 'degrees',
   },
   'ignition.coil_dwell': {
     key: 'ignition.coil_dwell',
     system: 'ignition',
     name: 'Coil Dwell Time',
-    description: 'Time the coil charges before firing. Longer dwell = stronger spark but more heat. High-RPM engines need coils that can keep up.',
+    description:
+      'Time the coil charges before firing. Longer dwell = stronger spark but more heat. High-RPM engines need coils that can keep up.',
     unit: 'ms',
   },
 
@@ -285,28 +303,32 @@ export const nodes = {
     key: 'exhaust.backpressure',
     system: 'exhaust',
     name: 'Exhaust Backpressure',
-    description: 'Resistance the exhaust gases face leaving the engine. Lower backpressure lets the engine breathe easier, freeing up power—especially on turbo cars.',
+    description:
+      'Resistance the exhaust gases face leaving the engine. Lower backpressure lets the engine breathe easier, freeing up power—especially on turbo cars.',
     unit: 'psi',
   },
   'exhaust.flow_capacity': {
     key: 'exhaust.flow_capacity',
     system: 'exhaust',
     name: 'Exhaust Flow Capacity',
-    description: 'How much exhaust volume the system can move. Bigger pipes and less-restrictive mufflers increase flow. Match to your power level.',
+    description:
+      'How much exhaust volume the system can move. Bigger pipes and less-restrictive mufflers increase flow. Match to your power level.',
     unit: 'cfm',
   },
   'exhaust.cat_converter_state': {
     key: 'exhaust.cat_converter_state',
     system: 'exhaust',
     name: 'Catalytic Converter',
-    description: 'Emissions device that restricts flow. High-flow cats reduce restriction while staying legal. Deletes are for track-only cars.',
+    description:
+      'Emissions device that restricts flow. High-flow cats reduce restriction while staying legal. Deletes are for track-only cars.',
     unit: 'state',
   },
   'exhaust.header_type': {
     key: 'exhaust.header_type',
     system: 'exhaust',
     name: 'Header Type',
-    description: 'The pipes connecting engine to exhaust. Long-tube headers flow best and sound great but are complex to install. Shortys are a good compromise.',
+    description:
+      'The pipes connecting engine to exhaust. Long-tube headers flow best and sound great but are complex to install. Shortys are a good compromise.',
     unit: 'type',
   },
 
@@ -317,7 +339,8 @@ export const nodes = {
     key: 'induction.turbo_size',
     system: 'induction',
     name: 'Turbo Size',
-    description: 'The size of the turbo compressor wheel. Bigger turbos make more peak power but spool slower ("turbo lag"). Smaller turbos respond faster but cap out sooner.',
+    description:
+      'The size of the turbo compressor wheel. Bigger turbos make more peak power but spool slower ("turbo lag"). Smaller turbos respond faster but cap out sooner.',
     unit: 'mm',
     applicableEngines: ['Turbo'],
   },
@@ -325,7 +348,8 @@ export const nodes = {
     key: 'induction.wastegate_capacity',
     system: 'induction',
     name: 'Wastegate Capacity',
-    description: 'The valve that controls max boost by diverting exhaust away from the turbo. Stock wastegates often can\'t hold high boost—upgraded ones prevent boost creep.',
+    description:
+      "The valve that controls max boost by diverting exhaust away from the turbo. Stock wastegates often can't hold high boost—upgraded ones prevent boost creep.",
     unit: 'psi',
     applicableEngines: ['Turbo'],
   },
@@ -333,7 +357,8 @@ export const nodes = {
     key: 'induction.bov_capacity',
     system: 'induction',
     name: 'Blow-Off Valve',
-    description: 'Releases pressurized air when you lift throttle, preventing compressor surge (that flutter sound). Bigger BOVs handle higher boost levels safely.',
+    description:
+      'Releases pressurized air when you lift throttle, preventing compressor surge (that flutter sound). Bigger BOVs handle higher boost levels safely.',
     unit: 'psi',
     applicableEngines: ['Turbo'],
   },
@@ -454,56 +479,64 @@ export const nodes = {
     key: 'brakes.pad_temp_rating',
     system: 'brakes',
     name: 'Brake Pad Temp Rating',
-    description: 'How hot the pads can get before they fade (stop working). Street pads fade early; track pads need heat to grip. Match pads to your driving.',
+    description:
+      'How hot the pads can get before they fade (stop working). Street pads fade early; track pads need heat to grip. Match pads to your driving.',
     unit: '°F',
   },
   'brakes.rotor_thermal_mass': {
     key: 'brakes.rotor_thermal_mass',
     system: 'brakes',
     name: 'Rotor Thermal Capacity',
-    description: 'How much heat the rotors can absorb before overheating. Bigger, thicker rotors handle more heat—crucial for track use.',
+    description:
+      'How much heat the rotors can absorb before overheating. Bigger, thicker rotors handle more heat—crucial for track use.',
     unit: 'kJ',
   },
   'brakes.rotor_size': {
     key: 'brakes.rotor_size',
     system: 'brakes',
     name: 'Rotor Diameter',
-    description: 'Larger rotors provide more leverage (stopping power) and thermal mass. Big brake kits typically increase rotor size for better performance.',
+    description:
+      'Larger rotors provide more leverage (stopping power) and thermal mass. Big brake kits typically increase rotor size for better performance.',
     unit: 'mm',
   },
   'brakes.caliper_piston_area': {
     key: 'brakes.caliper_piston_area',
     system: 'brakes',
     name: 'Caliper Piston Area',
-    description: 'More piston area = more clamping force on the rotor. Multi-piston calipers (4-pot, 6-pot) spread force evenly and resist pad taper.',
+    description:
+      'More piston area = more clamping force on the rotor. Multi-piston calipers (4-pot, 6-pot) spread force evenly and resist pad taper.',
     unit: 'sq in',
   },
   'brakes.fluid_boiling_point': {
     key: 'brakes.fluid_boiling_point',
     system: 'brakes',
     name: 'Brake Fluid Boiling Point',
-    description: 'When brake fluid boils, you get a spongy pedal and no brakes. Track driving requires high-temp fluid (DOT4 racing or better).',
+    description:
+      'When brake fluid boils, you get a spongy pedal and no brakes. Track driving requires high-temp fluid (DOT4 racing or better).',
     unit: '°F',
   },
   'brakes.line_expansion': {
     key: 'brakes.line_expansion',
     system: 'brakes',
     name: 'Brake Line Rigidity',
-    description: 'Rubber lines expand under pressure, giving a mushy pedal. Stainless braided lines don\'t flex, so pedal feel is firm and consistent.',
+    description:
+      "Rubber lines expand under pressure, giving a mushy pedal. Stainless braided lines don't flex, so pedal feel is firm and consistent.",
     unit: 'type',
   },
   'brakes.brake_bias': {
     key: 'brakes.brake_bias',
     system: 'brakes',
     name: 'Brake Bias',
-    description: 'The split of braking force between front and rear. Changes when you upgrade components. Incorrect bias = poor stopping or instability.',
+    description:
+      'The split of braking force between front and rear. Changes when you upgrade components. Incorrect bias = poor stopping or instability.',
     unit: 'ratio',
   },
   'brakes.abs_calibration': {
     key: 'brakes.abs_calibration',
     system: 'brakes',
     name: 'ABS Calibration',
-    description: 'How aggressively ABS intervenes. Factory settings are for street tires—high-grip tires can trigger ABS too early, hurting lap times.',
+    description:
+      'How aggressively ABS intervenes. Factory settings are for street tires—high-grip tires can trigger ABS too early, hurting lap times.',
     unit: 'type',
   },
 
@@ -514,28 +547,32 @@ export const nodes = {
     key: 'suspension.spring_rate_front',
     system: 'suspension',
     name: 'Front Spring Rate',
-    description: 'How stiff the front springs are. Stiffer = less body roll and faster response, but harsher ride. Balance front/rear rates for handling character.',
+    description:
+      'How stiff the front springs are. Stiffer = less body roll and faster response, but harsher ride. Balance front/rear rates for handling character.',
     unit: 'lb/in',
   },
   'suspension.spring_rate_rear': {
     key: 'suspension.spring_rate_rear',
     system: 'suspension',
     name: 'Rear Spring Rate',
-    description: 'Rear spring stiffness. Stiffer rear = more oversteer tendency; softer rear = more understeer. Work with a pro to balance your setup.',
+    description:
+      'Rear spring stiffness. Stiffer rear = more oversteer tendency; softer rear = more understeer. Work with a pro to balance your setup.',
     unit: 'lb/in',
   },
   'suspension.damper_range': {
     key: 'suspension.damper_range',
     system: 'suspension',
     name: 'Damper Operating Range',
-    description: 'How much stroke the shocks have before bottoming out. Lowered cars use up travel—quality coilovers maintain proper damper range.',
+    description:
+      'How much stroke the shocks have before bottoming out. Lowered cars use up travel—quality coilovers maintain proper damper range.',
     unit: 'mm',
   },
   'suspension.ride_height': {
     key: 'suspension.ride_height',
     system: 'suspension',
     name: 'Ride Height',
-    description: 'Distance from ground to chassis. Lower = better center of gravity and less body roll, but reduced ground clearance. Go too low and you\'ll scrape.',
+    description:
+      "Distance from ground to chassis. Lower = better center of gravity and less body roll, but reduced ground clearance. Go too low and you'll scrape.",
     unit: 'inches',
   },
   'suspension.bump_travel': {
@@ -779,7 +816,7 @@ export const relationshipTypes = {
     severity: 'critical',
     description: 'The upgrade cannot function properly without this supporting mod',
   },
-  
+
   // Capacity constraints - upgrade STRESSES this system
   STRESSES: {
     key: 'STRESSES',
@@ -787,7 +824,7 @@ export const relationshipTypes = {
     severity: 'warning',
     description: 'The upgrade increases load on this system - may need upgrade at higher levels',
   },
-  
+
   // Geometry/setup changes - upgrade INVALIDATES current setup
   INVALIDATES: {
     key: 'INVALIDATES',
@@ -795,7 +832,7 @@ export const relationshipTypes = {
     severity: 'warning',
     description: 'The upgrade changes geometry/setup and requires recalibration',
   },
-  
+
   // Strong recommendation - upgrade PAIRS_WELL with this
   PAIRS_WELL: {
     key: 'PAIRS_WELL',
@@ -803,7 +840,7 @@ export const relationshipTypes = {
     severity: 'info',
     description: 'These upgrades work synergistically together',
   },
-  
+
   // Safety concern - upgrade may COMPROMISE this
   COMPROMISES: {
     key: 'COMPROMISES',
@@ -811,7 +848,7 @@ export const relationshipTypes = {
     severity: 'safety',
     description: 'The upgrade may negatively affect this aspect - verify adequacy',
   },
-  
+
   // Direct improvement - upgrade IMPROVES this
   IMPROVES: {
     key: 'IMPROVES',
@@ -840,7 +877,7 @@ export const edges = [
   // ---------------------------------------------------------------------------
   // BOOST/TUNE DEPENDENCIES (Scenario A: ECU Tune for more boost)
   // ---------------------------------------------------------------------------
-  
+
   // Increased boost -> timing needs adjustment
   {
     from: 'powertrain.boost_level',
@@ -849,7 +886,7 @@ export const edges = [
     description: 'Higher boost requires retarded timing to prevent knock',
     threshold: { boostIncrease: 3 }, // psi increase that triggers this
   },
-  
+
   // Increased boost -> wastegate must handle it
   {
     from: 'powertrain.boost_level',
@@ -858,7 +895,7 @@ export const edges = [
     description: 'Wastegate must be able to regulate target boost level',
     threshold: { targetBoost: 18 }, // psi where stock wastegate may struggle
   },
-  
+
   // Increased boost -> fuel system demands
   {
     from: 'powertrain.boost_level',
@@ -874,7 +911,7 @@ export const edges = [
     description: 'HPFP may max out at high boost levels',
     threshold: { boostIncrease: 8 },
   },
-  
+
   // Increased boost -> spark plug heat range
   {
     from: 'powertrain.boost_level',
@@ -883,7 +920,7 @@ export const edges = [
     description: 'Higher cylinder temps may require colder plugs',
     threshold: { boostIncrease: 5 },
   },
-  
+
   // Increased boost -> knock margin
   {
     from: 'powertrain.boost_level',
@@ -892,7 +929,7 @@ export const edges = [
     description: 'Higher boost reduces knock margin - needs monitoring',
     threshold: { boostIncrease: 3 },
   },
-  
+
   // Increased power -> exhaust flow
   {
     from: 'powertrain.hp_output',
@@ -901,7 +938,7 @@ export const edges = [
     description: 'More power generates more exhaust gas volume',
     threshold: { hpIncrease: 100 },
   },
-  
+
   // Increased power -> cat converter becomes restriction
   {
     from: 'powertrain.hp_output',
@@ -910,7 +947,7 @@ export const edges = [
     description: 'Stock cats may become a bottleneck at high power',
     threshold: { hpIncrease: 150 },
   },
-  
+
   // Increased boost -> intercooler heat soak
   {
     from: 'powertrain.boost_level',
@@ -919,7 +956,7 @@ export const edges = [
     description: 'Higher boost generates more charge air heat',
     threshold: { boostIncrease: 5 },
   },
-  
+
   // Increased boost -> charge pipe pressure
   {
     from: 'powertrain.boost_level',
@@ -928,7 +965,7 @@ export const edges = [
     description: 'Stock plastic charge pipes may crack under high boost',
     threshold: { targetBoost: 22 },
   },
-  
+
   // Increased power -> cooling demands
   {
     from: 'powertrain.hp_output',
@@ -944,11 +981,11 @@ export const edges = [
     description: 'Higher power loads oil harder - needs better cooling',
     threshold: { hpIncrease: 100 },
   },
-  
+
   // ---------------------------------------------------------------------------
   // TIRE GRIP DEPENDENCIES (Scenario B: Stickier Tires)
   // ---------------------------------------------------------------------------
-  
+
   // More grip -> brakes work harder
   {
     from: 'tires.grip_coefficient',
@@ -971,7 +1008,7 @@ export const edges = [
     description: 'Track tires require high-temp brake fluid',
     threshold: { treadwear: 200 },
   },
-  
+
   // More grip -> bigger brakes may be needed
   {
     from: 'tires.grip_coefficient',
@@ -987,7 +1024,7 @@ export const edges = [
     description: 'May need more clamping force for high-grip tires',
     threshold: { treadwear: 100 },
   },
-  
+
   // Brake upgrades -> need to maintain bias
   {
     from: 'brakes.rotor_size',
@@ -1001,7 +1038,7 @@ export const edges = [
     type: 'INVALIDATES',
     description: 'Changing caliper size affects brake bias',
   },
-  
+
   // Brake upgrades -> may need brake cooling
   {
     from: 'brakes.pad_temp_rating',
@@ -1009,7 +1046,7 @@ export const edges = [
     type: 'PAIRS_WELL',
     description: 'Track pads benefit from brake cooling ducts',
   },
-  
+
   // More grip -> ABS may need recalibration
   {
     from: 'tires.grip_coefficient',
@@ -1025,7 +1062,7 @@ export const edges = [
     description: 'Factory ABS may struggle with very high grip - consider motorsports ABS',
     threshold: { treadwear: 100 },
   },
-  
+
   // Tire changes -> alignment needed
   {
     from: 'tires.section_width',
@@ -1045,11 +1082,11 @@ export const edges = [
     type: 'INVALIDATES',
     description: 'Stickier tires may benefit from different toe settings',
   },
-  
+
   // ---------------------------------------------------------------------------
   // LOWERING DEPENDENCIES (Scenario C: Lower the Car)
   // ---------------------------------------------------------------------------
-  
+
   // Lower ride height -> damper travel affected
   {
     from: 'suspension.ride_height',
@@ -1065,7 +1102,7 @@ export const edges = [
     description: 'Less bump travel = more likely to bottom out',
     threshold: { drop: 1.0 },
   },
-  
+
   // Lower ride height -> control arm geometry
   {
     from: 'suspension.ride_height',
@@ -1074,7 +1111,7 @@ export const edges = [
     description: 'Lowering changes suspension geometry angles',
     threshold: { drop: 1.0 },
   },
-  
+
   // Lower ride height -> roll center drops
   {
     from: 'suspension.ride_height',
@@ -1083,7 +1120,7 @@ export const edges = [
     description: 'Lowering drops roll center - may need correction kit',
     threshold: { drop: 1.5 },
   },
-  
+
   // Roll center drop -> may need correction
   {
     from: 'chassis.roll_center_height',
@@ -1091,7 +1128,7 @@ export const edges = [
     type: 'INVALIDATES',
     description: 'Roll center changes affect bump steer characteristics',
   },
-  
+
   // Significant drop -> camber changes
   {
     from: 'suspension.ride_height',
@@ -1107,7 +1144,7 @@ export const edges = [
     description: 'Lowering affects rear camber',
     threshold: { drop: 0.75 },
   },
-  
+
   // Significant drop -> ackermann may be affected
   {
     from: 'suspension.ride_height',
@@ -1116,7 +1153,7 @@ export const edges = [
     description: 'Extreme drops can affect steering geometry',
     threshold: { drop: 2.0 },
   },
-  
+
   // Springs need to match dampers
   {
     from: 'suspension.spring_rate_front',
@@ -1130,11 +1167,11 @@ export const edges = [
     type: 'REQUIRES',
     description: 'Rear spring rate must be matched to dampers',
   },
-  
+
   // ---------------------------------------------------------------------------
   // POWER → DRIVETRAIN DEPENDENCIES
   // ---------------------------------------------------------------------------
-  
+
   // More torque -> clutch capacity
   {
     from: 'powertrain.torque_output',
@@ -1143,7 +1180,7 @@ export const edges = [
     description: 'Stock clutch may slip under high torque',
     threshold: { torqueIncrease: 100 }, // lb-ft over stock
   },
-  
+
   // More torque -> transmission limit
   {
     from: 'powertrain.torque_output',
@@ -1152,7 +1189,7 @@ export const edges = [
     description: 'Transmission may have torque limiters or weak synchros',
     threshold: { torqueIncrease: 150 },
   },
-  
+
   // More torque -> diff and axles
   {
     from: 'powertrain.torque_output',
@@ -1182,7 +1219,7 @@ export const edges = [
     description: 'Raising the rev limit increases stress on the rotating assembly',
     threshold: { rpmIncrease: 500 },
   },
-  
+
   // High RPM -> driveshaft rating
   {
     from: 'powertrain.rev_limit',
@@ -1191,11 +1228,11 @@ export const edges = [
     description: 'Stock driveshaft may not be rated for extended high RPM',
     threshold: { rpmIncrease: 500 },
   },
-  
+
   // ---------------------------------------------------------------------------
   // AERO DEPENDENCIES
   // ---------------------------------------------------------------------------
-  
+
   // Front aero -> rear aero balance
   {
     from: 'aero.front_downforce',
@@ -1203,7 +1240,7 @@ export const edges = [
     type: 'INVALIDATES',
     description: 'Adding front downforce shifts aero balance - may need rear wing',
   },
-  
+
   // Rear aero -> front aero balance
   {
     from: 'aero.rear_downforce',
@@ -1211,7 +1248,7 @@ export const edges = [
     type: 'INVALIDATES',
     description: 'Adding rear downforce shifts aero balance - may need front splitter',
   },
-  
+
   // Aero -> suspension tuning
   {
     from: 'aero.front_downforce',
@@ -1227,11 +1264,11 @@ export const edges = [
     description: 'Rear downforce benefits from stiffer rear springs',
     threshold: { downforce: 100 },
   },
-  
+
   // ---------------------------------------------------------------------------
   // SYNERGY RELATIONSHIPS (Pairs Well)
   // ---------------------------------------------------------------------------
-  
+
   // Intake + Exhaust + Tune synergy
   {
     from: 'exhaust.flow_capacity',
@@ -1239,7 +1276,7 @@ export const edges = [
     type: 'PAIRS_WELL',
     description: 'Exhaust mods unlock more potential with a tune',
   },
-  
+
   // Suspension + Alignment synergy
   {
     from: 'suspension.spring_rate_front',
@@ -1247,7 +1284,7 @@ export const edges = [
     type: 'PAIRS_WELL',
     description: 'New suspension benefits from fresh alignment',
   },
-  
+
   // Coilovers + Sway bars synergy
   {
     from: 'suspension.spring_rate_front',
@@ -1255,7 +1292,7 @@ export const edges = [
     type: 'PAIRS_WELL',
     description: 'Sway bars help fine-tune balance with new suspension',
   },
-  
+
   // BBK + Track pads synergy
   {
     from: 'brakes.rotor_size',
@@ -1263,7 +1300,7 @@ export const edges = [
     type: 'PAIRS_WELL',
     description: 'Big brakes work best with high-performance pads',
   },
-  
+
   // Track tires + Brake fluid + Pads synergy
   {
     from: 'tires.grip_coefficient',
@@ -1275,7 +1312,8 @@ export const edges = [
     from: 'tires.grip_coefficient',
     to: 'safety.rollover_protection',
     type: 'PAIRS_WELL',
-    description: 'High-grip track setups often benefit from roll-over protection on serious track cars',
+    description:
+      'High-grip track setups often benefit from roll-over protection on serious track cars',
   },
 ];
 
@@ -1303,20 +1341,30 @@ export const upgradeNodeMap = {
   'stage2-tune': {
     improves: ['powertrain.hp_output', 'powertrain.torque_output'],
     modifies: ['powertrain.boost_level', 'powertrain.timing_advance'],
-    stresses: ['fueling.injector_capacity', 'fueling.hpfp_capacity', 'ignition.knock_threshold', 
-               'induction.intercooler_capacity', 'drivetrain.clutch_capacity'],
+    stresses: [
+      'fueling.injector_capacity',
+      'fueling.hpfp_capacity',
+      'ignition.knock_threshold',
+      'induction.intercooler_capacity',
+      'drivetrain.clutch_capacity',
+    ],
     requires: ['downpipe'],
   },
   'stage3-tune': {
     improves: ['powertrain.hp_output', 'powertrain.torque_output'],
     modifies: ['powertrain.boost_level', 'powertrain.timing_advance'],
-    stresses: ['drivetrain.clutch_capacity', 'drivetrain.trans_torque_limit', 'drivetrain.axle_strength',
-               'cooling.oil_cooler_capacity', 'cooling.trans_cooler_capacity'],
+    stresses: [
+      'drivetrain.clutch_capacity',
+      'drivetrain.trans_torque_limit',
+      'drivetrain.axle_strength',
+      'cooling.oil_cooler_capacity',
+      'cooling.trans_cooler_capacity',
+    ],
     requires: ['turbo-upgrade-existing', 'fuel-system-upgrade', 'intercooler'],
   },
 
   // Bolt-on power mods and general tuning
-  'intake': {
+  intake: {
     improves: ['powertrain.hp_output'],
     modifies: ['powertrain.air_fuel_ratio'],
   },
@@ -1343,15 +1391,15 @@ export const upgradeNodeMap = {
     modifies: ['powertrain.boost_level'],
     stresses: ['ignition.knock_threshold'],
   },
-  
+
   // Downpipe
-  'downpipe': {
+  downpipe: {
     improves: ['exhaust.flow_capacity'],
     modifies: ['exhaust.backpressure', 'exhaust.cat_converter_state'],
   },
-  
+
   // Intercooler
-  'intercooler': {
+  intercooler: {
     improves: ['induction.intercooler_capacity'],
     modifies: ['powertrain.boost_level'], // enables higher safe boost
   },
@@ -1359,7 +1407,7 @@ export const upgradeNodeMap = {
     improves: ['induction.intercooler_capacity'],
     modifies: ['powertrain.boost_level'],
   },
-  
+
   // Fuel system
   'hpfp-upgrade': {
     improves: ['fueling.hpfp_capacity'],
@@ -1378,26 +1426,41 @@ export const upgradeNodeMap = {
     improves: ['cooling.oil_cooler_capacity', 'ignition.knock_threshold'],
     modifies: ['powertrain.air_fuel_ratio'],
   },
-  
+
   // Forced induction
   'turbo-upgrade-existing': {
     improves: ['induction.turbo_size', 'powertrain.hp_output'],
     modifies: ['powertrain.boost_level'],
-    stresses: ['fueling.injector_capacity', 'fueling.hpfp_capacity', 'drivetrain.clutch_capacity',
-               'cooling.oil_cooler_capacity', 'induction.intercooler_capacity', 'powertrain.bottom_end_strength'],
+    stresses: [
+      'fueling.injector_capacity',
+      'fueling.hpfp_capacity',
+      'drivetrain.clutch_capacity',
+      'cooling.oil_cooler_capacity',
+      'induction.intercooler_capacity',
+      'powertrain.bottom_end_strength',
+    ],
   },
   'supercharger-roots': {
     improves: ['powertrain.hp_output', 'powertrain.torque_output'],
     modifies: ['powertrain.boost_level'],
-    stresses: ['fueling.injector_capacity', 'drivetrain.clutch_capacity', 'drivetrain.axle_strength',
-               'cooling.oil_cooler_capacity', 'powertrain.bottom_end_strength'],
+    stresses: [
+      'fueling.injector_capacity',
+      'drivetrain.clutch_capacity',
+      'drivetrain.axle_strength',
+      'cooling.oil_cooler_capacity',
+      'powertrain.bottom_end_strength',
+    ],
     requires: ['fuel-system-upgrade'],
   },
   'supercharger-centrifugal': {
     improves: ['powertrain.hp_output', 'powertrain.torque_output'],
     modifies: ['powertrain.boost_level'],
-    stresses: ['fueling.injector_capacity', 'drivetrain.clutch_capacity', 
-               'cooling.oil_cooler_capacity', 'powertrain.bottom_end_strength'],
+    stresses: [
+      'fueling.injector_capacity',
+      'drivetrain.clutch_capacity',
+      'cooling.oil_cooler_capacity',
+      'powertrain.bottom_end_strength',
+    ],
     requires: ['fuel-system-upgrade'],
   },
   'pulley-tune-sc': {
@@ -1405,12 +1468,12 @@ export const upgradeNodeMap = {
     modifies: ['powertrain.boost_level', 'induction.sc_pulley_size'],
     stresses: ['induction.intercooler_capacity', 'fueling.injector_capacity'],
   },
-  
+
   // Charge pipes
   'charge-pipe-upgrade': {
     improves: ['induction.charge_pipe_strength'],
   },
-  
+
   // Cooling
   'oil-cooler': {
     improves: ['cooling.oil_cooler_capacity'],
@@ -1421,7 +1484,7 @@ export const upgradeNodeMap = {
   'radiator-upgrade': {
     improves: ['cooling.radiator_capacity'],
   },
-  
+
   // Drivetrain
   'clutch-upgrade': {
     improves: ['drivetrain.clutch_capacity'],
@@ -1432,21 +1495,33 @@ export const upgradeNodeMap = {
   'dct-tune': {
     improves: ['drivetrain.trans_torque_limit'],
   },
-  
+
   // Suspension
   'lowering-springs': {
-    modifies: ['suspension.ride_height', 'suspension.spring_rate_front', 'suspension.spring_rate_rear'],
+    modifies: [
+      'suspension.ride_height',
+      'suspension.spring_rate_front',
+      'suspension.spring_rate_rear',
+    ],
     invalidates: ['chassis.camber_front', 'chassis.camber_rear', 'chassis.roll_center_height'],
     compromises: ['suspension.bump_travel', 'suspension.damper_range'],
   },
   'coilovers-street': {
-    modifies: ['suspension.ride_height', 'suspension.spring_rate_front', 'suspension.spring_rate_rear',
-               'suspension.damper_range'],
+    modifies: [
+      'suspension.ride_height',
+      'suspension.spring_rate_front',
+      'suspension.spring_rate_rear',
+      'suspension.damper_range',
+    ],
     invalidates: ['chassis.camber_front', 'chassis.camber_rear', 'chassis.roll_center_height'],
   },
   'coilovers-track': {
-    modifies: ['suspension.ride_height', 'suspension.spring_rate_front', 'suspension.spring_rate_rear',
-               'suspension.damper_range'],
+    modifies: [
+      'suspension.ride_height',
+      'suspension.spring_rate_front',
+      'suspension.spring_rate_rear',
+      'suspension.damper_range',
+    ],
     invalidates: ['chassis.camber_front', 'chassis.camber_rear', 'chassis.roll_center_height'],
     recommends: ['sway-bars', 'chassis-bracing'],
   },
@@ -1463,7 +1538,7 @@ export const upgradeNodeMap = {
   'wheels-lightweight': {
     improves: ['tires.grip_coefficient'],
   },
-  
+
   // Brakes
   'brake-pads-street': {
     improves: ['brakes.pad_temp_rating'],
@@ -1484,20 +1559,20 @@ export const upgradeNodeMap = {
   'slotted-rotors': {
     improves: ['brakes.rotor_thermal_mass'],
   },
-  
+
   // Aero
-  'splitter': {
+  splitter: {
     improves: ['aero.front_downforce'],
     invalidates: ['aero.aero_balance'],
   },
-  'wing': {
+  wing: {
     improves: ['aero.rear_downforce'],
     invalidates: ['aero.aero_balance'],
     modifies: ['aero.drag_coefficient'],
   },
-  
+
   // Exhaust
-  'headers': {
+  headers: {
     improves: ['exhaust.flow_capacity', 'exhaust.header_type'],
     requires: ['tune-street'], // Headers need a tune
   },
@@ -1507,7 +1582,7 @@ export const upgradeNodeMap = {
   },
 
   // Engine internals
-  'camshafts': {
+  camshafts: {
     improves: ['powertrain.hp_output', 'powertrain.torque_output'],
   },
   'ported-heads': {
@@ -1537,7 +1612,7 @@ export const upgradeNodeMap = {
   'fire-extinguisher': {
     // Safety item, no node impact
   },
-  'helmet': {
+  helmet: {
     // Safety item, no node impact
   },
 
@@ -1563,7 +1638,7 @@ export const upgradeNodeMap = {
   // ---------------------------------------------------------------------------
   // ADDITIONAL AERO UPGRADES
   // ---------------------------------------------------------------------------
-  'canards': {
+  canards: {
     improves: ['aero.front_downforce'],
     modifies: ['aero.aero_balance'],
   },
@@ -1580,7 +1655,7 @@ export const upgradeNodeMap = {
     improves: ['aero.rear_downforce'],
     modifies: ['aero.drag_coefficient'],
   },
-  'undertray': {
+  undertray: {
     improves: ['aero.front_downforce', 'aero.rear_downforce'],
     modifies: ['aero.drag_coefficient'],
   },
@@ -1591,9 +1666,13 @@ export const upgradeNodeMap = {
   // ---------------------------------------------------------------------------
   // ADDITIONAL CHASSIS & SUSPENSION UPGRADES
   // ---------------------------------------------------------------------------
-  'coilovers': {
-    modifies: ['suspension.ride_height', 'suspension.spring_rate_front', 'suspension.spring_rate_rear',
-               'suspension.damper_range'],
+  coilovers: {
+    modifies: [
+      'suspension.ride_height',
+      'suspension.spring_rate_front',
+      'suspension.spring_rate_rear',
+      'suspension.damper_range',
+    ],
     invalidates: ['chassis.camber_front', 'chassis.camber_rear', 'chassis.roll_center_height'],
   },
   'control-arms': {
@@ -1613,7 +1692,12 @@ export const upgradeNodeMap = {
     modifies: ['tires.wheel_offset'],
   },
   'performance-alignment': {
-    modifies: ['chassis.camber_front', 'chassis.camber_rear', 'chassis.toe_front', 'chassis.toe_rear'],
+    modifies: [
+      'chassis.camber_front',
+      'chassis.camber_rear',
+      'chassis.toe_front',
+      'chassis.toe_rear',
+    ],
   },
 
   // ---------------------------------------------------------------------------
@@ -1703,16 +1787,29 @@ export const upgradeNodeMap = {
   'turbo-kit-single': {
     improves: ['induction.turbo_size', 'powertrain.hp_output', 'powertrain.torque_output'],
     modifies: ['powertrain.boost_level'],
-    stresses: ['fueling.injector_capacity', 'fueling.hpfp_capacity', 'drivetrain.clutch_capacity',
-               'cooling.oil_cooler_capacity', 'induction.intercooler_capacity', 'powertrain.bottom_end_strength'],
+    stresses: [
+      'fueling.injector_capacity',
+      'fueling.hpfp_capacity',
+      'drivetrain.clutch_capacity',
+      'cooling.oil_cooler_capacity',
+      'induction.intercooler_capacity',
+      'powertrain.bottom_end_strength',
+    ],
     requires: ['fuel-system-upgrade'],
   },
   'turbo-kit-twin': {
     improves: ['induction.turbo_size', 'powertrain.hp_output', 'powertrain.torque_output'],
     modifies: ['powertrain.boost_level'],
-    stresses: ['fueling.injector_capacity', 'fueling.hpfp_capacity', 'drivetrain.clutch_capacity',
-               'drivetrain.trans_torque_limit', 'drivetrain.axle_strength',
-               'cooling.oil_cooler_capacity', 'induction.intercooler_capacity', 'powertrain.bottom_end_strength'],
+    stresses: [
+      'fueling.injector_capacity',
+      'fueling.hpfp_capacity',
+      'drivetrain.clutch_capacity',
+      'drivetrain.trans_torque_limit',
+      'drivetrain.axle_strength',
+      'cooling.oil_cooler_capacity',
+      'induction.intercooler_capacity',
+      'powertrain.bottom_end_strength',
+    ],
     requires: ['fuel-system-upgrade', 'forged-internals'],
   },
 
@@ -1731,12 +1828,21 @@ export const upgradeNodeMap = {
   // ---------------------------------------------------------------------------
   'engine-swap-kit-generic': {
     improves: ['powertrain.hp_output', 'powertrain.torque_output'],
-    stresses: ['drivetrain.clutch_capacity', 'drivetrain.trans_torque_limit', 'drivetrain.axle_strength',
-               'cooling.radiator_capacity', 'cooling.oil_cooler_capacity'],
+    stresses: [
+      'drivetrain.clutch_capacity',
+      'drivetrain.trans_torque_limit',
+      'drivetrain.axle_strength',
+      'cooling.radiator_capacity',
+      'cooling.oil_cooler_capacity',
+    ],
   },
   'engine-ls-family': {
     improves: ['powertrain.hp_output', 'powertrain.torque_output'],
-    stresses: ['drivetrain.clutch_capacity', 'drivetrain.trans_torque_limit', 'drivetrain.axle_strength'],
+    stresses: [
+      'drivetrain.clutch_capacity',
+      'drivetrain.trans_torque_limit',
+      'drivetrain.axle_strength',
+    ],
   },
   'engine-2jz': {
     improves: ['powertrain.hp_output', 'powertrain.torque_output'],
@@ -1759,7 +1865,11 @@ export const upgradeNodeMap = {
   },
   'engine-vr38dett': {
     improves: ['powertrain.hp_output', 'powertrain.torque_output'],
-    stresses: ['drivetrain.clutch_capacity', 'drivetrain.trans_torque_limit', 'fueling.injector_capacity'],
+    stresses: [
+      'drivetrain.clutch_capacity',
+      'drivetrain.trans_torque_limit',
+      'fueling.injector_capacity',
+    ],
   },
 };
 
@@ -1782,13 +1892,13 @@ export const dependencyRules = [
       upgradeKeys: ['stage2-tune', 'stage3-tune', 'turbo-upgrade-existing', 'pulley-tune-sc'],
     },
     check: (selectedUpgrades) => {
-      const needsFuelUpgrade = selectedUpgrades.some(u => 
+      const needsFuelUpgrade = selectedUpgrades.some((u) =>
         ['stage3-tune', 'turbo-upgrade-existing'].includes(u)
       );
-      const hasFuelUpgrade = selectedUpgrades.some(u => 
+      const hasFuelUpgrade = selectedUpgrades.some((u) =>
         ['fuel-system-upgrade', 'hpfp-upgrade'].includes(u)
       );
-      
+
       if (needsFuelUpgrade && !hasFuelUpgrade) {
         return {
           severity: 'critical',
@@ -1799,7 +1909,7 @@ export const dependencyRules = [
       return null;
     },
   },
-  
+
   {
     id: 'boost-intercooler',
     name: 'Intercooler for Boost',
@@ -1807,13 +1917,13 @@ export const dependencyRules = [
       upgradeKeys: ['stage2-tune', 'stage3-tune', 'turbo-upgrade-existing', 'pulley-tune-sc'],
     },
     check: (selectedUpgrades) => {
-      const needsIntercooler = selectedUpgrades.some(u => 
+      const needsIntercooler = selectedUpgrades.some((u) =>
         ['stage2-tune', 'stage3-tune', 'turbo-upgrade-existing'].includes(u)
       );
-      const hasIntercooler = selectedUpgrades.some(u => 
+      const hasIntercooler = selectedUpgrades.some((u) =>
         ['intercooler', 'heat-exchanger-sc'].includes(u)
       );
-      
+
       if (needsIntercooler && !hasIntercooler) {
         return {
           severity: 'warning',
@@ -1824,7 +1934,7 @@ export const dependencyRules = [
       return null;
     },
   },
-  
+
   {
     id: 'boost-charge-pipes',
     name: 'Charge Pipes for Boost',
@@ -1832,11 +1942,11 @@ export const dependencyRules = [
       upgradeKeys: ['stage2-tune', 'stage3-tune'],
     },
     check: (selectedUpgrades) => {
-      const needsChargePipes = selectedUpgrades.some(u => 
+      const needsChargePipes = selectedUpgrades.some((u) =>
         ['stage2-tune', 'stage3-tune'].includes(u)
       );
       const hasChargePipes = selectedUpgrades.includes('charge-pipe-upgrade');
-      
+
       if (needsChargePipes && !hasChargePipes) {
         return {
           severity: 'warning',
@@ -1847,7 +1957,7 @@ export const dependencyRules = [
       return null;
     },
   },
-  
+
   // ---------------------------------------------------------------------------
   // POWER INCREASE → DRIVETRAIN RULES
   // ---------------------------------------------------------------------------
@@ -1855,16 +1965,26 @@ export const dependencyRules = [
     id: 'power-clutch',
     name: 'Clutch for Power',
     trigger: {
-      upgradeKeys: ['supercharger-roots', 'supercharger-centrifugal', 'turbo-kit-single', 
-                    'turbo-kit-twin', 'stage3-tune'],
+      upgradeKeys: [
+        'supercharger-roots',
+        'supercharger-centrifugal',
+        'turbo-kit-single',
+        'turbo-kit-twin',
+        'stage3-tune',
+      ],
     },
     check: (selectedUpgrades) => {
-      const needsClutch = selectedUpgrades.some(u => 
-        ['supercharger-roots', 'supercharger-centrifugal', 'turbo-kit-single', 
-         'turbo-kit-twin', 'stage3-tune'].includes(u)
+      const needsClutch = selectedUpgrades.some((u) =>
+        [
+          'supercharger-roots',
+          'supercharger-centrifugal',
+          'turbo-kit-single',
+          'turbo-kit-twin',
+          'stage3-tune',
+        ].includes(u)
       );
       const hasClutch = selectedUpgrades.includes('clutch-upgrade');
-      
+
       if (needsClutch && !hasClutch) {
         return {
           severity: 'warning',
@@ -1880,38 +2000,56 @@ export const dependencyRules = [
     id: 'power-bottom-end',
     name: 'Engine Internals for Extreme Power',
     trigger: {
-      upgradeKeys: ['supercharger-roots', 'supercharger-centrifugal', 'turbo-kit-single', 'turbo-kit-twin', 'stage3-tune'],
+      upgradeKeys: [
+        'supercharger-roots',
+        'supercharger-centrifugal',
+        'turbo-kit-single',
+        'turbo-kit-twin',
+        'stage3-tune',
+      ],
     },
     check: (selectedUpgrades) => {
-      const hasExtremePowerMod = selectedUpgrades.some(u =>
-        ['supercharger-roots', 'supercharger-centrifugal', 'turbo-kit-single', 'turbo-kit-twin', 'stage3-tune'].includes(u)
+      const hasExtremePowerMod = selectedUpgrades.some((u) =>
+        [
+          'supercharger-roots',
+          'supercharger-centrifugal',
+          'turbo-kit-single',
+          'turbo-kit-twin',
+          'stage3-tune',
+        ].includes(u)
       );
       const hasForgedInternals = selectedUpgrades.includes('forged-internals');
 
       if (hasExtremePowerMod && !hasForgedInternals) {
         return {
           severity: 'warning',
-          message: 'Extreme power builds can push stock internals near their limits - forged internals recommended for durability',
+          message:
+            'Extreme power builds can push stock internals near their limits - forged internals recommended for durability',
           recommendation: ['forged-internals'],
         };
       }
       return null;
     },
   },
-  
+
   {
     id: 'power-cooling',
     name: 'Cooling for Power',
     trigger: {
-      upgradeKeys: ['supercharger-roots', 'supercharger-centrifugal', 'turbo-kit-single', 
-                    'turbo-kit-twin', 'stage3-tune'],
+      upgradeKeys: [
+        'supercharger-roots',
+        'supercharger-centrifugal',
+        'turbo-kit-single',
+        'turbo-kit-twin',
+        'stage3-tune',
+      ],
     },
     check: (selectedUpgrades) => {
-      const needsCooling = selectedUpgrades.some(u => 
+      const needsCooling = selectedUpgrades.some((u) =>
         ['supercharger-roots', 'turbo-kit-twin', 'stage3-tune'].includes(u)
       );
       const hasOilCooler = selectedUpgrades.includes('oil-cooler');
-      
+
       if (needsCooling && !hasOilCooler) {
         return {
           severity: 'warning',
@@ -1922,7 +2060,7 @@ export const dependencyRules = [
       return null;
     },
   },
-  
+
   // ---------------------------------------------------------------------------
   // LOWERING → GEOMETRY RULES
   // ---------------------------------------------------------------------------
@@ -1933,10 +2071,10 @@ export const dependencyRules = [
       upgradeKeys: ['lowering-springs', 'coilovers-street', 'coilovers-track'],
     },
     check: (selectedUpgrades) => {
-      const hasLowering = selectedUpgrades.some(u => 
+      const hasLowering = selectedUpgrades.some((u) =>
         ['lowering-springs', 'coilovers-street', 'coilovers-track'].includes(u)
       );
-      
+
       if (hasLowering) {
         return {
           severity: 'info',
@@ -1947,7 +2085,7 @@ export const dependencyRules = [
       return null;
     },
   },
-  
+
   {
     id: 'aggressive-drop-rollcenter',
     name: 'Roll Center for Aggressive Drop',
@@ -1957,18 +2095,19 @@ export const dependencyRules = [
     // This is informational - can't directly recommend a part
     check: (selectedUpgrades) => {
       const hasTrackCoilovers = selectedUpgrades.includes('coilovers-track');
-      
+
       if (hasTrackCoilovers) {
         return {
           severity: 'info',
-          message: 'Significant lowering may require roll center correction for optimal handling and steering feel',
+          message:
+            'Significant lowering may require roll center correction for optimal handling and steering feel',
           recommendation: [],
         };
       }
       return null;
     },
   },
-  
+
   // ---------------------------------------------------------------------------
   // AERO BALANCE RULES
   // ---------------------------------------------------------------------------
@@ -1981,18 +2120,19 @@ export const dependencyRules = [
     check: (selectedUpgrades) => {
       const hasWing = selectedUpgrades.includes('wing');
       const hasSplitter = selectedUpgrades.includes('splitter');
-      
+
       if (hasWing && !hasSplitter) {
         return {
           severity: 'info',
-          message: 'Rear wing without front aero may create understeer at high speed - consider a splitter',
+          message:
+            'Rear wing without front aero may create understeer at high speed - consider a splitter',
           recommendation: ['splitter'],
         };
       }
       return null;
     },
   },
-  
+
   {
     id: 'aero-balance-rear',
     name: 'Aero Balance - Rear',
@@ -2002,18 +2142,19 @@ export const dependencyRules = [
     check: (selectedUpgrades) => {
       const hasSplitter = selectedUpgrades.includes('splitter');
       const hasWing = selectedUpgrades.includes('wing');
-      
+
       if (hasSplitter && !hasWing) {
         return {
           severity: 'info',
-          message: 'Front splitter without rear aero may create oversteer at high speed - consider a wing',
+          message:
+            'Front splitter without rear aero may create oversteer at high speed - consider a wing',
           recommendation: ['wing'],
         };
       }
       return null;
     },
   },
-  
+
   // ---------------------------------------------------------------------------
   // HEADERS REQUIRE TUNE
   // ---------------------------------------------------------------------------
@@ -2025,15 +2166,23 @@ export const dependencyRules = [
     },
     check: (selectedUpgrades) => {
       const hasHeaders = selectedUpgrades.includes('headers');
-      const hasTune = selectedUpgrades.some(u => 
-        ['tune-street', 'tune-track', 'stage1-tune', 'stage2-tune', 'stage3-tune'].includes(u)
+      const hasTune = selectedUpgrades.some((u) =>
+        [
+          'tune-street',
+          'tune-track',
+          'stage1-tune',
+          'stage2-tune',
+          'stage3-tune',
+          'dct-tune',
+          'piggyback-tuner',
+        ].includes(u)
       );
-      
+
       if (hasHeaders && !hasTune) {
         return {
           severity: 'warning',
-          message: 'Headers require an ECU tune to take full advantage of the airflow gains',
-          recommendation: ['tune-street'],
+          message: 'ECU Tune required to achieve max performance gains from headers',
+          recommendation: ['ecu-tune'],
         };
       }
       return null;
@@ -2053,7 +2202,7 @@ export const dependencyRules = [
 export function getUpgradeDependencies(upgradeKey) {
   const mapping = upgradeNodeMap[upgradeKey];
   if (!mapping) return null;
-  
+
   return {
     improves: mapping.improves || [],
     modifies: mapping.modifies || [],
@@ -2072,13 +2221,11 @@ export function getUpgradeDependencies(upgradeKey) {
  */
 export function checkDependencies(selectedUpgrades) {
   const results = [];
-  
+
   for (const rule of dependencyRules) {
     // Check if any trigger upgrades are selected
-    const triggered = rule.trigger.upgradeKeys.some(key => 
-      selectedUpgrades.includes(key)
-    );
-    
+    const triggered = rule.trigger.upgradeKeys.some((key) => selectedUpgrades.includes(key));
+
     if (triggered) {
       const result = rule.check(selectedUpgrades);
       if (result) {
@@ -2090,7 +2237,7 @@ export function checkDependencies(selectedUpgrades) {
       }
     }
   }
-  
+
   return results;
 }
 
@@ -2101,11 +2248,11 @@ export function checkDependencies(selectedUpgrades) {
  */
 export function getAffectedSystems(upgradeKeys) {
   const affectedSystems = new Set();
-  
+
   for (const key of upgradeKeys) {
     const deps = getUpgradeDependencies(key);
     if (!deps) continue;
-    
+
     // Collect all affected nodes
     const allNodes = [
       ...deps.improves,
@@ -2114,7 +2261,7 @@ export function getAffectedSystems(upgradeKeys) {
       ...deps.invalidates,
       ...deps.compromises,
     ];
-    
+
     // Extract system from node keys (e.g., 'powertrain.boost_level' -> 'powertrain')
     for (const nodeKey of allNodes) {
       const system = nodeKey.split('.')[0];
@@ -2123,7 +2270,7 @@ export function getAffectedSystems(upgradeKeys) {
       }
     }
   }
-  
+
   return affectedSystems;
 }
 
@@ -2135,18 +2282,18 @@ export function getAffectedSystems(upgradeKeys) {
 export function getUpgradeSummary(upgradeKey) {
   const deps = getUpgradeDependencies(upgradeKey);
   if (!deps) return null;
-  
+
   const summary = {
     upgradeKey,
-    improves: deps.improves.map(n => nodes[n]?.name || n),
-    modifies: deps.modifies.map(n => nodes[n]?.name || n),
-    stresses: deps.stresses.map(n => nodes[n]?.name || n),
-    invalidates: deps.invalidates.map(n => nodes[n]?.name || n),
-    compromises: deps.compromises.map(n => nodes[n]?.name || n),
+    improves: deps.improves.map((n) => nodes[n]?.name || n),
+    modifies: deps.modifies.map((n) => nodes[n]?.name || n),
+    stresses: deps.stresses.map((n) => nodes[n]?.name || n),
+    invalidates: deps.invalidates.map((n) => nodes[n]?.name || n),
+    compromises: deps.compromises.map((n) => nodes[n]?.name || n),
     requires: deps.requires,
     recommends: deps.recommends,
   };
-  
+
   return summary;
 }
 
@@ -2162,4 +2309,3 @@ export default {
   getAffectedSystems,
   getUpgradeSummary,
 };
-

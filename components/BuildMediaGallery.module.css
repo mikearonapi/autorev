@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.5rem;
   font-size: 0.875rem;
   font-weight: 700;
   color: var(--brand-teal);
@@ -28,7 +28,7 @@
 }
 
 .sectionHint {
-  margin: 0 0 0.75rem 0;
+  margin: 0 0 0.75rem;
   font-size: 0.8125rem;
   color: rgba(255, 255, 255, 0.5);
   line-height: 1.5;
@@ -148,11 +148,7 @@
   aspect-ratio: 4 / 3;
   border-radius: 14px;
   overflow: hidden;
-  background: linear-gradient(
-    135deg,
-    rgba(30, 40, 55, 0.8) 0%,
-    rgba(20, 30, 45, 0.8) 100%
-  );
+  background: linear-gradient(135deg, rgba(30, 40, 55, 0.8) 0%, rgba(20, 30, 45, 0.8) 100%);
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   border: 2px solid rgba(255, 255, 255, 0.08);
@@ -203,7 +199,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s, background 0.2s;
+  transition:
+    transform 0.2s,
+    background 0.2s;
 }
 
 .mediaItem:hover .playOverlay {
@@ -251,7 +249,7 @@
 /* Hero item highlight - uses TEAL for selection state */
 .heroItem {
   border: 2.5px solid var(--brand-teal) !important;
-  box-shadow: 
+  box-shadow:
     0 0 0 3px rgba(var(--brand-teal-rgb), 0.2),
     0 8px 20px rgba(0, 0, 0, 0.4);
 }
@@ -312,6 +310,54 @@
   transform: scale(0.95);
 }
 
+/* ===========================================
+   DELETE BUTTON - Destructive action overlay
+   =========================================== */
+
+.deleteBtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  min-width: 44px; /* Touch target compliance */
+  min-height: 44px;
+  padding: 0;
+  background: rgba(15, 20, 30, 0.9);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: rgba(255, 255, 255, 0.7);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  cursor: pointer;
+  opacity: 0;
+  transition: all 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+}
+
+.deleteBtn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mediaItem:hover .deleteBtn {
+  opacity: 1;
+}
+
+.deleteBtn:hover {
+  background: rgba(var(--brand-error-rgb), 0.9);
+  color: white;
+  border-color: var(--brand-error);
+  box-shadow: 0 4px 12px rgba(var(--brand-error-rgb), 0.35);
+}
+
+.deleteBtn:active {
+  transform: scale(0.95);
+}
+
 /* Stock image label - Premium tag */
 .stockItem {
   position: relative;
@@ -348,8 +394,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .lightboxClose {
@@ -436,38 +487,38 @@
   .heroOptions {
     gap: 0.5rem;
   }
-  
+
   .heroOption {
     width: 120px;
   }
-  
+
   .heroOptionImage {
     height: 70px;
   }
-  
+
   .mediaGrid {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
     gap: 0.5rem;
   }
-  
+
   .lightboxContent {
     width: calc(100% - 2rem);
     height: calc(100% - 6rem);
   }
-  
+
   .lightboxNav {
     width: 44px;
     height: 44px;
   }
-  
+
   .lightboxPrev {
     left: 0.5rem;
   }
-  
+
   .lightboxNext {
     right: 0.5rem;
   }
-  
+
   .lightboxClose {
     top: 0.5rem;
     right: 0.5rem;
@@ -483,44 +534,49 @@
     overflow-x: hidden;
     box-sizing: border-box;
   }
-  
+
   /* Mobile: Keep header same size as Specs page (0.875rem) */
   .sectionTitle {
     font-size: 0.875rem;
     flex-wrap: wrap;
   }
-  
+
   .sectionHint {
     font-size: 0.75rem;
   }
-  
+
   .mediaGrid {
     grid-template-columns: repeat(2, 1fr);
     max-width: 100%;
   }
-  
+
   .mediaSection {
     max-width: 100%;
     overflow: hidden;
   }
-  
+
   .playOverlay {
     width: 40px;
     height: 40px;
   }
-  
+
   /* On mobile, always show the Set as Hero button (no hover) */
   .setHeroBtn {
     opacity: 1;
     padding: 5px 10px;
     font-size: 0.625rem;
   }
-  
+
+  /* On mobile, always show the delete button (no hover) */
+  .deleteBtn {
+    opacity: 1;
+  }
+
   .primaryBadge {
     padding: 5px 10px;
     font-size: 0.625rem;
   }
-  
+
   .stockLabel {
     padding: 4px 8px;
     font-size: 0.625rem;
