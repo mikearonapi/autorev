@@ -1,14 +1,14 @@
 /**
  * Community Build Detail API
- * 
+ *
  * GET /api/community/builds/[slug] - Get full build details including car data
- * 
+ *
  * Returns:
  *   - build: Basic build info
  *   - buildData: Full user_projects data with selected_upgrades
  *   - carData: Car data needed for performance calculations
  *   - parts: Community post parts
- * 
+ *
  * @route /api/community/builds/[slug]
  */
 
@@ -18,7 +18,11 @@ import { createClient } from '@supabase/supabase-js';
 
 import { calculateAllModificationGains } from '@/lib/performanceCalculator';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
-import { getBearerToken, createAuthenticatedClient, createServerSupabaseClient } from '@/lib/supabaseServer';
+import {
+  getBearerToken,
+  createAuthenticatedClient,
+  createServerSupabaseClient,
+} from '@/lib/supabaseServer';
 
 // Mark route as dynamic
 export const dynamic = 'force-dynamic';
@@ -36,24 +40,21 @@ async function handleGet(request, { params }) {
   const { slug } = await params;
 
   if (!slug) {
-    return NextResponse.json(
-      { error: 'Slug is required' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Slug is required' }, { status: 400 });
   }
 
   // Get user ID from auth if available (for current user's build detection)
   let currentUserId = null;
   try {
     const bearerToken = getBearerToken(request);
-    const supabase = bearerToken 
-      ? createAuthenticatedClient(bearerToken) 
+    const supabase = bearerToken
+      ? createAuthenticatedClient(bearerToken)
       : await createServerSupabaseClient();
-    
+
     if (supabase) {
-      const { data: { user } } = bearerToken
-        ? await supabase.auth.getUser(bearerToken)
-        : await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = bearerToken ? await supabase.auth.getUser(bearerToken) : await supabase.auth.getUser();
       currentUserId = user?.id;
     }
   } catch (e) {
@@ -69,24 +70,18 @@ async function handleGet(request, { params }) {
 
     if (postError) {
       console.error('[Build Detail API] RPC error:', postError);
-      return NextResponse.json(
-        { error: 'Failed to fetch build' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to fetch build' }, { status: 500 });
     }
 
     if (!postData || postData.length === 0) {
-      return NextResponse.json(
-        { error: 'Build not found' },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Build not found' }, { status: 404 });
     }
 
     const result = postData[0];
     const post = result.post;
     const buildData = result.build_data;
     const vehicleData = result.vehicle_data; // Direct link to user_vehicles via user_vehicle_id
-    
+
     // Check if this is the current user's own build
     const isOwnBuild = currentUserId && post?.user_id === currentUserId;
 
@@ -95,7 +90,8 @@ async function handleGet(request, { params }) {
     if (post?.car_slug) {
       const { data: car, error: carError } = await supabaseAdmin
         .from('cars')
-        .select(`
+        .select(
+          `
           id,
           slug,
           name,
@@ -121,12 +117,28 @@ async function handleGet(request, { params }) {
           perf_drivability,
           perf_reliability_heat,
           perf_sound_emotion
-        `)
+        `
+        )
         .eq('slug', post.car_slug)
         .single();
 
       if (!carError && car) {
         carData = car;
+      }
+    }
+
+    // Fetch latest dyno result if vehicle is linked
+    let latestDynoResult = null;
+    if (post?.user_vehicle_id) {
+      const { data: dynoResult } = await supabaseAdmin
+        .from('user_dyno_results')
+        .select('whp, wtq, boost_psi, dyno_shop, dyno_date, is_verified')
+        .eq('user_vehicle_id', post.user_vehicle_id)
+        .order('dyno_date', { ascending: false })
+        .limit(1)
+        .single();
+      if (dynoResult) {
+        latestDynoResult = dynoResult;
       }
     }
 
@@ -143,23 +155,21 @@ async function handleGet(request, { params }) {
       if (carData) {
         // Get mods from linked vehicle
         const installedMods = vehicleData?.installed_modifications || [];
-        
+
         // Get planned mods from build project (for status comparison only)
         let plannedMods = [];
         if (buildData?.selected_upgrades) {
           const rawSelected = buildData.selected_upgrades;
-          const rawKeys = Array.isArray(rawSelected)
-            ? rawSelected
-            : (rawSelected?.upgrades || []);
+          const rawKeys = Array.isArray(rawSelected) ? rawSelected : rawSelected?.upgrades || [];
 
           plannedMods = (rawKeys || [])
             .map((u) => (typeof u === 'string' ? u : u?.key))
             .filter(Boolean);
         }
-        
+
         // Calculate build status by comparing planned vs installed
         if (plannedMods.length > 0) {
-          const installedCount = plannedMods.filter(mod => installedMods.includes(mod)).length;
+          const installedCount = plannedMods.filter((mod) => installedMods.includes(mod)).length;
           if (installedMods.length > 0 && installedCount >= plannedMods.length) {
             buildStatus = 'complete';
           } else if (installedCount > 0) {
@@ -182,16 +192,29 @@ async function handleGet(request, { params }) {
           quarterMile: carData.quarter_mile,
           curbWeight: carData.curb_weight,
         };
-        
-        const modGains = installedMods.length > 0 
-          ? calculateAllModificationGains(installedMods, normalizedCar)
-          : { hpGain: 0, torqueGain: 0, zeroToSixtyImprovement: 0 };
-        
+
+        const modGains =
+          installedMods.length > 0
+            ? calculateAllModificationGains(installedMods, normalizedCar)
+            : { hpGain: 0, torqueGain: 0, zeroToSixtyImprovement: 0 };
+
         const stockHp = carData.hp || 0;
         const stockTorque = carData.torque || 0;
         const hpGain = modGains.hpGain || 0;
         const torqueGain = modGains.torqueGain || 0;
         const zeroToSixtyImprovement = modGains.zeroToSixtyImprovement || 0;
+
+        // Check for user-provided dyno data
+        // Priority: user_dyno_results table > custom_specs.dyno > custom_specs.engine
+        const dynoFromTable = latestDynoResult?.whp ? latestDynoResult : null;
+        const dynoFromSpecs = vehicleData?.custom_specs?.dyno || vehicleData?.custom_specs?.engine;
+        const dynoData = dynoFromTable || dynoFromSpecs;
+        const hasUserDynoData = !!(dynoData?.whp && dynoData.whp > 0);
+
+        // Use dyno data if available, otherwise use calculated values
+        const finalHp = hasUserDynoData ? dynoData.whp : stockHp + hpGain;
+        const finalTorque =
+          hasUserDynoData && dynoData?.wtq ? dynoData.wtq : stockTorque + torqueGain;
 
         computedPerformance = {
           stock: {
@@ -202,20 +225,37 @@ async function handleGet(request, { params }) {
             lateralG: carData.lateral_g,
           },
           upgraded: {
-            hp: stockHp + hpGain,
-            torque: stockTorque + torqueGain,
-            zeroToSixty: carData.zero_to_sixty 
-              ? Math.max(2.0, carData.zero_to_sixty - zeroToSixtyImprovement) 
+            hp: finalHp,
+            torque: finalTorque,
+            zeroToSixty: carData.zero_to_sixty
+              ? Math.max(2.0, carData.zero_to_sixty - zeroToSixtyImprovement)
               : null,
             braking60To0: carData.braking_60_0,
             lateralG: carData.lateral_g,
           },
-          hpGain,
-          torqueGain,
+          hpGain: hasUserDynoData ? finalHp - stockHp : hpGain,
+          torqueGain: hasUserDynoData ? finalTorque - stockTorque : torqueGain,
           upgradeKeys: installedMods,
           installedMods,
           plannedMods,
           isCurrentUserBuild: isOwnBuild,
+          // Data source tracking for UI badges
+          isUserProvided: hasUserDynoData,
+          dataSources: hasUserDynoData
+            ? {
+                hp: dynoFromTable?.is_verified ? 'verified' : 'measured',
+                torque: dynoData?.wtq
+                  ? dynoFromTable?.is_verified
+                    ? 'verified'
+                    : 'measured'
+                  : 'estimated',
+                zeroToSixty: 'calibrated',
+                braking: 'estimated',
+                lateralG: 'estimated',
+              }
+            : null,
+          dynoShop: hasUserDynoData ? dynoFromTable?.dyno_shop || dynoFromSpecs?.dynoShop : null,
+          dynoDate: hasUserDynoData ? dynoFromTable?.dyno_date || dynoFromSpecs?.dynoDate : null,
         };
       }
     } catch (e) {
@@ -226,14 +266,15 @@ async function handleGet(request, { params }) {
     // Fetch community post parts if available
     let parts = [];
     if (post?.id) {
-      const PARTS_COLS = 'id, community_post_id, category, brand, part_name, part_number, price, notes, link_url, created_at';
-      
+      const PARTS_COLS =
+        'id, community_post_id, category, brand, part_name, part_number, price, notes, link_url, created_at';
+
       const { data: partsData } = await supabaseAdmin
         .from('community_post_parts')
         .select(PARTS_COLS)
         .eq('community_post_id', post.id)
         .order('category');
-      
+
       if (partsData) {
         parts = partsData;
       }
@@ -243,7 +284,8 @@ async function handleGet(request, { params }) {
     if (buildData?.id) {
       const { data: projectParts } = await supabaseAdmin
         .from('user_project_parts')
-        .select(`
+        .select(
+          `
           id,
           part_id,
           quantity,
@@ -252,46 +294,46 @@ async function handleGet(request, { params }) {
           price_cents,
           notes,
           category
-        `)
+        `
+        )
         .eq('project_id', buildData.id);
-      
+
       if (projectParts && projectParts.length > 0) {
         // Merge project parts with community parts
-        const formattedProjectParts = projectParts.map(p => ({
+        const formattedProjectParts = projectParts.map((p) => ({
           ...p,
           mod_type: p.part_name,
           product_name: p.part_name,
-          source: 'project'
+          source: 'project',
         }));
         parts = [...parts, ...formattedProjectParts];
       }
     }
 
-    return NextResponse.json({
-      build: {
-        ...post,
-        author: result.author,
-        images: result.images || [],
+    return NextResponse.json(
+      {
+        build: {
+          ...post,
+          author: result.author,
+          images: result.images || [],
+        },
+        buildData,
+        carData,
+        computedPerformance,
+        buildStatus, // 'complete' | 'in_progress' | 'planned' | null
+        vehicleData, // Current user's vehicle data
+        parts,
       },
-      buildData,
-      carData,
-      computedPerformance,
-      buildStatus, // 'complete' | 'in_progress' | 'planned' | null
-      vehicleData, // Current user's vehicle data
-      parts,
-    }, {
-      headers: {
-        // Disable caching temporarily to ensure fresh data
-        'Cache-Control': 'no-store, max-age=0',
-      },
-    });
-
+      {
+        headers: {
+          // Disable caching temporarily to ensure fresh data
+          'Cache-Control': 'no-store, max-age=0',
+        },
+      }
+    );
   } catch (err) {
     console.error('[Build Detail API] Error:', err);
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 

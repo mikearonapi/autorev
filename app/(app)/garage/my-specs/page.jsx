@@ -25,28 +25,46 @@ import { MyGarageSubNav, GarageVehicleSelector } from '@/components/garage';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
-import { Skeleton } from '@/components/ui';
+import { Skeleton, DataSourceBadge, PerformanceSourceSummary } from '@/components/ui';
 import EmptyState from '@/components/ui/EmptyState';
 import { Icons } from '@/components/ui/Icons';
 import { useCarsList, useCarBySlug, useCarMaintenance } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
 import { calculateAllModificationGains } from '@/lib/performanceCalculator';
+import { whpToCrankHp } from '@/lib/userDynoDataService';
 
 import styles from './page.module.css';
 
 /**
  * SpecRow - Semantic table row for spec display
  * Per SOURCE_OF_TRUTH.md: Use proper ARIA and semantic HTML
+ *
+ * Enhanced with data source badges to indicate measured vs estimated values
  */
-function SpecRow({ label, value, unit = '', stockValue, modifiedValue, gain }) {
+function SpecRow({
+  label,
+  value,
+  unit = '',
+  stockValue,
+  modifiedValue,
+  gain,
+  dataSource = null, // 'verified' | 'measured' | 'calibrated' | 'estimated' | null
+  sourceDetail = null,
+}) {
   // Handle missing values with "—" per audit requirements
   const displayValue = value !== undefined && value !== null ? value : '—';
   const hasModification = stockValue !== undefined && modifiedValue !== undefined;
+
+  // Show badge for non-estimated data sources
+  const showSourceBadge = dataSource && dataSource !== 'estimated';
 
   return (
     <tr className={styles.specTableRow}>
       <th scope="row" className={styles.specTableLabel}>
         {label}
+        {showSourceBadge && (
+          <DataSourceBadge source={dataSource} variant="minimal" detail={sourceDetail} />
+        )}
       </th>
       <td className={styles.specTableValue}>
         {hasModification ? (
@@ -376,24 +394,80 @@ function MySpecsContent() {
   // SOURCE OF TRUTH: Calculate HP gain dynamically from installed mods
   // Never use stored values (currentBuild?.totalHpGain) - they can become stale
   // See docs/SOURCE_OF_TRUTH.md Rule 8
+  //
+  // IMPORTANT: When user has dyno data, that takes PRIORITY over calculations
   // NOTE: This must be called before any early returns (React hooks rules)
-  const { hpGain, finalHp, hasBuildUpgrades } = useMemo(() => {
-    const installedMods = userVehicle?.installedModifications || [];
+  const { hpGain, finalHp, hasBuildUpgrades, hasUserDynoData, dynoData, performanceDataSources } =
+    useMemo(() => {
+      const installedMods = userVehicle?.installedModifications || [];
+      const customSpecs = userVehicle?.customSpecs || {};
 
-    if (installedMods.length === 0) {
-      return { hpGain: 0, finalHp: selectedCar?.hp || null, hasBuildUpgrades: false };
-    }
+      // Check if user has dyno data - PRIORITY OVER CALCULATIONS
+      const userDyno = customSpecs?.engine || customSpecs?.dyno;
+      const hasDyno = userDyno?.dynoWhp && userDyno.dynoWhp > 0;
 
-    const modificationGains = calculateAllModificationGains(installedMods, selectedCar);
-    const calculatedHpGain = modificationGains.hpGain || 0;
-    const calculatedFinalHp = selectedCar?.hp ? selectedCar.hp + calculatedHpGain : null;
+      if (hasDyno) {
+        // User has dyno data - USE IT
+        const dynoWhp = userDyno.dynoWhp;
+        const dynoWtq = userDyno.dynoWtq;
+        const isVerified = userDyno.isVerified || false;
 
-    return {
-      hpGain: calculatedHpGain,
-      finalHp: calculatedFinalHp,
-      hasBuildUpgrades: calculatedHpGain > 0,
-    };
-  }, [userVehicle?.installedModifications, selectedCar]);
+        // Convert WHP to crank HP using drivetrain loss
+        const crankHp = whpToCrankHp(dynoWhp, selectedCar?.drivetrain || 'RWD');
+        const crankTq = dynoWtq ? whpToCrankHp(dynoWtq, selectedCar?.drivetrain || 'RWD') : null;
+
+        const hpGainFromDyno = crankHp - (selectedCar?.hp || 0);
+
+        return {
+          hpGain: hpGainFromDyno,
+          finalHp: crankHp,
+          hasBuildUpgrades: hpGainFromDyno > 0,
+          hasUserDynoData: true,
+          dynoData: {
+            whp: dynoWhp,
+            wtq: dynoWtq,
+            crankHp,
+            crankTq,
+            isVerified,
+            dynoShop: userDyno.dynoShop,
+            dynoDate: userDyno.dynoDate,
+            boostPsi: userDyno.boostPsi,
+            fuelType: userDyno.fuelType,
+          },
+          performanceDataSources: {
+            hp: isVerified ? 'verified' : 'measured',
+            torque: dynoWtq ? (isVerified ? 'verified' : 'measured') : 'estimated',
+            whp: isVerified ? 'verified' : 'measured',
+            wtq: dynoWtq ? (isVerified ? 'verified' : 'measured') : null,
+          },
+        };
+      }
+
+      // No dyno data - calculate from mods
+      if (installedMods.length === 0) {
+        return {
+          hpGain: 0,
+          finalHp: selectedCar?.hp || null,
+          hasBuildUpgrades: false,
+          hasUserDynoData: false,
+          dynoData: null,
+          performanceDataSources: null,
+        };
+      }
+
+      const modificationGains = calculateAllModificationGains(installedMods, selectedCar);
+      const calculatedHpGain = modificationGains.hpGain || 0;
+      const calculatedFinalHp = selectedCar?.hp ? selectedCar.hp + calculatedHpGain : null;
+
+      return {
+        hpGain: calculatedHpGain,
+        finalHp: calculatedFinalHp,
+        hasBuildUpgrades: calculatedHpGain > 0,
+        hasUserDynoData: false,
+        dynoData: null,
+        performanceDataSources: null,
+      };
+    }, [userVehicle?.installedModifications, userVehicle?.customSpecs, selectedCar]);
 
   // Loading state - only block on auth and build loading, NOT carsLoading
   // The fallbackCar mechanism ensures we have car data when needed
@@ -441,6 +515,16 @@ function MySpecsContent() {
       <GarageVehicleSelector selectedCarSlug={selectedCar.slug} buildId={currentBuildId} />
 
       <div className={styles.content}>
+        {/* Data Source Summary - shows when user has dyno data */}
+        {hasUserDynoData && (
+          <PerformanceSourceSummary
+            hasUserData={hasUserDynoData}
+            primarySource={performanceDataSources?.hp || 'measured'}
+            dynoShop={dynoData?.dynoShop}
+            dynoDate={dynoData?.dynoDate}
+          />
+        )}
+
         {/* Specs Grid */}
         <div className={styles.specsGrid} role="region" aria-label="Vehicle Specifications">
           {/* Performance - Semantic table for accessibility */}
@@ -452,19 +536,40 @@ function MySpecsContent() {
               </h3>
             </div>
             <SpecTable caption="Performance specifications" aria-labelledby="performance-specs">
-              {hasBuildUpgrades ? (
+              {hasBuildUpgrades || hasUserDynoData ? (
                 <SpecRow
                   label="Horsepower"
                   stockValue={selectedCar.hp}
                   modifiedValue={finalHp}
                   gain={hpGain}
                   unit="HP"
+                  dataSource={performanceDataSources?.hp}
+                  sourceDetail={dynoData?.dynoShop}
                 />
               ) : (
                 <SpecRow label="Horsepower" value={selectedCar.hp} unit="HP" />
               )}
-              <SpecRow label="Torque" value={selectedCar.torque} unit="lb-ft" />
-              <SpecRow label="0-60 mph" value={selectedCar.zeroToSixty} unit="s" />
+              {/* If user has dyno torque data, show it */}
+              {hasUserDynoData && dynoData?.crankTq ? (
+                <SpecRow
+                  label="Torque"
+                  stockValue={selectedCar.torque}
+                  modifiedValue={dynoData.crankTq}
+                  gain={dynoData.crankTq - (selectedCar.torque || 0)}
+                  unit="lb-ft"
+                  dataSource={performanceDataSources?.torque}
+                  sourceDetail={dynoData?.dynoShop}
+                />
+              ) : (
+                <SpecRow label="Torque" value={selectedCar.torque} unit="lb-ft" />
+              )}
+              <SpecRow
+                label="0-60 mph"
+                value={selectedCar.zeroToSixty}
+                unit="s"
+                dataSource={hasUserDynoData ? 'calibrated' : null}
+                sourceDetail={hasUserDynoData ? 'Based on dyno HP' : null}
+              />
               <SpecRow label="1/4 Mile" value={selectedCar.quarterMile} unit="s" />
               <SpecRow label="Top Speed" value={selectedCar.topSpeed} unit="mph" />
               <SpecRow label="60-0 Braking" value={selectedCar.braking60To0} unit="ft" />
@@ -797,22 +902,70 @@ function MySpecsContent() {
                     )}
                   </>
                 )}
-                {/* Engine/Dyno */}
-                {userVehicle.customSpecs.engine && (
+                {/* Engine/Dyno - Show with verified/measured badges */}
+                {(userVehicle.customSpecs.engine || userVehicle.customSpecs.dyno) && (
                   <>
-                    {userVehicle.customSpecs.engine.dynoWhp && (
+                    {(userVehicle.customSpecs.engine?.dynoWhp ||
+                      userVehicle.customSpecs.dyno?.whp) && (
                       <div className={styles.specItem}>
-                        <span>Dyno WHP</span>
+                        <span className={styles.specItemLabel}>
+                          Dyno WHP
+                          <DataSourceBadge
+                            source={dynoData?.isVerified ? 'verified' : 'measured'}
+                            variant="minimal"
+                            detail={dynoData?.dynoShop}
+                          />
+                        </span>
                         <span className={styles.customSpecHighlight}>
-                          {userVehicle.customSpecs.engine.dynoWhp} WHP
+                          {userVehicle.customSpecs.engine?.dynoWhp ||
+                            userVehicle.customSpecs.dyno?.whp}{' '}
+                          WHP
                         </span>
                       </div>
                     )}
-                    {userVehicle.customSpecs.engine.dynoWtq && (
+                    {(userVehicle.customSpecs.engine?.dynoWtq ||
+                      userVehicle.customSpecs.dyno?.wtq) && (
                       <div className={styles.specItem}>
-                        <span>Dyno WTQ</span>
+                        <span className={styles.specItemLabel}>
+                          Dyno WTQ
+                          <DataSourceBadge
+                            source={dynoData?.isVerified ? 'verified' : 'measured'}
+                            variant="minimal"
+                          />
+                        </span>
                         <span className={styles.customSpecHighlight}>
-                          {userVehicle.customSpecs.engine.dynoWtq} lb-ft
+                          {userVehicle.customSpecs.engine?.dynoWtq ||
+                            userVehicle.customSpecs.dyno?.wtq}{' '}
+                          lb-ft
+                        </span>
+                      </div>
+                    )}
+                    {/* Show boost if available */}
+                    {(userVehicle.customSpecs.engine?.boostPsi ||
+                      userVehicle.customSpecs.dyno?.boostPsi) && (
+                      <div className={styles.specItem}>
+                        <span className={styles.specItemLabel}>
+                          Peak Boost
+                          <DataSourceBadge
+                            source={dynoData?.isVerified ? 'verified' : 'measured'}
+                            variant="minimal"
+                          />
+                        </span>
+                        <span className={styles.customSpecHighlight}>
+                          {userVehicle.customSpecs.engine?.boostPsi ||
+                            userVehicle.customSpecs.dyno?.boostPsi}{' '}
+                          PSI
+                        </span>
+                      </div>
+                    )}
+                    {/* Show dyno shop if available */}
+                    {(userVehicle.customSpecs.engine?.dynoShop ||
+                      userVehicle.customSpecs.dyno?.dynoShop) && (
+                      <div className={styles.specItem}>
+                        <span>Dyno Shop</span>
+                        <span>
+                          {userVehicle.customSpecs.engine?.dynoShop ||
+                            userVehicle.customSpecs.dyno?.dynoShop}
                         </span>
                       </div>
                     )}

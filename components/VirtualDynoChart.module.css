@@ -11,6 +11,7 @@
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-radius: 14px;
   padding: 16px;
+
   /* Prevent chart elements from overflowing and causing page zoom on mobile */
   overflow: hidden;
   width: 100%;
@@ -28,8 +29,7 @@
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  flex-wrap: nowrap;
-  flex-direction: row;
+  flex-flow: row nowrap;
   margin-bottom: 20px;
   gap: 8px;
 }
@@ -40,6 +40,13 @@
   gap: 4px;
   flex: 1;
   min-width: 0;
+}
+
+.dynoTitleRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
 .dynoTitle {
@@ -150,9 +157,10 @@
   grid-template-rows: 1fr 28px;
   gap: 6px;
   height: 260px;
+
   /* Reduced padding - markers now sit on the lines */
   padding-top: 16px;
-  padding-right: 0;
+
   /* No right padding needed - annotations now stay inside container */
   padding-right: 0;
 }
@@ -180,6 +188,7 @@
   position: relative;
   background: rgba(0, 0, 0, 0.25);
   border-radius: 12px;
+
   /* Allow peak markers to overflow so values are visible */
   overflow: visible;
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -253,6 +262,7 @@
 .dynoPeakMarkerMod,
 .dynoPeakMarkerTq {
   position: absolute;
+
   /* Position markers sitting on the peak points */
   transform: translate(-50%, 0%);
   display: flex;
@@ -328,6 +338,7 @@
 
 .dynoGainAnnotation {
   position: absolute;
+
   /* Changed from right: -40px to stay within container bounds */
   right: 4px;
   background: rgba(16, 185, 129, 0.2);
@@ -351,65 +362,65 @@
     padding: 24px;
     border-radius: 16px;
   }
-  
+
   .dynoHeader {
     gap: 12px;
   }
-  
+
   .dynoSubtitle {
     font-size: 0.8125rem;
   }
-  
+
   .dynoGainBadge {
     padding: 10px 16px;
     width: auto;
     justify-content: flex-start;
   }
-  
+
   .dynoGainValue {
     font-size: 1.5rem;
   }
-  
+
   .dynoLegend {
     gap: 28px;
     justify-content: center;
     flex-wrap: nowrap;
   }
-  
+
   .dynoLegendItem {
     font-size: var(--text-sm);
     gap: 10px;
   }
-  
+
   .dynoLegendLine {
     width: 20px;
   }
-  
+
   .dynoChart {
     height: 340px;
     grid-template-columns: 44px 1fr;
   }
-  
+
   .dynoYAxis {
     font-size: var(--text-xs);
     padding-right: 6px;
   }
-  
+
   .dynoXAxis {
     font-size: var(--text-2xs);
   }
-  
+
   .dynoPeakMarkerMod,
   .dynoPeakMarkerTq {
     padding: 5px 10px;
     gap: 6px;
   }
-  
+
   .dynoPeakValueMod,
   .dynoPeakValueTq {
     font-size: 1.125rem;
   }
-  
+
   .dynoPeakLabelMod,
   .dynoPeakLabelTq {
     font-size: 0.625rem;
@@ -495,11 +506,11 @@
     padding: 8px 12px;
     min-width: 140px;
   }
-  
+
   .dynoHoverRpm {
     font-size: 0.75rem;
   }
-  
+
   .dynoHoverRow {
     font-size: 0.75rem;
     gap: 6px;
@@ -516,15 +527,15 @@
     animation: none;
     transition: none;
   }
-  
+
   .dynoHoverLine {
     transition: none;
   }
-  
+
   .dynoHoverTooltip {
     transition: none;
   }
-  
+
   .dynoPeakMarkerMod,
   .dynoPeakMarkerTq {
     transition: none;

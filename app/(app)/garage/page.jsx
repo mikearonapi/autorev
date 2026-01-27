@@ -54,6 +54,7 @@ import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import ServiceLogModal from '@/components/ServiceLogModal';
+import { DataSourceIndicator } from '@/components/ui';
 import PullToRefresh from '@/components/ui/PullToRefresh';
 import { Skeleton } from '@/components/ui/Skeleton';
 import SwipeableRow from '@/components/ui/SwipeableRow';
@@ -1735,6 +1736,7 @@ function HeroVehicleDisplay({
       {/* Key Specs Strip - Quick stats between image and action buttons */}
       {/* Always show build stats (with mods applied) for owned vehicles */}
       {/* Show loading state when car data is still loading (uses _isCarDataLoading flag) */}
+      {/* ENHANCED: Shows data source indicator when values are from user dyno data */}
       {panelState !== 'details' && (
         <div className={styles.keySpecsStrip}>
           <div className={styles.keySpecItem}>
@@ -1748,6 +1750,15 @@ function HeroVehicleDisplay({
                     ? car.hp + modificationGains.hpGain
                     : car.hp
                   : '—'}
+              {/* Show indicator when HP is from user dyno data */}
+              <DataSourceIndicator
+                source={
+                  isOwnedVehicle &&
+                  (item.vehicle?.customSpecs?.dyno?.whp || item.vehicle?.customSpecs?.engine?.whp)
+                    ? 'measured'
+                    : null
+                }
+              />
             </span>
             <span className={styles.keySpecLabel}>HP</span>
           </div>
@@ -1762,6 +1773,14 @@ function HeroVehicleDisplay({
                     ? car.torque + modificationGains.torqueGain
                     : car.torque
                   : '—'}
+              <DataSourceIndicator
+                source={
+                  isOwnedVehicle &&
+                  (item.vehicle?.customSpecs?.dyno?.wtq || item.vehicle?.customSpecs?.engine?.wtq)
+                    ? 'measured'
+                    : null
+                }
+              />
             </span>
             <span className={styles.keySpecLabel}>LB-FT</span>
           </div>
@@ -1790,7 +1809,7 @@ function HeroVehicleDisplay({
         </div>
       )}
 
-      {/* Bottom Action Bar - Specs, Build, Performance, Parts, Install, Photos (when not in details view) */}
+      {/* Bottom Action Bar - Specs, Build, Parts, Install, Photos (when not in details view) */}
       {panelState !== 'details' && (
         <div className={styles.heroBottomBar}>
           {/* Specs - links to dedicated page */}
@@ -1817,17 +1836,6 @@ function HeroVehicleDisplay({
               >
                 <Icons.wrench size={18} />
                 <span>Build</span>
-              </Link>
-              <Link
-                href={
-                  item.vehicle?.activeBuildId
-                    ? `/data?build=${item.vehicle.activeBuildId}`
-                    : `/data?car=${car.slug}`
-                }
-                className={styles.heroBottomBtn}
-              >
-                <Icons.bolt size={18} />
-                <span>Data</span>
               </Link>
               <Link
                 href={

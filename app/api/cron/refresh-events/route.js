@@ -1,14 +1,14 @@
 /**
  * Cron: Refresh events from external sources
- * 
+ *
  * GET /api/cron/refresh-events
- * 
+ *
  * Fetches events from configured event sources, deduplicates,
  * geocodes, and inserts new events into the database.
- * 
+ *
  * Auth:
  * - Authorization: Bearer <CRON_SECRET> OR x-vercel-cron: true
- * 
+ *
  * Query params:
  * - source: Specific source name to run (optional, default all active)
  * - limit: Max events to process per source (optional, for testing)
@@ -47,9 +47,12 @@ const SOURCE_TIMEOUT_MS = 5 * 60 * 1000;
 function withTimeout(promise, timeoutMs, operationName) {
   return Promise.race([
     promise,
-    new Promise((_, reject) => 
-      setTimeout(() => reject(new Error(`${operationName} timed out after ${timeoutMs / 1000}s`)), timeoutMs)
-    )
+    new Promise((_, reject) =>
+      setTimeout(
+        () => reject(new Error(`${operationName} timed out after ${timeoutMs / 1000}s`)),
+        timeoutMs
+      )
+    ),
   ]);
 }
 
@@ -66,28 +69,41 @@ function isAuthorized(request) {
 async function handleGet(request) {
   // Auth check
   if (!isAuthorized(request)) {
-    console.error('[refresh-events] Unauthorized request. CRON_SECRET set:', Boolean(CRON_SECRET), 'x-vercel-cron header:', request.headers.get('x-vercel-cron'));
+    console.error(
+      '[refresh-events] Unauthorized request. CRON_SECRET set:',
+      Boolean(CRON_SECRET),
+      'x-vercel-cron header:',
+      request.headers.get('x-vercel-cron')
+    );
     return NextResponse.json({ error: 'Unauthorized', code: 'UNAUTHORIZED' }, { status: 401 });
   }
 
   if (!isSupabaseConfigured || !supabaseServiceRole) {
-    console.error('[refresh-events] Database not configured. isSupabaseConfigured:', isSupabaseConfigured, 'supabaseServiceRole:', Boolean(supabaseServiceRole));
-    return NextResponse.json({ 
-      error: 'Database not configured', 
-      code: 'DB_NOT_CONFIGURED',
-      debug: {
-        isSupabaseConfigured,
-        hasServiceRole: Boolean(supabaseServiceRole),
-        hasUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
-        hasAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
-        hasServiceRoleKey: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
-      }
-    }, { status: 503 });
+    console.error(
+      '[refresh-events] Database not configured. isSupabaseConfigured:',
+      isSupabaseConfigured,
+      'supabaseServiceRole:',
+      Boolean(supabaseServiceRole)
+    );
+    return NextResponse.json(
+      {
+        error: 'Database not configured',
+        code: 'DB_NOT_CONFIGURED',
+        debug: {
+          isSupabaseConfigured,
+          hasServiceRole: Boolean(supabaseServiceRole),
+          hasUrl: Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL),
+          hasAnonKey: Boolean(process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY),
+          hasServiceRoleKey: Boolean(process.env.SUPABASE_SERVICE_ROLE_KEY),
+        },
+      },
+      { status: 503 }
+    );
   }
 
   const startedAt = Date.now();
   const { searchParams } = new URL(request.url);
-  
+
   // Diagnostic mode - returns system health without running the full cron
   const diagnosticMode = searchParams.get('diagnostic') === 'true';
   if (diagnosticMode) {
@@ -95,7 +111,7 @@ async function handleGet(request) {
       const { data: sources, error: sourcesErr } = await supabaseServiceRole
         .from('event_sources')
         .select('id, name, is_active, last_run_at, last_run_status, last_run_events');
-      
+
       const diagnostics = {
         timestamp: new Date().toISOString(),
         config: {
@@ -106,29 +122,43 @@ async function handleGet(request) {
           isSupabaseConfigured,
           hasServiceRoleClient: Boolean(supabaseServiceRole),
         },
-        sources: (sources || []).map(s => ({
+        sources: (sources || []).map((s) => ({
           ...s,
           normalized_name: s.name.toLowerCase().replace(/[^a-z]/g, ''),
           has_fetcher: Boolean(getFetcher(s.name)),
         })),
         sourcesError: sourcesErr?.message || null,
-        availableFetchers: ['motorsportreg', 'scca', 'pca', 'eventbrite', 'eventbritesearch', 'carsandcoffeeevents', 'facebookevents', 'rideology', 'trackvenue', 'ical'],
+        availableFetchers: [
+          'motorsportreg',
+          'scca',
+          'pca',
+          'eventbrite',
+          'eventbritesearch',
+          'carsandcoffeeevents',
+          'facebookevents',
+          'rideology',
+          'trackvenue',
+          'ical',
+        ],
       };
-      
+
       return NextResponse.json(diagnostics);
     } catch (err) {
       console.error('[refresh-events] Diagnostic failed:', err);
-      return NextResponse.json({ error: 'Diagnostic check failed', code: 'DIAGNOSTIC_FAILED' }, { status: 500 });
+      return NextResponse.json(
+        { error: 'Diagnostic check failed', code: 'DIAGNOSTIC_FAILED' },
+        { status: 500 }
+      );
     }
   }
-  
+
   const sourceFilter = searchParams.get('source');
   const limit = searchParams.get('limit') ? parseInt(searchParams.get('limit'), 10) : null;
   const dryRun = searchParams.get('dryRun') === 'true';
   const skipGeocode = searchParams.get('skipGeocode') === 'true';
   const rangeStart = searchParams.get('rangeStart'); // optional ISO-ish string
   const rangeEnd = searchParams.get('rangeEnd'); // optional ISO-ish string
-  
+
   const results = {
     success: true,
     dryRun,
@@ -148,7 +178,7 @@ async function handleGet(request) {
     // 0a. Cleanup stale running jobs (older than 10 minutes - generous timeout)
     // Individual sources have 5-minute timeouts, so 10 minutes means something went very wrong
     const staleThreshold = new Date(Date.now() - 10 * 60 * 1000).toISOString();
-    const { data: staleJobs, error: staleErr } = await supabaseServiceRole
+    const { data: staleJobs, error: _staleErr } = await supabaseServiceRole
       .from('scrape_jobs')
       .update({
         status: 'failed',
@@ -159,11 +189,11 @@ async function handleGet(request) {
       .eq('status', 'running')
       .lt('started_at', staleThreshold)
       .select('id');
-    
+
     if (staleJobs?.length > 0) {
       console.log(`[refresh-events] Cleaned up ${staleJobs.length} stale running jobs`);
     }
-    
+
     // 0b. Preload event types once to avoid N+1 queries during ingestion
     const { data: eventTypes, error: eventTypesErr } = await supabaseServiceRole
       .from('event_types')
@@ -176,70 +206,79 @@ async function handleGet(request) {
     const eventTypeIdBySlug = new Map((eventTypes || []).map((t) => [t.slug, t.id]));
     const otherTypeId = eventTypeIdBySlug.get('other') || null;
 
-    const SOURCE_COLS = 'id, name, slug, source_type, source_url, fetch_config, is_active, last_fetched_at, created_at';
-    
+    const SOURCE_COLS =
+      'id, name, slug, source_type, source_url, fetch_config, is_active, last_fetched_at, created_at';
+
     // 1. Get active event sources
     let sourcesQuery = supabaseServiceRole
       .from('event_sources')
       .select(SOURCE_COLS)
       .eq('is_active', true);
-    
+
     if (sourceFilter) {
       sourcesQuery = sourcesQuery.ilike('name', `%${sourceFilter}%`);
     }
-    
+
     const { data: sources, error: sourcesErr } = await sourcesQuery;
-    
+
     if (sourcesErr) {
       throw new Error(`Failed to fetch sources: ${sourcesErr.message}`);
     }
-    
+
     if (!sources || sources.length === 0) {
       return NextResponse.json({
         ...results,
         message: 'No active event sources found',
       });
     }
-    
-    console.log(`[refresh-events] Processing ${sources.length} source(s):`, sources.map(s => ({ id: s.id, name: s.name, is_active: s.is_active })));
-    
+
+    console.log(
+      `[refresh-events] Processing ${sources.length} source(s):`,
+      sources.map((s) => ({ id: s.id, name: s.name, is_active: s.is_active }))
+    );
+
     // Log fetcher availability for each source
     for (const source of sources) {
       const fetcher = getFetcher(source.name);
       if (!fetcher) {
-        console.warn(`[refresh-events] ⚠️ No fetcher found for source "${source.name}" (normalized: "${source.name.toLowerCase().replace(/[^a-z]/g, '')}")`);
+        console.warn(
+          `[refresh-events] ⚠️ No fetcher found for source "${source.name}" (normalized: "${source.name.toLowerCase().replace(/[^a-z]/g, '')}")`
+        );
       }
     }
-    
+
     // 2. Get existing events for deduplication (future events only for dedup logic)
     const { data: existingEvents, error: existingErr } = await supabaseServiceRole
       .from('events')
       .select('id, slug, name, source_url, start_date, city, state')
       .gte('start_date', new Date().toISOString().split('T')[0]);
-    
+
     if (existingErr) {
       console.error('[refresh-events] Error fetching existing events:', existingErr);
       results.errors.push(`Failed to fetch existing events: ${existingErr.message}`);
     }
-    
+
     // 2b. Get ALL existing slugs to prevent unique constraint violations
     // (includes past/expired events that still occupy slug namespace)
     const { data: allSlugs, error: slugsErr } = await supabaseServiceRole
       .from('events')
       .select('slug');
-    
+
     if (slugsErr) {
       console.error('[refresh-events] Error fetching all slugs:', slugsErr);
     }
-    
+
     const existingEventsList = existingEvents || [];
     const existingSlugByConflictKey = new Map(
-      existingEventsList.map((e) => [`${String(e.source_url || '').trim()}|${String(e.start_date || '').trim()}`, e.slug])
+      existingEventsList.map((e) => [
+        `${String(e.source_url || '').trim()}|${String(e.start_date || '').trim()}`,
+        e.slug,
+      ])
     );
-    
+
     // Include ALL slugs (past + future) to prevent slug collisions
-    const allExistingSlugs = new Set((allSlugs || []).map(e => e.slug));
-    
+    const allExistingSlugs = new Set((allSlugs || []).map((e) => e.slug));
+
     // 3. Process each source (create a scrape_jobs record per source for provenance)
     for (const source of sources) {
       const sourceResult = {
@@ -250,7 +289,7 @@ async function handleGet(request) {
         eventsDeduplicated: 0,
         errors: [],
       };
-      
+
       try {
         // Create provenance job
         const nowIso = new Date().toISOString();
@@ -278,13 +317,17 @@ async function handleGet(request) {
           .single();
 
         if (jobErr || !jobRow?.id) {
-          throw new Error(`Failed to create scrape_job for ${source.name}: ${jobErr?.message || 'unknown error'}`);
+          throw new Error(
+            `Failed to create scrape_job for ${source.name}: ${jobErr?.message || 'unknown error'}`
+          );
         }
 
         const scrapeJobId = jobRow.id;
 
-        console.log(`[refresh-events] Fetching from ${source.name} (timeout: ${SOURCE_TIMEOUT_MS / 1000}s)...`);
-        
+        console.log(
+          `[refresh-events] Fetching from ${source.name} (timeout: ${SOURCE_TIMEOUT_MS / 1000}s)...`
+        );
+
         // Fetch events from source with timeout to prevent hanging
         const { events: rawEvents, errors: fetchErrors } = await withTimeout(
           fetchFromSource(source, {
@@ -296,24 +339,24 @@ async function handleGet(request) {
           SOURCE_TIMEOUT_MS,
           `Fetch from ${source.name}`
         );
-        
+
         sourceResult.eventsDiscovered = rawEvents.length;
         results.eventsDiscovered += rawEvents.length;
-        
+
         if (fetchErrors && fetchErrors.length > 0) {
           sourceResult.errors.push(...fetchErrors);
-          results.errors.push(...fetchErrors.map(e => `[${source.name}] ${e}`));
+          results.errors.push(...fetchErrors.map((e) => `[${source.name}] ${e}`));
         }
-        
+
         if (rawEvents.length === 0) {
           console.log(`[refresh-events] No events from ${source.name}`);
           results.sourceResults.push(sourceResult);
           continue;
         }
-        
+
         // For observability: compute duplicates vs existing, but DO NOT drop them.
         // We need to re-verify existing events and stamp provenance.
-        const { unique: uniqueVsExisting, duplicates: duplicatesVsExisting } = deduplicateBatch(
+        const { unique: _uniqueVsExisting, duplicates: duplicatesVsExisting } = deduplicateBatch(
           rawEvents,
           existingEventsList
         );
@@ -342,11 +385,11 @@ async function handleGet(request) {
           verifiedAtIso: nowIso,
           scrapeJobId,
         });
-        
+
         // Geocode events if needed
         if (!skipGeocode && !dryRun && eventsToCreate.length > 0) {
           console.log(`[refresh-events] Geocoding ${eventsToCreate.length} events...`);
-          
+
           const geocodedEvents = await batchGeocodeEvents(eventsToCreate, {
             batchSize: 10,
             onProgress: (progress) => {
@@ -355,7 +398,7 @@ async function handleGet(request) {
               }
             },
           });
-          
+
           // Update events with geocoded coordinates
           let geocodedCount = 0;
           for (let i = 0; i < eventsToCreate.length; i++) {
@@ -365,46 +408,54 @@ async function handleGet(request) {
               geocodedCount++;
             }
           }
-          
+
           results.eventsGeocoded += geocodedCount;
           console.log(`[refresh-events] Geocoded ${geocodedCount} events`);
         }
-        
+
         // Insert / upsert events
         if (!dryRun && eventsToCreate.length > 0) {
           console.log(`[refresh-events] Inserting ${eventsToCreate.length} events...`);
-          
+
           const { data: insertedEvents, error: insertErr } = await supabaseServiceRole
             .from('events')
-            .upsert(eventsToCreate, { onConflict: 'source_url,start_date', ignoreDuplicates: false })
+            .upsert(eventsToCreate, {
+              onConflict: 'source_url,start_date',
+              ignoreDuplicates: false,
+            })
             .select('id, slug');
-          
+
           if (insertErr) {
             // If batch upsert fails (e.g., slug collision), try inserting one-by-one with slug regeneration
-            console.warn(`[refresh-events] Batch upsert failed, trying individual inserts with slug recovery:`, insertErr.message);
+            console.warn(
+              `[refresh-events] Batch upsert failed, trying individual inserts with slug recovery:`,
+              insertErr.message
+            );
             let successCount = 0;
             const individualErrors = [];
-            
+
             for (const event of eventsToCreate) {
               let attempts = 0;
               const maxAttempts = 3;
               let inserted = false;
-              
+
               while (!inserted && attempts < maxAttempts) {
                 const { error: singleErr } = await supabaseServiceRole
                   .from('events')
                   .upsert([event], { onConflict: 'source_url,start_date', ignoreDuplicates: true })
                   .select('id');
-                
+
                 if (singleErr) {
                   // Check if it's a slug collision - regenerate and retry
                   if (singleErr.message.includes('events_slug_key') && attempts < maxAttempts - 1) {
                     // Generate new unique slug
-                    const timestamp = Date.now();
+                    const _timestamp = Date.now();
                     const random = Math.random().toString(36).substring(2, 6);
                     event.slug = `${event.slug.substring(0, 60)}-${random}`.replace(/--+/g, '-');
                     attempts++;
-                    console.log(`[refresh-events] Slug collision, retrying with new slug: ${event.slug}`);
+                    console.log(
+                      `[refresh-events] Slug collision, retrying with new slug: ${event.slug}`
+                    );
                   } else {
                     // Other error or max attempts reached
                     individualErrors.push(`${event.name}: ${singleErr.message}`);
@@ -418,26 +469,37 @@ async function handleGet(request) {
                 }
               }
             }
-            
+
             if (individualErrors.length > 0) {
-              console.warn(`[refresh-events] ${individualErrors.length} events failed individually:`, individualErrors.slice(0, 3));
-              sourceResult.errors.push(`${individualErrors.length} events failed: ${individualErrors[0]}`);
+              console.warn(
+                `[refresh-events] ${individualErrors.length} events failed individually:`,
+                individualErrors.slice(0, 3)
+              );
+              sourceResult.errors.push(
+                `${individualErrors.length} events failed: ${individualErrors[0]}`
+              );
             }
-            
+
             sourceResult.eventsCreated = successCount;
             results.eventsCreated += successCount;
-            console.log(`[refresh-events] Created ${successCount}/${eventsToCreate.length} events from ${source.name} (individual inserts)`);
+            console.log(
+              `[refresh-events] Created ${successCount}/${eventsToCreate.length} events from ${source.name} (individual inserts)`
+            );
           } else {
             sourceResult.eventsCreated = insertedEvents?.length || 0;
             results.eventsCreated += sourceResult.eventsCreated;
             // Track all inserted slugs
-            (insertedEvents || []).forEach(e => allExistingSlugs.add(e.slug));
-            console.log(`[refresh-events] Created ${sourceResult.eventsCreated} events from ${source.name}`);
+            (insertedEvents || []).forEach((e) => allExistingSlugs.add(e.slug));
+            console.log(
+              `[refresh-events] Created ${sourceResult.eventsCreated} events from ${source.name}`
+            );
           }
         } else if (dryRun) {
           sourceResult.eventsCreated = eventsToCreate.length;
           results.eventsCreated += eventsToCreate.length;
-          console.log(`[refresh-events] [DRY RUN] Would create ${eventsToCreate.length} events from ${source.name}`);
+          console.log(
+            `[refresh-events] [DRY RUN] Would create ${eventsToCreate.length} events from ${source.name}`
+          );
         }
 
         // Mark scrape job completed
@@ -450,7 +512,8 @@ async function handleGet(request) {
               completed_at: completedAtIso,
               sources_succeeded: sourceResult.errors.length > 0 ? [] : [source.name],
               sources_failed: sourceResult.errors.length > 0 ? [source.name] : [],
-              error_message: sourceResult.errors.length > 0 ? sourceResult.errors.slice(0, 5).join(' | ') : null,
+              error_message:
+                sourceResult.errors.length > 0 ? sourceResult.errors.slice(0, 5).join(' | ') : null,
               job_payload: {
                 kind: 'events_refresh',
                 source_id: source.id,
@@ -464,7 +527,7 @@ async function handleGet(request) {
             })
             .eq('id', scrapeJobId);
         }
-        
+
         // Update source's last_run fields
         if (!dryRun) {
           await supabaseServiceRole
@@ -476,12 +539,11 @@ async function handleGet(request) {
             })
             .eq('id', source.id);
         }
-        
       } catch (err) {
         console.error(`[refresh-events] Error processing ${source.name}:`, err);
         sourceResult.errors.push(err.message);
         results.errors.push(`[${source.name}] ${err.message}`);
-        
+
         // Update source with failure
         if (!dryRun) {
           await supabaseServiceRole
@@ -494,18 +556,18 @@ async function handleGet(request) {
             .eq('id', source.id);
         }
       }
-      
+
       results.sourceResults.push(sourceResult);
       results.sourcesProcessed++;
     }
-    
+
     // 4. Mark expired events
     // An event is expired when:
     // - For multi-day events (end_date IS NOT NULL): end_date < today
     // - For single-day events (end_date IS NULL): start_date < today
     if (!dryRun) {
       const today = new Date().toISOString().split('T')[0];
-      
+
       // Expire single-day events (no end_date) where start_date has passed
       const { data: expiredSingleDay, error: expireSingleErr } = await supabaseServiceRole
         .from('events')
@@ -514,12 +576,12 @@ async function handleGet(request) {
         .lt('start_date', today)
         .eq('status', 'approved')
         .select('id');
-      
+
       if (expireSingleErr) {
         console.error('[refresh-events] Error expiring single-day events:', expireSingleErr);
         results.errors.push(`Failed to expire single-day events: ${expireSingleErr.message}`);
       }
-      
+
       // Expire multi-day events where end_date has passed
       const { data: expiredMultiDay, error: expireMultiErr } = await supabaseServiceRole
         .from('events')
@@ -528,22 +590,24 @@ async function handleGet(request) {
         .lt('end_date', today)
         .eq('status', 'approved')
         .select('id');
-      
+
       if (expireMultiErr) {
         console.error('[refresh-events] Error expiring multi-day events:', expireMultiErr);
         results.errors.push(`Failed to expire multi-day events: ${expireMultiErr.message}`);
       }
-      
+
       results.eventsExpired = (expiredSingleDay?.length || 0) + (expiredMultiDay?.length || 0);
       if (results.eventsExpired > 0) {
-        console.log(`[refresh-events] Marked ${results.eventsExpired} events as expired (${expiredSingleDay?.length || 0} single-day, ${expiredMultiDay?.length || 0} multi-day)`);
+        console.log(
+          `[refresh-events] Marked ${results.eventsExpired} events as expired (${expiredSingleDay?.length || 0} single-day, ${expiredMultiDay?.length || 0} multi-day)`
+        );
       }
     }
-    
+
     results.durationMs = Date.now() - startedAt;
-    
+
     notifyCronEnrichment('Events Calendar Refresh', {
-      duration: results.durationMs || (Date.now() - startedAt),
+      duration: results.durationMs || Date.now() - startedAt,
       table: 'events',
       recordsAdded: results.eventsCreated,
       recordsUpdated: results.eventsUpdated,
@@ -559,17 +623,19 @@ async function handleGet(request) {
     });
 
     return NextResponse.json(results);
-    
   } catch (err) {
     console.error('[refresh-events] Critical error:', err);
     await logCronError('refresh-events', err, { phase: 'processing' });
     notifyCronFailure('Refresh Events', err, { phase: 'processing' });
-    return NextResponse.json({
-      ...results,
-      success: false,
-      error: 'Event refresh failed',
-      durationMs: Date.now() - startedAt,
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        ...results,
+        success: false,
+        error: 'Event refresh failed',
+        durationMs: Date.now() - startedAt,
+      },
+      { status: 500 }
+    );
   }
 }
 

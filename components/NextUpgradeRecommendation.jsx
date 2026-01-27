@@ -407,7 +407,7 @@ export default function NextUpgradeRecommendation({
   aspiration = 'NA',
   currentHp: _currentHp = 300,
   carSlug,
-  vehicleId,
+  _vehicleId,
   onFeedback,
   // NEW: Consistency validation props
   car = null, // Car object for tunability calculation
@@ -488,10 +488,10 @@ export default function NextUpgradeRecommendation({
     return available;
   }, [installedUpgrades, aspiration, ecuValidation]);
 
-  // Build link for tuning shop with this upgrade
+  // Build link for the My Build page
   const getBuildLink = (_upgradeId) => {
-    if (!carSlug) return '/garage?tab=build';
-    return `/cars/${carSlug}/build${vehicleId ? `?vehicle=${vehicleId}` : ''}`;
+    if (!carSlug) return '/garage/my-build';
+    return `/garage/my-build?car=${carSlug}`;
   };
 
   // Show tuning limitation notice if ECU tuning was suppressed

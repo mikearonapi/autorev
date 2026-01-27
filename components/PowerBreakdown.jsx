@@ -15,6 +15,7 @@ import { calculateSmartHpGain } from '@/lib/performanceCalculator';
 import { getUpgradeByKey } from '@/lib/upgrades';
 
 import styles from './PowerBreakdown.module.css';
+import { InfoTooltipIcon } from './ui/InfoTooltip';
 
 // Color palette for donut segments (high contrast, distinct colors)
 // Segment colors - matching design system tokens
@@ -376,6 +377,7 @@ export default function PowerBreakdown({
           <span className={styles.adjustmentLabel}>Realistic adjustment:</span>
           <span className={styles.adjustmentValue}>
             -{calculationResult.adjustmentAmount} HP (diminishing returns)
+            <InfoTooltipIcon topicKey="diminishingReturns" size={14} className={styles.infoIcon} />
           </span>
         </div>
       )}

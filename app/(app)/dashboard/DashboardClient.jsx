@@ -7,7 +7,7 @@
  * - Streak counter (the ONE number)
  * - Achievements as hero (real metrics)
  * - Weekly activity chart
- * 
+ *
  * Uses React Query for data caching - dashboard data is prefetched
  * by AppDataPrefetcher at the layout level, so subsequent visits
  * render instantly from cache.
@@ -19,15 +19,14 @@ import Link from 'next/link';
 
 import { useQueryClient } from '@tanstack/react-query';
 
-
-import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { FullscreenQuestionnaire } from '@/components/questionnaire';
+import { DashboardSkeleton } from '@/components/ui/Skeleton';
 import { useProfileSummary } from '@/hooks/useQuestionnaire';
 import { useDashboardData } from '@/hooks/useUserData';
 import { userKeys } from '@/lib/queryKeys';
 
-import { GearIcon, MessageIcon } from './components/DashboardIcons';
+import { GearIcon } from './components/DashboardIcons';
 import ImprovementActions from './components/ImprovementActions';
 import LifetimeAchievements from './components/LifetimeAchievements';
 import UserGreeting from './components/UserGreeting';
@@ -42,9 +41,9 @@ export default function DashboardClient() {
   const [loadingTimedOut, setLoadingTimedOut] = useState(false);
 
   // Use React Query for cached dashboard data
-  const { 
-    data: dashboardData, 
-    isLoading: dataLoading, 
+  const {
+    data: dashboardData,
+    isLoading: dataLoading,
     error: dataError,
     refetch: refetchDashboard,
   } = useDashboardData(user?.id, {
@@ -110,15 +109,9 @@ export default function DashboardClient() {
 
   // Loading - with safety timeout to prevent stuck state
   // Show loading only if we don't have cached data (stale-while-revalidate pattern)
+  // ANDROID FIX: Use skeleton instead of spinner for faster perceived loading
   if (loading && !dashboardData && !loadingTimedOut) {
-    return (
-      <LoadingSpinner
-        variant="branded"
-        text="Loading Dashboard"
-        subtext="Fetching your progress..."
-        fullPage
-      />
-    );
+    return <DashboardSkeleton />;
   }
 
   // Error - only show if we have no data at all
@@ -225,8 +218,8 @@ export default function DashboardClient() {
 
       {/* Lifetime Achievements - Core feature metrics */}
       <section className={styles.achievementsSection}>
-        <LifetimeAchievements 
-          achievements={mappedAchievements} 
+        <LifetimeAchievements
+          achievements={mappedAchievements}
           profileCompleteness={questionnaireSummary?.profileCompletenessPct || 0}
         />
       </section>

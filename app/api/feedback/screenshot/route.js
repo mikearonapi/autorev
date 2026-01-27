@@ -6,10 +6,10 @@ import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 /**
  * Feedback Screenshot Upload API
- * 
+ *
  * Accepts a base64-encoded screenshot from the feedback widget,
  * uploads it to Vercel Blob storage, and returns the public URL.
- * 
+ *
  * This endpoint is used before feedback submission to upload the
  * screenshot, then the returned URL is included in the feedback payload.
  */
@@ -42,10 +42,10 @@ async function handlePost(request) {
 
     const imageFormat = base64Match[1];
     const base64Data = base64Match[2];
-    
+
     // Convert base64 to buffer
     const buffer = Buffer.from(base64Data, 'base64');
-    
+
     // Validate file size (max 5MB for screenshots)
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (buffer.length > maxSize) {
@@ -59,7 +59,7 @@ async function handlePost(request) {
     const timestamp = Date.now();
     const randomSuffix = Math.random().toString(36).substring(2, 8);
     const filename = `feedback-screenshots/${timestamp}-${randomSuffix}.${imageFormat}`;
-    
+
     // Content type mapping
     const contentTypeMap = {
       png: 'image/png',
@@ -92,7 +92,7 @@ async function handlePost(request) {
     });
   } catch (err) {
     console.error('[Feedback Screenshot] Upload error:', err);
-    
+
     // Check for specific Vercel Blob errors
     if (err.message?.includes('BLOB_READ_WRITE_TOKEN')) {
       return NextResponse.json(
@@ -114,7 +114,7 @@ async function handlePost(request) {
 async function handleGet() {
   // Check if blob storage is configured
   const hasBlobToken = !!process.env.BLOB_READ_WRITE_TOKEN;
-  
+
   return NextResponse.json({
     enabled: hasBlobToken,
     maxSizeMB: 5,
@@ -122,5 +122,11 @@ async function handleGet() {
   });
 }
 
-export const POST = withErrorLogging(handlePost, { route: 'feedback/screenshot', feature: 'feedback' });
-export const GET = withErrorLogging(handleGet, { route: 'feedback/screenshot', feature: 'feedback' });
+export const POST = withErrorLogging(handlePost, {
+  route: 'feedback/screenshot',
+  feature: 'feedback',
+});
+export const GET = withErrorLogging(handleGet, {
+  route: 'feedback/screenshot',
+  feature: 'feedback',
+});

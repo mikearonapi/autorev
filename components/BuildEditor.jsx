@@ -84,11 +84,10 @@ const BASIC_CATEGORIES = {
       { key: 'trans-cooler', label: 'Trans Cooler' },
     ],
   },
-  wheels: {
-    label: 'Wheels/Aero',
+  aero: {
+    label: 'Aero',
     icon: '🏎️',
     mods: [
-      { key: 'wheels-lightweight', label: 'Lightweight Wheels' },
       { key: 'wing', label: 'Wing' },
       { key: 'splitter', label: 'Splitter' },
     ],

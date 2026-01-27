@@ -32,10 +32,7 @@
 .animate::after {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: linear-gradient(
     90deg,
     transparent 0%,
@@ -51,6 +48,7 @@
   0% {
     transform: translateX(-100%);
   }
+
   100% {
     transform: translateX(100%);
   }
@@ -328,13 +326,212 @@
     padding: 24px;
     border-radius: 16px;
   }
-  
+
   .dynoChartBody {
     height: 280px;
     grid-template-columns: 44px 1fr;
   }
-  
+
   .dynoChartXAxis {
     padding-left: 50px;
+  }
+}
+
+/* =============================================================================
+   TRACK PAGE SKELETON
+   ============================================================================= */
+
+.trackPageSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px;
+}
+
+.trackHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.trackSection {
+  background-color: var(--color-card-bg, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.06));
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.trackTimesList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.trackTimeItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 10px;
+}
+
+.trackTimeLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.trackTimeRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+/* =============================================================================
+   DASHBOARD SKELETON
+   ============================================================================= */
+
+.dashboardSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.dashboardGreeting {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.dashboardStreakCard {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background-color: var(--color-card-bg, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.06));
+  border-radius: 16px;
+  padding: 24px;
+}
+
+.dashboardStreakText {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dashboardSection {
+  background-color: var(--color-card-bg, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.06));
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.dashboardWeeklyChart {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  height: 120px;
+  padding-top: 12px;
+}
+
+.dashboardDayBar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  flex: 1;
+}
+
+.dashboardAchievements {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.dashboardAchievement {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  text-align: center;
+}
+
+/* =============================================================================
+   INSIGHTS PAGE SKELETON
+   ============================================================================= */
+
+.insightsSkeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px;
+}
+
+.insightsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.insightsRings {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  padding: 20px;
+  background-color: var(--color-card-bg, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.06));
+  border-radius: 16px;
+}
+
+.insightsRing {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.insightsFeed {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.insightCard {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  background-color: var(--color-card-bg, rgba(255, 255, 255, 0.04));
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.06));
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.insightCardHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Mobile adjustments for dashboard */
+@media (max-width: 480px) {
+  .dashboardAchievements {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .insightsRings {
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .insightsRing .skeleton.circular {
+    width: 80px !important;
+    height: 80px !important;
   }
 }

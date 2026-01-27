@@ -14,26 +14,39 @@
   left: 0;
   right: 0;
   z-index: 1000;
-  
+
   /* Dimensions - use 100% to avoid Android dvw issues */
   width: 100%;
   max-width: 100%;
-  
-  /* Premium dark glass */
-  background: linear-gradient(
-    180deg,
-    rgba(13, 27, 42, 0.92) 0%,
-    rgba(13, 27, 42, 0.98) 100%
-  );
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-  backdrop-filter: saturate(180%) blur(20px);
-  
+
+  /* Premium dark glass - ANDROID OPTIMIZED */
+
+  /* Use solid background with slight transparency for better Android performance */
+  background: rgba(13, 27, 42, 0.97);
+
+  /* ANDROID FIX: Only apply backdrop-filter on devices that handle it well */
+
+  /* This is GPU-accelerated on iOS but can cause jank on Android */
+  @supports (backdrop-filter: blur(1px)) {
+    @media (hover: hover) {
+      /* Desktop/iOS - full blur effect */
+      background: linear-gradient(180deg, rgba(13, 27, 42, 0.92) 0%, rgba(13, 27, 42, 0.98) 100%);
+      -webkit-backdrop-filter: saturate(180%) blur(20px);
+      backdrop-filter: saturate(180%) blur(20px);
+    }
+  }
+
   /* Subtle top edge */
   border-top: 1px solid rgba(255, 255, 255, 0.06);
-  
+
   /* Safe area at bottom - content sits above this */
+
   /* Add extra 8px base padding + safe area for breathing room */
   padding-bottom: calc(8px + env(safe-area-inset-bottom, 0));
+
+  /* ANDROID FIX: Promote to GPU layer for smoother scrolling */
+  will-change: transform;
+  transform: translateZ(0);
 }
 
 /* Clean separator line */
@@ -72,10 +85,10 @@
   align-items: center;
   max-width: 400px;
   margin: 0 auto;
-  
+
   /* Taller to allow vertical centering */
   height: 62px;
-  
+
   /* Push content down slightly to center in visible area */
   padding: 6px 8px 0;
 }
@@ -89,32 +102,34 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  
+
   /* More gap between icon and label */
   gap: 5px;
-  
   position: relative;
-  
+
   /* Touch target */
   min-width: 60px;
   min-height: 44px;
   padding: 4px 8px;
-  
+
   /* Reset */
   background: none;
   border: none;
   text-decoration: none;
   cursor: pointer;
-  
+
   /* Inactive state */
   color: rgba(255, 255, 255, 0.4);
-  
+
   /* Smooth transition */
   transition: color 0.2s ease;
-  
+
   /* No highlight */
   -webkit-tap-highlight-color: transparent;
   user-select: none;
+
+  /* ANDROID FIX: Remove 300ms tap delay and prevent double-tap zoom */
+  touch-action: manipulation;
 }
 
 .tab:active {
@@ -136,7 +151,12 @@
   justify-content: center;
   width: 24px;
   height: 24px;
-  transition: transform 0.15s ease, filter 0.2s ease;
+
+  /* ANDROID FIX: Simplified transition for better performance */
+  transition: transform 0.1s ease-out;
+
+  /* Promote to GPU layer */
+  will-change: transform;
 }
 
 .tab:active .icon {
@@ -144,8 +164,13 @@
 }
 
 /* Active glow - matches AL's glow effect */
+
+/* ANDROID FIX: Use box-shadow on container instead of filter which is expensive */
 .active .icon {
-  filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.5));
+  /* Only apply glow on devices that handle it well */
+  @media (hover: hover) {
+    filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.5));
+  }
 }
 
 /* ==========================================================================
@@ -175,7 +200,7 @@
 
 .alWrapper {
   position: relative;
-  
+
   /* Force perfect circle */
   width: 28px;
   height: 28px;
@@ -184,12 +209,10 @@
   aspect-ratio: 1 / 1;
   border-radius: 50%;
   flex-shrink: 0;
-  
   overflow: hidden;
-  
+
   /* Subtle ring */
   box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.12);
-  
   transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -202,7 +225,7 @@
   border-radius: 50%;
   object-fit: cover;
   object-position: center;
-  
+
   /* Slightly dimmed when inactive */
   opacity: 0.65;
   transition: opacity 0.2s ease;
@@ -211,7 +234,7 @@
 /* AL Active State */
 .alWrapperActive {
   /* Teal ring with glow */
-  box-shadow: 
+  box-shadow:
     0 0 0 2px var(--color-accent-teal, #10b981),
     0 0 12px rgba(16, 185, 129, 0.4),
     0 0 24px rgba(16, 185, 129, 0.15);
@@ -229,11 +252,11 @@
   .tab:hover:not(.active) {
     color: rgba(255, 255, 255, 0.65);
   }
-  
+
   .tab:hover .alWrapper:not(.alWrapperActive) {
     box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.2);
   }
-  
+
   .tab:hover .alImage {
     opacity: 0.8;
   }
@@ -257,25 +280,25 @@
     height: 68px;
     padding: 8px 8px 0;
   }
-  
+
   .tab {
     min-width: 72px;
     gap: 6px;
   }
-  
+
   .alTab {
     gap: 7px;
   }
-  
+
   .icon svg {
     width: 24px;
     height: 24px;
   }
-  
+
   .label {
     font-size: 11px;
   }
-  
+
   .alWrapper {
     width: 30px;
     height: 30px;
@@ -290,26 +313,26 @@
     height: 56px;
     padding: 4px 4px 0;
   }
-  
+
   .tab {
     min-width: 52px;
     padding: 4px 6px;
     gap: 4px;
   }
-  
+
   .alTab {
     gap: 5px;
   }
-  
+
   .icon svg {
     width: 20px;
     height: 20px;
   }
-  
+
   .label {
     font-size: 9px;
   }
-  
+
   .alWrapper {
     width: 24px;
     height: 24px;
@@ -324,20 +347,20 @@
     /* Less padding in landscape but still some breathing room */
     padding-bottom: calc(4px + env(safe-area-inset-bottom, 0));
   }
-  
+
   .container {
     max-width: 100%;
     height: 48px;
     padding: 0 8px;
   }
-  
+
   .tab {
     flex-direction: row;
     gap: 6px;
     min-width: auto;
     padding: 4px 12px;
   }
-  
+
   .alTab {
     gap: 6px;
   }

@@ -4,12 +4,16 @@ import { awardPoints } from '@/lib/pointsService';
 import { rateLimit } from '@/lib/rateLimit';
 import { trackTimeSchema, validateWithSchema, validationErrorResponse } from '@/lib/schemas';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+import {
+  createAuthenticatedClient,
+  createServerSupabaseClient,
+  getBearerToken,
+} from '@/lib/supabaseServer';
 
 /**
  * GET /api/users/[userId]/track-times
  * Fetch user's track time history
- * 
+ *
  * Query params:
  * - track: Filter by track name
  * - carSlug: Filter by car
@@ -18,61 +22,63 @@ import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken }
 async function handleGet(request, { params }) {
   try {
     const { userId } = await params;
-    
+
     if (!userId) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
-    
+
     // Get authenticated user
     const bearerToken = getBearerToken(request);
-    const supabase = bearerToken 
-      ? createAuthenticatedClient(bearerToken) 
+    const supabase = bearerToken
+      ? createAuthenticatedClient(bearerToken)
       : await createServerSupabaseClient();
 
     if (!supabase) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
     }
 
-    const { data: { user }, error: authError } = bearerToken
-      ? await supabase.auth.getUser(bearerToken)
-      : await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = bearerToken ? await supabase.auth.getUser(bearerToken) : await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     // Users can only access their own data
     if (user.id !== userId) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
-    
+
     const { searchParams } = new URL(request.url);
     const track = searchParams.get('track');
     const carSlug = searchParams.get('carSlug');
     const limit = parseInt(searchParams.get('limit') || '20', 10);
-    
+
     // Try to use the helper function first
     const { data, error } = await supabase.rpc('get_user_track_history', {
       p_user_id: userId,
       p_track_name: track || null,
       p_car_slug: carSlug || null,
-      p_limit: limit
+      p_limit: limit,
     });
-    
+
     if (error) {
       // If RPC doesn't exist yet (migration not run), fall back to direct query
       // PostgREST returns PGRST202 when function is not in schema cache
       // Postgres returns 42883 when function doesn't exist
-      const isMissingFunction = 
-        error.code === '42883' || 
+      const isMissingFunction =
+        error.code === '42883' ||
         error.code === 'PGRST202' ||
         error.message?.includes('does not exist') ||
         error.message?.includes('Could not find the function');
-      
+
       if (isMissingFunction) {
         const query = supabase
           .from('user_track_times')
-          .select(`
+          .select(
+            `
             id,
             track_name,
             track_config,
@@ -91,17 +97,18 @@ async function handleGet(request, { params }) {
             driver_skill_level,
             al_analysis,
             created_at
-          `)
+          `
+          )
           .eq('user_id', userId)
           .order('session_date', { ascending: false })
           .order('created_at', { ascending: false })
           .limit(limit);
-        
+
         if (track) query.eq('track_name', track);
         if (carSlug) query.eq('car_slug', carSlug);
-        
+
         const { data: fallbackData, error: fallbackError } = await query;
-        
+
         if (fallbackError) {
           // Table might not exist yet
           if (fallbackError.code === '42P01') {
@@ -110,16 +117,15 @@ async function handleGet(request, { params }) {
           console.error('[TrackTimes] Error fetching track times:', fallbackError);
           return NextResponse.json({ error: 'Failed to fetch track times' }, { status: 500 });
         }
-        
+
         return NextResponse.json({ times: fallbackData || [] });
       }
-      
+
       console.error('[TrackTimes] RPC error:', error);
       return NextResponse.json({ error: 'Failed to fetch track times' }, { status: 500 });
     }
-    
+
     return NextResponse.json({ times: data || [] });
-    
   } catch (err) {
     console.error('[TrackTimes] Unexpected error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -136,41 +142,42 @@ async function handlePost(request, { params }) {
 
   try {
     const { userId } = await params;
-    
+
     if (!userId) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
-    
+
     // Get authenticated user
     const bearerToken = getBearerToken(request);
-    const supabase = bearerToken 
-      ? createAuthenticatedClient(bearerToken) 
+    const supabase = bearerToken
+      ? createAuthenticatedClient(bearerToken)
       : await createServerSupabaseClient();
 
     if (!supabase) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
     }
 
-    const { data: { user }, error: authError } = bearerToken
-      ? await supabase.auth.getUser(bearerToken)
-      : await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = bearerToken ? await supabase.auth.getUser(bearerToken) : await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     if (user.id !== userId) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
-    
+
     const body = await request.json();
-    
+
     // Validate with Zod schema
     const validation = validateWithSchema(trackTimeSchema, body);
     if (!validation.success) {
       return validationErrorResponse(validation.errors);
     }
-    
+
     const {
       trackName,
       trackConfig,
@@ -193,9 +200,9 @@ async function handlePost(request, { params }) {
       areasToImprove,
       carSlug,
       userVehicleId,
-      timingSystem
+      timingSystem,
     } = validation.data;
-    
+
     const { data, error } = await supabase
       .from('user_track_times')
       .insert({
@@ -221,27 +228,69 @@ async function handlePost(request, { params }) {
         areas_to_improve: areasToImprove || null,
         car_slug: carSlug || null,
         user_vehicle_id: userVehicleId || null,
-        timing_system: timingSystem || null
+        timing_system: timingSystem || null,
       })
       .select()
       .single();
-    
+
     if (error) {
       // Table might not exist yet
       if (error.code === '42P01') {
-        return NextResponse.json({ 
-          error: 'Track times feature not yet enabled. Please run database migration.' 
-        }, { status: 503 });
+        return NextResponse.json(
+          {
+            error: 'Track times feature not yet enabled. Please run database migration.',
+          },
+          { status: 503 }
+        );
       }
+
+      // Foreign key constraint violation (e.g., invalid user_vehicle_id)
+      if (error.code === '23503') {
+        console.error('[TrackTimes] Foreign key violation:', error);
+        return NextResponse.json(
+          {
+            error: 'Invalid vehicle reference. Please try selecting a different vehicle.',
+          },
+          { status: 400 }
+        );
+      }
+
+      // Invalid enum value (e.g., session_type or conditions)
+      if (error.code === '22P02' || error.message?.includes('invalid input value for enum')) {
+        console.error('[TrackTimes] Invalid enum value:', error);
+        return NextResponse.json(
+          {
+            error: 'Invalid session type or track conditions value.',
+          },
+          { status: 400 }
+        );
+      }
+
+      // Not null constraint violation
+      if (error.code === '23502') {
+        console.error('[TrackTimes] Not null violation:', error);
+        const field = error.message?.match(/column "([^"]+)"/)?.[1] || 'required field';
+        return NextResponse.json(
+          {
+            error: `Missing required field: ${field}`,
+          },
+          { status: 400 }
+        );
+      }
+
       console.error('[TrackTimes] Error inserting track time:', error);
-      return NextResponse.json({ error: 'Failed to save track time' }, { status: 500 });
+      return NextResponse.json(
+        {
+          error: `Failed to save track time: ${error.message || 'Unknown database error'}`,
+        },
+        { status: 500 }
+      );
     }
-    
+
     // Award points for logging track time (non-blocking)
     awardPoints(userId, 'data_log_track_time', { trackTimeId: data.id, trackName }).catch(() => {});
-    
+
     return NextResponse.json({ success: true, trackTime: data });
-    
   } catch (err) {
     console.error('[TrackTimes] Unexpected error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -258,53 +307,53 @@ async function handleDelete(request, { params }) {
 
   try {
     const { userId } = await params;
-    
+
     if (!userId) {
       return NextResponse.json({ error: 'User ID is required' }, { status: 400 });
     }
-    
+
     // Get authenticated user
     const bearerToken = getBearerToken(request);
-    const supabase = bearerToken 
-      ? createAuthenticatedClient(bearerToken) 
+    const supabase = bearerToken
+      ? createAuthenticatedClient(bearerToken)
       : await createServerSupabaseClient();
 
     if (!supabase) {
       return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
     }
 
-    const { data: { user }, error: authError } = bearerToken
-      ? await supabase.auth.getUser(bearerToken)
-      : await supabase.auth.getUser();
-    
+    const {
+      data: { user },
+      error: authError,
+    } = bearerToken ? await supabase.auth.getUser(bearerToken) : await supabase.auth.getUser();
+
     if (authError || !user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
-    
+
     if (user.id !== userId) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
-    
+
     const { searchParams } = new URL(request.url);
     const trackTimeId = searchParams.get('id');
-    
+
     if (!trackTimeId) {
       return NextResponse.json({ error: 'Missing track time ID' }, { status: 400 });
     }
-    
+
     const { error } = await supabase
       .from('user_track_times')
       .delete()
       .eq('id', trackTimeId)
       .eq('user_id', userId); // Ensure user owns this record
-    
+
     if (error) {
       console.error('[TrackTimes] Error deleting track time:', error);
       return NextResponse.json({ error: 'Failed to delete track time' }, { status: 500 });
     }
-    
+
     return NextResponse.json({ success: true });
-    
   } catch (err) {
     console.error('[TrackTimes] Unexpected error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -313,4 +362,7 @@ async function handleDelete(request, { params }) {
 
 export const GET = withErrorLogging(handleGet, { route: 'users-track-times', feature: 'garage' });
 export const POST = withErrorLogging(handlePost, { route: 'users-track-times', feature: 'garage' });
-export const DELETE = withErrorLogging(handleDelete, { route: 'users-track-times', feature: 'garage' });
+export const DELETE = withErrorLogging(handleDelete, {
+  route: 'users-track-times',
+  feature: 'garage',
+});

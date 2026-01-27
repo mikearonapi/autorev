@@ -15,7 +15,6 @@
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 
-
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
@@ -901,6 +900,12 @@ export default function ALPageClient() {
     abortControllerRef.current = new AbortController();
 
     try {
+      // NOTE: We intentionally do NOT send carSlug from localStorage selection.
+      // AL should determine car context from:
+      // 1. The user's explicit message (e.g., "tell me about the BMW M3")
+      // 2. User's owned vehicles in the database (fetched server-side)
+      // 3. Tool calls that look up specific cars
+      // This prevents biasing AL based on stale localStorage selections.
       const response = await fetch('/api/ai-mechanic?stream=true', {
         method: 'POST',
         headers: {
@@ -909,7 +914,7 @@ export default function ALPageClient() {
         },
         body: JSON.stringify({
           message: userMessage,
-          carSlug: selectedCar?.slug,
+          // carSlug intentionally omitted - let AL determine context from message
           userId: user?.id,
           conversationId: currentConversationId,
           history: messages.slice(-6),
@@ -1522,14 +1527,12 @@ export default function ALPageClient() {
               </div>
             ) : (
               // Standard empty state
+              // NOTE: We intentionally show generic text, not localStorage-selected car.
+              // AL determines car context from user's message and server-side owned vehicles.
               <div className={styles.emptyStateContent}>
                 <ALMascot size={80} />
                 <h2 className={styles.emptyTitle}>How can I help?</h2>
-                <p className={styles.emptySubtitle}>
-                  {selectedCar
-                    ? `Ask me anything about your ${selectedCar.name}`
-                    : 'Ask me anything about cars'}
-                </p>
+                <p className={styles.emptySubtitle}>Ask me anything about cars</p>
               </div>
             )}
           </div>
@@ -1849,7 +1852,7 @@ export default function ALPageClient() {
                 }
               }
             }}
-            placeholder={selectedCar ? `Ask about ${selectedCar.name}...` : 'Ask AL anything...'}
+            placeholder="Ask AL anything..."
             className={styles.input}
             rows={1}
             disabled={isLoading}

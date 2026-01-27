@@ -4,20 +4,20 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 
 /**
  * usePWAInstall - Hook for managing PWA installation across all platforms
- * 
+ *
  * Handles:
  * - Chrome/Edge/Samsung: beforeinstallprompt event capture
  * - iOS Safari: Detection and instruction display
  * - macOS Safari 17+: PWA support detection
  * - Already installed detection via display-mode: standalone
  * - Dismissal persistence with localStorage
- * 
+ *
  * @returns {Object} PWA install state and actions
  */
 export default function usePWAInstall() {
   // Install prompt event (Chrome/Edge only)
   const deferredPromptRef = useRef(null);
-  
+
   // State
   const [isInstallable, setIsInstallable] = useState(false);
   const [isInstalled, setIsInstalled] = useState(false);
@@ -30,7 +30,7 @@ export default function usePWAInstall() {
   // Check if user has dismissed the prompt recently
   const checkDismissed = useCallback(() => {
     if (typeof window === 'undefined') return false;
-    
+
     const dismissedUntil = localStorage.getItem('pwa-install-dismissed-until');
     if (dismissedUntil) {
       const dismissedDate = new Date(dismissedUntil);
@@ -57,24 +57,12 @@ export default function usePWAInstall() {
     setIsDismissed(true);
   }, []);
 
-  // Platform detection
+  // Platform detection - ALWAYS runs to ensure correct instructions even when force-shown
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    // Check if already permanently dismissed
-    if (localStorage.getItem('pwa-install-dismissed-permanently') === 'true') {
-      setIsDismissed(true);
-      return;
-    }
-
-    // Check temporary dismissal
-    if (checkDismissed()) {
-      setIsDismissed(true);
-      return;
-    }
-
     const ua = navigator.userAgent.toLowerCase();
-    
+
     // Detect iOS (iPhone, iPad, iPod)
     const iosDevice = /iphone|ipad|ipod/.test(ua) && !window.MSStream;
     setIsIOS(iosDevice);
@@ -95,37 +83,52 @@ export default function usePWAInstall() {
       }
     }
 
-    // Detect browser
-    if (/edg/.test(ua)) {
+    // Detect browser - order matters! Check specific browsers before generic ones
+    // Samsung Browser must be checked BEFORE Chrome (Samsung UA contains 'chrome')
+    if (/samsungbrowser/.test(ua)) {
+      setBrowser('samsung');
+    } else if (/edg/.test(ua)) {
       setBrowser('edge');
-    } else if (/chrome/.test(ua) && !/edg/.test(ua)) {
+    } else if (/opr|opera/.test(ua)) {
+      setBrowser('opera');
+    } else if (/firefox|fxios/.test(ua)) {
+      setBrowser('firefox');
+    } else if (/chrome|crios/.test(ua) && !/edg/.test(ua)) {
       setBrowser('chrome');
     } else if (/safari/.test(ua) && !/chrome/.test(ua)) {
       setBrowser('safari');
-    } else if (/firefox/.test(ua)) {
-      setBrowser('firefox');
-    } else if (/samsungbrowser/.test(ua)) {
-      setBrowser('samsung');
     }
 
     // Check if already installed (running in standalone mode)
-    const isStandalone = 
+    const isStandalone =
       window.matchMedia('(display-mode: standalone)').matches ||
       window.navigator.standalone === true || // iOS Safari
       document.referrer.includes('android-app://'); // TWA
 
     if (isStandalone) {
       setIsInstalled(true);
-      return;
+      // Still continue to set installable states for edge cases
+    }
+
+    // Check dismissal status (separate from detection)
+    if (localStorage.getItem('pwa-install-dismissed-permanently') === 'true') {
+      setIsDismissed(true);
+    } else if (checkDismissed()) {
+      setIsDismissed(true);
     }
 
     // For iOS, it's always "installable" (user can add to home screen)
-    if (iosDevice) {
+    if (iosDevice && !isStandalone) {
+      setIsInstallable(true);
+    }
+
+    // For Android, it's always "installable" (can add to home screen)
+    if (androidDevice && !isStandalone) {
       setIsInstallable(true);
     }
 
     // For macOS Safari 17+, it's installable
-    if (isMac && /safari/.test(ua) && !/chrome|firefox|edg/.test(ua)) {
+    if (isMac && /safari/.test(ua) && !/chrome|firefox|edg/.test(ua) && !isStandalone) {
       const safariVersionMatch = /version\/(\d+)\./.exec(ua);
       if (safariVersionMatch && parseInt(safariVersionMatch[1]) >= 17) {
         setIsInstallable(true);
@@ -174,20 +177,20 @@ export default function usePWAInstall() {
     try {
       // Show the install prompt
       deferredPromptRef.current.prompt();
-      
+
       // Wait for the user's response
       const { outcome } = await deferredPromptRef.current.userChoice;
       console.log(`[PWA] User response: ${outcome}`);
-      
+
       // Clear the stored prompt
       deferredPromptRef.current = null;
-      
+
       if (outcome === 'accepted') {
         setIsInstalled(true);
         setIsInstallable(false);
         dismissPermanently();
       }
-      
+
       return { outcome };
     } catch (error) {
       console.error('[PWA] Install prompt error:', error);
@@ -203,19 +206,21 @@ export default function usePWAInstall() {
 
   // Get platform-specific install instructions
   const getInstallInstructions = useCallback(() => {
+    // iOS Safari
     if (isIOS) {
       return {
         platform: 'ios',
         steps: [
-          { icon: 'share', text: 'Tap the Share button' },
-          { icon: 'scroll', text: 'Scroll down in the menu' },
+          { icon: 'share', text: 'Tap the Share button at the bottom' },
+          { icon: 'scroll', text: 'Scroll down in the share menu' },
           { icon: 'add', text: 'Tap "Add to Home Screen"' },
-          { icon: 'confirm', text: 'Tap "Add" to confirm' },
+          { icon: 'confirm', text: 'Tap "Add" in the top right' },
         ],
         shareIcon: true,
       };
     }
-    
+
+    // macOS Safari 17+
     if (isMacSafari17) {
       return {
         platform: 'mac-safari',
@@ -226,44 +231,112 @@ export default function usePWAInstall() {
         shareIcon: false,
       };
     }
-    
+
+    // Samsung Internet Browser (Android)
+    if (isAndroid && browser === 'samsung') {
+      return {
+        platform: 'samsung',
+        steps: [
+          { icon: 'menu', text: 'Tap the menu (☰) at the bottom right' },
+          { icon: 'add', text: 'Tap "Add page to" then "Home screen"' },
+          { icon: 'confirm', text: 'Tap "Add" to confirm' },
+        ],
+        canUseNativePrompt: canPromptNatively,
+      };
+    }
+
+    // Chrome on Android
     if (isAndroid && browser === 'chrome') {
       return {
         platform: 'android-chrome',
         steps: [
-          { icon: 'menu', text: 'Tap the menu (⋮) button' },
+          { icon: 'menu', text: 'Tap the menu (⋮) in the top right' },
           { icon: 'install', text: 'Tap "Install app" or "Add to Home screen"' },
+          { icon: 'confirm', text: 'Tap "Install" to confirm' },
         ],
         canUseNativePrompt: canPromptNatively,
       };
     }
 
-    if (browser === 'samsung') {
+    // Firefox on Android
+    if (isAndroid && browser === 'firefox') {
       return {
-        platform: 'samsung',
+        platform: 'android-firefox',
         steps: [
-          { icon: 'menu', text: 'Tap the menu button' },
-          { icon: 'add', text: 'Tap "Add page to" → "Home screen"' },
+          { icon: 'menu', text: 'Tap the menu (⋮) button' },
+          { icon: 'install', text: 'Tap "Install"' },
+          { icon: 'confirm', text: 'Tap "Add" to confirm' },
+        ],
+      };
+    }
+
+    // Opera on Android
+    if (isAndroid && browser === 'opera') {
+      return {
+        platform: 'android-opera',
+        steps: [
+          { icon: 'menu', text: 'Tap the menu (⋮) button' },
+          { icon: 'add', text: 'Tap "Home screen"' },
+          { icon: 'confirm', text: 'Tap "Add" to confirm' },
         ],
         canUseNativePrompt: canPromptNatively,
       };
     }
 
+    // Edge on Android
+    if (isAndroid && browser === 'edge') {
+      return {
+        platform: 'android-edge',
+        steps: [
+          { icon: 'menu', text: 'Tap the menu (…) at the bottom' },
+          { icon: 'add', text: 'Tap "Add to phone"' },
+          { icon: 'confirm', text: 'Tap "Install" to confirm' },
+        ],
+        canUseNativePrompt: canPromptNatively,
+      };
+    }
+
+    // Fallback for Android with unknown browser
+    if (isAndroid) {
+      return {
+        platform: 'android-generic',
+        steps: [
+          { icon: 'menu', text: 'Tap the browser menu (⋮ or ☰)' },
+          { icon: 'install', text: 'Look for "Install app" or "Add to Home screen"' },
+          { icon: 'confirm', text: 'Confirm when prompted' },
+        ],
+        canUseNativePrompt: canPromptNatively,
+      };
+    }
+
+    // Firefox on desktop
     if (browser === 'firefox') {
       return {
-        platform: 'firefox',
+        platform: 'firefox-desktop',
         steps: [
-          { icon: 'menu', text: 'Tap the menu (≡) button' },
-          { icon: 'install', text: 'Tap "Install" or "Add to Home screen"' },
+          { icon: 'install', text: 'Firefox does not support installing PWAs on desktop' },
+          { icon: 'menu', text: 'Try using Chrome or Edge for the best experience' },
         ],
       };
     }
 
-    // Default/Chrome on desktop
+    // Edge on desktop
+    if (browser === 'edge') {
+      return {
+        platform: 'edge-desktop',
+        steps: [
+          { icon: 'install', text: 'Click the install icon (⊕) in the address bar' },
+          { icon: 'confirm', text: 'Click "Install" to confirm' },
+        ],
+        canUseNativePrompt: canPromptNatively,
+      };
+    }
+
+    // Chrome on desktop (default)
     return {
       platform: 'chrome-desktop',
       steps: [
-        { icon: 'install', text: 'Click the install icon in the address bar' },
+        { icon: 'install', text: 'Click the install icon (⊕) in the address bar' },
         { icon: 'confirm', text: 'Click "Install" to confirm' },
       ],
       canUseNativePrompt: canPromptNatively,
@@ -279,11 +352,11 @@ export default function usePWAInstall() {
     isAndroid,
     isDismissed,
     browser,
-    
+
     // Computed
     canPromptNatively,
     shouldShowInstallPrompt,
-    
+
     // Actions
     promptInstall,
     dismissPrompt,

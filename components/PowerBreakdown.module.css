@@ -185,8 +185,41 @@
 }
 
 .adjustmentValue {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   color: rgba(255, 255, 255, 0.5);
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+/* Info icon for diminishing returns explanation */
+.infoIcon {
+  /* Ensure 44px touch target per accessibility standards */
+  min-width: 44px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: -15px -15px -15px 0; /* Negative margin to expand touch area without affecting layout */
+  padding: 15px;
+  color: rgba(255, 255, 255, 0.4);
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.infoIcon:hover,
+.infoIcon:focus {
+  color: var(--color-accent-teal, #10b981);
+}
+
+.infoIcon:focus {
+  outline: none;
+}
+
+.infoIcon:focus-visible {
+  outline: 2px solid var(--color-accent-teal, #10b981);
+  outline-offset: -10px;
+  border-radius: 8px;
 }
 
 /* ===========================================

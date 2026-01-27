@@ -1,17 +1,17 @@
 /**
  * Speed Insights Webhook Receiver
- * 
+ *
  * Receives Core Web Vitals data from Vercel Speed Insights Drain.
  * Stores metrics in Supabase for display in command center.
- * 
+ *
  * @route POST /api/webhooks/speed-insights
- * 
+ *
  * Setup in Vercel Dashboard:
  * 1. Go to Project Settings > Drains
  * 2. Create new drain with type "Speed Insights"
  * 3. Set URL to: https://autorev.app/api/webhooks/speed-insights
  * 4. Copy the secret and add as VERCEL_SPEED_INSIGHTS_SECRET env var
- * 
+ *
  * Vercel Speed Insights Drain docs:
  * https://vercel.com/docs/drains/reference/speed-insights
  */
@@ -33,16 +33,10 @@ const DRAIN_SECRET = process.env.VERCEL_SPEED_INSIGHTS_SECRET;
  */
 function verifySignature(payload, signature) {
   if (!DRAIN_SECRET) return false;
-  
-  const expectedSignature = crypto
-    .createHmac('sha256', DRAIN_SECRET)
-    .update(payload)
-    .digest('hex');
-    
-  return crypto.timingSafeEqual(
-    Buffer.from(signature),
-    Buffer.from(expectedSignature)
-  );
+
+  const expectedSignature = crypto.createHmac('sha256', DRAIN_SECRET).update(payload).digest('hex');
+
+  return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
 }
 
 /**
@@ -51,17 +45,17 @@ function verifySignature(payload, signature) {
  */
 function getMetricRating(name, value) {
   const thresholds = {
-    LCP: { good: 2500, poor: 4000 },      // Largest Contentful Paint (ms)
-    FID: { good: 100, poor: 300 },         // First Input Delay (ms)
-    INP: { good: 200, poor: 500 },         // Interaction to Next Paint (ms)
-    CLS: { good: 0.1, poor: 0.25 },        // Cumulative Layout Shift (score)
-    TTFB: { good: 800, poor: 1800 },       // Time to First Byte (ms)
-    FCP: { good: 1800, poor: 3000 },       // First Contentful Paint (ms)
+    LCP: { good: 2500, poor: 4000 }, // Largest Contentful Paint (ms)
+    FID: { good: 100, poor: 300 }, // First Input Delay (ms)
+    INP: { good: 200, poor: 500 }, // Interaction to Next Paint (ms)
+    CLS: { good: 0.1, poor: 0.25 }, // Cumulative Layout Shift (score)
+    TTFB: { good: 800, poor: 1800 }, // Time to First Byte (ms)
+    FCP: { good: 1800, poor: 3000 }, // First Contentful Paint (ms)
   };
-  
+
   const threshold = thresholds[name];
   if (!threshold) return null;
-  
+
   if (value <= threshold.good) return 'good';
   if (value >= threshold.poor) return 'poor';
   return 'needs-improvement';
@@ -95,10 +89,10 @@ async function handlePost(request) {
     console.error('[Speed Insights Webhook] Supabase not configured');
     return NextResponse.json({ error: 'Not configured' }, { status: 500 });
   }
-  
+
   try {
     const rawBody = await request.text();
-    
+
     // Verify signature if secret is configured
     if (DRAIN_SECRET) {
       const signature = request.headers.get('x-vercel-signature');
@@ -107,7 +101,7 @@ async function handlePost(request) {
         return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
       }
     }
-    
+
     // Parse the payload
     let events;
     try {
@@ -118,37 +112,34 @@ async function handlePost(request) {
       console.error('[Speed Insights Webhook] Invalid JSON:', e);
       return NextResponse.json({ error: 'Invalid JSON' }, { status: 400 });
     }
-    
+
     // Filter to only Core Web Vitals metrics we care about
     const validMetrics = ['LCP', 'FID', 'INP', 'CLS', 'TTFB', 'FCP'];
     const processedEvents = events
-      .filter(e => validMetrics.includes(e.name || e.metric))
+      .filter((e) => validMetrics.includes(e.name || e.metric))
       .map(processEvent);
-    
+
     if (processedEvents.length === 0) {
       // No valid events, but acknowledge receipt
       return NextResponse.json({ received: 0 });
     }
-    
+
     // Insert into Supabase
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
-    
-    const { error: insertError } = await supabase
-      .from('web_vitals')
-      .insert(processedEvents);
-      
+
+    const { error: insertError } = await supabase.from('web_vitals').insert(processedEvents);
+
     if (insertError) {
       console.error('[Speed Insights Webhook] Insert error:', insertError);
       return NextResponse.json({ error: 'Failed to store' }, { status: 500 });
     }
-    
+
     console.log(`[Speed Insights Webhook] Stored ${processedEvents.length} metrics`);
-    
-    return NextResponse.json({ 
+
+    return NextResponse.json({
       received: processedEvents.length,
-      metrics: processedEvents.map(e => e.metric_name),
+      metrics: processedEvents.map((e) => e.metric_name),
     });
-    
   } catch (err) {
     console.error('[Speed Insights Webhook] Error:', err);
     return NextResponse.json({ error: 'Failed to process speed insights data' }, { status: 500 });
@@ -165,5 +156,11 @@ async function handleGet() {
   });
 }
 
-export const GET = withErrorLogging(handleGet, { route: 'webhooks/speed-insights', feature: 'webhooks' });
-export const POST = withErrorLogging(handlePost, { route: 'webhooks/speed-insights', feature: 'webhooks' });
+export const GET = withErrorLogging(handleGet, {
+  route: 'webhooks/speed-insights',
+  feature: 'webhooks',
+});
+export const POST = withErrorLogging(handlePost, {
+  route: 'webhooks/speed-insights',
+  feature: 'webhooks',
+});

@@ -1,13 +1,13 @@
 /**
  * Retention Alerts Cron Job
- * 
+ *
  * Runs daily to send re-engagement emails:
  * 1. Score dropped 50%+ from peak → Re-engagement email
  * 2. Inactive 7 days → "We miss you" email
  * 3. Inactive 14 days → Personal outreach flag (Tuner+ tier)
- * 
+ *
  * Schedule: Daily at 10 AM UTC (via Vercel cron)
- * 
+ *
  * @route GET /api/cron/retention-alerts
  */
 
@@ -37,13 +37,13 @@ const CRON_SECRET = process.env.CRON_SECRET;
 function isAuthorized(request) {
   const authHeader = request.headers.get('authorization');
   const vercelCron = request.headers.get('x-vercel-cron');
-  
+
   // Accept Vercel's automatic cron header
   if (vercelCron === 'true') return true;
-  
+
   // Accept Bearer token with CRON_SECRET
   if (CRON_SECRET && authHeader === `Bearer ${CRON_SECRET}`) return true;
-  
+
   return false;
 }
 
@@ -133,7 +133,12 @@ async function markAlertProcessed(userId, alertType) {
 async function handleGet(request) {
   // Verify authorization
   if (!isAuthorized(request)) {
-    console.error('[RetentionCron] Unauthorized. CRON_SECRET set:', Boolean(CRON_SECRET), 'x-vercel-cron:', request.headers.get('x-vercel-cron'));
+    console.error(
+      '[RetentionCron] Unauthorized. CRON_SECRET set:',
+      Boolean(CRON_SECRET),
+      'x-vercel-cron:',
+      request.headers.get('x-vercel-cron')
+    );
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -177,7 +182,7 @@ async function handleGet(request) {
       for (const user of users) {
         try {
           const emailContent = getEmailContent(alertType, user);
-          
+
           if (!emailContent) {
             console.warn(`[RetentionCron] No email content for ${alertType}`);
             continue;
@@ -201,14 +206,13 @@ async function handleGet(request) {
           console.log(`[RetentionCron] Sent ${alertType} email to ${user.email}`);
 
           // Small delay to avoid rate limits
-          await new Promise(resolve => setTimeout(resolve, 100));
-
+          await new Promise((resolve) => setTimeout(resolve, 100));
         } catch (emailError) {
           console.error(`[RetentionCron] Email error for ${user.email}:`, emailError);
-          results.errors.push({ 
-            alertType, 
-            userId: user.user_id, 
-            error: emailError.message 
+          results.errors.push({
+            alertType,
+            userId: user.user_id,
+            error: emailError.message,
           });
         }
       }
@@ -222,16 +226,18 @@ async function handleGet(request) {
       duration: `${duration}ms`,
       results,
     });
-
   } catch (error) {
     console.error('[RetentionCron] Fatal error:', error);
     await logCronError('retention-alerts', error, { phase: 'retention-processing', results });
-    
-    return NextResponse.json({
-      success: false,
-      error: 'Retention alerts cron job failed',
-      results,
-    }, { status: 500 });
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Retention alerts cron job failed',
+        results,
+      },
+      { status: 500 }
+    );
   }
 }
 

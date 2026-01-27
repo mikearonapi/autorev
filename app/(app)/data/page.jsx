@@ -420,10 +420,32 @@ function DynoPageContent() {
     ]
   );
 
-  // Get the latest dyno result for comparison
-  const _latestDynoResult = useMemo(() => {
+  // Get the latest dyno result for comparison and display
+  const latestDynoResult = useMemo(() => {
     return dynoResults.length > 0 ? dynoResults[0] : null;
   }, [dynoResults]);
+
+  // Check if user has actual dyno data
+  const hasUserDynoData = !!latestDynoResult?.whp;
+  const dynoShop = latestDynoResult?.dynoShop || null;
+  const dynoDate = latestDynoResult?.dynoDate || null;
+
+  // Performance data sources - track where each metric comes from
+  const performanceDataSources = useMemo(() => {
+    if (!hasUserDynoData) return null;
+    return {
+      hp: 'measured',
+      torque: latestDynoResult?.wtq ? 'measured' : 'estimated',
+      zeroToSixty: 'calibrated', // Calculated from dyno HP
+      braking: 'estimated',
+      lateralG: 'estimated',
+    };
+  }, [hasUserDynoData, latestDynoResult]);
+
+  // Use dyno WHP for display when available, otherwise use calculated estimate
+  const displayHp = hasUserDynoData ? latestDynoResult.whp : estimatedHp;
+  const displayTorque =
+    hasUserDynoData && latestDynoResult?.wtq ? latestDynoResult.wtq : estimatedTorque;
 
   // For dyno comparison, we compare WHP directly to estimatedHp
   // since that's what users see as "the estimate" in the UI
@@ -539,25 +561,28 @@ function DynoPageContent() {
             </div>
           ) : (
             <>
-              {/* Virtual Dyno */}
+              {/* Virtual Dyno - shows actual dyno results when available */}
               <div className={styles.dataCard}>
                 <VirtualDynoChart
                   stockHp={stockHp}
-                  estimatedHp={estimatedHp}
+                  estimatedHp={displayHp}
                   stockTorque={stockTorque}
-                  estimatedTq={estimatedTorque}
+                  estimatedTq={displayTorque}
                   peakRpm={selectedVehicle.matchedCar?.peak_hp_rpm || 6500}
                   carName={`${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`}
                   carSlug={selectedVehicle.matchedCarSlug}
                   car={selectedVehicle.matchedCar}
                   selectedUpgrades={installedUpgrades}
+                  hasUserDynoData={hasUserDynoData}
+                  dataSource={hasUserDynoData ? 'measured' : null}
+                  dynoShop={dynoShop}
                 />
               </div>
 
-              {/* Calculated Performance */}
+              {/* Calculated Performance - shows data source badges when dyno data available */}
               <CalculatedPerformance
                 stockHp={stockHp}
-                estimatedHp={estimatedHp}
+                estimatedHp={displayHp}
                 weight={
                   selectedVehicle.matchedCar?.curbWeight ||
                   selectedVehicle.matchedCar?.weight ||
@@ -577,6 +602,10 @@ function DynoPageContent() {
                 hasSuspension={upgradeCategories.hasSuspension}
                 carName={`${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`}
                 carSlug={selectedVehicle.matchedCarSlug}
+                performanceDataSources={performanceDataSources}
+                hasUserDynoData={hasUserDynoData}
+                dynoShop={dynoShop}
+                dynoDate={dynoDate}
               />
 
               {/* Power Breakdown */}

@@ -1,9 +1,9 @@
 /**
  * Core Web Vitals API
- * 
+ *
  * Fetches aggregated Core Web Vitals data for the admin command center.
  * Data comes from Vercel Speed Insights Drain stored in Supabase.
- * 
+ *
  * @route GET /api/admin/web-vitals
  */
 
@@ -73,28 +73,28 @@ async function handleGet(request) {
   // Verify admin access
   const denied = await requireAdmin(request);
   if (denied) return denied;
-  
+
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
   }
-  
+
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
-  
+
   try {
     // Parse query params
     const { searchParams } = new URL(request.url);
     const days = parseInt(searchParams.get('days') || '7', 10);
-    
+
     // Get summary data (last N days)
     const sinceDate = new Date();
     sinceDate.setDate(sinceDate.getDate() - days);
-    
+
     // Fetch aggregated metrics
     const { data: summaryData, error: summaryError } = await supabase
       .from('web_vitals')
       .select('metric_name, metric_value, metric_rating')
       .gte('event_time', sinceDate.toISOString());
-      
+
     if (summaryError) {
       // Table might not exist yet
       if (summaryError.code === '42P01') {
@@ -110,7 +110,7 @@ async function handleGet(request) {
       }
       throw summaryError;
     }
-    
+
     // Check if we have data
     if (!summaryData || summaryData.length === 0) {
       return NextResponse.json({
@@ -133,45 +133,45 @@ async function handleGet(request) {
         metrics: {},
       });
     }
-    
+
     // Aggregate metrics
     const metrics = {};
     const metricGroups = {};
-    
-    summaryData.forEach(row => {
+
+    summaryData.forEach((row) => {
       const name = row.metric_name;
       if (!metricGroups[name]) {
         metricGroups[name] = [];
       }
       metricGroups[name].push(row);
     });
-    
+
     // Calculate stats for each metric
     Object.entries(metricGroups).forEach(([name, rows]) => {
-      const values = rows.map(r => parseFloat(r.metric_value)).filter(v => !isNaN(v));
-      
+      const values = rows.map((r) => parseFloat(r.metric_value)).filter((v) => !isNaN(v));
+
       if (values.length === 0) return;
-      
+
       const sorted = values.sort((a, b) => a - b);
       const sum = values.reduce((a, b) => a + b, 0);
       const avg = sum / values.length;
       const p75Index = Math.floor(values.length * 0.75);
       const p75 = sorted[p75Index] || sorted[sorted.length - 1];
-      
+
       const ratingCounts = { good: 0, 'needs-improvement': 0, poor: 0 };
-      rows.forEach(r => {
+      rows.forEach((r) => {
         if (r.metric_rating && ratingCounts[r.metric_rating] !== undefined) {
           ratingCounts[r.metric_rating]++;
         }
       });
-      
+
       const goodPct = (ratingCounts.good / rows.length) * 100;
       let overallRating = 'needs-improvement';
       if (goodPct >= 75) overallRating = 'good';
       else if (ratingCounts.poor / rows.length >= 0.25) overallRating = 'poor';
-      
+
       const info = METRIC_INFO[name] || { name, shortName: name, unit: '', description: '' };
-      
+
       metrics[name] = {
         ...info,
         sampleCount: values.length,
@@ -184,18 +184,18 @@ async function handleGet(request) {
         overallRating,
       };
     });
-    
+
     // Get daily trend for charts
-    const { data: dailyData, error: dailyError } = await supabase
+    const { data: dailyData, error: _dailyError } = await supabase
       .from('web_vitals')
       .select('metric_name, metric_value, event_time')
       .gte('event_time', sinceDate.toISOString())
       .order('event_time', { ascending: true });
-      
+
     // Group by day and metric
     const dailyTrend = {};
     if (dailyData) {
-      dailyData.forEach(row => {
+      dailyData.forEach((row) => {
         const date = row.event_time.split('T')[0];
         const key = `${date}-${row.metric_name}`;
         if (!dailyTrend[key]) {
@@ -204,20 +204,20 @@ async function handleGet(request) {
         dailyTrend[key].values.push(parseFloat(row.metric_value));
       });
     }
-    
-    const trend = Object.values(dailyTrend).map(d => ({
+
+    const trend = Object.values(dailyTrend).map((d) => ({
       date: d.date,
       metric: d.metric,
       avg: Math.round(d.values.reduce((a, b) => a + b, 0) / d.values.length),
       samples: d.values.length,
     }));
-    
+
     // Calculate overall score (weighted average based on Core Web Vitals)
     const coreMetrics = ['LCP', 'INP', 'CLS'];
     let overallScore = 0;
     let scoredMetrics = 0;
-    
-    coreMetrics.forEach(name => {
+
+    coreMetrics.forEach((name) => {
       if (metrics[name]) {
         const rating = metrics[name].overallRating;
         const score = rating === 'good' ? 100 : rating === 'needs-improvement' ? 50 : 0;
@@ -225,9 +225,9 @@ async function handleGet(request) {
         scoredMetrics++;
       }
     });
-    
+
     const finalScore = scoredMetrics > 0 ? Math.round(overallScore / scoredMetrics) : null;
-    
+
     return NextResponse.json({
       configured: true,
       hasData: true,
@@ -239,13 +239,15 @@ async function handleGet(request) {
       trend,
       timestamp: new Date().toISOString(),
     });
-    
   } catch (err) {
     console.error('[Web Vitals API] Error:', err);
-    return NextResponse.json({ 
-      error: 'Failed to fetch web vitals data',
-      configured: false,
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        error: 'Failed to fetch web vitals data',
+        configured: false,
+      },
+      { status: 500 }
+    );
   }
 }
 

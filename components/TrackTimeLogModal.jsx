@@ -2,12 +2,12 @@
 
 /**
  * Track Time Log Modal
- * 
+ *
  * Modal for logging actual track/lap times to compare against predictions.
  * Part of the "My Data" feedback loop vision.
- * 
+ *
  * Database table: user_track_times
- * 
+ *
  * Brand Colors:
  * - Teal (#10b981): Positive/improvements, success actions
  * - Blue (#3b82f6): Baseline/stock data
@@ -23,27 +23,27 @@ import styles from './TrackTimeLogModal.module.css';
 // SVG Icons
 const FlagIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
-    <line x1="4" y1="22" x2="4" y2="15"/>
+    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+    <line x1="4" y1="22" x2="4" y2="15" />
   </svg>
 );
 
 const ClockIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="12" cy="12" r="10"/>
-    <polyline points="12 6 12 12 16 14"/>
+    <circle cx="12" cy="12" r="10" />
+    <polyline points="12 6 12 12 16 14" />
   </svg>
 );
 
 const ThermometerIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z"/>
+    <path d="M14 14.76V3.5a2.5 2.5 0 0 0-5 0v11.26a4.5 4.5 0 1 0 5 0z" />
   </svg>
 );
 
 const CloudIcon = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>
+    <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z" />
   </svg>
 );
 
@@ -121,15 +121,15 @@ function formatLapTime(seconds) {
 /**
  * Parse MM:SS.mmm or SS.mmm to seconds
  */
-function parseLapTime(timeStr) {
+function _parseLapTime(timeStr) {
   if (!timeStr) return null;
-  
+
   // Handle MM:SS.mmm format
   if (timeStr.includes(':')) {
     const [mins, secs] = timeStr.split(':');
-    return (parseInt(mins) * 60) + parseFloat(secs);
+    return parseInt(mins) * 60 + parseFloat(secs);
   }
-  
+
   // Just seconds
   return parseFloat(timeStr);
 }
@@ -139,10 +139,10 @@ export default function TrackTimeLogModal({
   onClose,
   onSave,
   vehicleInfo,
-  predictedTime,      // Predicted lap time in seconds for comparison
-  selectedTrack,      // Pre-selected track if any
+  predictedTime, // Predicted lap time in seconds for comparison
+  selectedTrack, // Pre-selected track if any
   editingResult = null,
-  currentBuildInfo = null, // { upgrades: [], totalHpGain, estimatedHp }
+  _currentBuildInfo = null, // { upgrades: [], totalHpGain, estimatedHp }
 }) {
   // Portal mounting - required for SSR compatibility
   const [isMounted, setIsMounted] = useState(false);
@@ -170,7 +170,7 @@ export default function TrackTimeLogModal({
       document.documentElement.style.removeProperty('--safe-area-bottom-bg');
     };
   }, [isOpen]);
-  
+
   const [formData, setFormData] = useState({
     trackName: '',
     trackConfig: '',
@@ -187,22 +187,21 @@ export default function TrackTimeLogModal({
     highlights: '',
     areasToImprove: '',
   });
-  
+
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCustomTrack, setShowCustomTrack] = useState(false);
 
   // Calculate lap time in seconds
-  const lapTimeSeconds = formData.lapTimeMinutes && formData.lapTimeSeconds
-    ? (parseInt(formData.lapTimeMinutes) * 60) + parseFloat(formData.lapTimeSeconds)
-    : formData.lapTimeSeconds
-      ? parseFloat(formData.lapTimeSeconds)
-      : null;
+  const lapTimeSeconds =
+    formData.lapTimeMinutes && formData.lapTimeSeconds
+      ? parseInt(formData.lapTimeMinutes) * 60 + parseFloat(formData.lapTimeSeconds)
+      : formData.lapTimeSeconds
+        ? parseFloat(formData.lapTimeSeconds)
+        : null;
 
   // Calculate difference from prediction
-  const timeDiff = lapTimeSeconds && predictedTime 
-    ? lapTimeSeconds - predictedTime 
-    : null;
+  const _timeDiff = lapTimeSeconds && predictedTime ? lapTimeSeconds - predictedTime : null;
 
   // Initialize form for editing
   useEffect(() => {
@@ -210,7 +209,7 @@ export default function TrackTimeLogModal({
       const totalSeconds = editingResult.lap_time_seconds;
       const mins = Math.floor(totalSeconds / 60);
       const secs = (totalSeconds % 60).toFixed(3);
-      
+
       setFormData({
         trackName: editingResult.track_name || '',
         trackConfig: editingResult.track_config || '',
@@ -227,7 +226,7 @@ export default function TrackTimeLogModal({
         highlights: editingResult.highlights || '',
         areasToImprove: editingResult.areas_to_improve || '',
       });
-      
+
       // Check if track is custom
       if (editingResult.track_name && !POPULAR_TRACKS.includes(editingResult.track_name)) {
         setShowCustomTrack(true);
@@ -259,33 +258,33 @@ export default function TrackTimeLogModal({
     const value = e.target.value;
     if (value === 'Other') {
       setShowCustomTrack(true);
-      setFormData(prev => ({ ...prev, trackName: '' }));
+      setFormData((prev) => ({ ...prev, trackName: '' }));
     } else {
       setShowCustomTrack(false);
-      setFormData(prev => ({ ...prev, trackName: value }));
+      setFormData((prev) => ({ ...prev, trackName: value }));
     }
   };
 
   // Validate form
   const validate = () => {
     const newErrors = {};
-    
+
     if (!formData.trackName.trim()) {
       newErrors.trackName = 'Track name is required';
     }
-    
+
     if (!lapTimeSeconds || lapTimeSeconds < 20) {
       newErrors.lapTime = 'Valid lap time is required (minimum 20 seconds)';
     }
-    
+
     if (lapTimeSeconds > 1200) {
       newErrors.lapTime = 'Lap time seems too long. Please verify (max 20 minutes)';
     }
-    
+
     if (!formData.sessionDate) {
       newErrors.sessionDate = 'Session date is required';
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -293,11 +292,11 @@ export default function TrackTimeLogModal({
   // Handle submit
   const handleLapTimeSubmit = async (e) => {
     if (e) e.preventDefault();
-    
+
     if (!validate()) return;
-    
+
     setIsSubmitting(true);
-    
+
     try {
       await onSave({
         trackName: formData.trackName.trim(),
@@ -314,11 +313,13 @@ export default function TrackTimeLogModal({
         highlights: formData.highlights || null,
         areasToImprove: formData.areasToImprove || null,
       });
-      
+
       onClose();
     } catch (err) {
       console.error('[TrackTimeLogModal] Error saving:', err);
-      setErrors({ submit: 'Failed to save track time. Please try again.' });
+      // Show the actual error message from the API, not a generic one
+      const errorMessage = err?.message || 'Failed to save track time. Please try again.';
+      setErrors({ submit: errorMessage });
     } finally {
       setIsSubmitting(false);
     }
@@ -329,20 +330,22 @@ export default function TrackTimeLogModal({
 
   const modalContent = (
     <div className={styles.overlay} onClick={onClose} data-overlay-modal>
-      <div className={styles.modal} onClick={e => e.stopPropagation()}>
+      <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.header}>
           <div className={styles.titleRow}>
-            <span className={styles.titleIcon}><FlagIcon /></span>
-            <h2 className={styles.title}>
-              {editingResult ? 'Edit Lap Time' : 'Log Lap Time'}
-            </h2>
+            <span className={styles.titleIcon}>
+              <FlagIcon />
+            </span>
+            <h2 className={styles.title}>{editingResult ? 'Edit Lap Time' : 'Log Lap Time'}</h2>
           </div>
           {vehicleInfo && (
             <p className={styles.vehicleInfo}>
               {vehicleInfo.year} {vehicleInfo.make} {vehicleInfo.model}
             </p>
           )}
-          <button className={styles.closeBtn} onClick={onClose} aria-label="Close">×</button>
+          <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
+            ×
+          </button>
         </div>
 
         <form onSubmit={handleLapTimeSubmit} className={styles.form}>
@@ -352,7 +355,7 @@ export default function TrackTimeLogModal({
               <FlagIcon />
               Track & Time
             </h3>
-            
+
             <div className={styles.formGrid}>
               {/* Track Selection */}
               <div className={styles.formGroup}>
@@ -364,27 +367,31 @@ export default function TrackTimeLogModal({
                     className={styles.select}
                   >
                     <option value="">Select a track...</option>
-                    {POPULAR_TRACKS.map(track => (
-                      <option key={track} value={track}>{track}</option>
+                    {POPULAR_TRACKS.map((track) => (
+                      <option key={track} value={track}>
+                        {track}
+                      </option>
                     ))}
                   </select>
                 ) : (
                   <input
                     type="text"
                     value={formData.trackName}
-                    onChange={(e) => setFormData(prev => ({ ...prev, trackName: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, trackName: e.target.value }))
+                    }
                     className={styles.input}
                     placeholder="Enter track name"
                     autoFocus
                   />
                 )}
                 {showCustomTrack && (
-                  <button 
+                  <button
                     type="button"
                     className={styles.switchBtn}
                     onClick={() => {
                       setShowCustomTrack(false);
-                      setFormData(prev => ({ ...prev, trackName: '' }));
+                      setFormData((prev) => ({ ...prev, trackName: '' }));
                     }}
                   >
                     ← Choose from list
@@ -399,7 +406,9 @@ export default function TrackTimeLogModal({
                 <input
                   type="text"
                   value={formData.trackConfig}
-                  onChange={(e) => setFormData(prev => ({ ...prev, trackConfig: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, trackConfig: e.target.value }))
+                  }
                   className={styles.input}
                   placeholder="e.g., Full Course, GP Circuit"
                 />
@@ -416,7 +425,9 @@ export default function TrackTimeLogModal({
                     min="0"
                     max="59"
                     value={formData.lapTimeMinutes}
-                    onChange={(e) => setFormData(prev => ({ ...prev, lapTimeMinutes: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, lapTimeMinutes: e.target.value }))
+                    }
                     className={`${styles.input} ${styles.lapTimeInput}`}
                     placeholder="0"
                   />
@@ -430,7 +441,9 @@ export default function TrackTimeLogModal({
                     min="0"
                     max="59.999"
                     value={formData.lapTimeSeconds}
-                    onChange={(e) => setFormData(prev => ({ ...prev, lapTimeSeconds: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, lapTimeSeconds: e.target.value }))
+                    }
                     className={`${styles.input} ${styles.lapTimeInput}`}
                     placeholder="00.000"
                   />
@@ -438,9 +451,7 @@ export default function TrackTimeLogModal({
                 </div>
               </div>
               {lapTimeSeconds && (
-                <div className={styles.lapTimePreview}>
-                  {formatLapTime(lapTimeSeconds)}
-                </div>
+                <div className={styles.lapTimePreview}>{formatLapTime(lapTimeSeconds)}</div>
               )}
               {errors.lapTime && <span className={styles.error}>{errors.lapTime}</span>}
             </div>
@@ -455,7 +466,9 @@ export default function TrackTimeLogModal({
                 <input
                   type="date"
                   value={formData.sessionDate}
-                  onChange={(e) => setFormData(prev => ({ ...prev, sessionDate: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, sessionDate: e.target.value }))
+                  }
                   className={styles.input}
                   max={new Date().toISOString().split('T')[0]}
                 />
@@ -466,11 +479,15 @@ export default function TrackTimeLogModal({
                 <label className={styles.label}>Session Type</label>
                 <select
                   value={formData.sessionType}
-                  onChange={(e) => setFormData(prev => ({ ...prev, sessionType: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, sessionType: e.target.value }))
+                  }
                   className={styles.select}
                 >
-                  {SESSION_TYPES.map(type => (
-                    <option key={type.value} value={type.value}>{type.label}</option>
+                  {SESSION_TYPES.map((type) => (
+                    <option key={type.value} value={type.value}>
+                      {type.label}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -479,11 +496,13 @@ export default function TrackTimeLogModal({
                 <label className={styles.label}>Track Conditions</label>
                 <select
                   value={formData.conditions}
-                  onChange={(e) => setFormData(prev => ({ ...prev, conditions: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, conditions: e.target.value }))}
                   className={styles.select}
                 >
-                  {CONDITIONS.map(cond => (
-                    <option key={cond.value} value={cond.value}>{cond.label}</option>
+                  {CONDITIONS.map((cond) => (
+                    <option key={cond.value} value={cond.value}>
+                      {cond.label}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -492,11 +511,15 @@ export default function TrackTimeLogModal({
                 <label className={styles.label}>Tire Compound</label>
                 <select
                   value={formData.tireCompound}
-                  onChange={(e) => setFormData(prev => ({ ...prev, tireCompound: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, tireCompound: e.target.value }))
+                  }
                   className={styles.select}
                 >
-                  {TIRE_COMPOUNDS.map(tire => (
-                    <option key={tire.value} value={tire.value}>{tire.label}</option>
+                  {TIRE_COMPOUNDS.map((tire) => (
+                    <option key={tire.value} value={tire.value}>
+                      {tire.label}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -505,11 +528,15 @@ export default function TrackTimeLogModal({
                 <label className={styles.label}>Timing System</label>
                 <select
                   value={formData.timingSystem}
-                  onChange={(e) => setFormData(prev => ({ ...prev, timingSystem: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, timingSystem: e.target.value }))
+                  }
                   className={styles.select}
                 >
-                  {TIMING_SYSTEMS.map(sys => (
-                    <option key={sys.value} value={sys.value}>{sys.label}</option>
+                  {TIMING_SYSTEMS.map((sys) => (
+                    <option key={sys.value} value={sys.value}>
+                      {sys.label}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -519,7 +546,9 @@ export default function TrackTimeLogModal({
           {/* Conditions Section (Collapsible) */}
           <details className={styles.detailsSection}>
             <summary className={styles.detailsSummary}>
-              <span className={styles.detailsIcon}><ThermometerIcon /></span>
+              <span className={styles.detailsIcon}>
+                <ThermometerIcon />
+              </span>
               Weather Conditions (Optional)
             </summary>
             <div className={styles.conditionsGrid}>
@@ -531,7 +560,9 @@ export default function TrackTimeLogModal({
                   <input
                     type="number"
                     value={formData.ambientTempF}
-                    onChange={(e) => setFormData(prev => ({ ...prev, ambientTempF: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, ambientTempF: e.target.value }))
+                    }
                     className={styles.input}
                     placeholder="70"
                   />
@@ -547,7 +578,9 @@ export default function TrackTimeLogModal({
                   <input
                     type="number"
                     value={formData.trackTempF}
-                    onChange={(e) => setFormData(prev => ({ ...prev, trackTempF: e.target.value }))}
+                    onChange={(e) =>
+                      setFormData((prev) => ({ ...prev, trackTempF: e.target.value }))
+                    }
                     className={styles.input}
                     placeholder="85"
                   />
@@ -560,7 +593,9 @@ export default function TrackTimeLogModal({
           {/* Notes Section */}
           <details className={styles.detailsSection}>
             <summary className={styles.detailsSummary}>
-              <span className={styles.detailsIcon}><ClockIcon /></span>
+              <span className={styles.detailsIcon}>
+                <ClockIcon />
+              </span>
               Session Notes (Optional)
             </summary>
             <div className={styles.notesSection}>
@@ -568,7 +603,7 @@ export default function TrackTimeLogModal({
                 <label className={styles.label}>Notes</label>
                 <textarea
                   value={formData.notes}
-                  onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, notes: e.target.value }))}
                   className={styles.textarea}
                   placeholder="Car felt great today, brake fade on lap 5..."
                   rows={3}
@@ -580,7 +615,7 @@ export default function TrackTimeLogModal({
                 <input
                   type="text"
                   value={formData.highlights}
-                  onChange={(e) => setFormData(prev => ({ ...prev, highlights: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, highlights: e.target.value }))}
                   className={styles.input}
                   placeholder="Personal best! First time under 2 minutes"
                 />
@@ -591,7 +626,9 @@ export default function TrackTimeLogModal({
                 <input
                   type="text"
                   value={formData.areasToImprove}
-                  onChange={(e) => setFormData(prev => ({ ...prev, areasToImprove: e.target.value }))}
+                  onChange={(e) =>
+                    setFormData((prev) => ({ ...prev, areasToImprove: e.target.value }))
+                  }
                   className={styles.input}
                   placeholder="Late braking into T3, more aggression in T7"
                 />
@@ -600,21 +637,15 @@ export default function TrackTimeLogModal({
           </details>
 
           {/* Error Message */}
-          {errors.submit && (
-            <div className={styles.submitError}>{errors.submit}</div>
-          )}
+          {errors.submit && <div className={styles.submitError}>{errors.submit}</div>}
         </form>
 
         {/* Actions - Outside form for proper flex positioning */}
         <div className={styles.actions}>
-          <button 
-            type="button" 
-            className={styles.cancelBtn}
-            onClick={onClose}
-          >
+          <button type="button" className={styles.cancelBtn} onClick={onClose}>
             Cancel
           </button>
-          <button 
+          <button
             type="button"
             className={styles.saveBtn}
             disabled={isSubmitting}

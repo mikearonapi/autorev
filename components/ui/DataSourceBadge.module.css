@@ -1,0 +1,188 @@
+/**
+ * DataSourceBadge Styles
+ *
+ * Color tokens follow SOURCE_OF_TRUTH.md:
+ * - Teal: Verified user data (gains, positive)
+ * - Lime: Measured/user-provided (CTAs, highlights)
+ * - Blue: Calibrated/stock reference
+ * - Neutral: Generic estimates
+ */
+
+/* =============================================================================
+   BADGE - Main component
+   ============================================================================= */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+/* Variants */
+.badge--minimal {
+  padding: 1px 4px;
+  font-size: 9px;
+  border-radius: 3px;
+}
+
+.badge--compact {
+  padding: 2px 6px;
+  font-size: 10px;
+}
+
+.badge--full {
+  padding: 4px 8px;
+  font-size: 11px;
+}
+
+/* Color variants - using design tokens */
+.badge--teal {
+  background: rgba(20, 184, 166, 0.15);
+  color: var(--color-teal-400, #2dd4bf);
+  border: 1px solid rgba(20, 184, 166, 0.3);
+}
+
+.badge--lime {
+  background: rgba(163, 230, 53, 0.15);
+  color: var(--color-lime-400, #a3e635);
+  border: 1px solid rgba(163, 230, 53, 0.3);
+}
+
+.badge--blue {
+  background: rgba(59, 130, 246, 0.15);
+  color: var(--color-blue-400, #60a5fa);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.badge--neutral {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.6));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.label {
+  line-height: 1;
+}
+
+/* =============================================================================
+   INDICATOR - Small dot for inline use
+   ============================================================================= */
+
+.indicator {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 4px;
+}
+
+.indicatorDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.indicator--teal .indicatorDot {
+  background: var(--color-teal-400, #2dd4bf);
+  box-shadow: 0 0 4px rgba(20, 184, 166, 0.5);
+}
+
+.indicator--lime .indicatorDot {
+  background: var(--color-lime-400, #a3e635);
+  box-shadow: 0 0 4px rgba(163, 230, 53, 0.5);
+}
+
+.indicator--blue .indicatorDot {
+  background: var(--color-blue-400, #60a5fa);
+  box-shadow: 0 0 4px rgba(59, 130, 246, 0.5);
+}
+
+/* =============================================================================
+   METRIC WITH SOURCE - Value + badge combination
+   ============================================================================= */
+
+.metricWithSource {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.metric--stacked {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.metricValue {
+  font-variant-numeric: tabular-nums;
+}
+
+.metricUnit {
+  margin-left: 2px;
+  font-size: 0.85em;
+  opacity: 0.7;
+}
+
+.metricEmpty {
+  color: var(--color-text-tertiary, rgba(255, 255, 255, 0.4));
+}
+
+/* =============================================================================
+   SOURCE SUMMARY - Overview banner
+   ============================================================================= */
+
+.sourceSummary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--color-text-secondary, rgba(255, 255, 255, 0.7));
+  margin-bottom: 16px;
+}
+
+.summary--teal {
+  background: rgba(20, 184, 166, 0.08);
+  border-color: rgba(20, 184, 166, 0.2);
+  color: var(--color-teal-300, #5eead4);
+}
+
+.summary--lime {
+  background: rgba(163, 230, 53, 0.08);
+  border-color: rgba(163, 230, 53, 0.2);
+  color: var(--color-lime-300, #bef264);
+}
+
+.summary--blue {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.2);
+  color: var(--color-blue-300, #93c5fd);
+}
+
+.summaryDate {
+  opacity: 0.7;
+  font-size: 12px;
+}
+
+/* =============================================================================
+   RESPONSIVE
+   ============================================================================= */
+
+@media (max-width: 480px) {
+  .badge--full {
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+
+  .sourceSummary {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}

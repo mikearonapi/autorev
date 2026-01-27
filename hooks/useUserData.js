@@ -2,12 +2,12 @@
 
 /**
  * React Query Hooks for User Data
- * 
+ *
  * Provides cached, deduplicated data fetching for user-related data.
  * Includes conversations, credits, track times, saved events, and vehicles.
- * 
+ *
  * Uses apiClient for standardized error handling and cross-platform support.
- * 
+ *
  * @module hooks/useUserData
  */
 
@@ -28,20 +28,25 @@ import { CACHE_TIMES } from './useCarData';
  */
 export const userKeys = {
   all: ['user'],
-  
+
   // Conversations
   conversations: (userId) => [...userKeys.all, userId, 'conversations'],
-  conversation: (userId, conversationId) => [...userKeys.all, userId, 'conversation', conversationId],
-  
+  conversation: (userId, conversationId) => [
+    ...userKeys.all,
+    userId,
+    'conversation',
+    conversationId,
+  ],
+
   // Credits
   credits: (userId) => [...userKeys.all, userId, 'credits'],
-  
+
   // Track times
   trackTimes: (userId, carSlug) => [...userKeys.all, userId, 'track-times', carSlug || 'all'],
-  
+
   // Saved events
   savedEvents: (userId, filters) => [...userKeys.all, userId, 'saved-events', filters],
-  
+
   // Vehicles
   vehicle: (userId, vehicleId) => [...userKeys.all, userId, 'vehicle', vehicleId],
   garage: (userId) => [...userKeys.all, userId, 'garage'],
@@ -66,11 +71,12 @@ async function fetchConversation(userId, conversationId) {
   const data = await apiClient.get(`/api/users/${userId}/al-conversations/${conversationId}`);
   return {
     ...data,
-    messages: data.messages?.map(msg => ({
-      role: msg.role,
-      content: msg.content,
-      timestamp: msg.created_at,
-    })) || [],
+    messages:
+      data.messages?.map((msg) => ({
+        role: msg.role,
+        content: msg.content,
+        timestamp: msg.created_at,
+      })) || [],
   };
 }
 
@@ -92,7 +98,7 @@ async function fetchTrackTimes(userId, carSlug, limit = 10) {
   const params = new URLSearchParams();
   if (carSlug) params.append('carSlug', carSlug);
   if (limit) params.append('limit', limit.toString());
-  
+
   const data = await apiClient.get(`/api/users/${userId}/track-times?${params.toString()}`);
   return data.times || [];
 }
@@ -104,7 +110,7 @@ async function fetchSavedEvents(userId, filters = {}) {
   const params = new URLSearchParams();
   if (filters.includeExpired) params.append('includeExpired', 'true');
   if (filters.limit) params.append('limit', filters.limit.toString());
-  
+
   // Build auth headers if we have a token
   const data = await apiClient.get(`/api/users/${userId}/saved-events?${params.toString()}`);
   return data;
@@ -249,7 +255,7 @@ export function useUserGarage(userId, options = {}) {
  */
 export function useAddTrackTime() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ userId, trackTime }) => {
       const res = await fetch(`/api/users/${userId}/track-times`, {
@@ -261,8 +267,19 @@ export function useAddTrackTime() {
         const error = new Error('Failed to save track time');
         try {
           const body = await res.json();
-          error.message = body.error || error.message;
-        } catch {}
+          // Handle validation errors with details
+          if (body.code === 'VALIDATION_ERROR' && body.details) {
+            const fieldErrors = Object.entries(body.details)
+              .map(([field, msg]) => `${field}: ${msg}`)
+              .join(', ');
+            error.message = `Validation failed: ${fieldErrors}`;
+          } else {
+            error.message = body.error || error.message;
+          }
+        } catch {
+          // If response isn't JSON, use status text
+          error.message = `Failed to save track time (${res.status})`;
+        }
         throw error;
       }
       return res.json();
@@ -304,7 +321,7 @@ export function useAnalyzeTrackTimes() {
  */
 export function useDeleteTrackTime() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ userId, trackTimeId }) => {
       const res = await fetch(`/api/users/${userId}/track-times?id=${trackTimeId}`, {
@@ -333,7 +350,7 @@ export function useDeleteTrackTime() {
  */
 export function useClearUserData() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ userId, scope }) => {
       const res = await fetch(`/api/users/${userId}/clear-data`, {
@@ -346,7 +363,7 @@ export function useClearUserData() {
       }
       return res.json();
     },
-    onSuccess: (data, { userId }) => {
+    onSuccess: (_data, { _userId }) => {
       // Invalidate all user data
       queryClient.invalidateQueries({ queryKey: userKeys.all });
     },
@@ -386,7 +403,7 @@ export function useDeleteAccount() {
  */
 export function useSaveEvent() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ userId, eventId, action = 'save' }) => {
       const res = await fetch(`/api/users/${userId}/saved-events`, {
@@ -411,7 +428,7 @@ export function useSaveEvent() {
  */
 export function useUpdateVehicle() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ userId, vehicleId, updates }) => {
       const res = await fetch(`/api/users/${userId}/vehicles/${vehicleId}`, {
@@ -444,6 +461,12 @@ export function useUpdateVehicle() {
 
 /**
  * Hook to fetch dyno results for a vehicle
+ *
+ * Returns array of dyno results sorted by date (most recent first).
+ * Use the first result as the "latest" dyno data.
+ *
+ * @param {string} vehicleId - User vehicle UUID
+ * @param {object} options - React Query options
  */
 export function useDynoResults(vehicleId, options = {}) {
   return useQuery({
@@ -459,6 +482,110 @@ export function useDynoResults(vehicleId, options = {}) {
     staleTime: CACHE_TIMES.STANDARD,
     enabled: !!vehicleId,
     ...options,
+  });
+}
+
+/**
+ * Hook to get the latest dyno result for a vehicle
+ *
+ * Convenience hook that returns only the most recent dyno result
+ * formatted for use with the performance calculator.
+ *
+ * @param {string} vehicleId - User vehicle UUID
+ * @param {object} options - React Query options
+ */
+export function useLatestDynoResult(vehicleId, options = {}) {
+  const { data: results, ...queryResult } = useDynoResults(vehicleId, options);
+
+  // Format the latest result if available
+  const latestDyno = results?.[0]
+    ? {
+        whp: results[0].whp,
+        wtq: results[0].wtq,
+        boostPsi: results[0].boost_psi,
+        crankHp: results[0].crank_hp,
+        crankTq: results[0].crank_tq,
+        fuelType: results[0].fuel_type,
+        dynoType: results[0].dyno_type,
+        dynoDate: results[0].dyno_date,
+        dynoShop: results[0].dyno_shop,
+        isVerified: results[0].is_verified,
+        hasResults: true,
+        id: results[0].id,
+      }
+    : null;
+
+  return {
+    data: latestDyno,
+    ...queryResult,
+  };
+}
+
+/**
+ * Hook to add a new dyno result
+ */
+export function useAddDynoResult() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ dynoResult }) => {
+      const res = await fetch('/api/dyno-results', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dynoResult),
+      });
+      if (!res.ok) {
+        const error = new Error('Failed to save dyno result');
+        try {
+          const body = await res.json();
+          if (body.code === 'VALIDATION_ERROR' && body.details) {
+            const fieldErrors = Object.entries(body.details)
+              .map(([field, msg]) => `${field}: ${msg}`)
+              .join(', ');
+            error.message = `Validation failed: ${fieldErrors}`;
+          } else {
+            error.message = body.error || error.message;
+          }
+        } catch {
+          error.message = `Failed to save dyno result (${res.status})`;
+        }
+        throw error;
+      }
+      return res.json();
+    },
+    onSuccess: (data, { dynoResult }) => {
+      // Invalidate dyno results cache for this vehicle
+      queryClient.invalidateQueries({
+        queryKey: [...userKeys.all, 'dyno-results', dynoResult.userVehicleId],
+      });
+      // Also invalidate garage in case dyno data affects vehicle display
+      queryClient.invalidateQueries({ queryKey: userKeys.garage });
+    },
+  });
+}
+
+/**
+ * Hook to delete a dyno result
+ */
+export function useDeleteDynoResult() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ dynoResultId, vehicleId: _vehicleIdForMutation }) => {
+      const res = await fetch(`/api/dyno-results?id=${dynoResultId}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) {
+        throw new Error('Failed to delete dyno result');
+      }
+      return res.json();
+    },
+    onSuccess: (_data, { vehicleId }) => {
+      // Invalidate dyno results cache for this vehicle
+      queryClient.invalidateQueries({
+        queryKey: [...userKeys.all, 'dyno-results', vehicleId],
+      });
+    },
   });
 }
 
@@ -508,7 +635,7 @@ export function useGarageEnrich(vehicleId, options = {}) {
  */
 export function useUpdateVehicleBuild() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ vehicleId, buildData }) => {
       const res = await fetch(`/api/vehicles/${vehicleId}/build`, {
@@ -556,7 +683,7 @@ export function useVinSafety() {
  */
 export function useVinResolve() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ vehicleId, decoded }) => {
       const res = await fetch('/api/vin/resolve', {
@@ -586,7 +713,7 @@ export function useVinResolve() {
  */
 export function useTriggerEnrichment() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ vehicleId }) => {
       const res = await fetch('/api/garage/enrich', {
@@ -650,7 +777,7 @@ export function useALPreferences(options = {}) {
  */
 export function useUpdateALPreferences() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async (preferences) => {
       const res = await fetch('/api/al/preferences', {
@@ -699,7 +826,7 @@ export function useReferralData(options = {}) {
  */
 export function useSendReferralInvite() {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: async ({ email }) => {
       const res = await fetch('/api/referrals', {
@@ -747,10 +874,16 @@ export function useResendReferralInvite() {
 /**
  * Hook to fetch user's build insights
  * Returns vehicles with matched car data, insights, and summary stats
+ *
+ * Uses prefetched data from splash screen if available for instant rendering.
+ *
  * @param {string} userId - User ID
  * @param {object} options - React Query options
  */
 export function useUserInsights(userId, options = {}) {
+  // Check for prefetched data (loaded during splash screen)
+  const prefetchedInsights = getPrefetchedData('insights', userId);
+
   return useQuery({
     queryKey: [...userKeys.all, userId, 'insights'],
     queryFn: async () => {
@@ -765,6 +898,8 @@ export function useUserInsights(userId, options = {}) {
     staleTime: CACHE_TIMES.FAST, // 30 seconds - insights should feel fresh
     gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
     refetchOnWindowFocus: true, // Refetch when user returns to tab (handles bfcache)
+    // Use prefetched data as placeholder for instant rendering
+    placeholderData: prefetchedInsights || undefined,
     enabled: !!userId,
     ...options,
   });
@@ -777,16 +912,16 @@ export function useUserInsights(userId, options = {}) {
 /**
  * Hook to fetch user's dashboard data
  * Returns streak, points, achievements, activity, and profile data
- * 
+ *
  * Uses prefetched data from splash screen if available for instant rendering.
- * 
+ *
  * @param {string} userId - User ID
  * @param {object} options - React Query options
  */
 export function useDashboardData(userId, options = {}) {
   // Check for prefetched data (loaded during splash screen)
   const prefetchedDashboard = getPrefetchedData('dashboard', userId);
-  
+
   return useQuery({
     queryKey: [...userKeys.all, userId, 'dashboard'],
     queryFn: async () => {

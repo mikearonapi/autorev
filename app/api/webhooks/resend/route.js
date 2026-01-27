@@ -1,13 +1,13 @@
 /**
  * Resend Webhook Handler
- * 
+ *
  * Receives events from Resend for email tracking:
  * - email.delivered
  * - email.opened
  * - email.clicked
  * - email.bounced
  * - email.complained
- * 
+ *
  * Set this URL in your Resend dashboard: /api/webhooks/resend
  */
 
@@ -36,16 +36,10 @@ function verifySignature(payload, signature, secret) {
     return false;
   }
 
-  const expectedSignature = crypto
-    .createHmac('sha256', secret)
-    .update(payload)
-    .digest('hex');
+  const expectedSignature = crypto.createHmac('sha256', secret).update(payload).digest('hex');
 
   try {
-    return crypto.timingSafeEqual(
-      Buffer.from(signature),
-      Buffer.from(expectedSignature)
-    );
+    return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(expectedSignature));
   } catch (err) {
     console.error('[Resend Webhook] Signature comparison failed:', err.message);
     return false;
@@ -66,14 +60,13 @@ async function handlePost(request) {
 
     // Parse the event
     const event = JSON.parse(rawBody);
-    
+
     console.log(`[Resend Webhook] Received event: ${event.type}`);
 
     // Handle the event
     await handleResendWebhook(event);
 
     return NextResponse.json({ received: true });
-
   } catch (err) {
     console.error('[Resend Webhook] Error:', err);
     await logServerError(err, request, {

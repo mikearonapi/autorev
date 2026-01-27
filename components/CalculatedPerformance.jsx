@@ -5,16 +5,22 @@
  *
  * Reusable component showing Performance Metrics + Experience Scores
  * with progress bars. Used in build planning and data views.
+ *
+ * IMPORTANT: When user has provided dyno data, this component displays
+ * "Measured" badges to distinguish from estimated values. This ensures
+ * users always know when they're seeing their actual data vs calculations.
  */
 
 import React from 'react';
 
+import { DataSourceBadge, PerformanceSourceSummary } from '@/components/ui';
 import { Icons } from '@/components/ui/Icons';
 
 import styles from './CalculatedPerformance.module.css';
 
 // ============================================================================
 // METRIC ROW - With progress bar (same as Performance tab)
+// Now supports data source badges to indicate measured vs estimated data
 // ============================================================================
 function MetricRow({
   icon: Icon,
@@ -24,6 +30,8 @@ function MetricRow({
   unit,
   isLowerBetter = false,
   maxScale,
+  dataSource = null, // 'verified' | 'measured' | 'calibrated' | 'estimated' | null
+  sourceDetail = null,
 }) {
   const stock = stockValue ?? 0;
   const upgraded = upgradedValue ?? stock;
@@ -58,12 +66,18 @@ function MetricRow({
     ? ((maxValue - upgraded) / maxValue) * 100
     : (upgraded / maxValue) * 100;
 
+  // Show badge for non-estimated data sources
+  const showSourceBadge = dataSource && dataSource !== 'estimated';
+
   return (
     <div className={styles.metric}>
       <div className={styles.metricHeader}>
         <span className={styles.metricLabel}>
           <Icon size={12} />
           {label}
+          {showSourceBadge && (
+            <DataSourceBadge source={dataSource} variant="minimal" detail={sourceDetail} />
+          )}
         </span>
         <span className={styles.metricValues}>
           {hasImproved ? (
@@ -173,6 +187,12 @@ export default function CalculatedPerformance({
   // Car context for Ask AL prompts
   carName = null,
   carSlug: _carSlug = null,
+  // Data source tracking - NEW for dyno data integration
+  // When user has dyno data, these indicate measured vs estimated
+  performanceDataSources = null, // { hp: 'measured', torque: 'measured', ... }
+  hasUserDynoData = false,
+  dynoShop = null,
+  dynoDate = null,
 }) {
   // Guard against invalid inputs
   const safeStockHp = typeof stockHp === 'number' && !isNaN(stockHp) && stockHp > 0 ? stockHp : 300;
@@ -314,8 +334,24 @@ export default function CalculatedPerformance({
 
   const _experienceDisplayMessage = 'Explain my experience scores';
 
+  // Determine data source for each metric
+  const getSource = (metric) => {
+    if (!performanceDataSources) return null;
+    return performanceDataSources[metric] || null;
+  };
+
   return (
     <div className={styles.calcPerformance}>
+      {/* Data Source Summary - shows when user has dyno data */}
+      {hasUserDynoData && (
+        <PerformanceSourceSummary
+          hasUserData={hasUserDynoData}
+          primarySource={performanceDataSources?.hp || 'measured'}
+          dynoShop={dynoShop}
+          dynoDate={dynoDate}
+        />
+      )}
+
       {/* Performance Metrics Section */}
       <div className={styles.section}>
         <div className={styles.sectionHeader}>
@@ -328,6 +364,8 @@ export default function CalculatedPerformance({
             stockValue={safeStockHp}
             upgradedValue={safeEstimatedHp}
             unit="hp"
+            dataSource={getSource('hp')}
+            sourceDetail={dynoShop}
           />
           <MetricRow
             icon={Icons.stopwatch}
@@ -336,6 +374,8 @@ export default function CalculatedPerformance({
             upgradedValue={estimated060}
             unit="s"
             isLowerBetter
+            dataSource={hasUserDynoData ? 'calibrated' : getSource('zeroToSixty')}
+            sourceDetail={hasUserDynoData ? 'Based on dyno HP' : null}
           />
           <MetricRow
             icon={Icons.gauge}
@@ -345,6 +385,8 @@ export default function CalculatedPerformance({
             unit="s"
             isLowerBetter
             maxScale={15}
+            dataSource={hasUserDynoData ? 'calibrated' : getSource('quarterMile')}
+            sourceDetail={hasUserDynoData ? 'Based on dyno HP' : null}
           />
           <MetricRow
             icon={Icons.speed}
@@ -352,6 +394,8 @@ export default function CalculatedPerformance({
             stockValue={stockTrap}
             upgradedValue={estimatedTrap}
             unit="mph"
+            dataSource={hasUserDynoData ? 'calibrated' : getSource('trapSpeed')}
+            sourceDetail={hasUserDynoData ? 'Based on dyno HP' : null}
           />
           <MetricRow
             icon={Icons.disc}
@@ -360,6 +404,7 @@ export default function CalculatedPerformance({
             upgradedValue={estimatedBraking60}
             unit="ft"
             isLowerBetter
+            dataSource={getSource('braking')}
           />
           <MetricRow
             icon={Icons.target}
@@ -367,6 +412,7 @@ export default function CalculatedPerformance({
             stockValue={stockLateralG}
             upgradedValue={estimatedLateralG}
             unit="g"
+            dataSource={getSource('lateralG')}
           />
           <MetricRow
             icon={Icons.weight}
@@ -374,6 +420,7 @@ export default function CalculatedPerformance({
             stockValue={stockPtw}
             upgradedValue={powerToWeight}
             unit="hp/ton"
+            dataSource={hasUserDynoData ? 'calibrated' : null}
           />
         </div>
       </div>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -169,6 +169,8 @@ const tabs = [
 export default function BottomTabBar() {
   const pathname = usePathname();
   const { prefetchRoute } = usePrefetchNavigation();
+  const navRef = useRef(null);
+  const prefetchedRef = useRef(new Set());
 
   /**
    * Handle prefetch on hover (desktop) or touch start (mobile)
@@ -176,10 +178,42 @@ export default function BottomTabBar() {
    */
   const handlePrefetch = useCallback(
     (href) => {
+      // Prevent duplicate prefetches in the same session
+      if (prefetchedRef.current.has(href)) return;
+      prefetchedRef.current.add(href);
       prefetchRoute(href);
     },
     [prefetchRoute]
   );
+
+  /**
+   * ANDROID FIX: Attach passive touch listeners for faster response
+   * React's onTouchStart is not passive by default, causing potential delays
+   * on Android. Passive listeners allow the browser to start scrolling/navigating
+   * immediately without waiting for JS to process.
+   */
+  useEffect(() => {
+    const nav = navRef.current;
+    if (!nav) return;
+
+    // Create touch handlers for each tab link
+    const handleTouchStart = (e) => {
+      const link = e.target.closest('a[href]');
+      if (link) {
+        const href = link.getAttribute('href');
+        if (href) {
+          handlePrefetch(href);
+        }
+      }
+    };
+
+    // Add passive listener for faster touch response on Android
+    nav.addEventListener('touchstart', handleTouchStart, { passive: true });
+
+    return () => {
+      nav.removeEventListener('touchstart', handleTouchStart);
+    };
+  }, [handlePrefetch]);
 
   const shouldShow = isAppRoute(pathname);
   if (!shouldShow) return null;
@@ -189,7 +223,7 @@ export default function BottomTabBar() {
   };
 
   return (
-    <nav className={styles.nav} aria-label="Main navigation">
+    <nav ref={navRef} className={styles.nav} aria-label="Main navigation">
       <div className={styles.container}>
         {tabs.map((tab) => {
           const active = isActive(tab);
@@ -202,7 +236,6 @@ export default function BottomTabBar() {
               className={`${styles.tab} ${active ? styles.active : ''} ${tab.isAL ? styles.alTab : ''}`}
               aria-current={active ? 'page' : undefined}
               onMouseEnter={() => handlePrefetch(tab.href)}
-              onTouchStart={() => handlePrefetch(tab.href)}
             >
               <span className={styles.icon}>
                 <TabIcon active={active} />

@@ -1,8 +1,9 @@
+/* eslint-disable no-console */
 /**
  * Lap Time Service Tests
- * 
+ *
  * Tests the data-driven lap time estimation service.
- * 
+ *
  * Run: node tests/lapTimeService.test.js
  */
 
@@ -15,9 +16,9 @@ async function runTests() {
   console.log('╔════════════════════════════════════════════════════════════════╗');
   console.log('║            Lap Time Service Tests                              ║');
   console.log('╚════════════════════════════════════════════════════════════════╝\n');
-  
+
   const results = { passed: 0, failed: 0 };
-  
+
   // Test 1: formatLapTime (M:SS.mmm format with 3 decimal places)
   console.log('Test 1: formatLapTime');
   try {
@@ -29,7 +30,7 @@ async function runTests() {
       console.log(`  ❌ formatLapTime(95.5) expected "1:35.500", got "${formatted}"`);
       results.failed++;
     }
-    
+
     const nullFormatted = lapTimeService.formatLapTime(null);
     if (nullFormatted === '--:--.---') {
       console.log('  ✅ formatLapTime(null) = "--:--.---"');
@@ -42,7 +43,7 @@ async function runTests() {
     console.log(`  ❌ Error: ${err.message}`);
     results.failed++;
   }
-  
+
   // Test 2: DRIVER_SKILLS constants
   console.log('\nTest 2: DRIVER_SKILLS constants');
   try {
@@ -54,8 +55,8 @@ async function runTests() {
       console.log('  ❌ Missing skill levels');
       results.failed++;
     }
-    
-    if (skills.beginner.modUtilization === 0.20 && skills.professional.modUtilization === 0.95) {
+
+    if (skills.beginner.modUtilization === 0.2 && skills.professional.modUtilization === 0.95) {
       console.log('  ✅ Mod utilization values correct');
       results.passed++;
     } else {
@@ -66,7 +67,7 @@ async function runTests() {
     console.log(`  ❌ Error: ${err.message}`);
     results.failed++;
   }
-  
+
   // Test 3: MOD_IMPACT constants
   console.log('\nTest 3: MOD_IMPACT constants');
   try {
@@ -78,7 +79,7 @@ async function runTests() {
       console.log('  ❌ Missing MOD_IMPACT categories');
       results.failed++;
     }
-    
+
     if (impact.tires['r-comp'] === 0.07) {
       console.log('  ✅ R-comp tire impact = 0.07 (7%)');
       results.passed++;
@@ -90,7 +91,7 @@ async function runTests() {
     console.log(`  ❌ Error: ${err.message}`);
     results.failed++;
   }
-  
+
   // Test 4: getTrackStatsSummary (requires DB connection)
   console.log('\nTest 4: getTrackStatsSummary (requires DB)');
   try {
@@ -99,7 +100,7 @@ async function runTests() {
     } else {
       // Use Road Atlanta - exists in both tracks and track_venues tables
       const stats = await lapTimeService.getTrackStatsSummary('road-atlanta');
-      
+
       if (stats && stats.hasData) {
         console.log(`  ✅ Got stats for Road Atlanta: ${stats.count} lap times`);
         console.log(`     Fastest: ${stats.fastest}, Median: ${stats.median}`);
@@ -116,7 +117,7 @@ async function runTests() {
     console.log(`  ❌ Error: ${err.message}`);
     results.failed++;
   }
-  
+
   // Test 5: estimateLapTime (requires DB connection)
   console.log('\nTest 5: estimateLapTime (requires DB)');
   try {
@@ -134,10 +135,12 @@ async function runTests() {
           suspension: { type: 'coilovers' },
         },
       });
-      
+
       if (estimate.source === 'real_data') {
         console.log(`  ✅ Got estimate from real data (${estimate.sampleSize} samples)`);
-        console.log(`     Stock: ${estimate.formatted?.stock}, Modded: ${estimate.formatted?.modded}`);
+        console.log(
+          `     Stock: ${estimate.formatted?.stock}, Modded: ${estimate.formatted?.modded}`
+        );
         console.log(`     Improvement: ${estimate.formatted?.improvement}`);
         results.passed++;
       } else if (estimate.source === 'unavailable') {
@@ -152,7 +155,7 @@ async function runTests() {
     console.log(`  ❌ Error: ${err.message}`);
     results.failed++;
   }
-  
+
   // Test 6: Check database connection and count lap times
   console.log('\nTest 6: Database lap time count');
   try {
@@ -165,14 +168,14 @@ async function runTests() {
         process.env.NEXT_PUBLIC_SUPABASE_URL,
         process.env.SUPABASE_SERVICE_ROLE_KEY
       );
-      
+
       const { count, error } = await client
         .from('car_track_lap_times')
         .select('*', { count: 'exact', head: true });
-      
+
       if (!error && count !== null) {
         console.log(`  ✅ Database contains ${count.toLocaleString()} lap times`);
-        
+
         // Check if we have enough for good estimates
         if (count >= 3000) {
           console.log(`     ✅ Sufficient data for reliable estimates`);
@@ -189,12 +192,71 @@ async function runTests() {
     console.log(`  ❌ Error: ${err.message}`);
     results.failed++;
   }
-  
+
+  // Test 7: Skill level progression should be reasonable (not race car outliers)
+  console.log('\nTest 7: Skill level progression sanity check');
+  try {
+    if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
+      console.log('  ⚠️ Skipped - No Supabase connection');
+    } else {
+      // Test with a track that has mixed data (street cars + race cars)
+      const beginnerEst = await lapTimeService.estimateLapTime({
+        trackSlug: 'vir-full',
+        stockHp: 300,
+        driverSkill: 'beginner',
+      });
+
+      const proEst = await lapTimeService.estimateLapTime({
+        trackSlug: 'vir-full',
+        stockHp: 300,
+        driverSkill: 'professional',
+      });
+
+      if (beginnerEst.source === 'real_data' && proEst.source === 'real_data') {
+        const beginnerTime = beginnerEst.stockLapTime;
+        const proTime = proEst.stockLapTime;
+        const improvement = beginnerTime - proTime;
+
+        // Pro should be faster than beginner
+        if (proTime < beginnerTime) {
+          console.log(
+            `  ✅ Pro (${lapTimeService.formatLapTime(proTime)}) is faster than Beginner (${lapTimeService.formatLapTime(beginnerTime)})`
+          );
+          results.passed++;
+        } else {
+          console.log(`  ❌ Pro should be faster than Beginner`);
+          results.failed++;
+        }
+
+        // But not unreasonably faster (race car vs street car = 50%+ improvement)
+        // A reasonable skill-based improvement should be < 40% of beginner time
+        const improvementPercent = (improvement / beginnerTime) * 100;
+        if (improvementPercent < 40) {
+          console.log(
+            `  ✅ Skill improvement is reasonable: ${improvement.toFixed(1)}s (${improvementPercent.toFixed(1)}%)`
+          );
+          results.passed++;
+        } else {
+          console.log(
+            `  ❌ Skill improvement too large (${improvementPercent.toFixed(1)}%) - likely includes race car outliers`
+          );
+          results.failed++;
+        }
+      } else {
+        console.log('  ⚠️ No data for VIR track');
+        results.passed++;
+      }
+    }
+  } catch (err) {
+    console.log(`  ❌ Error: ${err.message}`);
+    results.failed++;
+  }
+
   // Summary
   console.log('\n' + '═'.repeat(60));
   console.log(`RESULTS: ${results.passed} passed, ${results.failed} failed`);
   console.log('═'.repeat(60));
-  
+
   process.exit(results.failed > 0 ? 1 : 0);
 }
 

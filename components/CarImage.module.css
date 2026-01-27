@@ -21,6 +21,7 @@
 /* Variant Sizes - Mobile First */
 .hero {
   width: 100%;
+
   /* Taller aspect ratio on mobile for better visual impact */
   aspect-ratio: 4 / 3;
 }
@@ -39,12 +40,14 @@
 
 .thumbnail {
   width: 100%;
+
   /* Match source image aspect ratio (2752×1536 = 43:24 ≈ 1.79:1) */
   aspect-ratio: 43 / 24;
 }
 
 .card {
   width: 100%;
+
   /* Match source image aspect ratio (2752×1536 = 43:24 ≈ 1.79:1) */
   aspect-ratio: 43 / 24;
 }
@@ -79,6 +82,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
   /* Faster transition for snappy feel (200ms vs slow ~400ms) */
   transition: opacity 200ms ease-out;
   z-index: 1;
@@ -122,18 +126,14 @@
 .placeholderOverlay {
   position: absolute;
   inset: 0;
-  background: radial-gradient(
-    ellipse at center bottom,
-    rgba(0, 0, 0, 0.2) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(ellipse at center bottom, rgba(0, 0, 0, 0.2) 0%, transparent 70%);
   z-index: 1;
 }
 
 .placeholderGrid {
   position: absolute;
   inset: 0;
-  background-image: 
+  background-image:
     linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
   background-size: 40px 40px;
@@ -148,9 +148,11 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+
   /* Position to show the car (typically in lower portion of hero images) */
   object-position: center 70%;
   opacity: 0;
+
   /* Faster transition for snappy load feel (200ms vs slow ~400ms) */
   transition: opacity 200ms ease-out;
   z-index: 2;
@@ -173,22 +175,23 @@
 
 /* Garage placeholder - dark studio theme */
 .garage .placeholder {
-  background: linear-gradient(135deg, var(--color-bg-base, #0a0a0f) 0%, var(--brand-bg-card-dark) 50%, #0f0f14 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-bg-base, #0a0a0f) 0%,
+    var(--brand-bg-card-dark) 50%,
+    #0f0f14 100%
+  );
 }
 
 .garage .placeholderGrid {
-  background-image: 
+  background-image:
     linear-gradient(rgba(255, 255, 255, 0.01) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.01) 1px, transparent 1px);
   background-size: 60px 60px;
 }
 
 .garage .placeholderOverlay {
-  background: radial-gradient(
-    ellipse at center,
-    transparent 0%,
-    rgba(0, 0, 0, 0.6) 100%
-  );
+  background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.6) 100%);
 }
 
 /* Variant-specific placeholder text sizes - Mobile First */
@@ -255,6 +258,7 @@
   0% {
     background-position: -100% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
@@ -264,12 +268,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.05),
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.05), transparent);
   background-size: 200% 100%;
   animation: shimmer 2s infinite;
   z-index: 3;
@@ -283,4 +282,3 @@
 .placeholder.error::before {
   animation: none;
 }
-

@@ -69,17 +69,21 @@
 /* Tabs */
 .tabs {
   display: flex;
+  flex-wrap: wrap;
   gap: 6px;
   margin-bottom: 12px;
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+  /* Prevent overflow on mobile */
+  overflow: hidden;
 }
 
 .tab {
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 6px 12px;
+  padding: 6px 10px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid transparent;
   border-radius: 6px;
@@ -88,6 +92,13 @@
   color: var(--color-text-secondary, #94a3b8);
   cursor: pointer;
   transition: all 0.2s ease;
+
+  /* Ensure minimum touch target */
+  min-height: 36px;
+
+  /* Allow tabs to shrink slightly on small screens */
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .tab:hover {
@@ -314,6 +325,7 @@
   align-items: flex-start;
   gap: 10px;
   padding: 12px;
+
   /* Tips are informational content - use blue (informational), not lime (CTAs) */
   background: var(--color-accent-blue-muted, rgba(59, 130, 246, 0.15));
   border: 1px solid var(--color-accent-blue-border, rgba(59, 130, 246, 0.3));
@@ -322,6 +334,7 @@
 
 .tipCard svg:first-child {
   flex-shrink: 0;
+
   /* Informational icon - use blue, not lime */
   color: var(--color-accent-blue, #3b82f6);
   margin-top: 2px;
@@ -372,24 +385,20 @@
   .platformInsights {
     padding: 16px;
   }
-  
-  .tabs {
-    flex-wrap: wrap;
-  }
-  
+
   .tab {
-    padding: 6px 10px;
+    padding: 8px 14px;
     font-size: var(--text-xs, 11px);
   }
-  
+
   .insightHeader {
     padding: 12px;
   }
-  
+
   .insightTitle {
     font-size: var(--text-xs, 11px);
   }
-  
+
   .insightDescription {
     padding: 0 12px 12px;
     font-size: var(--text-xs, 11px);

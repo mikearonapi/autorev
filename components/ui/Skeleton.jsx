@@ -1,24 +1,24 @@
 /**
  * Skeleton Loading Components
- * 
+ *
  * Provides loading placeholders for content to improve perceived performance.
  * Features a smooth shimmer animation for visual feedback.
- * 
+ *
  * @module components/ui/Skeleton
- * 
+ *
  * @example
  * // Basic usage
  * <Skeleton width={200} height={20} />
- * 
+ *
  * // Text placeholder
  * <SkeletonText lines={3} />
- * 
+ *
  * // Card skeleton
  * <CardSkeleton />
- * 
+ *
  * // List skeleton
  * <ListSkeleton count={5} />
- * 
+ *
  * // Table skeleton
  * <TableSkeleton rows={10} columns={4} />
  */
@@ -31,7 +31,7 @@ import styles from './Skeleton.module.css';
 
 /**
  * Base skeleton component with shimmer animation
- * 
+ *
  * @param {Object} props
  * @param {number|string} [props.width] - Width (number for px, string for other units)
  * @param {number|string} [props.height] - Height (number for px, string for other units)
@@ -70,19 +70,14 @@ export function Skeleton({
 
 /**
  * Text skeleton with multiple lines
- * 
+ *
  * @param {Object} props
  * @param {number} [props.lines=3] - Number of text lines
  * @param {number} [props.lineHeight=20] - Height of each line in px
  * @param {number} [props.gap=8] - Gap between lines in px
  * @param {string} [props.className] - Additional CSS classes
  */
-export function SkeletonText({
-  lines = 3,
-  lineHeight = 20,
-  gap = 8,
-  className = '',
-}) {
+export function SkeletonText({ lines = 3, lineHeight = 20, gap = 8, className = '' }) {
   return (
     <div className={`${styles.textWrapper} ${className}`} style={{ gap: `${gap}px` }}>
       {Array.from({ length: lines }).map((_, i) => (
@@ -99,17 +94,13 @@ export function SkeletonText({
 
 /**
  * Card skeleton for card-based layouts
- * 
+ *
  * @param {Object} props
  * @param {boolean} [props.hasImage=true] - Whether to show image placeholder
  * @param {number} [props.imageHeight=160] - Height of image placeholder
  * @param {string} [props.className] - Additional CSS classes
  */
-export function CardSkeleton({
-  hasImage = true,
-  imageHeight = 160,
-  className = '',
-}) {
+export function CardSkeleton({ hasImage = true, imageHeight = 160, className = '' }) {
   return (
     <div className={`${styles.card} ${className}`}>
       {hasImage && (
@@ -129,20 +120,15 @@ export function CardSkeleton({
 
 /**
  * List item skeleton
- * 
+ *
  * @param {Object} props
  * @param {boolean} [props.hasAvatar=false] - Whether to show avatar placeholder
  * @param {string} [props.className] - Additional CSS classes
  */
-export function ListItemSkeleton({
-  hasAvatar = false,
-  className = '',
-}) {
+export function ListItemSkeleton({ hasAvatar = false, className = '' }) {
   return (
     <div className={`${styles.listItem} ${className}`}>
-      {hasAvatar && (
-        <Skeleton width={40} height={40} variant="circular" />
-      )}
+      {hasAvatar && <Skeleton width={40} height={40} variant="circular" />}
       <div className={styles.listItemContent}>
         <Skeleton height={18} width="60%" variant="rounded" />
         <Skeleton height={14} width="80%" variant="rounded" />
@@ -153,17 +139,13 @@ export function ListItemSkeleton({
 
 /**
  * List skeleton with multiple items
- * 
+ *
  * @param {Object} props
  * @param {number} [props.count=5] - Number of items
  * @param {boolean} [props.hasAvatar=false] - Whether items have avatars
  * @param {string} [props.className] - Additional CSS classes
  */
-export function ListSkeleton({
-  count = 5,
-  hasAvatar = false,
-  className = '',
-}) {
+export function ListSkeleton({ count = 5, hasAvatar = false, className = '' }) {
   return (
     <div className={`${styles.list} ${className}`}>
       {Array.from({ length: count }).map((_, i) => (
@@ -175,19 +157,14 @@ export function ListSkeleton({
 
 /**
  * Table skeleton for tabular data
- * 
+ *
  * @param {Object} props
  * @param {number} [props.rows=5] - Number of data rows
  * @param {number} [props.columns=4] - Number of columns
  * @param {boolean} [props.hasHeader=true] - Whether to show header row
  * @param {string} [props.className] - Additional CSS classes
  */
-export function TableSkeleton({
-  rows = 5,
-  columns = 4,
-  hasHeader = true,
-  className = '',
-}) {
+export function TableSkeleton({ rows = 5, columns = 4, hasHeader = true, className = '' }) {
   return (
     <div className={`${styles.table} ${className}`}>
       {hasHeader && (
@@ -201,11 +178,11 @@ export function TableSkeleton({
         {Array.from({ length: rows }).map((_, rowIndex) => (
           <div key={rowIndex} className={styles.tableRow}>
             {Array.from({ length: columns }).map((_, colIndex) => (
-              <Skeleton 
-                key={colIndex} 
-                height={16} 
+              <Skeleton
+                key={colIndex}
+                height={16}
                 width={colIndex === 0 ? '80%' : '60%'}
-                variant="rounded" 
+                variant="rounded"
               />
             ))}
           </div>
@@ -217,63 +194,37 @@ export function TableSkeleton({
 
 /**
  * Avatar skeleton
- * 
+ *
  * @param {Object} props
  * @param {number} [props.size=40] - Size in pixels
  * @param {string} [props.className] - Additional CSS classes
  */
-export function AvatarSkeleton({
-  size = 40,
-  className = '',
-}) {
-  return (
-    <Skeleton
-      width={size}
-      height={size}
-      variant="circular"
-      className={className}
-    />
-  );
+export function AvatarSkeleton({ size = 40, className = '' }) {
+  return <Skeleton width={size} height={size} variant="circular" className={className} />;
 }
 
 /**
  * Button skeleton
- * 
+ *
  * @param {Object} props
  * @param {number} [props.width=120] - Width in pixels
  * @param {number} [props.height=40] - Height in pixels
  * @param {string} [props.className] - Additional CSS classes
  */
-export function ButtonSkeleton({
-  width = 120,
-  height = 40,
-  className = '',
-}) {
-  return (
-    <Skeleton
-      width={width}
-      height={height}
-      variant="rounded"
-      className={className}
-    />
-  );
+export function ButtonSkeleton({ width = 120, height = 40, className = '' }) {
+  return <Skeleton width={width} height={height} variant="rounded" className={className} />;
 }
 
 /**
  * Image skeleton
- * 
+ *
  * @param {Object} props
  * @param {number|string} [props.width='100%'] - Width
  * @param {number} [props.height=200] - Height in pixels
  * @param {string} [props.aspectRatio] - CSS aspect-ratio (e.g., '16/9')
  * @param {string} [props.className] - Additional CSS classes
  */
-export function ImageSkeleton({
-  width = '100%',
-  height = 200,
-  aspectRatio,
-  className = '',
-}) {
+export function ImageSkeleton({ width = '100%', height = 200, aspectRatio, className = '' }) {
   const style = aspectRatio
     ? { aspectRatio, height: 'auto' }
     : { height: typeof height === 'number' ? `${height}px` : height };
@@ -290,7 +241,7 @@ export function ImageSkeleton({
 
 /**
  * Stat/metric skeleton
- * 
+ *
  * @param {Object} props
  * @param {string} [props.className] - Additional CSS classes
  */
@@ -356,12 +307,7 @@ export function DynoChartSkeleton({ className = '' }) {
           <Skeleton height={10} width={20} variant="rounded" />
         </div>
         {/* Main chart area */}
-        <Skeleton 
-          height="100%" 
-          width="100%" 
-          variant="rounded" 
-          className={styles.dynoChartArea}
-        />
+        <Skeleton height="100%" width="100%" variant="rounded" className={styles.dynoChartArea} />
       </div>
       {/* X-Axis */}
       <div className={styles.dynoChartXAxis}>
@@ -384,10 +330,10 @@ export function DataPageSkeleton({ className = '' }) {
     <div className={`${styles.dataPageSkeleton} ${className}`}>
       {/* Estimate explainer */}
       <Skeleton height={48} width="100%" variant="rounded" style={{ marginBottom: '16px' }} />
-      
+
       {/* Virtual Dyno Chart */}
       <DynoChartSkeleton />
-      
+
       {/* Calculated Performance */}
       <div className={styles.perfSection}>
         <Skeleton height={18} width={160} variant="rounded" style={{ marginBottom: '12px' }} />
@@ -400,7 +346,7 @@ export function DataPageSkeleton({ className = '' }) {
           ))}
         </div>
       </div>
-      
+
       {/* Power Breakdown */}
       <div className={styles.powerSection}>
         <Skeleton height={18} width={140} variant="rounded" style={{ marginBottom: '16px' }} />
@@ -412,6 +358,141 @@ export function DataPageSkeleton({ className = '' }) {
             ))}
           </div>
         </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Track page skeleton - full page loading state for /data/track
+ * Matches the layout of lap time estimator and track times list
+ */
+export function TrackPageSkeleton({ className = '' }) {
+  return (
+    <div className={`${styles.trackPageSkeleton} ${className}`}>
+      {/* Header with title */}
+      <div className={styles.trackHeader}>
+        <Skeleton height={28} width={180} variant="rounded" />
+        <Skeleton height={40} width={120} variant="rounded" />
+      </div>
+
+      {/* Lap Time Estimator section */}
+      <div className={styles.trackSection}>
+        <Skeleton height={20} width={160} variant="rounded" style={{ marginBottom: '12px' }} />
+        <Skeleton height={200} width="100%" variant="rounded" />
+      </div>
+
+      {/* Track Times list */}
+      <div className={styles.trackSection}>
+        <Skeleton height={20} width={140} variant="rounded" style={{ marginBottom: '12px' }} />
+        <div className={styles.trackTimesList}>
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className={styles.trackTimeItem}>
+              <div className={styles.trackTimeLeft}>
+                <Skeleton height={18} width={100} variant="rounded" />
+                <Skeleton height={14} width={80} variant="rounded" />
+              </div>
+              <div className={styles.trackTimeRight}>
+                <Skeleton height={24} width={60} variant="rounded" />
+                <Skeleton height={12} width={40} variant="rounded" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Dashboard skeleton - full page loading state for /dashboard
+ * Matches the Duolingo-style layout: greeting, streak, weekly activity, achievements
+ */
+export function DashboardSkeleton({ className = '' }) {
+  return (
+    <div className={`${styles.dashboardSkeleton} ${className}`}>
+      {/* User greeting */}
+      <div className={styles.dashboardGreeting}>
+        <Skeleton height={32} width={200} variant="rounded" />
+        <Skeleton height={16} width={160} variant="rounded" />
+      </div>
+
+      {/* Streak card */}
+      <div className={styles.dashboardStreakCard}>
+        <Skeleton height={80} width={80} variant="circular" />
+        <div className={styles.dashboardStreakText}>
+          <Skeleton height={24} width={120} variant="rounded" />
+          <Skeleton height={14} width={80} variant="rounded" />
+        </div>
+      </div>
+
+      {/* Weekly activity chart */}
+      <div className={styles.dashboardSection}>
+        <Skeleton height={18} width={140} variant="rounded" style={{ marginBottom: '12px' }} />
+        <div className={styles.dashboardWeeklyChart}>
+          {Array.from({ length: 7 }).map((_, i) => (
+            <div key={i} className={styles.dashboardDayBar}>
+              <Skeleton height={`${40 + Math.random() * 60}%`} width={32} variant="rounded" />
+              <Skeleton height={12} width={24} variant="rounded" />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Achievements grid */}
+      <div className={styles.dashboardSection}>
+        <Skeleton height={18} width={120} variant="rounded" style={{ marginBottom: '12px' }} />
+        <div className={styles.dashboardAchievements}>
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className={styles.dashboardAchievement}>
+              <Skeleton height={48} width={48} variant="circular" />
+              <Skeleton height={12} width="80%" variant="rounded" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Insights page skeleton - full page loading state for /insights
+ * Matches the layout: progress rings, insights feed
+ */
+export function InsightsSkeleton({ className = '' }) {
+  return (
+    <div className={`${styles.insightsSkeleton} ${className}`}>
+      {/* Page header */}
+      <div className={styles.insightsHeader}>
+        <Skeleton height={28} width={200} variant="rounded" />
+        <Skeleton height={36} width={100} variant="rounded" />
+      </div>
+
+      {/* Progress rings section */}
+      <div className={styles.insightsRings}>
+        {Array.from({ length: 3 }).map((_, i) => (
+          <div key={i} className={styles.insightsRing}>
+            <Skeleton height={100} width={100} variant="circular" />
+            <Skeleton height={16} width={60} variant="rounded" />
+            <Skeleton height={12} width={40} variant="rounded" />
+          </div>
+        ))}
+      </div>
+
+      {/* Insights feed */}
+      <div className={styles.insightsFeed}>
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className={styles.insightCard}>
+            <div className={styles.insightCardHeader}>
+              <Skeleton height={24} width={24} variant="circular" />
+              <Skeleton height={16} width={100} variant="rounded" />
+              <Skeleton height={14} width={60} variant="rounded" style={{ marginLeft: 'auto' }} />
+            </div>
+            <Skeleton height={18} width="90%" variant="rounded" />
+            <Skeleton height={14} width="70%" variant="rounded" />
+            <Skeleton height={36} width={100} variant="rounded" style={{ marginTop: '8px' }} />
+          </div>
+        ))}
       </div>
     </div>
   );

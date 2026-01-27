@@ -1,0 +1,352 @@
+# Data Accuracy & Logic Audit
+
+> **Purpose**: Systematically verify that all user-facing vehicle data is accurate, logically consistent, and free of contradictions across the entire application.
+>
+> **Invoke with**: "Run a data accuracy audit for [car-slug or 'all vehicles']"
+
+---
+
+## Philosophy
+
+This audit is NOT about checking if data EXISTS. It's about verifying:
+1. **Is the data CORRECT for this specific vehicle?**
+2. **Does the data CONTRADICT itself anywhere?**
+3. **Does the data make LOGICAL SENSE given the car's characteristics?**
+4. **Is the data CONSISTENT across all pages/components?**
+
+---
+
+## Pre-Audit: Understand the Vehicle First
+
+Before auditing any vehicle, establish ground truth:
+
+```
+For [VEHICLE_NAME]:
+1. What is the ACTUAL engine? (displacement, config, aspiration)
+2. What is the ACTUAL drivetrain? (FWD/RWD/AWD)
+3. What is the ACTUAL stock horsepower?
+4. What is the ACTUAL transmission? (manual/auto/DCT)
+5. What tuning platforms ACTUALLY work with this car?
+6. What are the KNOWN characteristics of this platform?
+```
+
+Use external sources if needed (manufacturer specs, enthusiast forums, tuning company websites) to verify ground truth.
+
+---
+
+## Audit Categories
+
+### 1. Engine & Aspiration Logic
+
+**Check**: Does content match the car's actual engine configuration?
+
+| Car Aspiration | Should NOT Have | Should Have |
+|----------------|-----------------|-------------|
+| Naturally Aspirated | intercooler, BOV, wastegate, boost controller, downpipe (unless turbo conversion context) | intake, headers, exhaust, tune, cams |
+| Turbocharged | - | boost, intercooler, downpipe, BOV |
+| Supercharged | wastegate, BOV, turbo-specific | pulley, belt, heat exchanger |
+| Electric | exhaust, intake, headers, fuel, tune, turbo, supercharger | battery, motor, software unlock |
+| Hybrid | (depends on if gas engine is tunable) | clarify which components apply to which powertrain |
+
+**Red Flags**:
+- NA car with "boost" recommendations
+- Supercharged car with "wastegate" advice
+- EV with "ECU tune" recommendations
+- Rotary engine with "piston ring" advice
+- I6/inline engine described as "V6"
+
+**Audit Script Pattern**:
+```javascript
+// Check if content matches aspiration
+const engine = car.engine.toLowerCase();
+const isTurbo = /turbo|\btt\b|biturbo/i.test(engine);
+const isSupercharged = /supercharged|\bsc\b|kompressor/i.test(engine);
+const isNA = !isTurbo && !isSupercharged && !/electric/i.test(engine);
+
+if (isNA && content.match(/\b(intercooler|downpipe|wastegate|bov|blow-off|boost controller)\b/i)) {
+  if (!content.match(/turbo kit|turbo conversion|add turbo|forced induction build/i)) {
+    FLAG: "NA car has turbo-specific content without conversion context"
+  }
+}
+```
+
+---
+
+### 2. Drivetrain Logic
+
+**Check**: Does advice match the car's actual drivetrain?
+
+| Drivetrain | Should NOT Have | Appropriate Content |
+|------------|-----------------|---------------------|
+| FWD | rear differential upgrade, drift setup (traditional) | LSD, front suspension, traction |
+| RWD | front differential upgrade | drift setup, rear suspension, diff upgrades |
+| AWD | single-axle specific advice without context | transfer case, center diff, all-wheel considerations |
+
+**Red Flags**:
+- FWD car with "rear diff upgrade" recommendation
+- FWD car with "drift car" tips (without lift-off/Scandinavian context)
+- AWD car described as RWD or FWD
+
+---
+
+### 3. Tuning Platform Compatibility
+
+**Check**: Do listed tuning platforms actually work with this car?
+
+**Known Platform Restrictions**:
+```javascript
+const PLATFORM_COMPATIBILITY = {
+  'Hondata': ['Honda', 'Acura'],
+  'KTuner': ['Honda', 'Acura'],
+  'COBB/Accessport': ['Subaru', 'Ford', 'Mazda', 'VW', 'Audi', 'Porsche', 'BMW', 'Nissan', 'Mitsubishi', 'Toyota', 'Hyundai', 'Kia', 'Genesis'],
+  'MHD': ['BMW', 'MINI', 'Toyota GR Supra (B58)'],
+  'Bootmod3': ['BMW', 'MINI', 'Toyota GR Supra (B58)'],
+  'JB4': ['BMW', 'MINI', 'Audi', 'VW', 'Porsche', 'Infiniti', 'Mercedes', 'Hyundai', 'Kia', 'Genesis'],
+  'APR': ['Audi', 'VW', 'Porsche'],
+  'Unitronic': ['Audi', 'VW'],
+  'HP Tuners': ['GM', 'Ford', 'Dodge/Chrysler/Jeep/Ram'],
+  'SCT': ['Ford', 'Dodge/Chrysler/Jeep/Ram'],
+  'DiabloSport': ['Ford', 'GM', 'Dodge/Chrysler/Jeep/Ram'],
+  'EcuTek': ['Subaru', 'Nissan', 'Infiniti', 'Toyota', 'Lexus', 'Mazda', 'Mitsubishi', 'McLaren', 'Ferrari', 'Aston Martin'],
+};
+
+// Special cases:
+// - Toyota GR Supra uses BMW B58 engine, so BMW tools work
+// - Lamborghini Huracan shares Audi R8 platform, some VAG tools may work
+// - Lotus uses Toyota engines, Toyota-compatible tools work
+```
+
+**Red Flags**:
+- Hondata listed on a Toyota (unless Lotus with Honda engine swap)
+- BMW tools (MHD, Bootmod3) on non-BMW cars (except GR Supra)
+- HP Tuners on Toyota or Honda
+- SCT on GM vehicles
+
+---
+
+### 4. Stage Progression Logic
+
+**Check**: Do power numbers make sense for this engine?
+
+**Realism Checks**:
+```javascript
+// Stage 1 (tune only) realistic gains:
+// - NA: 5-15% HP gain
+// - Turbo: 15-40% HP gain
+// - Supercharged: 10-25% HP gain
+
+// HP per liter maximums (without major internal work):
+// - NA: ~140 hp/L (exceptional: 180 hp/L for F1-derived)
+// - Turbo: ~200-300 hp/L achievable
+// - Supercharged: ~150-200 hp/L achievable
+
+// Stage should progress logically:
+// Stock < Stage 1 < Stage 2 < Stage 3
+// Each stage should require previous stage mods
+```
+
+**Red Flags**:
+- Stage 1 claiming 50%+ gains on NA engine
+- Stage 2 HP lower than Stage 1
+- HP/L exceeding realistic limits without internal work mentioned
+- Stage 3 requiring fewer mods than Stage 2
+
+---
+
+### 5. Self-Contradiction Detection
+
+**Check**: Does content contradict itself?
+
+**Patterns to Check**:
+```javascript
+// Strengths vs Weaknesses
+if (strengths.includes('excellent reliability') && weaknesses.includes('unreliable')) {
+  FLAG: "Contradictory reliability claims"
+}
+
+// Tips vs Insights
+if (tips.includes('ECU tune is best first mod') && insights.includes('ECU tuning is impossible')) {
+  FLAG: "Tips contradict platform insights"
+}
+
+// Tuning platforms vs Difficulty
+if (tuningPlatforms.length > 0 && insights.includes('no aftermarket tuning support')) {
+  FLAG: "Tuning platforms listed but insights say no tuning support"
+}
+```
+
+**Note**: Some apparent contradictions are valid nuances:
+- "Bulletproof engine" + "VANOS prone to failure" = Valid (engine core reliable, specific component weak)
+- "Great handling" + "Heavy weight" = Valid (can be true simultaneously)
+
+---
+
+### 6. Cross-Page Consistency
+
+**Check**: Is the same data shown consistently across different views?
+
+**Pages to Cross-Reference**:
+1. **Car Profile Page** (`/cars/[slug]`)
+2. **Insights Dashboard** (`/insights`)
+3. **Garage View** (user's vehicles)
+4. **Comparison Tool** (if applicable)
+5. **Search Results**
+
+**Check for**:
+- Same HP number shown everywhere
+- Same engine description
+- Same tuning recommendations
+- Same stage progression data
+
+---
+
+### 7. Known Edge Cases
+
+**Special Vehicles Requiring Extra Attention**:
+
+| Vehicle Type | Special Considerations |
+|--------------|------------------------|
+| **Ferrari/Lamborghini/McLaren** | Heavily encrypted ECUs, most gains from bolt-ons only |
+| **Toyota GR Supra** | Uses BMW B58, BMW tuning tools work despite Toyota badge |
+| **Lotus with Toyota engine** | Toyota-compatible tuning, not Lotus-specific |
+| **Porsche GT3/GT4** | Often restricted from tuning by Porsche |
+| **Hybrids** | Clarify which components apply to gas vs electric |
+| **EVs** | No traditional tuning, software unlocks only |
+| **Rotary (Mazda RX)** | Completely different maintenance/tuning from piston engines |
+
+---
+
+## Audit Execution Process
+
+### For a Single Vehicle:
+
+```
+1. ESTABLISH GROUND TRUTH
+   - Query car data: SELECT * FROM cars WHERE slug = '[slug]'
+   - Query tuning profile: SELECT * FROM car_tuning_profiles WHERE car_id = '[id]'
+   - Verify engine/drivetrain/HP against external sources
+
+2. CHECK ENGINE/ASPIRATION LOGIC
+   - Is aspiration correctly identified?
+   - Does tuning content match aspiration?
+   - Are turbo-specific mods only on turbo cars?
+
+3. CHECK DRIVETRAIN LOGIC
+   - Is drivetrain correctly identified?
+   - Does advice match drivetrain configuration?
+
+4. CHECK TUNING PLATFORM COMPATIBILITY
+   - Do listed platforms actually support this car?
+   - Remove any incompatible platforms
+
+5. CHECK STAGE PROGRESSIONS
+   - Are HP numbers realistic for this engine?
+   - Do stages progress logically?
+   - Are required mods appropriate?
+
+6. CHECK FOR SELF-CONTRADICTIONS
+   - Do strengths contradict weaknesses?
+   - Do tips contradict insights?
+   - Do recommendations align with stated limitations?
+
+7. CHECK CROSS-PAGE CONSISTENCY
+   - Is the same data shown on all relevant pages?
+   - Are there any display discrepancies?
+
+8. DOCUMENT FINDINGS
+   - List all issues found
+   - Categorize by severity (Critical/Warning/Info)
+   - Provide specific fix recommendations
+```
+
+### For Bulk Audit:
+
+```javascript
+// Run: node scripts/logic-accuracy-audit.mjs
+
+// This script checks all 309 vehicles for:
+// - Incompatible tuning platforms
+// - NA cars with turbo content
+// - Supercharged cars with turbo advice
+// - Self-contradictions
+// - Drivetrain mismatches
+// - Engine type mismatches
+```
+
+---
+
+## Audit Scripts Reference
+
+| Script | Purpose |
+|--------|---------|
+| `scripts/logic-accuracy-audit.mjs` | Comprehensive logic check across all vehicles |
+| `scripts/fix-logic-issues.mjs` | Fix identified incompatible platforms |
+| `scripts/fix-duplicate-profiles.mjs` | Remove duplicate tuning profiles |
+| `scripts/audit-data-consistency.mjs` | Check for data contradictions |
+| `scripts/deep-audit-data-quality.mjs` | Deeper content quality checks |
+
+---
+
+## Output Format
+
+When reporting audit findings:
+
+```
+═══════════════════════════════════════════════════
+AUDIT: [Vehicle Name] ([slug])
+═══════════════════════════════════════════════════
+
+GROUND TRUTH:
+  Engine: [actual engine]
+  Drivetrain: [actual drivetrain]
+  Stock HP: [actual HP]
+  Aspiration: [NA/Turbo/Supercharged/Electric/Hybrid]
+
+CRITICAL ISSUES (must fix):
+  ❌ [Issue description]
+     Found: [what was found]
+     Expected: [what it should be]
+     Fix: [how to fix]
+
+WARNINGS (should review):
+  ⚠️ [Issue description]
+     Context: [why flagged]
+     Recommendation: [suggested action]
+
+INFO (minor):
+  ℹ️ [Note]
+
+VERIFICATION:
+  ✅ Engine logic: PASS/FAIL
+  ✅ Drivetrain logic: PASS/FAIL
+  ✅ Platform compatibility: PASS/FAIL
+  ✅ Stage progression: PASS/FAIL
+  ✅ Self-consistency: PASS/FAIL
+```
+
+---
+
+## Common Fixes
+
+| Issue | Fix |
+|-------|-----|
+| Wrong tuning platform | Remove from `tuning_platforms` array |
+| Turbo content on NA car | Remove tip/weakness or add "turbo conversion" context |
+| Drift tip on FWD car | Remove or add "lift-off oversteer" context |
+| Contradictory reliability | Verify both claims, keep if discussing different components |
+| Unrealistic HP claims | Research actual dyno numbers, adjust accordingly |
+| Duplicate profiles | Keep most complete, delete others |
+
+---
+
+## Quality Gates
+
+Before marking audit complete:
+
+- [ ] All critical issues resolved
+- [ ] No tuning platforms listed that don't work with the car
+- [ ] No aspiration-specific content that doesn't match the engine
+- [ ] No drivetrain-specific content that doesn't match the car
+- [ ] Stage progressions are realistic and logical
+- [ ] No self-contradicting content (unless validly nuanced)
+- [ ] Re-run audit script shows 0 critical issues
