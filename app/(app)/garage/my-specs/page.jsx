@@ -30,7 +30,6 @@ import EmptyState from '@/components/ui/EmptyState';
 import { Icons } from '@/components/ui/Icons';
 import { useCarsList, useCarBySlug, useCarMaintenance } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
-import { useTuningProfile, getFormattedPowerLimits } from '@/hooks/useTuningProfile';
 import { calculateAllModificationGains } from '@/lib/performanceCalculator';
 
 import styles from './page.module.css';
@@ -268,9 +267,6 @@ function MySpecsContent() {
     refetchFullCar,
     refetchMaintenance,
   ]);
-
-  // Fetch tuning profile data
-  const { profile: tuningProfile, hasProfile: hasTuningProfile } = useTuningProfile(selectedCar);
 
   // Merge full car data with selected car for driving character fields
   const carWithDetails = useMemo(() => {
@@ -613,49 +609,55 @@ function MySpecsContent() {
               </div>
             )}
 
-          {/* Tuning Potential - Semantic table for accessibility */}
-          {hasTuningProfile && tuningProfile && (
+          {/* Service Info - Battery, fluids, lug specs, wipers */}
+          {maintenanceData?.data?.specs && (
             <div className={styles.specCard}>
               <div className={styles.cardHeader}>
-                <h3 className={styles.cardTitle} id="tuning-specs">
-                  <Icons.sliders size={16} />
-                  Tuning Potential
+                <h3 className={styles.cardTitle} id="service-specs">
+                  <Icons.settings size={16} />
+                  Service Info
                 </h3>
               </div>
-              <SpecTable caption="Tuning potential specifications" aria-labelledby="tuning-specs">
+              <SpecTable
+                caption="Service information specifications"
+                aria-labelledby="service-specs"
+              >
                 <SpecRow
-                  label="Focus"
+                  label="Battery Size"
+                  value={maintenanceData.data.specs.battery_group_size}
+                />
+                <SpecRow label="Oil Type" value={maintenanceData.data.specs.oil_viscosity} />
+                <SpecRow
+                  label="Oil Capacity"
                   value={
-                    tuningProfile.tuning_focus
-                      ? tuningProfile.tuning_focus.charAt(0).toUpperCase() +
-                        tuningProfile.tuning_focus.slice(1)
-                      : null
+                    maintenanceData.data.specs.oil_capacity_quarts
+                      ? `${maintenanceData.data.specs.oil_capacity_quarts} qt`
+                      : maintenanceData.data.specs.oil_capacity_liters
+                        ? `${maintenanceData.data.specs.oil_capacity_liters} L`
+                        : null
                   }
                 />
-                <SpecRow label="Engine Family" value={tuningProfile.engine_family} />
-                <SpecRow label="Stock WHP" value={tuningProfile.stock_whp} unit="WHP" />
-                {tuningProfile.power_limits &&
-                  (() => {
-                    const limits = getFormattedPowerLimits(tuningProfile);
-                    const stockTurbo = limits.find((l) => l.key.toLowerCase().includes('turbo'));
-                    const stockInternals = limits.find((l) =>
-                      l.key.toLowerCase().includes('internals')
-                    );
-                    return (
-                      <>
-                        {stockTurbo && <SpecRow label={stockTurbo.name} value={stockTurbo.value} />}
-                        {stockInternals && (
-                          <SpecRow label={stockInternals.name} value={stockInternals.value} />
-                        )}
-                      </>
-                    );
-                  })()}
+                <SpecRow label="Trans Fluid" value={maintenanceData.data.specs.trans_fluid_type} />
                 <SpecRow
-                  label="Data Quality"
+                  label="Lug Pattern"
+                  value={maintenanceData.data.specs.wheel_bolt_pattern}
+                />
+                <SpecRow
+                  label="Lug Torque"
+                  value={maintenanceData.data.specs.wheel_lug_torque_ft_lbs}
+                  unit="ft-lb"
+                />
+                <SpecRow
+                  label="Spark Plug Gap"
+                  value={maintenanceData.data.specs.spark_plug_gap}
+                  unit="mm"
+                />
+                <SpecRow
+                  label="Wipers"
                   value={
-                    tuningProfile.data_quality_tier
-                      ? tuningProfile.data_quality_tier.charAt(0).toUpperCase() +
-                        tuningProfile.data_quality_tier.slice(1)
+                    maintenanceData.data.specs.wiper_driver_size_inches ||
+                    maintenanceData.data.specs.wiper_passenger_size_inches
+                      ? `${maintenanceData.data.specs.wiper_driver_size_inches || '—'}" / ${maintenanceData.data.specs.wiper_passenger_size_inches || '—'}"${maintenanceData.data.specs.wiper_rear_size_inches ? ` / ${maintenanceData.data.specs.wiper_rear_size_inches}"` : ''}`
                       : null
                   }
                 />

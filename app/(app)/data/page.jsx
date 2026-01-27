@@ -2,16 +2,16 @@
 
 /**
  * Data Page - Virtual Dyno (Primary Tab)
- * 
+ *
  * This page shows dyno-related performance data for the selected vehicle:
  * - Virtual Dyno Chart (estimated HP/TQ curves)
  * - Calculated Performance (0-60, 1/4 mile, etc.)
  * - Power Breakdown (where HP gains come from)
  * - Dyno logging (user-recorded dyno results)
- * 
+ *
  * Vehicle selection is handled by the shared DataHeader in layout.jsx.
  * Vehicle ID comes from URL params (?vehicle=123).
- * 
+ *
  * Legacy URL handling:
  * - /data?filter=track → redirects to /data/track
  * - /data?action=log&filter=track → redirects to /data/track?action=log
@@ -20,7 +20,7 @@
 import { useState, useMemo, useEffect, useCallback, Suspense } from 'react';
 
 import Link from 'next/link';
-import { useRouter, useSearchParams , redirect } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import CalculatedPerformance from '@/components/CalculatedPerformance';
@@ -41,74 +41,93 @@ import styles from './page.module.css';
 
 // Icons
 const ChartIcon = () => (
-  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-    <path d="M3 3v18h18"/>
-    <path d="M18 17V9"/>
-    <path d="M13 17V5"/>
-    <path d="M8 17v-3"/>
+  <svg
+    width="48"
+    height="48"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+  >
+    <path d="M3 3v18h18" />
+    <path d="M18 17V9" />
+    <path d="M13 17V5" />
+    <path d="M8 17v-3" />
   </svg>
 );
 
 const CarIcon = ({ size = 20 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-    <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L18 10l-2.7-5.5c-.4-.7-1.1-1.5-2.3-1.5H11c-1.2 0-1.9.8-2.3 1.5L6 10l-2.5 1.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2"/>
-    <circle cx="7" cy="17" r="2"/>
-    <circle cx="17" cy="17" r="2"/>
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+  >
+    <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L18 10l-2.7-5.5c-.4-.7-1.1-1.5-2.3-1.5H11c-1.2 0-1.9.8-2.3 1.5L6 10l-2.5 1.1C2.7 11.3 2 12.1 2 13v3c0 .6.4 1 1 1h2" />
+    <circle cx="7" cy="17" r="2" />
+    <circle cx="17" cy="17" r="2" />
   </svg>
 );
 
 const ChevronRightIcon = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <polyline points="9 18 15 12 9 6"/>
+    <polyline points="9 18 15 12 9 6" />
   </svg>
 );
 
 const PlusIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-    <line x1="12" y1="5" x2="12" y2="19"/>
-    <line x1="5" y1="12" x2="19" y2="12"/>
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+  >
+    <line x1="12" y1="5" x2="12" y2="19" />
+    <line x1="5" y1="12" x2="19" y2="12" />
   </svg>
 );
 
 const GaugeIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <circle cx="12" cy="12" r="10"/>
-    <path d="M12 6v6l4 2"/>
+    <circle cx="12" cy="12" r="10" />
+    <path d="M12 6v6l4 2" />
   </svg>
 );
 
 function DynoPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { user, isAuthenticated, isLoading: authLoading, isDataFetchReady } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, isDataFetchReady } = useAuth();
   const { showPointsEarned } = usePointsNotification();
   const { vehicles, isLoading: vehiclesLoading } = useOwnedVehicles();
   const { builds, getBuildsByCarSlug, isLoading: buildsLoading } = useSavedBuilds();
   const { data: carsData } = useCarsList();
   const allCars = useMemo(() => carsData || [], [carsData]);
   const authModal = useAuthModal();
-  
+
   // Handle legacy URL redirects
   const filterFromUrl = searchParams.get('filter');
   const actionFromUrl = searchParams.get('action');
-  
+
   useEffect(() => {
     // Redirect legacy ?filter=track URLs to /data/track
     if (filterFromUrl === 'track') {
-      const redirectUrl = actionFromUrl 
-        ? `/data/track?action=${actionFromUrl}` 
-        : '/data/track';
+      const redirectUrl = actionFromUrl ? `/data/track?action=${actionFromUrl}` : '/data/track';
       router.replace(redirectUrl);
     }
   }, [filterFromUrl, actionFromUrl, router]);
-  
+
   // Dyno logging state
   const [showDynoModal, setShowDynoModal] = useState(false);
   const [editingDynoResult, setEditingDynoResult] = useState(null);
-  
+
   // Track if we've processed the action param
   const [actionProcessed, setActionProcessed] = useState(false);
-  
+
   // Safety timeout to prevent infinite loading
   const [loadingTimedOut, setLoadingTimedOut] = useState(false);
   useEffect(() => {
@@ -122,23 +141,23 @@ function DynoPageContent() {
     }, 6000);
     return () => clearTimeout(timeout);
   }, [authLoading, isDataFetchReady, vehiclesLoading]);
-  
+
   // Get vehicle ID from URL params (shared with layout)
   const vehicleIdFromUrl = searchParams.get('vehicle');
-  
+
   // Get user's vehicles with matched car data
   const userVehicles = useMemo(() => {
     if (!vehicles || vehicles.length === 0) return [];
-    
-    return vehicles.map(vehicle => {
+
+    return vehicles.map((vehicle) => {
       let matchedCar = null;
       if (vehicle.matchedCarId) {
-        matchedCar = allCars.find(c => c.id === vehicle.matchedCarId);
+        matchedCar = allCars.find((c) => c.id === vehicle.matchedCarId);
       }
       if (!matchedCar && vehicle.matchedCarSlug) {
-        matchedCar = allCars.find(c => c.slug === vehicle.matchedCarSlug);
+        matchedCar = allCars.find((c) => c.slug === vehicle.matchedCarSlug);
       }
-      
+
       return {
         ...vehicle,
         matchedCar,
@@ -146,86 +165,95 @@ function DynoPageContent() {
       };
     });
   }, [vehicles, allCars]);
-  
+
   // Determine selected vehicle ID with fallback logic
   const selectedVehicleId = useMemo(() => {
     if (userVehicles.length === 0) return null;
-    
+
     if (vehicleIdFromUrl) {
-      const vehicleExists = userVehicles.some(v => v.id === vehicleIdFromUrl);
+      const vehicleExists = userVehicles.some((v) => v.id === vehicleIdFromUrl);
       if (vehicleExists) return vehicleIdFromUrl;
     }
-    
+
     if (typeof window !== 'undefined') {
       const storedId = localStorage.getItem('autorev_data_selected_vehicle');
       if (storedId) {
-        const vehicleExists = userVehicles.some(v => v.id === storedId);
+        const vehicleExists = userVehicles.some((v) => v.id === storedId);
         if (vehicleExists) return storedId;
       }
     }
-    
+
     return userVehicles[0]?.id || null;
   }, [userVehicles, vehicleIdFromUrl]);
-  
+
   // Dyno results via React Query
-  const { 
-    data: dynoResults = [], 
+  const {
+    data: dynoResults = [],
     isLoading: dynoResultsLoading,
     refetch: refetchDynoResults,
   } = useDynoResults(selectedVehicleId, { enabled: isAuthenticated && !!selectedVehicleId });
-  
+
   // Get selected vehicle data
   const selectedVehicle = useMemo(() => {
     if (!selectedVehicleId) return null;
-    return userVehicles.find(v => v.id === selectedVehicleId) || null;
+    return userVehicles.find((v) => v.id === selectedVehicleId) || null;
   }, [userVehicles, selectedVehicleId]);
-  
+
   // Handle action=log param to auto-open dyno modal
   useEffect(() => {
-    if (actionFromUrl === 'log' && filterFromUrl !== 'track' && !actionProcessed && selectedVehicle && isAuthenticated) {
+    if (
+      actionFromUrl === 'log' &&
+      filterFromUrl !== 'track' &&
+      !actionProcessed &&
+      selectedVehicle &&
+      isAuthenticated
+    ) {
       const timer = setTimeout(() => {
         setShowDynoModal(true);
         setActionProcessed(true);
-        
+
         // Clear the action param from URL
         const newUrl = new URL(window.location.href);
         newUrl.searchParams.delete('action');
         router.replace(newUrl.pathname + newUrl.search, { scroll: false });
       }, 500);
-      
+
       return () => clearTimeout(timer);
     }
   }, [actionFromUrl, filterFromUrl, actionProcessed, selectedVehicle, isAuthenticated, router]);
-  
+
   // Get build data for selected vehicle
   const vehicleBuildData = useMemo(() => {
     if (!selectedVehicle) return null;
-    
+
     const matchedCar = selectedVehicle.matchedCar;
     const carSlug = selectedVehicle.matchedCarSlug;
     const carId = selectedVehicle.matchedCarId;
-    
+
     const hasCarReference = !!(carSlug || carId);
     const matchedCarNotFound = hasCarReference && !matchedCar;
-    
+
     if (matchedCarNotFound) {
-      console.warn(`[Data Page] Vehicle ${selectedVehicle.id} has car reference but matchedCar not found in catalog.`);
+      console.warn(
+        `[Data Page] Vehicle ${selectedVehicle.id} has car reference but matchedCar not found in catalog.`
+      );
     }
-    
+
     const stockHp = matchedCar?.hp || (matchedCarNotFound ? null : 300);
-    const weight = matchedCar?.curb_weight || matchedCar?.weight || (matchedCarNotFound ? null : 3500);
+    const weight =
+      matchedCar?.curb_weight || matchedCar?.weight || (matchedCarNotFound ? null : 3500);
     const drivetrain = matchedCar?.drivetrain || (matchedCarNotFound ? null : 'RWD');
-    
+
     const vehicleMods = selectedVehicle.installedModifications || [];
     const vehicleHpGain = selectedVehicle.totalHpGain || 0;
     const vehicleActiveBuildId = selectedVehicle.activeBuildId;
-    
+
     if (vehicleMods.length > 0 || vehicleHpGain > 0) {
       let buildData = null;
       if (vehicleActiveBuildId) {
-        buildData = builds.find(b => b.id === vehicleActiveBuildId);
+        buildData = builds.find((b) => b.id === vehicleActiveBuildId);
       }
-      
+
       return {
         id: vehicleActiveBuildId,
         projectName: buildData?.name || 'My Build',
@@ -244,13 +272,13 @@ function DynoPageContent() {
         matchedCarNotFound,
       };
     }
-    
+
     if (carSlug) {
       const carBuilds = getBuildsByCarSlug(carSlug);
-      
+
       if (carBuilds && carBuilds.length > 0) {
         const latestBuild = carBuilds[0];
-        
+
         return {
           id: latestBuild.id,
           projectName: latestBuild.name,
@@ -270,7 +298,7 @@ function DynoPageContent() {
         };
       }
     }
-    
+
     return {
       specs: selectedVehicle.customSpecs || {},
       selectedUpgrades: { upgrades: [] },
@@ -283,107 +311,138 @@ function DynoPageContent() {
       matchedCarNotFound,
     };
   }, [selectedVehicle, getBuildsByCarSlug, builds]);
-  
+
   // Get HP values
   const stockHp = vehicleBuildData?.stockHp ?? selectedVehicle?.matchedCar?.hp ?? 300;
-  
+
   // Get tire compound from build
   const tireCompound = useMemo(() => {
     const wheelFitment = vehicleBuildData?.selectedUpgrades?.wheelFitment;
-    return wheelFitment?.tireCompound || vehicleBuildData?.specs?.suspension?.tireCompound || 'summer';
+    return (
+      wheelFitment?.tireCompound || vehicleBuildData?.specs?.suspension?.tireCompound || 'summer'
+    );
   }, [vehicleBuildData]);
-  
+
   // Get list of installed upgrades
   const installedUpgrades = useMemo(() => {
     return vehicleBuildData?.selectedUpgrades?.upgrades || [];
   }, [vehicleBuildData]);
-  
+
   // Calculate ALL gains using performanceCalculator
   const stockTorque = selectedVehicle?.matchedCar?.torque || Math.round(stockHp * 0.85);
   const modificationGains = useMemo(() => {
-    const modKeys = installedUpgrades.map(u => typeof u === 'string' ? u : u?.key).filter(Boolean);
+    const modKeys = installedUpgrades
+      .map((u) => (typeof u === 'string' ? u : u?.key))
+      .filter(Boolean);
     return calculateAllModificationGains(modKeys, selectedVehicle?.matchedCar);
   }, [installedUpgrades, selectedVehicle?.matchedCar]);
-  
+
   const hpGain = modificationGains.hpGain || 0;
   const estimatedHp = stockHp + hpGain;
-  
+
   const torqueGain = modificationGains.torqueGain || 0;
   const estimatedTorque = stockTorque + torqueGain;
-  
+
   // Detect upgrade categories for experience score calculations
   const upgradeCategories = useMemo(() => {
-    const upgrades = installedUpgrades.map(u => typeof u === 'string' ? u : u?.key).filter(Boolean);
+    const upgrades = installedUpgrades
+      .map((u) => (typeof u === 'string' ? u : u?.key))
+      .filter(Boolean);
     return {
-      hasExhaust: upgrades.some(k => k.includes('exhaust') || k === 'headers' || k === 'downpipe'),
-      hasIntake: upgrades.some(k => k.includes('intake') || k === 'throttle-body'),
-      hasTune: upgrades.some(k => k.includes('tune') || k.includes('ecu') || k === 'piggyback-tuner'),
-      hasSuspension: upgrades.some(k => k.includes('coilover') || k.includes('spring') || k.includes('sway')),
+      hasExhaust: upgrades.some(
+        (k) => k.includes('exhaust') || k === 'headers' || k === 'downpipe'
+      ),
+      hasIntake: upgrades.some((k) => k.includes('intake')),
+      hasTune: upgrades.some(
+        (k) => k.includes('tune') || k.includes('ecu') || k === 'piggyback-tuner'
+      ),
+      hasSuspension: upgrades.some(
+        (k) => k.includes('coilover') || k.includes('spring') || k.includes('sway')
+      ),
     };
   }, [installedUpgrades]);
-  
+
   // Save dyno result handler
-  const handleSaveDynoResult = useCallback(async (dynoData) => {
-    if (!selectedVehicleId) return;
-    
-    try {
-      const modsSnapshot = {
-        upgrades: installedUpgrades.map(u => typeof u === 'string' ? u : u?.key).filter(Boolean),
-        totalHpGain: hpGain,
-        estimatedHp,
-        stockHp,
-      };
-      
-      const payload = {
-        userVehicleId: selectedVehicleId,
-        modsSummary: modsSnapshot,
-        ...dynoData,
-      };
-      
-      const response = await fetch('/api/dyno-results', {
-        method: editingDynoResult ? 'PUT' : 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(editingDynoResult ? { id: editingDynoResult.id, ...dynoData } : payload),
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to save dyno result');
+  const handleSaveDynoResult = useCallback(
+    async (dynoData) => {
+      if (!selectedVehicleId) return;
+
+      try {
+        const modsSnapshot = {
+          upgrades: installedUpgrades
+            .map((u) => (typeof u === 'string' ? u : u?.key))
+            .filter(Boolean),
+          totalHpGain: hpGain,
+          estimatedHp,
+          stockHp,
+        };
+
+        const payload = {
+          userVehicleId: selectedVehicleId,
+          modsSummary: modsSnapshot,
+          ...dynoData,
+        };
+
+        const response = await fetch('/api/dyno-results', {
+          method: editingDynoResult ? 'PUT' : 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(
+            editingDynoResult ? { id: editingDynoResult.id, ...dynoData } : payload
+          ),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to save dyno result');
+        }
+
+        await refetchDynoResults();
+
+        if (!editingDynoResult) {
+          showPointsEarned(50, 'Dyno logged');
+        }
+
+        setShowDynoModal(false);
+        setEditingDynoResult(null);
+      } catch (err) {
+        console.error('[DataPage] Error saving dyno result:', err);
+        throw err;
       }
-      
-      await refetchDynoResults();
-      
-      if (!editingDynoResult) {
-        showPointsEarned(50, 'Dyno logged');
-      }
-      
-      setShowDynoModal(false);
-      setEditingDynoResult(null);
-    } catch (err) {
-      console.error('[DataPage] Error saving dyno result:', err);
-      throw err;
-    }
-  }, [selectedVehicleId, editingDynoResult, refetchDynoResults, showPointsEarned, installedUpgrades, hpGain, estimatedHp, stockHp]);
-  
+    },
+    [
+      selectedVehicleId,
+      editingDynoResult,
+      refetchDynoResults,
+      showPointsEarned,
+      installedUpgrades,
+      hpGain,
+      estimatedHp,
+      stockHp,
+    ]
+  );
+
   // Get the latest dyno result for comparison
-  const latestDynoResult = useMemo(() => {
+  const _latestDynoResult = useMemo(() => {
     return dynoResults.length > 0 ? dynoResults[0] : null;
   }, [dynoResults]);
-  
+
   // For dyno comparison, we compare WHP directly to estimatedHp
   // since that's what users see as "the estimate" in the UI
   const predictedWhp = useMemo(() => {
     return Math.round(estimatedHp);
   }, [estimatedHp]);
-  
+
   // Generate contextual message based on dyno results
   const getDynoResultContext = useCallback((actualWhp, estimated) => {
     if (!estimated || !actualWhp) return null;
-    
+
     const diff = actualWhp - estimated;
     const percentDiff = (diff / estimated) * 100;
-    
+
     if (percentDiff >= 20) {
-      return { type: 'exceptional', message: 'Exceptional results! Your setup is making serious power.' };
+      return {
+        type: 'exceptional',
+        message: 'Exceptional results! Your setup is making serious power.',
+      };
     } else if (percentDiff >= 10) {
       return { type: 'excellent', message: 'Solid results—your tuner left nothing on the table!' };
     } else if (percentDiff >= 0) {
@@ -394,7 +453,7 @@ function DynoPageContent() {
       return { type: 'under', message: 'Under estimates—check tune or dyno conditions.' };
     }
   }, []);
-  
+
   // Loading state
   const isDataLoading = useMemo(() => {
     if (loadingTimedOut) return false;
@@ -403,7 +462,7 @@ function DynoPageContent() {
     if (!isDataFetchReady) return true;
     return vehiclesLoading;
   }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading, loadingTimedOut]);
-  
+
   // Not authenticated - show sign in prompt
   // NOTE: Keep messaging consistent with original combined page
   if (!authLoading && !isAuthenticated) {
@@ -417,15 +476,15 @@ function DynoPageContent() {
             Sign In to Get Started
           </button>
         </div>
-        <AuthModal 
-          isOpen={authModal.isOpen} 
+        <AuthModal
+          isOpen={authModal.isOpen}
           onClose={authModal.close}
           defaultMode={authModal.defaultMode}
         />
       </div>
     );
   }
-  
+
   // Loading state - use skeleton that matches content shape
   if (isDataLoading) {
     return (
@@ -434,7 +493,7 @@ function DynoPageContent() {
       </div>
     );
   }
-  
+
   // No vehicles - show centered prompt matching original page layout
   if (userVehicles.length === 0) {
     return (
@@ -447,16 +506,16 @@ function DynoPageContent() {
             Add Vehicle
           </Link>
         </div>
-        
-        <AuthModal 
-          isOpen={authModal.isOpen} 
+
+        <AuthModal
+          isOpen={authModal.isOpen}
           onClose={authModal.close}
           defaultMode={authModal.defaultMode}
         />
       </div>
     );
   }
-  
+
   return (
     <div className={styles.pageContent}>
       {/* How Estimates Work - Single explanation */}
@@ -464,11 +523,12 @@ function DynoPageContent() {
         <div className={styles.estimateExplainer}>
           <span className={styles.estimateExplainerIcon}>ⓘ</span>
           <span className={styles.estimateExplainerText}>
-            All figures are <strong>estimates</strong> for <em>relative comparison</em>—actual results vary with tune quality and conditions.
+            All figures are <strong>estimates</strong> for <em>relative comparison</em>—actual
+            results vary with tune quality and conditions.
           </span>
         </div>
       )}
-      
+
       {/* Dyno Content */}
       {selectedVehicle && (
         <section className={styles.syntheticDataSection}>
@@ -493,12 +553,16 @@ function DynoPageContent() {
                   selectedUpgrades={installedUpgrades}
                 />
               </div>
-              
+
               {/* Calculated Performance */}
               <CalculatedPerformance
                 stockHp={stockHp}
                 estimatedHp={estimatedHp}
-                weight={selectedVehicle.matchedCar?.curbWeight || selectedVehicle.matchedCar?.weight || 3500}
+                weight={
+                  selectedVehicle.matchedCar?.curbWeight ||
+                  selectedVehicle.matchedCar?.weight ||
+                  3500
+                }
                 drivetrain={selectedVehicle.matchedCar?.drivetrain || 'RWD'}
                 tireCompound={tireCompound}
                 weightMod={vehicleBuildData?.specs?.weight?.reduction || 0}
@@ -514,7 +578,7 @@ function DynoPageContent() {
                 carName={`${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`}
                 carSlug={selectedVehicle.matchedCarSlug}
               />
-              
+
               {/* Power Breakdown */}
               <div className={styles.dataCard}>
                 <PowerBreakdown
@@ -525,18 +589,21 @@ function DynoPageContent() {
                   carSlug={selectedVehicle.matchedCarSlug}
                 />
               </div>
-              
+
               {/* Quick Build Link if no build configured */}
-              {(!vehicleBuildData?.selectedUpgrades?.upgrades?.length) && (
+              {!vehicleBuildData?.selectedUpgrades?.upgrades?.length && (
                 <div className={styles.buildPrompt}>
                   <p>Configure your build to see accurate power estimates</p>
-                  <Link href={`/garage?tab=build&vehicle=${selectedVehicle.id}`} className={styles.buildPromptBtn}>
+                  <Link
+                    href={`/garage?tab=build&vehicle=${selectedVehicle.id}`}
+                    className={styles.buildPromptBtn}
+                  >
                     Configure Build
                     <ChevronRightIcon />
                   </Link>
                 </div>
               )}
-              
+
               {/* Log Your Dyno Data Section */}
               <div className={styles.logDataSection}>
                 <div className={styles.logDataHeader}>
@@ -547,10 +614,11 @@ function DynoPageContent() {
                     <h3 className={styles.logDataTitle}>Your Dyno Results</h3>
                   </div>
                   <p className={styles.logDataSubtitle}>
-                    Log your actual dyno numbers to compare against estimates and help us improve predictions for your car
+                    Log your actual dyno numbers to compare against estimates and help us improve
+                    predictions for your car
                   </p>
                 </div>
-                
+
                 {/* Show logged dyno results */}
                 {dynoResultsLoading ? (
                   <div className={styles.logDataLoading}>
@@ -563,7 +631,7 @@ function DynoPageContent() {
                       const resultContext = getDynoResultContext(result.whp, predictedWhp);
                       const diff = result.whp - predictedWhp;
                       const isPositive = diff >= 0;
-                      
+
                       return (
                         <div key={result.id} className={styles.dynoResultCard}>
                           {/* Power Display - Prominent */}
@@ -579,31 +647,40 @@ function DynoPageContent() {
                               </div>
                             )}
                           </div>
-                          
+
                           {/* Comparison Row */}
                           {predictedWhp > 0 && (
                             <div className={styles.dynoCardComparison}>
-                              <div className={`${styles.dynoCardDiff} ${isPositive ? styles.positive : styles.negative}`}>
-                                {isPositive ? '+' : ''}{diff}
+                              <div
+                                className={`${styles.dynoCardDiff} ${isPositive ? styles.positive : styles.negative}`}
+                              >
+                                {isPositive ? '+' : ''}
+                                {diff}
                               </div>
                               <span className={styles.dynoCardVs}>vs {predictedWhp} estimated</span>
                             </div>
                           )}
-                          
+
                           {/* Contextual Message - Only show for first/most recent result */}
                           {index === 0 && resultContext && (
-                            <div className={`${styles.dynoCardMessage} ${styles[resultContext.type]}`}>
+                            <div
+                              className={`${styles.dynoCardMessage} ${styles[resultContext.type]}`}
+                            >
                               {resultContext.message}
                             </div>
                           )}
-                          
+
                           {/* Meta Row */}
                           <div className={styles.dynoCardMeta}>
                             <span className={styles.dynoCardDate}>
-                              {new Date(result.dyno_date).toLocaleDateString('en-US', { 
-                                month: 'short', 
+                              {new Date(result.dyno_date).toLocaleDateString('en-US', {
+                                month: 'short',
                                 day: 'numeric',
-                                year: new Date(result.dyno_date).getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+                                year:
+                                  new Date(result.dyno_date).getFullYear() !==
+                                  new Date().getFullYear()
+                                    ? 'numeric'
+                                    : undefined,
                               })}
                             </span>
                             {result.dyno_type && (
@@ -614,7 +691,7 @@ function DynoPageContent() {
                                 </span>
                               </>
                             )}
-                            <button 
+                            <button
                               className={styles.dynoCardEditBtn}
                               onClick={() => {
                                 setEditingDynoResult(result);
@@ -622,9 +699,16 @@ function DynoPageContent() {
                               }}
                               aria-label="Edit dyno result"
                             >
-                              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                              <svg
+                                width="14"
+                                height="14"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              >
+                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                               </svg>
                             </button>
                           </div>
@@ -643,9 +727,9 @@ function DynoPageContent() {
                     <span>Your data helps refine estimates for this model</span>
                   </div>
                 )}
-                
+
                 {/* Log Dyno CTA Button */}
-                <button 
+                <button
                   className={styles.logDataCta}
                   onClick={() => {
                     setEditingDynoResult(null);
@@ -660,13 +744,13 @@ function DynoPageContent() {
           )}
         </section>
       )}
-      
-      <AuthModal 
-        isOpen={authModal.isOpen} 
+
+      <AuthModal
+        isOpen={authModal.isOpen}
         onClose={authModal.close}
         defaultMode={authModal.defaultMode}
       />
-      
+
       {/* Dyno Log Modal */}
       <DynoLogModal
         isOpen={showDynoModal}
@@ -675,22 +759,28 @@ function DynoPageContent() {
           setEditingDynoResult(null);
         }}
         onSave={handleSaveDynoResult}
-        vehicleInfo={selectedVehicle ? {
-          year: selectedVehicle.year,
-          make: selectedVehicle.make,
-          model: selectedVehicle.model,
-        } : null}
+        vehicleInfo={
+          selectedVehicle
+            ? {
+                year: selectedVehicle.year,
+                make: selectedVehicle.make,
+                model: selectedVehicle.model,
+              }
+            : null
+        }
         predictedWhp={predictedWhp}
         editingResult={editingDynoResult}
         currentBuildInfo={{
-          upgrades: installedUpgrades.map(u => typeof u === 'string' ? u : u?.key).filter(Boolean),
+          upgrades: installedUpgrades
+            .map((u) => (typeof u === 'string' ? u : u?.key))
+            .filter(Boolean),
           totalHpGain: hpGain,
           estimatedHp,
         }}
       />
-      
+
       {/* Onboarding Popup */}
-      <OnboardingPopup 
+      <OnboardingPopup
         storageKey="autorev_data_onboarding_dismissed"
         steps={dataOnboardingSteps}
         accentColor="var(--sn-accent)"
@@ -702,11 +792,13 @@ function DynoPageContent() {
 // Wrap in Suspense for useSearchParams
 export default function DataPage() {
   return (
-    <Suspense fallback={
-      <div className={styles.pageContent}>
-        <DataPageSkeleton />
-      </div>
-    }>
+    <Suspense
+      fallback={
+        <div className={styles.pageContent}>
+          <DataPageSkeleton />
+        </div>
+      }
+    >
       <DynoPageContent />
     </Suspense>
   );

@@ -33,7 +33,6 @@ import {
 } from './DashboardIcons';
 import styles from './PointsExplainerModal.module.css';
 
-
 // Profile icon for questionnaire category
 const ProfileIcon = ({ size }) => (
   <svg
@@ -265,7 +264,6 @@ export default function PointsExplainerModal({ isOpen, onClose }) {
         '/garage/my-build',
         '/garage/my-install',
         '/garage/my-photos',
-        '/garage/my-performance',
         '/garage/my-parts',
         '/garage/my-specs',
       ];

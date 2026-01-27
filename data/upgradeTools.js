@@ -1,6 +1,6 @@
 /**
  * AutoRev - Upgrade Tools & Equipment Data
- * 
+ *
  * Maps upgrade categories to the tools, equipment, and workspace requirements
  * needed to complete the installation. This helps users understand the full
  * scope of what's needed for their build.
@@ -212,7 +212,7 @@ export const tools = {
     description: 'Basic code reader minimum, professional scan tool preferred',
     essential: true,
   },
-  'laptop': {
+  laptop: {
     key: 'laptop',
     name: 'Laptop Computer',
     category: 'diagnostic',
@@ -242,7 +242,7 @@ export const tools = {
   },
 
   // Electrical Tools
-  'multimeter': {
+  multimeter: {
     key: 'multimeter',
     name: 'Digital Multimeter',
     category: 'electrical',
@@ -325,7 +325,7 @@ export const tools = {
   },
 
   // Fabrication
-  'welder': {
+  welder: {
     key: 'welder',
     name: 'MIG/TIG Welder',
     category: 'fabrication',
@@ -339,7 +339,7 @@ export const tools = {
     description: 'For cutting and grinding',
     essential: false,
   },
-  'drill': {
+  drill: {
     key: 'drill',
     name: 'Power Drill',
     category: 'fabrication',
@@ -354,7 +354,7 @@ export const tools = {
  */
 export const upgradeToolRequirements = {
   // Power & Engine
-  'intake': {
+  intake: {
     essential: ['socket-set-metric', 'screwdriver-set', 'pliers-set'],
     recommended: ['torque-wrench'],
     difficulty: 'easy',
@@ -371,37 +371,35 @@ export const upgradeToolRequirements = {
     notes: 'Basic bolt-on installation. Some intakes require removing intake tube clips.',
   },
   'exhaust-catback': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'floor-jack', 'jack-stands', 'breaker-bar'],
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'floor-jack',
+      'jack-stands',
+      'breaker-bar',
+    ],
     recommended: ['penetrating-oil', 'oxygen-sensor-socket'],
     difficulty: 'moderate',
     timeEstimate: '2-4 hours',
     diyFriendly: true,
     notes: 'Exhaust bolts can be corroded. Use penetrating oil overnight if possible.',
   },
-  'headers': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'floor-jack', 'jack-stands', 'torque-wrench', 'oxygen-sensor-socket'],
+  headers: {
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'floor-jack',
+      'jack-stands',
+      'torque-wrench',
+      'oxygen-sensor-socket',
+    ],
     recommended: ['breaker-bar', 'welder'],
     difficulty: 'advanced',
     timeEstimate: '6-10 hours',
     diyFriendly: false,
     notes: 'Tight spaces, corroded hardware, may require O2 sensor extension harnesses.',
   },
-  'tune-street': {
-    essential: ['obd-scanner', 'laptop', 'tuning-cable'],
-    recommended: ['wideband-o2', 'boost-gauge'],
-    difficulty: 'moderate',
-    timeEstimate: '1-2 hours',
-    diyFriendly: true,
-    notes: 'Flash tune is straightforward. Custom tuning requires dyno time and expertise.',
-  },
-  'tune-track': {
-    essential: ['obd-scanner', 'laptop', 'tuning-cable'],
-    recommended: ['wideband-o2', 'boost-gauge'],
-    difficulty: 'moderate',
-    timeEstimate: '1-2 hours',
-    diyFriendly: true,
-    notes: 'Flash tune is straightforward. Custom tuning requires dyno time and expertise.',
-  },
+  // Note: tune-street and tune-track removed - Stage tunes are the standard for turbo/SC cars
   'stage1-tune': {
     essential: ['obd-scanner', 'laptop', 'tuning-cable'],
     recommended: ['wideband-o2', 'boost-gauge'],
@@ -418,8 +416,14 @@ export const upgradeToolRequirements = {
     diyFriendly: true,
     notes: 'Requires supporting hardware mods. May need dyno tuning for optimal results.',
   },
-  'downpipe': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'floor-jack', 'jack-stands', 'oxygen-sensor-socket'],
+  downpipe: {
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'floor-jack',
+      'jack-stands',
+      'oxygen-sensor-socket',
+    ],
     recommended: ['breaker-bar', 'torque-wrench'],
     difficulty: 'advanced',
     timeEstimate: '3-6 hours',
@@ -429,7 +433,16 @@ export const upgradeToolRequirements = {
 
   // Forced Induction
   'supercharger-centrifugal': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench', 'floor-jack', 'jack-stands', 'multimeter', 'obd-scanner', 'laptop'],
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'torque-wrench',
+      'floor-jack',
+      'jack-stands',
+      'multimeter',
+      'obd-scanner',
+      'laptop',
+    ],
     recommended: ['harmonic-balancer-puller', 'wideband-o2'],
     difficulty: 'expert',
     timeEstimate: '12-20 hours',
@@ -437,7 +450,16 @@ export const upgradeToolRequirements = {
     notes: 'Major installation. Professional install recommended unless highly experienced.',
   },
   'supercharger-roots': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench', 'floor-jack', 'jack-stands', 'multimeter', 'obd-scanner', 'laptop'],
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'torque-wrench',
+      'floor-jack',
+      'jack-stands',
+      'multimeter',
+      'obd-scanner',
+      'laptop',
+    ],
     recommended: ['wideband-o2'],
     difficulty: 'expert',
     timeEstimate: '10-16 hours',
@@ -445,14 +467,24 @@ export const upgradeToolRequirements = {
     notes: 'Major installation. Professional install recommended.',
   },
   'turbo-kit-single': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench', 'floor-jack', 'jack-stands', 'multimeter', 'obd-scanner', 'laptop', 'welder'],
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'torque-wrench',
+      'floor-jack',
+      'jack-stands',
+      'multimeter',
+      'obd-scanner',
+      'laptop',
+      'welder',
+    ],
     recommended: ['wideband-o2', 'boost-gauge'],
     difficulty: 'expert',
     timeEstimate: '20-40 hours',
     diyFriendly: false,
     notes: 'Expert-level installation. Requires fabrication skills and professional tuning.',
   },
-  'intercooler': {
+  intercooler: {
     essential: ['socket-set-metric', 'wrench-set-metric', 'pliers-set', 'drain-pan'],
     recommended: ['torque-wrench'],
     difficulty: 'moderate',
@@ -463,15 +495,29 @@ export const upgradeToolRequirements = {
 
   // Suspension
   'lowering-springs': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'floor-jack', 'jack-stands', 'spring-compressor', 'torque-wrench'],
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'floor-jack',
+      'jack-stands',
+      'spring-compressor',
+      'torque-wrench',
+    ],
     recommended: ['ball-joint-separator'],
     difficulty: 'moderate',
     timeEstimate: '4-6 hours',
     diyFriendly: true,
-    notes: 'Spring compressors are dangerous if used incorrectly. Consider having shop press springs.',
+    notes:
+      'Spring compressors are dangerous if used incorrectly. Consider having shop press springs.',
   },
   'coilovers-street': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'floor-jack', 'jack-stands', 'torque-wrench'],
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'floor-jack',
+      'jack-stands',
+      'torque-wrench',
+    ],
     recommended: ['spring-compressor', 'ball-joint-separator'],
     difficulty: 'moderate',
     timeEstimate: '4-8 hours',
@@ -479,7 +525,13 @@ export const upgradeToolRequirements = {
     notes: 'Complete assembly replacement. Easier than spring swap on most vehicles.',
   },
   'coilovers-track': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'floor-jack', 'jack-stands', 'torque-wrench'],
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'floor-jack',
+      'jack-stands',
+      'torque-wrench',
+    ],
     recommended: ['spring-compressor', 'ball-joint-separator', 'camber-gauge'],
     difficulty: 'moderate',
     timeEstimate: '4-8 hours',
@@ -487,7 +539,13 @@ export const upgradeToolRequirements = {
     notes: 'Same as street coilovers. Professional alignment essential after install.',
   },
   'sway-bars': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'floor-jack', 'jack-stands', 'torque-wrench'],
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'floor-jack',
+      'jack-stands',
+      'torque-wrench',
+    ],
     recommended: [],
     difficulty: 'moderate',
     timeEstimate: '2-4 hours',
@@ -513,7 +571,14 @@ export const upgradeToolRequirements = {
     notes: 'Basic maintenance job. Track pads may dust heavily - not for daily driving.',
   },
   'brake-fluid-lines': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'floor-jack', 'jack-stands', 'brake-bleeder', 'drain-pan'],
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'floor-jack',
+      'jack-stands',
+      'brake-bleeder',
+      'drain-pan',
+    ],
     recommended: ['torque-wrench'],
     difficulty: 'moderate',
     timeEstimate: '2-4 hours',
@@ -521,7 +586,15 @@ export const upgradeToolRequirements = {
     notes: 'Must bleed all four corners properly. Two-person job without pressure bleeder.',
   },
   'big-brake-kit': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'floor-jack', 'jack-stands', 'torque-wrench', 'brake-bleeder', 'drain-pan'],
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'floor-jack',
+      'jack-stands',
+      'torque-wrench',
+      'brake-bleeder',
+      'drain-pan',
+    ],
     recommended: [],
     difficulty: 'advanced',
     timeEstimate: '4-8 hours',
@@ -531,7 +604,14 @@ export const upgradeToolRequirements = {
 
   // Cooling
   'oil-cooler': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'floor-jack', 'jack-stands', 'drain-pan', 'funnel-set'],
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'floor-jack',
+      'jack-stands',
+      'drain-pan',
+      'funnel-set',
+    ],
     recommended: ['torque-wrench'],
     difficulty: 'moderate',
     timeEstimate: '3-5 hours',
@@ -559,7 +639,14 @@ export const upgradeToolRequirements = {
 
   // Drivetrain
   'clutch-upgrade': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'floor-jack', 'jack-stands', 'torque-wrench', 'clutch-alignment-tool'],
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'floor-jack',
+      'jack-stands',
+      'torque-wrench',
+      'clutch-alignment-tool',
+    ],
     recommended: ['vehicle-lift'],
     difficulty: 'expert',
     timeEstimate: '8-12 hours',
@@ -567,7 +654,14 @@ export const upgradeToolRequirements = {
     notes: 'Requires transmission removal. Professional install recommended.',
   },
   'diff-upgrade': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'floor-jack', 'jack-stands', 'torque-wrench', 'drain-pan'],
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'floor-jack',
+      'jack-stands',
+      'torque-wrench',
+      'drain-pan',
+    ],
     recommended: [],
     difficulty: 'advanced',
     timeEstimate: '4-8 hours',
@@ -584,7 +678,7 @@ export const upgradeToolRequirements = {
   },
 
   // Aero
-  'splitter': {
+  splitter: {
     essential: ['socket-set-metric', 'screwdriver-set', 'drill'],
     recommended: [],
     difficulty: 'moderate',
@@ -592,7 +686,7 @@ export const upgradeToolRequirements = {
     diyFriendly: true,
     notes: 'May require drilling. Test fit carefully before final mounting.',
   },
-  'wing': {
+  wing: {
     essential: ['socket-set-metric', 'wrench-set-metric', 'drill', 'torque-wrench'],
     recommended: [],
     difficulty: 'moderate',
@@ -617,14 +711,20 @@ export const upgradeToolRequirements = {
 
   // Cat-back exhaust (alias for exhaust-catback)
   'cat-back-exhaust': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'floor-jack', 'jack-stands', 'breaker-bar'],
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'floor-jack',
+      'jack-stands',
+      'breaker-bar',
+    ],
     recommended: ['penetrating-oil', 'oxygen-sensor-socket'],
     difficulty: 'moderate',
     timeEstimate: '2-4 hours',
     diyFriendly: true,
     notes: 'Exhaust bolts can be corroded. Use penetrating oil overnight if possible.',
   },
-  
+
   // TCU/DCT Tune
   'dct-tune': {
     essential: ['obd-scanner', 'laptop', 'tuning-cable'],
@@ -653,29 +753,18 @@ export const upgradeToolRequirements = {
     notes: 'Splices into factory sensors. Follow wiring diagrams carefully.',
   },
 
-  // Charge Pipe Upgrade
-  'charge-pipe-upgrade': {
-    essential: ['socket-set-metric', 'pliers-set', 'screwdriver-set'],
-    recommended: ['torque-wrench'],
-    difficulty: 'moderate',
-    timeEstimate: '1-3 hours',
-    diyFriendly: true,
-    notes: 'Replaces plastic factory charge pipes with aluminum. Prevents boost leaks.',
-  },
-
-  // High-Pressure Fuel Pump (HPFP)
-  'hpfp-upgrade': {
-    essential: ['socket-set-metric', 'torque-wrench', 'drain-pan'],
-    recommended: ['fuel-line-disconnect-tool'],
-    difficulty: 'advanced',
-    timeEstimate: '3-5 hours',
-    diyFriendly: false,
-    notes: 'Fuel system work requires careful attention to cleanliness. May require fuel system depressurization.',
-  },
+  // Note: charge-pipe-upgrade and hpfp-upgrade removed - bundled with other mods
 
   // Flex Fuel / E85
   'flex-fuel-e85': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'multimeter', 'wire-crimper', 'obd-scanner', 'laptop'],
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'multimeter',
+      'wire-crimper',
+      'obd-scanner',
+      'laptop',
+    ],
     recommended: ['fuel-line-disconnect-tool'],
     difficulty: 'advanced',
     timeEstimate: '4-8 hours',
@@ -683,79 +772,22 @@ export const upgradeToolRequirements = {
     notes: 'Requires tune and often HPFP upgrade. Ethanol content sensor installation needed.',
   },
 
-  // Methanol Injection
-  'methanol-injection': {
-    essential: ['socket-set-metric', 'drill', 'multimeter', 'wire-crimper'],
-    recommended: ['torque-wrench'],
-    difficulty: 'advanced',
-    timeEstimate: '4-6 hours',
-    diyFriendly: false,
-    notes: 'Requires careful nozzle placement and tank mounting. Must be tuned properly.',
-  },
-
-  // Camshafts
-  'camshafts': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench', 'floor-jack', 'jack-stands'],
-    recommended: ['timing-tools'],
-    difficulty: 'expert',
-    timeEstimate: '8-12 hours',
-    diyFriendly: false,
-    notes: 'Requires valve timing expertise. Professional installation strongly recommended.',
-  },
-
-  // Ported Heads
-  'ported-heads': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench', 'floor-jack', 'jack-stands'],
-    recommended: [],
-    difficulty: 'expert',
-    timeEstimate: '12-20 hours',
-    diyFriendly: false,
-    notes: 'Major engine work. Head gasket replacement required. Professional install recommended.',
-  },
-
-  // Forged Internals
-  'forged-internals': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench', 'piston-ring-compressor'],
-    recommended: ['engine-hoist', 'engine-stand'],
-    difficulty: 'expert',
-    timeEstimate: '20-40 hours',
-    diyFriendly: false,
-    notes: 'Complete engine rebuild. Requires machine shop services. Professional install only.',
-  },
-
-  // Stroker Kit
-  'stroker-kit': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench', 'piston-ring-compressor'],
-    recommended: ['engine-hoist', 'engine-stand'],
-    difficulty: 'expert',
-    timeEstimate: '30-50 hours',
-    diyFriendly: false,
-    notes: 'Complete engine rebuild with larger displacement. Machine shop required. Professional only.',
-  },
-
-  // Throttle Body
-  'throttle-body': {
-    essential: ['socket-set-metric', 'screwdriver-set'],
-    recommended: ['torque-wrench', 'obd-scanner'],
-    difficulty: 'easy',
-    timeEstimate: '1-2 hours',
-    diyFriendly: true,
-    notes: 'Simple bolt-on upgrade. May require throttle body relearn procedure.',
-  },
-
-  // Intake Manifold
-  'intake-manifold': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench', 'drain-pan'],
-    recommended: ['coolant-pressure-tester'],
-    difficulty: 'advanced',
-    timeEstimate: '4-8 hours',
-    diyFriendly: false,
-    notes: 'Requires coolant drain on some vehicles. Vacuum line routing must be correct.',
-  },
+  // Note: methanol-injection, camshafts, ported-heads, forged-internals, stroker-kit,
+  // throttle-body, intake-manifold removed - specialist/niche mods
 
   // Twin Turbo Kit
   'turbo-kit-twin': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench', 'floor-jack', 'jack-stands', 'multimeter', 'obd-scanner', 'laptop', 'welder'],
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'torque-wrench',
+      'floor-jack',
+      'jack-stands',
+      'multimeter',
+      'obd-scanner',
+      'laptop',
+      'welder',
+    ],
     recommended: ['wideband-o2', 'boost-gauge', 'vehicle-lift'],
     difficulty: 'expert',
     timeEstimate: '40-80 hours',
@@ -765,7 +797,15 @@ export const upgradeToolRequirements = {
 
   // Turbo Upgrade (existing turbo cars)
   'turbo-upgrade-existing': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'torque-wrench', 'floor-jack', 'jack-stands', 'obd-scanner', 'laptop'],
+    essential: [
+      'socket-set-metric',
+      'wrench-set-metric',
+      'torque-wrench',
+      'floor-jack',
+      'jack-stands',
+      'obd-scanner',
+      'laptop',
+    ],
     recommended: ['wideband-o2', 'boost-gauge'],
     difficulty: 'advanced',
     timeEstimate: '8-16 hours',
@@ -783,15 +823,7 @@ export const upgradeToolRequirements = {
     notes: 'Smaller pulley = more boost. Requires tune to match. Watch belt alignment.',
   },
 
-  // Supercharger Heat Exchanger
-  'heat-exchanger-sc': {
-    essential: ['socket-set-metric', 'wrench-set-metric', 'drain-pan', 'funnel-set'],
-    recommended: ['torque-wrench', 'coolant-pressure-tester'],
-    difficulty: 'moderate',
-    timeEstimate: '3-5 hours',
-    diyFriendly: true,
-    notes: 'Larger heat exchanger reduces intake temps. Requires coolant drain and refill.',
-  },
+  // Note: heat-exchanger-sc merged into intercooler entry
 
   // Chassis Bracing / Strut Tower Brace
   'chassis-bracing': {
@@ -846,7 +878,8 @@ export const upgradeToolRequirements = {
     difficulty: 'advanced',
     timeEstimate: '2-4 hours',
     diyFriendly: false,
-    notes: 'Requires extensive supporting mods. Custom dyno tuning essential. High stress on drivetrain.',
+    notes:
+      'Requires extensive supporting mods. Custom dyno tuning essential. High stress on drivetrain.',
   },
 };
 
@@ -908,25 +941,29 @@ export function getToolsForUpgrade(upgradeKey) {
 export function getToolsForBuild(upgradeKeys) {
   const essentialSet = new Set();
   const recommendedSet = new Set();
-  
-  upgradeKeys.forEach(key => {
+
+  upgradeKeys.forEach((key) => {
     const reqs = upgradeToolRequirements[key];
     if (reqs) {
-      (reqs.essential || []).forEach(t => essentialSet.add(t));
-      (reqs.recommended || []).forEach(t => recommendedSet.add(t));
+      (reqs.essential || []).forEach((t) => essentialSet.add(t));
+      (reqs.recommended || []).forEach((t) => recommendedSet.add(t));
     }
   });
-  
+
   // Remove recommended items that are already essential
-  essentialSet.forEach(t => recommendedSet.delete(t));
-  
+  essentialSet.forEach((t) => recommendedSet.delete(t));
+
   // Resolve to full tool objects
-  const essential = Array.from(essentialSet).map(k => tools[k]).filter(Boolean);
-  const recommended = Array.from(recommendedSet).map(k => tools[k]).filter(Boolean);
-  
+  const essential = Array.from(essentialSet)
+    .map((k) => tools[k])
+    .filter(Boolean);
+  const recommended = Array.from(recommendedSet)
+    .map((k) => tools[k])
+    .filter(Boolean);
+
   // Group by category, tracking essential vs recommended
   const byCategory = {};
-  essential.forEach(tool => {
+  essential.forEach((tool) => {
     const cat = tool.category;
     if (!byCategory[cat]) {
       byCategory[cat] = {
@@ -937,7 +974,7 @@ export function getToolsForBuild(upgradeKeys) {
     }
     byCategory[cat].essential.push(tool);
   });
-  recommended.forEach(tool => {
+  recommended.forEach((tool) => {
     const cat = tool.category;
     if (!byCategory[cat]) {
       byCategory[cat] = {
@@ -948,7 +985,7 @@ export function getToolsForBuild(upgradeKeys) {
     }
     byCategory[cat].recommended.push(tool);
   });
-  
+
   return { essential, recommended, byCategory };
 }
 
@@ -964,14 +1001,14 @@ export function calculateBuildComplexity(upgradeKeys) {
   let shopOnlyCount = 0;
   let expertCount = 0;
   const allNotes = [];
-  
-  upgradeKeys.forEach(key => {
+
+  upgradeKeys.forEach((key) => {
     const reqs = upgradeToolRequirements[key];
     if (reqs) {
       difficulties.push(reqs.difficulty);
       if (reqs.difficulty === 'shop-only') shopOnlyCount++;
       if (reqs.difficulty === 'expert') expertCount++;
-      
+
       // Parse time estimate (e.g., "2-4 hours" or "30 min - 1 hour")
       const timeMatch = reqs.timeEstimate?.match(/(\d+(?:\.\d+)?)\s*-?\s*(\d+(?:\.\d+)?)?/);
       if (timeMatch) {
@@ -986,24 +1023,24 @@ export function calculateBuildComplexity(upgradeKeys) {
           totalMaxHours += max;
         }
       }
-      
+
       if (reqs.notes) {
         allNotes.push({ upgrade: key, note: reqs.notes });
       }
     }
   });
-  
+
   // Determine overall difficulty (highest individual difficulty)
   const difficultyOrder = ['easy', 'moderate', 'advanced', 'expert', 'shop-only'];
   const maxDifficulty = difficultyOrder.reduce((max, d) => {
     if (difficulties.includes(d)) return d;
     return max;
   }, 'easy');
-  
+
   // DIY feasibility assessment
   let diyFeasibility = 'fully-diy';
   let diyMessage = 'All upgrades can be done in your garage with basic tools.';
-  
+
   if (shopOnlyCount > 0) {
     diyFeasibility = 'partial-diy';
     diyMessage = `${shopOnlyCount} item(s) require professional equipment. Other upgrades can be DIY.`;
@@ -1016,22 +1053,23 @@ export function calculateBuildComplexity(upgradeKeys) {
     diyFeasibility = 'mostly-shop';
     diyMessage = 'Most of this build requires professional installation.';
   }
-  
+
   // Format time estimate
   const formatTime = (hours) => {
     if (hours < 1) return `${Math.round(hours * 60)} min`;
     return `${Math.round(hours)} hrs`;
   };
-  
+
   return {
     difficulty: maxDifficulty,
     difficultyInfo: difficultyLevels[maxDifficulty],
     timeEstimate: {
       min: totalMinHours,
       max: totalMaxHours,
-      display: totalMinHours === totalMaxHours 
-        ? formatTime(totalMinHours)
-        : `${formatTime(totalMinHours)} - ${formatTime(totalMaxHours)}`,
+      display:
+        totalMinHours === totalMaxHours
+          ? formatTime(totalMinHours)
+          : `${formatTime(totalMinHours)} - ${formatTime(totalMaxHours)}`,
     },
     diyFeasibility,
     diyMessage,
@@ -1042,7 +1080,7 @@ export function calculateBuildComplexity(upgradeKeys) {
   };
 }
 
-export default {
+const upgradeTools = {
   toolCategories,
   tools,
   upgradeToolRequirements,
@@ -1052,23 +1090,4 @@ export default {
   calculateBuildComplexity,
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export default upgradeTools;

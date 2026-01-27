@@ -2,7 +2,7 @@
 
 /**
  * Build Value Analysis - Shows total investment vs. performance gains
- * 
+ *
  * EXTREMELY VALUABLE: Users see the cost-efficiency of their build,
  * dollars-per-HP metrics, and comparison to buying a faster stock car.
  * This helps users understand if their modifications are worth it.
@@ -15,84 +15,136 @@ import InsightFeedback from './ui/InsightFeedback';
 
 // Efficiency rating colors - matching design system tokens
 const EFFICIENCY_COLORS = {
-  good: '#10b981',     // var(--color-accent-teal) - Good/Excellent
-  warning: '#f59e0b',  // var(--color-warning) - Average/Below Average
-  danger: '#ef4444',   // var(--color-error) - Diminishing Returns
+  good: '#10b981', // var(--color-accent-teal) - Good/Excellent
+  warning: '#f59e0b', // var(--color-warning) - Average/Below Average
+  danger: '#ef4444', // var(--color-error) - Diminishing Returns
 };
 
 // Icons
 const TrendingUpIcon = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
-    <polyline points="17 6 23 6 23 12"/>
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+    <polyline points="17 6 23 6 23 12" />
   </svg>
 );
 
 const DollarIcon = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="12" y1="1" x2="12" y2="23"/>
-    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="12" y1="1" x2="12" y2="23" />
+    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
   </svg>
 );
 
 const ZapIcon = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
   </svg>
 );
 
 const ScaleIcon = ({ size = 16 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
-    <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
-    <path d="M7 21h10"/>
-    <path d="M12 3v18"/>
-    <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" />
+    <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z" />
+    <path d="M7 21h10" />
+    <path d="M12 3v18" />
+    <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2" />
   </svg>
 );
 
 const CheckCircleIcon = ({ size = 14 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-    <polyline points="22 4 12 14.01 9 11.01"/>
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+    <polyline points="22 4 12 14.01 9 11.01" />
   </svg>
 );
 
 const XCircleIcon = ({ size = 14 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10"/>
-    <path d="m15 9-6 6"/>
-    <path d="m9 9 6 6"/>
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <path d="m15 9-6 6" />
+    <path d="m9 9 6 6" />
   </svg>
 );
 
 // Upgrade cost estimates (rough averages)
 const UPGRADE_COST_ESTIMATES = {
   // Engine
-  'tune': { low: 400, high: 800 },
-  'tune-stage-1': { low: 400, high: 700 },
-  'tune-stage-2': { low: 500, high: 900 },
+  tune: { low: 400, high: 800 },
+  'stage1-tune': { low: 400, high: 700 },
+  'stage2-tune': { low: 500, high: 900 },
+  'stage3-tune': { low: 800, high: 1500 },
   'tune-e85': { low: 600, high: 1000 },
-  'tune-track': { low: 600, high: 1000 },
-  'intake': { low: 200, high: 500 },
+  intake: { low: 200, high: 500 },
   'cold-air-intake': { low: 250, high: 500 },
   'exhaust-catback': { low: 500, high: 1500 },
   'exhaust-axleback': { low: 300, high: 800 },
-  'headers': { low: 800, high: 2000 },
-  'downpipe': { low: 400, high: 1000 },
-  'intercooler': { low: 500, high: 1500 },
+  headers: { low: 800, high: 2000 },
+  downpipe: { low: 400, high: 1000 },
+  intercooler: { low: 500, high: 1500 },
   'intercooler-fmic': { low: 700, high: 2000 },
   'turbo-upgrade': { low: 2000, high: 5000 },
-  'supercharger': { low: 4000, high: 8000 },
+  supercharger: { low: 4000, high: 8000 },
   'fuel-injectors': { low: 400, high: 1200 },
   'fuel-pump': { low: 200, high: 600 },
-  'camshafts': { low: 800, high: 2000 },
-  'ported-heads': { low: 1500, high: 3500 },
-  'forged-internals': { low: 4000, high: 10000 },
+  // Note: camshafts, ported-heads, forged-internals removed - specialist mods
   'built-motor': { low: 8000, high: 20000 },
-  
+
   // Suspension
-  'coilovers': { low: 1000, high: 3000 },
+  coilovers: { low: 1000, high: 3000 },
   'coilovers-street': { low: 800, high: 2000 },
   'coilovers-track': { low: 1500, high: 4000 },
   'lowering-springs': { low: 200, high: 500 },
@@ -101,24 +153,24 @@ const UPGRADE_COST_ESTIMATES = {
   'sway-bar-rear': { low: 150, high: 350 },
   'control-arms': { low: 300, high: 800 },
   'camber-kit': { low: 150, high: 400 },
-  
+
   // Brakes
   'big-brake-kit': { low: 1500, high: 4000 },
   'brake-pads-track': { low: 150, high: 400 },
   'brake-rotors': { low: 200, high: 600 },
   'brake-lines': { low: 80, high: 200 },
   'brake-fluid': { low: 30, high: 80 },
-  
+
   // Wheels/Tires
   'wheels-lightweight': { low: 1500, high: 4000 },
   'tires-track': { low: 600, high: 1500 },
   'tires-summer': { low: 400, high: 1000 },
-  
+
   // Aero
-  'splitter': { low: 200, high: 600 },
-  'wing': { low: 400, high: 1500 },
-  'diffuser': { low: 300, high: 1000 },
-  
+  splitter: { low: 200, high: 600 },
+  wing: { low: 400, high: 1500 },
+  diffuser: { low: 300, high: 1000 },
+
   // Cooling
   'radiator-upgrade': { low: 300, high: 800 },
   'oil-cooler': { low: 300, high: 800 },
@@ -128,43 +180,46 @@ const UPGRADE_COST_ESTIMATES = {
 // Normalize key for matching
 const normalizeKey = (key) => {
   if (!key) return '';
-  return key.toLowerCase().replace(/[-_\s]+/g, '-').trim();
+  return key
+    .toLowerCase()
+    .replace(/[-_\s]+/g, '-')
+    .trim();
 };
 
 // Get cost estimate for an upgrade
 const getUpgradeCost = (upgradeKey) => {
   const normalized = normalizeKey(upgradeKey);
-  
+
   // Direct match
   if (UPGRADE_COST_ESTIMATES[normalized]) {
     return UPGRADE_COST_ESTIMATES[normalized];
   }
-  
+
   // Partial matching
   for (const [key, cost] of Object.entries(UPGRADE_COST_ESTIMATES)) {
     if (normalized.includes(key) || key.includes(normalized)) {
       return cost;
     }
   }
-  
+
   // Default estimate for unknown upgrades
   return { low: 200, high: 500 };
 };
 
-export default function BuildValueAnalysis({ 
-  installedUpgrades, 
-  stockHp, 
-  currentHp, 
-  carName,
+export default function BuildValueAnalysis({
+  installedUpgrades,
+  stockHp,
+  currentHp,
+  carName: _carName,
   buildCostLow,
   buildCostHigh,
   onFeedback,
 }) {
   const analysis = useMemo(() => {
     const upgrades = installedUpgrades
-      .map(u => typeof u === 'string' ? u : u?.key)
+      .map((u) => (typeof u === 'string' ? u : u?.key))
       .filter(Boolean);
-    
+
     if (upgrades.length === 0) {
       return null;
     }
@@ -172,9 +227,9 @@ export default function BuildValueAnalysis({
     // Calculate total estimated cost from upgrades if not provided
     let totalLow = buildCostLow || 0;
     let totalHigh = buildCostHigh || 0;
-    
+
     if (!buildCostLow && !buildCostHigh) {
-      upgrades.forEach(upgrade => {
+      upgrades.forEach((upgrade) => {
         const cost = getUpgradeCost(upgrade);
         totalLow += cost.low;
         totalHigh += cost.high;
@@ -185,12 +240,12 @@ export default function BuildValueAnalysis({
     const avgCost = (totalLow + totalHigh) / 2;
     const dollarsPerHp = hpGain > 0 ? Math.round(avgCost / hpGain) : 0;
     const hpPerThousand = hpGain > 0 ? Math.round((hpGain / avgCost) * 1000) : 0;
-    
+
     // Determine efficiency rating
     let efficiencyRating = 'Good';
     let efficiencyColor = '#10b981';
     let efficiencyNote = 'Solid value for the performance gains';
-    
+
     if (dollarsPerHp < 30) {
       efficiencyRating = 'Excellent';
       efficiencyColor = '#10b981';
@@ -218,17 +273,30 @@ export default function BuildValueAnalysis({
 
     // Break down costs by category
     const categoryBreakdown = {};
-    upgrades.forEach(upgrade => {
+    upgrades.forEach((upgrade) => {
       const cost = getUpgradeCost(upgrade);
       let category = 'Other';
       const norm = normalizeKey(upgrade);
-      
-      if (norm.includes('tune') || norm.includes('intake') || norm.includes('exhaust') || 
-          norm.includes('header') || norm.includes('downpipe') || norm.includes('turbo') ||
-          norm.includes('intercooler') || norm.includes('fuel') || norm.includes('cam')) {
+
+      if (
+        norm.includes('tune') ||
+        norm.includes('intake') ||
+        norm.includes('exhaust') ||
+        norm.includes('header') ||
+        norm.includes('downpipe') ||
+        norm.includes('turbo') ||
+        norm.includes('intercooler') ||
+        norm.includes('fuel') ||
+        norm.includes('cam')
+      ) {
         category = 'Engine';
-      } else if (norm.includes('coilover') || norm.includes('spring') || norm.includes('sway') ||
-                 norm.includes('control') || norm.includes('camber')) {
+      } else if (
+        norm.includes('coilover') ||
+        norm.includes('spring') ||
+        norm.includes('sway') ||
+        norm.includes('control') ||
+        norm.includes('camber')
+      ) {
         category = 'Suspension';
       } else if (norm.includes('brake')) {
         category = 'Brakes';
@@ -239,7 +307,7 @@ export default function BuildValueAnalysis({
       } else if (norm.includes('radiator') || norm.includes('cooler')) {
         category = 'Cooling';
       }
-      
+
       if (!categoryBreakdown[category]) {
         categoryBreakdown[category] = { low: 0, high: 0, count: 0 };
       }
@@ -271,7 +339,7 @@ export default function BuildValueAnalysis({
           <TrendingUpIcon size={18} />
           <span className={styles.headerTitle}>Build Value Analysis</span>
           {onFeedback && (
-            <InsightFeedback 
+            <InsightFeedback
               insightType="value-analysis"
               insightKey="value-analysis-empty"
               insightTitle="Build Value Analysis (Empty)"
@@ -287,10 +355,18 @@ export default function BuildValueAnalysis({
     );
   }
 
-  const { 
-    totalLow, totalHigh, hpGain, dollarsPerHp, hpPerThousand, 
-    percentIncrease, upgradeCount, efficiencyRating, efficiencyColor, 
-    efficiencyNote, categoryBreakdown 
+  const {
+    totalLow,
+    totalHigh,
+    hpGain,
+    dollarsPerHp,
+    hpPerThousand,
+    percentIncrease,
+    upgradeCount,
+    efficiencyRating,
+    efficiencyColor,
+    efficiencyNote,
+    categoryBreakdown,
   } = analysis;
 
   return (
@@ -299,7 +375,7 @@ export default function BuildValueAnalysis({
         <TrendingUpIcon size={18} />
         <span className={styles.headerTitle}>Build Value Analysis</span>
         {onFeedback && (
-          <InsightFeedback 
+          <InsightFeedback
             insightType="value-analysis"
             insightKey="value-analysis"
             insightTitle="Build Value Analysis"
@@ -341,14 +417,11 @@ export default function BuildValueAnalysis({
         <div className={styles.efficiencyHeader}>
           <ScaleIcon size={16} />
           <span>Cost Efficiency</span>
-          <span 
-            className={styles.efficiencyBadge}
-            style={{ backgroundColor: efficiencyColor }}
-          >
+          <span className={styles.efficiencyBadge} style={{ backgroundColor: efficiencyColor }}>
             {efficiencyRating}
           </span>
         </div>
-        
+
         <div className={styles.efficiencyMetrics}>
           <div className={styles.efficiencyMetric}>
             <span className={styles.metricValue}>${dollarsPerHp}</span>
@@ -360,7 +433,7 @@ export default function BuildValueAnalysis({
             <span className={styles.metricLabel}>HP per $1,000</span>
           </div>
         </div>
-        
+
         <p className={styles.efficiencyNote}>{efficiencyNote}</p>
       </div>
 
@@ -369,23 +442,22 @@ export default function BuildValueAnalysis({
         <div className={styles.breakdownHeader}>Investment by Category</div>
         <div className={styles.categories}>
           {Object.entries(categoryBreakdown)
-            .sort((a, b) => (b[1].low + b[1].high) - (a[1].low + a[1].high))
+            .sort((a, b) => b[1].low + b[1].high - (a[1].low + a[1].high))
             .map(([category, data]) => {
               const avgCategoryCost = (data.low + data.high) / 2;
               const totalAvg = (totalLow + totalHigh) / 2;
               const percentage = Math.round((avgCategoryCost / totalAvg) * 100);
-              
+
               return (
                 <div key={category} className={styles.categoryRow}>
                   <div className={styles.categoryInfo}>
                     <span className={styles.categoryName}>{category}</span>
-                    <span className={styles.categoryParts}>{data.count} part{data.count > 1 ? 's' : ''}</span>
+                    <span className={styles.categoryParts}>
+                      {data.count} part{data.count > 1 ? 's' : ''}
+                    </span>
                   </div>
                   <div className={styles.categoryBar}>
-                    <div 
-                      className={styles.categoryFill}
-                      style={{ width: `${percentage}%` }}
-                    />
+                    <div className={styles.categoryFill} style={{ width: `${percentage}%` }} />
                   </div>
                   <span className={styles.categoryCost}>
                     ~${Math.round((data.low + data.high) / 2).toLocaleString()}
@@ -429,7 +501,8 @@ export default function BuildValueAnalysis({
 
       {/* Disclaimer */}
       <p className={styles.disclaimer}>
-        Cost estimates based on typical market prices. Actual costs vary by brand, labor, and location.
+        Cost estimates based on typical market prices. Actual costs vary by brand, labor, and
+        location.
       </p>
     </div>
   );

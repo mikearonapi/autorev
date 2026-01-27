@@ -1,18 +1,18 @@
 /**
  * AutoRev - Car-Specific Upgrade Recommendations
- * 
+ *
  * @deprecated As of 2026-01-15, this file is a LEGACY FALLBACK only.
- * 
+ *
  * SOURCE OF TRUTH: Use car_tuning_profiles table via useTuningProfile hook instead.
  * - Upgrade recommendations: car_tuning_profiles.upgrades_by_objective
  * - Platform strengths/weaknesses: car_tuning_profiles.platform_strengths, platform_weaknesses
- * 
+ *
  * This static file is used as a fallback in UpgradeCenter.jsx only when:
  * - car_tuning_profiles data is not yet available for a specific car
  * - The useTuningProfile hook returns no profile
- * 
+ *
  * New car data should be added to car_tuning_profiles table, not this file.
- * 
+ *
  * Structure per car:
  * - defaultTier: Which package tier to show by default
  * - streetSport: Upgrades for enhanced street performance
@@ -49,19 +49,22 @@ export const carUpgradeRecommendations = {
         mustHave: ['high-flow-air-filter', 'brake-pads-performance', 'performance-alignment'],
         recommended: ['cat-back-exhaust', 'coilovers'],
         niceToHave: ['short-shifter', 'lightweight-battery'],
-        narrative: 'The GT4 is already track-focused from the factory. Street Sport upgrades enhance the already excellent chassis without compromising daily usability.',
+        narrative:
+          'The GT4 is already track-focused from the factory. Street Sport upgrades enhance the already excellent chassis without compromising daily usability.',
       },
       trackPack: {
         mustHave: ['coilovers', 'brake-pads-track', 'high-temp-brake-fluid', 'oil-cooler'],
         recommended: ['big-brake-kit', 'performance-tires', 'sway-bars'],
         niceToHave: ['lightweight-wheels', 'braided-brake-lines', 'helmet'],
-        narrative: 'The 4.0L flat-6 is incredible NA, so focus on chassis and brakes. The GT4 runs hot during sustained track use - oil cooler is essential.',
+        narrative:
+          'The 4.0L flat-6 is incredible NA, so focus on chassis and brakes. The GT4 runs hot during sustained track use - oil cooler is essential.',
       },
       timeAttack: {
         mustHave: ['coilovers', 'big-brake-kit', 'competition-tires', 'oil-cooler', 'racing-seat'],
         recommended: ['front-splitter', 'rear-wing', 'racing-harness', 'roll-bar'],
         niceToHave: ['lightweight-wheels', 'carbon-fiber-hood', 'interior-delete'],
-        narrative: 'Max NA performance. The flat-6 has limited tuning potential but the chassis is superb. Focus on aero, weight reduction, and tires.',
+        narrative:
+          'Max NA performance. The flat-6 has limited tuning potential but the chassis is superb. Focus on aero, weight reduction, and tires.',
       },
     },
     platformNotes: [
@@ -83,13 +86,15 @@ export const carUpgradeRecommendations = {
         mustHave: ['high-flow-air-filter', 'performance-alignment'],
         recommended: ['cat-back-exhaust', 'lowering-springs'],
         niceToHave: ['short-shifter', 'brake-pads-performance'],
-        narrative: 'The GTS 4.0 is the sweet spot between GT4 and base Cayman. Subtle upgrades enhance without compromising GT credentials.',
+        narrative:
+          'The GTS 4.0 is the sweet spot between GT4 and base Cayman. Subtle upgrades enhance without compromising GT credentials.',
       },
       trackPack: {
         mustHave: ['coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
         recommended: ['oil-cooler', 'performance-tires', 'sway-bars'],
         niceToHave: ['big-brake-kit', 'lightweight-wheels'],
-        narrative: 'With 394hp and excellent balance, the GTS 4.0 is a fantastic track platform. Cooling and brakes are the priorities.',
+        narrative:
+          'With 394hp and excellent balance, the GTS 4.0 is a fantastic track platform. Cooling and brakes are the priorities.',
       },
     },
     platformNotes: [
@@ -97,9 +102,7 @@ export const carUpgradeRecommendations = {
       'Sport Chrono package adds launch control and better throttle maps',
       'PASM suspension is very capable - coilovers are optional for track use',
     ],
-    knownIssues: [
-      'Same oil consumption notes as GT4',
-    ],
+    knownIssues: ['Same oil consumption notes as GT4'],
   },
 
   '981-cayman-gts': {
@@ -109,13 +112,15 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'performance-alignment'],
         recommended: ['cat-back-exhaust', 'lowering-springs', 'ecu-tune'],
         niceToHave: ['short-shifter', 'brake-pads-performance'],
-        narrative: 'The 3.4L flat-6 responds well to intake and exhaust. Mild tune adds 15-20hp. Focus on enhancing the naturally excellent chassis.',
+        narrative:
+          'The 3.4L flat-6 responds well to intake and exhaust. Mild tune adds 15-20hp. Focus on enhancing the naturally excellent chassis.',
       },
       trackPack: {
         mustHave: ['coilovers', 'brake-pads-track', 'high-temp-brake-fluid', 'oil-cooler'],
         recommended: ['big-brake-kit', 'performance-tires', 'sway-bars'],
         niceToHave: ['lightweight-wheels', 'braided-brake-lines'],
-        narrative: 'The 981 chassis is exceptional. Cooling is important for sustained track use. Big brake kit improves fade resistance significantly.',
+        narrative:
+          'The 981 chassis is exceptional. Cooling is important for sustained track use. Big brake kit improves fade resistance significantly.',
       },
     },
     platformNotes: [
@@ -136,22 +141,19 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'performance-alignment'],
         recommended: ['cat-back-exhaust', 'ecu-tune'],
         niceToHave: ['lowering-springs', 'brake-pads-performance'],
-        narrative: 'The 325hp flat-6 is a gem. Basic bolt-ons wake it up nicely while maintaining the refined Porsche character.',
+        narrative:
+          'The 325hp flat-6 is a gem. Basic bolt-ons wake it up nicely while maintaining the refined Porsche character.',
       },
       trackPack: {
         mustHave: ['coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
         recommended: ['oil-cooler', 'performance-tires', 'sway-bars'],
         niceToHave: ['big-brake-kit', 'lightweight-wheels'],
-        narrative: 'Solid track platform. Prioritize cooling and brakes for sustained lapping. The chassis is incredibly capable.',
+        narrative:
+          'Solid track platform. Prioritize cooling and brakes for sustained lapping. The chassis is incredibly capable.',
       },
     },
-    platformNotes: [
-      'Same 3.4L as GTS but ~15hp less',
-      'Sport Chrono recommended for track use',
-    ],
-    knownIssues: [
-      'Same as 981 GTS - coolant pipes and AOS',
-    ],
+    platformNotes: ['Same 3.4L as GTS but ~15hp less', 'Sport Chrono recommended for track use'],
+    knownIssues: ['Same as 981 GTS - coolant pipes and AOS'],
   },
 
   '987-2-cayman-s': {
@@ -161,13 +163,15 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'performance-alignment'],
         recommended: ['cat-back-exhaust', 'headers', 'ecu-tune'],
         niceToHave: ['lowering-springs', 'short-shifter'],
-        narrative: 'The 987.2 is the last of the simpler, more analog Caymans. Headers and tune make a noticeable difference.',
+        narrative:
+          'The 987.2 is the last of the simpler, more analog Caymans. Headers and tune make a noticeable difference.',
       },
       trackPack: {
         mustHave: ['coilovers', 'brake-pads-track', 'oil-cooler'],
         recommended: ['big-brake-kit', 'performance-tires'],
         niceToHave: ['sway-bars', 'lightweight-wheels'],
-        narrative: 'Great value track platform. More affordable than newer Caymans but just as capable. Cooling is key.',
+        narrative:
+          'Great value track platform. More affordable than newer Caymans but just as capable. Cooling is key.',
       },
     },
     platformNotes: [
@@ -175,9 +179,7 @@ export const carUpgradeRecommendations = {
       'Direct injection engine runs hotter - oil cooler important',
       'Headers provide significant NA power gains',
     ],
-    knownIssues: [
-      'Bore scoring possible on high-mileage engines',
-    ],
+    knownIssues: ['Bore scoring possible on high-mileage engines'],
   },
 
   '991-1-carrera-s': {
@@ -187,13 +189,15 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'performance-alignment'],
         recommended: ['cat-back-exhaust', 'ecu-tune', 'lowering-springs'],
         niceToHave: ['brake-pads-performance', 'short-shifter'],
-        narrative: 'The 400hp 3.8L flat-6 is beautifully responsive. Subtle upgrades enhance without overwhelming the balanced package.',
+        narrative:
+          'The 400hp 3.8L flat-6 is beautifully responsive. Subtle upgrades enhance without overwhelming the balanced package.',
       },
       trackPack: {
         mustHave: ['coilovers', 'brake-pads-track', 'high-temp-brake-fluid', 'oil-cooler'],
         recommended: ['big-brake-kit', 'performance-tires', 'sway-bars'],
         niceToHave: ['lightweight-wheels', 'front-splitter'],
-        narrative: 'The 991.1 is an excellent track car. PASM works well, but coilovers offer more adjustability. Cooling is important.',
+        narrative:
+          'The 991.1 is an excellent track car. PASM works well, but coilovers offer more adjustability. Cooling is important.',
       },
     },
     platformNotes: [
@@ -214,13 +218,15 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'performance-alignment'],
         recommended: ['cat-back-exhaust', 'headers', 'ecu-tune'],
         niceToHave: ['lowering-springs', 'short-shifter'],
-        narrative: 'The 997.2 is peak analog 911. Headers and full exhaust transform the sound. Tune adds noticeable power.',
+        narrative:
+          'The 997.2 is peak analog 911. Headers and full exhaust transform the sound. Tune adds noticeable power.',
       },
       trackPack: {
         mustHave: ['coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
         recommended: ['oil-cooler', 'big-brake-kit', 'performance-tires'],
         niceToHave: ['sway-bars', 'lightweight-wheels'],
-        narrative: 'Many consider this the best modern 911 for driving feel. Exceptional track platform with modest cooling upgrades.',
+        narrative:
+          'Many consider this the best modern 911 for driving feel. Exceptional track platform with modest cooling upgrades.',
       },
     },
     platformNotes: [
@@ -228,9 +234,7 @@ export const carUpgradeRecommendations = {
       'No IMS bearing concerns',
       'Manual gearbox is sublime',
     ],
-    knownIssues: [
-      'Rear main seal can leak on older examples',
-    ],
+    knownIssues: ['Rear main seal can leak on older examples'],
   },
 
   // ============================================================================
@@ -243,19 +247,22 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'cat-back-exhaust'],
         recommended: ['ecu-tune', 'lowering-springs'],
         niceToHave: ['brake-pads-performance', 'performance-alignment'],
-        narrative: 'The C8 is incredibly capable stock. A tune unlocks the DCT\'s potential and the exhaust awakens the LT2.',
+        narrative:
+          "The C8 is incredibly capable stock. A tune unlocks the DCT's potential and the exhaust awakens the LT2.",
       },
       trackPack: {
         mustHave: ['coilovers', 'brake-pads-track', 'high-temp-brake-fluid', 'trans-cooler'],
         recommended: ['big-brake-kit', 'performance-tires', 'oil-cooler'],
         niceToHave: ['front-splitter', 'lightweight-wheels'],
-        narrative: 'The DCT needs cooling upgrades for sustained track use. The LT2 is robust but trans temps climb quickly on track.',
+        narrative:
+          'The DCT needs cooling upgrades for sustained track use. The LT2 is robust but trans temps climb quickly on track.',
       },
       ultimatePower: {
-        mustHave: ['supercharger-centrifugal', 'clutch-upgrade', 'hpfp-upgrade'],
-        recommended: ['oil-cooler', 'heat-exchanger-sc', 'headers'],
-        niceToHave: ['forged-internals', 'driveshaft-upgrade'],
-        narrative: 'ProCharger or Whipple kits push the C8 to 700+ hp. DCT can handle ~750hp stock but clutch upgrades are wise.',
+        mustHave: ['supercharger-centrifugal', 'clutch-upgrade', 'fuel-system-upgrade'],
+        recommended: ['oil-cooler', 'intercooler', 'headers'],
+        niceToHave: ['driveshaft-upgrade', 'driveshaft-upgrade'],
+        narrative:
+          'ProCharger or Whipple kits push the C8 to 700+ hp. DCT can handle ~750hp stock but clutch upgrades are wise.',
       },
     },
     platformNotes: [
@@ -278,19 +285,22 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'cat-back-exhaust'],
         recommended: ['ecu-tune', 'headers'],
         niceToHave: ['brake-pads-performance', 'short-shifter'],
-        narrative: 'The Grand Sport is the Z06 chassis with the LT1. Exhaust and headers transform the sound and add power.',
+        narrative:
+          'The Grand Sport is the Z06 chassis with the LT1. Exhaust and headers transform the sound and add power.',
       },
       trackPack: {
         mustHave: ['headers', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
         recommended: ['big-brake-kit', 'performance-tires', 'oil-cooler'],
         niceToHave: ['sway-bars', 'lightweight-wheels'],
-        narrative: 'Already has Z06 brakes and aero. The LT1 runs cooler than the LT4, so cooling upgrades are less critical.',
+        narrative:
+          'Already has Z06 brakes and aero. The LT1 runs cooler than the LT4, so cooling upgrades are less critical.',
       },
       ultimatePower: {
         mustHave: ['supercharger-centrifugal', 'fuel-system-upgrade', 'clutch-upgrade'],
         recommended: ['oil-cooler', 'headers', 'ecu-tune'],
-        niceToHave: ['forged-internals', 'driveshaft-upgrade'],
-        narrative: 'The LT1 handles boost excellently. A supercharger transforms the already-excellent chassis into a monster.',
+        niceToHave: ['driveshaft-upgrade', 'driveshaft-upgrade'],
+        narrative:
+          'The LT1 handles boost excellently. A supercharger transforms the already-excellent chassis into a monster.',
       },
     },
     platformNotes: [
@@ -298,9 +308,7 @@ export const carUpgradeRecommendations = {
       'Manual trans is TR6060 - handles up to ~700hp',
       'Already has dry sump from Z06',
     ],
-    knownIssues: [
-      'Z07 package carbon ceramic brakes expensive to replace',
-    ],
+    knownIssues: ['Z07 package carbon ceramic brakes expensive to replace'],
   },
 
   'c7-corvette-z06': {
@@ -310,24 +318,27 @@ export const carUpgradeRecommendations = {
         mustHave: ['high-flow-air-filter', 'brake-pads-performance'],
         recommended: ['cat-back-exhaust', 'pulley-tune-sc'],
         niceToHave: ['short-shifter', 'lowering-springs'],
-        narrative: 'At 650hp stock, the Z06 doesn\'t need much. A smaller pulley and tune adds 70-100hp easily.',
+        narrative:
+          "At 650hp stock, the Z06 doesn't need much. A smaller pulley and tune adds 70-100hp easily.",
       },
       trackPack: {
-        mustHave: ['heat-exchanger-sc', 'oil-cooler', 'brake-pads-track', 'high-temp-brake-fluid'],
+        mustHave: ['intercooler', 'oil-cooler', 'brake-pads-track', 'high-temp-brake-fluid'],
         recommended: ['coilovers', 'trans-cooler', 'diff-cooler'],
         niceToHave: ['big-brake-kit', 'performance-tires'],
-        narrative: 'COOLING. COOLING. COOLING. The LT4 is heat-limited on track. Upgrade everything that transfers heat.',
+        narrative:
+          'COOLING. COOLING. COOLING. The LT4 is heat-limited on track. Upgrade everything that transfers heat.',
       },
       ultimatePower: {
-        mustHave: ['pulley-tune-sc', 'heat-exchanger-sc', 'hpfp-upgrade', 'clutch-upgrade'],
+        mustHave: ['pulley-tune-sc', 'intercooler', 'fuel-system-upgrade', 'clutch-upgrade'],
         recommended: ['headers', 'fuel-system-upgrade', 'oil-cooler'],
-        niceToHave: ['forged-internals', 'axles-halfshafts'],
-        narrative: '800-900+ hp is achievable with pulley, tune, and supporting mods. The LT4 bottom end is strong.',
+        niceToHave: ['driveshaft-upgrade', 'axles-halfshafts'],
+        narrative:
+          '800-900+ hp is achievable with pulley, tune, and supporting mods. The LT4 bottom end is strong.',
       },
     },
     platformNotes: [
       'LT4 supercharged V8 is extremely powerful stock',
-      'Heat management is the Z06\'s Achilles heel',
+      "Heat management is the Z06's Achilles heel",
       'Z07 package adds significant downforce but carbon brakes',
       'Magnetic ride is excellent for dual-purpose use',
     ],
@@ -348,19 +359,22 @@ export const carUpgradeRecommendations = {
         mustHave: ['high-flow-air-filter', 'brake-pads-performance'],
         recommended: ['cat-back-exhaust', 'pulley-tune-sc'],
         niceToHave: ['lowering-springs', 'sway-bars'],
-        narrative: 'At 760hp, the GT500 is already a monster. Small pulley + tune pushes past 800hp with ease.',
+        narrative:
+          'At 760hp, the GT500 is already a monster. Small pulley + tune pushes past 800hp with ease.',
       },
       trackPack: {
-        mustHave: ['heat-exchanger-sc', 'brake-pads-track', 'high-temp-brake-fluid', 'oil-cooler'],
+        mustHave: ['intercooler', 'brake-pads-track', 'high-temp-brake-fluid', 'oil-cooler'],
         recommended: ['coilovers', 'big-brake-kit', 'trans-cooler'],
         niceToHave: ['performance-tires', 'diff-cooler'],
-        narrative: 'The GT500 generates massive heat. Cooling upgrades are critical for track use. DCT is robust but runs hot.',
+        narrative:
+          'The GT500 generates massive heat. Cooling upgrades are critical for track use. DCT is robust but runs hot.',
       },
       ultimatePower: {
-        mustHave: ['pulley-tune-sc', 'heat-exchanger-sc', 'hpfp-upgrade', 'driveshaft-upgrade'],
+        mustHave: ['pulley-tune-sc', 'intercooler', 'fuel-system-upgrade', 'driveshaft-upgrade'],
         recommended: ['headers', 'fuel-system-upgrade', 'axles-halfshafts'],
-        niceToHave: ['forged-internals'],
-        narrative: '900-1000hp is achievable with pulley mods and supporting fueling. The 5.2L Predator is strong.',
+        niceToHave: ['driveshaft-upgrade'],
+        narrative:
+          '900-1000hp is achievable with pulley mods and supporting fueling. The 5.2L Predator is strong.',
       },
     },
     platformNotes: [
@@ -369,10 +383,7 @@ export const carUpgradeRecommendations = {
       'Carbon fiber track pack is expensive but effective',
       'Heat exchanger upgrade is almost mandatory for track use',
     ],
-    knownIssues: [
-      'Heat soak affects power significantly',
-      'DCT can be harsh in city driving',
-    ],
+    knownIssues: ['Heat soak affects power significantly', 'DCT can be harsh in city driving'],
   },
 
   'shelby-gt350': {
@@ -382,19 +393,28 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'cat-back-exhaust'],
         recommended: ['headers', 'ecu-tune', 'brake-pads-performance'],
         niceToHave: ['short-shifter', 'lowering-springs'],
-        narrative: 'The Voodoo flat-plane V8 screams with full exhaust. Headers are essential to unlock the top-end power.',
+        narrative:
+          'The Voodoo flat-plane V8 screams with full exhaust. Headers are essential to unlock the top-end power.',
       },
       trackPack: {
-        mustHave: ['headers', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid', 'oil-cooler'],
+        mustHave: [
+          'headers',
+          'coilovers',
+          'brake-pads-track',
+          'high-temp-brake-fluid',
+          'oil-cooler',
+        ],
         recommended: ['big-brake-kit', 'performance-tires', 'trans-cooler'],
         niceToHave: ['lightweight-wheels', 'sway-bars'],
-        narrative: 'The GT350 is a track weapon. Headers and exhaust unlock 525+ hp. Cooling is important for the Voodoo.',
+        narrative:
+          'The GT350 is a track weapon. Headers and exhaust unlock 525+ hp. Cooling is important for the Voodoo.',
       },
       ultimatePower: {
         mustHave: ['supercharger-centrifugal', 'headers', 'fuel-system-upgrade', 'clutch-upgrade'],
-        recommended: ['oil-cooler', 'heat-exchanger-sc', 'forged-internals'],
+        recommended: ['oil-cooler', 'intercooler', 'driveshaft-upgrade'],
         niceToHave: ['driveshaft-upgrade', 'axles-halfshafts'],
-        narrative: 'Supercharging the Voodoo is incredible - 700-800hp with the right setup. The flat-plane crank sounds amazing with boost.',
+        narrative:
+          'Supercharging the Voodoo is incredible - 700-800hp with the right setup. The flat-plane crank sounds amazing with boost.',
       },
     },
     platformNotes: [
@@ -415,20 +435,23 @@ export const carUpgradeRecommendations = {
       streetSport: {
         mustHave: ['cold-air-intake', 'cat-back-exhaust', 'ecu-tune'],
         recommended: ['headers', 'brake-pads-performance'],
-        niceToHave: ['short-shifter', 'throttle-body'],
-        narrative: 'The Coyote 5.0 loves bolt-ons. Intake, exhaust, headers, and tune can add 50-70hp.',
+        niceToHave: ['short-shifter', 'intake'],
+        narrative:
+          'The Coyote 5.0 loves bolt-ons. Intake, exhaust, headers, and tune can add 50-70hp.',
       },
       trackPack: {
         mustHave: ['headers', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
         recommended: ['big-brake-kit', 'performance-tires', 'oil-cooler'],
         niceToHave: ['sway-bars', 'limited-slip-diff'],
-        narrative: 'PP2 already has excellent chassis components. Headers and exhaust are the main power adds.',
+        narrative:
+          'PP2 already has excellent chassis components. Headers and exhaust are the main power adds.',
       },
       ultimatePower: {
         mustHave: ['supercharger-roots', 'fuel-system-upgrade', 'clutch-upgrade'],
         recommended: ['oil-cooler', 'headers', 'driveshaft-upgrade'],
-        niceToHave: ['forged-internals', 'axles-halfshafts'],
-        narrative: 'A Whipple or Roush supercharger transforms the Mustang GT. 700+ hp is achievable while remaining streetable.',
+        niceToHave: ['driveshaft-upgrade', 'axles-halfshafts'],
+        narrative:
+          'A Whipple or Roush supercharger transforms the Mustang GT. 700+ hp is achievable while remaining streetable.',
       },
     },
     platformNotes: [
@@ -437,9 +460,7 @@ export const carUpgradeRecommendations = {
       'MT-82 manual has limitations - TR-3160 swap popular for high power',
       '10R80 auto is excellent for drag racing',
     ],
-    knownIssues: [
-      'MT-82 transmission can have synchro issues under high power',
-    ],
+    knownIssues: ['MT-82 transmission can have synchro issues under high power'],
   },
 
   // ============================================================================
@@ -452,19 +473,22 @@ export const carUpgradeRecommendations = {
         mustHave: ['high-flow-air-filter', 'brake-pads-performance'],
         recommended: ['cat-back-exhaust', 'pulley-tune-sc'],
         niceToHave: ['lowering-springs', 'short-shifter'],
-        narrative: 'The LT4 in the ZL1 makes 650hp stock. Small pulley + tune adds 70-100hp with minimal effort.',
+        narrative:
+          'The LT4 in the ZL1 makes 650hp stock. Small pulley + tune adds 70-100hp with minimal effort.',
       },
       trackPack: {
-        mustHave: ['heat-exchanger-sc', 'brake-pads-track', 'high-temp-brake-fluid', 'oil-cooler'],
+        mustHave: ['intercooler', 'brake-pads-track', 'high-temp-brake-fluid', 'oil-cooler'],
         recommended: ['coilovers', 'trans-cooler', 'performance-tires'],
         niceToHave: ['big-brake-kit', 'diff-cooler'],
-        narrative: 'Like the C7 Z06, heat management is critical. The ZL1 1LE package is already track-ready.',
+        narrative:
+          'Like the C7 Z06, heat management is critical. The ZL1 1LE package is already track-ready.',
       },
       ultimatePower: {
-        mustHave: ['pulley-tune-sc', 'heat-exchanger-sc', 'hpfp-upgrade', 'clutch-upgrade'],
+        mustHave: ['pulley-tune-sc', 'intercooler', 'fuel-system-upgrade', 'clutch-upgrade'],
         recommended: ['headers', 'fuel-system-upgrade', 'driveshaft-upgrade'],
-        niceToHave: ['forged-internals', 'axles-halfshafts'],
-        narrative: '800-900+ hp is achievable with pulley mods. The LT4 shares much with the C7 Z06.',
+        niceToHave: ['driveshaft-upgrade', 'axles-halfshafts'],
+        narrative:
+          '800-900+ hp is achievable with pulley mods. The LT4 shares much with the C7 Z06.',
       },
     },
     platformNotes: [
@@ -485,20 +509,23 @@ export const carUpgradeRecommendations = {
       streetSport: {
         mustHave: ['cold-air-intake', 'cat-back-exhaust', 'ecu-tune'],
         recommended: ['headers', 'brake-pads-performance'],
-        niceToHave: ['short-shifter', 'throttle-body'],
-        narrative: 'The LT1 responds excellently to bolt-ons. Intake, exhaust, headers, and tune can add 50-70hp.',
+        niceToHave: ['short-shifter', 'intake'],
+        narrative:
+          'The LT1 responds excellently to bolt-ons. Intake, exhaust, headers, and tune can add 50-70hp.',
       },
       trackPack: {
         mustHave: ['headers', 'brake-pads-track', 'high-temp-brake-fluid'],
         recommended: ['coilovers', 'performance-tires', 'oil-cooler'],
         niceToHave: ['big-brake-kit', 'sway-bars'],
-        narrative: 'The 1LE package is already track-ready. Focus on headers and exhaust for power.',
+        narrative:
+          'The 1LE package is already track-ready. Focus on headers and exhaust for power.',
       },
       ultimatePower: {
         mustHave: ['supercharger-centrifugal', 'fuel-system-upgrade', 'clutch-upgrade'],
         recommended: ['oil-cooler', 'headers', 'driveshaft-upgrade'],
-        niceToHave: ['forged-internals', 'axles-halfshafts'],
-        narrative: 'A supercharger transforms the SS 1LE into a monster. 650-700hp is achievable while remaining reliable.',
+        niceToHave: ['driveshaft-upgrade', 'axles-halfshafts'],
+        narrative:
+          'A supercharger transforms the SS 1LE into a monster. 650-700hp is achievable while remaining reliable.',
       },
     },
     platformNotes: [
@@ -506,9 +533,7 @@ export const carUpgradeRecommendations = {
       'Includes coolers for engine oil and differential',
       'Magnetic Ride available on some trims',
     ],
-    knownIssues: [
-      'LT1 runs hot under sustained track use - oil cooler helps',
-    ],
+    knownIssues: ['LT1 runs hot under sustained track use - oil cooler helps'],
   },
 
   // ============================================================================
@@ -521,19 +546,33 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'cat-back-exhaust'],
         recommended: ['piggyback-tune', 'downpipe', 'intercooler'],
         niceToHave: ['brake-pads-performance', 'lowering-springs'],
-        narrative: 'The VR38DETT responds incredibly to basic bolt-ons. Intake, downpipes, and tune can add 80-100hp.',
+        narrative:
+          'The VR38DETT responds incredibly to basic bolt-ons. Intake, downpipes, and tune can add 80-100hp.',
       },
       trackPack: {
-        mustHave: ['intercooler', 'downpipe', 'brake-pads-track', 'high-temp-brake-fluid', 'trans-cooler'],
+        mustHave: [
+          'intercooler',
+          'downpipe',
+          'brake-pads-track',
+          'high-temp-brake-fluid',
+          'trans-cooler',
+        ],
         recommended: ['coilovers', 'oil-cooler', 'big-brake-kit'],
         niceToHave: ['performance-tires', 'lightweight-wheels'],
-        narrative: 'The GT-R generates massive heat. Cooling is critical. The DCT needs a cooler for track use.',
+        narrative:
+          'The GT-R generates massive heat. Cooling is critical. The DCT needs a cooler for track use.',
       },
       ultimatePower: {
-        mustHave: ['turbo-upgrade-existing', 'intercooler', 'fuel-system-upgrade', 'clutch-upgrade'],
+        mustHave: [
+          'turbo-upgrade-existing',
+          'intercooler',
+          'fuel-system-upgrade',
+          'clutch-upgrade',
+        ],
         recommended: ['oil-cooler', 'trans-cooler', 'driveshaft-upgrade'],
-        niceToHave: ['forged-internals', 'axles-halfshafts'],
-        narrative: 'The VR38 can reliably make 700-800hp on stock internals. Upgraded turbos push past 1000hp.',
+        niceToHave: ['driveshaft-upgrade', 'axles-halfshafts'],
+        narrative:
+          'The VR38 can reliably make 700-800hp on stock internals. Upgraded turbos push past 1000hp.',
       },
     },
     platformNotes: [
@@ -555,19 +594,22 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'cat-back-exhaust', 'ecu-tune'],
         recommended: ['headers', 'brake-pads-performance'],
         niceToHave: ['short-shifter', 'lowering-springs'],
-        narrative: 'The VQ37VHR responds well to bolt-ons. Intake, exhaust, and tune can add 30-40hp.',
+        narrative:
+          'The VQ37VHR responds well to bolt-ons. Intake, exhaust, and tune can add 30-40hp.',
       },
       trackPack: {
         mustHave: ['coilovers', 'brake-pads-track', 'high-temp-brake-fluid', 'oil-cooler'],
         recommended: ['big-brake-kit', 'performance-tires', 'limited-slip-diff'],
         niceToHave: ['sway-bars', 'lightweight-wheels'],
-        narrative: 'The NISMO package already has a good LSD and brakes. Cooling and suspension are the priorities.',
+        narrative:
+          'The NISMO package already has a good LSD and brakes. Cooling and suspension are the priorities.',
       },
       ultimatePower: {
         mustHave: ['turbo-kit-single', 'fuel-system-upgrade', 'clutch-upgrade'],
-        recommended: ['oil-cooler', 'intercooler', 'forged-internals'],
+        recommended: ['oil-cooler', 'intercooler', 'driveshaft-upgrade'],
         niceToHave: ['driveshaft-upgrade', 'axles-halfshafts'],
-        narrative: 'The VQ37 handles boost well. A single turbo kit can push 450-550hp. Requires significant supporting mods.',
+        narrative:
+          'The VQ37 handles boost well. A single turbo kit can push 450-550hp. Requires significant supporting mods.',
       },
     },
     platformNotes: [
@@ -591,19 +633,28 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'downpipe'],
         recommended: ['piggyback-tune', 'cat-back-exhaust'],
         niceToHave: ['brake-pads-performance', 'lowering-springs'],
-        narrative: 'The S55 twin-turbo responds incredibly to tuning. JB4 or downpipe + tune can add 80-100hp.',
+        narrative:
+          'The S55 twin-turbo responds incredibly to tuning. JB4 or downpipe + tune can add 80-100hp.',
       },
       trackPack: {
-        mustHave: ['intercooler', 'downpipe', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
+        mustHave: [
+          'intercooler',
+          'downpipe',
+          'coilovers',
+          'brake-pads-track',
+          'high-temp-brake-fluid',
+        ],
         recommended: ['oil-cooler', 'big-brake-kit', 'performance-tires'],
         niceToHave: ['limited-slip-diff', 'sway-bars'],
-        narrative: 'The M2 Competition is an excellent track car. Intercooler prevents heat soak, downpipe adds power.',
+        narrative:
+          'The M2 Competition is an excellent track car. Intercooler prevents heat soak, downpipe adds power.',
       },
       ultimatePower: {
         mustHave: ['turbo-upgrade-existing', 'intercooler', 'downpipe', 'fuel-system-upgrade'],
         recommended: ['oil-cooler', 'clutch-upgrade', 'ecu-tune'],
         niceToHave: ['driveshaft-upgrade'],
-        narrative: 'Pure Turbos or similar upgraded turbos push the S55 past 600hp. Requires extensive supporting mods.',
+        narrative:
+          'Pure Turbos or similar upgraded turbos push the S55 past 600hp. Requires extensive supporting mods.',
       },
     },
     platformNotes: [
@@ -612,10 +663,7 @@ export const carUpgradeRecommendations = {
       'Excellent chassis balance',
       'Carbon ceramic brakes available but expensive',
     ],
-    knownIssues: [
-      'Crank hub issues on some S55 engines',
-      'Charge pipe can crack under boost',
-    ],
+    knownIssues: ['Crank hub issues on some S55 engines', 'Charge pipe can crack under boost'],
   },
 
   'bmw-m4-f82': {
@@ -623,21 +671,29 @@ export const carUpgradeRecommendations = {
     tiers: {
       streetSport: {
         mustHave: ['cold-air-intake', 'downpipe'],
-        recommended: ['piggyback-tune', 'cat-back-exhaust', 'charge-pipe-upgrade'],
+        recommended: ['piggyback-tune', 'cat-back-exhaust', 'intercooler'],
         niceToHave: ['lowering-springs', 'brake-pads-performance'],
-        narrative: 'The S55 twin-turbo is incredibly responsive to mods. JB4 + downpipe = easy 500hp.',
+        narrative:
+          'The S55 twin-turbo is incredibly responsive to mods. JB4 + downpipe = easy 500hp.',
       },
       trackPack: {
         mustHave: ['intercooler', 'downpipe', 'coilovers', 'brake-pads-track', 'oil-cooler'],
         recommended: ['big-brake-kit', 'performance-tires', 'trans-cooler'],
         niceToHave: ['limited-slip-diff', 'sway-bars'],
-        narrative: 'Heat management is key for track use. The S55 runs hot. Intercooler and oil cooler are essential.',
+        narrative:
+          'Heat management is key for track use. The S55 runs hot. Intercooler and oil cooler are essential.',
       },
       ultimatePower: {
-        mustHave: ['turbo-upgrade-existing', 'intercooler', 'fuel-system-upgrade', 'clutch-upgrade'],
+        mustHave: [
+          'turbo-upgrade-existing',
+          'intercooler',
+          'fuel-system-upgrade',
+          'clutch-upgrade',
+        ],
         recommended: ['oil-cooler', 'downpipe', 'driveshaft-upgrade'],
-        niceToHave: ['forged-internals'],
-        narrative: 'Upgraded turbos push the F82 M4 past 600hp. The S55 can handle big power with proper cooling.',
+        niceToHave: ['driveshaft-upgrade'],
+        narrative:
+          'Upgraded turbos push the F82 M4 past 600hp. The S55 can handle big power with proper cooling.',
       },
     },
     platformNotes: [
@@ -662,19 +718,28 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'downpipe'],
         recommended: ['piggyback-tune', 'cat-back-exhaust'],
         niceToHave: ['lowering-springs', 'brake-pads-performance'],
-        narrative: 'The B58 responds incredibly to tuning. A JB4 or downpipe + tune can add 80-100hp with zero drama.',
+        narrative:
+          'The B58 responds incredibly to tuning. A JB4 or downpipe + tune can add 80-100hp with zero drama.',
       },
       trackPack: {
-        mustHave: ['intercooler', 'downpipe', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
+        mustHave: [
+          'intercooler',
+          'downpipe',
+          'coilovers',
+          'brake-pads-track',
+          'high-temp-brake-fluid',
+        ],
         recommended: ['oil-cooler', 'big-brake-kit', 'performance-tires'],
         niceToHave: ['sway-bars', 'limited-slip-diff'],
-        narrative: 'The Supra is an excellent track platform. Intercooler prevents heat soak, coilovers improve handling.',
+        narrative:
+          'The Supra is an excellent track platform. Intercooler prevents heat soak, coilovers improve handling.',
       },
       ultimatePower: {
         mustHave: ['turbo-upgrade-existing', 'intercooler', 'downpipe', 'fuel-system-upgrade'],
         recommended: ['oil-cooler', 'clutch-upgrade', 'driveshaft-upgrade'],
-        niceToHave: ['forged-internals'],
-        narrative: 'Pure Turbos or similar upgraded turbos push the B58 past 600hp. The engine is very strong.',
+        niceToHave: ['driveshaft-upgrade'],
+        narrative:
+          'Pure Turbos or similar upgraded turbos push the B58 past 600hp. The engine is very strong.',
       },
     },
     platformNotes: [
@@ -696,13 +761,15 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'cat-back-exhaust'],
         recommended: ['headers', 'ecu-tune', 'lowering-springs'],
         niceToHave: ['brake-pads-performance', 'performance-alignment'],
-        narrative: 'The 5.0L 2UR-GSE V8 sounds incredible with a full exhaust. Headers add noticeable power.',
+        narrative:
+          'The 5.0L 2UR-GSE V8 sounds incredible with a full exhaust. Headers add noticeable power.',
       },
       trackPack: {
         mustHave: ['headers', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
         recommended: ['big-brake-kit', 'performance-tires', 'oil-cooler'],
         niceToHave: ['sway-bars', 'lightweight-wheels'],
-        narrative: 'The LC 500 is a grand tourer, not a track car. But the chassis is capable with proper upgrades.',
+        narrative:
+          'The LC 500 is a grand tourer, not a track car. But the chassis is capable with proper upgrades.',
       },
     },
     platformNotes: [
@@ -711,9 +778,7 @@ export const carUpgradeRecommendations = {
       'LFA-derived exhaust note is incredible',
       'GT car, not a sports car - comfortable first',
     ],
-    knownIssues: [
-      'Heavy for a sports car - best as GT',
-    ],
+    knownIssues: ['Heavy for a sports car - best as GT'],
   },
 
   'lexus-rc-f': {
@@ -723,19 +788,22 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'cat-back-exhaust'],
         recommended: ['headers', 'ecu-tune', 'brake-pads-performance'],
         niceToHave: ['lowering-springs', 'short-shifter'],
-        narrative: 'The 2UR-GSE 5.0L V8 responds well to exhaust and headers. Tune optimizes the throttle response.',
+        narrative:
+          'The 2UR-GSE 5.0L V8 responds well to exhaust and headers. Tune optimizes the throttle response.',
       },
       trackPack: {
         mustHave: ['headers', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
         recommended: ['big-brake-kit', 'performance-tires', 'oil-cooler'],
         niceToHave: ['lightweight-wheels', 'sway-bars'],
-        narrative: 'Track Edition has carbon roof and TVD. Standard RC F needs suspension work for serious track use.',
+        narrative:
+          'Track Edition has carbon roof and TVD. Standard RC F needs suspension work for serious track use.',
       },
       ultimatePower: {
         mustHave: ['supercharger-centrifugal', 'fuel-system-upgrade', 'clutch-upgrade'],
         recommended: ['headers', 'oil-cooler', 'intercooler'],
-        niceToHave: ['forged-internals'],
-        narrative: 'RR Racing supercharger kits push the RC F past 600hp. The 2UR engine handles boost well.',
+        niceToHave: ['driveshaft-upgrade'],
+        narrative:
+          'RR Racing supercharger kits push the RC F past 600hp. The 2UR engine handles boost well.',
       },
     },
     platformNotes: [
@@ -743,9 +811,7 @@ export const carUpgradeRecommendations = {
       'Heavier than M4/C63 competition',
       'V8 sounds excellent with exhaust',
     ],
-    knownIssues: [
-      'Weight is the main limitation',
-    ],
+    knownIssues: ['Weight is the main limitation'],
   },
 
   // ============================================================================
@@ -758,19 +824,28 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'cat-back-exhaust'],
         recommended: ['headers', 'ecu-tune', 'brake-pads-performance'],
         niceToHave: ['lowering-springs', 'performance-alignment'],
-        narrative: 'The M156 6.2L V8 sounds incredible with exhaust. Headers add significant power and sound.',
+        narrative:
+          'The M156 6.2L V8 sounds incredible with exhaust. Headers add significant power and sound.',
       },
       trackPack: {
-        mustHave: ['headers', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid', 'oil-cooler'],
+        mustHave: [
+          'headers',
+          'coilovers',
+          'brake-pads-track',
+          'high-temp-brake-fluid',
+          'oil-cooler',
+        ],
         recommended: ['big-brake-kit', 'performance-tires', 'trans-cooler'],
         niceToHave: ['sway-bars', 'limited-slip-diff'],
-        narrative: 'The M156 runs hot on track. Cooling is essential. The LSD is available but expensive.',
+        narrative:
+          'The M156 runs hot on track. Cooling is essential. The LSD is available but expensive.',
       },
       ultimatePower: {
         mustHave: ['supercharger-centrifugal', 'fuel-system-upgrade', 'clutch-upgrade'],
         recommended: ['headers', 'oil-cooler', 'intercooler'],
-        niceToHave: ['forged-internals'],
-        narrative: 'Supercharging the M156 creates a monster. VF Engineering and Weistec kits push past 600hp.',
+        niceToHave: ['driveshaft-upgrade'],
+        narrative:
+          'Supercharging the M156 creates a monster. VF Engineering and Weistec kits push past 600hp.',
       },
     },
     platformNotes: [
@@ -794,13 +869,15 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'cat-back-exhaust'],
         recommended: ['headers', 'ecu-tune', 'brake-pads-performance'],
         niceToHave: ['lowering-springs', 'performance-alignment'],
-        narrative: 'The 4.2L FSI V8 sounds amazing with exhaust. Headers are expensive but add power and sound.',
+        narrative:
+          'The 4.2L FSI V8 sounds amazing with exhaust. Headers are expensive but add power and sound.',
       },
       trackPack: {
         mustHave: ['headers', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
         recommended: ['big-brake-kit', 'performance-tires', 'oil-cooler'],
         niceToHave: ['lightweight-wheels', 'sway-bars'],
-        narrative: 'The R8 is a capable track car. Cooling and brakes are the priorities. The chassis is excellent.',
+        narrative:
+          'The R8 is a capable track car. Cooling and brakes are the priorities. The chassis is excellent.',
       },
     },
     platformNotes: [
@@ -822,19 +899,22 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'cat-back-exhaust'],
         recommended: ['ecu-tune', 'brake-pads-performance'],
         niceToHave: ['lowering-springs', 'performance-alignment'],
-        narrative: 'The 5.2L V10 is incredible stock. A tune removes limiters and adds throttle response.',
+        narrative:
+          'The 5.2L V10 is incredible stock. A tune removes limiters and adds throttle response.',
       },
       trackPack: {
         mustHave: ['coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
         recommended: ['big-brake-kit', 'performance-tires', 'oil-cooler'],
         niceToHave: ['lightweight-wheels', 'sway-bars'],
-        narrative: 'The R8 V10 is a supercar. It handles track duty well but needs cooling for sustained use.',
+        narrative:
+          'The R8 V10 is a supercar. It handles track duty well but needs cooling for sustained use.',
       },
       ultimatePower: {
         mustHave: ['turbo-kit-twin', 'fuel-system-upgrade', 'clutch-upgrade'],
-        recommended: ['forged-internals', 'oil-cooler', 'intercooler'],
+        recommended: ['driveshaft-upgrade', 'oil-cooler', 'intercooler'],
         niceToHave: ['driveshaft-upgrade', 'axles-halfshafts'],
-        narrative: 'Twin turbo R8 V10 builds can make 1000+ hp. Extreme but possible with significant investment.',
+        narrative:
+          'Twin turbo R8 V10 builds can make 1000+ hp. Extreme but possible with significant investment.',
       },
     },
     platformNotes: [
@@ -859,19 +939,22 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'cat-back-exhaust'],
         recommended: ['ecu-tune', 'brake-pads-performance'],
         niceToHave: ['lowering-springs', 'performance-alignment'],
-        narrative: 'The V10 sounds incredible with exhaust. Minimal mods preserve the exotic character.',
+        narrative:
+          'The V10 sounds incredible with exhaust. Minimal mods preserve the exotic character.',
       },
       trackPack: {
         mustHave: ['coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
         recommended: ['big-brake-kit', 'performance-tires', 'oil-cooler'],
         niceToHave: ['lightweight-wheels', 'sway-bars'],
-        narrative: 'The Gallardo is a capable track car. Superleggera and Performante variants are track-focused.',
+        narrative:
+          'The Gallardo is a capable track car. Superleggera and Performante variants are track-focused.',
       },
       ultimatePower: {
         mustHave: ['turbo-kit-twin', 'fuel-system-upgrade', 'clutch-upgrade'],
-        recommended: ['forged-internals', 'oil-cooler', 'intercooler'],
+        recommended: ['driveshaft-upgrade', 'oil-cooler', 'intercooler'],
         niceToHave: ['driveshaft-upgrade', 'axles-halfshafts'],
-        narrative: 'Underground Racing and similar shops build 1500+ hp twin turbo Gallardos. Extreme builds.',
+        narrative:
+          'Underground Racing and similar shops build 1500+ hp twin turbo Gallardos. Extreme builds.',
       },
     },
     platformNotes: [
@@ -896,13 +979,15 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'cat-back-exhaust'],
         recommended: ['ecu-tune', 'brake-pads-performance'],
         niceToHave: ['performance-alignment', 'lowering-springs'],
-        narrative: 'The AMG-sourced 2.0L turbo responds well to tuning. The Toyota V6 version has less tuning potential.',
+        narrative:
+          'The AMG-sourced 2.0L turbo responds well to tuning. The Toyota V6 version has less tuning potential.',
       },
       trackPack: {
         mustHave: ['coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
         recommended: ['big-brake-kit', 'performance-tires', 'intercooler'],
         niceToHave: ['lightweight-wheels', 'oil-cooler'],
-        narrative: 'The Emira is already very capable. The chassis is excellent. Focus on cooling for track use.',
+        narrative:
+          'The Emira is already very capable. The chassis is excellent. Focus on cooling for track use.',
       },
     },
     platformNotes: [
@@ -911,10 +996,7 @@ export const carUpgradeRecommendations = {
       'Toyota engine is more reliable long-term',
       'Last pure ICE Lotus',
     ],
-    knownIssues: [
-      'Early production had some quality issues',
-      'Dealer network is limited',
-    ],
+    knownIssues: ['Early production had some quality issues', 'Dealer network is limited'],
   },
 
   'lotus-evora-gt': {
@@ -924,13 +1006,15 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'cat-back-exhaust'],
         recommended: ['ecu-tune', 'brake-pads-performance'],
         niceToHave: ['short-shifter', 'performance-alignment'],
-        narrative: 'The supercharged 2GR-FE V6 responds to intake and exhaust mods. Keep the lightweight character.',
+        narrative:
+          'The supercharged 2GR-FE V6 responds to intake and exhaust mods. Keep the lightweight character.',
       },
       trackPack: {
         mustHave: ['coilovers', 'brake-pads-track', 'high-temp-brake-fluid', 'oil-cooler'],
         recommended: ['big-brake-kit', 'performance-tires', 'pulley-tune-sc'],
         niceToHave: ['lightweight-wheels', 'sway-bars'],
-        narrative: 'The Evora GT is a serious track car. Supercharger pulley adds easy power. Focus on cooling.',
+        narrative:
+          'The Evora GT is a serious track car. Supercharger pulley adds easy power. Focus on cooling.',
       },
     },
     platformNotes: [
@@ -939,10 +1023,7 @@ export const carUpgradeRecommendations = {
       'GT version has 416hp, lighter than base',
       'Manual gearbox is Toyota-sourced',
     ],
-    knownIssues: [
-      'A/C can be weak in hot climates',
-      'Parts availability can be challenging',
-    ],
+    knownIssues: ['A/C can be weak in hot climates', 'Parts availability can be challenging'],
   },
 
   'lotus-evora-s': {
@@ -952,7 +1033,8 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'cat-back-exhaust'],
         recommended: ['ecu-tune', 'brake-pads-performance'],
         niceToHave: ['lowering-springs', 'short-shifter'],
-        narrative: 'The supercharged V6 responds to basic mods. Focus on maintaining the lightweight character.',
+        narrative:
+          'The supercharged V6 responds to basic mods. Focus on maintaining the lightweight character.',
       },
       trackPack: {
         mustHave: ['coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
@@ -966,9 +1048,7 @@ export const carUpgradeRecommendations = {
       'IPS (automated manual) is less desirable than manual',
       'Excellent weight distribution',
     ],
-    knownIssues: [
-      'IPS gearbox can be clunky',
-    ],
+    knownIssues: ['IPS gearbox can be clunky'],
   },
 
   // ============================================================================
@@ -981,19 +1061,28 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'cat-back-exhaust'],
         recommended: ['headers', 'ecu-tune', 'brake-pads-performance'],
         niceToHave: ['short-shifter', 'performance-alignment'],
-        narrative: 'The 8.4L V10 is already making serious power. Headers and exhaust add to the incredible sound.',
+        narrative:
+          'The 8.4L V10 is already making serious power. Headers and exhaust add to the incredible sound.',
       },
       trackPack: {
-        mustHave: ['headers', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid', 'oil-cooler'],
+        mustHave: [
+          'headers',
+          'coilovers',
+          'brake-pads-track',
+          'high-temp-brake-fluid',
+          'oil-cooler',
+        ],
         recommended: ['big-brake-kit', 'performance-tires', 'trans-cooler'],
         niceToHave: ['limited-slip-diff', 'sway-bars'],
-        narrative: 'The Viper is a serious track weapon. The ACR is the ultimate version. Cooling is critical.',
+        narrative:
+          'The Viper is a serious track weapon. The ACR is the ultimate version. Cooling is critical.',
       },
       ultimatePower: {
-        mustHave: ['turbo-kit-twin', 'fuel-system-upgrade', 'clutch-upgrade', 'forged-internals'],
+        mustHave: ['turbo-kit-twin', 'fuel-system-upgrade', 'clutch-upgrade', 'driveshaft-upgrade'],
         recommended: ['oil-cooler', 'trans-cooler', 'driveshaft-upgrade'],
         niceToHave: ['axles-halfshafts'],
-        narrative: 'Twin turbo Vipers make 1500+ hp. The V10 can handle significant power with proper supporting mods.',
+        narrative:
+          'Twin turbo Vipers make 1500+ hp. The V10 can handle significant power with proper supporting mods.',
       },
     },
     platformNotes: [
@@ -1018,19 +1107,22 @@ export const carUpgradeRecommendations = {
         mustHave: ['high-flow-air-filter', 'cat-back-exhaust'],
         recommended: ['pulley-tune-sc', 'brake-pads-performance'],
         niceToHave: ['lowering-springs', 'performance-alignment'],
-        narrative: 'The supercharged 5.0L V8 responds to pulley and tune. The exhaust is already excellent.',
+        narrative:
+          'The supercharged 5.0L V8 responds to pulley and tune. The exhaust is already excellent.',
       },
       trackPack: {
         mustHave: ['pulley-tune-sc', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
-        recommended: ['heat-exchanger-sc', 'big-brake-kit', 'performance-tires'],
+        recommended: ['intercooler', 'big-brake-kit', 'performance-tires'],
         niceToHave: ['oil-cooler', 'sway-bars'],
-        narrative: 'The F-Type R is a grand tourer first. With mods, it becomes a capable track car.',
+        narrative:
+          'The F-Type R is a grand tourer first. With mods, it becomes a capable track car.',
       },
       ultimatePower: {
-        mustHave: ['pulley-tune-sc', 'heat-exchanger-sc', 'fuel-system-upgrade'],
+        mustHave: ['pulley-tune-sc', 'intercooler', 'fuel-system-upgrade'],
         recommended: ['oil-cooler', 'headers', 'intercooler'],
-        niceToHave: ['forged-internals'],
-        narrative: 'The supercharged V8 can reliably make 650-700hp with pulley and tune. The ZF8 handles the power.',
+        niceToHave: ['driveshaft-upgrade'],
+        narrative:
+          'The supercharged V8 can reliably make 650-700hp with pulley and tune. The ZF8 handles the power.',
       },
     },
     platformNotes: [
@@ -1056,19 +1148,14 @@ export const carUpgradeRecommendations = {
       },
       trackPack: {
         mustHave: ['pulley-tune-sc', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
-        recommended: ['heat-exchanger-sc', 'big-brake-kit', 'performance-tires'],
+        recommended: ['intercooler', 'big-brake-kit', 'performance-tires'],
         niceToHave: ['oil-cooler', 'sway-bars'],
-        narrative: 'The V6 S is lighter than the V8. Makes it a better canyon car. Cooling upgrades help on track.',
+        narrative:
+          'The V6 S is lighter than the V8. Makes it a better canyon car. Cooling upgrades help on track.',
       },
     },
-    platformNotes: [
-      '3.0L supercharged V6 - 380hp',
-      'Manual available',
-      'Lighter than V8 R',
-    ],
-    knownIssues: [
-      'Same as F-Type R',
-    ],
+    platformNotes: ['3.0L supercharged V6 - 380hp', 'Manual available', 'Lighter than V8 R'],
+    knownIssues: ['Same as F-Type R'],
   },
 
   // ============================================================================
@@ -1081,13 +1168,15 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'cat-back-exhaust'],
         recommended: ['piggyback-tune', 'brake-pads-performance'],
         niceToHave: ['lowering-springs', 'performance-alignment'],
-        narrative: 'The 1750 turbo is responsive to mods. Exhaust adds character to the already exotic sound.',
+        narrative:
+          'The 1750 turbo is responsive to mods. Exhaust adds character to the already exotic sound.',
       },
       trackPack: {
         mustHave: ['intercooler', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
         recommended: ['big-brake-kit', 'performance-tires', 'oil-cooler'],
         niceToHave: ['lightweight-wheels', 'sway-bars'],
-        narrative: 'The 4C is incredibly light and nimble. It\'s a track weapon with minimal upgrades needed.',
+        narrative:
+          "The 4C is incredibly light and nimble. It's a track weapon with minimal upgrades needed.",
       },
     },
     platformNotes: [
@@ -1096,11 +1185,7 @@ export const carUpgradeRecommendations = {
       'TCT dual-clutch only',
       'Spider version has removable roof',
     ],
-    knownIssues: [
-      'Reliability can be questionable',
-      'Dealer network limited',
-      'Parts expensive',
-    ],
+    knownIssues: ['Reliability can be questionable', 'Dealer network limited', 'Parts expensive'],
   },
 
   // ============================================================================
@@ -1113,13 +1198,15 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'cat-back-exhaust'],
         recommended: ['headers', 'ecu-tune', 'brake-pads-performance'],
         niceToHave: ['lowering-springs', 'short-shifter'],
-        narrative: 'The 4.3/4.7L V8 sounds incredible. Headers and exhaust transform the character.',
+        narrative:
+          'The 4.3/4.7L V8 sounds incredible. Headers and exhaust transform the character.',
       },
       trackPack: {
         mustHave: ['headers', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
         recommended: ['big-brake-kit', 'performance-tires', 'oil-cooler'],
         niceToHave: ['sway-bars', 'lightweight-wheels'],
-        narrative: 'The Vantage is a competent track car. The V8 S has more power. Cooling is important.',
+        narrative:
+          'The Vantage is a competent track car. The V8 S has more power. Cooling is important.',
       },
     },
     platformNotes: [
@@ -1128,10 +1215,7 @@ export const carUpgradeRecommendations = {
       'Sportshift is a single-clutch automated manual - not great',
       'Manual is the most desirable',
     ],
-    knownIssues: [
-      'Sportshift can be expensive to maintain',
-      'Running costs are high',
-    ],
+    knownIssues: ['Sportshift can be expensive to maintain', 'Running costs are high'],
   },
 
   // ============================================================================
@@ -1144,7 +1228,8 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'cat-back-exhaust'],
         recommended: ['headers', 'ecu-tune', 'brake-pads-performance'],
         niceToHave: ['lowering-springs', 'performance-alignment'],
-        narrative: 'The Ferrari-derived V8 sounds incredible. Exhaust and headers enhance the already fantastic sound.',
+        narrative:
+          'The Ferrari-derived V8 sounds incredible. Exhaust and headers enhance the already fantastic sound.',
       },
       trackPack: {
         mustHave: ['headers', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid'],
@@ -1159,11 +1244,7 @@ export const carUpgradeRecommendations = {
       'ZF6 automatic or MC Race gearbox',
       'Heavy but comfortable',
     ],
-    knownIssues: [
-      'Expensive to maintain',
-      'Electronics can be problematic',
-      'Parts are expensive',
-    ],
+    knownIssues: ['Expensive to maintain', 'Electronics can be problematic', 'Parts are expensive'],
   },
 
   // ============================================================================
@@ -1176,19 +1257,28 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'downpipe', 'cat-back-exhaust'],
         recommended: ['ecu-tune', 'brake-pads-performance'],
         niceToHave: ['short-shifter', 'lowering-springs'],
-        narrative: 'The EJ257 responds well to bolt-ons. Intake, downpipe, and tune are the essential trio.',
+        narrative:
+          'The EJ257 responds well to bolt-ons. Intake, downpipe, and tune are the essential trio.',
       },
       trackPack: {
-        mustHave: ['ecu-tune', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid', 'oil-cooler'],
+        mustHave: [
+          'ecu-tune',
+          'coilovers',
+          'brake-pads-track',
+          'high-temp-brake-fluid',
+          'oil-cooler',
+        ],
         recommended: ['big-brake-kit', 'performance-tires', 'intercooler'],
         niceToHave: ['sway-bars', 'limited-slip-diff'],
-        narrative: 'The STI is a rally-bred car. It handles track duty well but needs cooling upgrades.',
+        narrative:
+          'The STI is a rally-bred car. It handles track duty well but needs cooling upgrades.',
       },
       ultimatePower: {
-        mustHave: ['turbo-upgrade-existing', 'fuel-system-upgrade', 'forged-internals'],
+        mustHave: ['turbo-upgrade-existing', 'fuel-system-upgrade', 'driveshaft-upgrade'],
         recommended: ['clutch-upgrade', 'intercooler', 'oil-cooler'],
         niceToHave: ['driveshaft-upgrade'],
-        narrative: 'The EJ257 can make 400-500hp reliably with proper supporting mods. Forged internals are essential.',
+        narrative:
+          'The EJ257 can make 400-500hp reliably with proper supporting mods. Forged internals are essential.',
       },
     },
     platformNotes: [
@@ -1211,13 +1301,21 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'downpipe', 'cat-back-exhaust'],
         recommended: ['ecu-tune', 'brake-pads-performance'],
         niceToHave: ['short-shifter', 'lowering-springs'],
-        narrative: 'Same EJ257 as VA. The hatchback is lighter and more practical. Same bolt-on formula.',
+        narrative:
+          'Same EJ257 as VA. The hatchback is lighter and more practical. Same bolt-on formula.',
       },
       trackPack: {
-        mustHave: ['ecu-tune', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid', 'oil-cooler'],
+        mustHave: [
+          'ecu-tune',
+          'coilovers',
+          'brake-pads-track',
+          'high-temp-brake-fluid',
+          'oil-cooler',
+        ],
         recommended: ['big-brake-kit', 'performance-tires', 'intercooler'],
         niceToHave: ['sway-bars', 'limited-slip-diff'],
-        narrative: 'GR hatchback is lighter and more balanced. Excellent track platform with cooling upgrades.',
+        narrative:
+          'GR hatchback is lighter and more balanced. Excellent track platform with cooling upgrades.',
       },
     },
     platformNotes: [
@@ -1225,9 +1323,7 @@ export const carUpgradeRecommendations = {
       'Spec C available in some markets',
       'Wide-body fenders on GR',
     ],
-    knownIssues: [
-      'Same as VA - ringland, head gaskets',
-    ],
+    knownIssues: ['Same as VA - ringland, head gaskets'],
   },
 
   'subaru-wrx-sti-gd': {
@@ -1240,7 +1336,13 @@ export const carUpgradeRecommendations = {
         narrative: 'The classic blob-eye/hawk-eye STI. Same EJ257 formula. Iconic styling.',
       },
       trackPack: {
-        mustHave: ['ecu-tune', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid', 'oil-cooler'],
+        mustHave: [
+          'ecu-tune',
+          'coilovers',
+          'brake-pads-track',
+          'high-temp-brake-fluid',
+          'oil-cooler',
+        ],
         recommended: ['big-brake-kit', 'performance-tires', 'intercooler'],
         niceToHave: ['sway-bars', 'limited-slip-diff'],
         narrative: 'The GD is the most analog STI. Excellent track platform with proper cooling.',
@@ -1251,10 +1353,7 @@ export const carUpgradeRecommendations = {
       'Many consider this the best STI generation',
       'DCCD system is excellent',
     ],
-    knownIssues: [
-      'Age-related issues more common',
-      'Same engine concerns',
-    ],
+    knownIssues: ['Age-related issues more common', 'Same engine concerns'],
   },
 
   // ============================================================================
@@ -1267,19 +1366,28 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'downpipe', 'cat-back-exhaust'],
         recommended: ['ecu-tune', 'brake-pads-performance'],
         niceToHave: ['short-shifter', 'lowering-springs'],
-        narrative: 'The 4G63 is legendary. Intake, exhaust, and boost controller can add 50-80hp easily.',
+        narrative:
+          'The 4G63 is legendary. Intake, exhaust, and boost controller can add 50-80hp easily.',
       },
       trackPack: {
-        mustHave: ['ecu-tune', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid', 'oil-cooler'],
+        mustHave: [
+          'ecu-tune',
+          'coilovers',
+          'brake-pads-track',
+          'high-temp-brake-fluid',
+          'oil-cooler',
+        ],
         recommended: ['intercooler', 'performance-tires', 'big-brake-kit'],
         niceToHave: ['sway-bars', 'diff-cooler'],
-        narrative: 'The Evo is a rally homologation car. It excels on track with minimal modifications.',
+        narrative:
+          'The Evo is a rally homologation car. It excels on track with minimal modifications.',
       },
       ultimatePower: {
-        mustHave: ['turbo-upgrade-existing', 'fuel-system-upgrade', 'forged-internals'],
+        mustHave: ['turbo-upgrade-existing', 'fuel-system-upgrade', 'driveshaft-upgrade'],
         recommended: ['clutch-upgrade', 'intercooler', 'oil-cooler'],
         niceToHave: ['driveshaft-upgrade', 'axles-halfshafts'],
-        narrative: 'The 4G63 can make 500-600hp with proper supporting mods. Legendary tuning platform.',
+        narrative:
+          'The 4G63 can make 500-600hp with proper supporting mods. Legendary tuning platform.',
       },
     },
     platformNotes: [
@@ -1301,19 +1409,28 @@ export const carUpgradeRecommendations = {
         mustHave: ['cold-air-intake', 'downpipe', 'cat-back-exhaust'],
         recommended: ['ecu-tune', 'brake-pads-performance'],
         niceToHave: ['short-shifter', 'lowering-springs'],
-        narrative: 'The 4B11T is responsive to mods. MIVEC provides good power across the rev range.',
+        narrative:
+          'The 4B11T is responsive to mods. MIVEC provides good power across the rev range.',
       },
       trackPack: {
-        mustHave: ['ecu-tune', 'coilovers', 'brake-pads-track', 'high-temp-brake-fluid', 'oil-cooler'],
+        mustHave: [
+          'ecu-tune',
+          'coilovers',
+          'brake-pads-track',
+          'high-temp-brake-fluid',
+          'oil-cooler',
+        ],
         recommended: ['intercooler', 'performance-tires', 'big-brake-kit'],
         niceToHave: ['sway-bars', 'diff-cooler'],
-        narrative: 'The Evo X is more refined than 8/9 but still a capable track car. S-AWC is excellent.',
+        narrative:
+          'The Evo X is more refined than 8/9 but still a capable track car. S-AWC is excellent.',
       },
       ultimatePower: {
         mustHave: ['turbo-upgrade-existing', 'fuel-system-upgrade', 'clutch-upgrade'],
-        recommended: ['forged-internals', 'intercooler', 'oil-cooler'],
+        recommended: ['driveshaft-upgrade', 'intercooler', 'oil-cooler'],
         niceToHave: ['driveshaft-upgrade'],
-        narrative: 'The 4B11T can make 500hp with proper supporting mods. Weaker than 4G63 at extreme levels.',
+        narrative:
+          'The 4B11T can make 500hp with proper supporting mods. Weaker than 4G63 at extreme levels.',
       },
     },
     platformNotes: [
@@ -1322,10 +1439,7 @@ export const carUpgradeRecommendations = {
       'S-AWC (Super All Wheel Control) is impressive',
       'Final Evo - Final Edition highly collectible',
     ],
-    knownIssues: [
-      'SST can be fragile under high power',
-      'Crankshaft thrust bearing wear reported',
-    ],
+    knownIssues: ['SST can be fragile under high power', 'Crankshaft thrust bearing wear reported'],
   },
 };
 
@@ -1388,10 +1502,3 @@ export function getCarSlugsWithRecommendations() {
 }
 
 export default carUpgradeRecommendations;
-
-
-
-
-
-
-

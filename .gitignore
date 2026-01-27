@@ -47,3 +47,6 @@ test-results/
 *.tsbuildinfo
 next-env.d.ts
 .env*.local
+
+# GitHub workflows (require PAT with workflow scope)
+.github/

@@ -21,11 +21,7 @@ import { NextResponse } from 'next/server';
 
 import { createClient } from '@supabase/supabase-js';
 
-import {
-  executeWithCircuitBreaker,
-  isAnthropicHealthy,
-  getAnthropicStats,
-} from '@/lib/aiCircuitBreaker';
+import { executeWithCircuitBreaker } from '@/lib/aiCircuitBreaker';
 import { buildAIContext, formatContextForAI } from '@/lib/aiMechanicService';
 import {
   AL_TOOLS,
@@ -36,8 +32,6 @@ import {
   formatCentsAsDollars,
   calculateTokenCost,
   selectPromptVariant,
-  selectModelForQuery,
-  MODEL_TIERS,
 } from '@/lib/alConfig';
 // Note: Multi-agent imports are below after other imports
 import {
@@ -47,6 +41,7 @@ import {
   formatMessagesForClaude,
 } from '@/lib/alConversationService';
 import { classifyQueryIntent } from '@/lib/alIntentClassifier';
+import { streamWithMultiAgent, MULTI_AGENT_ENABLED } from '@/lib/alOrchestrator';
 import { executeToolCall } from '@/lib/alTools';
 import {
   getUserBalance,
@@ -55,9 +50,13 @@ import {
   processMonthlyRefill,
   estimateQueryCost,
   incrementDailyQuery,
-  getDailyUsage,
 } from '@/lib/alUsageService';
+import { trackActivity } from '@/lib/dashboardScoreService';
 import { notifyALConversation } from '@/lib/discord';
+import { getAnthropicConfig } from '@/lib/observability';
+import { awardPoints } from '@/lib/pointsService';
+import { rateLimit } from '@/lib/rateLimit';
+import { logServerError, withErrorLogging } from '@/lib/serverErrorLogger';
 
 // =============================================================================
 // USER INFO HELPER (for Discord notifications)
@@ -93,12 +92,6 @@ async function getUserInfoForNotification(userId) {
     return { displayName: null, email: null };
   }
 }
-import { getAnthropicConfig } from '@/lib/observability';
-import { trackActivity } from '@/lib/dashboardScoreService';
-import { awardPoints } from '@/lib/pointsService';
-import { rateLimit } from '@/lib/rateLimit';
-import { logServerError, withErrorLogging } from '@/lib/serverErrorLogger';
-import { streamWithMultiAgent, MULTI_AGENT_ENABLED } from '@/lib/alOrchestrator';
 
 // Stream encoding helper
 const encoder = new TextEncoder();
@@ -152,24 +145,6 @@ function buildMessageContentWithAttachments(text, attachments = []) {
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-sonnet-4-20250514';
 const INTERNAL_EVAL_KEY = process.env.INTERNAL_EVAL_KEY;
-
-// Model tiering feature flag - set to true to enable dynamic model selection
-// When enabled, simple queries use Haiku (cheaper), complex queries stay on Sonnet
-const ENABLE_MODEL_TIERING = process.env.ENABLE_MODEL_TIERING === 'true';
-
-/**
- * Get the appropriate model for a query based on complexity
- * @param {string} query - User's query
- * @param {string[]} domains - Detected domains
- * @returns {string} Model identifier
- */
-function getModelForQuery(query, domains = []) {
-  if (!ENABLE_MODEL_TIERING) {
-    return ANTHROPIC_MODEL;
-  }
-  const tier = selectModelForQuery(query, domains);
-  return tier.model;
-}
 
 // =============================================================================
 // STREAMING HELPERS
@@ -283,6 +258,7 @@ function getToolStartLabel(toolName) {
     // Parts & mods
     search_parts: 'Searching parts catalog...',
     find_best_parts: 'Finding best parts...',
+    research_parts_live: 'Researching parts across vendors...',
     get_upgrade_info: 'Loading upgrade information...',
     recommend_build: 'Generating build recommendations...',
     calculate_mod_impact: 'Calculating performance gains...',
@@ -1308,8 +1284,8 @@ async function handlePost(request) {
     }
 
     // Variant-aware maintenance: keep handy for tool input normalization.
-    const userMatchedCarSlug = context?.userVehicle?.matched_car_slug || null;
-    const userMatchedCarVariantKey = context?.userVehicle?.matched_car_variant_key || null;
+    const _userMatchedCarSlug = context?.userVehicle?.matched_car_slug || null;
+    const _userMatchedCarVariantKey = context?.userVehicle?.matched_car_variant_key || null;
 
     // Format context for the system prompt
     const contextText = formatContextForAI(context);

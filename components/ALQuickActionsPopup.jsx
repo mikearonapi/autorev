@@ -221,13 +221,47 @@ export function generatePartsPageActions(upgrades = [], carName = 'my car') {
   }
 
   // Generate specific prompts for EVERY upgrade - no limit
+  // Uses research_parts_live for real vendor search with purchase links
   const upgradeActions = upgrades
     .map((upgrade) => {
       const name = getUpgradeName(upgrade);
+      const _key = typeof upgrade === 'object' ? upgrade.key || name : name;
       if (name === 'Unknown') return null;
       return {
-        label: `Find best ${name}`,
-        prompt: `What are the best ${name} options for my ${carName}? Compare the top 3-4 brands/options with pros, cons, price ranges, and which offers the best value. Include any fitment or compatibility notes.`,
+        label: `See ${name} Options`,
+        prompt: `Find me the best ${name.toLowerCase()} options for my ${carName}.
+
+USE THE research_parts_live TOOL with these parameters:
+- upgrade_type: "${name.toLowerCase()}"
+
+Then format the results as a Top 5 list:
+
+## Top 5 ${name} Picks for ${carName}
+
+For each pick:
+
+**1) [Brand] [Product Name]**
+
+**Why it's recommended:** [1-2 sentences based on what you found]
+
+**What differentiates it:** [What makes this unique vs others]
+
+**Price:** $XXX (from the search results)
+
+**Buy from:** [Vendor Name](actual_url_from_results)
+
+---
+
+[Continue for picks 2-5]
+
+---
+
+### Quick Buying Guide
+- **Best overall:** [Pick name] - [one line why]
+- **Best value:** [Pick name] - [one line why]
+- **Best for performance:** [Pick name] - [one line why]
+
+Use the ACTUAL URLs and prices from research_parts_live results.`,
       };
     })
     .filter(Boolean);

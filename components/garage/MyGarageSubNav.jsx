@@ -2,16 +2,15 @@
 
 /**
  * MyGarageSubNav Component
- * 
+ *
  * Dropdown navigation for My Garage sub-pages:
  * - Specs: Full vehicle specifications
  * - Build: Configure upgrades and modifications
- * - Performance: See performance impact of upgrades
  * - Parts: Research and select specific parts
  * - Install: Track installation progress and find service centers
  * - Photos: Manage vehicle photos
- * 
- * Used across all six vehicle-specific pages in My Garage.
+ *
+ * Used across all five vehicle-specific pages in My Garage.
  */
 
 import React, { useState, useRef, useEffect } from 'react';
@@ -19,83 +18,77 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
+import { Icons } from '@/components/ui/Icons';
+
 import styles from './MyGarageSubNav.module.css';
 
 // Navigation options - in display order
 const NAV_OPTIONS = [
-  { 
-    id: 'my-specs', 
+  {
+    id: 'my-specs',
     label: 'Specs',
     href: '/garage/my-specs',
     description: 'Vehicle specifications',
-    icon: 'specs'
+    icon: 'specs',
   },
-  { 
-    id: 'my-build', 
+  {
+    id: 'my-build',
     label: 'Build',
     href: '/garage/my-build',
     description: 'Configure upgrades',
-    icon: 'wrench'
+    icon: 'wrench',
   },
-  { 
-    id: 'my-performance', 
-    label: 'Performance',
-    href: '/garage/my-performance',
-    description: 'See performance gains',
-    icon: 'bolt'
-  },
-  { 
-    id: 'my-parts', 
+  {
+    id: 'my-parts',
     label: 'Parts',
     href: '/garage/my-parts',
     description: 'Research parts',
-    icon: 'box'
+    icon: 'box',
   },
-  { 
-    id: 'my-install', 
+  {
+    id: 'my-install',
     label: 'Install',
     href: '/garage/my-install',
     description: 'Track installations',
-    icon: 'tool'
+    icon: 'tool',
   },
-  { 
-    id: 'my-photos', 
+  {
+    id: 'my-photos',
     label: 'Photos',
     href: '/garage/my-photos',
     description: 'Manage photos',
-    icon: 'camera'
+    icon: 'camera',
   },
 ];
-
-import { Icons } from '@/components/ui/Icons';
 
 // Get icon component by name
 function getIcon(iconName) {
   switch (iconName) {
-    case 'specs': return Icons.specs;
-    case 'wrench': return Icons.wrench;
-    case 'bolt': return Icons.bolt;
-    case 'box': return Icons.box;
-    case 'camera': return Icons.camera;
-    case 'tool': return Icons.tool;
-    default: return Icons.specs;
+    case 'specs':
+      return Icons.specs;
+    case 'wrench':
+      return Icons.wrench;
+    case 'bolt':
+      return Icons.bolt;
+    case 'box':
+      return Icons.box;
+    case 'camera':
+      return Icons.camera;
+    case 'tool':
+      return Icons.tool;
+    default:
+      return Icons.specs;
   }
 }
 
-export default function MyGarageSubNav({ 
-  carSlug, 
-  buildId,
-  onBack,
-  leftAction,
-  rightAction,
-}) {
+export default function MyGarageSubNav({ carSlug, buildId, onBack, leftAction, rightAction }) {
   const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
-  
+
   // Determine current page from pathname
-  const currentOption = NAV_OPTIONS.find(opt => pathname?.startsWith(opt.href)) || NAV_OPTIONS[0];
-  
+  const currentOption = NAV_OPTIONS.find((opt) => pathname?.startsWith(opt.href)) || NAV_OPTIONS[0];
+
   // Build URL with query params
   const buildUrl = (baseHref) => {
     const params = new URLSearchParams();
@@ -104,7 +97,7 @@ export default function MyGarageSubNav({
     const queryString = params.toString();
     return queryString ? `${baseHref}?${queryString}` : baseHref;
   };
-  
+
   // Close dropdown when clicking outside
   useEffect(() => {
     function handleClickOutside(event) {
@@ -112,70 +105,64 @@ export default function MyGarageSubNav({
         setIsDropdownOpen(false);
       }
     }
-    
+
     if (isDropdownOpen) {
       document.addEventListener('mousedown', handleClickOutside);
       document.addEventListener('touchstart', handleClickOutside);
     }
-    
+
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
       document.removeEventListener('touchstart', handleClickOutside);
     };
   }, [isDropdownOpen]);
-  
+
   // Close dropdown on escape key
   useEffect(() => {
     function handleEscape(e) {
       if (e.key === 'Escape') setIsDropdownOpen(false);
     }
-    
+
     if (isDropdownOpen) {
       document.addEventListener('keydown', handleEscape);
     }
-    
+
     return () => document.removeEventListener('keydown', handleEscape);
   }, [isDropdownOpen]);
-  
+
   return (
     <div className={styles.header}>
       {/* Back Button */}
-      <button 
-        className={styles.backButton} 
-        onClick={onBack}
-        aria-label="Back to garage"
-      >
+      <button className={styles.backButton} onClick={onBack} aria-label="Back to garage">
         <Icons.arrowLeft size={20} />
       </button>
-      
+
       {/* Left Action (optional, e.g., Save status) */}
-      {leftAction && (
-        <div className={styles.leftAction}>
-          {leftAction}
-        </div>
-      )}
-      
+      {leftAction && <div className={styles.leftAction}>{leftAction}</div>}
+
       {/* Dropdown Trigger */}
       <div className={styles.dropdownContainer} ref={dropdownRef}>
-        <button 
+        <button
           className={`${styles.dropdownTrigger} ${isDropdownOpen ? styles.dropdownTriggerOpen : ''}`}
           onClick={() => setIsDropdownOpen(!isDropdownOpen)}
           aria-expanded={isDropdownOpen}
           aria-haspopup="listbox"
         >
           <span className={styles.triggerLabel}>{currentOption.label}</span>
-          <span className={`${styles.triggerIcon} ${isDropdownOpen ? styles.triggerIconRotated : ''}`}>
+          <span
+            className={`${styles.triggerIcon} ${isDropdownOpen ? styles.triggerIconRotated : ''}`}
+          >
             <Icons.chevronDown size={16} />
           </span>
         </button>
-        
+
         {/* Dropdown Menu */}
         {isDropdownOpen && (
           <div className={styles.dropdownMenu} role="listbox">
             {NAV_OPTIONS.map((option) => {
               const IconComponent = getIcon(option.icon);
               const isActive = option.id === currentOption.id;
-              
+
               return (
                 <Link
                   key={option.id}
@@ -203,13 +190,9 @@ export default function MyGarageSubNav({
           </div>
         )}
       </div>
-      
+
       {/* Right Action (optional, e.g., Save button) */}
-      {rightAction && (
-        <div className={styles.rightAction}>
-          {rightAction}
-        </div>
-      )}
+      {rightAction && <div className={styles.rightAction}>{rightAction}</div>}
     </div>
   );
 }

@@ -2,10 +2,10 @@
 
 /**
  * Parts Shopping List Component
- * 
+ *
  * SCOPE: Shopping/purchasing workflow (planned → purchased)
  * Installation tracking is handled by the Install page (/garage/my-install)
- * 
+ *
  * Shows the selected upgrades as a shopping list - items the user needs to buy.
  * Users can:
  * - See all upgrades they've selected as line items
@@ -14,12 +14,12 @@
  * - Add/edit specific part details (brand, model, price, etc.)
  * - Get AL to review the entire build for compatibility and suggestions
  * - Link to Install page when parts are ready
- * 
+ *
  * STATUS TRACKING (on this page):
  * - Planned: Selected upgrade, no part chosen yet (gray)
  * - Purchased: Part acquired, ready for installation (teal)
  * - Installed: Shows as complete (read-only, lime) - managed by Install page
- * 
+ *
  * @module components/tuning-shop/PartsSelector
  */
 
@@ -49,11 +49,11 @@ const PART_STATUS = {
  */
 function ALAvatar({ size = 24 }) {
   return (
-    <Image 
+    <Image
       src={UI_IMAGES.alMascot}
       alt="AL"
       unoptimized
-      width={size} 
+      width={size}
       height={size}
       className={styles.alAvatar}
     />
@@ -65,7 +65,7 @@ function ALAvatar({ size = 24 }) {
  */
 function buildContextSummary(upgrades) {
   if (!upgrades || upgrades.length === 0) return '';
-  
+
   // Group by category
   const byCategory = upgrades.reduce((acc, u) => {
     const cat = u.category || 'Other';
@@ -73,7 +73,7 @@ function buildContextSummary(upgrades) {
     acc[cat].push(u.name);
     return acc;
   }, {});
-  
+
   return Object.entries(byCategory)
     .map(([cat, names]) => `${cat}: ${names.join(', ')}`)
     .join('\n');
@@ -87,7 +87,7 @@ function buildContextSummary(upgrades) {
 function StatusBadge({ status, onClick, disabled, upgradeName }) {
   const statusInfo = PART_STATUS[status] || PART_STATUS.planned;
   const canClick = statusInfo.canToggle && statusInfo.next && !disabled;
-  
+
   // For installed parts, show as complete (non-interactive)
   if (status === 'installed') {
     return (
@@ -101,19 +101,19 @@ function StatusBadge({ status, onClick, disabled, upgradeName }) {
       </span>
     );
   }
-  
+
   return (
     <button
       className={`${styles.statusBadge} ${styles[`status${statusInfo.color}`]}`}
       onClick={canClick ? onClick : undefined}
       disabled={!canClick}
-      title={canClick 
-        ? `Click to mark as ${PART_STATUS[statusInfo.next]?.label}` 
-        : statusInfo.label
+      title={
+        canClick ? `Click to mark as ${PART_STATUS[statusInfo.next]?.label}` : statusInfo.label
       }
-      aria-label={canClick 
-        ? `Mark ${upgradeName} as ${PART_STATUS[statusInfo.next]?.label}` 
-        : `${upgradeName}: ${statusInfo.label}`
+      aria-label={
+        canClick
+          ? `Mark ${upgradeName} as ${PART_STATUS[statusInfo.next]?.label}`
+          : `${upgradeName}: ${statusInfo.label}`
       }
       aria-pressed={status === 'purchased'}
     >
@@ -126,21 +126,21 @@ function StatusBadge({ status, onClick, disabled, upgradeName }) {
 /**
  * Single shopping list item for an upgrade
  */
-function ShoppingListItem({ 
-  upgrade, 
-  partDetails, 
+function ShoppingListItem({
+  upgrade,
+  partDetails,
   onUpdatePart,
   onStatusChange,
-  onFindWithAL,
+  onSeeOptions,
   carSlug,
 }) {
   const [isEditing, setIsEditing] = useState(false);
-  
+
   const [editData, setEditData] = useState({
     brandName: partDetails?.brandName || '',
     partName: partDetails?.partName || '',
     partNumber: partDetails?.partNumber || '',
-    price: partDetails?.price || partDetails?.priceCents ? (partDetails.priceCents / 100) : '',
+    price: partDetails?.price || partDetails?.priceCents ? partDetails.priceCents / 100 : '',
     productUrl: partDetails?.productUrl || '',
     vendorName: partDetails?.vendorName || '',
     notes: partDetails?.notes || '',
@@ -149,7 +149,7 @@ function ShoppingListItem({
   const hasPartDetails = partDetails?.brandName || partDetails?.partName;
   const status = partDetails?.status || 'planned';
   const statusInfo = PART_STATUS[status] || PART_STATUS.planned;
-  
+
   const handleSave = () => {
     onUpdatePart({
       ...editData,
@@ -166,7 +166,7 @@ function ShoppingListItem({
       brandName: partDetails?.brandName || '',
       partName: partDetails?.partName || '',
       partNumber: partDetails?.partNumber || '',
-      price: partDetails?.price || partDetails?.priceCents ? (partDetails.priceCents / 100) : '',
+      price: partDetails?.price || partDetails?.priceCents ? partDetails.priceCents / 100 : '',
       productUrl: partDetails?.productUrl || '',
       vendorName: partDetails?.vendorName || '',
       notes: partDetails?.notes || '',
@@ -177,28 +177,26 @@ function ShoppingListItem({
   const handleStatusToggle = () => {
     // Only allow toggling if status supports it and has a next state
     if (!statusInfo.canToggle || !statusInfo.next) return;
-    
+
     const nextStatus = statusInfo.next;
     const now = new Date().toISOString();
-    
+
     const statusUpdate = {
       status: nextStatus,
       // Set or clear purchasedAt based on direction
-      ...(nextStatus === 'purchased' 
-        ? { purchasedAt: now } 
-        : { purchasedAt: null }), // Clear when going back to planned
+      ...(nextStatus === 'purchased' ? { purchasedAt: now } : { purchasedAt: null }), // Clear when going back to planned
       // NOTE: installed status is handled by Install page, not here
     };
-    
+
     onStatusChange?.(upgrade.key, statusUpdate);
   };
 
-  const handleFindWithAL = () => {
-    onFindWithAL?.(upgrade, carSlug);
+  const handleSeeOptions = () => {
+    onSeeOptions?.(upgrade, carSlug);
   };
 
   return (
-    <div 
+    <div
       className={`${styles.listItem} ${hasPartDetails ? styles.hasDetails : ''} ${styles[`item${statusInfo.color}`]}`}
       role="listitem"
       aria-label={`${upgrade.name}: ${statusInfo.label}`}
@@ -214,12 +212,25 @@ function ShoppingListItem({
               </span>
             )}
           </div>
-          
+
           <div className={styles.itemStatus}>
             <StatusBadge status={status} onClick={handleStatusToggle} upgradeName={upgrade.name} />
           </div>
         </div>
-        
+
+        {/* See Options CTA - Only show when no part selected yet */}
+        {!hasPartDetails && !isEditing && (
+          <button
+            className={styles.seeOptionsBtn}
+            onClick={handleSeeOptions}
+            aria-label={`See ${upgrade.name} options with AL recommendations`}
+          >
+            <ALAvatar size={20} />
+            <span>See {upgrade.name} Options</span>
+            <Icons.chevronRight size={16} aria-hidden="true" />
+          </button>
+        )}
+
         {/* Bottom row: Sub-details + Actions */}
         <div className={styles.itemBottomRow}>
           {/* Left side: Add button + text */}
@@ -246,14 +257,23 @@ function ShoppingListItem({
                 )}
               </div>
             ) : (
-              <span className={styles.noPartText}>No part selected</span>
+              <span className={styles.noPartText}>or add manually</span>
             )}
           </div>
-          
+
           {/* Right side: Actions */}
           <div className={styles.itemActions}>
             {!isEditing && hasPartDetails && (
               <>
+                {/* See other options button - when part already selected */}
+                <button
+                  className={styles.seeOtherOptionsBtn}
+                  onClick={handleSeeOptions}
+                  title={`See other ${upgrade.name} options`}
+                  aria-label={`See other ${upgrade.name} options`}
+                >
+                  <ALAvatar size={16} />
+                </button>
                 {partDetails.productUrl && (
                   <a
                     href={partDetails.productUrl}
@@ -281,7 +301,11 @@ function ShoppingListItem({
       </div>
 
       {isEditing && (
-        <div className={styles.editForm} role="form" aria-label={`Edit part details for ${upgrade.name}`}>
+        <div
+          className={styles.editForm}
+          role="form"
+          aria-label={`Edit part details for ${upgrade.name}`}
+        >
           <div className={styles.editRow}>
             <input
               type="text"
@@ -345,18 +369,10 @@ function ShoppingListItem({
             />
           </div>
           <div className={styles.editActions}>
-            <button 
-              type="button"
-              className={styles.cancelBtn} 
-              onClick={handleCancel}
-            >
+            <button type="button" className={styles.cancelBtn} onClick={handleCancel}>
               Cancel
             </button>
-            <button 
-              type="button"
-              className={styles.saveBtn} 
-              onClick={handleSave}
-            >
+            <button type="button" className={styles.saveBtn} onClick={handleSave}>
               Save Part
             </button>
           </div>
@@ -368,7 +384,7 @@ function ShoppingListItem({
 
 /**
  * Main Parts Shopping List Component
- * 
+ *
  * SCOPE: This component handles SHOPPING (planned → purchased)
  * Installation tracking is handled by the Install page (/garage/my-install)
  */
@@ -389,9 +405,17 @@ export default function PartsSelector({
   // Get full upgrade objects from keys
   const upgrades = useMemo(() => {
     return selectedUpgrades
-      .map(key => {
+      .map((key) => {
         const upgrade = getUpgradeByKey(key);
-        return upgrade || { key, name: key.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') };
+        return (
+          upgrade || {
+            key,
+            name: key
+              .split('-')
+              .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+              .join(' '),
+          }
+        );
       })
       .filter(Boolean);
   }, [selectedUpgrades]);
@@ -399,7 +423,7 @@ export default function PartsSelector({
   // Map parts to upgrades
   const partsByUpgrade = useMemo(() => {
     const map = {};
-    selectedParts.forEach(part => {
+    selectedParts.forEach((part) => {
       if (part.upgradeKey) {
         map[part.upgradeKey] = part;
       }
@@ -418,107 +442,155 @@ export default function PartsSelector({
   // Status counts for summary
   const statusCounts = useMemo(() => {
     const counts = { planned: 0, purchased: 0, installed: 0 };
-    
+
     // Count parts by status
-    selectedParts.forEach(p => {
+    selectedParts.forEach((p) => {
       const status = p.status || 'planned';
       if (counts[status] !== undefined) {
         counts[status]++;
       }
     });
-    
+
     // Upgrades without parts are "planned"
-    const partsWithStatus = selectedParts.filter(p => p.status).map(p => p.upgradeKey);
-    upgrades.forEach(u => {
+    const partsWithStatus = selectedParts.filter((p) => p.status).map((p) => p.upgradeKey);
+    upgrades.forEach((u) => {
       if (!partsWithStatus.includes(u.key)) {
         counts.planned++;
       }
     });
-    
+
     return counts;
   }, [selectedParts, upgrades]);
 
-  const handleUpdatePart = useCallback((partData) => {
-    const existingIndex = selectedParts.findIndex(p => p.upgradeKey === partData.upgradeKey);
-    
-    let newParts;
-    if (existingIndex >= 0) {
-      newParts = [...selectedParts];
-      newParts[existingIndex] = {
-        ...newParts[existingIndex],
-        ...partData,
-        id: newParts[existingIndex].id || `part_${Date.now()}`,
-      };
-    } else {
-      newParts = [
-        ...selectedParts,
-        {
+  const handleUpdatePart = useCallback(
+    (partData) => {
+      const existingIndex = selectedParts.findIndex((p) => p.upgradeKey === partData.upgradeKey);
+
+      let newParts;
+      if (existingIndex >= 0) {
+        newParts = [...selectedParts];
+        newParts[existingIndex] = {
+          ...newParts[existingIndex],
           ...partData,
-          id: `part_${Date.now()}`,
-          status: 'planned',
-        },
-      ];
-    }
-    
-    onPartsChange(newParts);
-  }, [selectedParts, onPartsChange]);
+          id: newParts[existingIndex].id || `part_${Date.now()}`,
+        };
+      } else {
+        newParts = [
+          ...selectedParts,
+          {
+            ...partData,
+            id: `part_${Date.now()}`,
+            status: 'planned',
+          },
+        ];
+      }
+
+      onPartsChange(newParts);
+    },
+    [selectedParts, onPartsChange]
+  );
 
   // Handle status change for a part
-  const handleStatusChange = useCallback((upgradeKey, statusUpdate) => {
-    const existingIndex = selectedParts.findIndex(p => p.upgradeKey === upgradeKey);
-    
-    let newParts;
-    if (existingIndex >= 0) {
-      newParts = [...selectedParts];
-      newParts[existingIndex] = {
-        ...newParts[existingIndex],
-        ...statusUpdate,
-      };
-    } else {
-      // Create a new part entry just for status tracking
-      newParts = [
-        ...selectedParts,
-        {
-          id: `part_${Date.now()}`,
-          upgradeKey,
+  const handleStatusChange = useCallback(
+    (upgradeKey, statusUpdate) => {
+      const existingIndex = selectedParts.findIndex((p) => p.upgradeKey === upgradeKey);
+
+      let newParts;
+      if (existingIndex >= 0) {
+        newParts = [...selectedParts];
+        newParts[existingIndex] = {
+          ...newParts[existingIndex],
           ...statusUpdate,
+        };
+      } else {
+        // Create a new part entry just for status tracking
+        newParts = [
+          ...selectedParts,
+          {
+            id: `part_${Date.now()}`,
+            upgradeKey,
+            ...statusUpdate,
+          },
+        ];
+      }
+
+      onPartsChange?.(newParts);
+      onStatusChange?.(upgradeKey, statusUpdate);
+    },
+    [selectedParts, onPartsChange, onStatusChange]
+  );
+
+  /**
+   * Handle "See Options" - uses research_parts_live for real vendor search
+   * This triggers a live search across Summit Racing, Amazon, manufacturer sites, etc.
+   * and returns structured results with actual purchase links.
+   */
+  const handleSeeOptions = useCallback(
+    (upgrade, slug) => {
+      const prompt = `Find me the best ${upgrade.name.toLowerCase()} options for my ${carName}.
+
+USE THE research_parts_live TOOL with these parameters:
+- car_slug: "${slug}"
+- upgrade_type: "${upgrade.name.toLowerCase()}"
+
+Then format the results as a Top 5 list like this:
+
+## Top 5 ${upgrade.name} Picks for ${carName}
+
+For each pick, include:
+
+**1) [Brand] [Product Name]**
+
+**Why it's recommended:** [1-2 sentences based on what you found]
+
+**What differentiates it:** [What makes this unique vs others]
+
+**Price:** $XXX (from the search results)
+
+**Buy from:** [Vendor Name](actual_url_from_results) - include multiple vendors if available
+
+---
+
+[Continue for picks 2-5]
+
+---
+
+### Quick Buying Guide
+- **Best overall:** [Pick name] - [one line why]
+- **Best value:** [Pick name] - [one line why]
+- **Best for performance:** [Pick name] - [one line why]
+
+IMPORTANT:
+1. Use the ACTUAL URLs from research_parts_live results for "Buy from" links
+2. Use the ACTUAL prices from the search results
+3. Focus on parts from reputable vendors (Summit Racing, manufacturer direct, etc.)
+4. Include a mix of price points if available
+5. Mention if fitment should be verified on the vendor's website`;
+
+      openChatWithPrompt(
+        prompt,
+        {
+          category: `${upgrade.name} for ${carName}`,
+          carSlug: slug,
         },
-      ];
-    }
-    
-    onPartsChange?.(newParts);
-    onStatusChange?.(upgradeKey, statusUpdate);
-  }, [selectedParts, onPartsChange, onStatusChange]);
-
-  // Handle "Find with AL" for a specific upgrade
-  const handleFindWithAL = useCallback((upgrade, slug) => {
-    const prompt = `I need to find the best ${upgrade.name} for my ${carName}. 
-
-Please use the find_best_parts tool to search for parts that fit my car and give me your top recommendations. I'm looking for:
-- Parts with verified fitment for this specific car
-- Good balance of quality and price
-- Any important installation notes or things I should know
-
-My car: ${carName} (${slug})
-Upgrade type: ${upgrade.name} (category: ${upgrade.category})`;
-
-    openChatWithPrompt(prompt, {
-      category: `Parts for ${carName}`,
-      carSlug: slug,
-    }, `Find best ${upgrade.name} for ${carName}`);
-  }, [carName, openChatWithPrompt]);
+        `Top 5 ${upgrade.name} for ${carName}`,
+        { autoSend: true }
+      );
+    },
+    [carName, openChatWithPrompt]
+  );
 
   // AL Build Review - comprehensive analysis of the entire build
   const handleALBuildReview = useCallback(() => {
     const buildSummary = buildContextSummary(upgrades);
     const specifiedParts = selectedParts
-      .filter(p => p.brandName || p.partName)
-      .map(p => `- ${p.upgradeName}: ${p.brandName || ''} ${p.partName || ''}`.trim())
+      .filter((p) => p.brandName || p.partName)
+      .map((p) => `- ${p.upgradeName}: ${p.brandName || ''} ${p.partName || ''}`.trim())
       .join('\n');
-    
-    const costInfo = totalCostRange 
+
+    const costInfo = totalCostRange
       ? `Estimated cost: $${totalCostRange.low?.toLocaleString()} - $${totalCostRange.high?.toLocaleString()}`
-      : totalCost > 0 
+      : totalCost > 0
         ? `Parts cost so far: $${totalCost.toLocaleString()}`
         : '';
 
@@ -556,11 +628,24 @@ ${specifiedParts ? `## Parts I've Selected:\n${specifiedParts}\n` : ''}
 
 Be specific to my ${carName} and this exact build configuration.`;
 
-    openChatWithPrompt(reviewPrompt, {
-      category: `Build Review for ${carName}`,
-      carSlug,
-    }, `Review my ${carName} build (${upgrades.length} mods, +${totalHpGain} HP)`);
-  }, [upgrades, selectedParts, carName, carSlug, totalHpGain, totalCost, totalCostRange, openChatWithPrompt]);
+    openChatWithPrompt(
+      reviewPrompt,
+      {
+        category: `Build Review for ${carName}`,
+        carSlug,
+      },
+      `Review my ${carName} build (${upgrades.length} mods, +${totalHpGain} HP)`
+    );
+  }, [
+    upgrades,
+    selectedParts,
+    carName,
+    carSlug,
+    totalHpGain,
+    totalCost,
+    totalCostRange,
+    openChatWithPrompt,
+  ]);
 
   if (upgrades.length === 0) {
     return null;
@@ -619,14 +704,14 @@ Be specific to my ${carName} and this exact build configuration.`;
       </div>
 
       <div className={styles.list}>
-        {upgrades.map(upgrade => (
+        {upgrades.map((upgrade) => (
           <ShoppingListItem
             key={upgrade.key}
             upgrade={upgrade}
             partDetails={partsByUpgrade[upgrade.key]}
             onUpdatePart={handleUpdatePart}
             onStatusChange={handleStatusChange}
-            onFindWithAL={handleFindWithAL}
+            onSeeOptions={handleSeeOptions}
             carSlug={carSlug}
           />
         ))}
@@ -641,13 +726,16 @@ Be specific to my ${carName} and this exact build configuration.`;
 
       {/* Ready to Install CTA - shows when there are purchased parts */}
       {statusCounts.purchased > 0 && (
-        <Link 
-          href={buildId ? `/garage/my-install?build=${buildId}` : `/garage/my-install?car=${carSlug}`}
+        <Link
+          href={
+            buildId ? `/garage/my-install?build=${buildId}` : `/garage/my-install?car=${carSlug}`
+          }
           className={styles.readyToInstallCta}
         >
           <div className={styles.readyToInstallCtaContent}>
             <span className={styles.readyToInstallCtaTitle}>
-              {statusCounts.purchased} {statusCounts.purchased === 1 ? 'Part' : 'Parts'} Ready to Install
+              {statusCounts.purchased} {statusCounts.purchased === 1 ? 'Part' : 'Parts'} Ready to
+              Install
             </span>
             <span className={styles.readyToInstallCtaSubtitle}>
               Track your installation progress, find DIY videos, or locate service centers

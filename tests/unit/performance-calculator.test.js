@@ -1,8 +1,8 @@
 /**
  * Unit Tests: Performance Calculator
- * 
+ *
  * Tests the consolidated HP calculation logic, metrics, and conflict detection.
- * 
+ *
  * Run: npm run test:unit -- tests/unit/performance-calculator.test.js
  */
 
@@ -15,17 +15,17 @@ import {
   isExhaustMod,
   isIntakeMod,
   isForcedInductionMod,
-  
+
   // Constants
   STAGE_TUNE_INCLUDED_MODS,
   TUNE_HIERARCHY,
   CATEGORY_CAPS,
   getHighestPriorityTune,
   isModExpectedByTune,
-  
+
   // Metrics
   calculateUpgradedMetrics,
-  
+
   // Conflict Detection
   detectUpgradeConflicts,
   getConflictSummary,
@@ -64,7 +64,7 @@ const mockTurboCar = {
 describe('calculateSmartHpGain', () => {
   it('should return stock values when no upgrades selected', () => {
     const result = calculateSmartHpGain(mockCar, []);
-    
+
     expect(result.stockHp).toBe(300);
     expect(result.totalGain).toBe(0);
     expect(result.projectedHp).toBe(300);
@@ -73,14 +73,14 @@ describe('calculateSmartHpGain', () => {
 
   it('should handle null car gracefully', () => {
     const result = calculateSmartHpGain(null, ['intake']);
-    
+
     expect(result.stockHp).toBe(0);
     expect(result.projectedHp).toBe(0);
   });
 
   it('should calculate gains for single intake mod', () => {
     const result = calculateSmartHpGain(mockCar, ['intake']);
-    
+
     expect(result.totalGain).toBeGreaterThan(0);
     expect(result.projectedHp).toBeGreaterThan(300);
     expect('intake' in result.breakdown || Object.keys(result.breakdown).length >= 0).toBeTruthy();
@@ -88,15 +88,19 @@ describe('calculateSmartHpGain', () => {
 
   it('should calculate gains for multiple mods', () => {
     const result = calculateSmartHpGain(mockCar, ['intake', 'exhaust-catback', 'headers']);
-    
+
     expect(result.totalGain).toBeGreaterThan(0);
   });
 
   it('should apply diminishing returns for many mods', () => {
     const manyMods = calculateSmartHpGain(mockCar, [
-      'intake', 'exhaust-catback', 'headers', 'downpipe', 'stage1-tune'
+      'intake',
+      'exhaust-catback',
+      'headers',
+      'downpipe',
+      'stage1-tune',
     ]);
-    
+
     // Adjustment should be applied for multiple mods
     expect(manyMods.adjustmentAmount).toBeGreaterThanOrEqual(0);
   });
@@ -104,7 +108,7 @@ describe('calculateSmartHpGain', () => {
   it('should handle turbo car differently than NA car for downpipe', () => {
     const naResult = calculateSmartHpGain(mockCar, ['downpipe']);
     const turboResult = calculateSmartHpGain(mockTurboCar, ['downpipe']);
-    
+
     // Downpipe should give more gains on turbo cars
     expect(turboResult.totalGain).toBeGreaterThanOrEqual(naResult.totalGain);
   });
@@ -131,8 +135,7 @@ describe('isExhaustMod', () => {
 describe('isIntakeMod', () => {
   it('should identify intake mods correctly', () => {
     expect(isIntakeMod('intake')).toBe(true);
-    expect(isIntakeMod('throttle-body')).toBe(true);
-    expect(isIntakeMod('intake-manifold')).toBe(true);
+    // Note: throttle-body and intake-manifold removed from upgrade options
   });
 
   it('should reject non-intake mods', () => {
@@ -159,7 +162,7 @@ describe('formatHpDisplay', () => {
     // formatHpDisplay takes a result object from calculateSmartHpGain
     const result = calculateSmartHpGain(mockCar, ['intake']);
     const formatted = formatHpDisplay(result);
-    
+
     expect(formatted).toHaveProperty('full');
     expect(formatted).toHaveProperty('compact');
     expect(formatted).toHaveProperty('stock');
@@ -172,7 +175,7 @@ describe('formatHpDisplay', () => {
   it('should format stock car with no upgrades', () => {
     const result = calculateSmartHpGain(mockCar, []);
     const formatted = formatHpDisplay(result);
-    
+
     expect(formatted.stock).toBe(300);
     expect(formatted.projected).toBe(300);
     expect(formatted.gain).toBe(0);
@@ -204,7 +207,9 @@ describe('STAGE_TUNE_INCLUDED_MODS', () => {
 describe('TUNE_HIERARCHY', () => {
   it('should have increasing priority for stage tunes', () => {
     // TUNE_HIERARCHY now contains objects with priority property
-    expect(TUNE_HIERARCHY['stage2-tune'].priority).toBeLessThan(TUNE_HIERARCHY['stage3-tune'].priority);
+    expect(TUNE_HIERARCHY['stage2-tune'].priority).toBeLessThan(
+      TUNE_HIERARCHY['stage3-tune'].priority
+    );
   });
 
   it('should have includes array for each tune level', () => {
@@ -256,7 +261,7 @@ describe('getConflictSummary', () => {
   it('should summarize conflicts', () => {
     const conflicts = detectUpgradeConflicts(['stage1-tune', 'stage2-tune']);
     const summary = getConflictSummary(conflicts);
-    
+
     expect(summary).toHaveProperty('hasConflicts');
     expect(summary).toHaveProperty('warningCount');
     expect(summary).toHaveProperty('infoCount');
@@ -279,13 +284,9 @@ describe('getConflictSummary', () => {
 describe('calculateUpgradedMetrics', () => {
   it('should calculate improved 0-60 with HP gains', () => {
     // Pass upgrade objects with .key property (correct API)
-    const upgrades = [
-      { key: 'intake' },
-      { key: 'exhaust-catback' },
-      { key: 'stage1-tune' },
-    ];
+    const upgrades = [{ key: 'intake' }, { key: 'exhaust-catback' }, { key: 'stage1-tune' }];
     const result = calculateUpgradedMetrics(mockCar, upgrades);
-    
+
     expect(result.zeroToSixty).toBeLessThan(mockCar.zeroToSixty);
   });
 
@@ -293,23 +294,20 @@ describe('calculateUpgradedMetrics', () => {
     const carWithoutMetrics = { hp: 300 };
     const upgrades = [{ key: 'intake' }];
     const result = calculateUpgradedMetrics(carWithoutMetrics, upgrades);
-    
+
     expect(result).toBeDefined();
   });
 
   it('should handle empty upgrades array', () => {
     const result = calculateUpgradedMetrics(mockCar, []);
-    
+
     expect(result.hp).toBe(mockCar.hp);
   });
 
   it('should return improved HP with mods', () => {
-    const upgrades = [
-      { key: 'intake' },
-      { key: 'exhaust-catback' },
-    ];
+    const upgrades = [{ key: 'intake' }, { key: 'exhaust-catback' }];
     const result = calculateUpgradedMetrics(mockCar, upgrades);
-    
+
     expect(result.hp).toBeGreaterThan(mockCar.hp);
   });
 });
@@ -364,7 +362,7 @@ describe('Platform-specific calibrations', () => {
 
   it('should give RS5 2.9T reduced downpipe gains (efficient factory DP)', () => {
     const rs5Result = calculateSmartHpGain(mockRS5B9, ['downpipe']);
-    
+
     // RS5 2.9T should get ~8 HP from downpipe (forum-validated)
     // NOT the generic 5% (which would be 22 HP)
     expect(rs5Result.totalGain).toBeLessThanOrEqual(10);
@@ -374,7 +372,7 @@ describe('Platform-specific calibrations', () => {
 
   it('should give B58 platform higher downpipe gains (restrictive factory DP)', () => {
     const b58Result = calculateSmartHpGain(mockBMWB58, ['downpipe']);
-    
+
     // B58 should get ~20 HP from downpipe (restrictive factory DP)
     expect(b58Result.totalGain).toBeGreaterThanOrEqual(15);
     expect(b58Result.totalGain).toBeLessThanOrEqual(25);
@@ -383,7 +381,7 @@ describe('Platform-specific calibrations', () => {
   it('should calculate reasonable Stage 1 build for RS5', () => {
     // Typical Stage 1 build: tune + downpipe + intake
     const result = calculateSmartHpGain(mockRS5B9, ['stage1-tune', 'downpipe', 'intake']);
-    
+
     // RS5 Stage 1 build should be ~90-110 HP total
     // Stage 1: ~80 HP (18% of 444)
     // Downpipe: ~8 HP (platform-specific)
@@ -391,7 +389,7 @@ describe('Platform-specific calibrations', () => {
     // With diminishing returns and overlap, total should be ~95-105 HP
     expect(result.totalGain).toBeGreaterThanOrEqual(85);
     expect(result.totalGain).toBeLessThanOrEqual(120);
-    
+
     // Should NOT be overcounting (e.g., 140+ HP would indicate double-counting)
     expect(result.totalGain).toBeLessThan(130);
   });
@@ -401,22 +399,22 @@ describe('Edge Cases', () => {
   it('should handle car with 0 HP', () => {
     const zeroCar = { hp: 0, engine: 'Unknown' };
     const result = calculateSmartHpGain(zeroCar, ['intake']);
-    
+
     expect(result.stockHp).toBe(0);
     expect(result.projectedHp).toBeGreaterThanOrEqual(0);
   });
 
   it('should handle undefined upgrade keys gracefully', () => {
     const result = calculateSmartHpGain(mockCar, ['nonexistent-mod']);
-    
+
     // Should handle gracefully, not throw
     expect(result.stockHp).toBe(300);
   });
 
   it('should handle duplicate upgrade keys with diminishing returns', () => {
     const result = calculateSmartHpGain(mockCar, ['intake', 'intake', 'intake']);
-    const singleResult = calculateSmartHpGain(mockCar, ['intake']);
-    
+    const _singleResult = calculateSmartHpGain(mockCar, ['intake']);
+
     // Duplicates may apply diminishing returns or be category-capped
     // Either way, result should be defined and non-negative
     expect(result.totalGain).toBeGreaterThanOrEqual(0);

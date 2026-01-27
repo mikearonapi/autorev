@@ -1368,24 +1368,9 @@ export const upgradeNodeMap = {
     improves: ['powertrain.hp_output'],
     modifies: ['powertrain.air_fuel_ratio'],
   },
-  'throttle-body': {
-    improves: ['powertrain.hp_output'],
-    modifies: ['powertrain.air_fuel_ratio'],
-  },
-  'intake-manifold': {
-    improves: ['powertrain.hp_output', 'powertrain.torque_output'],
-    modifies: ['powertrain.air_fuel_ratio'],
-  },
-  'tune-street': {
-    improves: ['powertrain.hp_output', 'powertrain.torque_output'],
-    modifies: ['powertrain.timing_advance', 'powertrain.air_fuel_ratio'],
-    stresses: ['ignition.knock_threshold'],
-  },
-  'tune-track': {
-    improves: ['powertrain.hp_output', 'powertrain.torque_output'],
-    modifies: ['powertrain.timing_advance', 'powertrain.air_fuel_ratio'],
-    stresses: ['ignition.knock_threshold', 'cooling.oil_cooler_capacity'],
-  },
+  // Note: throttle-body and intake-manifold removed - marginal gains, niche applications
+  // Note: tune-street and tune-track removed - Stage 1/2/3+ are the standard progression
+  // for turbo/SC cars. NA cars use bolt-ons without ECU tune requirements.
   'piggyback-tuner': {
     improves: ['powertrain.hp_output', 'powertrain.torque_output'],
     modifies: ['powertrain.boost_level'],
@@ -1398,20 +1383,13 @@ export const upgradeNodeMap = {
     modifies: ['exhaust.backpressure', 'exhaust.cat_converter_state'],
   },
 
-  // Intercooler
+  // Intercooler (also covers heat-exchanger-sc for SC cars)
   intercooler: {
     improves: ['induction.intercooler_capacity'],
     modifies: ['powertrain.boost_level'], // enables higher safe boost
   },
-  'heat-exchanger-sc': {
-    improves: ['induction.intercooler_capacity'],
-    modifies: ['powertrain.boost_level'],
-  },
 
-  // Fuel system
-  'hpfp-upgrade': {
-    improves: ['fueling.hpfp_capacity'],
-  },
+  // Fuel system (hpfp-upgrade merged into fuel-system-upgrade)
   'fuel-system-upgrade': {
     improves: ['fueling.injector_capacity', 'fueling.lpfp_capacity', 'fueling.hpfp_capacity'],
   },
@@ -1420,12 +1398,9 @@ export const upgradeNodeMap = {
   'flex-fuel-e85': {
     improves: ['fueling.fuel_octane'],
     modifies: ['powertrain.air_fuel_ratio'],
-    stresses: ['fueling.injector_capacity', 'fueling.hpfp_capacity'],
+    stresses: ['fueling.injector_capacity'],
   },
-  'methanol-injection': {
-    improves: ['cooling.oil_cooler_capacity', 'ignition.knock_threshold'],
-    modifies: ['powertrain.air_fuel_ratio'],
-  },
+  // Note: methanol-injection removed - E85/flex fuel is the popular modern alternative
 
   // Forced induction
   'turbo-upgrade-existing': {
@@ -1469,10 +1444,7 @@ export const upgradeNodeMap = {
     stresses: ['induction.intercooler_capacity', 'fueling.injector_capacity'],
   },
 
-  // Charge pipes
-  'charge-pipe-upgrade': {
-    improves: ['induction.charge_pipe_strength'],
-  },
+  // Note: charge-pipe-upgrade removed - typically bundled with intercooler kits
 
   // Cooling
   'oil-cooler': {
@@ -1574,27 +1546,15 @@ export const upgradeNodeMap = {
   // Exhaust
   headers: {
     improves: ['exhaust.flow_capacity', 'exhaust.header_type'],
-    requires: ['tune-street'], // Headers need a tune
+    // Note: Headers benefit from a tune but don't strictly require one for NA cars
   },
   'exhaust-catback': {
     improves: ['exhaust.flow_capacity'],
     modifies: ['exhaust.backpressure'],
   },
 
-  // Engine internals
-  camshafts: {
-    improves: ['powertrain.hp_output', 'powertrain.torque_output'],
-  },
-  'ported-heads': {
-    improves: ['powertrain.hp_output', 'powertrain.torque_output'],
-  },
-  'forged-internals': {
-    improves: ['powertrain.bottom_end_strength'],
-  },
-  'stroker-kit': {
-    improves: ['powertrain.hp_output', 'powertrain.torque_output'],
-    stresses: ['powertrain.oiling_system_margin'],
-  },
+  // Note: Engine internals (camshafts, ported-heads, forged-internals, stroker-kit) removed
+  // These are specialist engine build mods that <5% of enthusiasts pursue
 
   // Safety
   'roll-bar': {
@@ -1895,15 +1855,13 @@ export const dependencyRules = [
       const needsFuelUpgrade = selectedUpgrades.some((u) =>
         ['stage3-tune', 'turbo-upgrade-existing'].includes(u)
       );
-      const hasFuelUpgrade = selectedUpgrades.some((u) =>
-        ['fuel-system-upgrade', 'hpfp-upgrade'].includes(u)
-      );
+      const hasFuelUpgrade = selectedUpgrades.includes('fuel-system-upgrade');
 
       if (needsFuelUpgrade && !hasFuelUpgrade) {
         return {
           severity: 'critical',
           message: 'High boost levels require upgraded fuel system',
-          recommendation: ['fuel-system-upgrade', 'hpfp-upgrade'],
+          recommendation: ['fuel-system-upgrade'],
         };
       }
       return null;
@@ -1920,9 +1878,7 @@ export const dependencyRules = [
       const needsIntercooler = selectedUpgrades.some((u) =>
         ['stage2-tune', 'stage3-tune', 'turbo-upgrade-existing'].includes(u)
       );
-      const hasIntercooler = selectedUpgrades.some((u) =>
-        ['intercooler', 'heat-exchanger-sc'].includes(u)
-      );
+      const hasIntercooler = selectedUpgrades.includes('intercooler');
 
       if (needsIntercooler && !hasIntercooler) {
         return {
@@ -1935,28 +1891,7 @@ export const dependencyRules = [
     },
   },
 
-  {
-    id: 'boost-charge-pipes',
-    name: 'Charge Pipes for Boost',
-    trigger: {
-      upgradeKeys: ['stage2-tune', 'stage3-tune'],
-    },
-    check: (selectedUpgrades) => {
-      const needsChargePipes = selectedUpgrades.some((u) =>
-        ['stage2-tune', 'stage3-tune'].includes(u)
-      );
-      const hasChargePipes = selectedUpgrades.includes('charge-pipe-upgrade');
-
-      if (needsChargePipes && !hasChargePipes) {
-        return {
-          severity: 'warning',
-          message: 'Stock charge pipes may crack under high boost - consider upgrading',
-          recommendation: ['charge-pipe-upgrade'],
-        };
-      }
-      return null;
-    },
-  },
+  // Note: boost-charge-pipes check removed - charge-pipe-upgrade removed from modules
 
   // ---------------------------------------------------------------------------
   // POWER INCREASE → DRIVETRAIN RULES
@@ -1996,41 +1931,7 @@ export const dependencyRules = [
     },
   },
 
-  {
-    id: 'power-bottom-end',
-    name: 'Engine Internals for Extreme Power',
-    trigger: {
-      upgradeKeys: [
-        'supercharger-roots',
-        'supercharger-centrifugal',
-        'turbo-kit-single',
-        'turbo-kit-twin',
-        'stage3-tune',
-      ],
-    },
-    check: (selectedUpgrades) => {
-      const hasExtremePowerMod = selectedUpgrades.some((u) =>
-        [
-          'supercharger-roots',
-          'supercharger-centrifugal',
-          'turbo-kit-single',
-          'turbo-kit-twin',
-          'stage3-tune',
-        ].includes(u)
-      );
-      const hasForgedInternals = selectedUpgrades.includes('forged-internals');
-
-      if (hasExtremePowerMod && !hasForgedInternals) {
-        return {
-          severity: 'warning',
-          message:
-            'Extreme power builds can push stock internals near their limits - forged internals recommended for durability',
-          recommendation: ['forged-internals'],
-        };
-      }
-      return null;
-    },
-  },
+  // Note: power-bottom-end (forged-internals) check removed - specialist mod removed
 
   {
     id: 'power-cooling',
@@ -2167,15 +2068,7 @@ export const dependencyRules = [
     check: (selectedUpgrades) => {
       const hasHeaders = selectedUpgrades.includes('headers');
       const hasTune = selectedUpgrades.some((u) =>
-        [
-          'tune-street',
-          'tune-track',
-          'stage1-tune',
-          'stage2-tune',
-          'stage3-tune',
-          'dct-tune',
-          'piggyback-tuner',
-        ].includes(u)
+        ['stage1-tune', 'stage2-tune', 'stage3-tune', 'dct-tune', 'piggyback-tuner'].includes(u)
       );
 
       if (hasHeaders && !hasTune) {
@@ -2297,7 +2190,7 @@ export function getUpgradeSummary(upgradeKey) {
   return summary;
 }
 
-export default {
+const connectedTissueMatrix = {
   systems,
   nodes,
   edges,
@@ -2309,3 +2202,5 @@ export default {
   getAffectedSystems,
   getUpgradeSummary,
 };
+
+export default connectedTissueMatrix;

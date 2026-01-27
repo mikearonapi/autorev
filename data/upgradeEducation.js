@@ -1,9 +1,9 @@
 /**
  * AutoRev - Comprehensive Upgrade Encyclopedia
- * 
+ *
  * This is the unified, comprehensive source of educational content for all car upgrades.
  * It covers performance, reliability, and track-prep upgrades across all major categories.
- * 
+ *
  * CATEGORIES:
  * - power: Engine bolt-ons, intake, exhaust, tune
  * - forcedInduction: Superchargers, turbos, intercoolers
@@ -17,13 +17,13 @@
  * - safety: Harnesses, seats, roll bars, fire suppression
  * - weightReduction: Lightweight panels, interior deletion, seam welding
  * - engineSwaps: Complete engine swaps and crate engines
- * 
+ *
  * DATA ACCURACY DISCLAIMER:
  * All horsepower and performance gain estimates are based on community dyno data,
  * manufacturer claims, and aggregated tuner reports. Actual results vary based on
  * vehicle condition, supporting modifications, fuel quality, ambient conditions,
  * and tuning quality. These figures should be treated as estimates, not guarantees.
- * 
+ *
  * Last validated: December 8, 2025
  */
 
@@ -31,7 +31,7 @@
  * Performance gains disclaimer for display in the UI
  * @type {string}
  */
-export const PERFORMANCE_GAINS_DISCLAIMER = 
+export const PERFORMANCE_GAINS_DISCLAIMER =
   'All horsepower and performance gain estimates are based on community dyno data and ' +
   'manufacturer claims. Actual results vary based on vehicle condition, supporting ' +
   'modifications, fuel quality, and tuning quality. These figures should be treated as estimates.';
@@ -45,84 +45,96 @@ export const upgradeCategories = {
     key: 'power',
     name: 'Power & Engine',
     icon: 'bolt',
-    description: 'Bolt-on upgrades that increase horsepower, torque, and throttle response. These modifications help your engine breathe better, burn fuel more efficiently, and produce more power.',
+    description:
+      'Bolt-on upgrades that increase horsepower, torque, and throttle response. These modifications help your engine breathe better, burn fuel more efficiently, and produce more power.',
     color: '#e74c3c',
   },
   forcedInduction: {
     key: 'forcedInduction',
     name: 'Forced Induction',
     icon: 'turbo',
-    description: 'Superchargers, turbochargers, and supporting modifications for massive power gains. The most effective way to add significant horsepower to naturally aspirated engines.',
+    description:
+      'Superchargers, turbochargers, and supporting modifications for massive power gains. The most effective way to add significant horsepower to naturally aspirated engines.',
     color: '#9b59b6',
   },
   exhaust: {
     key: 'exhaust',
     name: 'Exhaust & Sound',
     icon: 'sound',
-    description: 'Exhaust modifications improve flow, reduce restriction, and change your car\'s voice. From subtle tone improvements to aggressive race notes.',
+    description:
+      "Exhaust modifications improve flow, reduce restriction, and change your car's voice. From subtle tone improvements to aggressive race notes.",
     color: '#8e44ad',
   },
   suspension: {
     key: 'suspension',
     name: 'Suspension & Chassis',
     icon: 'car',
-    description: 'Suspension upgrades transform how your car handles corners, responds to driver input, and manages weight transfer. The foundation of any serious build.',
+    description:
+      'Suspension upgrades transform how your car handles corners, responds to driver input, and manages weight transfer. The foundation of any serious build.',
     color: '#3498db',
   },
   brakes: {
     key: 'brakes',
     name: 'Brakes & Stopping',
     icon: 'brake',
-    description: 'Brake upgrades improve stopping power, fade resistance, and pedal feel. Critical for track use and spirited driving.',
+    description:
+      'Brake upgrades improve stopping power, fade resistance, and pedal feel. Critical for track use and spirited driving.',
     color: '#f39c12',
   },
   wheels: {
     key: 'wheels',
     name: 'Wheels & Tires',
     icon: 'tire',
-    description: 'The only thing connecting your car to the road. Quality wheels and tires are often the single biggest performance upgrade you can make.',
+    description:
+      'The only thing connecting your car to the road. Quality wheels and tires are often the single biggest performance upgrade you can make.',
     color: '#2ecc71',
   },
   cooling: {
     key: 'cooling',
     name: 'Cooling & Reliability',
     icon: 'thermometer',
-    description: 'Keep your engine, transmission, and brakes running cool under stress. Essential for track days and hot climates.',
+    description:
+      'Keep your engine, transmission, and brakes running cool under stress. Essential for track days and hot climates.',
     color: '#1abc9c',
   },
   aero: {
     key: 'aero',
     name: 'Aerodynamics',
     icon: 'wind',
-    description: 'Aerodynamic upgrades create downforce and improve high-speed stability. From subtle improvements to full race aero packages.',
+    description:
+      'Aerodynamic upgrades create downforce and improve high-speed stability. From subtle improvements to full race aero packages.',
     color: '#34495e',
   },
   drivetrain: {
     key: 'drivetrain',
     name: 'Drivetrain & Gearing',
     icon: 'gears',
-    description: 'Upgrades to the clutch, flywheel, differential, and driveline components. Critical for putting power to the ground reliably.',
+    description:
+      'Upgrades to the clutch, flywheel, differential, and driveline components. Critical for putting power to the ground reliably.',
     color: '#e67e22',
   },
   safety: {
     key: 'safety',
     name: 'Safety & Track Prep',
     icon: 'shield',
-    description: 'Safety equipment for track use: harnesses, seats, roll protection, and fire suppression. Required for competitive events.',
+    description:
+      'Safety equipment for track use: harnesses, seats, roll protection, and fire suppression. Required for competitive events.',
     color: '#c0392b',
   },
   weightReduction: {
     key: 'weightReduction',
     name: 'Weight Reduction',
     icon: 'feather',
-    description: 'Lightweight components and weight reduction strategies. Every pound matters for acceleration, braking, and handling.',
+    description:
+      'Lightweight components and weight reduction strategies. Every pound matters for acceleration, braking, and handling.',
     color: '#7f8c8d',
   },
   engineSwaps: {
     key: 'engineSwaps',
     name: 'Engine Swaps',
     icon: 'engine',
-    description: 'Complete engine swap options and crate engine upgrades. Major undertakings that can completely transform a vehicle\'s character.',
+    description:
+      "Complete engine swap options and crate engine upgrades. Major undertakings that can completely transform a vehicle's character.",
     color: '#2c3e50',
   },
 };
@@ -135,9 +147,9 @@ export const upgradeDetails = {
   // ============================================================================
   // POWER & ENGINE
   // ============================================================================
-  
+
   // 'intake' is the key used by upgradePackages.js for Cold Air Intake selection
-  'intake': {
+  intake: {
     key: 'intake',
     name: 'Cold Air Intake',
     category: 'power',
@@ -186,52 +198,10 @@ export const upgradeDetails = {
   },
 
   // ============================================================================
-  // ECU TUNES - Critical for power calculations
+  // ECU TUNES - Stage tunes for turbo/SC cars
+  // Note: Street/Track ECU Tune removed - Stage 1/2/3+ are the standard tuning
+  // progression for boosted cars. NA cars use bolt-ons (intake, exhaust, headers, cams).
   // ============================================================================
-  
-  'tune-street': {
-    key: 'tune-street',
-    name: 'Street ECU Tune',
-    category: 'power',
-    tier: 'streetSport',
-    shortDescription: 'Conservative tune for daily driving reliability',
-    expectedGains: { hp: '10-25 hp' },
-    cost: { range: '$400 - $800', low: 400, high: 800 },
-    configOptions: {
-      fuel: {
-        label: 'Fuel Type',
-        description: 'Higher octane = more aggressive timing',
-        type: 'radio',
-        default: '93',
-        options: [
-          { value: '91', label: '91 Octane', hpModifier: -5, description: 'Most conservative' },
-          { value: '93', label: '93 Octane', hpModifier: 0, description: 'Standard premium' },
-        ],
-      },
-    },
-  },
-
-  'tune-track': {
-    key: 'tune-track',
-    name: 'Track ECU Tune',
-    category: 'power',
-    tier: 'trackPack',
-    shortDescription: 'Aggressive tune for track use',
-    expectedGains: { hp: '20-40 hp' },
-    cost: { range: '$500 - $1,000', low: 500, high: 1000 },
-    configOptions: {
-      fuel: {
-        label: 'Fuel Type',
-        description: 'Higher octane allows more aggressive tuning',
-        type: 'radio',
-        default: '93',
-        options: [
-          { value: '93', label: '93 Octane', hpModifier: 0, description: 'Premium pump gas' },
-          { value: 'e30', label: 'E30 Blend', hpModifier: 10, description: '30% ethanol mix', note: 'Requires flex fuel or manual mixing' },
-        ],
-      },
-    },
-  },
 
   'stage1-tune': {
     key: 'stage1-tune',
@@ -248,9 +218,20 @@ export const upgradeDetails = {
         type: 'radio',
         default: '93',
         options: [
-          { value: '91', label: '91 Octane', hpModifier: -10, description: 'Lower boost/timing for 91' },
+          {
+            value: '91',
+            label: '91 Octane',
+            hpModifier: -10,
+            description: 'Lower boost/timing for 91',
+          },
           { value: '93', label: '93 Octane', hpModifier: 0, description: 'Standard Stage 1 map' },
-          { value: 'e30', label: 'E30 Blend', hpModifier: 15, description: 'More boost with ethanol', note: 'Requires ethanol content sensor or careful mixing' },
+          {
+            value: 'e30',
+            label: 'E30 Blend',
+            hpModifier: 15,
+            description: 'More boost with ethanol',
+            note: 'Requires ethanol content sensor or careful mixing',
+          },
         ],
       },
       tuneType: {
@@ -259,8 +240,18 @@ export const upgradeDetails = {
         type: 'radio',
         default: 'flash',
         options: [
-          { value: 'flash', label: 'ECU Flash', description: 'Direct ECU reprogram', note: 'Most power, may show in dealer scan' },
-          { value: 'piggyback', label: 'Piggyback (JB4 etc)', description: 'Plug-in tuner', note: 'Removable, slightly less power' },
+          {
+            value: 'flash',
+            label: 'ECU Flash',
+            description: 'Direct ECU reprogram',
+            note: 'Most power, may show in dealer scan',
+          },
+          {
+            value: 'piggyback',
+            label: 'Piggyback (JB4 etc)',
+            description: 'Plug-in tuner',
+            note: 'Removable, slightly less power',
+          },
         ],
       },
     },
@@ -282,8 +273,20 @@ export const upgradeDetails = {
         default: '93',
         options: [
           { value: '93', label: '93 Octane', hpModifier: 0, description: 'Pump gas Stage 2' },
-          { value: 'e30', label: 'E30 Blend', hpModifier: 20, description: 'Popular enthusiast choice', note: 'Good power/reliability balance' },
-          { value: 'e50', label: 'E50 Blend', hpModifier: 35, description: 'Serious power increase', warning: 'May require fuel system upgrades' },
+          {
+            value: 'e30',
+            label: 'E30 Blend',
+            hpModifier: 20,
+            description: 'Popular enthusiast choice',
+            note: 'Good power/reliability balance',
+          },
+          {
+            value: 'e50',
+            label: 'E50 Blend',
+            hpModifier: 35,
+            description: 'Serious power increase',
+            warning: 'May require fuel system upgrades',
+          },
         ],
       },
       boost: {
@@ -292,9 +295,25 @@ export const upgradeDetails = {
         type: 'radio',
         default: 'moderate',
         options: [
-          { value: 'conservative', label: 'Conservative', hpModifier: -15, description: 'Lower boost for reliability' },
-          { value: 'moderate', label: 'Moderate', hpModifier: 0, description: 'Standard Stage 2 boost' },
-          { value: 'aggressive', label: 'Aggressive', hpModifier: 15, description: 'Maximum safe boost', warning: 'Monitor knock closely' },
+          {
+            value: 'conservative',
+            label: 'Conservative',
+            hpModifier: -15,
+            description: 'Lower boost for reliability',
+          },
+          {
+            value: 'moderate',
+            label: 'Moderate',
+            hpModifier: 0,
+            description: 'Standard Stage 2 boost',
+          },
+          {
+            value: 'aggressive',
+            label: 'Aggressive',
+            hpModifier: 15,
+            description: 'Maximum safe boost',
+            warning: 'Monitor knock closely',
+          },
         ],
       },
     },
@@ -315,9 +334,21 @@ export const upgradeDetails = {
         type: 'radio',
         default: 'e50',
         options: [
-          { value: '93', label: '93 Octane Only', hpModifier: -30, description: 'Limited by fuel', warning: 'Not recommended for Stage 3' },
+          {
+            value: '93',
+            label: '93 Octane Only',
+            hpModifier: -30,
+            description: 'Limited by fuel',
+            warning: 'Not recommended for Stage 3',
+          },
           { value: 'e50', label: 'E50 Blend', hpModifier: 0, description: 'Common Stage 3 fuel' },
-          { value: 'e85', label: 'Full E85', hpModifier: 25, description: 'Maximum power potential', note: 'Requires upgraded fuel system' },
+          {
+            value: 'e85',
+            label: 'Full E85',
+            hpModifier: 25,
+            description: 'Maximum power potential',
+            note: 'Requires upgraded fuel system',
+          },
         ],
       },
       turbo: {
@@ -326,9 +357,25 @@ export const upgradeDetails = {
         type: 'radio',
         default: 'hybrid',
         options: [
-          { value: 'stockFrame', label: 'Stock Frame Turbo', hpModifier: -20, description: 'Upgraded internals, stock housing' },
-          { value: 'hybrid', label: 'Hybrid Turbo', hpModifier: 0, description: 'Larger compressor, stock location' },
-          { value: 'bigTurbo', label: 'Big Turbo Kit', hpModifier: 40, description: 'Full turbo upgrade', note: 'May require custom tune' },
+          {
+            value: 'stockFrame',
+            label: 'Stock Frame Turbo',
+            hpModifier: -20,
+            description: 'Upgraded internals, stock housing',
+          },
+          {
+            value: 'hybrid',
+            label: 'Hybrid Turbo',
+            hpModifier: 0,
+            description: 'Larger compressor, stock location',
+          },
+          {
+            value: 'bigTurbo',
+            label: 'Big Turbo Kit',
+            hpModifier: 40,
+            description: 'Full turbo upgrade',
+            note: 'May require custom tune',
+          },
         ],
       },
     },
@@ -349,10 +396,27 @@ export const upgradeDetails = {
         type: 'radio',
         default: 'map2',
         options: [
-          { value: 'map1', label: 'Map 1 - Conservative', hpModifier: -15, description: 'Safe for stock hardware' },
+          {
+            value: 'map1',
+            label: 'Map 1 - Conservative',
+            hpModifier: -15,
+            description: 'Safe for stock hardware',
+          },
           { value: 'map2', label: 'Map 2 - Moderate', hpModifier: 0, description: 'Best balance' },
-          { value: 'map5', label: 'Map 5 - Aggressive', hpModifier: 15, description: 'With supporting mods', warning: 'Requires intake + downpipe' },
-          { value: 'map6', label: 'Map 6 - E85', hpModifier: 30, description: 'Ethanol map', note: 'Requires ethanol content sensor' },
+          {
+            value: 'map5',
+            label: 'Map 5 - Aggressive',
+            hpModifier: 15,
+            description: 'With supporting mods',
+            warning: 'Requires intake + downpipe',
+          },
+          {
+            value: 'map6',
+            label: 'Map 6 - E85',
+            hpModifier: 30,
+            description: 'Ethanol map',
+            note: 'Requires ethanol content sensor',
+          },
         ],
       },
     },
@@ -365,7 +429,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Replaces restrictive factory airbox with free-flowing intake',
     fullDescription: `A cold air intake replaces your car's stock airbox with a larger, less restrictive system that draws cooler air from outside the engine bay. Cold air is denser, meaning more oxygen molecules per gulp, which allows for more efficient combustion and more power.`,
-    howItWorks: 'The factory airbox is designed with noise reduction and emissions as priorities. A CAI prioritizes airflow, using a high-flow filter and smooth tubing to deliver cooler, denser air to your engine.',
+    howItWorks:
+      'The factory airbox is designed with noise reduction and emissions as priorities. A CAI prioritizes airflow, using a high-flow filter and smooth tubing to deliver cooler, denser air to your engine.',
     expectedGains: {
       hp: '5-15 hp',
       torque: '5-10 lb-ft',
@@ -425,7 +490,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['All cars', 'First modification for enthusiasts'],
     worksWellWith: ['ECU tune', 'Exhaust upgrades', 'Throttle body upgrade'],
-    considerations: 'Look for designs that actually draw cold air from outside the engine bay. Some "short ram" intakes actually pull hot air and can hurt performance.',
+    considerations:
+      'Look for designs that actually draw cold air from outside the engine bay. Some "short ram" intakes actually pull hot air and can hurt performance.',
     brands: ['K&N', 'AEM', 'Injen', 'aFe', 'Mishimoto'],
   },
 
@@ -436,7 +502,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Drop-in replacement filter with better flow than stock',
     fullDescription: `A high-flow air filter is a direct replacement for your factory filter that allows more air to pass through while still filtering contaminants. Brands like K&N and AEM offer reusable filters that can be cleaned and re-oiled.`,
-    howItWorks: 'Stock paper filters prioritize filtration over flow. High-flow filters use oiled cotton or foam media that allows more air through while still capturing harmful particles.',
+    howItWorks:
+      'Stock paper filters prioritize filtration over flow. High-flow filters use oiled cotton or foam media that allows more air through while still capturing harmful particles.',
     expectedGains: {
       hp: '1-5 hp',
       torque: '2-5 lb-ft',
@@ -462,83 +529,12 @@ export const upgradeDetails = {
     ],
     bestFor: ['Budget builds', 'First-time modifiers'],
     worksWellWith: ['Any modification'],
-    considerations: 'Don\'t over-oil the filter - excess oil can contaminate your MAF sensor and cause issues.',
+    considerations:
+      "Don't over-oil the filter - excess oil can contaminate your MAF sensor and cause issues.",
     brands: ['K&N', 'AEM', 'aFe', 'Green Filter'],
   },
 
-  'throttle-body': {
-    key: 'throttle-body',
-    name: 'Throttle Body Upgrade',
-    category: 'power',
-    tier: 'streetSport',
-    shortDescription: 'Larger throttle body for improved high-RPM airflow',
-    fullDescription: `An upgraded throttle body has a larger bore diameter than stock, allowing more air to enter the engine at wide-open throttle. This is most beneficial on cars that are already modified and need more air.`,
-    howItWorks: 'The throttle body controls how much air enters your engine. A larger bore means more air can flow at full throttle, supporting additional power from other modifications.',
-    expectedGains: {
-      hp: '5-15 hp (with supporting mods)',
-      torque: '5-10 lb-ft',
-      note: 'Benefits increase when combined with intake, exhaust, and tune.',
-    },
-    cost: { range: '$250 - $800', low: 250, high: 800 },
-    difficulty: 'Moderate',
-    installTime: '1-2 hours',
-    requiresTune: true,
-    requiresProInstall: false,
-    streetLegal: 'street-legal',
-    riskLevel: 'low',
-    pros: [
-      'Sharper throttle response',
-      'Supports high-power builds',
-      'Usually bolt-on installation',
-    ],
-    cons: [
-      'Limited gains on stock engines',
-      'May require ECU tune for best results',
-      'Not worth it as a standalone mod',
-    ],
-    bestFor: ['Cars with other bolt-ons', 'High-RPM builds'],
-    worksWellWith: ['Cold air intake', 'Ported intake manifold', 'ECU tune'],
-    considerations: 'On a stock engine, the throttle body is rarely the restriction. This mod shines when combined with other airflow improvements.',
-    brands: ['BBK', 'FAST', 'Ford Performance', 'GM Performance'],
-  },
-
-  'intake-manifold': {
-    key: 'intake-manifold',
-    name: 'Performance Intake Manifold',
-    category: 'power',
-    tier: 'trackPack',
-    shortDescription: 'High-flow intake manifold for NA power gains',
-    fullDescription: `A performance intake manifold replaces the factory unit with a design optimized for airflow. Larger runners, optimized plenum volume, and smoother internal surfaces all contribute to better cylinder filling and more power.`,
-    howItWorks: 'The intake manifold distributes air from the throttle body to each cylinder. Performance manifolds use larger, straighter runners and optimized plenum designs to improve airflow velocity and volume.',
-    expectedGains: {
-      hp: '15-35 hp',
-      torque: '10-25 lb-ft',
-      note: 'Gains are most significant on NA V8 engines with other bolt-ons.',
-    },
-    cost: { range: '$800 - $2,500', low: 800, high: 2500 },
-    difficulty: 'Moderate to Hard',
-    installTime: '4-8 hours',
-    requiresTune: true,
-    requiresProInstall: false,
-    streetLegal: 'varies-by-region',
-    riskLevel: 'medium',
-    pros: [
-      'Significant NA power gains',
-      'Improved high-RPM breathing',
-      'Often lighter than stock',
-      'Can support forced induction later',
-    ],
-    cons: [
-      'Complex installation',
-      'Requires supporting mods and tune',
-      'Can hurt low-end torque if poorly matched',
-      'May have emissions implications',
-    ],
-    bestFor: ['NA V8 builds', 'High-RPM applications'],
-    worksWellWith: ['Throttle body', 'Headers', 'Camshafts', 'ECU tune'],
-    considerations: 'Match the manifold to your intended use. Short runners make more top-end power; long runners make more low-end torque.',
-    brands: ['Holley', 'Edelbrock', 'FAST', 'Ford Performance', 'Sniper'],
-  },
+  // Note: throttle-body and intake-manifold entries removed - marginal gains, niche applications
 
   'ecu-tune': {
     key: 'ecu-tune',
@@ -547,7 +543,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Optimizes engine computer for more power and better response',
     fullDescription: `An ECU tune modifies the software in your car's engine computer to optimize fuel delivery, ignition timing, boost pressure (on turbo cars), and other parameters. It's often called "the best bang for your buck" because it unlocks power the factory left on the table.`,
-    howItWorks: 'Factory tunes are conservative to account for poor fuel quality, extreme temperatures, and minimal maintenance. A performance tune assumes you\'ll use good fuel and maintain your car, allowing more aggressive timing and fueling.',
+    howItWorks:
+      "Factory tunes are conservative to account for poor fuel quality, extreme temperatures, and minimal maintenance. A performance tune assumes you'll use good fuel and maintain your car, allowing more aggressive timing and fueling.",
     expectedGains: {
       hp: '15-30 hp (NA) / 40-100+ hp (turbo)',
       torque: '15-30 lb-ft (NA) / 50-100+ lb-ft (turbo)',
@@ -575,7 +572,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Best first mod for turbo cars', 'Great value for all cars'],
     worksWellWith: ['All bolt-ons (intake, exhaust, downpipe)'],
-    considerations: 'Only use reputable tuners with experience on your platform. Cheap tunes can be dangerous. Expect to pay more for quality.',
+    considerations:
+      'Only use reputable tuners with experience on your platform. Cheap tunes can be dangerous. Expect to pay more for quality.',
     brands: ['Cobb', 'APR', 'Dinan', 'HP Tuners', 'VF Engineering', 'JB4'],
   },
 
@@ -586,7 +584,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Plug-and-play device that modifies ECU signals',
     fullDescription: `A piggyback tuner intercepts and modifies signals going to and from the ECU without permanently changing the ECU itself. Popular options include JB4, Burger Motorsports, and similar devices. They're great for people who want gains without voiding warranty.`,
-    howItWorks: 'Instead of rewriting the ECU software, piggybacks intercept sensor signals (like boost pressure or fuel maps) and modify them on the fly. The ECU thinks it\'s seeing normal values while the engine gets optimized parameters.',
+    howItWorks:
+      "Instead of rewriting the ECU software, piggybacks intercept sensor signals (like boost pressure or fuel maps) and modify them on the fly. The ECU thinks it's seeing normal values while the engine gets optimized parameters.",
     expectedGains: {
       hp: '30-60 hp (turbo cars)',
       torque: '40-80 lb-ft (turbo cars)',
@@ -612,121 +611,14 @@ export const upgradeDetails = {
     ],
     bestFor: ['Leased vehicles', 'Warranty-conscious owners', 'DIY enthusiasts'],
     worksWellWith: ['Downpipe', 'Intake', 'Intercooler'],
-    considerations: 'Popular for BMW, VW/Audi, and other European turbo cars. Remove before dealer service to avoid detection.',
+    considerations:
+      'Popular for BMW, VW/Audi, and other European turbo cars. Remove before dealer service to avoid detection.',
     brands: ['JB4', 'Burger Motorsports', 'RaceChip', 'Pedal Commander'],
   },
 
-  'camshafts': {
-    key: 'camshafts',
-    name: 'Performance Camshafts',
-    category: 'power',
-    tier: 'timeAttack',
-    shortDescription: 'Upgraded camshafts for significant NA power gains',
-    fullDescription: `Performance camshafts feature more aggressive profiles with increased lift and duration compared to stock cams. They allow the engine to breathe better at high RPM, significantly increasing power on naturally aspirated engines.`,
-    howItWorks: 'Camshafts control when and how long the intake and exhaust valves open. More aggressive cams open the valves further (lift) and keep them open longer (duration), allowing more air in and exhaust out at high RPM.',
-    expectedGains: {
-      hp: '25-50 hp',
-      torque: '15-30 lb-ft',
-      note: 'Power band shifts to higher RPM. May lose some low-end torque.',
-    },
-    cost: { range: '$1,500 - $4,000', low: 1500, high: 4000 },
-    difficulty: 'Hard',
-    installTime: '8-16 hours',
-    requiresTune: true,
-    requiresProInstall: true,
-    streetLegal: 'varies-by-region',
-    riskLevel: 'high',
-    pros: [
-      'Significant NA power gains',
-      'More aggressive sound character',
-      'Transforms engine personality',
-      'Essential for high-RPM builds',
-    ],
-    cons: [
-      'Rougher idle',
-      'May lose low-end torque',
-      'Complex installation',
-      'Requires valve springs and tune',
-    ],
-    bestFor: ['NA V8 builds', 'Track-focused cars', 'Sound enthusiasts'],
-    worksWellWith: ['Headers', 'Intake manifold', 'Ported heads', 'ECU tune'],
-    considerations: 'Camshaft selection should match your goals. Street cams maintain daily drivability; race cams sacrifice idle quality for maximum power.',
-    brands: ['Comp Cams', 'Texas Speed', 'Ford Performance', 'Brian Crower', 'Kelford'],
-  },
+  // Note: camshafts and ported-heads entries removed - specialist engine build mods
 
-  'ported-heads': {
-    key: 'ported-heads',
-    name: 'Ported Cylinder Heads',
-    category: 'power',
-    tier: 'timeAttack',
-    shortDescription: 'CNC-ported heads for maximum NA airflow',
-    fullDescription: `Cylinder head porting involves reshaping the intake and exhaust ports to improve airflow. CNC porting uses computer-controlled machining for consistent, optimized port shapes that significantly improve breathing.`,
-    howItWorks: 'Factory cylinder heads have rough casting surfaces and compromised port shapes. Porting smooths these surfaces, enlarges restrictive areas, and optimizes the port shape for maximum airflow velocity and volume.',
-    expectedGains: {
-      hp: '30-60 hp',
-      torque: '20-40 lb-ft',
-      note: 'Gains scale with other breathing mods. Most effective on NA engines.',
-    },
-    cost: { range: '$2,500 - $6,000', low: 2500, high: 6000 },
-    difficulty: 'Professional',
-    installTime: '12-20 hours',
-    requiresTune: true,
-    requiresProInstall: true,
-    streetLegal: 'varies-by-region',
-    riskLevel: 'medium',
-    pros: [
-      'Significant NA power gains',
-      'Improved engine efficiency',
-      'Better throttle response',
-      'Essential for high-power NA builds',
-    ],
-    cons: [
-      'Expensive',
-      'Engine must be disassembled',
-      'Requires supporting mods',
-      'Quality varies by shop',
-    ],
-    bestFor: ['Serious NA builds', 'Time attack cars', 'Engine rebuilds'],
-    worksWellWith: ['Camshafts', 'Headers', 'Intake manifold', 'ECU tune'],
-    considerations: 'Quality matters enormously. Choose a shop with documented experience on your specific engine. Flow bench testing is essential.',
-    brands: ['Livernois', 'Texas Speed', 'MPR Racing Engines', 'Cylinder Head Innovations'],
-  },
-
-  'hpfp-upgrade': {
-    key: 'hpfp-upgrade',
-    name: 'High-Pressure Fuel Pump (HPFP)',
-    category: 'power',
-    tier: 'trackPack',
-    shortDescription: 'Upgraded fuel pump for more fueling capacity',
-    fullDescription: `On direct-injection turbo cars, the high-pressure fuel pump is often the limiting factor for power. An upgraded HPFP can deliver more fuel at higher pressures, supporting bigger turbos and more aggressive tunes.`,
-    howItWorks: 'Direct injection engines need extremely high fuel pressure (2,000+ PSI). The stock pump is sized for factory power levels. Upgraded internals allow higher flow and pressure to match increased air from turbo upgrades.',
-    expectedGains: {
-      hp: 'Enables 50-150+ additional hp with supporting mods',
-      torque: 'Varies with tune',
-      note: 'This is a supporting mod - it enables other upgrades to work.',
-    },
-    cost: { range: '$300 - $1,000', low: 300, high: 1000 },
-    difficulty: 'Moderate',
-    installTime: '2-4 hours',
-    requiresTune: true,
-    requiresProInstall: false,
-    streetLegal: 'street-legal',
-    riskLevel: 'low',
-    pros: [
-      'Removes fueling limitation',
-      'Required for high-power builds',
-      'Usually bolt-on installation',
-    ],
-    cons: [
-      'No gains on its own',
-      'Only needed for aggressive builds',
-      'Platform-specific parts',
-    ],
-    bestFor: ['High-power turbo builds', 'E85 conversions'],
-    worksWellWith: ['Upgraded turbo', 'Aggressive tune', 'E85 fuel'],
-    considerations: 'You don\'t need this for basic bolt-ons. It\'s for builds exceeding 400-500+ hp on most platforms.',
-    brands: ['Autotech', 'APR', 'Nostrum', 'Cobb'],
-  },
+  // Note: hpfp-upgrade entry removed - too niche, bundled with fuel-system-upgrade
 
   'fuel-system-upgrade': {
     key: 'fuel-system-upgrade',
@@ -735,7 +627,8 @@ export const upgradeDetails = {
     tier: 'ultimatePower',
     shortDescription: 'Complete fuel system upgrade for high-power builds',
     fullDescription: `A comprehensive fuel system upgrade includes larger injectors, an upgraded fuel pump (or dual pump setup), and often upgraded fuel rails and lines. This ensures adequate fuel delivery for high-boost or high-RPM applications where the stock system cannot keep up.`,
-    howItWorks: 'High-power builds need significantly more fuel. The stock fuel system is sized for factory power with some headroom. Upgrading injectors, pumps, and supporting hardware ensures the engine can receive enough fuel to match increased airflow from turbo/supercharger upgrades.',
+    howItWorks:
+      'High-power builds need significantly more fuel. The stock fuel system is sized for factory power with some headroom. Upgrading injectors, pumps, and supporting hardware ensures the engine can receive enough fuel to match increased airflow from turbo/supercharger upgrades.',
     expectedGains: {
       hp: 'Enables 100-500+ additional hp with supporting mods',
       note: 'This is a supporting mod - it enables other power upgrades to function safely.',
@@ -761,125 +654,17 @@ export const upgradeDetails = {
     ],
     bestFor: ['Supercharger/turbo builds', 'E85 conversions', '600+ hp builds'],
     worksWellWith: ['Supercharger', 'Turbo kit', 'E85 tune', 'HPFP upgrade'],
-    considerations: 'Always upgrade the entire fuel system together. Mismatched components can cause lean conditions and engine damage.',
+    considerations:
+      'Always upgrade the entire fuel system together. Mismatched components can cause lean conditions and engine damage.',
     brands: ['DeatschWerks', 'Injector Dynamics', 'FIC', 'Walbro', 'AEM'],
   },
 
-  'charge-pipe-upgrade': {
-    key: 'charge-pipe-upgrade',
-    name: 'Charge Pipe Upgrade',
-    category: 'power',
-    tier: 'trackPack',
-    shortDescription: 'Reinforced charge pipes for boosted applications',
-    fullDescription: `Upgraded charge pipes replace the factory plastic or weak aluminum pipes that route pressurized air from the turbo/supercharger to the engine. Factory charge pipes are prone to cracking or blowing off under increased boost pressure.`,
-    howItWorks: 'Turbo and supercharger systems pressurize intake air through charge pipes. Factory plastic pipes can crack under heat cycling and increased boost. Upgraded aluminum or silicone pipes handle higher pressures and temperatures reliably.',
-    expectedGains: {
-      hp: '0 hp directly (prevents boost leaks)',
-      note: 'Reliability mod - prevents power loss from cracked or blown-off pipes.',
-    },
-    cost: { range: '$150 - $400', low: 150, high: 400 },
-    difficulty: 'Easy to Moderate',
-    installTime: '1-2 hours',
-    requiresTune: false,
-    requiresProInstall: false,
-    streetLegal: 'street-legal',
-    riskLevel: 'low',
-    pros: [
-      'Prevents boost leaks',
-      'Much stronger than factory plastic',
-      'Often includes upgraded couplers',
-      'Required for high-boost builds',
-    ],
-    cons: [
-      'Only needed for boosted cars',
-      'Some designs require bumper removal',
-      'Quality varies by manufacturer',
-    ],
-    bestFor: ['BMW N54/N55/S55', 'Audi/VW turbo engines', 'Any tuned turbo car'],
-    worksWellWith: ['Turbo upgrade', 'Downpipe', 'Intercooler', 'Tune'],
-    considerations: 'On BMW S55 engines (M2C, M3, M4), the charge pipe is a known weak point. Upgrade it before increasing boost.',
-    brands: ['VRSF', 'BMS', 'Evolution Racewerks', 'Mishimoto', 'aFe'],
-  },
-
-  'forged-internals': {
-    key: 'forged-internals',
-    name: 'Forged Engine Internals',
-    category: 'power',
-    tier: 'ultimatePower',
-    shortDescription: 'Forged pistons, rods, and crank for extreme power',
-    fullDescription: `Forged internals replace the factory cast or powdered metal components with stronger forged steel and aluminum parts. This allows the engine to handle significantly more power and RPM without catastrophic failure.`,
-    howItWorks: 'Forged components are made by pressing metal under extreme heat and pressure, aligning the grain structure for maximum strength. This makes them far more resistant to the forces of high-boost or high-RPM applications.',
-    expectedGains: {
-      hp: 'Enables 500-1000+ hp reliably',
-      note: 'Doesn\'t add power directly - enables other upgrades safely.',
-    },
-    cost: { range: '$5,000 - $15,000', low: 5000, high: 15000 },
-    difficulty: 'Professional',
-    installTime: '20-40 hours',
-    requiresTune: true,
-    requiresProInstall: true,
-    streetLegal: 'street-legal',
-    riskLevel: 'medium',
-    pros: [
-      'Handles extreme power levels',
-      'Much stronger than stock',
-      'Peace of mind for high-boost builds',
-      'Typically improves reliability',
-    ],
-    cons: [
-      'Very expensive',
-      'Requires full engine teardown',
-      'Long installation time',
-      'Overkill for moderate builds',
-    ],
-    bestFor: ['1000+ hp builds', 'Forced induction setups', 'Competition engines'],
-    worksWellWith: ['Supercharger', 'Turbo kit', 'Stroker kit', 'Head studs'],
-    considerations: 'For most street cars making under 700 hp, stock internals are fine. Forged internals are insurance for extreme builds.',
-    brands: ['Wiseco', 'JE Pistons', 'Manley', 'Carrillo', 'CP Pistons'],
-  },
-
-  'stroker-kit': {
-    key: 'stroker-kit',
-    name: 'Stroker Kit',
-    category: 'power',
-    tier: 'ultimatePower',
-    shortDescription: 'Increased displacement for more power and torque',
-    fullDescription: `A stroker kit increases engine displacement by using a crankshaft with a longer stroke, combined with appropriately sized pistons and rods. More displacement means more air/fuel per cycle, resulting in more power.`,
-    howItWorks: 'By increasing the crankshaft stroke, each piston travels further in the cylinder. This increases the swept volume (displacement), allowing the engine to ingest more air and fuel each cycle.',
-    expectedGains: {
-      hp: '50-100+ hp',
-      torque: '50-100+ lb-ft',
-      note: 'Gains are proportional to displacement increase. Torque benefits most.',
-    },
-    cost: { range: '$8,000 - $18,000', low: 8000, high: 18000 },
-    difficulty: 'Professional',
-    installTime: '30-50 hours',
-    requiresTune: true,
-    requiresProInstall: true,
-    streetLegal: 'varies-by-region',
-    riskLevel: 'medium',
-    pros: [
-      'Significant power and torque gains',
-      'More area under the power curve',
-      'Feels like a bigger engine',
-      'Improves acceleration significantly',
-    ],
-    cons: [
-      'Very expensive',
-      'Requires complete engine rebuild',
-      'May need supporting mods',
-      'Complex project',
-    ],
-    bestFor: ['NA V8 builds', 'Drag racing', 'Displacement junkies'],
-    worksWellWith: ['Ported heads', 'Camshafts', 'Headers', 'ECU tune'],
-    considerations: 'Popular stroker combinations: LS 383/408/427 from 5.3/6.0/6.2L, Ford 4.6 to 5.0 stroker, etc.',
-    brands: ['Texas Speed', 'Callies', 'Scat', 'Eagle', 'Lunati'],
-  },
+  // Note: charge-pipe-upgrade, forged-internals, stroker-kit removed - specialist mods
 
   // ============================================================================
   // EXHAUST & SOUND
   // ============================================================================
-  
+
   // 'exhaust-catback' is the key used by upgradePackages.js
   'exhaust-catback': {
     key: 'exhaust-catback',
@@ -942,7 +727,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Complete exhaust from catalytic converter back, improved flow and sound',
     fullDescription: `A cat-back exhaust replaces everything from the catalytic converter to the tailpipe. This includes the mid-pipe, resonator (or resonator delete), muffler, and tips. It's the most popular exhaust modification because it significantly improves sound while adding some power.`,
-    howItWorks: 'Stock exhausts are designed for noise reduction first, flow second. Cat-backs use larger diameter piping and less restrictive mufflers to reduce back pressure while giving your car a more aggressive voice.',
+    howItWorks:
+      'Stock exhausts are designed for noise reduction first, flow second. Cat-backs use larger diameter piping and less restrictive mufflers to reduce back pressure while giving your car a more aggressive voice.',
     expectedGains: {
       hp: '5-20 hp',
       torque: '5-15 lb-ft',
@@ -963,24 +749,24 @@ export const upgradeDetails = {
         type: 'radio',
         default: 'moderate',
         options: [
-          { 
-            value: 'touring', 
-            label: 'Touring / Quiet', 
+          {
+            value: 'touring',
+            label: 'Touring / Quiet',
             hpModifier: 0,
             description: 'Subtle improvement, daily driver friendly',
             icon: 'volume-low',
           },
-          { 
-            value: 'moderate', 
-            label: 'Sport / Moderate', 
+          {
+            value: 'moderate',
+            label: 'Sport / Moderate',
             hpModifier: 0,
             description: 'Noticeable upgrade, some highway drone',
             icon: 'volume-medium',
           },
-          { 
-            value: 'aggressive', 
-            label: 'Race / Loud', 
-            hpModifier: 3,  // Slightly more flow from less restriction
+          {
+            value: 'aggressive',
+            label: 'Race / Loud',
+            hpModifier: 3, // Slightly more flow from less restriction
             description: 'Very loud, potential drone, track-focused',
             icon: 'volume-high',
             warning: 'May be too loud for daily driving. Check local noise ordinances.',
@@ -993,7 +779,7 @@ export const upgradeDetails = {
         type: 'checkbox',
         default: false,
         hpModifier: 0,
-        costModifier: 800,  // Adds to base cost
+        costModifier: 800, // Adds to base cost
         description: 'Switch between quiet and loud modes with a button',
         note: 'Best of both worlds - quiet when you want, loud when you want.',
       },
@@ -1011,18 +797,20 @@ export const upgradeDetails = {
     ],
     bestFor: ['All enthusiasts', 'Daily drivers who want better sound'],
     worksWellWith: ['Headers/downpipe', 'ECU tune', 'Intake'],
-    considerations: 'Research sound clips before buying! What sounds great on YouTube might be too loud or droney in person. Valved exhausts offer the best of both worlds.',
+    considerations:
+      'Research sound clips before buying! What sounds great on YouTube might be too loud or droney in person. Valved exhausts offer the best of both worlds.',
     brands: ['Borla', 'Corsa', 'AWE', 'Akrapovic', 'MagnaFlow', 'Flowmaster'],
   },
 
-  'headers': {
+  headers: {
     key: 'headers',
     name: 'Performance Headers',
     category: 'exhaust',
     tier: 'trackPack',
     shortDescription: 'Long-tube or equal-length headers for significant power gains',
     fullDescription: `Headers replace the factory exhaust manifolds with optimized tubing designed for maximum exhaust flow. Long-tube headers provide the biggest gains but are more complex to install; shorty headers are easier but less effective.`,
-    howItWorks: 'Factory manifolds are designed for cost and packaging. Headers use equal-length, smoothly bent tubing to optimize exhaust scavenging and reduce restrictions, significantly improving exhaust flow.',
+    howItWorks:
+      'Factory manifolds are designed for cost and packaging. Headers use equal-length, smoothly bent tubing to optimize exhaust scavenging and reduce restrictions, significantly improving exhaust flow.',
     expectedGains: {
       hp: '15-40 hp',
       torque: '15-30 lb-ft',
@@ -1091,18 +879,20 @@ export const upgradeDetails = {
     ],
     bestFor: ['NA V8 builds', 'Track cars', 'Power-focused builds'],
     worksWellWith: ['Cat-back exhaust', 'ECU tune', 'Camshafts'],
-    considerations: 'Long-tube headers often require O2 sensor spacers or a tune to avoid check engine lights. Ceramic coating helps with heat management.',
+    considerations:
+      'Long-tube headers often require O2 sensor spacers or a tune to avoid check engine lights. Ceramic coating helps with heat management.',
     brands: ['Kooks', 'American Racing', 'Stainless Works', 'JBA', 'ARH'],
   },
 
-  'downpipe': {
+  downpipe: {
     key: 'downpipe',
     name: 'Downpipe (Turbo Cars)',
     category: 'exhaust',
     tier: 'trackPack',
     shortDescription: 'Larger diameter pipe from turbo to exhaust, major power gains',
     fullDescription: `On turbocharged cars, the downpipe connects the turbocharger to the rest of the exhaust. The stock downpipe is often very restrictive. An upgraded downpipe with a high-flow catalytic converter (or catless for track use) is one of the best power mods for turbo cars.`,
-    howItWorks: 'The turbocharger is driven by exhaust gases. Any restriction after the turbo creates back pressure that the turbo fights against. A larger, smoother downpipe lets exhaust gases exit faster, allowing quicker spool and more power.',
+    howItWorks:
+      'The turbocharger is driven by exhaust gases. Any restriction after the turbo creates back pressure that the turbo fights against. A larger, smoother downpipe lets exhaust gases exit faster, allowing quicker spool and more power.',
     expectedGains: {
       hp: '25-50 hp (with tune)',
       torque: '40-60 lb-ft (with tune)',
@@ -1123,17 +913,17 @@ export const upgradeDetails = {
         type: 'radio',
         default: 'catted',
         options: [
-          { 
-            value: 'catted', 
-            label: 'High-Flow Catted', 
-            hpModifier: 0,  // Base HP gain (25-50hp range)
+          {
+            value: 'catted',
+            label: 'High-Flow Catted',
+            hpModifier: 0, // Base HP gain (25-50hp range)
             description: 'Street legal, passes emissions',
             icon: 'check',
           },
-          { 
-            value: 'catless', 
-            label: 'Catless', 
-            hpModifier: 15,  // Additional HP on top of base
+          {
+            value: 'catless',
+            label: 'Catless',
+            hpModifier: 15, // Additional HP on top of base
             description: 'Track only - not street legal',
             icon: 'warning',
             warning: 'Not street legal. Will trigger check engine light without tune.',
@@ -1143,16 +933,13 @@ export const upgradeDetails = {
           // When catless is selected, recommend these upgrades
           catless: {
             recommended: ['ecu-tune', 'stage2-tune'],
-            warning: 'Catless downpipe requires a tune to prevent check engine lights and realize full gains.',
+            warning:
+              'Catless downpipe requires a tune to prevent check engine lights and realize full gains.',
           },
         },
       },
     },
-    pros: [
-      'Significant power gains on turbo cars',
-      'Faster turbo spool',
-      'Deeper exhaust note',
-    ],
+    pros: ['Significant power gains on turbo cars', 'Faster turbo spool', 'Deeper exhaust note'],
     cons: [
       'Catless versions are not street legal',
       'May throw check engine light without tune',
@@ -1160,7 +947,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Turbocharged cars only'],
     worksWellWith: ['ECU tune (required)', 'Intake', 'Intercooler'],
-    considerations: 'A downpipe without a tune will throw a check engine light and won\'t realize full gains. Budget for both together.',
+    considerations:
+      "A downpipe without a tune will throw a check engine light and won't realize full gains. Budget for both together.",
     brands: ['AWE', 'Milltek', 'Wagner Tuning', 'VRSF', 'Agency Power'],
   },
 
@@ -1171,7 +959,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Removes resonator for louder, more aggressive sound',
     fullDescription: `A resonator delete removes the resonator from your exhaust and replaces it with a straight pipe. The resonator's job is to cancel out certain frequencies - removing it makes the exhaust louder and often raspier.`,
-    howItWorks: 'Resonators are tuned chambers that cancel specific sound frequencies. Removing them lets those frequencies through, changing the exhaust tone and increasing volume.',
+    howItWorks:
+      'Resonators are tuned chambers that cancel specific sound frequencies. Removing them lets those frequencies through, changing the exhaust tone and increasing volume.',
     expectedGains: {
       hp: '0-5 hp',
       torque: '0-5 lb-ft',
@@ -1187,7 +976,7 @@ export const upgradeDetails = {
     pros: [
       'Very affordable',
       'Louder, more aggressive sound',
-      'Reversible if you don\'t like it',
+      "Reversible if you don't like it",
       'Slight weight reduction',
     ],
     cons: [
@@ -1197,7 +986,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Budget sound improvement', 'Track cars'],
     worksWellWith: ['Muffler delete', 'Cat-back exhaust'],
-    considerations: 'Try this before committing to a full exhaust system. It\'s cheap and reversible, so you can test if you like a louder car.',
+    considerations:
+      "Try this before committing to a full exhaust system. It's cheap and reversible, so you can test if you like a louder car.",
     brands: ['Any local exhaust shop', 'Mishimoto', 'Vibrant'],
   },
 
@@ -1208,7 +998,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Removes mufflers for maximum volume',
     fullDescription: `A muffler delete replaces your mufflers with straight pipes, eliminating all sound deadening. This creates maximum exhaust volume but can be too loud for daily driving and may not be legal in all areas.`,
-    howItWorks: 'Mufflers use baffles and chambers to absorb and cancel sound waves. Without them, exhaust gases flow freely and sound travels unimpeded, resulting in maximum volume.',
+    howItWorks:
+      'Mufflers use baffles and chambers to absorb and cancel sound waves. Without them, exhaust gases flow freely and sound travels unimpeded, resulting in maximum volume.',
     expectedGains: {
       hp: '0-10 hp',
       torque: '0-5 lb-ft',
@@ -1235,7 +1026,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Track-only cars', 'Sound junkies'],
     worksWellWith: ['Resonator delete'],
-    considerations: 'Many enthusiasts find muffler deletes too loud for regular use. Consider a cat-back with aggressive mufflers instead for better sound quality.',
+    considerations:
+      'Many enthusiasts find muffler deletes too loud for regular use. Consider a cat-back with aggressive mufflers instead for better sound quality.',
     brands: ['Any local exhaust shop'],
   },
 
@@ -1249,7 +1041,8 @@ export const upgradeDetails = {
     tier: 'ultimatePower',
     shortDescription: 'Belt-driven compressor with linear power delivery',
     fullDescription: `A centrifugal supercharger is a belt-driven compressor that spins up to 50,000+ RPM to compress intake air. Unlike roots/TVS superchargers, power delivery is linear and builds with engine RPM, similar to a turbocharger but without lag.`,
-    howItWorks: 'The supercharger is belt-driven from the crankshaft. An internal impeller spins at high speed, drawing in air and compressing it before it enters the engine. More air + more fuel = more power.',
+    howItWorks:
+      'The supercharger is belt-driven from the crankshaft. An internal impeller spins at high speed, drawing in air and compressing it before it enters the engine. More air + more fuel = more power.',
     expectedGains: {
       hp: '150-250+ hp',
       torque: '100-150+ lb-ft',
@@ -1277,7 +1070,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['NA V8 owners', 'Street machines', 'Roll racing'],
     worksWellWith: ['Fuel system upgrade', 'Heat exchanger', 'Exhaust', 'ECU tune'],
-    considerations: 'Centrifugal superchargers work well on V8s but require adequate fueling and heat management. Budget for a quality tune.',
+    considerations:
+      'Centrifugal superchargers work well on V8s but require adequate fueling and heat management. Budget for a quality tune.',
     brands: ['ProCharger', 'Vortech', 'Paxton', 'ATI'],
   },
 
@@ -1288,7 +1082,8 @@ export const upgradeDetails = {
     tier: 'ultimatePower',
     shortDescription: 'Positive displacement supercharger with instant boost',
     fullDescription: `A roots or TVS (Twin Vortices Series) supercharger sits on top of the engine and provides positive displacement boost. Unlike centrifugal superchargers, they provide full boost almost immediately, making for a very responsive power delivery.`,
-    howItWorks: 'Twin rotors mesh together to trap and compress air. Because it\'s positive displacement, boost is available from low RPM. TVS superchargers are more efficient than traditional roots designs.',
+    howItWorks:
+      "Twin rotors mesh together to trap and compress air. Because it's positive displacement, boost is available from low RPM. TVS superchargers are more efficient than traditional roots designs.",
     expectedGains: {
       hp: '200-350+ hp',
       torque: '200-300+ lb-ft',
@@ -1315,7 +1110,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Street monsters', 'Maximum torque builds', 'Factory-style integration'],
     worksWellWith: ['Heat exchanger upgrade', 'Fuel system', 'Headers', 'ECU tune'],
-    considerations: 'TVS superchargers generate significant heat. An upgraded heat exchanger is essential for sustained power.',
+    considerations:
+      'TVS superchargers generate significant heat. An upgraded heat exchanger is essential for sustained power.',
     brands: ['Whipple', 'Roush', 'Magnuson', 'Edelbrock', 'VMP'],
   },
 
@@ -1326,7 +1122,8 @@ export const upgradeDetails = {
     tier: 'ultimatePower',
     shortDescription: 'Single turbocharger for massive power potential',
     fullDescription: `A single turbo kit adds a turbocharger to a naturally aspirated engine or replaces the factory turbo with a larger unit. Single turbos can make massive power but may have more lag than twin-turbo setups.`,
-    howItWorks: 'Exhaust gases spin the turbine wheel, which is connected to a compressor wheel that forces air into the engine. More boost pressure = more air = more power when combined with additional fuel.',
+    howItWorks:
+      'Exhaust gases spin the turbine wheel, which is connected to a compressor wheel that forces air into the engine. More boost pressure = more air = more power when combined with additional fuel.',
     expectedGains: {
       hp: '150-400+ hp',
       torque: '150-350+ lb-ft',
@@ -1353,7 +1150,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Big power builds', 'Drag racing', 'Project cars'],
     worksWellWith: ['Forged internals', 'Fuel system', 'Intercooler', 'ECU tune'],
-    considerations: 'Turbo size selection is critical. Too big = excessive lag. Too small = runs out of breath. Match to your power goals.',
+    considerations:
+      'Turbo size selection is critical. Too big = excessive lag. Too small = runs out of breath. Match to your power goals.',
     brands: ['Garrett', 'Precision', 'BorgWarner', 'Full Race', 'On3 Performance'],
   },
 
@@ -1364,7 +1162,8 @@ export const upgradeDetails = {
     tier: 'ultimatePower',
     shortDescription: 'Two turbochargers for faster spool and big power',
     fullDescription: `Twin turbo kits use two smaller turbochargers instead of one large one. This provides faster spool-up while still making big power, as each turbo only needs to supply half the airflow.`,
-    howItWorks: 'Two turbos split the exhaust duty, allowing smaller turbos to be used while still flowing enough air for big power. Smaller turbos spool faster, reducing lag compared to a single large turbo.',
+    howItWorks:
+      'Two turbos split the exhaust duty, allowing smaller turbos to be used while still flowing enough air for big power. Smaller turbos spool faster, reducing lag compared to a single large turbo.',
     expectedGains: {
       hp: '250-500+ hp',
       torque: '250-450+ lb-ft',
@@ -1391,7 +1190,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['V8 engines', 'Maximum power with response', 'Street/strip builds'],
     worksWellWith: ['Forged internals', 'Fuel system', 'Intercooler', 'ECU tune'],
-    considerations: 'Twin turbos are natural for V8s since each bank gets its own turbo. For inline engines, a single turbo is usually simpler.',
+    considerations:
+      'Twin turbos are natural for V8s since each bank gets its own turbo. For inline engines, a single turbo is usually simpler.',
     brands: ['Hellion', 'Pure Turbos', 'On3 Performance', 'Full Race', 'TiAL'],
   },
 
@@ -1402,7 +1202,8 @@ export const upgradeDetails = {
     tier: 'ultimatePower',
     shortDescription: 'Larger turbos to replace restrictive factory units',
     fullDescription: `For cars that already have turbochargers from the factory, upgraded turbos with larger compressor and turbine wheels can flow significantly more air, supporting much higher power levels than stock.`,
-    howItWorks: 'Factory turbos are sized for economy and emissions compliance. Upgraded turbos use larger wheels and housings to flow more air at higher boost levels, supporting significantly more power.',
+    howItWorks:
+      'Factory turbos are sized for economy and emissions compliance. Upgraded turbos use larger wheels and housings to flow more air at higher boost levels, supporting significantly more power.',
     expectedGains: {
       hp: '80-200+ hp',
       torque: '100-250+ lb-ft',
@@ -1429,7 +1230,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Factory turbo cars seeking more power', 'N54/N55 BMWs', 'EcoBoost Mustangs'],
     worksWellWith: ['Downpipe', 'Intercooler', 'Fuel system', 'ECU tune'],
-    considerations: 'Upgraded turbos often need downpipes, intercoolers, and fuel system upgrades to support the increased airflow.',
+    considerations:
+      'Upgraded turbos often need downpipes, intercoolers, and fuel system upgrades to support the increased airflow.',
     brands: ['Pure Turbos', 'Precision', 'Vargas', 'TiAL', 'BorgWarner'],
   },
 
@@ -1440,7 +1242,8 @@ export const upgradeDetails = {
     tier: 'trackPack',
     shortDescription: 'Smaller pulley for more boost on factory supercharged cars',
     fullDescription: `On factory supercharged cars, a smaller supercharger pulley spins the blower faster, making more boost. Combined with a tune to adjust fueling and timing, this is one of the easiest ways to add significant power to already-boosted cars.`,
-    howItWorks: 'A smaller pulley increases the ratio between the crankshaft and supercharger, spinning the supercharger faster. Faster spin = more boost = more power, when properly tuned.',
+    howItWorks:
+      'A smaller pulley increases the ratio between the crankshaft and supercharger, spinning the supercharger faster. Faster spin = more boost = more power, when properly tuned.',
     expectedGains: {
       hp: '50-100+ hp',
       torque: '50-80+ lb-ft',
@@ -1466,22 +1269,24 @@ export const upgradeDetails = {
     ],
     bestFor: ['GT500', 'ZL1', 'Hellcat', 'Factory SC cars'],
     worksWellWith: ['Heat exchanger upgrade', 'Intake', 'Headers', 'ECU tune'],
-    considerations: 'Always upgrade the heat exchanger with pulley mods. More boost means more heat, and heat kills power and reliability.',
+    considerations:
+      'Always upgrade the heat exchanger with pulley mods. More boost means more heat, and heat kills power and reliability.',
     brands: ['VMP', 'Metco', 'Whipple', 'Roush', 'Lethal Performance'],
   },
 
-  'intercooler': {
+  intercooler: {
     key: 'intercooler',
-    name: 'Upgraded Intercooler',
+    name: 'Intercooler / Heat Exchanger',
     category: 'forcedInduction',
     tier: 'trackPack',
-    shortDescription: 'Better cooling for turbo charge air, more consistent power',
-    fullDescription: `On turbocharged cars, the intercooler cools compressed air from the turbo before it enters the engine. Cooler air is denser and makes more power. An upgraded intercooler provides better cooling and maintains power during hard driving.`,
-    howItWorks: 'Turbochargers heat air during compression (physics). Hot air is less dense and makes less power. The intercooler is a heat exchanger that cools this air. A bigger, more efficient one keeps air cooler.',
+    shortDescription: 'Better cooling for charge air, more consistent power',
+    fullDescription: `On turbocharged and supercharged cars, the intercooler (or heat exchanger) cools compressed air before it enters the engine. Cooler air is denser and makes more power. An upgraded unit provides better cooling and maintains power during hard driving.`,
+    howItWorks:
+      'Turbo/superchargers heat air during compression (physics). Hot air is less dense and makes less power. The intercooler/heat exchanger cools this air. A bigger, more efficient one keeps air cooler.',
     expectedGains: {
       hp: '10-25 hp (by maintaining power)',
       consistency: 'Eliminates heat soak',
-      note: 'Won\'t make more peak power, but maintains it consistently.',
+      note: "Won't make more peak power, but maintains it consistently.",
     },
     cost: { range: '$500 - $2,500', low: 500, high: 2500 },
     difficulty: 'Moderate',
@@ -1498,23 +1303,23 @@ export const upgradeDetails = {
         type: 'radio',
         default: 'upgraded',
         options: [
-          { 
-            value: 'stockPlus', 
-            label: 'Stock+ / OEM Upgrade', 
+          {
+            value: 'stockPlus',
+            label: 'Stock+ / OEM Upgrade',
             hpModifier: 0,
             description: 'Direct OEM replacement, slightly better',
             note: 'Easiest install, modest improvement',
           },
-          { 
-            value: 'upgraded', 
-            label: 'Upgraded Bar & Plate', 
+          {
+            value: 'upgraded',
+            label: 'Upgraded Bar & Plate',
             hpModifier: 5,
             description: 'Larger core, significantly better cooling',
             note: 'Best balance of cooling and response',
           },
-          { 
-            value: 'fmic', 
-            label: 'Front-Mount IC (FMIC)', 
+          {
+            value: 'fmic',
+            label: 'Front-Mount IC (FMIC)',
             hpModifier: 10,
             description: 'Maximum cooling capacity',
             note: 'Best for high-power builds and track use',
@@ -1535,49 +1340,17 @@ export const upgradeDetails = {
     ],
     bestFor: ['Track-focused turbo cars', 'Hot climate turbo owners'],
     worksWellWith: ['ECU tune', 'Downpipe', 'Intake'],
-    considerations: 'If your car feels slower after a few hard pulls, you need this. Heat soak is the enemy.',
+    considerations:
+      'If your car feels slower after a few hard pulls, you need this. Heat soak is the enemy.',
     brands: ['Wagner Tuning', 'Mishimoto', 'CSF', 'Agency Power', 'VRSF'],
   },
 
-  'heat-exchanger-sc': {
-    key: 'heat-exchanger-sc',
-    name: 'Heat Exchanger Upgrade (Supercharged)',
-    category: 'forcedInduction',
-    tier: 'trackPack',
-    shortDescription: 'Better cooling for supercharged intake air',
-    fullDescription: `Factory supercharged cars use a heat exchanger (intercooler) to cool the compressed air. An upgraded unit with more cooling capacity prevents heat soak and maintains power during extended hard driving.`,
-    howItWorks: 'Superchargers generate heat when compressing air. The heat exchanger uses coolant or air to remove this heat. A larger unit with better flow removes heat more effectively.',
-    expectedGains: {
-      hp: '10-30 hp (by maintaining power)',
-      consistency: 'Prevents heat soak',
-      note: 'Essential for pulley upgrades or track use.',
-    },
-    cost: { range: '$600 - $2,000', low: 600, high: 2000 },
-    difficulty: 'Moderate',
-    installTime: '3-5 hours',
-    requiresTune: false,
-    requiresProInstall: false,
-    streetLegal: 'street-legal',
-    riskLevel: 'low',
-    pros: [
-      'Maintains power in hot conditions',
-      'Essential for pulley upgrades',
-      'Improves reliability under load',
-    ],
-    cons: [
-      'No peak power gains',
-      'Only noticed during sustained use',
-    ],
-    bestFor: ['GT500', 'ZL1', 'Hellcat', 'Any SC car with pulley mods'],
-    worksWellWith: ['Pulley upgrade', 'ECU tune', 'Upgraded coolant pump'],
-    considerations: 'Always upgrade the heat exchanger when doing pulley upgrades. The extra boost generates more heat.',
-    brands: ['Afco', 'VMP', 'C&R Racing', 'Lethal Performance'],
-  },
+  // Note: heat-exchanger-sc merged into intercooler entry above
 
   // ============================================================================
   // SUSPENSION & CHASSIS
   // ============================================================================
-  
+
   // 'coilovers-street' is the key used by upgradePackages.js for street coilovers
   'coilovers-street': {
     key: 'coilovers-street',
@@ -1694,14 +1467,15 @@ export const upgradeDetails = {
     },
   },
 
-  'coilovers': {
+  coilovers: {
     key: 'coilovers',
     name: 'Coilover Suspension',
     category: 'suspension',
     tier: 'trackPack',
     shortDescription: 'Fully adjustable suspension for height, damping, and handling',
     fullDescription: `Coilovers combine a shock absorber and spring into one unit with adjustable ride height. Quality coilovers also offer damping adjustment, allowing you to fine-tune your suspension for different driving conditions.`,
-    howItWorks: 'Coilovers replace your factory struts/shocks and springs. Threaded bodies allow height adjustment, while valving controls how quickly the suspension compresses and rebounds.',
+    howItWorks:
+      'Coilovers replace your factory struts/shocks and springs. Threaded bodies allow height adjustment, while valving controls how quickly the suspension compresses and rebounds.',
     expectedGains: {
       handling: 'Significantly improved cornering',
       adjustability: 'Height and damping control',
@@ -1722,23 +1496,23 @@ export const upgradeDetails = {
         type: 'radio',
         default: 'street',
         options: [
-          { 
-            value: 'street', 
-            label: 'Street / Comfort', 
+          {
+            value: 'street',
+            label: 'Street / Comfort',
             handlingModifier: 1.0,
             description: 'Softer springs, daily driver friendly',
             note: 'Good handling without sacrificing comfort',
           },
-          { 
-            value: 'sport', 
-            label: 'Sport / Spirited', 
+          {
+            value: 'sport',
+            label: 'Sport / Spirited',
             handlingModifier: 1.15,
             description: 'Stiffer springs, still livable daily',
             note: 'Best balance for enthusiast daily drivers',
           },
-          { 
-            value: 'track', 
-            label: 'Track / Race', 
+          {
+            value: 'track',
+            label: 'Track / Race',
             handlingModifier: 1.3,
             description: 'Very stiff, track-focused',
             warning: 'Not recommended for daily driving. May be harsh on public roads.',
@@ -1751,21 +1525,21 @@ export const upgradeDetails = {
         type: 'radio',
         default: 'single',
         options: [
-          { 
-            value: 'fixed', 
-            label: 'Non-Adjustable', 
+          {
+            value: 'fixed',
+            label: 'Non-Adjustable',
             costModifier: -300,
             description: 'Set and forget, simplest option',
           },
-          { 
-            value: 'single', 
-            label: 'Single Adjustable', 
+          {
+            value: 'single',
+            label: 'Single Adjustable',
             costModifier: 0,
             description: 'One knob controls compression + rebound together',
           },
-          { 
-            value: 'double', 
-            label: 'Double Adjustable', 
+          {
+            value: 'double',
+            label: 'Double Adjustable',
             costModifier: 800,
             description: 'Separate compression and rebound adjustment',
             note: 'Recommended for serious track use',
@@ -1787,7 +1561,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Track-focused cars', 'Autocross', 'Canyon carving'],
     worksWellWith: ['Upgraded sway bars', 'Performance alignment', 'Better tires'],
-    considerations: 'Don\'t cheap out on coilovers. Budget coilovers can be worse than stock suspension. Look for double-adjustable damping for serious track use.',
+    considerations:
+      "Don't cheap out on coilovers. Budget coilovers can be worse than stock suspension. Look for double-adjustable damping for serious track use.",
     brands: ['KW', 'Ohlins', 'MCS', 'JRZ', 'Bilstein', 'BC Racing', 'Fortune Auto'],
   },
 
@@ -1798,7 +1573,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Shorter, stiffer springs for lower ride height and better handling',
     fullDescription: `Lowering springs are stiffer and shorter than stock springs, dropping the car 1-2 inches while improving handling. They're a more affordable alternative to coilovers for enthusiasts who want better looks and handling without full adjustability.`,
-    howItWorks: 'Stiffer springs reduce body roll and improve handling. Shorter springs lower the center of gravity and improve aerodynamics. The drop also reduces suspension travel.',
+    howItWorks:
+      'Stiffer springs reduce body roll and improve handling. Shorter springs lower the center of gravity and improve aerodynamics. The drop also reduces suspension travel.',
     expectedGains: {
       handling: 'Moderate improvement',
       appearance: 'Lower, more aggressive stance',
@@ -1818,9 +1594,25 @@ export const upgradeDetails = {
         type: 'radio',
         default: 'moderate',
         options: [
-          { value: 'mild', label: '0.75" - 1.0" Drop', handlingModifier: 0.9, description: 'Subtle drop, maintains ride quality' },
-          { value: 'moderate', label: '1.0" - 1.5" Drop', handlingModifier: 1.0, description: 'Noticeable drop, good balance' },
-          { value: 'aggressive', label: '1.5" - 2.0" Drop', handlingModifier: 1.1, description: 'Aggressive stance', warning: 'May require adjustable end links' },
+          {
+            value: 'mild',
+            label: '0.75" - 1.0" Drop',
+            handlingModifier: 0.9,
+            description: 'Subtle drop, maintains ride quality',
+          },
+          {
+            value: 'moderate',
+            label: '1.0" - 1.5" Drop',
+            handlingModifier: 1.0,
+            description: 'Noticeable drop, good balance',
+          },
+          {
+            value: 'aggressive',
+            label: '1.5" - 2.0" Drop',
+            handlingModifier: 1.1,
+            description: 'Aggressive stance',
+            warning: 'May require adjustable end links',
+          },
         ],
       },
       stiffness: {
@@ -1829,8 +1621,17 @@ export const upgradeDetails = {
         type: 'radio',
         default: 'progressive',
         options: [
-          { value: 'progressive', label: 'Progressive Rate', description: 'Comfortable daily, firms up under load' },
-          { value: 'linear', label: 'Linear Rate', description: 'Consistent feel, more track-focused', note: 'Better for spirited driving' },
+          {
+            value: 'progressive',
+            label: 'Progressive Rate',
+            description: 'Comfortable daily, firms up under load',
+          },
+          {
+            value: 'linear',
+            label: 'Linear Rate',
+            description: 'Consistent feel, more track-focused',
+            note: 'Better for spirited driving',
+          },
         ],
       },
     },
@@ -1848,7 +1649,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Budget builds', 'Appearance upgrades', 'Light performance use'],
     worksWellWith: ['Performance shocks', 'Sway bars', 'Better tires'],
-    considerations: 'Lowering springs on stock shocks work initially but can wear out the shocks faster. Consider upgrading shocks at the same time.',
+    considerations:
+      'Lowering springs on stock shocks work initially but can wear out the shocks faster. Consider upgrading shocks at the same time.',
     brands: ['Eibach', 'H&R', 'Swift', 'Tein', 'Steeda'],
   },
 
@@ -1859,7 +1661,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Thicker bars to reduce body roll in corners',
     fullDescription: `Sway bars (also called anti-roll bars) connect the left and right suspension. When the car rolls into a corner, the sway bar resists this motion. Thicker bars reduce body roll, making the car feel flatter and more responsive in corners.`,
-    howItWorks: 'When one wheel moves up, the sway bar transfers some of that force to the opposite wheel. A stiffer bar transfers more force, reducing how much the body rolls during cornering.',
+    howItWorks:
+      'When one wheel moves up, the sway bar transfers some of that force to the opposite wheel. A stiffer bar transfers more force, reducing how much the body rolls during cornering.',
     expectedGains: {
       handling: 'Flatter cornering',
       responsiveness: 'Faster direction changes',
@@ -1877,9 +1680,24 @@ export const upgradeDetails = {
         type: 'radio',
         default: 'both',
         options: [
-          { value: 'front', label: 'Front Only', description: 'Reduces understeer', note: 'Good for FWD cars' },
-          { value: 'rear', label: 'Rear Only', description: 'Adds rotation/oversteer', note: 'Good for RWD cars' },
-          { value: 'both', label: 'Front & Rear', description: 'Best overall balance', note: 'Recommended for most builds' },
+          {
+            value: 'front',
+            label: 'Front Only',
+            description: 'Reduces understeer',
+            note: 'Good for FWD cars',
+          },
+          {
+            value: 'rear',
+            label: 'Rear Only',
+            description: 'Adds rotation/oversteer',
+            note: 'Good for RWD cars',
+          },
+          {
+            value: 'both',
+            label: 'Front & Rear',
+            description: 'Best overall balance',
+            note: 'Recommended for most builds',
+          },
         ],
       },
       adjustability: {
@@ -1906,7 +1724,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['All enthusiasts', 'Autocross', 'Track days'],
     worksWellWith: ['Coilovers', 'Better tires', 'Performance alignment'],
-    considerations: 'Balance matters. A bigger rear bar adds oversteer. A bigger front bar adds understeer. Match the stiffness to your driving style and car.',
+    considerations:
+      'Balance matters. A bigger rear bar adds oversteer. A bigger front bar adds understeer. Match the stiffness to your driving style and car.',
     brands: ['Whiteline', 'Hotchkis', 'Eibach', 'Progress', 'Steeda'],
   },
 
@@ -1917,7 +1736,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Connects strut towers to reduce chassis flex',
     fullDescription: `A strut tower brace connects the tops of your strut towers, adding rigidity to the front (or rear) of the chassis. This helps keep the suspension geometry consistent during hard cornering when the chassis would otherwise flex.`,
-    howItWorks: 'Under hard cornering, the chassis flexes, changing suspension geometry in ways the engineers didn\'t intend. A strut tower brace ties the two towers together, resisting this flex.',
+    howItWorks:
+      "Under hard cornering, the chassis flexes, changing suspension geometry in ways the engineers didn't intend. A strut tower brace ties the two towers together, resisting this flex.",
     expectedGains: {
       handling: 'More consistent, predictable',
       steering: 'Improved precision',
@@ -1943,7 +1763,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Older cars', 'Convertibles', 'High-flex chassis'],
     worksWellWith: ['Subframe connectors', 'Chassis bracing'],
-    considerations: 'Modern sports cars often have rigid chassis that don\'t need this. Most benefit goes to older cars or convertibles.',
+    considerations:
+      "Modern sports cars often have rigid chassis that don't need this. Most benefit goes to older cars or convertibles.",
     brands: ['BMR', 'UPR', 'Steeda', 'K-Member', 'M&M Racing'],
   },
 
@@ -1954,7 +1775,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Structural reinforcement connecting front and rear subframes',
     fullDescription: `Subframe connectors are structural tubes that connect the front and rear subframes, dramatically increasing chassis rigidity. They're especially beneficial on unibody cars and convertibles where flex can be significant.`,
-    howItWorks: 'The subframes (which hold the suspension) are only connected by the relatively flexible floor pan. Connectors tie them together directly, creating a more rigid structure that handles suspension loads better.',
+    howItWorks:
+      'The subframes (which hold the suspension) are only connected by the relatively flexible floor pan. Connectors tie them together directly, creating a more rigid structure that handles suspension loads better.',
     expectedGains: {
       handling: 'More consistent, predictable',
       feel: 'Tighter, more connected',
@@ -1980,7 +1802,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Mustangs', 'Camaros', 'Convertibles', 'Track builds'],
     worksWellWith: ['Strut tower brace', 'Chassis bracing', 'Coilovers'],
-    considerations: 'Weld-in connectors are much better than bolt-on. Budget for professional installation.',
+    considerations:
+      'Weld-in connectors are much better than bolt-on. Budget for professional installation.',
     brands: ['BMR', 'UPR', 'Steeda', 'PHR', 'Maximum Motorsports'],
   },
 
@@ -1991,7 +1814,8 @@ export const upgradeDetails = {
     tier: 'trackPack',
     shortDescription: 'Adjustable suspension arms for alignment and handling tuning',
     fullDescription: `Adjustable control arms replace the fixed-length factory arms with adjustable versions. This allows you to fine-tune camber, caster, and toe beyond factory specifications, which is essential after lowering your car.`,
-    howItWorks: 'Factory control arms are fixed length. After lowering, suspension geometry is off. Adjustable arms let you correct camber and caster, and can change rear toe for handling tuning.',
+    howItWorks:
+      'Factory control arms are fixed length. After lowering, suspension geometry is off. Adjustable arms let you correct camber and caster, and can change rear toe for handling tuning.',
     expectedGains: {
       handling: 'Optimized suspension geometry',
       tire: 'Even tire wear at lowered heights',
@@ -2017,7 +1841,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Lowered cars', 'Track builds', 'Autocross'],
     worksWellWith: ['Coilovers', 'Performance alignment', 'Camber plates'],
-    considerations: 'Spherical bearing arms are great for track but add noise and harshness for street. Poly bushing arms are street-friendly.',
+    considerations:
+      'Spherical bearing arms are great for track but add noise and harshness for street. Poly bushing arms are street-friendly.',
     brands: ['SPL Parts', 'Whiteline', 'Maximum Motorsports', 'BMR', 'UMI'],
   },
 
@@ -2028,7 +1853,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Stiffer bushings for improved responsiveness',
     fullDescription: `Factory suspension bushings are made of soft rubber for comfort. Polyurethane bushings are stiffer, reducing deflection and improving steering precision and handling response.`,
-    howItWorks: 'Rubber bushings compress and flex under load, introducing slop into the suspension. Polyurethane is stiffer, keeping the suspension geometry more consistent under hard driving.',
+    howItWorks:
+      'Rubber bushings compress and flex under load, introducing slop into the suspension. Polyurethane is stiffer, keeping the suspension geometry more consistent under hard driving.',
     expectedGains: {
       handling: 'Sharper turn-in',
       steering: 'More precise feel',
@@ -2055,7 +1881,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['All performance-focused builds', 'Track cars', 'Autocross'],
     worksWellWith: ['Coilovers', 'Sway bars', 'Control arms'],
-    considerations: 'For the most extreme response, spherical bearings eliminate deflection entirely but add significant NVH.',
+    considerations:
+      'For the most extreme response, spherical bearings eliminate deflection entirely but add significant NVH.',
     brands: ['Energy Suspension', 'Prothane', 'Whiteline', 'SuperPro'],
   },
 
@@ -2066,7 +1893,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Aggressive alignment for improved handling',
     fullDescription: `A performance alignment adjusts camber, caster, and toe beyond factory specifications for improved handling. More negative camber keeps more tire on the ground during cornering, while optimized toe improves turn-in response.`,
-    howItWorks: 'Factory alignments prioritize tire wear and comfort. A performance alignment trades some inner tire wear for more grip during cornering by increasing negative camber and often adding toe-out.',
+    howItWorks:
+      'Factory alignments prioritize tire wear and comfort. A performance alignment trades some inner tire wear for more grip during cornering by increasing negative camber and often adding toe-out.',
     expectedGains: {
       handling: 'Improved cornering grip',
       feel: 'Sharper turn-in',
@@ -2092,14 +1920,15 @@ export const upgradeDetails = {
     ],
     bestFor: ['Everyone with suspension mods', 'Track/autocross participants'],
     worksWellWith: ['Better tires', 'Coilovers', 'Adjustable arms'],
-    considerations: 'Find an alignment shop experienced with performance cars. Not all shops know how to set up a car for handling.',
+    considerations:
+      'Find an alignment shop experienced with performance cars. Not all shops know how to set up a car for handling.',
     brands: ['Any quality alignment shop'],
   },
 
   // ============================================================================
   // BRAKES
   // ============================================================================
-  
+
   // 'brake-pads-street' is the key used by upgradePackages.js
   'brake-pads-street': {
     key: 'brake-pads-street',
@@ -2239,7 +2068,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'High-friction pads for better stopping and fade resistance',
     fullDescription: `Performance brake pads use higher-friction compounds than stock pads. Street performance pads offer better stopping with minimal dust and noise. Track pads prioritize fade resistance at high temperatures but may be noisy when cold.`,
-    howItWorks: 'Brake pads generate friction against the rotor. Performance compounds maintain friction better under heat and provide more initial bite. Track pads are designed to work best at higher temperatures.',
+    howItWorks:
+      'Brake pads generate friction against the rotor. Performance compounds maintain friction better under heat and provide more initial bite. Track pads are designed to work best at higher temperatures.',
     expectedGains: {
       braking: '10-20% shorter stopping distance',
       fade: 'Better heat resistance',
@@ -2265,7 +2095,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['First brake upgrade', 'Track day preparation', 'All enthusiasts'],
     worksWellWith: ['Performance rotors', 'Braided lines', 'High-temp fluid'],
-    considerations: 'For street driving, choose a compound with good cold bite. For track, prioritize fade resistance. Some pads offer a good compromise.',
+    considerations:
+      'For street driving, choose a compound with good cold bite. For track, prioritize fade resistance. Some pads offer a good compromise.',
     brands: ['Hawk', 'StopTech', 'PFC', 'Carbotech', 'Ferodo', 'EBC'],
   },
 
@@ -2287,10 +2118,30 @@ export const upgradeDetails = {
         type: 'radio',
         default: 'slotted',
         options: [
-          { value: 'slotted', label: 'Slotted', description: 'Grooves for gas venting', note: 'Best for track use - won\'t crack' },
-          { value: 'drilled', label: 'Cross-Drilled', description: 'Holes for cooling', warning: 'Can crack under extreme heat' },
-          { value: 'both', label: 'Slotted & Drilled', description: 'Maximum cooling', note: 'Good for street/light track' },
-          { value: 'blank', label: 'Blank (Plain)', description: 'No slots or holes', note: 'Best for endurance racing' },
+          {
+            value: 'slotted',
+            label: 'Slotted',
+            description: 'Grooves for gas venting',
+            note: "Best for track use - won't crack",
+          },
+          {
+            value: 'drilled',
+            label: 'Cross-Drilled',
+            description: 'Holes for cooling',
+            warning: 'Can crack under extreme heat',
+          },
+          {
+            value: 'both',
+            label: 'Slotted & Drilled',
+            description: 'Maximum cooling',
+            note: 'Good for street/light track',
+          },
+          {
+            value: 'blank',
+            label: 'Blank (Plain)',
+            description: 'No slots or holes',
+            note: 'Best for endurance racing',
+          },
         ],
       },
       construction: {
@@ -2300,7 +2151,13 @@ export const upgradeDetails = {
         default: 'onepiece',
         options: [
           { value: 'onepiece', label: 'One-Piece', description: 'Standard construction' },
-          { value: 'twopiece', label: 'Two-Piece (Floating)', costModifier: 400, description: 'Aluminum hat reduces weight', note: 'Reduces unsprung weight' },
+          {
+            value: 'twopiece',
+            label: 'Two-Piece (Floating)',
+            costModifier: 400,
+            description: 'Aluminum hat reduces weight',
+            note: 'Reduces unsprung weight',
+          },
         ],
       },
     },
@@ -2313,7 +2170,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Slotted or drilled rotors for better heat management',
     fullDescription: `Performance rotors improve heat management and pad degassing. Slotted rotors use machined grooves to wipe away gases and debris. Drilled rotors add cooling holes. Two-piece rotors use an aluminum hat for weight reduction.`,
-    howItWorks: 'Slots help remove pad gases and debris from the friction surface. Drilling adds cooling capacity. Both help maintain consistent friction under hard braking.',
+    howItWorks:
+      'Slots help remove pad gases and debris from the friction surface. Drilling adds cooling capacity. Both help maintain consistent friction under hard braking.',
     expectedGains: {
       braking: 'More consistent under heat',
       cooling: 'Better heat dissipation',
@@ -2339,7 +2197,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Track days', 'Mountain driving', 'Heavy vehicles'],
     worksWellWith: ['Performance pads', 'High-temp fluid', 'Brake cooling'],
-    considerations: 'For serious track use, prefer slotted over drilled. Drilled rotors can crack under extreme heat cycling.',
+    considerations:
+      'For serious track use, prefer slotted over drilled. Drilled rotors can crack under extreme heat cycling.',
     brands: ['StopTech', 'DBA', 'Brembo', 'Girodisc', 'AP Racing'],
   },
 
@@ -2350,7 +2209,8 @@ export const upgradeDetails = {
     tier: 'trackPack',
     shortDescription: 'Larger calipers and rotors for maximum stopping power',
     fullDescription: `A big brake kit replaces your factory brakes with larger rotors and multi-piston calipers. This dramatically increases stopping power and heat capacity, essential for track use where repeated hard braking overwhelms stock brakes.`,
-    howItWorks: 'Larger rotors have more surface area for heat dissipation. Multi-piston calipers apply more uniform pressure across the pad. Together, they provide dramatically improved braking.',
+    howItWorks:
+      'Larger rotors have more surface area for heat dissipation. Multi-piston calipers apply more uniform pressure across the pad. Together, they provide dramatically improved braking.',
     expectedGains: {
       braking: '30-50% improvement in fade resistance',
       distance: '10-15% shorter stopping distance',
@@ -2370,9 +2230,27 @@ export const upgradeDetails = {
         type: 'radio',
         default: 'medium',
         options: [
-          { value: 'small', label: 'Small Upgrade (+1")', brakingModifier: 1.1, description: 'Fits stock wheels', note: 'Good for street/light track' },
-          { value: 'medium', label: 'Medium Upgrade (+2")', brakingModifier: 1.2, description: 'May need 18"+ wheels', note: 'Best balance for track use' },
-          { value: 'large', label: 'Large Upgrade (+3")', brakingModifier: 1.35, description: 'Requires 19"+ wheels', note: 'Serious track/racing use' },
+          {
+            value: 'small',
+            label: 'Small Upgrade (+1")',
+            brakingModifier: 1.1,
+            description: 'Fits stock wheels',
+            note: 'Good for street/light track',
+          },
+          {
+            value: 'medium',
+            label: 'Medium Upgrade (+2")',
+            brakingModifier: 1.2,
+            description: 'May need 18"+ wheels',
+            note: 'Best balance for track use',
+          },
+          {
+            value: 'large',
+            label: 'Large Upgrade (+3")',
+            brakingModifier: 1.35,
+            description: 'Requires 19"+ wheels',
+            note: 'Serious track/racing use',
+          },
         ],
       },
       pistons: {
@@ -2382,8 +2260,20 @@ export const upgradeDetails = {
         default: '4piston',
         options: [
           { value: '4piston', label: '4-Piston', description: 'Good for most applications' },
-          { value: '6piston', label: '6-Piston', costModifier: 500, description: 'Better pad coverage', note: 'Recommended for heavy cars' },
-          { value: '8piston', label: '8-Piston', costModifier: 1000, description: 'Maximum braking force', note: 'Racing applications' },
+          {
+            value: '6piston',
+            label: '6-Piston',
+            costModifier: 500,
+            description: 'Better pad coverage',
+            note: 'Recommended for heavy cars',
+          },
+          {
+            value: '8piston',
+            label: '8-Piston',
+            costModifier: 1000,
+            description: 'Maximum braking force',
+            note: 'Racing applications',
+          },
         ],
       },
       position: {
@@ -2393,7 +2283,13 @@ export const upgradeDetails = {
         default: 'front',
         options: [
           { value: 'front', label: 'Front Only', description: 'Where most braking happens' },
-          { value: 'both', label: 'Front & Rear', costModifier: 2000, description: 'Complete upgrade', note: 'Recommended for high-power cars' },
+          {
+            value: 'both',
+            label: 'Front & Rear',
+            costModifier: 2000,
+            description: 'Complete upgrade',
+            note: 'Recommended for high-power cars',
+          },
         ],
       },
     },
@@ -2411,7 +2307,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Track cars', 'Heavy performance cars', 'High-powered vehicles'],
     worksWellWith: ['High-temp fluid', 'Brake cooling ducts', 'Performance tires'],
-    considerations: 'Make sure the BBK fits your wheels. Some kits require 18"+ wheels. For street driving, quality pads on stock brakes are often sufficient.',
+    considerations:
+      'Make sure the BBK fits your wheels. Some kits require 18"+ wheels. For street driving, quality pads on stock brakes are often sufficient.',
     brands: ['Brembo', 'AP Racing', 'StopTech', 'Wilwood', 'Alcon'],
   },
 
@@ -2422,7 +2319,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Stiffer brake lines for improved pedal feel',
     fullDescription: `Stainless braided brake lines replace the factory rubber lines that can expand under pressure. The braided stainless construction doesn't expand, providing a firmer, more consistent pedal feel.`,
-    howItWorks: 'Factory rubber brake lines expand slightly under pressure, creating a soft pedal feel. Braided lines maintain their shape, transmitting more of the pedal pressure directly to the caliper.',
+    howItWorks:
+      'Factory rubber brake lines expand slightly under pressure, creating a soft pedal feel. Braided lines maintain their shape, transmitting more of the pedal pressure directly to the caliper.',
     expectedGains: {
       feel: 'Firmer, more consistent pedal',
       confidence: 'Better brake modulation',
@@ -2448,7 +2346,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Track preparation', 'Older cars', 'Brake feel enthusiasts'],
     worksWellWith: ['Performance pads', 'High-temp fluid', 'BBK'],
-    considerations: 'Always use DOT-approved lines from reputable manufacturers. This is a safety item.',
+    considerations:
+      'Always use DOT-approved lines from reputable manufacturers. This is a safety item.',
     brands: ['Goodridge', 'StopTech', 'Russell', 'HEL'],
   },
 
@@ -2459,7 +2358,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Racing brake fluid with higher boiling point',
     fullDescription: `High-performance brake fluid has a higher boiling point than standard DOT 3/4 fluid. When brake fluid boils, you lose braking - the pedal goes soft or to the floor. Racing fluid resists this under track conditions.`,
-    howItWorks: 'Brake fluid transfers hydraulic pressure from your pedal to the calipers. Heat from braking raises fluid temperature. Standard fluid boils at lower temperatures than racing fluid.',
+    howItWorks:
+      'Brake fluid transfers hydraulic pressure from your pedal to the calipers. Heat from braking raises fluid temperature. Standard fluid boils at lower temperatures than racing fluid.',
     expectedGains: {
       safety: 'Prevents brake fade from boiling fluid',
       feel: 'Maintains firm pedal under heat',
@@ -2485,7 +2385,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Track days', 'Any track-focused car'],
     worksWellWith: ['Performance pads', 'Performance rotors', 'BBK'],
-    considerations: 'Racing fluid absorbs moisture faster than standard fluid. For track cars, flush every 1-2 years. For dedicated track cars, flush before each event.',
+    considerations:
+      'Racing fluid absorbs moisture faster than standard fluid. For track cars, flush every 1-2 years. For dedicated track cars, flush before each event.',
     brands: ['Motul RBF', 'Castrol SRF', 'AP Racing', 'StopTech STR'],
   },
 
@@ -2496,7 +2397,8 @@ export const upgradeDetails = {
     tier: 'trackPack',
     shortDescription: 'Directs air to brakes for better cooling on track',
     fullDescription: `Brake cooling ducts channel air from the front of the car to the brake rotors, dramatically reducing brake temperatures on track. This is essential for cars that experience fade or excessive rotor wear during track sessions.`,
-    howItWorks: 'Flexible ducting routes cool air from the front bumper opening directly to the brake rotors. The airflow carries away heat, keeping the brakes operating in their optimal temperature range.',
+    howItWorks:
+      'Flexible ducting routes cool air from the front bumper opening directly to the brake rotors. The airflow carries away heat, keeping the brakes operating in their optimal temperature range.',
     expectedGains: {
       temperature: '100-200°F reduction in rotor temps',
       fade: 'Significantly reduced fade',
@@ -2522,8 +2424,9 @@ export const upgradeDetails = {
     ],
     bestFor: ['Dedicated track cars', 'Heavy track use', 'Hot climates'],
     worksWellWith: ['BBK', 'Track pads', 'High-temp fluid'],
-    considerations: 'Position matters. Direct the air at the rotor face, not the caliper. Aluminum backing plates can also help reflect heat.',
-    brands: ['Cool-a-Brake', 'Trackspec', 'Earl\'s', 'Summit Racing'],
+    considerations:
+      'Position matters. Direct the air at the rotor face, not the caliper. Aluminum backing plates can also help reflect heat.',
+    brands: ['Cool-a-Brake', 'Trackspec', "Earl's", 'Summit Racing'],
   },
 
   // ============================================================================
@@ -2536,7 +2439,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'High-grip tires for maximum street performance',
     fullDescription: `Performance street tires use softer compounds and more aggressive tread patterns than standard all-season tires. They provide significantly more grip while remaining street legal and usable in light rain.`,
-    howItWorks: 'Softer rubber compounds grip better but wear faster. Performance tread patterns maximize contact patch while still channeling water. The right tire can transform your car.',
+    howItWorks:
+      'Softer rubber compounds grip better but wear faster. Performance tread patterns maximize contact patch while still channeling water. The right tire can transform your car.',
     expectedGains: {
       grip: '20-40% improvement over all-seasons',
       handling: 'Dramatic improvement',
@@ -2563,8 +2467,14 @@ export const upgradeDetails = {
     ],
     bestFor: ['Everyone serious about performance', 'Track days', 'Autocross'],
     worksWellWith: ['Suspension upgrades', 'Better alignment', 'Wheel upgrade'],
-    considerations: 'Tires are more important than almost any other modification. Budget for good tires before spending on other upgrades.',
-    brands: ['Michelin PS4S', 'Continental ExtremeContact', 'Bridgestone Potenza', 'Yokohama ADVAN'],
+    considerations:
+      'Tires are more important than almost any other modification. Budget for good tires before spending on other upgrades.',
+    brands: [
+      'Michelin PS4S',
+      'Continental ExtremeContact',
+      'Bridgestone Potenza',
+      'Yokohama ADVAN',
+    ],
   },
 
   'competition-tires': {
@@ -2574,7 +2484,8 @@ export const upgradeDetails = {
     tier: 'timeAttack',
     shortDescription: 'DOT-legal race tires with maximum grip',
     fullDescription: `Competition tires are DOT-legal tires designed primarily for track use. They have minimal tread and ultra-soft compounds for maximum grip, but wear quickly and have limited wet/cold weather capability.`,
-    howItWorks: 'Extremely soft compounds and minimal tread maximize contact patch and grip. Many are "200 treadwear" or lower, meaning they sacrifice longevity for grip.',
+    howItWorks:
+      'Extremely soft compounds and minimal tread maximize contact patch and grip. Many are "200 treadwear" or lower, meaning they sacrifice longevity for grip.',
     expectedGains: {
       grip: '50-100% more than street tires',
       handling: 'Transformation',
@@ -2601,7 +2512,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Time attack', 'Track days', 'Autocross competition'],
     worksWellWith: ['Coilovers', 'Performance alignment', 'Track-compound pads'],
-    considerations: 'Heat cycling matters for these tires. Break them in properly for maximum life and grip.',
+    considerations:
+      'Heat cycling matters for these tires. Break them in properly for maximum life and grip.',
     brands: ['Toyo R888R', 'Nitto NT01', 'Hoosier A7', 'Goodyear Eagle F1 SC', 'Yokohama A052'],
   },
 
@@ -2612,7 +2524,8 @@ export const upgradeDetails = {
     tier: 'trackPack',
     shortDescription: 'Forged or flow-formed wheels for reduced unsprung weight',
     fullDescription: `Lightweight wheels reduce unsprung weight - the weight the suspension has to control. This improves acceleration, braking, steering response, and ride quality. Forged wheels are the lightest and strongest.`,
-    howItWorks: 'Unsprung weight directly impacts how quickly the suspension can respond. Lighter wheels accelerate and decelerate faster with the same engine/brakes, and the suspension can react to bumps more quickly.',
+    howItWorks:
+      'Unsprung weight directly impacts how quickly the suspension can respond. Lighter wheels accelerate and decelerate faster with the same engine/brakes, and the suspension can react to bumps more quickly.',
     expectedGains: {
       acceleration: 'Equivalent to ~5-10 hp',
       handling: 'Improved response',
@@ -2638,7 +2551,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Track cars', 'Autocross', 'Anyone seeking improved response'],
     worksWellWith: ['Performance tires', 'Suspension upgrades', 'Brake upgrades'],
-    considerations: 'Flow-formed wheels offer a good compromise between weight, strength, and cost. True forged wheels are the ultimate but expensive.',
+    considerations:
+      'Flow-formed wheels offer a good compromise between weight, strength, and cost. True forged wheels are the ultimate but expensive.',
     brands: ['Apex', 'BBS', 'Enkei', 'Volk Racing', 'Forgeline', 'HRE', 'CCW'],
   },
 
@@ -2649,7 +2563,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Push wheels outward for better stance and handling',
     fullDescription: `Wheel spacers mount between the hub and wheel, pushing the wheels outward. This widens the track width, improving handling stability, and can improve the appearance by filling the wheel wells better.`,
-    howItWorks: 'A wider track width improves lateral stability and reduces weight transfer during cornering. Spacers also change the scrub radius, which can affect steering feel.',
+    howItWorks:
+      'A wider track width improves lateral stability and reduces weight transfer during cornering. Spacers also change the scrub radius, which can affect steering feel.',
     expectedGains: {
       handling: 'More stable cornering',
       appearance: 'Better wheel fitment',
@@ -2675,7 +2590,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Appearance builds', 'Temporary fitment solution', 'BBK clearance'],
     worksWellWith: ['Lowering', 'Wheel upgrade'],
-    considerations: 'Quality hub-centric spacers are important. Cheap spacers can cause vibration or safety issues. Extended wheel studs may be required.',
+    considerations:
+      'Quality hub-centric spacers are important. Cheap spacers can cause vibration or safety issues. Extended wheel studs may be required.',
     brands: ['Eibach', 'H&R', 'Motorsport Hardware', 'Burger Tuning'],
   },
 
@@ -2689,7 +2605,8 @@ export const upgradeDetails = {
     tier: 'trackPack',
     shortDescription: 'Additional cooling for engine oil during track use',
     fullDescription: `An oil cooler is a heat exchanger that cools your engine oil before it circulates back through the engine. Essential for track use where sustained high RPM and load can push oil temperatures beyond safe limits.`,
-    howItWorks: 'Hot oil from the engine passes through a heat exchanger (similar to a radiator) mounted in the airstream. The cooled oil then returns to the engine, maintaining proper lubrication even under extreme conditions.',
+    howItWorks:
+      'Hot oil from the engine passes through a heat exchanger (similar to a radiator) mounted in the airstream. The cooled oil then returns to the engine, maintaining proper lubrication even under extreme conditions.',
     expectedGains: {
       reliability: 'Prevents oil breakdown',
       safety: 'Maintains lubrication under stress',
@@ -2715,8 +2632,9 @@ export const upgradeDetails = {
     ],
     bestFor: ['Track cars', 'High-heat climates', 'Forced induction builds'],
     worksWellWith: ['High-temp oil', 'Trans cooler', 'Diff cooler'],
-    considerations: 'Thermostatic sandwich plates help prevent over-cooling in cold weather by only opening when oil is hot enough.',
-    brands: ['Mishimoto', 'Setrab', 'Mocal', 'Earl\'s', 'Canton'],
+    considerations:
+      'Thermostatic sandwich plates help prevent over-cooling in cold weather by only opening when oil is hot enough.',
+    brands: ['Mishimoto', 'Setrab', 'Mocal', "Earl's", 'Canton'],
   },
 
   'radiator-upgrade': {
@@ -2726,7 +2644,8 @@ export const upgradeDetails = {
     tier: 'trackPack',
     shortDescription: 'Higher capacity radiator for better cooling',
     fullDescription: `An upgraded radiator has more cooling capacity than stock through larger size, more efficient core design, or both. This helps maintain optimal coolant temperatures during track use or in hot climates.`,
-    howItWorks: 'Coolant absorbs engine heat. The radiator transfers this heat to the air passing through it. A larger or more efficient radiator can dissipate more heat, keeping engine temps lower.',
+    howItWorks:
+      'Coolant absorbs engine heat. The radiator transfers this heat to the air passing through it. A larger or more efficient radiator can dissipate more heat, keeping engine temps lower.',
     expectedGains: {
       cooling: '10-30°F lower coolant temps',
       reliability: 'Prevents overheating',
@@ -2752,7 +2671,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Track cars', 'Hot climates', 'Forced induction builds'],
     worksWellWith: ['Electric fan upgrade', 'Oil cooler', 'High-flow thermostat'],
-    considerations: 'Look for dual-core or triple-core designs. CSF and Mishimoto are excellent OEM-fit options.',
+    considerations:
+      'Look for dual-core or triple-core designs. CSF and Mishimoto are excellent OEM-fit options.',
     brands: ['CSF', 'Mishimoto', 'PWR', 'Ron Davis', 'Koyo'],
   },
 
@@ -2763,7 +2683,8 @@ export const upgradeDetails = {
     tier: 'trackPack',
     shortDescription: 'Additional cooling for transmission fluid',
     fullDescription: `A transmission cooler is essential for track use, especially with automatic transmissions. High trans temps cause fluid breakdown and accelerated wear. A dedicated cooler keeps temps in check during hard driving.`,
-    howItWorks: 'Hot transmission fluid passes through an external heat exchanger. The cooled fluid returns to the transmission, preventing overheating that causes shift problems and wear.',
+    howItWorks:
+      'Hot transmission fluid passes through an external heat exchanger. The cooled fluid returns to the transmission, preventing overheating that causes shift problems and wear.',
     expectedGains: {
       reliability: 'Prevents trans damage',
       performance: 'Maintains shift quality',
@@ -2789,7 +2710,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Automatic transmission track cars', 'Heavy towing', 'Hot climates'],
     worksWellWith: ['Oil cooler', 'Radiator upgrade', 'Diff cooler'],
-    considerations: 'Plate-and-fin coolers are more efficient than tube-and-fin. Stack mounting in front of radiator is common.',
+    considerations:
+      'Plate-and-fin coolers are more efficient than tube-and-fin. Stack mounting in front of radiator is common.',
     brands: ['Mishimoto', 'Derale', 'B&M', 'TCI', 'Hayden'],
   },
 
@@ -2800,7 +2722,8 @@ export const upgradeDetails = {
     tier: 'timeAttack',
     shortDescription: 'Cooling for high-stress differential applications',
     fullDescription: `On high-powered or heavily tracked cars, the differential can overheat, causing fluid breakdown and wear. A differential cooler maintains optimal temps during sustained aggressive driving.`,
-    howItWorks: 'Differential fluid circulates through an external cooler, dissipating heat before returning to the diff. Essential for cars with limited-slip differentials under heavy track use.',
+    howItWorks:
+      'Differential fluid circulates through an external cooler, dissipating heat before returning to the diff. Essential for cars with limited-slip differentials under heavy track use.',
     expectedGains: {
       reliability: 'Prevents diff wear',
       consistency: 'Maintains LSD performance',
@@ -2818,14 +2741,11 @@ export const upgradeDetails = {
       'Maintains LSD clutch life',
       'Essential for endurance use',
     ],
-    cons: [
-      'Complex installation',
-      'Only needed for extreme use',
-      'Requires regular fluid checks',
-    ],
+    cons: ['Complex installation', 'Only needed for extreme use', 'Requires regular fluid checks'],
     bestFor: ['Time attack', 'Endurance racing', 'High-power RWD cars'],
     worksWellWith: ['Oil cooler', 'Trans cooler', 'LSD upgrade'],
-    considerations: 'Most street cars don\'t need this. It\'s for serious track use where the diff sees sustained heavy load.',
+    considerations:
+      "Most street cars don't need this. It's for serious track use where the diff sees sustained heavy load.",
     brands: ['Mishimoto', 'Derale', 'Setrab', 'Mocal'],
   },
 
@@ -2836,7 +2756,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Racing-grade oil, coolant, and brake fluid',
     fullDescription: `High-temperature fluids (engine oil, coolant, diff fluid, brake fluid) are formulated to maintain their properties at temperatures that would break down standard fluids. Essential for any track use.`,
-    howItWorks: 'Racing fluids use better base stocks and additives that resist breakdown at high temperatures. They maintain viscosity (oil), boiling point (brake fluid), and heat transfer (coolant) under extreme conditions.',
+    howItWorks:
+      'Racing fluids use better base stocks and additives that resist breakdown at high temperatures. They maintain viscosity (oil), boiling point (brake fluid), and heat transfer (coolant) under extreme conditions.',
     expectedGains: {
       reliability: 'Prevents fluid breakdown',
       safety: 'Maintains braking and lubrication',
@@ -2862,7 +2783,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['All track cars', 'Spirited street driving'],
     worksWellWith: ['All cooling upgrades', 'Any track prep'],
-    considerations: 'For oil, use a quality 5W-40 or 10W-40 with track-appropriate specs. Motul, Redline, and Amsoil are popular choices.',
+    considerations:
+      'For oil, use a quality 5W-40 or 10W-40 with track-appropriate specs. Motul, Redline, and Amsoil are popular choices.',
     brands: ['Motul', 'Redline', 'Amsoil', 'Royal Purple', 'Castrol'],
   },
 
@@ -2876,7 +2798,8 @@ export const upgradeDetails = {
     tier: 'trackPack',
     shortDescription: 'Generates front downforce for better grip',
     fullDescription: `A front splitter is a flat extension that protrudes forward from the front bumper. It creates a high-pressure zone above and low-pressure zone below, generating downforce that pushes the front tires into the ground.`,
-    howItWorks: 'Air hitting the splitter is forced over and under. The flat underside accelerates air (low pressure), while air over the bumper slows (high pressure). This pressure difference creates downforce.',
+    howItWorks:
+      'Air hitting the splitter is forced over and under. The flat underside accelerates air (low pressure), while air over the bumper slows (high pressure). This pressure difference creates downforce.',
     expectedGains: {
       downforce: '50-200+ lbs at speed',
       handling: 'Improved front grip',
@@ -2903,7 +2826,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Track cars', 'Time attack', 'High-speed roads'],
     worksWellWith: ['Rear wing', 'Rear diffuser', 'Canards'],
-    considerations: 'Front-only aero can create oversteer. Balance with rear downforce. Support rods help prevent flex and damage.',
+    considerations:
+      'Front-only aero can create oversteer. Balance with rear downforce. Support rods help prevent flex and damage.',
     brands: ['APR', 'Seibon', 'Verus Engineering', 'Varis', 'Platform-specific'],
   },
 
@@ -2914,7 +2838,8 @@ export const upgradeDetails = {
     tier: 'trackPack',
     shortDescription: 'Creates rear downforce for high-speed traction',
     fullDescription: `A rear wing is an inverted airfoil that creates downforce on the rear of the car. This pushes the rear tires into the ground, increasing traction at high speed and improving stability during braking.`,
-    howItWorks: 'The wing\'s shape accelerates air over the top surface faster than underneath. This creates low pressure above and high pressure below, pushing down on the trunk/hatch.',
+    howItWorks:
+      "The wing's shape accelerates air over the top surface faster than underneath. This creates low pressure above and high pressure below, pushing down on the trunk/hatch.",
     expectedGains: {
       downforce: '100-500+ lbs at speed',
       traction: 'Improved rear grip',
@@ -2941,7 +2866,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Track cars', 'Time attack', 'High-speed circuits'],
     worksWellWith: ['Front splitter', 'Rear diffuser', 'Side skirts'],
-    considerations: 'Balance is key. Too much rear downforce creates understeer. Match to front aero and adjust angle for your track.',
+    considerations:
+      'Balance is key. Too much rear downforce creates understeer. Match to front aero and adjust angle for your track.',
     brands: ['APR', 'Big Country Labs', 'Voltex', 'Seibon', '9Lives Racing'],
   },
 
@@ -2952,7 +2878,8 @@ export const upgradeDetails = {
     tier: 'timeAttack',
     shortDescription: 'Manages underbody airflow for downforce with less drag',
     fullDescription: `A rear diffuser is an upward-sloping section under the rear bumper that accelerates air exiting from under the car. This creates a low-pressure zone that generates downforce without the drag penalty of a large wing.`,
-    howItWorks: 'As air exits the flat underbody, the diffuser\'s expanding shape slows it down. This low pressure "sucks" the car toward the ground. Effective diffusers need a relatively flat underbody to work properly.',
+    howItWorks:
+      'As air exits the flat underbody, the diffuser\'s expanding shape slows it down. This low pressure "sucks" the car toward the ground. Effective diffusers need a relatively flat underbody to work properly.',
     expectedGains: {
       downforce: '50-150+ lbs at speed',
       efficiency: 'Downforce with less drag than wing',
@@ -2978,18 +2905,20 @@ export const upgradeDetails = {
     ],
     bestFor: ['Time attack', 'Serious track cars', 'Full aero packages'],
     worksWellWith: ['Flat floor/undertray', 'Front splitter', 'Rear wing'],
-    considerations: 'An effective diffuser requires a flat floor leading up to it. Without proper preparation, a diffuser is mostly cosmetic.',
+    considerations:
+      'An effective diffuser requires a flat floor leading up to it. Without proper preparation, a diffuser is mostly cosmetic.',
     brands: ['Verus Engineering', 'APR', 'Seibon', 'Varis'],
   },
 
-  'canards': {
+  canards: {
     key: 'canards',
     name: 'Canards (Dive Planes)',
     category: 'aero',
     tier: 'trackPack',
     shortDescription: 'Small front aero elements for additional downforce',
     fullDescription: `Canards are small wing-like elements mounted on the front bumper corners. They generate a small amount of front downforce and help direct airflow around the front wheels.`,
-    howItWorks: 'Each canard acts as a small airfoil, generating local downforce. They also help "dirty" the air heading to the front wheels, reducing drag from the wheel wells.',
+    howItWorks:
+      'Each canard acts as a small airfoil, generating local downforce. They also help "dirty" the air heading to the front wheels, reducing drag from the wheel wells.',
     expectedGains: {
       downforce: '20-50 lbs at speed',
       balance: 'Can help fine-tune front grip',
@@ -3008,25 +2937,23 @@ export const upgradeDetails = {
       'Can help balance aero',
       'Aggressive appearance',
     ],
-    cons: [
-      'Minimal downforce alone',
-      'Often mostly cosmetic',
-      'Can catch on obstacles',
-    ],
+    cons: ['Minimal downforce alone', 'Often mostly cosmetic', 'Can catch on obstacles'],
     bestFor: ['Complete aero packages', 'Fine-tuning balance'],
     worksWellWith: ['Front splitter', 'Rear wing', 'Full aero package'],
-    considerations: 'Canards work best as part of a complete aero package. On their own, they\'re mostly cosmetic.',
+    considerations:
+      "Canards work best as part of a complete aero package. On their own, they're mostly cosmetic.",
     brands: ['APR', 'Verus', 'Seibon', 'Various generic'],
   },
 
-  'undertray': {
+  undertray: {
     key: 'undertray',
     name: 'Flat Floor/Undertray',
     category: 'aero',
     tier: 'timeAttack',
     shortDescription: 'Smooth underbody for better aerodynamic efficiency',
     fullDescription: `An undertray creates a smooth, flat surface under the car. This improves aerodynamic efficiency by eliminating turbulent air from the rough underside and allows the rear diffuser to work properly.`,
-    howItWorks: 'A smooth underside allows air to flow faster and more predictably. This low-pressure zone under the car creates downforce and allows the rear diffuser to work as intended.',
+    howItWorks:
+      'A smooth underside allows air to flow faster and more predictably. This low-pressure zone under the car creates downforce and allows the rear diffuser to work as intended.',
     expectedGains: {
       downforce: 'Enables other aero to work',
       drag: 'Reduced overall drag',
@@ -3052,7 +2979,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Time attack', 'Full aero builds', 'Serious track cars'],
     worksWellWith: ['Rear diffuser', 'Front splitter', 'Full aero package'],
-    considerations: 'Include cooling vents for the transmission and exhaust. Full undertrays can trap significant heat.',
+    considerations:
+      'Include cooling vents for the transmission and exhaust. Full undertrays can trap significant heat.',
     brands: ['Verus Engineering', 'APR', 'Platform-specific', 'Custom'],
   },
 
@@ -3066,7 +2994,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Higher-capacity clutch for increased power handling',
     fullDescription: `A performance clutch uses higher-friction materials and stronger pressure plates to handle more power than the stock clutch. Essential when adding significant power, especially forced induction.`,
-    howItWorks: 'The clutch transmits power from the engine to the transmission. Performance clutches use organic, ceramic, or metallic friction materials with higher coefficients and heat resistance.',
+    howItWorks:
+      'The clutch transmits power from the engine to the transmission. Performance clutches use organic, ceramic, or metallic friction materials with higher coefficients and heat resistance.',
     expectedGains: {
       capacity: 'Handle 50-200%+ more power',
       reliability: 'Prevents clutch slip',
@@ -3093,7 +3022,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Any build exceeding stock power by 30%+', 'Forced induction'],
     worksWellWith: ['Lightweight flywheel', 'Short shifter', 'LSD'],
-    considerations: 'Match clutch type to use. Organic for street, ceramic for track, twin-disc for extreme power.',
+    considerations:
+      'Match clutch type to use. Organic for street, ceramic for track, twin-disc for extreme power.',
     brands: ['ACT', 'Clutch Masters', 'Exedy', 'Spec', 'McLeod', 'South Bend'],
   },
 
@@ -3104,7 +3034,8 @@ export const upgradeDetails = {
     tier: 'trackPack',
     shortDescription: 'Reduced rotating mass for faster revs',
     fullDescription: `A lightweight flywheel reduces rotating mass, allowing the engine to rev up and down faster. This improves throttle response and makes heel-toe downshifts easier.`,
-    howItWorks: 'The flywheel stores rotational energy. A lighter flywheel has less inertia, so the engine accelerates and decelerates more quickly. This makes the car feel more responsive.',
+    howItWorks:
+      'The flywheel stores rotational energy. A lighter flywheel has less inertia, so the engine accelerates and decelerates more quickly. This makes the car feel more responsive.',
     expectedGains: {
       response: 'Faster rev changes',
       feel: 'Improved throttle response',
@@ -3131,7 +3062,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Track cars', 'High-RPM builds', 'Autocross'],
     worksWellWith: ['Performance clutch', 'Short shifter'],
-    considerations: 'Do this when replacing the clutch to save labor. Too light can make smooth driving difficult. 10-15 lb is common.',
+    considerations:
+      'Do this when replacing the clutch to save labor. Too light can make smooth driving difficult. 10-15 lb is common.',
     brands: ['ACT', 'Fidanza', 'Spec', 'XClutch', 'Competition'],
   },
 
@@ -3142,7 +3074,8 @@ export const upgradeDetails = {
     tier: 'trackPack',
     shortDescription: 'Sends power to both drive wheels instead of spinning one',
     fullDescription: `A limited-slip differential distributes power to both drive wheels instead of just the one with less traction. This dramatically improves traction out of corners and under acceleration.`,
-    howItWorks: 'Open diffs send power to the wheel with least resistance. An LSD uses clutches, gears, or torque-sensing mechanisms to limit the speed difference between wheels, ensuring both get power.',
+    howItWorks:
+      'Open diffs send power to the wheel with least resistance. An LSD uses clutches, gears, or torque-sensing mechanisms to limit the speed difference between wheels, ensuring both get power.',
     expectedGains: {
       traction: '30-50% better acceleration grip',
       handling: 'Improved corner exit',
@@ -3169,7 +3102,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Track cars', 'Any RWD performance car', 'High-power builds'],
     worksWellWith: ['Performance tires', 'Suspension upgrades', 'Power mods'],
-    considerations: 'Helical/Torsen LSDs are maintenance-free. Clutch-type LSDs are more aggressive but need fluid changes.',
+    considerations:
+      'Helical/Torsen LSDs are maintenance-free. Clutch-type LSDs are more aggressive but need fluid changes.',
     brands: ['Wavetrac', 'Quaife', 'OS Giken', 'Kaaz', 'Cusco', 'MFactory'],
   },
 
@@ -3180,7 +3114,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Reduced throw for faster gear changes',
     fullDescription: `A short shifter reduces the distance you need to move the shifter to change gears. This allows faster shifts and gives a more direct, sporty feel to the transmission.`,
-    howItWorks: 'The shifter is a lever. A short shifter changes the pivot point or lever ratio, reducing throw distance. Less distance = faster shifts.',
+    howItWorks:
+      'The shifter is a lever. A short shifter changes the pivot point or lever ratio, reducing throw distance. Less distance = faster shifts.',
     expectedGains: {
       shifts: '30-50% shorter throws',
       feel: 'More precise, sporty',
@@ -3193,12 +3128,7 @@ export const upgradeDetails = {
     requiresProInstall: false,
     streetLegal: 'street-legal',
     riskLevel: 'low',
-    pros: [
-      'Faster shifts',
-      'Sportier feel',
-      'Relatively affordable',
-      'No drivability penalty',
-    ],
+    pros: ['Faster shifts', 'Sportier feel', 'Relatively affordable', 'No drivability penalty'],
     cons: [
       'Increased shift effort',
       'Very short throws can be notchy',
@@ -3206,7 +3136,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['All manual transmission cars', 'Track use', 'Spirited driving'],
     worksWellWith: ['Shift bushings', 'Weighted shift knob'],
-    considerations: 'Adjustable short shifters let you find the right balance of throw reduction and effort.',
+    considerations:
+      'Adjustable short shifters let you find the right balance of throw reduction and effort.',
     brands: ['B&M', 'Hurst', 'CAE', 'UUC', 'Kartboy'],
   },
 
@@ -3217,7 +3148,8 @@ export const upgradeDetails = {
     tier: 'ultimatePower',
     shortDescription: 'Stronger driveshaft for high-power applications',
     fullDescription: `Stock driveshafts can fail under extreme power or RPM. Upgraded driveshafts use stronger materials (chromoly or carbon fiber) to handle more power reliably.`,
-    howItWorks: 'The driveshaft transmits power from the transmission to the differential. High power and RPM create tremendous stress. Stronger materials prevent twist or failure.',
+    howItWorks:
+      'The driveshaft transmits power from the transmission to the differential. High power and RPM create tremendous stress. Stronger materials prevent twist or failure.',
     expectedGains: {
       reliability: 'Prevents catastrophic failure',
       performance: 'CF versions reduce weight',
@@ -3243,8 +3175,9 @@ export const upgradeDetails = {
     ],
     bestFor: ['1000+ hp builds', 'Drag racing', 'Competition'],
     worksWellWith: ['Built transmission', 'Upgraded axles'],
-    considerations: 'Carbon fiber driveshafts are lighter but must be protected from impacts. Aluminum is a good compromise.',
-    brands: ['The Driveshaft Shop', 'QA1', 'Carbon Fiber Driveline', 'John\'s Industries'],
+    considerations:
+      'Carbon fiber driveshafts are lighter but must be protected from impacts. Aluminum is a good compromise.',
+    brands: ['The Driveshaft Shop', 'QA1', 'Carbon Fiber Driveline', "John's Industries"],
   },
 
   'axles-halfshafts': {
@@ -3254,7 +3187,8 @@ export const upgradeDetails = {
     tier: 'ultimatePower',
     shortDescription: 'Stronger axles for high-power applications',
     fullDescription: `Stock axles can twist or snap under extreme power, especially with sticky tires. Upgraded axles use stronger materials and larger diameter to handle aggressive launches.`,
-    howItWorks: 'Axles transmit power from the differential to the wheels. Under hard launches, they experience tremendous torsional stress. Stronger axles resist this without failure.',
+    howItWorks:
+      'Axles transmit power from the differential to the wheels. Under hard launches, they experience tremendous torsional stress. Stronger axles resist this without failure.',
     expectedGains: {
       reliability: 'Prevents snapped axles',
       safety: 'Essential for drag racing',
@@ -3273,14 +3207,11 @@ export const upgradeDetails = {
       'Usually lifetime warranty',
       'Peace of mind',
     ],
-    cons: [
-      'Only needed for extreme builds',
-      'Expensive',
-      'Overkill for street use',
-    ],
+    cons: ['Only needed for extreme builds', 'Expensive', 'Overkill for street use'],
     bestFor: ['Drag racing', 'High-power builds', 'Slick tire applications'],
     worksWellWith: ['Built transmission', 'Upgraded driveshaft', 'LSD'],
-    considerations: 'Often the first failure point with big power and sticky tires. Get these before the axle breaks on the track.',
+    considerations:
+      'Often the first failure point with big power and sticky tires. Get these before the axle breaks on the track.',
     brands: ['The Driveshaft Shop', 'GForce', 'Moser', 'Strange'],
   },
 
@@ -3294,7 +3225,8 @@ export const upgradeDetails = {
     tier: 'timeAttack',
     shortDescription: 'Multi-point harness for track safety',
     fullDescription: `A racing harness keeps you firmly in place during high-G cornering, braking, and impacts. Required for wheel-to-wheel racing and highly recommended for serious track use.`,
-    howItWorks: 'Multiple straps distribute force across your body during a crash, preventing ejection and reducing injury risk. The anti-submarine strap prevents you from sliding under the lap belts.',
+    howItWorks:
+      'Multiple straps distribute force across your body during a crash, preventing ejection and reducing injury risk. The anti-submarine strap prevents you from sliding under the lap belts.',
     expectedGains: {
       safety: 'Dramatically improved crash protection',
       control: 'Better car control (no sliding in seat)',
@@ -3321,7 +3253,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Track days', 'Competition', 'Serious performance driving'],
     worksWellWith: ['Racing seat', 'Roll bar/cage', 'HANS device'],
-    considerations: 'Harnesses require proper mounting points. Mounting to stock belts is unsafe. Use with a HANS device for best protection.',
+    considerations:
+      'Harnesses require proper mounting points. Mounting to stock belts is unsafe. Use with a HANS device for best protection.',
     brands: ['Schroth', 'Sparco', 'Simpson', 'Sabelt', 'G-Force'],
   },
 
@@ -3332,7 +3265,8 @@ export const upgradeDetails = {
     tier: 'trackPack',
     shortDescription: 'Fixed-back seat for safety and support',
     fullDescription: `Racing seats provide much more lateral support than stock seats, keeping you in place during hard cornering. Fixed-back seats are required for harness use and are safer in a crash.`,
-    howItWorks: 'Deep bolsters hold you in place during G-forces. Fixed-back construction is stronger than stock seat backs. FIA-rated seats have passed stringent crash tests.',
+    howItWorks:
+      'Deep bolsters hold you in place during G-forces. Fixed-back construction is stronger than stock seat backs. FIA-rated seats have passed stringent crash tests.',
     expectedGains: {
       safety: 'Better crash protection',
       control: 'Better driver positioning',
@@ -3359,7 +3293,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Track cars', 'Competition', 'Serious enthusiasts'],
     worksWellWith: ['Racing harness', 'Roll bar/cage', 'Side mounts'],
-    considerations: 'FIA-approved seats are safest. Sliding seat mounts can retain some adjustability while using harnesses.',
+    considerations:
+      'FIA-approved seats are safest. Sliding seat mounts can retain some adjustability while using harnesses.',
     brands: ['Recaro', 'Sparco', 'Bride', 'Corbeau', 'OMP'],
   },
 
@@ -3370,7 +3305,8 @@ export const upgradeDetails = {
     tier: 'trackPack',
     shortDescription: 'Protects occupants in a rollover',
     fullDescription: `A roll bar is a reinforced bar behind the seats that protects occupants if the car rolls over. It prevents the roof from crushing and is required for many competition classes.`,
-    howItWorks: 'The roll bar creates a protective structure above and around the occupants. In a rollover, it absorbs impact forces and maintains survival space.',
+    howItWorks:
+      'The roll bar creates a protective structure above and around the occupants. In a rollover, it absorbs impact forces and maintains survival space.',
     expectedGains: {
       safety: 'Rollover protection',
       chassis: 'Often improves rigidity',
@@ -3397,7 +3333,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Track cars', 'Convertibles', 'Competition'],
     worksWellWith: ['Racing seat', 'Harness', 'Helmet'],
-    considerations: 'Bolt-in bars are easier to install but weld-in provides better protection. Add proper padding for headstrike protection.',
+    considerations:
+      'Bolt-in bars are easier to install but weld-in provides better protection. Add proper padding for headstrike protection.',
     brands: ['Autopower', 'Kirk Racing', 'Brown Davis', 'Cusco'],
   },
 
@@ -3408,7 +3345,8 @@ export const upgradeDetails = {
     tier: 'timeAttack',
     shortDescription: 'Full cage for maximum protection',
     fullDescription: `A roll cage extends throughout the passenger compartment, providing comprehensive protection in all types of impacts. Required for wheel-to-wheel racing and serious time attack.`,
-    howItWorks: 'The cage creates a complete structural cell around occupants. Multiple tubes distribute impact forces throughout the car, maintaining survival space in severe crashes.',
+    howItWorks:
+      'The cage creates a complete structural cell around occupants. Multiple tubes distribute impact forces throughout the car, maintaining survival space in severe crashes.',
     expectedGains: {
       safety: 'Maximum crash protection',
       rigidity: 'Dramatically improved chassis stiffness',
@@ -3435,7 +3373,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Race cars', 'Time attack', 'Competition only'],
     worksWellWith: ['Racing seat', 'Harness', 'Fire system', 'Window net'],
-    considerations: 'Full cages usually make the car impractical for street use. Consider a half cage or roll bar for street/track cars.',
+    considerations:
+      'Full cages usually make the car impractical for street use. Consider a half cage or roll bar for street/track cars.',
     brands: ['Custom by certified fabricator', 'AutoPower', 'S&W', 'Trick Race Parts'],
   },
 
@@ -3446,7 +3385,8 @@ export const upgradeDetails = {
     tier: 'trackPack',
     shortDescription: 'Fire suppression for track safety',
     fullDescription: `A fire extinguisher or system is essential track safety equipment. Handheld extinguishers are the minimum; onboard fire suppression systems are required for competition.`,
-    howItWorks: 'Fire extinguishers release agents that cool the fire and cut off oxygen. Racing systems can be driver-activated or automatic, protecting both the driver and engine bay.',
+    howItWorks:
+      'Fire extinguishers release agents that cool the fire and cut off oxygen. Racing systems can be driver-activated or automatic, protecting both the driver and engine bay.',
     expectedGains: {
       safety: 'Can save your life',
       compliance: 'Required for most track days',
@@ -3459,31 +3399,24 @@ export const upgradeDetails = {
     requiresProInstall: false,
     streetLegal: 'street-legal',
     riskLevel: 'low',
-    pros: [
-      'Can save your life',
-      'Required for track days',
-      'Inexpensive',
-      'Easy to install',
-    ],
-    cons: [
-      'Needs regular inspection',
-      'Takes up space',
-      'Must be properly mounted',
-    ],
+    pros: ['Can save your life', 'Required for track days', 'Inexpensive', 'Easy to install'],
+    cons: ['Needs regular inspection', 'Takes up space', 'Must be properly mounted'],
     bestFor: ['All track cars', 'All performance cars'],
     worksWellWith: ['Fire-resistant suit', 'Helmet', 'All safety equipment'],
-    considerations: 'ABC dry chemical for handheld. Halotron or AFFF for onboard systems. Mount securely - loose extinguishers are projectiles in a crash.',
+    considerations:
+      'ABC dry chemical for handheld. Halotron or AFFF for onboard systems. Mount securely - loose extinguishers are projectiles in a crash.',
     brands: ['H3R', 'Element', 'Lifeline', 'SPA Design'],
   },
 
-  'helmet': {
+  helmet: {
     key: 'helmet',
     name: 'Racing Helmet',
     category: 'safety',
     tier: 'streetSport',
     shortDescription: 'Head protection for track driving',
     fullDescription: `A racing helmet is required for all track driving. It protects your head from impacts and can be combined with a HANS device to prevent basilar skull fractures in crashes.`,
-    howItWorks: 'The helmet\'s outer shell distributes impact force while inner foam absorbs energy. Fire-resistant materials protect against flames. HANS anchors prevent neck hyperextension.',
+    howItWorks:
+      "The helmet's outer shell distributes impact force while inner foam absorbs energy. Fire-resistant materials protect against flames. HANS anchors prevent neck hyperextension.",
     expectedGains: {
       safety: 'Essential head protection',
       compliance: 'Required for all track events',
@@ -3510,7 +3443,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Everyone who drives on track'],
     worksWellWith: ['HANS device', 'Harness', 'Racing seat'],
-    considerations: 'Snell or FIA rating required for track use. SA (Special Application) rated helmets include fire resistance. Fit matters enormously.',
+    considerations:
+      'Snell or FIA rating required for track use. SA (Special Application) rated helmets include fire resistance. Fit matters enormously.',
     brands: ['Arai', 'Bell', 'Simpson', 'Stilo', 'Sparco'],
   },
 
@@ -3524,7 +3458,8 @@ export const upgradeDetails = {
     tier: 'streetSport',
     shortDescription: 'Lithium battery for significant weight savings',
     fullDescription: `A lightweight lithium battery can weigh 10-30 lbs less than a stock lead-acid battery while providing similar or better power. This weight reduction is also at a high point in the car.`,
-    howItWorks: 'Lithium-ion batteries have much higher energy density than lead-acid. They provide the same cranking power at a fraction of the weight.',
+    howItWorks:
+      'Lithium-ion batteries have much higher energy density than lead-acid. They provide the same cranking power at a fraction of the weight.',
     expectedGains: {
       weight: '10-30 lbs reduction',
       location: 'High in the car = lower CG',
@@ -3546,11 +3481,12 @@ export const upgradeDetails = {
     cons: [
       'More expensive than lead-acid',
       'May need battery maintainer',
-      'Some don\'t like cold weather',
+      "Some don't like cold weather",
     ],
     bestFor: ['All track cars', 'Weight-conscious builds'],
     worksWellWith: ['Any weight reduction'],
-    considerations: 'Some lithium batteries need a maintainer if the car sits. Check compatibility with your electrical system.',
+    considerations:
+      'Some lithium batteries need a maintainer if the car sits. Check compatibility with your electrical system.',
     brands: ['Antigravity', 'Braille', 'Odyssey', 'XS Power'],
   },
 
@@ -3561,7 +3497,8 @@ export const upgradeDetails = {
     tier: 'trackPack',
     shortDescription: 'Lightweight hood with significant weight savings',
     fullDescription: `A carbon fiber hood can save 20-40+ lbs compared to a steel hood. This weight is at the front and high on the car, so the handling improvement is more than the raw numbers suggest.`,
-    howItWorks: 'Carbon fiber is extremely strong and stiff at very low weight. It replaces heavy steel with lightweight composites while maintaining or improving rigidity.',
+    howItWorks:
+      'Carbon fiber is extremely strong and stiff at very low weight. It replaces heavy steel with lightweight composites while maintaining or improving rigidity.',
     expectedGains: {
       weight: '20-40+ lbs reduction',
       handling: 'Improved front-end response',
@@ -3588,7 +3525,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Track cars', 'Time attack', 'Weight-focused builds'],
     worksWellWith: ['Lightweight wheels', 'Lightweight battery', 'Interior deletion'],
-    considerations: 'Vented hoods can also improve cooling. UV protection is important for longevity. Quality varies significantly.',
+    considerations:
+      'Vented hoods can also improve cooling. UV protection is important for longevity. Quality varies significantly.',
     brands: ['Seibon', 'APR', 'Varis', 'VIS Racing', 'Platform-specific'],
   },
 
@@ -3599,7 +3537,8 @@ export const upgradeDetails = {
     tier: 'timeAttack',
     shortDescription: 'Remove interior components for weight savings',
     fullDescription: `Removing rear seats, sound deadening, carpeting, and non-essential interior components can save 50-150+ lbs. This is common for dedicated track cars.`,
-    howItWorks: 'Modern cars have significant weight in comfort and sound deadening materials. Removing these reduces weight but also comfort and noise insulation.',
+    howItWorks:
+      'Modern cars have significant weight in comfort and sound deadening materials. Removing these reduces weight but also comfort and noise insulation.',
     expectedGains: {
       weight: '50-150+ lbs reduction',
       note: 'Significant savings at low cost.',
@@ -3617,15 +3556,11 @@ export const upgradeDetails = {
       'Improves handling',
       'Makes the car louder (pro for some)',
     ],
-    cons: [
-      'Much louder interior',
-      'Less comfortable',
-      'May affect resale',
-      'Less practical',
-    ],
+    cons: ['Much louder interior', 'Less comfortable', 'May affect resale', 'Less practical'],
     bestFor: ['Dedicated track cars', 'Time attack', 'Autocross'],
     worksWellWith: ['Racing seat', 'Roll bar/cage', 'All weight reduction'],
-    considerations: 'Keep structural components. Some sound deadening serves dual purpose as heat insulation. Consider how this affects the car\'s value.',
+    considerations:
+      "Keep structural components. Some sound deadening serves dual purpose as heat insulation. Consider how this affects the car's value.",
     brands: ['N/A - DIY'],
   },
 
@@ -3639,7 +3574,8 @@ export const upgradeDetails = {
     tier: 'ultimatePower',
     shortDescription: 'Legendary small-block V8 swap option',
     fullDescription: `The GM LS (Gen III/IV) and LT (Gen V) V8 family is the most popular engine swap platform in history. Compact, lightweight, and capable of enormous power, these engines fit where other V8s won\'t and make everything faster.`,
-    howItWorks: 'The LS/LT family uses an aluminum block (most variants), cam-in-block design, and electronic fuel injection. The compact package and abundant aftermarket make it the go-to swap engine.',
+    howItWorks:
+      'The LS/LT family uses an aluminum block (most variants), cam-in-block design, and electronic fuel injection. The compact package and abundant aftermarket make it the go-to swap engine.',
     expectedGains: {
       power: '300-600+ hp (naturally aspirated)',
       potential: '1000+ hp with boost',
@@ -3653,11 +3589,16 @@ export const upgradeDetails = {
     streetLegal: 'varies-by-region',
     riskLevel: 'high',
     engineSpecs: {
-      'LS1': { displacement: '5.7L', hp: '305-350 hp', torque: '335-365 lb-ft', weight: '425 lbs' },
-      'LS3': { displacement: '6.2L', hp: '426-430 hp', torque: '424 lb-ft', weight: '418 lbs' },
-      'LS7': { displacement: '7.0L', hp: '505 hp', torque: '470 lb-ft', weight: '440 lbs' },
-      'LT1 (Gen V)': { displacement: '6.2L', hp: '455-460 hp', torque: '460-465 lb-ft', weight: '465 lbs' },
-      'LT4': { displacement: '6.2L SC', hp: '650 hp', torque: '650 lb-ft', weight: '520 lbs' },
+      LS1: { displacement: '5.7L', hp: '305-350 hp', torque: '335-365 lb-ft', weight: '425 lbs' },
+      LS3: { displacement: '6.2L', hp: '426-430 hp', torque: '424 lb-ft', weight: '418 lbs' },
+      LS7: { displacement: '7.0L', hp: '505 hp', torque: '470 lb-ft', weight: '440 lbs' },
+      'LT1 (Gen V)': {
+        displacement: '6.2L',
+        hp: '455-460 hp',
+        torque: '460-465 lb-ft',
+        weight: '465 lbs',
+      },
+      LT4: { displacement: '6.2L SC', hp: '650 hp', torque: '650 lb-ft', weight: '520 lbs' },
     },
     pros: [
       'Incredible aftermarket support',
@@ -3672,9 +3613,17 @@ export const upgradeDetails = {
       'Oil pan fitment varies by application',
       'Major project commitment',
     ],
-    bestFor: ['S-chassis Nissans', 'Miatas', 'RX-7s', 'E36/E46 BMWs', 'Porsches', 'Virtually anything'],
+    bestFor: [
+      'S-chassis Nissans',
+      'Miatas',
+      'RX-7s',
+      'E36/E46 BMWs',
+      'Porsches',
+      'Virtually anything',
+    ],
     worksWellWith: ['T56/TR6060 transmission', 'Custom exhaust', 'Stand-alone ECU'],
-    considerations: 'The LS swap is well-documented with kits available for many platforms. Still requires significant fabrication and wiring expertise.',
+    considerations:
+      'The LS swap is well-documented with kits available for many platforms. Still requires significant fabrication and wiring expertise.',
     brands: ['GM Performance', 'Texas Speed', 'BTR', 'Holley'],
   },
 
@@ -3685,7 +3634,8 @@ export const upgradeDetails = {
     tier: 'ultimatePower',
     shortDescription: 'High-revving modern Ford V8',
     fullDescription: `Ford\'s Coyote 5.0L is a DOHC, 32-valve V8 that revs to 7,500+ RPM and makes impressive naturally aspirated power. It\'s increasingly popular as a swap engine for those wanting something different from LS.`,
-    howItWorks: 'The Coyote uses dual overhead cams and four valves per cylinder for excellent high-RPM breathing. Variable cam timing (Ti-VCT) provides broad powerband.',
+    howItWorks:
+      'The Coyote uses dual overhead cams and four valves per cylinder for excellent high-RPM breathing. Variable cam timing (Ti-VCT) provides broad powerband.',
     expectedGains: {
       power: '412-480 hp (naturally aspirated)',
       potential: '700-1000+ hp with boost',
@@ -3699,17 +3649,32 @@ export const upgradeDetails = {
     streetLegal: 'varies-by-region',
     riskLevel: 'high',
     engineSpecs: {
-      'Coyote Gen 1': { displacement: '5.0L', hp: '412-420 hp', torque: '390 lb-ft', weight: '444 lbs' },
-      'Coyote Gen 2': { displacement: '5.0L', hp: '435 hp', torque: '400 lb-ft', weight: '444 lbs' },
-      'Coyote Gen 3': { displacement: '5.0L', hp: '460-480 hp', torque: '420 lb-ft', weight: '444 lbs' },
-      'Voodoo (GT350)': { displacement: '5.2L flat-plane', hp: '526 hp', torque: '429 lb-ft', weight: '452 lbs' },
+      'Coyote Gen 1': {
+        displacement: '5.0L',
+        hp: '412-420 hp',
+        torque: '390 lb-ft',
+        weight: '444 lbs',
+      },
+      'Coyote Gen 2': {
+        displacement: '5.0L',
+        hp: '435 hp',
+        torque: '400 lb-ft',
+        weight: '444 lbs',
+      },
+      'Coyote Gen 3': {
+        displacement: '5.0L',
+        hp: '460-480 hp',
+        torque: '420 lb-ft',
+        weight: '444 lbs',
+      },
+      'Voodoo (GT350)': {
+        displacement: '5.2L flat-plane',
+        hp: '526 hp',
+        torque: '429 lb-ft',
+        weight: '452 lbs',
+      },
     },
-    pros: [
-      'High-revving character',
-      'Excellent power',
-      'Growing aftermarket',
-      'Sounds incredible',
-    ],
+    pros: ['High-revving character', 'Excellent power', 'Growing aftermarket', 'Sounds incredible'],
     cons: [
       'Wider than LS due to DOHC heads',
       'More complex electronics',
@@ -3718,7 +3683,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Fox body Mustangs', 'SN95/New Edge Mustangs', 'Ford trucks', 'Some import swaps'],
     worksWellWith: ['MT82/Tremec transmission', 'Custom exhaust'],
-    considerations: 'Coyote swaps are becoming more common with better kit support. Still more challenging than LS due to width and electronics.',
+    considerations:
+      'Coyote swaps are becoming more common with better kit support. Still more challenging than LS due to width and electronics.',
     brands: ['Ford Performance', 'VMP', 'Kenne Bell', 'Whipple'],
   },
 
@@ -3729,7 +3695,8 @@ export const upgradeDetails = {
     tier: 'ultimatePower',
     shortDescription: 'Legendary Japanese inline-6 turbo',
     fullDescription: `The Toyota 2JZ-GTE is one of the most legendary engine swap platforms, famous for its ability to handle huge power on stock internals. Iron block strength and excellent design make 800-1500+ hp possible.`,
-    howItWorks: 'The 2JZ uses an iron block with aluminum head, sequential twin turbos (stock), and DOHC design. The overbuilt bottom end handles enormous power.',
+    howItWorks:
+      'The 2JZ uses an iron block with aluminum head, sequential twin turbos (stock), and DOHC design. The overbuilt bottom end handles enormous power.',
     expectedGains: {
       power: '276-320 hp (stock)',
       potential: '1500+ hp with built internals',
@@ -3743,15 +3710,20 @@ export const upgradeDetails = {
     streetLegal: 'varies-by-region',
     riskLevel: 'high',
     engineSpecs: {
-      '2JZ-GTE': { displacement: '3.0L', hp: '276-320 hp (stock)', torque: '315-320 lb-ft', weight: '507 lbs' },
-      '2JZ-GE (NA)': { displacement: '3.0L', hp: '215-230 hp', torque: '210 lb-ft', weight: '475 lbs' },
+      '2JZ-GTE': {
+        displacement: '3.0L',
+        hp: '276-320 hp (stock)',
+        torque: '315-320 lb-ft',
+        weight: '507 lbs',
+      },
+      '2JZ-GE (NA)': {
+        displacement: '3.0L',
+        hp: '215-230 hp',
+        torque: '210 lb-ft',
+        weight: '475 lbs',
+      },
     },
-    pros: [
-      'Legendary reliability',
-      'Handles huge power',
-      'Great sound',
-      'Strong aftermarket',
-    ],
+    pros: ['Legendary reliability', 'Handles huge power', 'Great sound', 'Strong aftermarket'],
     cons: [
       'Heavy engine',
       'Increasingly rare/expensive',
@@ -3760,7 +3732,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Supras', 'Z cars', 'SC300', 'Various drift cars'],
     worksWellWith: ['Single turbo upgrade', 'Built transmission', 'Stand-alone ECU'],
-    considerations: 'Engines are getting expensive and hard to find. Consider 1JZ-GTE as a more affordable alternative for lower power goals.',
+    considerations:
+      'Engines are getting expensive and hard to find. Consider 1JZ-GTE as a more affordable alternative for lower power goals.',
     brands: ['Toyota', 'Brian Crower', 'HKS', 'Precision Turbo'],
   },
 
@@ -3771,7 +3744,8 @@ export const upgradeDetails = {
     tier: 'ultimatePower',
     shortDescription: 'Modern BMW turbo six with big potential',
     fullDescription: `BMW\'s B58 is a modern turbocharged inline-6 with closed-deck construction and impressive tuning potential. It\'s becoming a swap candidate for those wanting a modern, reliable turbo six.`,
-    howItWorks: 'The B58 uses a closed-deck aluminum block, single twin-scroll turbo, and direct/port injection. The strong design handles significant power increases.',
+    howItWorks:
+      'The B58 uses a closed-deck aluminum block, single twin-scroll turbo, and direct/port injection. The strong design handles significant power increases.',
     expectedGains: {
       power: '335-382 hp (stock)',
       potential: '600-800+ hp with upgrades',
@@ -3785,8 +3759,13 @@ export const upgradeDetails = {
     streetLegal: 'varies-by-region',
     riskLevel: 'high',
     engineSpecs: {
-      'B58': { displacement: '3.0L', hp: '335-382 hp', torque: '330-369 lb-ft', weight: '375 lbs' },
-      'S58 (M3/M4)': { displacement: '3.0L', hp: '473-503 hp', torque: '406-479 lb-ft', weight: '395 lbs' },
+      B58: { displacement: '3.0L', hp: '335-382 hp', torque: '330-369 lb-ft', weight: '375 lbs' },
+      'S58 (M3/M4)': {
+        displacement: '3.0L',
+        hp: '473-503 hp',
+        torque: '406-479 lb-ft',
+        weight: '395 lbs',
+      },
     },
     pros: [
       'Modern design and reliability',
@@ -3802,7 +3781,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['E30/E36 BMWs', 'Z3/Z4', 'Modern engine swap builds'],
     worksWellWith: ['ZF transmission', 'Pure Turbos upgrade', 'MHD tune'],
-    considerations: 'B58 swaps are still emerging. Expect to pioneer some solutions. Electronics integration is the main challenge.',
+    considerations:
+      'B58 swaps are still emerging. Expect to pioneer some solutions. Electronics integration is the main challenge.',
     brands: ['BMW', 'Pure Turbos', 'Vargas Turbo', 'MHD'],
   },
 
@@ -3813,7 +3793,8 @@ export const upgradeDetails = {
     tier: 'ultimatePower',
     shortDescription: 'High-revving Honda 4-cylinder',
     fullDescription: `Honda\'s K-series is the most popular 4-cylinder swap platform. Compact, lightweight, and capable of huge power with boost, it\'s the go-to choice for lightweight Honda and Acura swaps.`,
-    howItWorks: 'The K-series uses an aluminum block, DOHC i-VTEC head, and chain-driven timing. It revs to 8,000+ RPM and responds incredibly well to forced induction.',
+    howItWorks:
+      'The K-series uses an aluminum block, DOHC i-VTEC head, and chain-driven timing. It revs to 8,000+ RPM and responds incredibly well to forced induction.',
     expectedGains: {
       power: '197-306 hp (naturally aspirated)',
       potential: '600-1000+ hp with boost',
@@ -3827,10 +3808,20 @@ export const upgradeDetails = {
     streetLegal: 'varies-by-region',
     riskLevel: 'high',
     engineSpecs: {
-      'K20A (JDM Type R)': { displacement: '2.0L', hp: '217-220 hp', torque: '152 lb-ft', weight: '326 lbs' },
-      'K20A2': { displacement: '2.0L', hp: '197-201 hp', torque: '142 lb-ft', weight: '326 lbs' },
-      'K24A2': { displacement: '2.4L', hp: '197-205 hp', torque: '167-170 lb-ft', weight: '339 lbs' },
-      'K20C1 (Civic Type R)': { displacement: '2.0L Turbo', hp: '306 hp', torque: '295 lb-ft', weight: '340 lbs' },
+      'K20A (JDM Type R)': {
+        displacement: '2.0L',
+        hp: '217-220 hp',
+        torque: '152 lb-ft',
+        weight: '326 lbs',
+      },
+      K20A2: { displacement: '2.0L', hp: '197-201 hp', torque: '142 lb-ft', weight: '326 lbs' },
+      K24A2: { displacement: '2.4L', hp: '197-205 hp', torque: '167-170 lb-ft', weight: '339 lbs' },
+      'K20C1 (Civic Type R)': {
+        displacement: '2.0L Turbo',
+        hp: '306 hp',
+        torque: '295 lb-ft',
+        weight: '340 lbs',
+      },
     },
     pros: [
       'Lightweight and compact',
@@ -3838,14 +3829,11 @@ export const upgradeDetails = {
       'Huge aftermarket',
       'Well-documented swaps',
     ],
-    cons: [
-      'Less torque than V8s',
-      'Requires high RPM for power',
-      'Expensive JDM variants',
-    ],
+    cons: ['Less torque than V8s', 'Requires high RPM for power', 'Expensive JDM variants'],
     bestFor: ['Civic', 'Integra', 'Miata', 'Lotus Elise', 'Lightweight cars'],
     worksWellWith: ['Hasport mounts', 'Turbo kit', 'Ktuner/Hondata'],
-    considerations: 'K-series swaps into Hondas are very well documented. K-swap into other platforms requires more fabrication.',
+    considerations:
+      'K-series swaps into Hondas are very well documented. K-swap into other platforms requires more fabrication.',
     brands: ['Honda', 'Ktuner', 'Hondata', 'Skunk2', 'Brian Crower'],
   },
 
@@ -3856,7 +3844,8 @@ export const upgradeDetails = {
     tier: 'ultimatePower',
     shortDescription: 'GT-R twin-turbo V6',
     fullDescription: `The hand-built VR38DETT from the Nissan GT-R is a sophisticated twin-turbo V6 capable of enormous power. While rare as a swap engine, it represents the pinnacle of Japanese V6 engineering.`,
-    howItWorks: 'The VR38 uses a closed-deck aluminum block, DOHC heads, and parallel twin turbos. Each engine is hand-assembled by a single takumi (master craftsman).',
+    howItWorks:
+      'The VR38 uses a closed-deck aluminum block, DOHC heads, and parallel twin turbos. Each engine is hand-assembled by a single takumi (master craftsman).',
     expectedGains: {
       power: '485-600 hp (stock variants)',
       potential: '1500+ hp with built internals',
@@ -3870,15 +3859,26 @@ export const upgradeDetails = {
     streetLegal: 'varies-by-region',
     riskLevel: 'high',
     engineSpecs: {
-      'VR38DETT (2009-2016)': { displacement: '3.8L', hp: '485-545 hp', torque: '434-463 lb-ft', weight: '595 lbs' },
-      'VR38DETT (2017+)': { displacement: '3.8L', hp: '565-600 hp', torque: '467-481 lb-ft', weight: '595 lbs' },
-      'VR38DETT (NISMO)': { displacement: '3.8L', hp: '600 hp', torque: '481 lb-ft', weight: '595 lbs' },
+      'VR38DETT (2009-2016)': {
+        displacement: '3.8L',
+        hp: '485-545 hp',
+        torque: '434-463 lb-ft',
+        weight: '595 lbs',
+      },
+      'VR38DETT (2017+)': {
+        displacement: '3.8L',
+        hp: '565-600 hp',
+        torque: '467-481 lb-ft',
+        weight: '595 lbs',
+      },
+      'VR38DETT (NISMO)': {
+        displacement: '3.8L',
+        hp: '600 hp',
+        torque: '481 lb-ft',
+        weight: '595 lbs',
+      },
     },
-    pros: [
-      'Incredible power potential',
-      'Sophisticated engineering',
-      'Strong and reliable',
-    ],
+    pros: ['Incredible power potential', 'Sophisticated engineering', 'Strong and reliable'],
     cons: [
       'Very expensive',
       'Heavy and complex',
@@ -3887,7 +3887,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['Dedicated builds', 'Very few swap candidates'],
     worksWellWith: ['GR6 transaxle', 'Alpha turbos', 'Cobb/EcuTek tune'],
-    considerations: 'VR38 swaps are extremely rare and complex. Most builds stay in GT-R chassis. Not a practical swap for most applications.',
+    considerations:
+      'VR38 swaps are extremely rare and complex. Most builds stay in GT-R chassis. Not a practical swap for most applications.',
     brands: ['Nissan', 'AMS', 'Alpha Performance', 'Jotech'],
   },
 
@@ -3898,7 +3899,8 @@ export const upgradeDetails = {
     tier: 'ultimatePower',
     shortDescription: 'Air and water-cooled Porsche flat-6 options',
     fullDescription: `Porsche\'s flat-6 engines are engineering masterpieces, from air-cooled classics to modern 9A1 variants. They\'re primarily used in 911s and Boxster/Cayman but occasionally find their way into other platforms.`,
-    howItWorks: 'Flat-6 engines have horizontally opposed cylinders for a low center of gravity. Air-cooled versions use a fan; water-cooled versions (996+) have traditional cooling systems.',
+    howItWorks:
+      'Flat-6 engines have horizontally opposed cylinders for a low center of gravity. Air-cooled versions use a fan; water-cooled versions (996+) have traditional cooling systems.',
     expectedGains: {
       power: '220-700 hp depending on variant',
       potential: '800+ hp (GT3 based builds)',
@@ -3912,10 +3914,30 @@ export const upgradeDetails = {
     streetLegal: 'varies-by-region',
     riskLevel: 'high',
     engineSpecs: {
-      '3.6L Air-cooled': { displacement: '3.6L', hp: '270-285 hp', torque: '250 lb-ft', weight: '380 lbs' },
-      'Mezger GT3 (996/997)': { displacement: '3.6-3.8L', hp: '381-500 hp', torque: '284-339 lb-ft', weight: '440 lbs' },
-      '9A1 (991 GT3)': { displacement: '3.8-4.0L', hp: '475-520 hp', torque: '339-346 lb-ft', weight: '415 lbs' },
-      'Turbo (9A1)': { displacement: '3.8L', hp: '560-640 hp', torque: '516-590 lb-ft', weight: '480 lbs' },
+      '3.6L Air-cooled': {
+        displacement: '3.6L',
+        hp: '270-285 hp',
+        torque: '250 lb-ft',
+        weight: '380 lbs',
+      },
+      'Mezger GT3 (996/997)': {
+        displacement: '3.6-3.8L',
+        hp: '381-500 hp',
+        torque: '284-339 lb-ft',
+        weight: '440 lbs',
+      },
+      '9A1 (991 GT3)': {
+        displacement: '3.8-4.0L',
+        hp: '475-520 hp',
+        torque: '339-346 lb-ft',
+        weight: '415 lbs',
+      },
+      'Turbo (9A1)': {
+        displacement: '3.8L',
+        hp: '560-640 hp',
+        torque: '516-590 lb-ft',
+        weight: '480 lbs',
+      },
     },
     pros: [
       'Incredible sound',
@@ -3931,7 +3953,8 @@ export const upgradeDetails = {
     ],
     bestFor: ['911 engine swaps', '914', '912', 'VW Beetle/Bus'],
     worksWellWith: ['Porsche transaxle', 'G50/G96 transmission'],
-    considerations: 'Most Porsche flat-6 work is within the Porsche family (putting GT3 engines in Caymans, etc.). External swaps are rare and expensive.',
+    considerations:
+      'Most Porsche flat-6 work is within the Porsche family (putting GT3 engines in Caymans, etc.). External swaps are rare and expensive.',
     brands: ['Porsche', 'Sharkwerks', 'GMG Racing', 'Dundon'],
   },
 
@@ -3942,7 +3965,8 @@ export const upgradeDetails = {
     tier: 'ultimatePower',
     shortDescription: 'General considerations for engine swaps',
     fullDescription: `Engine swaps are major undertakings that involve far more than just dropping an engine in. They require extensive fabrication, wiring, transmission matching, cooling, fuel systems, and often custom everything.`,
-    howItWorks: 'An engine swap involves mounting a new engine, adapting or replacing the transmission, rerouting cooling and fuel systems, integrating electronics, and modifying exhaust routing.',
+    howItWorks:
+      'An engine swap involves mounting a new engine, adapting or replacing the transmission, rerouting cooling and fuel systems, integrating electronics, and modifying exhaust routing.',
     expectedGains: {
       power: 'Varies widely by engine choice',
       potential: 'Complete transformation of the car',
@@ -3992,7 +4016,7 @@ export const upgradeDetails = {
  * @returns {Object[]} Array of upgrade objects in that category
  */
 export function getUpgradesByCategory(categoryKey) {
-  return Object.values(upgradeDetails).filter(u => u.category === categoryKey);
+  return Object.values(upgradeDetails).filter((u) => u.category === categoryKey);
 }
 
 /**
@@ -4001,7 +4025,7 @@ export function getUpgradesByCategory(categoryKey) {
  */
 export function getAllUpgradesGrouped() {
   const grouped = {};
-  Object.keys(upgradeCategories).forEach(catKey => {
+  Object.keys(upgradeCategories).forEach((catKey) => {
     grouped[catKey] = {
       ...upgradeCategories[catKey],
       upgrades: getUpgradesByCategory(catKey),
@@ -4034,10 +4058,11 @@ export function getAllUpgradeKeys() {
  */
 export function searchUpgrades(query) {
   const lowerQuery = query.toLowerCase();
-  return Object.values(upgradeDetails).filter(u => 
-    u.name.toLowerCase().includes(lowerQuery) ||
-    u.shortDescription.toLowerCase().includes(lowerQuery) ||
-    u.category.toLowerCase().includes(lowerQuery)
+  return Object.values(upgradeDetails).filter(
+    (u) =>
+      u.name.toLowerCase().includes(lowerQuery) ||
+      u.shortDescription.toLowerCase().includes(lowerQuery) ||
+      u.category.toLowerCase().includes(lowerQuery)
   );
 }
 

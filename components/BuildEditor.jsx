@@ -2,11 +2,11 @@
 
 /**
  * BuildEditor Component
- * 
+ *
  * Two-mode build configuration:
  * - BASIC: Quick mod selection with checkboxes (current behavior + enhanced)
  * - ADVANCED: Detailed specs for turbo, engine, fuel, dyno verification
- * 
+ *
  * Advanced mode data feeds the physics model for accurate HP predictions.
  */
 
@@ -54,7 +54,7 @@ const BASIC_CATEGORIES = {
     mods: [
       { key: 'flex-fuel-e85', label: 'E85/Flex Fuel' },
       { key: 'fuel-system-upgrade', label: 'Fuel System' },
-      { key: 'hpfp-upgrade', label: 'HPFP' },
+      // Note: hpfp-upgrade removed - bundled with fuel-system-upgrade
     ],
   },
   suspension: {
@@ -101,7 +101,14 @@ const BASIC_CATEGORIES = {
 
 const Icons = {
   basic: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <rect x="3" y="3" width="7" height="7" rx="1" />
       <rect x="14" y="3" width="7" height="7" rx="1" />
       <rect x="3" y="14" width="7" height="7" rx="1" />
@@ -109,25 +116,53 @@ const Icons = {
     </svg>
   ),
   advanced: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <circle cx="12" cy="12" r="3" />
       <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" />
     </svg>
   ),
   check: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="3"
+    >
       <polyline points="20 6 9 17 4 12" />
     </svg>
   ),
   info: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <circle cx="12" cy="12" r="10" />
       <line x1="12" y1="16" x2="12" y2="12" />
       <line x1="12" y1="8" x2="12.01" y2="8" />
     </svg>
   ),
   upload: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
       <polyline points="17 8 12 3 7 8" />
       <line x1="12" y1="3" x2="12" y2="15" />
@@ -140,8 +175,8 @@ const Icons = {
 // ============================================================================
 
 export default function BuildEditor({
-  vehicleId,
-  carSlug,
+  vehicleId: _vehicleId,
+  carSlug: _carSlug,
   initialMods = [],
   initialCustomSpecs = {},
   turboOptions = [],
@@ -151,10 +186,10 @@ export default function BuildEditor({
 }) {
   // Mode: 'basic' or 'advanced'
   const [mode, setMode] = useState('basic');
-  
+
   // Basic mode state
   const [selectedMods, setSelectedMods] = useState(new Set(initialMods));
-  
+
   // Advanced mode state
   const [customSpecs, setCustomSpecs] = useState({
     engine: {
@@ -198,20 +233,21 @@ export default function BuildEditor({
     },
     ...initialCustomSpecs,
   });
-  
+
   const [saving, setSaving] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
 
   // Detect changes
   useEffect(() => {
-    const modsChanged = JSON.stringify([...selectedMods].sort()) !== JSON.stringify([...initialMods].sort());
+    const modsChanged =
+      JSON.stringify([...selectedMods].sort()) !== JSON.stringify([...initialMods].sort());
     const specsChanged = JSON.stringify(customSpecs) !== JSON.stringify(initialCustomSpecs);
     setHasChanges(modsChanged || specsChanged);
   }, [selectedMods, customSpecs, initialMods, initialCustomSpecs]);
 
   // Toggle mod in basic mode
   const toggleMod = useCallback((modKey) => {
-    setSelectedMods(prev => {
+    setSelectedMods((prev) => {
       const next = new Set(prev);
       if (next.has(modKey)) {
         next.delete(modKey);
@@ -224,7 +260,7 @@ export default function BuildEditor({
 
   // Update custom specs
   const updateSpecs = useCallback((section, field, value) => {
-    setCustomSpecs(prev => ({
+    setCustomSpecs((prev) => ({
       ...prev,
       [section]: {
         ...prev[section],
@@ -234,10 +270,16 @@ export default function BuildEditor({
   }, []);
 
   // Find selected turbo data from options
-  const selectedTurboData = turboOptions.find(t => t.id === customSpecs.turbo?.modelId) || null;
+  const selectedTurboData = turboOptions.find((t) => t.id === customSpecs.turbo?.modelId) || null;
 
   // Calculate estimated HP with turbo data for best projection
-  const estimatedHp = calculateEstimatedHp(stockHp, selectedMods, customSpecs, mode, selectedTurboData);
+  const estimatedHp = calculateEstimatedHp(
+    stockHp,
+    selectedMods,
+    customSpecs,
+    mode,
+    selectedTurboData
+  );
 
   // Notify parent of estimate changes
   useEffect(() => {
@@ -279,12 +321,11 @@ export default function BuildEditor({
           <Icons.advanced />
           Advanced
         </button>
-        
+
         <div className={styles.modeHint}>
-          {mode === 'basic' 
+          {mode === 'basic'
             ? 'Quick mod selection — good for general builds'
-            : 'Detailed specs — accurate predictions for your exact setup'
-          }
+            : 'Detailed specs — accurate predictions for your exact setup'}
         </div>
       </div>
 
@@ -301,7 +342,9 @@ export default function BuildEditor({
               <span className={styles.modifiedHp}>
                 {estimatedHp.range.low}-{estimatedHp.range.high} WHP
               </span>
-              <span className={styles.hpGain}>(+{estimatedHp.range.low - stockHp} to +{estimatedHp.range.high - stockHp})</span>
+              <span className={styles.hpGain}>
+                (+{estimatedHp.range.low - stockHp} to +{estimatedHp.range.high - stockHp})
+              </span>
             </>
           ) : (
             <>
@@ -313,9 +356,7 @@ export default function BuildEditor({
         <div className={styles.hpConfidence}>
           <span className={`${styles.confidenceDot} ${styles[estimatedHp.confidenceLevel]}`} />
           {estimatedHp.confidenceLabel}
-          {estimatedHp.tier && (
-            <span className={styles.tierBadge}>Tier {estimatedHp.tier}</span>
-          )}
+          {estimatedHp.tier && <span className={styles.tierBadge}>Tier {estimatedHp.tier}</span>}
         </div>
       </div>
 
@@ -343,11 +384,7 @@ export default function BuildEditor({
       {hasChanges && (
         <div className={styles.saveBar}>
           <span className={styles.unsavedIndicator}>Unsaved changes</span>
-          <button 
-            className={styles.saveButton}
-            onClick={handleSave}
-            disabled={saving}
-          >
+          <button className={styles.saveButton} onClick={handleSave} disabled={saving}>
             {saving ? 'Saving...' : 'Save Build'}
           </button>
         </div>
@@ -370,7 +407,7 @@ function BasicBuildForm({ categories, selectedMods, onToggle }) {
             <span className={styles.categoryLabel}>{category.label}</span>
           </div>
           <div className={styles.modGrid}>
-            {category.mods.map(mod => (
+            {category.mods.map((mod) => (
               <button
                 key={mod.key}
                 className={`${styles.modButton} ${selectedMods.has(mod.key) ? styles.selected : ''}`}
@@ -402,7 +439,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
           <span className={styles.sectionIcon}>🔧</span>
           Engine
         </h3>
-        
+
         <div className={styles.fieldGroup}>
           <label className={styles.fieldLabel}>Build Level</label>
           <div className={styles.radioGroup}>
@@ -410,14 +447,14 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
               { value: 'stock', label: 'Stock' },
               { value: 'built', label: 'Built' },
               { value: 'stroked', label: 'Stroked' },
-            ].map(opt => (
+            ].map((opt) => (
               <label key={opt.value} className={styles.radioLabel}>
                 <input
                   type="radio"
                   name="engineType"
                   value={opt.value}
                   checked={specs?.engine?.type === opt.value}
-                  onChange={e => onUpdate('engine', 'type', e.target.value)}
+                  onChange={(e) => onUpdate('engine', 'type', e.target.value)}
                 />
                 <span className={styles.radioText}>{opt.label}</span>
               </label>
@@ -436,7 +473,9 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                   className={styles.input}
                   placeholder="e.g., 2.2"
                   value={specs.engine?.displacement || ''}
-                  onChange={e => onUpdate('engine', 'displacement', parseFloat(e.target.value) || null)}
+                  onChange={(e) =>
+                    onUpdate('engine', 'displacement', parseFloat(e.target.value) || null)
+                  }
                 />
               </div>
             )}
@@ -447,14 +486,14 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                 {[
                   { value: 'stock', label: 'Stock' },
                   { value: 'forged', label: 'Forged' },
-                ].map(opt => (
+                ].map((opt) => (
                   <label key={opt.value} className={styles.radioLabel}>
                     <input
                       type="radio"
                       name="internals"
                       value={opt.value}
                       checked={specs.engine?.internals === opt.value}
-                      onChange={e => onUpdate('engine', 'internals', e.target.value)}
+                      onChange={(e) => onUpdate('engine', 'internals', e.target.value)}
                     />
                     <span className={styles.radioText}>{opt.label}</span>
                   </label>
@@ -470,14 +509,14 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                   { value: 'stage1', label: 'Stage 1' },
                   { value: 'stage2', label: 'Stage 2' },
                   { value: 'stage3', label: 'Stage 3' },
-                ].map(opt => (
+                ].map((opt) => (
                   <label key={opt.value} className={styles.radioLabel}>
                     <input
                       type="radio"
                       name="cams"
                       value={opt.value}
                       checked={specs.engine?.cams === opt.value}
-                      onChange={e => onUpdate('engine', 'cams', e.target.value)}
+                      onChange={(e) => onUpdate('engine', 'cams', e.target.value)}
                     />
                     <span className={styles.radioText}>{opt.label}</span>
                   </label>
@@ -490,7 +529,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                 <input
                   type="checkbox"
                   checked={specs.engine?.headWork || false}
-                  onChange={e => onUpdate('engine', 'headWork', e.target.checked)}
+                  onChange={(e) => onUpdate('engine', 'headWork', e.target.checked)}
                 />
                 <span>Head work / Porting</span>
               </label>
@@ -513,14 +552,14 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
               { value: 'stock', label: 'Stock' },
               { value: 'upgraded', label: 'Upgraded' },
               { value: 'custom', label: 'Custom / Big Turbo' },
-            ].map(opt => (
+            ].map((opt) => (
               <label key={opt.value} className={styles.radioLabel}>
                 <input
                   type="radio"
                   name="turboType"
                   value={opt.value}
                   checked={specs?.turbo?.type === opt.value}
-                  onChange={e => onUpdate('turbo', 'type', e.target.value)}
+                  onChange={(e) => onUpdate('turbo', 'type', e.target.value)}
                 />
                 <span className={styles.radioText}>{opt.label}</span>
               </label>
@@ -536,10 +575,10 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                 <select
                   className={styles.select}
                   value={specs.turbo?.modelId || ''}
-                  onChange={e => onUpdate('turbo', 'modelId', e.target.value || null)}
+                  onChange={(e) => onUpdate('turbo', 'modelId', e.target.value || null)}
                 >
                   <option value="">-- Select from library --</option>
-                  {turboOptions.map(turbo => (
+                  {turboOptions.map((turbo) => (
                     <option key={turbo.id} value={turbo.id}>
                       {turbo.brand} {turbo.model} ({turbo.flow_hp_min}-{turbo.flow_hp_max} HP)
                     </option>
@@ -556,14 +595,14 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                   className={styles.input}
                   placeholder="Brand (e.g., Garrett)"
                   value={specs.turbo?.customBrand || ''}
-                  onChange={e => onUpdate('turbo', 'customBrand', e.target.value)}
+                  onChange={(e) => onUpdate('turbo', 'customBrand', e.target.value)}
                 />
                 <input
                   type="text"
                   className={styles.input}
                   placeholder="Model (e.g., GTX3576R)"
                   value={specs.turbo?.customModel || ''}
-                  onChange={e => onUpdate('turbo', 'customModel', e.target.value)}
+                  onChange={(e) => onUpdate('turbo', 'customModel', e.target.value)}
                 />
               </div>
             </div>
@@ -576,7 +615,9 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                   className={styles.inputSmall}
                   placeholder="Inducer mm"
                   value={specs.turbo?.inducerMm || ''}
-                  onChange={e => onUpdate('turbo', 'inducerMm', parseFloat(e.target.value) || null)}
+                  onChange={(e) =>
+                    onUpdate('turbo', 'inducerMm', parseFloat(e.target.value) || null)
+                  }
                 />
                 <span className={styles.inputSeparator}>/</span>
                 <input
@@ -584,7 +625,9 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                   className={styles.inputSmall}
                   placeholder="Exducer mm"
                   value={specs.turbo?.exducerMm || ''}
-                  onChange={e => onUpdate('turbo', 'exducerMm', parseFloat(e.target.value) || null)}
+                  onChange={(e) =>
+                    onUpdate('turbo', 'exducerMm', parseFloat(e.target.value) || null)
+                  }
                 />
               </div>
             </div>
@@ -596,7 +639,9 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                 className={styles.inputSmall}
                 placeholder="e.g., 30"
                 value={specs.turbo?.targetBoostPsi || ''}
-                onChange={e => onUpdate('turbo', 'targetBoostPsi', parseFloat(e.target.value) || null)}
+                onChange={(e) =>
+                  onUpdate('turbo', 'targetBoostPsi', parseFloat(e.target.value) || null)
+                }
               />
             </div>
           </>
@@ -620,14 +665,14 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
               { value: 'e50', label: 'E50' },
               { value: 'e85', label: 'E85' },
               { value: 'flex', label: 'Flex' },
-            ].map(opt => (
+            ].map((opt) => (
               <label key={opt.value} className={styles.radioLabel}>
                 <input
                   type="radio"
                   name="fuelType"
                   value={opt.value}
                   checked={specs?.fuel?.type === opt.value}
-                  onChange={e => onUpdate('fuel', 'type', e.target.value)}
+                  onChange={(e) => onUpdate('fuel', 'type', e.target.value)}
                 />
                 <span className={styles.radioText}>{opt.label}</span>
               </label>
@@ -642,7 +687,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
             className={styles.inputSmall}
             placeholder="e.g., 1300"
             value={specs?.fuel?.injectorCc || ''}
-            onChange={e => onUpdate('fuel', 'injectorCc', parseInt(e.target.value) || null)}
+            onChange={(e) => onUpdate('fuel', 'injectorCc', parseInt(e.target.value) || null)}
           />
         </div>
 
@@ -653,7 +698,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
             className={styles.input}
             placeholder="e.g., Walbro 450"
             value={specs?.fuel?.fuelPump || ''}
-            onChange={e => onUpdate('fuel', 'fuelPump', e.target.value)}
+            onChange={(e) => onUpdate('fuel', 'fuelPump', e.target.value)}
           />
         </div>
       </section>
@@ -663,7 +708,9 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
         <h3 className={styles.sectionTitle}>
           <span className={styles.sectionIcon}>📊</span>
           Dyno Results
-          <span className={styles.sectionHint}>Verified data improves predictions for everyone</span>
+          <span className={styles.sectionHint}>
+            Verified data improves predictions for everyone
+          </span>
         </h3>
 
         <div className={styles.fieldGroup}>
@@ -671,7 +718,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
             <input
               type="checkbox"
               checked={specs?.dyno?.hasResults || false}
-              onChange={e => onUpdate('dyno', 'hasResults', e.target.checked)}
+              onChange={(e) => onUpdate('dyno', 'hasResults', e.target.checked)}
             />
             <span>I have dyno results</span>
           </label>
@@ -687,21 +734,21 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                   className={styles.inputSmall}
                   placeholder="WHP"
                   value={specs.dyno?.whp || ''}
-                  onChange={e => onUpdate('dyno', 'whp', parseInt(e.target.value) || null)}
+                  onChange={(e) => onUpdate('dyno', 'whp', parseInt(e.target.value) || null)}
                 />
                 <input
                   type="number"
                   className={styles.inputSmall}
                   placeholder="WTQ"
                   value={specs.dyno?.wtq || ''}
-                  onChange={e => onUpdate('dyno', 'wtq', parseInt(e.target.value) || null)}
+                  onChange={(e) => onUpdate('dyno', 'wtq', parseInt(e.target.value) || null)}
                 />
                 <input
                   type="number"
                   className={styles.inputSmall}
                   placeholder="Boost PSI"
                   value={specs.dyno?.boostPsi || ''}
-                  onChange={e => onUpdate('dyno', 'boostPsi', parseFloat(e.target.value) || null)}
+                  onChange={(e) => onUpdate('dyno', 'boostPsi', parseFloat(e.target.value) || null)}
                 />
               </div>
             </div>
@@ -712,7 +759,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                 <select
                   className={styles.select}
                   value={specs.dyno?.dynoType || ''}
-                  onChange={e => onUpdate('dyno', 'dynoType', e.target.value)}
+                  onChange={(e) => onUpdate('dyno', 'dynoType', e.target.value)}
                 >
                   <option value="">Dyno Type</option>
                   <option value="dynojet">Dynojet</option>
@@ -723,7 +770,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                 <select
                   className={styles.select}
                   value={specs.dyno?.fuelType || ''}
-                  onChange={e => onUpdate('dyno', 'fuelType', e.target.value)}
+                  onChange={(e) => onUpdate('dyno', 'fuelType', e.target.value)}
                 >
                   <option value="">Fuel</option>
                   <option value="91">91</option>
@@ -740,7 +787,7 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
                 className={styles.input}
                 placeholder="Dyno shop name"
                 value={specs.dyno?.shop || ''}
-                onChange={e => onUpdate('dyno', 'shop', e.target.value)}
+                onChange={(e) => onUpdate('dyno', 'shop', e.target.value)}
               />
             </div>
           </>
@@ -754,16 +801,18 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
           Supporting Mods
         </h3>
         <div className={styles.compactModGrid}>
-          {Object.values(BASIC_CATEGORIES).flatMap(cat => cat.mods).map(mod => (
-            <label key={mod.key} className={styles.compactModLabel}>
-              <input
-                type="checkbox"
-                checked={selectedMods.has(mod.key)}
-                onChange={() => onToggleMod(mod.key)}
-              />
-              <span>{mod.label}</span>
-            </label>
-          ))}
+          {Object.values(BASIC_CATEGORIES)
+            .flatMap((cat) => cat.mods)
+            .map((mod) => (
+              <label key={mod.key} className={styles.compactModLabel}>
+                <input
+                  type="checkbox"
+                  checked={selectedMods.has(mod.key)}
+                  onChange={() => onToggleMod(mod.key)}
+                />
+                <span>{mod.label}</span>
+              </label>
+            ))}
         </div>
       </section>
     </div>
@@ -776,7 +825,13 @@ function AdvancedBuildForm({ specs, onUpdate, turboOptions, selectedMods, onTogg
 
 function calculateEstimatedHp(stockHp, selectedMods, customSpecs, mode, turboData = null) {
   if (!stockHp) {
-    return { whp: 0, gain: 0, confidenceLevel: 'low', confidenceLabel: 'Missing stock HP', range: null };
+    return {
+      whp: 0,
+      gain: 0,
+      confidenceLevel: 'low',
+      confidenceLabel: 'Missing stock HP',
+      range: null,
+    };
   }
 
   // If user has dyno results, use them directly (Tier 1 - Verified)
@@ -799,7 +854,8 @@ function calculateEstimatedHp(stockHp, selectedMods, customSpecs, mode, turboDat
   // Basic mode: use simple multipliers with disclaimer
   if (mode === 'basic') {
     const modCount = selectedMods.size;
-    const hasTurboUpgrade = selectedMods.has('turbo-upgrade-existing') || selectedMods.has('turbo-kit-single');
+    const hasTurboUpgrade =
+      selectedMods.has('turbo-upgrade-existing') || selectedMods.has('turbo-kit-single');
     const hasE85 = selectedMods.has('flex-fuel-e85');
     const hasStage3 = selectedMods.has('stage3-tune');
     const hasStage2 = selectedMods.has('stage2-tune');
@@ -819,7 +875,7 @@ function calculateEstimatedHp(stockHp, selectedMods, customSpecs, mode, turboDat
       estimatedWhp = Math.round(stockHp * (1 + modCount * 0.03));
       confidence = 'medium';
     }
-    
+
     return {
       whp: estimatedWhp,
       gain: estimatedWhp - stockHp,
@@ -829,21 +885,21 @@ function calculateEstimatedHp(stockHp, selectedMods, customSpecs, mode, turboDat
       tier: 4,
     };
   }
-  
+
   // Advanced mode: Physics-based calculation
   if (mode === 'advanced') {
     const calculations = [];
     let engineMultiplier = 1.0;
     let fuelMultiplier = 1.0;
     const stockBoost = 21; // Typical turbo car stock boost
-    
+
     // === ENGINE MODIFICATIONS ===
     if (customSpecs.engine?.type === 'built' || customSpecs.engine?.type === 'stroked') {
       // Forged internals enable more power but don't add directly
       if (customSpecs.engine.internals === 'forged') {
         engineMultiplier += 0.02; // Small reliability margin
       }
-      
+
       // Cams add significant VE improvement
       if (customSpecs.engine.cams === 'stage3') {
         engineMultiplier += 0.12; // +12% VE
@@ -852,12 +908,12 @@ function calculateEstimatedHp(stockHp, selectedMods, customSpecs, mode, turboDat
       } else if (customSpecs.engine.cams === 'stage1') {
         engineMultiplier += 0.04; // +4% VE
       }
-      
+
       // Head work
       if (customSpecs.engine.headWork) {
         engineMultiplier += 0.06; // +6% flow
       }
-      
+
       // Stroker displacement bonus
       if (customSpecs.engine.type === 'stroked' && customSpecs.engine.displacement) {
         const stockDisplacement = 2.0;
@@ -865,42 +921,45 @@ function calculateEstimatedHp(stockHp, selectedMods, customSpecs, mode, turboDat
         engineMultiplier *= displacementRatio;
       }
     }
-    
+
     // === FUEL SYSTEM ===
     if (customSpecs.fuel?.type === 'e85' || customSpecs.fuel?.type === 'flex') {
       fuelMultiplier = 1.15; // E85 adds ~15%
     } else if (customSpecs.fuel?.type === 'e50') {
-      fuelMultiplier = 1.10;
+      fuelMultiplier = 1.1;
     } else if (customSpecs.fuel?.type === 'e30') {
       fuelMultiplier = 1.06;
     } else if (customSpecs.fuel?.type === '91') {
       fuelMultiplier = 0.97; // Knock limited
     }
-    
+
     // === TURBO CALCULATION (Most Important) ===
     if (customSpecs.turbo?.type === 'upgraded' || customSpecs.turbo?.type === 'custom') {
-      
       // Method 1: If we have turbo library data (best)
       if (turboData && turboData.flow_hp_min && turboData.flow_hp_max) {
         const turboEfficiency = 0.78; // Typical ball-bearing efficiency
         const flowMidpoint = (turboData.flow_hp_min + turboData.flow_hp_max) / 2;
-        const turboBasedHp = Math.round(flowMidpoint * turboEfficiency * fuelMultiplier * engineMultiplier);
-        
+        const turboBasedHp = Math.round(
+          flowMidpoint * turboEfficiency * fuelMultiplier * engineMultiplier
+        );
+
         calculations.push({
           method: 'turbo_flow',
           hp: turboBasedHp,
           weight: 0.35,
           label: `${turboData.brand} ${turboData.model} flow data`,
         });
-        
+
         // Also calculate range from turbo limits
         const turboMin = Math.round(turboData.flow_hp_min * turboEfficiency * fuelMultiplier);
-        const turboMax = Math.round(turboData.flow_hp_max * turboEfficiency * fuelMultiplier * engineMultiplier);
+        const turboMax = Math.round(
+          turboData.flow_hp_max * turboEfficiency * fuelMultiplier * engineMultiplier
+        );
         range = { low: turboMin, high: turboMax };
         confidence = 'high';
         confidenceLabel = `Based on ${turboData.model} flow capacity`;
       }
-      
+
       // Method 2: Inducer size estimation
       if (customSpecs.turbo.inducerMm) {
         const inducer = customSpecs.turbo.inducerMm;
@@ -908,60 +967,63 @@ function calculateEstimatedHp(stockHp, selectedMods, customSpecs, mode, turboDat
         // 50mm ~= 400HP, 58mm ~= 600HP, 66mm ~= 850HP
         const hpPotential = Math.pow(inducer / 50, 2.3) * 400;
         const inducerBasedHp = Math.round(hpPotential * fuelMultiplier * engineMultiplier * 0.85);
-        
+
         calculations.push({
           method: 'inducer_size',
           hp: inducerBasedHp,
           weight: 0.25,
           label: `${inducer}mm inducer estimate`,
         });
-        
+
         if (!range) {
-          range = { 
-            low: Math.round(inducerBasedHp * 0.9), 
-            high: Math.round(inducerBasedHp * 1.1) 
+          range = {
+            low: Math.round(inducerBasedHp * 0.9),
+            high: Math.round(inducerBasedHp * 1.1),
           };
         }
       }
-      
+
       // Method 3: Target boost pressure ratio
       if (customSpecs.turbo.targetBoostPsi) {
         const targetBoost = customSpecs.turbo.targetBoostPsi;
         const pressureRatio = (14.7 + targetBoost) / (14.7 + stockBoost);
-        const boostGain = (pressureRatio - 1) * 0.70; // 70% of theoretical
-        const boostBasedHp = Math.round(stockHp * (1 + boostGain) * fuelMultiplier * engineMultiplier);
-        
+        const boostGain = (pressureRatio - 1) * 0.7; // 70% of theoretical
+        const boostBasedHp = Math.round(
+          stockHp * (1 + boostGain) * fuelMultiplier * engineMultiplier
+        );
+
         calculations.push({
           method: 'boost_pressure',
           hp: boostBasedHp,
           weight: 0.25,
           label: `@ ${targetBoost} PSI (PR: ${pressureRatio.toFixed(2)})`,
         });
-        
+
         confidenceLabel = `Estimated @ ${targetBoost} PSI`;
       }
-      
+
       // Method 4: Generic upgrade fallback
       if (calculations.length === 0) {
         const genericMultiplier = customSpecs.turbo.type === 'custom' ? 1.8 : 1.5;
-        const genericHp = Math.round(stockHp * genericMultiplier * fuelMultiplier * engineMultiplier);
-        
+        const genericHp = Math.round(
+          stockHp * genericMultiplier * fuelMultiplier * engineMultiplier
+        );
+
         calculations.push({
           method: 'generic',
           hp: genericHp,
           weight: 1.0,
           label: 'Generic turbo upgrade estimate',
         });
-        
+
         confidence = 'low';
         confidenceLabel = 'Enter turbo details for better estimate';
       }
-      
     } else {
       // No turbo upgrade - just bolt-ons
-      const boltOnMultiplier = 1.0 + (selectedMods.size * 0.02);
+      const boltOnMultiplier = 1.0 + selectedMods.size * 0.02;
       estimatedWhp = Math.round(stockHp * boltOnMultiplier * fuelMultiplier * engineMultiplier);
-      
+
       return {
         whp: estimatedWhp,
         gain: estimatedWhp - stockHp,
@@ -971,16 +1033,16 @@ function calculateEstimatedHp(stockHp, selectedMods, customSpecs, mode, turboDat
         tier: 3,
       };
     }
-    
+
     // Calculate weighted average of all methods
     if (calculations.length > 0) {
       const totalWeight = calculations.reduce((sum, c) => sum + c.weight, 0);
       estimatedWhp = Math.round(
-        calculations.reduce((sum, c) => sum + (c.hp * c.weight), 0) / totalWeight
+        calculations.reduce((sum, c) => sum + c.hp * c.weight, 0) / totalWeight
       );
-      
+
       // Determine confidence level
-      if (calculations.some(c => c.method === 'turbo_flow')) {
+      if (calculations.some((c) => c.method === 'turbo_flow')) {
         confidence = 'high';
       } else if (calculations.length >= 2) {
         confidence = 'medium';

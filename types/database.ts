@@ -1,9 +1,9 @@
 /**
  * AutoRev Database Type Definitions
- * 
+ *
  * This file documents the structure of JSONB columns and provides TypeScript
  * type definitions for database operations.
- * 
+ *
  * Last Updated: January 11, 2026
  */
 
@@ -21,8 +21,7 @@ export type UpgradeKey =
   | 'stage1-tune'
   | 'stage2-tune'
   | 'stage3-tune'
-  | 'charge-pipe-upgrade'
-  | 'hpfp-upgrade'
+  // Note: charge-pipe-upgrade and hpfp-upgrade removed
   | 'flex-fuel-e85'
   | 'fuel-system-upgrade'
   | 'intercooler'
@@ -54,11 +53,7 @@ export type UpgradeKey =
   | 'widebody-kit';
 
 /** Upgrade objective/tier names */
-export type UpgradeObjective = 
-  | 'streetSport'
-  | 'trackPack'
-  | 'timeAttack'
-  | 'ultimatePower';
+export type UpgradeObjective = 'streetSport' | 'trackPack' | 'timeAttack' | 'ultimatePower';
 
 /** Categories for organizing upgrades */
 export type UpgradeCategory =
@@ -243,12 +238,7 @@ export interface UserEventData {
 export type SubscriptionTier = 'free' | 'collector' | 'tuner' | 'admin';
 
 /** Stripe subscription status */
-export type StripeSubscriptionStatus = 
-  | 'active'
-  | 'trialing'
-  | 'past_due'
-  | 'canceled'
-  | 'none';
+export type StripeSubscriptionStatus = 'active' | 'trialing' | 'past_due' | 'canceled' | 'none';
 
 // ============================================================================
 // EVENT TYPES

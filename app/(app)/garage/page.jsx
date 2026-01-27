@@ -1821,13 +1821,13 @@ function HeroVehicleDisplay({
               <Link
                 href={
                   item.vehicle?.activeBuildId
-                    ? `/garage/my-performance?build=${item.vehicle.activeBuildId}`
-                    : `/garage/my-performance?car=${car.slug}`
+                    ? `/data?build=${item.vehicle.activeBuildId}`
+                    : `/data?car=${car.slug}`
                 }
                 className={styles.heroBottomBtn}
               >
                 <Icons.bolt size={18} />
-                <span>Perf</span>
+                <span>Data</span>
               </Link>
               <Link
                 href={

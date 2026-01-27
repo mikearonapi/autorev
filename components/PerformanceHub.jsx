@@ -25,18 +25,8 @@ import {
   getEnhancementUpgrades,
   getRecommendationProgress,
 } from '@/lib/carRecommendations.js';
-import {
-  validateUpgradeSelection,
-  getRecommendedUpgrades,
-  SEVERITY,
-} from '@/lib/dependencyChecker.js';
 import { useAppConfig } from '@/lib/hooks/useAppConfig.js';
-import {
-  getAvailableUpgrades,
-  calculateTotalCost,
-  getUpgradeSummary,
-  performanceCategories,
-} from '@/lib/performance.js';
+import { getAvailableUpgrades, calculateTotalCost, getUpgradeSummary } from '@/lib/performance.js';
 import {
   getPerformanceProfile,
   getScoreComparison,
@@ -47,12 +37,11 @@ import { getUpgradeByKey } from '@/lib/upgrades.js';
 
 import CarImage from './CarImage';
 import styles from './PerformanceHub.module.css';
-import { useOwnedVehicles } from './providers/OwnedVehiclesProvider';
 import { useAuth } from './providers/AuthProvider';
 import { useCarSelection } from './providers/CarSelectionProvider';
+import { useOwnedVehicles } from './providers/OwnedVehiclesProvider';
 import { useSavedBuilds } from './providers/SavedBuildsProvider';
 import ScoringInfo from './ScoringInfo';
-import UpgradeAggregator from './UpgradeAggregator';
 import UpgradeDetailModal from './UpgradeDetailModal';
 
 // Map icon names to components
@@ -92,7 +81,7 @@ const packageDescriptions = {
     title: 'Time Attack',
     shortDesc: 'Maximum naturally-aspirated performance with full chassis optimization.',
     details:
-      'Competitive time attack build with camshafts, ported heads, full aero, R-compound tires, and comprehensive cooling. Some street comfort compromised.',
+      'Maximum track performance with full aero, R-compound tires, and comprehensive cooling. Some street comfort compromised.',
   },
   ultimatePower: {
     title: 'Ultimate Power',
@@ -121,7 +110,7 @@ function PackageDescription({
   projectedHp,
 }) {
   const desc = packageDescriptions[packageKey] || packageDescriptions.stock;
-  const currentPkg = packages?.find((p) => p.key === packageKey);
+  const _currentPkg = packages?.find((p) => p.key === packageKey);
 
   return (
     <div className={styles.packageDescriptionCard}>
@@ -535,301 +524,6 @@ function CarRecommendations({ car, selectedModules, onAddToModule, onUpgradeClic
 }
 
 /**
- * Equivalent upgrade mappings - some requirements can be satisfied by multiple variants
- * For example, 'ecu-tune' requirement is satisfied by any tune variant
- */
-const EQUIVALENT_UPGRADES = {
-  'ecu-tune': [
-    'tune-street',
-    'tune-track',
-    'stage1-tune',
-    'stage2-tune',
-    'stage3-tune',
-    'dct-tune',
-    'piggyback-tuner',
-  ],
-};
-
-/**
- * Check if a requirement is satisfied by the selected modules
- * Handles equivalent upgrades (e.g., any tune variant satisfies 'ecu-tune')
- */
-function isRequirementSatisfied(reqKey, selectedModules) {
-  // Direct match
-  if (selectedModules.includes(reqKey)) return true;
-
-  // Check if any equivalent upgrade is selected
-  const equivalents = EQUIVALENT_UPGRADES[reqKey];
-  if (equivalents) {
-    return equivalents.some((eq) => selectedModules.includes(eq));
-  }
-
-  return false;
-}
-
-/**
- * Dependency Warnings - Shows missing required/recommended upgrades
- * Now powered by the Connected Tissue Matrix for comprehensive dependency checking
- * Soft enforcement: warns but doesn't prevent selection
- */
-function DependencyWarnings({ selectedModules, availableModules, onAddMods, car }) {
-  // Use the Connected Tissue Matrix for comprehensive dependency checking
-  const validation = useMemo(() => {
-    if (selectedModules.length === 0) return null;
-    return validateUpgradeSelection(selectedModules, car);
-  }, [selectedModules, car]);
-
-  // Get recommended upgrades with full context
-  const recommendations = useMemo(() => {
-    if (selectedModules.length === 0) return [];
-    return getRecommendedUpgrades(selectedModules, car);
-  }, [selectedModules, car]);
-
-  // Also check simple requires/stronglyRecommended from individual upgrades (fallback)
-  const simpleDeps = useMemo(() => {
-    const allRequires = new Set();
-    const allRecommended = new Set();
-
-    selectedModules.forEach((modKey) => {
-      const mod = getUpgradeByKey(modKey);
-      if (!mod) return;
-
-      if (mod.requires) {
-        mod.requires.forEach((reqKey) => {
-          // Use equivalent check - e.g., tune-track satisfies ecu-tune requirement
-          if (!isRequirementSatisfied(reqKey, selectedModules)) {
-            allRequires.add(reqKey);
-          }
-        });
-      }
-
-      if (mod.stronglyRecommended) {
-        mod.stronglyRecommended.forEach((recKey) => {
-          if (!isRequirementSatisfied(recKey, selectedModules) && !allRequires.has(recKey)) {
-            allRecommended.add(recKey);
-          }
-        });
-      }
-    });
-
-    const availableKeys = Object.values(availableModules)
-      .flat()
-      .map((m) => m.key);
-
-    return {
-      required: [...allRequires].filter((k) => availableKeys.includes(k)),
-      recommended: [...allRecommended].filter((k) => availableKeys.includes(k)),
-    };
-  }, [selectedModules, availableModules]);
-
-  // Merge matrix-based and simple deps
-  const criticalIssues = validation?.critical || [];
-  const warningIssues = validation?.warnings || [];
-  const infoIssues = validation?.info || [];
-  const synergies = validation?.synergies || [];
-
-  // Combine simple requires with matrix-based critical issues
-  const allRequired = new Set(simpleDeps.required);
-  criticalIssues.forEach((issue) => {
-    issue.recommendation?.forEach((r) => allRequired.add(r));
-  });
-
-  // Combine simple recommended with matrix-based warnings
-  const allRecommended = new Set(simpleDeps.recommended);
-  warningIssues.forEach((issue) => {
-    issue.recommendation?.forEach((r) => {
-      if (!allRequired.has(r)) allRecommended.add(r);
-    });
-  });
-
-  // Filter to available modules
-  const availableKeys = Object.values(availableModules)
-    .flat()
-    .map((m) => m.key);
-  const filteredRequired = [...allRequired].filter((k) => availableKeys.includes(k));
-  const filteredRecommended = [...allRecommended].filter((k) => availableKeys.includes(k));
-
-  // Nothing to show
-  if (filteredRequired.length === 0 && filteredRecommended.length === 0 && synergies.length === 0) {
-    return null;
-  }
-
-  return (
-    <div className={styles.dependencyWarnings}>
-      {/* Critical / Required */}
-      {filteredRequired.length > 0 && (
-        <div className={styles.depWarningBox}>
-          <div className={styles.depWarningHeader}>
-            <Icons.alertTriangle size={16} />
-            <span>Required Supporting Mods</span>
-          </div>
-          <p className={styles.depWarningText}>
-            These mods are recommended to achieve max performance gains:
-          </p>
-          <div className={styles.depList}>
-            {filteredRequired.map((key) => {
-              const upgrade = getUpgradeByKey(key);
-              const rec = recommendations.find((r) => r.upgradeKey === key);
-              return (
-                <div key={key} className={styles.depTagWrapper}>
-                  <span className={styles.depTag}>{upgrade?.name || key}</span>
-                  {rec?.reason && <span className={styles.depReason}>{rec.reason}</span>}
-                </div>
-              );
-            })}
-          </div>
-          <button className={styles.addDepsBtn} onClick={() => onAddMods(filteredRequired)}>
-            <Icons.check size={14} />
-            Add Required Mods
-          </button>
-        </div>
-      )}
-
-      {/* Warnings / Recommended */}
-      {filteredRecommended.length > 0 && (
-        <div className={styles.depRecommendBox}>
-          <div className={styles.depWarningHeader}>
-            <Icons.info size={16} />
-            <span>Strongly Recommended</span>
-          </div>
-          <p className={styles.depWarningText}>
-            These mods pair well with your selections for best results:
-          </p>
-          <div className={styles.depList}>
-            {filteredRecommended.map((key) => {
-              const upgrade = getUpgradeByKey(key);
-              const rec = recommendations.find((r) => r.upgradeKey === key);
-              return (
-                <div key={key} className={styles.depTagWrapper}>
-                  <span className={styles.depTagRecommended}>{upgrade?.name || key}</span>
-                  {rec?.reason && <span className={styles.depReason}>{rec.reason}</span>}
-                </div>
-              );
-            })}
-          </div>
-          <button
-            className={styles.addDepsBtnSecondary}
-            onClick={() => onAddMods(filteredRecommended)}
-          >
-            Add Recommended
-          </button>
-        </div>
-      )}
-
-      {/* Positive Synergies */}
-      {synergies.length > 0 && (
-        <div className={styles.depSynergyBox}>
-          <div className={styles.depWarningHeader}>
-            <Icons.check size={16} />
-            <span>Great Combinations</span>
-          </div>
-          {synergies.map((synergy, idx) => (
-            <p key={idx} className={styles.synergyText}>
-              <strong>{synergy.name}:</strong> {synergy.message}
-            </p>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/**
- * Component Breakdown - Shows what parts are included in upgrade
- * Now with clickable upgrade items that open the encyclopedia modal
- */
-function ComponentBreakdown({ selectedUpgrades, showUpgrade, onUpgradeClick }) {
-  // Get main package and modules first (these aren't hooks)
-  const mainPackage = selectedUpgrades.find((u) => u.type === 'package');
-  const modules = selectedUpgrades.filter((u) => u.type === 'module');
-
-  // Get resolved upgrade details for the includedUpgradeKeys
-  // Must call useMemo before any conditional returns (React hooks rules)
-  const resolvedUpgrades = useMemo(() => {
-    if (!mainPackage?.includedUpgradeKeys) return [];
-    return mainPackage.includedUpgradeKeys.map((key) => getUpgradeByKey(key)).filter(Boolean);
-  }, [mainPackage]);
-
-  // Early return after all hooks
-  if (!showUpgrade || selectedUpgrades.length === 0) return null;
-
-  return (
-    <div className={styles.componentBreakdown}>
-      <h4 className={styles.breakdownTitle}>
-        <Icons.wrench size={16} />
-        What's Included
-      </h4>
-
-      {/* Clickable upgrade chips using includedUpgradeKeys */}
-      {resolvedUpgrades.length > 0 && (
-        <div className={styles.upgradeChips}>
-          {resolvedUpgrades.map((upgrade) => (
-            <button
-              key={upgrade.key}
-              className={styles.upgradeChip}
-              onClick={() => onUpgradeClick(upgrade)}
-              title={upgrade.shortDescription || upgrade.description}
-            >
-              <Icons.check size={12} />
-              <span className={styles.upgradeChipName}>{upgrade.name}</span>
-              {upgrade.metricChanges?.hpGain && (
-                <span className={styles.upgradeChipGain}>+{upgrade.metricChanges.hpGain}hp</span>
-              )}
-              <Icons.info size={12} className={styles.infoIcon} />
-            </button>
-          ))}
-        </div>
-      )}
-
-      {/* Fallback to plain text includes if no includedUpgradeKeys */}
-      {resolvedUpgrades.length === 0 && mainPackage?.includes && (
-        <div className={styles.componentList}>
-          {mainPackage.includes.map((item, idx) => (
-            <div key={idx} className={styles.componentItem}>
-              <Icons.check size={14} />
-              <span>{item}</span>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {/* Additional standalone modules selected by user */}
-      {modules.length > 0 && (
-        <div className={styles.additionalModules}>
-          <span className={styles.modulesLabel}>Additional Modules:</span>
-          <div className={styles.modulesList}>
-            {modules.map((mod) => {
-              const modDetails = getUpgradeByKey(mod.key);
-              return (
-                <button
-                  key={mod.key}
-                  className={styles.moduleBadgeClickable}
-                  onClick={() => onUpgradeClick(modDetails || mod)}
-                >
-                  {mod.name}
-                  <Icons.info size={10} />
-                </button>
-              );
-            })}
-          </div>
-        </div>
-      )}
-
-      {mainPackage && mainPackage.considerations && (
-        <div className={styles.considerations}>
-          <span className={styles.considerationsLabel}>Things to Consider:</span>
-          <ul className={styles.considerationsList}>
-            {mainPackage.considerations.map((item, idx) => (
-              <li key={idx}>{item}</li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  );
-}
-
-/**
  * Expert Track Insights - Shows what reviewers say about track performance
  */
 function ExpertTrackInsights({ car }) {
@@ -927,14 +621,19 @@ export default function PerformanceHub({
   const { tierConfig } = useAppConfig();
 
   // Global car selection integration
-  const { selectCar, setUpgrades, clearCar, isHydrated } = useCarSelection();
+  const {
+    selectCar,
+    setUpgrades: _setUpgrades,
+    clearCar: _clearCar,
+    isHydrated,
+  } = useCarSelection();
 
   // Auth and saved builds
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated: _isAuthenticated } = useAuth();
   const { saveBuild, updateBuild, getBuildById, getBuildsByCarSlug, canSave } = useSavedBuilds();
 
   // Owned vehicles for "Apply to My Vehicle" feature
-  const { vehicles, getVehiclesByCarSlug, applyModifications } = useOwnedVehicles();
+  const { vehicles: _vehicles, getVehiclesByCarSlug, applyModifications } = useOwnedVehicles();
 
   // Find user's vehicles that match this car, enriched with build data for accurate HP gain
   const matchingVehicles = useMemo(() => {
@@ -953,7 +652,7 @@ export default function PerformanceHub({
 
   // Initialize to stock - users can select their preferred package
   const [selectedPackageKey, setSelectedPackageKey] = useState('stock');
-  const [expandedModules, setExpandedModules] = useState(false);
+  const [_expandedModules, _setExpandedModules] = useState(false);
   const [selectedModules, setSelectedModules] = useState([]);
   const [selectedUpgradeForModal, setSelectedUpgradeForModal] = useState(null);
 
@@ -1073,7 +772,7 @@ export default function PerformanceHub({
   );
 
   // Get summary text
-  const upgradeSummary = useMemo(
+  const _upgradeSummary = useMemo(
     () => getUpgradeSummary(profile.selectedUpgrades),
     [profile.selectedUpgrades]
   );
@@ -1110,7 +809,7 @@ export default function PerformanceHub({
   };
 
   // Handler for adding required/recommended mods
-  const handleAddRequiredMods = (modKeys) => {
+  const _handleAddRequiredMods = (modKeys) => {
     setSelectedModules((prev) => {
       const newMods = modKeys.filter((k) => !prev.includes(k));
       return [...prev, ...newMods];

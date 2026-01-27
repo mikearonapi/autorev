@@ -41,12 +41,12 @@ Before changing ANY code:
 
 ## THE 4-COLOR SYSTEM (Non-Negotiable)
 
-| Color | Hex | CSS Variable | ONLY Use For |
-|-------|-----|--------------|--------------|
-| **Lime** | `#d4ff00` | `--color-accent-lime` | CTAs, primary buttons, user actions |
-| **Teal** | `#10b981` | `--color-accent-teal` | Gains, improvements, positive data, active states |
-| **Blue** | `#3b82f6` | `--color-accent-blue` | Stock/baseline values, info, links |
-| **Amber** | `#f59e0b` | `--color-warning` | Warnings ONLY (use sparingly) |
+| Color     | Hex       | CSS Variable          | ONLY Use For                                      |
+| --------- | --------- | --------------------- | ------------------------------------------------- |
+| **Lime**  | `#d4ff00` | `--color-accent-lime` | CTAs, primary buttons, user actions               |
+| **Teal**  | `#10b981` | `--color-accent-teal` | Gains, improvements, positive data, active states |
+| **Blue**  | `#3b82f6` | `--color-accent-blue` | Stock/baseline values, info, links                |
+| **Amber** | `#f59e0b` | `--color-warning`     | Warnings ONLY (use sparingly)                     |
 
 ### Color Decision Tree
 
@@ -130,30 +130,29 @@ Otherwise → White/secondary text
 
 ### Global Styles
 
-| File | Purpose |
-|------|---------|
-| `app/globals.css` | Token definitions, global styles |
-| `styles/tokens/colors.css` | Color tokens (if exists) |
-| `styles/components/` | Shared component styles |
+| File                       | Purpose                          |
+| -------------------------- | -------------------------------- |
+| `app/globals.css`          | Token definitions, global styles |
+| `styles/tokens/colors.css` | Color tokens (if exists)         |
+| `styles/components/`       | Shared component styles          |
 
 ### High-Usage Components
 
-| File | Purpose |
-|------|---------|
-| `components/ui/Button.jsx` | Button variants |
-| `components/ui/Card.jsx` | Card patterns |
-| `components/ui/Badge.jsx` | Badge colors |
-| `components/ui/Input.jsx` | Form input sizing |
-| `components/ui/Skeleton.jsx` | Loading patterns |
+| File                         | Purpose           |
+| ---------------------------- | ----------------- |
+| `components/ui/Button.jsx`   | Button variants   |
+| `components/ui/Card.jsx`     | Card patterns     |
+| `components/ui/Badge.jsx`    | Badge colors      |
+| `components/ui/Input.jsx`    | Form input sizing |
+| `components/ui/Skeleton.jsx` | Loading patterns  |
 
 ### Pages with Heavy Data Display
 
-| File | Purpose |
-|------|---------|
-| `app/(app)/garage/my-performance/` | Stock vs modified display |
-| `app/(app)/data/` | Virtual Dyno charts |
-| `app/(app)/insights/` | Health scores, metrics |
-| `components/VirtualDynoChart.jsx` | Chart colors |
+| File                              | Purpose                                        |
+| --------------------------------- | ---------------------------------------------- |
+| `app/(app)/data/`                 | Virtual Dyno charts, stock vs modified display |
+| `app/(app)/insights/`             | Health scores, metrics                         |
+| `components/VirtualDynoChart.jsx` | Chart colors                                   |
 
 ---
 
@@ -204,13 +203,13 @@ color: #10b981;
 
 List all violations found with:
 
-| Field | Description |
-|-------|-------------|
-| File path | Full path to file |
-| Line number | Specific line |
-| Current value | The incorrect value |
-| Correct value | What it should be |
-| Severity | Critical / Medium / Low |
+| Field         | Description             |
+| ------------- | ----------------------- |
+| File path     | Full path to file       |
+| Line number   | Specific line           |
+| Current value | The incorrect value     |
+| Correct value | What it should be       |
+| Severity      | Critical / Medium / Low |
 
 ### 2. Summary Statistics
 
@@ -239,13 +238,13 @@ List all violations found with:
 
 ## SUCCESS CRITERIA
 
-| # | Criterion |
-|---|-----------|
-| 1 | Zero hardcoded hex colors in CSS (use variables with fallbacks) |
-| 2 | Zero semantic color misuse (lime only for CTAs, teal only for gains, etc.) |
-| 3 | All interactive elements meet 44px touch target |
-| 4 | Violation report documents ALL findings for downstream audits |
-| 5 | Any exceptions are documented with justification |
+| #   | Criterion                                                                  |
+| --- | -------------------------------------------------------------------------- |
+| 1   | Zero hardcoded hex colors in CSS (use variables with fallbacks)            |
+| 2   | Zero semantic color misuse (lime only for CTAs, teal only for gains, etc.) |
+| 3   | All interactive elements meet 44px touch target                            |
+| 4   | Violation report documents ALL findings for downstream audits              |
+| 5   | Any exceptions are documented with justification                           |
 
 ---
 
@@ -256,7 +255,7 @@ List all violations found with:
 
 **Summary:**
 - Hardcoded colors: X violations
-- Semantic misuse: X violations  
+- Semantic misuse: X violations
 - Touch targets: X violations
 - Total files affected: X
 
@@ -283,10 +282,10 @@ List all violations found with:
 ## AUDIT EXECUTION LOG
 
 | Date | Auditor | Result | Notes |
-|------|---------|--------|-------|
-| | | | |
+| ---- | ------- | ------ | ----- |
+|      |         |        |       |
 
 ---
 
-*Audit prompt generated: January 25, 2026*  
-*Part of AutoRev Systematic Audit Suite (36 total audits)*
+_Audit prompt generated: January 25, 2026_  
+_Part of AutoRev Systematic Audit Suite (36 total audits)_

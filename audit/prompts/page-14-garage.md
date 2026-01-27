@@ -13,6 +13,7 @@
 The Garage home page is the **central hub** for vehicle management. Users see their vehicles, select the active vehicle, and navigate to detailed garage sections (specs, build, performance, etc.).
 
 **Key Features:**
+
 - Vehicle list/grid display
 - Add new vehicle flow
 - Vehicle selection (sets context for sub-pages)
@@ -25,28 +26,28 @@ The Garage home page is the **central hub** for vehicle management. Users see th
 
 ### Page Files
 
-| File | Purpose |
-|------|---------|
-| `app/(app)/garage/page.jsx` | Main page component |
-| `app/(app)/garage/page.module.css` | Page styles |
-| `app/(app)/garage/layout.jsx` | Garage layout (shared across sub-pages) |
+| File                               | Purpose                                 |
+| ---------------------------------- | --------------------------------------- |
+| `app/(app)/garage/page.jsx`        | Main page component                     |
+| `app/(app)/garage/page.module.css` | Page styles                             |
+| `app/(app)/garage/layout.jsx`      | Garage layout (shared across sub-pages) |
 
 ### Related Components
 
-| File | Purpose |
-|------|---------|
-| `components/VehicleCard.jsx` | Vehicle display card |
-| `components/AddVehicleButton.jsx` | Add vehicle CTA |
-| `components/VehicleSelector.jsx` | Vehicle picker dropdown |
+| File                               | Purpose                 |
+| ---------------------------------- | ----------------------- |
+| `components/VehicleCard.jsx`       | Vehicle display card    |
+| `components/AddVehicleButton.jsx`  | Add vehicle CTA         |
+| `components/VehicleSelector.jsx`   | Vehicle picker dropdown |
 | `components/SelectedCarBanner.jsx` | Selected vehicle banner |
 
 ### Related Providers/Hooks
 
-| File | Purpose |
-|------|---------|
-| `components/providers/OwnedVehiclesProvider.jsx` | Vehicle list context |
-| `components/providers/SelectedCarProvider.jsx` | Selected vehicle context |
-| `hooks/useCarData.js` | Car data fetching |
+| File                                             | Purpose                  |
+| ------------------------------------------------ | ------------------------ |
+| `components/providers/OwnedVehiclesProvider.jsx` | Vehicle list context     |
+| `components/providers/SelectedCarProvider.jsx`   | Selected vehicle context |
+| `hooks/useCarData.js`                            | Car data fetching        |
 
 ---
 
@@ -189,14 +190,13 @@ const [selected, setSelected] = useState(null);
 
 ### Sub-Page Navigation
 
-| Link | Target | Works |
-|------|--------|-------|
-| My Specs | `/garage/my-specs` | ✅/❌ |
-| My Build | `/garage/my-build` | ✅/❌ |
-| My Performance | `/garage/my-performance` | ✅/❌ |
-| My Parts | `/garage/my-parts` | ✅/❌ |
+| Link       | Target               | Works |
+| ---------- | -------------------- | ----- |
+| My Specs   | `/garage/my-specs`   | ✅/❌ |
+| My Build   | `/garage/my-build`   | ✅/❌ |
+| My Parts   | `/garage/my-parts`   | ✅/❌ |
 | My Install | `/garage/my-install` | ✅/❌ |
-| My Photos | `/garage/my-photos` | ✅/❌ |
+| My Photos  | `/garage/my-photos`  | ✅/❌ |
 
 ---
 
@@ -266,13 +266,13 @@ grep -rn "p-1\|p-2\|h-6\|h-8" app/\(app\)/garage/page.jsx
 
 ## CROSS-REFERENCE WITH FOUNDATION AUDITS
 
-| Audit | Check On This Page |
-|-------|-------------------|
-| D. UI/UX | Card styling, selected state colors |
-| E. Accessibility | Card keyboard navigation, focus states |
-| C. Database | Provider usage, no direct queries |
+| Audit               | Check On This Page                         |
+| ------------------- | ------------------------------------------ |
+| D. UI/UX            | Card styling, selected state colors        |
+| E. Accessibility    | Card keyboard navigation, focus states     |
+| C. Database         | Provider usage, no direct queries          |
 | I. State Management | OwnedVehiclesProvider, SelectedCarProvider |
-| A. Performance | Image optimization, no re-render on select |
+| A. Performance      | Image optimization, no re-render on select |
 
 ---
 
@@ -280,28 +280,28 @@ grep -rn "p-1\|p-2\|h-6\|h-8" app/\(app\)/garage/page.jsx
 
 ### 1. Functionality Report
 
-| Feature | Works | Issues |
-|---------|-------|--------|
-| Vehicle list | ✅/❌ | |
-| Vehicle selection | ✅/❌ | |
-| Selection persistence | ✅/❌ | |
-| Add vehicle | ✅/❌ | |
-| Sub-page navigation | ✅/❌ | |
+| Feature               | Works | Issues |
+| --------------------- | ----- | ------ |
+| Vehicle list          | ✅/❌ |        |
+| Vehicle selection     | ✅/❌ |        |
+| Selection persistence | ✅/❌ |        |
+| Add vehicle           | ✅/❌ |        |
+| Sub-page navigation   | ✅/❌ |        |
 
 ### 2. Compliance Report
 
-| Category | Pass | Issues |
-|----------|------|--------|
-| UI/UX Design System | ✅/❌ | |
-| Accessibility | ✅/❌ | |
-| Performance | ✅/❌ | |
-| State Management | ✅/❌ | |
+| Category            | Pass  | Issues |
+| ------------------- | ----- | ------ |
+| UI/UX Design System | ✅/❌ |        |
+| Accessibility       | ✅/❌ |        |
+| Performance         | ✅/❌ |        |
+| State Management    | ✅/❌ |        |
 
 ### 3. Issues Found
 
 | Severity | Issue | File:Line | Fix |
-|----------|-------|-----------|-----|
-| | | | |
+| -------- | ----- | --------- | --- |
+|          |       |           |     |
 
 ---
 
@@ -317,15 +317,15 @@ grep -rn "p-1\|p-2\|h-6\|h-8" app/\(app\)/garage/page.jsx
 
 ## SUCCESS CRITERIA
 
-| # | Criterion |
-|---|-----------|
-| 1 | Vehicle list displays all user vehicles |
-| 2 | Selection works and persists across navigation |
-| 3 | Empty state shows clear CTA |
-| 4 | Selected vehicle visually distinct (teal) |
-| 5 | All sub-page links work |
-| 6 | Uses providers (not direct data fetching) |
-| 7 | No critical/high issues remaining |
+| #   | Criterion                                      |
+| --- | ---------------------------------------------- |
+| 1   | Vehicle list displays all user vehicles        |
+| 2   | Selection works and persists across navigation |
+| 3   | Empty state shows clear CTA                    |
+| 4   | Selected vehicle visually distinct (teal)      |
+| 5   | All sub-page links work                        |
+| 6   | Uses providers (not direct data fetching)      |
+| 7   | No critical/high issues remaining              |
 
 ---
 
@@ -367,10 +367,10 @@ grep -rn "p-1\|p-2\|h-6\|h-8" app/\(app\)/garage/page.jsx
 ## AUDIT EXECUTION LOG
 
 | Date | Auditor | Status | Issues | Notes |
-|------|---------|--------|--------|-------|
-| | | | | |
+| ---- | ------- | ------ | ------ | ----- |
+|      |         |        |        |       |
 
 ---
 
-*Audit prompt generated: January 25, 2026*  
-*Part of AutoRev Systematic Audit Suite (36 total audits)*
+_Audit prompt generated: January 25, 2026_  
+_Part of AutoRev Systematic Audit Suite (36 total audits)_
