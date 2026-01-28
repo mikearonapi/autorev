@@ -1,17 +1,25 @@
 'use client';
 
-import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+  useRef,
+} from 'react';
 
 import dynamic from 'next/dynamic';
 import { useRouter } from 'next/navigation';
 
 import { useQueryClient } from '@tanstack/react-query';
 
-import { 
+import {
   signInWithGoogle,
-  signInWithFacebook, 
-  signInWithEmail, 
-  signUpWithEmail, 
+  signInWithFacebook,
+  signInWithEmail,
+  signUpWithEmail,
   signOut as authSignOut,
   onAuthStateChange,
   getUserProfile,
@@ -24,7 +32,6 @@ import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 import { TRIAL_CONFIG, calculateTrialEndDate } from '@/lib/tierAccess';
 
 import { useLoadingProgress } from './LoadingProgressProvider';
-
 
 // Dynamically import OnboardingFlow to avoid SSR issues
 const OnboardingFlow = dynamic(() => import('@/components/onboarding/OnboardingFlow'), {
@@ -85,9 +92,9 @@ function consumeLoginIntent() {
   try {
     const intentTs = localStorage.getItem(LOGIN_INTENT_KEY);
     if (!intentTs) return false;
-    
+
     localStorage.removeItem(LOGIN_INTENT_KEY);
-    
+
     const elapsed = Date.now() - parseInt(intentTs, 10);
     if (elapsed < LOGIN_INTENT_TTL) {
       console.log('[AuthProvider] Valid login intent consumed (age:', elapsed, 'ms)');
@@ -110,16 +117,19 @@ const AUTH_TS_MAX_AGE = 60000; // 60 seconds
  */
 function hasOAuthCallbackSignals() {
   if (typeof window === 'undefined') return false;
-  
+
   // Check for auth_ts in URL params
   const params = new URLSearchParams(window.location.search);
   const hasAuthTs = params.has('auth_ts');
-  
+
   // Check for auth_callback_complete cookie
   const hasCallbackCookie = document.cookie.includes('auth_callback_complete=');
-  
+
   if (hasAuthTs || hasCallbackCookie) {
-    console.log('[AuthProvider] OAuth callback signals detected:', { hasAuthTs, hasCallbackCookie });
+    console.log('[AuthProvider] OAuth callback signals detected:', {
+      hasAuthTs,
+      hasCallbackCookie,
+    });
     return true;
   }
   return false;
@@ -128,21 +138,21 @@ function hasOAuthCallbackSignals() {
 /**
  * Check if OAuth callback signals are FRESH (not stale from a previous session).
  * This is more stringent than hasOAuthCallbackSignals() - it also checks timestamps.
- * 
+ *
  * Returns { isFresh: boolean, hasAuthTs: boolean, hasCallbackCookie: boolean }
  */
 function checkFreshOAuthSignals() {
   if (typeof window === 'undefined') {
     return { isFresh: false, hasAuthTs: false, hasCallbackCookie: false };
   }
-  
+
   const params = new URLSearchParams(window.location.search);
   const authTsStr = params.get('auth_ts');
   const hasCallbackCookie = document.cookie.includes('auth_callback_complete=');
-  
+
   let hasAuthTs = false;
   let authTsFresh = false;
-  
+
   if (authTsStr) {
     hasAuthTs = true;
     const authTs = parseInt(authTsStr, 10);
@@ -154,14 +164,19 @@ function checkFreshOAuthSignals() {
       }
     }
   }
-  
+
   // Fresh if either:
   // - auth_ts is present AND fresh (within TTL)
   // - auth_callback_complete cookie is present (it has its own 60s TTL)
   const isFresh = authTsFresh || hasCallbackCookie;
-  
-  console.log('[AuthProvider] Fresh OAuth signal check:', { hasAuthTs, authTsFresh, hasCallbackCookie, isFresh });
-  
+
+  console.log('[AuthProvider] Fresh OAuth signal check:', {
+    hasAuthTs,
+    authTsFresh,
+    hasCallbackCookie,
+    isFresh,
+  });
+
   return { isFresh, hasAuthTs, hasCallbackCookie };
 }
 
@@ -171,7 +186,7 @@ function checkFreshOAuthSignals() {
  */
 function consumeOAuthSignals() {
   if (typeof window === 'undefined') return;
-  
+
   // Clear auth_ts from URL
   const url = new URL(window.location.href);
   if (url.searchParams.has('auth_ts')) {
@@ -179,13 +194,13 @@ function consumeOAuthSignals() {
     window.history.replaceState({}, '', url.pathname + url.search);
     console.log('[AuthProvider] Cleared auth_ts from URL');
   }
-  
+
   // Clear auth_callback_complete cookie
   if (document.cookie.includes('auth_callback_complete=')) {
     document.cookie = 'auth_callback_complete=; max-age=0; path=/';
     console.log('[AuthProvider] Cleared auth_callback_complete cookie');
   }
-  
+
   // Clear auth_verified_user cookie
   if (document.cookie.includes('auth_verified_user=')) {
     document.cookie = 'auth_verified_user=; max-age=0; path=/';
@@ -196,11 +211,11 @@ function consumeOAuthSignals() {
 /**
  * Detect if this is a "fresh login" that should show the loading overlay.
  * Consumes any pending signals.
- * 
+ *
  * A fresh login is:
  * - OAuth callback return (auth_ts param or auth_callback_complete cookie)
  * - Explicit user-initiated sign-in (loginWithGoogle, loginWithEmail, loginViaErrorBanner)
- * 
+ *
  * NOT a fresh login:
  * - Page refresh with existing session
  * - Silent token refresh (TOKEN_REFRESHED event)
@@ -209,7 +224,7 @@ function consumeOAuthSignals() {
 function detectFreshLogin() {
   const hasOAuth = hasOAuthCallbackSignals();
   const hasIntent = consumeLoginIntent();
-  
+
   const isFresh = hasOAuth || hasIntent;
   console.log('[AuthProvider] Fresh login detection:', { hasOAuth, hasIntent, isFresh });
   return isFresh;
@@ -218,10 +233,33 @@ function detectFreshLogin() {
 /**
  * Check if the inline OAuth splash is currently showing.
  * The inline splash is injected by a script in root layout BEFORE React hydrates.
+ *
+ * IMPORTANT: This function must be called AFTER hydration to get accurate results.
+ * During SSR, window is undefined. During hydration, __hasSplash should already be set
+ * by the inline script that runs before React.
  */
 function hasInlineSplash() {
   if (typeof window === 'undefined') return false;
   return window.__hasSplash === true;
+}
+
+/**
+ * Check for fresh OAuth callback signals that indicate we should show splash.
+ * This is used to determine if inline splash should be showing.
+ */
+function hasOAuthReturnSignals() {
+  if (typeof window === 'undefined') return false;
+
+  const params = new URLSearchParams(window.location.search);
+  const authTs = params.get('auth_ts');
+  const hasCallback = document.cookie.includes('auth_callback_complete=');
+
+  // If we have auth signals, the inline splash SHOULD be showing
+  if (authTs || hasCallback) {
+    const age = authTs ? Date.now() - parseInt(authTs, 10) : 0;
+    return hasCallback || (age >= 0 && age < 60000);
+  }
+  return false;
 }
 
 /**
@@ -234,14 +272,14 @@ function dismissInlineSplash(callback) {
     callback?.();
     return;
   }
-  
+
   const startTime = window.__splashStartTime || Date.now();
   const elapsed = Date.now() - startTime;
   const minDuration = 3000; // 3 seconds minimum - gives time for prefetch to complete
   const remaining = Math.max(0, minDuration - elapsed);
-  
+
   console.log('[Splash] Will dismiss in', remaining, 'ms (elapsed:', elapsed, 'ms)');
-  
+
   setTimeout(() => {
     window.dismissOAuthSplash(callback);
   }, remaining);
@@ -277,48 +315,55 @@ const defaultOnboardingState = {
 
 /**
  * Maximum dismissals before opting out permanently
+ * @deprecated Kept for reference - current logic always shows onboarding until completed
  */
-const MAX_ONBOARDING_DISMISSALS = 3;
+const _MAX_ONBOARDING_DISMISSALS = 3;
 
 /**
  * Session initialization with retry logic
  * Handles race conditions after OAuth callback and stale sessions
- * 
+ *
  * Strategy:
  * 1. Use cached session promise from getSessionEarly() for fast initial check
  * 2. If that fails, try refreshSession() - works with refresh token even if access token expired
  * 3. If refresh works, validate with getUser()
  * 4. If refresh fails, try getUser() directly (maybe access token is fine)
  * 5. If all fail and it's a stale session error, clear local storage
- * 
+ *
  * @param {number} maxRetries - Maximum retry attempts
  * @param {number} initialDelay - Initial delay in ms (doubles with each retry)
  * @param {string|null} expectedUserId - If provided from callback, verify user matches
  */
-async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100, expectedUserId = null) {
+async function initializeSessionWithRetry(
+  maxRetries = 3,
+  initialDelay = 100,
+  expectedUserId = null
+) {
   let lastError = null;
   let errorCategory = null;
-  
+
   // FIRST: Try cached session from early check (saves 200-400ms)
   try {
     console.log(`[AuthProvider] Checking cached session from early load...`);
     const sessionCheckStart = Date.now();
     const { data, error } = await getSessionEarly();
     const sessionCheckDuration = Date.now() - sessionCheckStart;
-    
+
     console.log(`[AuthProvider] Cached session check completed in ${sessionCheckDuration}ms`);
-    
+
     if (!error && data?.session && data?.session.user) {
       // Verify user matches expected if provided
       if (expectedUserId && data.session.user.id !== expectedUserId) {
-        console.warn(`[AuthProvider] User mismatch: expected ${expectedUserId.slice(0, 8)}..., got ${data.session.user.id.slice(0, 8)}...`);
+        console.warn(
+          `[AuthProvider] User mismatch: expected ${expectedUserId.slice(0, 8)}..., got ${data.session.user.id.slice(0, 8)}...`
+        );
         // This might happen if cookies got mixed - fall through to refresh
       } else {
         console.log(`[AuthProvider] Session retrieved from cache successfully`);
         return { session: data.session, user: data.session.user, error: null, errorCategory: null };
       }
     }
-    
+
     if (error) {
       console.log(`[AuthProvider] Cached session check returned error:`, error.message);
       lastError = error;
@@ -329,40 +374,47 @@ async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100, ex
     lastError = cacheErr;
     errorCategory = categorizeAuthError(cacheErr);
   }
-  
+
   // SECOND: Try to refresh session - this is the most reliable recovery method
   // It uses the refresh token which often survives when access tokens expire
   try {
     console.log(`[AuthProvider] Attempting session refresh...`);
     const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
-    
+
     if (!refreshError && refreshData?.session && refreshData?.user) {
       // Verify user matches expected if provided
       if (expectedUserId && refreshData.user.id !== expectedUserId) {
-        console.warn(`[AuthProvider] User mismatch: expected ${expectedUserId.slice(0, 8)}..., got ${refreshData.user.id.slice(0, 8)}...`);
+        console.warn(
+          `[AuthProvider] User mismatch: expected ${expectedUserId.slice(0, 8)}..., got ${refreshData.user.id.slice(0, 8)}...`
+        );
         // This might happen if cookies got mixed - clear and re-auth
       } else {
         console.log(`[AuthProvider] Session refreshed successfully`);
-        return { session: refreshData.session, user: refreshData.user, error: null, errorCategory: null };
+        return {
+          session: refreshData.session,
+          user: refreshData.user,
+          error: null,
+          errorCategory: null,
+        };
       }
     }
-    
+
     if (refreshError) {
       console.log(`[AuthProvider] Refresh returned error:`, refreshError.message);
       lastError = refreshError;
       errorCategory = categorizeAuthError(refreshError);
-      
+
       // If session was revoked (logged out elsewhere), don't retry - provide clear feedback
       if (errorCategory === ErrorCategory.SESSION_REVOKED) {
         console.warn(`[AuthProvider] Session was revoked - likely logged out on another device`);
         await clearAuthState();
-        return { 
-          session: null, 
-          user: null, 
-          error: refreshError, 
+        return {
+          session: null,
+          user: null,
+          error: refreshError,
           sessionExpired: true,
           sessionRevoked: true,
-          errorCategory 
+          errorCategory,
         };
       }
     }
@@ -371,74 +423,90 @@ async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100, ex
     lastError = refreshErr;
     errorCategory = categorizeAuthError(refreshErr);
   }
-  
+
   // If we know the error is non-recoverable, don't waste time retrying
-  if (errorCategory === ErrorCategory.INVALID_TOKEN || errorCategory === ErrorCategory.SESSION_EXPIRED) {
+  if (
+    errorCategory === ErrorCategory.INVALID_TOKEN ||
+    errorCategory === ErrorCategory.SESSION_EXPIRED
+  ) {
     console.warn(`[AuthProvider] Non-recoverable error (${errorCategory}), clearing session...`);
     await clearAuthState();
     return { session: null, user: null, error: lastError, sessionExpired: true, errorCategory };
   }
-  
+
   // THIRD: Refresh didn't work, try getUser() with retries
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
       if (userError) {
         lastError = userError;
         errorCategory = categorizeAuthError(userError);
-        console.warn(`[AuthProvider] getUser attempt ${attempt}/${maxRetries} failed:`, userError.message, `(${errorCategory})`);
-        
+        console.warn(
+          `[AuthProvider] getUser attempt ${attempt}/${maxRetries} failed:`,
+          userError.message,
+          `(${errorCategory})`
+        );
+
         // Don't retry for non-recoverable errors
         if (errorCategory !== ErrorCategory.NETWORK && errorCategory !== ErrorCategory.UNKNOWN) {
           console.warn(`[AuthProvider] Non-retryable error category: ${errorCategory}`);
           await clearAuthState();
-          return { 
-            session: null, 
-            user: null, 
-            error: userError, 
+          return {
+            session: null,
+            user: null,
+            error: userError,
             sessionExpired: true,
             sessionRevoked: errorCategory === ErrorCategory.SESSION_REVOKED,
-            errorCategory 
+            errorCategory,
           };
         }
-        
+
         // For network errors, retry with backoff
         if (attempt < maxRetries) {
           const delay = initialDelay * Math.pow(2, attempt - 1);
           console.log(`[AuthProvider] Retrying in ${delay}ms...`);
-          await new Promise(resolve => setTimeout(resolve, delay));
+          await new Promise((resolve) => setTimeout(resolve, delay));
           continue;
         }
-        
+
         throw userError;
       }
-      
+
       if (user) {
         // Verify user matches expected if provided
         if (expectedUserId && user.id !== expectedUserId) {
-          console.warn(`[AuthProvider] User mismatch on getUser: expected ${expectedUserId.slice(0, 8)}..., got ${user.id.slice(0, 8)}...`);
+          console.warn(
+            `[AuthProvider] User mismatch on getUser: expected ${expectedUserId.slice(0, 8)}..., got ${user.id.slice(0, 8)}...`
+          );
         }
-        
+
         // User validated, get the session
-        const { data: { session } } = await supabase.auth.getSession();
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
         console.log(`[AuthProvider] Session initialized on attempt ${attempt}`);
         return { session, user, error: null, errorCategory: null };
       }
-      
+
       // No user - not logged in
       return { session: null, user: null, error: null, errorCategory: null };
-      
     } catch (err) {
       lastError = err;
       errorCategory = categorizeAuthError(err);
-      if (attempt < maxRetries && (errorCategory === ErrorCategory.NETWORK || errorCategory === ErrorCategory.UNKNOWN)) {
+      if (
+        attempt < maxRetries &&
+        (errorCategory === ErrorCategory.NETWORK || errorCategory === ErrorCategory.UNKNOWN)
+      ) {
         const delay = initialDelay * Math.pow(2, attempt - 1);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
   }
-  
+
   // All attempts failed
   // Only log as error for unknown issues - expected failures (expired, revoked) are info-level
   if (errorCategory === ErrorCategory.UNKNOWN || errorCategory === ErrorCategory.NETWORK) {
@@ -447,8 +515,14 @@ async function initializeSessionWithRetry(maxRetries = 3, initialDelay = 100, ex
     console.log('[AuthProvider] Auth session cleared:', errorCategory);
   }
   await clearAuthState();
-  
-  return { session: null, user: null, error: lastError, sessionExpired: !!lastError, errorCategory };
+
+  return {
+    session: null,
+    user: null,
+    error: lastError,
+    sessionExpired: !!lastError,
+    errorCategory,
+  };
 }
 
 /**
@@ -460,11 +534,11 @@ async function clearAuthState() {
   } catch (e) {
     console.warn('[AuthProvider] signOut during clearAuthState failed:', e.message);
   }
-  
+
   // Clear any stale tokens from localStorage directly
   if (typeof window !== 'undefined') {
     const keys = Object.keys(localStorage);
-    keys.forEach(key => {
+    keys.forEach((key) => {
       if (key.startsWith('sb-') && key.includes('auth')) {
         console.log(`[AuthProvider] Clearing stale auth key: ${key}`);
         localStorage.removeItem(key);
@@ -477,11 +551,11 @@ async function clearAuthState() {
  * Error categories for better handling
  */
 const ErrorCategory = {
-  NETWORK: 'network',        // Network/connectivity issues - retry makes sense
-  SESSION_EXPIRED: 'session_expired',  // Session legitimately expired - re-login needed
-  SESSION_REVOKED: 'session_revoked',  // Session was revoked (e.g., logout from another device)
-  INVALID_TOKEN: 'invalid_token',      // Token is malformed or invalid
-  UNKNOWN: 'unknown',        // Unexpected error
+  NETWORK: 'network', // Network/connectivity issues - retry makes sense
+  SESSION_EXPIRED: 'session_expired', // Session legitimately expired - re-login needed
+  SESSION_REVOKED: 'session_revoked', // Session was revoked (e.g., logout from another device)
+  INVALID_TOKEN: 'invalid_token', // Token is malformed or invalid
+  UNKNOWN: 'unknown', // Unexpected error
 };
 
 /**
@@ -489,59 +563,67 @@ const ErrorCategory = {
  */
 function categorizeAuthError(error) {
   if (!error) return null;
-  
+
   const message = error.message?.toLowerCase() || '';
   const status = error.status;
   const code = error.code || error.__isAuthError;
-  
+
   // Network errors
-  if (message.includes('network') || 
-      message.includes('fetch') || 
-      message.includes('timeout') ||
-      message.includes('failed to fetch') ||
-      message.includes('unable to resolve') ||
-      message.includes('connection') ||
-      status === 0) {
+  if (
+    message.includes('network') ||
+    message.includes('fetch') ||
+    message.includes('timeout') ||
+    message.includes('failed to fetch') ||
+    message.includes('unable to resolve') ||
+    message.includes('connection') ||
+    status === 0
+  ) {
     return ErrorCategory.NETWORK;
   }
-  
+
   // Session was revoked/logged out on another device
-  if (message.includes('session has been revoked') || 
-      message.includes('logged out') ||
-      message.includes('user session not found') ||
-      message.includes('not authenticated') ||
-      (status === 401 && message.includes('session'))) {
+  if (
+    message.includes('session has been revoked') ||
+    message.includes('logged out') ||
+    message.includes('user session not found') ||
+    message.includes('not authenticated') ||
+    (status === 401 && message.includes('session'))
+  ) {
     return ErrorCategory.SESSION_REVOKED;
   }
-  
+
   // Session legitimately expired
-  if (message.includes('session not found') ||
-      message.includes('session from session_id claim') ||
-      message.includes('jwt expired') ||
-      message.includes('token expired') ||
-      message.includes('token is expired') ||
-      message.includes('auth session missing') ||
-      message.includes('no current session')) {
+  if (
+    message.includes('session not found') ||
+    message.includes('session from session_id claim') ||
+    message.includes('jwt expired') ||
+    message.includes('token expired') ||
+    message.includes('token is expired') ||
+    message.includes('auth session missing') ||
+    message.includes('no current session')
+  ) {
     return ErrorCategory.SESSION_EXPIRED;
   }
-  
+
   // Invalid/malformed token
-  if (message.includes('invalid refresh token') ||
-      message.includes('refresh_token') ||
-      message.includes('malformed') ||
-      message.includes('invalid jwt') ||
-      message.includes('invalid claim') ||
-      message.includes('token contains an invalid') ||
-      status === 403) {
+  if (
+    message.includes('invalid refresh token') ||
+    message.includes('refresh_token') ||
+    message.includes('malformed') ||
+    message.includes('invalid jwt') ||
+    message.includes('invalid claim') ||
+    message.includes('token contains an invalid') ||
+    status === 403
+  ) {
     return ErrorCategory.INVALID_TOKEN;
   }
-  
+
   // Auth error type from Supabase - treat as expired session
   if (code === true || error.__isAuthError === true) {
     // Generic auth error from Supabase - likely session issue
     return ErrorCategory.SESSION_EXPIRED;
   }
-  
+
   return ErrorCategory.UNKNOWN;
 }
 
@@ -552,31 +634,31 @@ function categorizeAuthError(error) {
  */
 function checkAuthCallbackCookie() {
   if (typeof document === 'undefined') return { fromCallback: false, verifiedUserId: null };
-  
+
   const cookies = document.cookie.split(';');
-  const authCookie = cookies.find(c => c.trim().startsWith('auth_callback_complete='));
-  const verifiedCookie = cookies.find(c => c.trim().startsWith('auth_verified_user='));
-  
+  const authCookie = cookies.find((c) => c.trim().startsWith('auth_callback_complete='));
+  const verifiedCookie = cookies.find((c) => c.trim().startsWith('auth_verified_user='));
+
   let verifiedUserId = null;
   if (verifiedCookie) {
     verifiedUserId = verifiedCookie.split('=')[1]?.trim() || null;
     // Clear the verified user cookie
     document.cookie = 'auth_verified_user=; max-age=0; path=/';
   }
-  
+
   if (authCookie) {
     // Clear the callback cookie after reading
     document.cookie = 'auth_callback_complete=; max-age=0; path=/';
     return { fromCallback: true, verifiedUserId };
   }
-  
+
   return { fromCallback: false, verifiedUserId };
 }
 
 /**
  * AuthProvider Component
  * Wraps the app and provides auth context
- * 
+ *
  * ENHANCED: Includes retry logic, cross-tab sync, and proactive token refresh
  */
 export function AuthProvider({ children }) {
@@ -592,52 +674,98 @@ export function AuthProvider({ children }) {
   const isFreshLoginRef = useRef(false); // Tracks if current session is from a fresh login
   const wasAuthenticatedOnMountRef = useRef(null); // null = not checked yet, true/false = initial auth state
   // Track if inline splash is being used (for OAuth logins)
-  const usingInlineSplashRef = useRef(typeof window !== 'undefined' && hasInlineSplash());
-  const hasShownSplashRef = useRef(usingInlineSplashRef.current);
-  
+  // SPLASH FIX: Initialize to false, then check after hydration in useEffect
+  // This fixes the race condition where useRef was initialized during SSR (window undefined)
+  const usingInlineSplashRef = useRef(false);
+  const hasShownSplashRef = useRef(false);
+  const splashCheckedRef = useRef(false); // Track if we've done the post-hydration check
+
   // Refs for values used in auth state change listener to avoid stale closures
   const resetProgressRef = useRef(resetProgress);
   const stateProfileRef = useRef(state.profile);
   const queryClientRef = useRef(queryClient);
   const routerRef = useRef(router);
-  
+
   // Keep refs in sync with values
   useEffect(() => {
     resetProgressRef.current = resetProgress;
   }, [resetProgress]);
-  
+
   useEffect(() => {
     stateProfileRef.current = state.profile;
   }, [state.profile]);
-  
+
   useEffect(() => {
     queryClientRef.current = queryClient;
   }, [queryClient]);
-  
+
   useEffect(() => {
     routerRef.current = router;
   }, [router]);
-  
+
   // Keep the ref in sync with state
   useEffect(() => {
     isAuthenticatedRef.current = state.isAuthenticated;
   }, [state.isAuthenticated]);
 
+  // SPLASH FIX: Check for inline splash AFTER hydration
+  // This runs once after the component mounts on the client
+  // The inline script in layout.jsx sets window.__hasSplash before React hydrates,
+  // so by the time this effect runs, the value should be accurate.
+  useEffect(() => {
+    if (splashCheckedRef.current) return;
+    splashCheckedRef.current = true;
+
+    const hasInline = hasInlineSplash();
+    const hasOAuthSignals = hasOAuthReturnSignals();
+
+    // If inline splash is showing OR we have OAuth return signals (which means splash should be showing)
+    // Note: Sometimes the inline script may not have set __hasSplash yet due to timing,
+    // but if we have OAuth signals, we know the splash SHOULD be showing
+    if (hasInline || hasOAuthSignals) {
+      console.log('[Splash] Post-hydration check: inline splash detected', {
+        hasInline,
+        hasOAuthSignals,
+      });
+      usingInlineSplashRef.current = true;
+      hasShownSplashRef.current = true;
+    } else {
+      console.log('[Splash] Post-hydration check: no inline splash');
+    }
+  }, []);
+
   // =============================================================================
   // SPLASH SCREEN: Show on EVERY fresh login
   // =============================================================================
   // Email/Password Login Splash Detection
-  // 
+  //
   // OAuth logins use the inline splash (injected before React).
   // This useEffect handles email/password logins which happen in-page.
+  //
+  // SPLASH FIX: Wait for post-hydration splash check before deciding to show React splash
   // =============================================================================
   useEffect(() => {
     // Skip while still loading initial auth state
     if (state.isLoading) return;
-    
+
+    // SPLASH FIX: Wait for hydration check to complete before making splash decisions
+    // This prevents showing React splash when inline splash is already showing
+    if (!splashCheckedRef.current) {
+      // The hydration check effect hasn't run yet - skip this cycle
+      return;
+    }
+
     // Skip if using inline splash (OAuth login) or splash already shown
     if (usingInlineSplashRef.current || hasShownSplashRef.current || state.showSplashScreen) return;
-    
+
+    // Also check for OAuth return signals - if present, inline splash should be showing
+    // This is a fallback in case the refs weren't set correctly
+    if (hasOAuthReturnSignals()) {
+      console.log('[Splash] OAuth return signals detected - skipping React splash');
+      hasShownSplashRef.current = true;
+      return;
+    }
+
     // Skip if not authenticated
     if (!state.isAuthenticated) {
       // Record that user was not authenticated (for email login detection)
@@ -647,18 +775,18 @@ export function AuthProvider({ children }) {
       }
       return;
     }
-    
+
     // Record initial auth state if not already recorded
     if (wasAuthenticatedOnMountRef.current === null) {
       wasAuthenticatedOnMountRef.current = state.isAuthenticated;
     }
-    
+
     // Email login: User became authenticated after being unauthenticated on mount
     if (wasAuthenticatedOnMountRef.current === false) {
       console.log('[Splash] 🚀 Email login detected - showing React splash');
       hasShownSplashRef.current = true;
       isFreshLoginRef.current = true;
-      setState(prev => ({ ...prev, showSplashScreen: true }));
+      setState((prev) => ({ ...prev, showSplashScreen: true }));
     }
   }, [state.isAuthenticated, state.isLoading, state.showSplashScreen]);
 
@@ -670,14 +798,14 @@ export function AuthProvider({ children }) {
     if (!userId) return null;
 
     console.log('[AuthProvider] fetchProfile called for user:', userId);
-      
+
     // Create abort controller for timeout
     const controller = new AbortController();
     const timeoutId = setTimeout(() => {
       console.warn('[AuthProvider] Profile fetch timeout after', timeout, 'ms');
       controller.abort();
     }, timeout);
-    
+
     try {
       // Fetch with timeout
       const fetchPromise = getUserProfile();
@@ -686,8 +814,11 @@ export function AuthProvider({ children }) {
           reject(new Error('Profile fetch timed out'));
         });
       });
-      
-      const { data: profile, error: profileError } = await Promise.race([fetchPromise, timeoutPromise]);
+
+      const { data: profile, error: profileError } = await Promise.race([
+        fetchPromise,
+        timeoutPromise,
+      ]);
 
       console.log('[AuthProvider] Profile fetch result:', {
         hasProfile: !!profile,
@@ -702,20 +833,20 @@ export function AuthProvider({ children }) {
 
           if (authUser) {
             // Calculate trial end date for new users (7-day Pro trial)
-            const trialEndsAt = TRIAL_CONFIG.enabled 
+            const trialEndsAt = TRIAL_CONFIG.enabled
               ? calculateTrialEndDate(new Date()).toISOString()
               : null;
-            
+
             const newProfileData = {
               id: authUser.id,
               email: authUser.email,
-              display_name: authUser.user_metadata?.full_name
-                || authUser.user_metadata?.name
-                || authUser.email?.split('@')[0]
-                || 'User',
-              avatar_url: authUser.user_metadata?.avatar_url
-                || authUser.user_metadata?.picture
-                || null,
+              display_name:
+                authUser.user_metadata?.full_name ||
+                authUser.user_metadata?.name ||
+                authUser.email?.split('@')[0] ||
+                'User',
+              avatar_url:
+                authUser.user_metadata?.avatar_url || authUser.user_metadata?.picture || null,
               // Start with 'free' tier but trial_ends_at gives Pro access
               subscription_tier: 'free',
               trial_ends_at: trialEndsAt,
@@ -726,7 +857,12 @@ export function AuthProvider({ children }) {
               updated_at: new Date().toISOString(),
             };
 
-            console.log('[AuthProvider] No profile found, creating one for:', authUser.id, 'with data:', newProfileData);
+            console.log(
+              '[AuthProvider] No profile found, creating one for:',
+              authUser.id,
+              'with data:',
+              newProfileData
+            );
 
             const { data: createdProfile, error: createError } = await supabase
               .from('user_profiles')
@@ -794,26 +930,31 @@ export function AuthProvider({ children }) {
     if (refreshIntervalRef.current) {
       clearTimeout(refreshIntervalRef.current);
     }
-    
+
     if (!session?.expires_at) return;
-    
+
     const expiresAt = session.expires_at * 1000; // Convert to ms
     const now = Date.now();
     const timeUntilExpiry = expiresAt - now;
-    
+
     // Refresh 5 minutes before expiry (or immediately if less than 5 min left)
     const refreshBuffer = 5 * 60 * 1000; // 5 minutes
     const refreshIn = Math.max(timeUntilExpiry - refreshBuffer, 1000);
-    
-    console.log(`[AuthProvider] Scheduling token refresh in ${Math.round(refreshIn / 1000 / 60)} minutes`);
-    
+
+    console.log(
+      `[AuthProvider] Scheduling token refresh in ${Math.round(refreshIn / 1000 / 60)} minutes`
+    );
+
     refreshIntervalRef.current = setTimeout(async () => {
       console.log('[AuthProvider] Proactive token refresh triggered');
       try {
-        const { data: { session: newSession }, error } = await supabase.auth.refreshSession();
+        const {
+          data: { session: newSession },
+          error,
+        } = await supabase.auth.refreshSession();
         if (!error && newSession) {
           console.log('[AuthProvider] Token refreshed proactively');
-          setState(prev => ({
+          setState((prev) => ({
             ...prev,
             session: newSession,
           }));
@@ -832,13 +973,14 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (!isSupabaseConfigured || !supabase) {
       console.log('[AuthProvider] Supabase not configured, skipping auth init');
-      setState(prev => ({ ...prev, isLoading: false }));
+      setState((prev) => ({ ...prev, isLoading: false }));
       return;
     }
 
     // Check if we just came from OAuth callback
     const { fromCallback, verifiedUserId } = checkAuthCallbackCookie();
-    const urlParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
+    const urlParams =
+      typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null;
     const hasAuthTimestamp = urlParams?.has('auth_ts');
 
     // Get initial session with retry logic
@@ -846,42 +988,43 @@ export function AuthProvider({ children }) {
       try {
         initAttemptRef.current += 1;
         const attemptNum = initAttemptRef.current;
-        
+
         console.log(`[AuthProvider] Initializing auth (attempt ${attemptNum})...`, {
           fromCallback,
           hasAuthTimestamp,
           verifiedUserId: verifiedUserId?.slice(0, 8) + '...',
         });
-        
+
         // If coming from OAuth callback, use retry logic to handle race conditions
-        const maxRetries = (fromCallback || hasAuthTimestamp) ? 5 : 3;
-        
+        const maxRetries = fromCallback || hasAuthTimestamp ? 5 : 3;
+
         // Add timeout to prevent infinite loading
         // OAuth callbacks need more time due to cookie propagation delays
         // Regular auth init: 15 seconds, OAuth callback: 30 seconds
-        const timeoutMs = (fromCallback || hasAuthTimestamp) ? 30000 : 15000;
-        const timeoutPromise = new Promise((_, reject) => 
+        const timeoutMs = fromCallback || hasAuthTimestamp ? 30000 : 15000;
+        const timeoutPromise = new Promise((_, reject) =>
           setTimeout(() => reject(new Error('Auth initialization timeout')), timeoutMs)
         );
-        
+
         let result;
         try {
           result = await Promise.race([
             initializeSessionWithRetry(maxRetries, 100, verifiedUserId),
-            timeoutPromise
+            timeoutPromise,
           ]);
         } catch (timeoutErr) {
           console.error('[AuthProvider] Auth init timed out:', timeoutErr.message);
-          
+
           // For OAuth callbacks, a timeout likely means cookies haven't propagated yet
           // Don't show error immediately - try one more time after a short delay
           if (fromCallback || hasAuthTimestamp) {
             console.log('[AuthProvider] OAuth callback timeout - attempting one more refresh...');
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+
             // One final attempt with refreshSession
             try {
-              const { data: refreshData, error: refreshError } = await supabase.auth.refreshSession();
+              const { data: refreshData, error: refreshError } =
+                await supabase.auth.refreshSession();
               if (!refreshError && refreshData?.session && refreshData?.user) {
                 console.log('[AuthProvider] Final refresh succeeded after timeout');
                 isAuthenticatedRef.current = true;
@@ -897,16 +1040,16 @@ export function AuthProvider({ children }) {
                   sessionRevoked: false,
                 });
                 scheduleSessionRefresh(refreshData.session);
-                
+
                 // Fire off prefetch in background (don't block on it)
-                prefetchAllUserData(refreshData.user.id).catch(err => {
+                prefetchAllUserData(refreshData.user.id).catch((err) => {
                   console.warn('[AuthProvider] Prefetch error in timeout recovery:', err);
                 });
-                
+
                 // Load profile, then signal ready
                 const profile = await fetchProfile(refreshData.user.id);
-                setState(prev => ({ 
-                  ...prev, 
+                setState((prev) => ({
+                  ...prev,
                   profile: profile || prev.profile,
                   isDataFetchReady: true,
                 }));
@@ -916,7 +1059,7 @@ export function AuthProvider({ children }) {
               console.error('[AuthProvider] Final refresh attempt failed:', finalErr);
             }
           }
-          
+
           // On timeout, assume not authenticated and let user retry
           setState({
             ...defaultAuthState,
@@ -926,22 +1069,34 @@ export function AuthProvider({ children }) {
           });
           return;
         }
-        
-        const { session, user, error: initError, sessionExpired, sessionRevoked, errorCategory } = result;
-        
+
+        const {
+          session,
+          user,
+          error: initError,
+          sessionExpired,
+          sessionRevoked,
+          errorCategory,
+        } = result;
+
         if (initError) {
-          console.error('[AuthProvider] Session init error:', initError, `(category: ${errorCategory})`);
-          
+          console.error(
+            '[AuthProvider] Session init error:',
+            initError,
+            `(category: ${errorCategory})`
+          );
+
           // Provide user-friendly error messages based on error category
           let userMessage = initError.message;
           if (sessionRevoked) {
-            userMessage = 'You were signed out because you logged in on another device. Please sign in again.';
+            userMessage =
+              'You were signed out because you logged in on another device. Please sign in again.';
           } else if (errorCategory === ErrorCategory.NETWORK) {
             userMessage = 'Network error. Please check your connection and try again.';
           } else if (sessionExpired) {
             userMessage = 'Your session has expired. Please sign in again.';
           }
-          
+
           setState({
             ...defaultAuthState,
             isLoading: false,
@@ -952,10 +1107,10 @@ export function AuthProvider({ children }) {
           });
           return;
         }
-        
+
         // Handle case where session was cleared due to being stale
         if (sessionExpired && !user) {
-          const message = sessionRevoked 
+          const message = sessionRevoked
             ? 'You were signed out from another device.'
             : 'Your session has expired.';
           console.log(`[AuthProvider] ${message} User needs to re-login`);
@@ -968,20 +1123,20 @@ export function AuthProvider({ children }) {
           });
           return;
         }
-        
+
         console.log('[AuthProvider] Session check result:', {
           hasSession: !!session,
           userId: user?.id?.slice(0, 8) + '...',
           expiresAt: session?.expires_at,
         });
-        
+
         if (user && session) {
           // Mark as authenticated BEFORE any async work
           isAuthenticatedRef.current = true;
-          
+
           // IMMEDIATELY set authenticated state so UI updates right away
           // NOTE: Use functional update to preserve showSplashScreen if already set
-          setState(prev => ({
+          setState((prev) => ({
             ...prev,
             user,
             profile: null, // Will be loaded below
@@ -992,28 +1147,28 @@ export function AuthProvider({ children }) {
             authError: null,
           }));
           console.log('[AuthProvider] User authenticated via initializeAuth');
-          
+
           // Schedule proactive token refresh
           scheduleSessionRefresh(session);
-          
+
           // Check for fresh OAuth signals
           const { isFresh: isFreshOAuth, hasAuthTs } = checkFreshOAuthSignals();
-          
+
           // Fresh OAuth login detected
           if (isFreshOAuth) {
             console.log('[Splash] Fresh OAuth login detected');
-            
+
             // Consume the signals
             consumeOAuthSignals();
             consumeLoginIntent();
-            
+
             // Mark as fresh login for onboarding
             isFreshLoginRef.current = true;
             hasShownSplashRef.current = true;
-            
+
             // GA4 tracking: Check if new signup vs returning user
             const userCreatedAt = new Date(user.created_at);
-            const isNewUser = (Date.now() - userCreatedAt.getTime()) < 60000; // Created within 60 seconds
+            const isNewUser = Date.now() - userCreatedAt.getTime() < 60000; // Created within 60 seconds
             if (isNewUser) {
               console.log('[AuthProvider] New user signup detected - firing GA4 sign_up');
               ga4TrackSignUp(user.app_metadata?.provider || 'google');
@@ -1022,56 +1177,58 @@ export function AuthProvider({ children }) {
               ga4TrackLogin(user.app_metadata?.provider || 'google');
             }
           }
-          
+
           // Clean up auth_ts from URL if present
           if (hasAuthTs && typeof window !== 'undefined') {
             const url = new URL(window.location.href);
             url.searchParams.delete('auth_ts');
             window.history.replaceState({}, '', url.pathname + url.search);
           }
-          
+
           // Load profile in background, then signal ready for child providers
           // NOTE: Prefetch runs in parallel but does NOT block isDataFetchReady
           // Providers will use prefetched data if available, otherwise fetch themselves
           console.log('[AuthProvider] Loading user data in background');
-          
+
           // Fire off prefetch in background (fire-and-forget)
-          prefetchAllUserData(user.id).catch(err => {
+          prefetchAllUserData(user.id).catch((err) => {
             console.warn('[AuthProvider] Background prefetch error:', err);
           });
-          
+
           // Load profile - this is what we actually wait for
-          fetchProfile(user.id).then(profile => {
-            if (profile) {
-              setState(prev => ({ ...prev, profile }));
-              console.log('[AuthProvider] Profile loaded:', {
-                userId: user.id.slice(0, 8) + '...',
-                tier: profile?.subscription_tier,
-              });
-            }
-            // Signal ready for child providers AFTER profile loads
-            console.log('[AuthProvider] Profile loaded, signaling ready for child providers');
-            setState(prev => ({ ...prev, isDataFetchReady: true }));
-            
-            // Dismiss inline splash (if present) - OAuth login complete
-            if (usingInlineSplashRef.current) {
-              dismissInlineSplash(() => {
-                console.log('[Splash] Inline splash dismissed, showing welcome toast');
-                setState(prev => ({ ...prev, showWelcomeToast: true }));
-              });
-            }
-          }).catch(err => {
-            console.warn('[AuthProvider] Profile fetch error:', err);
-            // Still signal ready so app doesn't hang
-            setState(prev => ({ ...prev, isDataFetchReady: true }));
-            
-            // Dismiss inline splash even on error
-            if (usingInlineSplashRef.current) {
-              dismissInlineSplash(() => {
-                setState(prev => ({ ...prev, showWelcomeToast: true }));
-              });
-            }
-          });
+          fetchProfile(user.id)
+            .then((profile) => {
+              if (profile) {
+                setState((prev) => ({ ...prev, profile }));
+                console.log('[AuthProvider] Profile loaded:', {
+                  userId: user.id.slice(0, 8) + '...',
+                  tier: profile?.subscription_tier,
+                });
+              }
+              // Signal ready for child providers AFTER profile loads
+              console.log('[AuthProvider] Profile loaded, signaling ready for child providers');
+              setState((prev) => ({ ...prev, isDataFetchReady: true }));
+
+              // Dismiss inline splash (if present) - OAuth login complete
+              if (usingInlineSplashRef.current) {
+                dismissInlineSplash(() => {
+                  console.log('[Splash] Inline splash dismissed, showing welcome toast');
+                  setState((prev) => ({ ...prev, showWelcomeToast: true }));
+                });
+              }
+            })
+            .catch((err) => {
+              console.warn('[AuthProvider] Profile fetch error:', err);
+              // Still signal ready so app doesn't hang
+              setState((prev) => ({ ...prev, isDataFetchReady: true }));
+
+              // Dismiss inline splash even on error
+              if (usingInlineSplashRef.current) {
+                dismissInlineSplash(() => {
+                  setState((prev) => ({ ...prev, showWelcomeToast: true }));
+                });
+              }
+            });
         } else {
           console.log('[AuthProvider] No session found, user is not authenticated');
           setState({
@@ -1082,7 +1239,7 @@ export function AuthProvider({ children }) {
         }
       } catch (err) {
         console.error('[AuthProvider] Error initializing auth:', err);
-        setState(prev => ({ ...prev, isLoading: false, authError: err.message }));
+        setState((prev) => ({ ...prev, isLoading: false, authError: err.message }));
       }
     };
 
@@ -1090,14 +1247,17 @@ export function AuthProvider({ children }) {
 
     // Subscribe to auth changes
     const unsubscribe = onAuthStateChange(async (event, session) => {
-      console.log('[AuthProvider] Auth state change:', JSON.stringify({
-        event,
-        hasSession: !!session,
-        hasUser: !!session?.user,
-        userId: session?.user?.id?.slice(0, 8),
-        currentIsAuthenticated: isAuthenticatedRef.current,
-      }));
-      
+      console.log(
+        '[AuthProvider] Auth state change:',
+        JSON.stringify({
+          event,
+          hasSession: !!session,
+          hasUser: !!session?.user,
+          userId: session?.user?.id?.slice(0, 8),
+          currentIsAuthenticated: isAuthenticatedRef.current,
+        })
+      );
+
       if (event === 'SIGNED_IN' && session?.user) {
         // Check if this is a fresh login that should show the loading overlay.
         // A fresh login is either:
@@ -1107,27 +1267,31 @@ export function AuthProvider({ children }) {
         const wasNotAuthenticated = !isAuthenticatedRef.current;
         const hasFreshSignals = wasNotAuthenticated && detectFreshLogin();
         const isFreshLogin = wasNotAuthenticated && hasFreshSignals;
-        console.log('[AuthProvider] Handling SIGNED_IN event:', { wasNotAuthenticated, hasFreshSignals, isFreshLogin });
-        
+        console.log('[AuthProvider] Handling SIGNED_IN event:', {
+          wasNotAuthenticated,
+          hasFreshSignals,
+          isFreshLogin,
+        });
+
         // Mark as authenticated and track fresh login for onboarding
         isAuthenticatedRef.current = true;
         if (isFreshLogin) {
           isFreshLoginRef.current = true;
-          
+
           // CACHE CLEARING: Clear all cached data on fresh login to ensure user sees latest content
           // This prevents stale data from guest browsing or previous sessions
           console.log('[AuthProvider] Fresh login - clearing all caches');
-          
+
           // Clear React Query cache (in-memory data cache)
           queryClientRef.current.clear();
-          
+
           // Refresh Next.js Router Cache (server component cache)
           // This ensures any server-rendered content is re-fetched
           routerRef.current.refresh();
         }
-        
+
         // Update state - keep isDataFetchReady false until prefetch completes
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           user: session.user,
           session,
@@ -1137,19 +1301,19 @@ export function AuthProvider({ children }) {
           authError: null,
         }));
         scheduleSessionRefresh(session);
-        
+
         // Fresh login via explicit sign-in
         if (isFreshLogin) {
           // Only show React splash for email logins (OAuth uses inline splash)
           if (!usingInlineSplashRef.current && !hasShownSplashRef.current) {
             console.log('[Splash] 🚀 Fresh email login - showing React splash');
             hasShownSplashRef.current = true;
-            setState(prev => ({ ...prev, showSplashScreen: true }));
+            setState((prev) => ({ ...prev, showSplashScreen: true }));
           }
-          
+
           // GA4 tracking: Check if new signup vs returning user
           const userCreatedAt = new Date(session.user.created_at);
-          const isNewUser = (Date.now() - userCreatedAt.getTime()) < 60000; // Created within 60 seconds
+          const isNewUser = Date.now() - userCreatedAt.getTime() < 60000; // Created within 60 seconds
           if (isNewUser) {
             console.log('[AuthProvider] New user signup via SIGNED_IN - firing GA4 sign_up');
             ga4TrackSignUp(session.user.app_metadata?.provider || 'google');
@@ -1157,26 +1321,26 @@ export function AuthProvider({ children }) {
             console.log('[AuthProvider] Returning user via SIGNED_IN - firing GA4 login');
             ga4TrackLogin(session.user.app_metadata?.provider || 'google');
           }
-          
+
           // Fire off prefetch in background (don't wait for it)
-          prefetchAllUserData(session.user.id).catch(err => {
+          prefetchAllUserData(session.user.id).catch((err) => {
             console.warn('[AuthProvider] Prefetch error (non-fatal):', err);
           });
-          
+
           // Load profile - this we do wait for
           try {
             const profile = await fetchProfile(session.user.id);
-            
+
             // Signal ready for child providers immediately after profile
-            setState(prev => ({ ...prev, isDataFetchReady: true }));
-            
+            setState((prev) => ({ ...prev, isDataFetchReady: true }));
+
             // Check if there's a pending tier selection from the join page
             let finalProfile = profile;
             const pendingTier = localStorage.getItem('autorev_selected_tier');
             if (pendingTier && pendingTier !== profile?.subscription_tier) {
               try {
-                const { data: updatedProfile } = await updateUserProfile({ 
-                  subscription_tier: pendingTier 
+                const { data: updatedProfile } = await updateUserProfile({
+                  subscription_tier: pendingTier,
                 });
                 localStorage.removeItem('autorev_selected_tier');
                 finalProfile = updatedProfile || { ...profile, subscription_tier: pendingTier };
@@ -1185,14 +1349,16 @@ export function AuthProvider({ children }) {
                 localStorage.removeItem('autorev_selected_tier');
               }
             }
-            
+
             if (finalProfile) {
-              setState(prev => ({ ...prev, profile: finalProfile }));
-              console.log('[AuthProvider] Profile loaded:', { tier: finalProfile?.subscription_tier });
+              setState((prev) => ({ ...prev, profile: finalProfile }));
+              console.log('[AuthProvider] Profile loaded:', {
+                tier: finalProfile?.subscription_tier,
+              });
             }
           } catch (err) {
             console.error('[AuthProvider] Error loading data:', err);
-            setState(prev => ({ ...prev, isDataFetchReady: true }));
+            setState((prev) => ({ ...prev, isDataFetchReady: true }));
           }
         } else {
           console.log('[AuthProvider] Page refresh - initializeAuth handles loading');
@@ -1228,11 +1394,11 @@ export function AuthProvider({ children }) {
         // but token refresh succeeded (auth recovery scenario)
         const wasAuthenticated = isAuthenticatedRef.current;
         const needsProfileLoad = !wasAuthenticated || !stateProfileRef.current;
-        
+
         // Mark as authenticated
         isAuthenticatedRef.current = true;
-        
-        setState(prev => {
+
+        setState((prev) => {
           if (!prev.isAuthenticated) {
             console.log('[AuthProvider] Auth recovered via token refresh');
           }
@@ -1248,34 +1414,38 @@ export function AuthProvider({ children }) {
           };
         });
         scheduleSessionRefresh(session);
-        
+
         // If we just recovered auth or don't have a profile, load profile
         // Prefetch runs in background but doesn't block isDataFetchReady
         if (needsProfileLoad) {
           // Only prefetch if this is auth recovery (wasn't previously authenticated)
           if (!wasAuthenticated) {
-            prefetchAllUserData(session.user.id).catch(err => {
+            prefetchAllUserData(session.user.id).catch((err) => {
               console.warn('[AuthProvider] Prefetch error in TOKEN_REFRESHED:', err);
             });
           }
-          
+
           // Load profile - this is what we wait for
-          fetchProfile(session.user.id).then(profile => {
-            setState(prev => ({ 
-              ...prev, 
-              profile: profile || prev.profile,
-              isDataFetchReady: true, // Now safe for child providers
-            }));
-            console.log('[AuthProvider] Profile loaded after token refresh:', { tier: profile?.subscription_tier });
-          }).catch(err => {
-            console.error('[AuthProvider] Error loading profile after token refresh:', err);
-            // Still signal ready so child providers don't hang
-            setState(prev => ({ ...prev, isDataFetchReady: true }));
-          });
+          fetchProfile(session.user.id)
+            .then((profile) => {
+              setState((prev) => ({
+                ...prev,
+                profile: profile || prev.profile,
+                isDataFetchReady: true, // Now safe for child providers
+              }));
+              console.log('[AuthProvider] Profile loaded after token refresh:', {
+                tier: profile?.subscription_tier,
+              });
+            })
+            .catch((err) => {
+              console.error('[AuthProvider] Error loading profile after token refresh:', err);
+              // Still signal ready so child providers don't hang
+              setState((prev) => ({ ...prev, isDataFetchReady: true }));
+            });
         }
       } else if (event === 'USER_UPDATED' && session?.user) {
         const profile = await fetchProfile(session.user.id);
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           user: session.user,
           profile,
@@ -1285,20 +1455,20 @@ export function AuthProvider({ children }) {
         // This can fire if Supabase detects a session before our initializeAuth completes
         // OR right after an OAuth callback (race: INITIAL_SESSION might arrive before SIGNED_IN)
         console.log('[AuthProvider] Initial session detected via event');
-        
+
         // Only proceed if we're not already authenticated
         if (isAuthenticatedRef.current) {
           console.log('[AuthProvider] Already authenticated, skipping INITIAL_SESSION');
           return;
         }
-        
+
         // Check for fresh login signals - if present, this is actually an OAuth callback
         // or explicit sign-in that arrived via INITIAL_SESSION instead of SIGNED_IN
         const hasFreshSignals = detectFreshLogin();
         console.log('[AuthProvider] INITIAL_SESSION fresh login check:', { hasFreshSignals });
-        
+
         isAuthenticatedRef.current = true;
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           user: session.user,
           session,
@@ -1308,24 +1478,24 @@ export function AuthProvider({ children }) {
           authError: null,
         }));
         scheduleSessionRefresh(session);
-        
+
         // Fresh login via INITIAL_SESSION
         if (hasFreshSignals) {
           console.log('[Splash] Fresh login via INITIAL_SESSION');
-          
+
           // Mark as fresh login (inline splash is already showing)
           hasShownSplashRef.current = true;
           isFreshLoginRef.current = true;
-          
+
           // CACHE CLEARING: Clear all cached data on fresh login to ensure user sees latest content
           // This prevents stale data from guest browsing or previous sessions
           console.log('[AuthProvider] Fresh login via INITIAL_SESSION - clearing all caches');
           queryClientRef.current.clear();
           routerRef.current.refresh();
-          
+
           // GA4 tracking: Check if new signup vs returning user
           const userCreatedAt = new Date(session.user.created_at);
-          const isNewUser = (Date.now() - userCreatedAt.getTime()) < 60000; // Created within 60 seconds
+          const isNewUser = Date.now() - userCreatedAt.getTime() < 60000; // Created within 60 seconds
           if (isNewUser) {
             console.log('[AuthProvider] New user signup via INITIAL_SESSION - firing GA4 sign_up');
             ga4TrackSignUp(session.user.app_metadata?.provider || 'google');
@@ -1334,48 +1504,50 @@ export function AuthProvider({ children }) {
             ga4TrackLogin(session.user.app_metadata?.provider || 'google');
           }
         }
-        
+
         // Load data silently in background (same path for fresh and recovery)
         // Prefetch runs in parallel but doesn't block isDataFetchReady
         console.log('[AuthProvider] INITIAL_SESSION - loading data silently');
-        
+
         // Fire off prefetch (fire-and-forget)
-        prefetchAllUserData(session.user.id).catch(err => {
+        prefetchAllUserData(session.user.id).catch((err) => {
           console.warn('[AuthProvider] Prefetch error in INITIAL_SESSION:', err);
         });
-        
+
         // Load profile - this is what we wait for
-        fetchProfile(session.user.id).then(profile => {
-          setState(prev => ({ 
-            ...prev, 
-            profile: profile || prev.profile,
-            isDataFetchReady: true,
-          }));
-          
-          // Dismiss inline splash (if present) - INITIAL_SESSION login complete
-          if (usingInlineSplashRef.current && hasFreshSignals) {
-            dismissInlineSplash(() => {
-              console.log('[Splash] Inline splash dismissed via INITIAL_SESSION');
-              setState(prev => ({ ...prev, showWelcomeToast: true }));
-            });
-          }
-        }).catch(err => {
-          console.error('[AuthProvider] Error loading data in INITIAL_SESSION:', err);
-          setState(prev => ({ ...prev, isDataFetchReady: true }));
-          
-          // Dismiss inline splash even on error
-          if (usingInlineSplashRef.current && hasFreshSignals) {
-            dismissInlineSplash(() => {
-              setState(prev => ({ ...prev, showWelcomeToast: true }));
-            });
-          }
-        });
+        fetchProfile(session.user.id)
+          .then((profile) => {
+            setState((prev) => ({
+              ...prev,
+              profile: profile || prev.profile,
+              isDataFetchReady: true,
+            }));
+
+            // Dismiss inline splash (if present) - INITIAL_SESSION login complete
+            if (usingInlineSplashRef.current && hasFreshSignals) {
+              dismissInlineSplash(() => {
+                console.log('[Splash] Inline splash dismissed via INITIAL_SESSION');
+                setState((prev) => ({ ...prev, showWelcomeToast: true }));
+              });
+            }
+          })
+          .catch((err) => {
+            console.error('[AuthProvider] Error loading data in INITIAL_SESSION:', err);
+            setState((prev) => ({ ...prev, isDataFetchReady: true }));
+
+            // Dismiss inline splash even on error
+            if (usingInlineSplashRef.current && hasFreshSignals) {
+              dismissInlineSplash(() => {
+                setState((prev) => ({ ...prev, showWelcomeToast: true }));
+              });
+            }
+          });
       } else if (session?.user && !isAuthenticatedRef.current) {
         // Catch-all: If we have a valid session but aren't authenticated,
         // this is an auth recovery scenario
         console.log('[AuthProvider] Auth recovery detected via event:', event);
         isAuthenticatedRef.current = true;
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           user: session.user,
           session,
@@ -1385,27 +1557,29 @@ export function AuthProvider({ children }) {
           authError: null,
         }));
         scheduleSessionRefresh(session);
-        
+
         // Load profile, then signal ready for child providers
         // Prefetch runs in parallel but doesn't block isDataFetchReady
-        
+
         // Fire off prefetch (fire-and-forget)
-        prefetchAllUserData(session.user.id).catch(err => {
+        prefetchAllUserData(session.user.id).catch((err) => {
           console.warn('[AuthProvider] Prefetch error in auth recovery:', err);
         });
-        
+
         // Load profile - this is what we wait for
-        fetchProfile(session.user.id).then(profile => {
-          setState(prev => ({ 
-            ...prev, 
-            profile: profile || prev.profile,
-            isDataFetchReady: true,
-          }));
-        }).catch(err => {
-          console.error('[AuthProvider] Error loading data after auth recovery:', err);
-          // Still signal ready so child providers don't hang
-          setState(prev => ({ ...prev, isDataFetchReady: true }));
-        });
+        fetchProfile(session.user.id)
+          .then((profile) => {
+            setState((prev) => ({
+              ...prev,
+              profile: profile || prev.profile,
+              isDataFetchReady: true,
+            }));
+          })
+          .catch((err) => {
+            console.error('[AuthProvider] Error loading data after auth recovery:', err);
+            // Still signal ready so child providers don't hang
+            setState((prev) => ({ ...prev, isDataFetchReady: true }));
+          });
       }
     });
 
@@ -1416,17 +1590,23 @@ export function AuthProvider({ children }) {
         const now = Date.now();
         const timeSinceLastCheck = now - lastVisibilityChangeRef.current;
         lastVisibilityChangeRef.current = now;
-        
+
         // Only check if tab was hidden for more than 30 seconds
         if (timeSinceLastCheck > 30000) {
           console.log('[AuthProvider] Tab became visible after long absence, verifying session...');
           try {
-            const { data: { user }, error } = await supabase.auth.getUser();
-            
+            const {
+              data: { user },
+              error,
+            } = await supabase.auth.getUser();
+
             if (error) {
               console.warn('[AuthProvider] Session invalid after tab switch:', error.message);
               // Try to refresh
-              const { data: { session: newSession }, error: refreshError } = await supabase.auth.refreshSession();
+              const {
+                data: { session: newSession },
+                error: refreshError,
+              } = await supabase.auth.refreshSession();
               if (refreshError || !newSession) {
                 // Session is truly invalid - user needs to re-auth
                 console.warn('[AuthProvider] Session refresh failed, user logged out');
@@ -1438,7 +1618,7 @@ export function AuthProvider({ children }) {
                 });
               } else {
                 console.log('[AuthProvider] Session restored after tab switch');
-                setState(prev => ({
+                setState((prev) => ({
                   ...prev,
                   session: newSession,
                   user: newSession.user,
@@ -1496,10 +1676,10 @@ export function AuthProvider({ children }) {
   const loginWithGoogle = useCallback(async (redirectTo) => {
     // Set login intent signal BEFORE redirect so we can detect fresh login on return
     setLoginIntent();
-    setState(prev => ({ ...prev, isLoading: true }));
+    setState((prev) => ({ ...prev, isLoading: true }));
     const { error } = await signInWithGoogle(redirectTo);
     if (error) {
-      setState(prev => ({ ...prev, isLoading: false }));
+      setState((prev) => ({ ...prev, isLoading: false }));
       return { error };
     }
     return { error: null };
@@ -1509,10 +1689,10 @@ export function AuthProvider({ children }) {
   const loginWithFacebook = useCallback(async (redirectTo) => {
     // Set login intent signal BEFORE redirect so we can detect fresh login on return
     setLoginIntent();
-    setState(prev => ({ ...prev, isLoading: true }));
+    setState((prev) => ({ ...prev, isLoading: true }));
     const { error } = await signInWithFacebook(redirectTo);
     if (error) {
-      setState(prev => ({ ...prev, isLoading: false }));
+      setState((prev) => ({ ...prev, isLoading: false }));
       return { error };
     }
     return { error: null };
@@ -1522,10 +1702,10 @@ export function AuthProvider({ children }) {
   const loginWithEmail = useCallback(async (email, password) => {
     // Set login intent signal for fresh login detection
     setLoginIntent();
-    setState(prev => ({ ...prev, isLoading: true }));
+    setState((prev) => ({ ...prev, isLoading: true }));
     const { data, error } = await signInWithEmail(email, password);
     if (error) {
-      setState(prev => ({ ...prev, isLoading: false }));
+      setState((prev) => ({ ...prev, isLoading: false }));
       return { error };
     }
     // Auth state change will update the state
@@ -1534,10 +1714,10 @@ export function AuthProvider({ children }) {
 
   // Sign up with email
   const signUp = useCallback(async (email, password, metadata) => {
-    setState(prev => ({ ...prev, isLoading: true }));
+    setState((prev) => ({ ...prev, isLoading: true }));
     const { data, error } = await signUpWithEmail(email, password, metadata);
     if (error) {
-      setState(prev => ({ ...prev, isLoading: false }));
+      setState((prev) => ({ ...prev, isLoading: false }));
       return { error };
     }
     return { data, error: null };
@@ -1546,7 +1726,7 @@ export function AuthProvider({ children }) {
   // Sign out - Instant UI update, background cleanup
   /**
    * Sign out the current user
-   * 
+   *
    * @param {Object} options - Logout options
    * @param {'global'|'local'|'others'} options.scope - Scope of sign out:
    *   - 'global': (default) Sign out from ALL devices
@@ -1554,80 +1734,83 @@ export function AuthProvider({ children }) {
    *   - 'others': Sign out from all OTHER devices (keep this session)
    * @param {Function} options.onComplete - Optional callback when server signout completes
    */
-  const logout = useCallback(async ({ scope = 'global', onComplete } = {}) => {
-    console.log('[AuthProvider] Starting logout with scope:', scope);
-    
-    // Clear refresh timer immediately
-    if (refreshIntervalRef.current) {
-      clearTimeout(refreshIntervalRef.current);
-      refreshIntervalRef.current = null;
-    }
-    
-    // Reset refs immediately
-    isAuthenticatedRef.current = false;
-    initAttemptRef.current = 0;
-    wasAuthenticatedOnMountRef.current = null; // Reset so next login shows splash
-    hasShownSplashRef.current = false;
-    isFreshLoginRef.current = false;
-    
-    console.log('[Splash] Logout - refs reset for next login');
-    
-    // Reset loading progress immediately
-    resetProgress();
-    
-    // Clear prefetch cache
-    clearPrefetchCache();
-    
-    // Clear session cache to ensure fresh check on next login
-    clearSessionCache();
-    
-    // Clear onboarding dismissal so next login shows onboarding if incomplete
-    if (typeof localStorage !== 'undefined') {
-      localStorage.removeItem('onboarding_dismissed_until');
-    }
-    
-    // INSTANT: Clear state immediately so UI updates right away
-    // NOTE: isDataFetchReady must be TRUE on logout so child providers 
-    // (FavoritesProvider, OwnedVehiclesProvider, SavedBuildsProvider) can 
-    // properly react to the auth change and clear their cached user data.
-    setState({
-      ...defaultAuthState,
-      isLoading: false,
-      isDataFetchReady: true, // Critical: enables providers to clear user data on logout
-    });
-    setOnboardingState(defaultOnboardingState);
-    
-    console.log('[AuthProvider] UI cleared - starting background cleanup...');
-    
-    // BACKGROUND: Do server signout and cookie cleanup async (don't await)
-    authSignOut({ 
-      scope, 
-      onComplete: (result) => {
-        if (result.serverSignOutFailed) {
-          console.warn('[AuthProvider] Server signout had issues (local cleanup succeeded)');
-        } else {
-          console.log('[AuthProvider] Server signout complete');
-        }
-        // Call user's callback if provided
+  const logout = useCallback(
+    async ({ scope = 'global', onComplete } = {}) => {
+      console.log('[AuthProvider] Starting logout with scope:', scope);
+
+      // Clear refresh timer immediately
+      if (refreshIntervalRef.current) {
+        clearTimeout(refreshIntervalRef.current);
+        refreshIntervalRef.current = null;
+      }
+
+      // Reset refs immediately
+      isAuthenticatedRef.current = false;
+      initAttemptRef.current = 0;
+      wasAuthenticatedOnMountRef.current = null; // Reset so next login shows splash
+      hasShownSplashRef.current = false;
+      isFreshLoginRef.current = false;
+
+      console.log('[Splash] Logout - refs reset for next login');
+
+      // Reset loading progress immediately
+      resetProgress();
+
+      // Clear prefetch cache
+      clearPrefetchCache();
+
+      // Clear session cache to ensure fresh check on next login
+      clearSessionCache();
+
+      // Clear onboarding dismissal so next login shows onboarding if incomplete
+      if (typeof localStorage !== 'undefined') {
+        localStorage.removeItem('onboarding_dismissed_until');
+      }
+
+      // INSTANT: Clear state immediately so UI updates right away
+      // NOTE: isDataFetchReady must be TRUE on logout so child providers
+      // (FavoritesProvider, OwnedVehiclesProvider, SavedBuildsProvider) can
+      // properly react to the auth change and clear their cached user data.
+      setState({
+        ...defaultAuthState,
+        isLoading: false,
+        isDataFetchReady: true, // Critical: enables providers to clear user data on logout
+      });
+      setOnboardingState(defaultOnboardingState);
+
+      console.log('[AuthProvider] UI cleared - starting background cleanup...');
+
+      // BACKGROUND: Do server signout and cookie cleanup async (don't await)
+      authSignOut({
+        scope,
+        onComplete: (result) => {
+          if (result.serverSignOutFailed) {
+            console.warn('[AuthProvider] Server signout had issues (local cleanup succeeded)');
+          } else {
+            console.log('[AuthProvider] Server signout complete');
+          }
+          // Call user's callback if provided
+          if (onComplete) {
+            onComplete(result);
+          }
+        },
+      }).catch((err) => {
+        console.warn('[AuthProvider] Background signout exception (ignored):', err.message);
         if (onComplete) {
-          onComplete(result);
+          onComplete({ error: err, serverSignOutFailed: true });
         }
-      }
-    }).catch(err => {
-      console.warn('[AuthProvider] Background signout exception (ignored):', err.message);
-      if (onComplete) {
-        onComplete({ error: err, serverSignOutFailed: true });
-      }
-    });
-    
-    return { error: null }; // Return success immediately - UI is already cleared
-  }, [resetProgress]);
+      });
+
+      return { error: null }; // Return success immediately - UI is already cleared
+    },
+    [resetProgress]
+  );
 
   // Update profile
   const updateProfile = useCallback(async (updates) => {
     const { data, error } = await updateUserProfile(updates);
     if (!error && data) {
-      setState(prev => ({
+      setState((prev) => ({
         ...prev,
         profile: { ...prev.profile, ...data },
       }));
@@ -1640,7 +1823,7 @@ export function AuthProvider({ children }) {
     if (state.user?.id) {
       const profile = await fetchProfile(state.user.id);
       if (profile) {
-        setState(prev => ({ ...prev, profile }));
+        setState((prev) => ({ ...prev, profile }));
       }
     }
   }, [state.user?.id, fetchProfile]);
@@ -1653,15 +1836,18 @@ export function AuthProvider({ children }) {
 
     try {
       console.log('[AuthProvider] Manual session refresh requested');
-      const { data: { session }, error } = await supabase.auth.refreshSession();
-      
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.refreshSession();
+
       if (error) {
         console.error('[AuthProvider] Manual refresh failed:', error);
         return { error };
       }
-      
+
       if (session) {
-        setState(prev => ({
+        setState((prev) => ({
           ...prev,
           session,
           user: session.user,
@@ -1671,7 +1857,7 @@ export function AuthProvider({ children }) {
         console.log('[AuthProvider] Manual refresh succeeded');
         return { session, error: null };
       }
-      
+
       return { error: new Error('No session returned') };
     } catch (err) {
       console.error('[AuthProvider] Manual refresh error:', err);
@@ -1681,13 +1867,13 @@ export function AuthProvider({ children }) {
 
   // Clear auth error
   const clearAuthError = useCallback(() => {
-    setState(prev => ({ ...prev, authError: null, sessionExpired: false }));
+    setState((prev) => ({ ...prev, authError: null, sessionExpired: false }));
   }, []);
 
   // Check if user needs onboarding
   // SIMPLIFIED LOGIC: If onboarding_completed_at is NULL in DB, ALWAYS show onboarding
   // No temporary dismissals - user must complete it or it shows every time
-  const checkOnboardingStatus = useCallback(async (profile, isFreshLogin = false) => {
+  const checkOnboardingStatus = useCallback(async (profile, _isFreshLogin = false) => {
     // DEV: Allow forcing onboarding with ?showOnboarding=1 query param
     if (typeof window !== 'undefined') {
       const urlParams = new URLSearchParams(window.location.search);
@@ -1710,20 +1896,20 @@ export function AuthProvider({ children }) {
         return;
       }
     }
-    
+
     // If onboarding is already completed (timestamp set in DB), don't show
     if (profile?.onboarding_completed_at) {
       console.log('[AuthProvider] Onboarding already completed, not showing');
-      setOnboardingState(prev => ({ ...prev, showOnboarding: false }));
+      setOnboardingState((prev) => ({ ...prev, showOnboarding: false }));
       return;
     }
-    
+
     // IMPORTANT: If onboarding is NOT completed, ALWAYS show it
     // Clear any localStorage dismissal - the database is the source of truth
     // User must complete onboarding to stop seeing it
     console.log('[AuthProvider] Onboarding NOT completed - showing onboarding flow');
     localStorage.removeItem('onboarding_dismissed_until');
-    
+
     setOnboardingState({
       showOnboarding: true,
       onboardingStep: profile?.onboarding_step || 1,
@@ -1745,18 +1931,20 @@ export function AuthProvider({ children }) {
   const dismissOnboarding = useCallback(async () => {
     // Just hide for current session - don't persist to localStorage or database
     // This ensures onboarding shows again on next visit until completed
-    setOnboardingState(prev => ({ 
-      ...prev, 
-      showOnboarding: false, 
+    setOnboardingState((prev) => ({
+      ...prev,
+      showOnboarding: false,
       onboardingDismissed: true,
     }));
-    
-    console.log('[AuthProvider] Onboarding dismissed for current session (will show again next time)');
+
+    console.log(
+      '[AuthProvider] Onboarding dismissed for current session (will show again next time)'
+    );
   }, []);
 
   // Handle onboarding complete
   const completeOnboarding = useCallback((data) => {
-    setState(prev => ({
+    setState((prev) => ({
       ...prev,
       profile: {
         ...prev.profile,
@@ -1764,7 +1952,7 @@ export function AuthProvider({ children }) {
         ...data,
       },
     }));
-    setOnboardingState(prev => ({ ...prev, showOnboarding: false }));
+    setOnboardingState((prev) => ({ ...prev, showOnboarding: false }));
     // Clear any dismissal tracking since onboarding is now complete
     localStorage.removeItem('onboarding_dismissed_until');
   }, []);
@@ -1773,7 +1961,7 @@ export function AuthProvider({ children }) {
   const triggerOnboarding = useCallback(() => {
     // Clear localStorage dismissal
     localStorage.removeItem('onboarding_dismissed_until');
-    
+
     // Reset onboarding state to show the flow from the beginning
     setOnboardingState({
       showOnboarding: true,
@@ -1788,7 +1976,7 @@ export function AuthProvider({ children }) {
       onboardingDismissed: false,
       dismissedCount: 0,
     });
-    
+
     console.log('[AuthProvider] Onboarding triggered manually');
   }, [state.profile]);
 
@@ -1813,61 +2001,64 @@ export function AuthProvider({ children }) {
   }, [state.isAuthenticated, state.profile, checkOnboardingStatus]);
 
   // Context value
-  const value = useMemo(() => ({
-    // State
-    user: state.user,
-    profile: state.profile,
-    session: state.session,
-    isLoading: state.isLoading,
-    isAuthenticated: state.isAuthenticated,
-    isDataFetchReady: state.isDataFetchReady, // True when child providers can safely fetch user data
-    authError: state.authError,
-    sessionExpired: state.sessionExpired, // True when session token expired
-    sessionRevoked: state.sessionRevoked, // True when session was revoked (e.g., logout from another device)
-    
-    // Onboarding State
-    showOnboarding: onboardingState.showOnboarding,
-    onboardingDismissed: onboardingState.onboardingDismissed,
-    needsOnboarding: state.isAuthenticated && !state.profile?.onboarding_completed_at,
-    
-    // Methods
-    loginWithGoogle,
-    loginWithFacebook,
-    loginWithEmail,
-    signUp,
-    logout,
-    updateProfile,
-    refreshProfile,
-    refreshSession,
-    clearAuthError,
-    dismissOnboarding,
-    completeOnboarding,
-    triggerOnboarding,
-    
-    // Helpers
-    isSupabaseConfigured,
-  }), [
-    state,
-    onboardingState.showOnboarding,
-    onboardingState.onboardingDismissed,
-    loginWithGoogle,
-    loginWithFacebook,
-    loginWithEmail,
-    signUp,
-    logout,
-    updateProfile,
-    refreshProfile,
-    refreshSession,
-    clearAuthError,
-    dismissOnboarding,
-    completeOnboarding,
-    triggerOnboarding,
-  ]);
+  const value = useMemo(
+    () => ({
+      // State
+      user: state.user,
+      profile: state.profile,
+      session: state.session,
+      isLoading: state.isLoading,
+      isAuthenticated: state.isAuthenticated,
+      isDataFetchReady: state.isDataFetchReady, // True when child providers can safely fetch user data
+      authError: state.authError,
+      sessionExpired: state.sessionExpired, // True when session token expired
+      sessionRevoked: state.sessionRevoked, // True when session was revoked (e.g., logout from another device)
+
+      // Onboarding State
+      showOnboarding: onboardingState.showOnboarding,
+      onboardingDismissed: onboardingState.onboardingDismissed,
+      needsOnboarding: state.isAuthenticated && !state.profile?.onboarding_completed_at,
+
+      // Methods
+      loginWithGoogle,
+      loginWithFacebook,
+      loginWithEmail,
+      signUp,
+      logout,
+      updateProfile,
+      refreshProfile,
+      refreshSession,
+      clearAuthError,
+      dismissOnboarding,
+      completeOnboarding,
+      triggerOnboarding,
+
+      // Helpers
+      isSupabaseConfigured,
+    }),
+    [
+      state,
+      onboardingState.showOnboarding,
+      onboardingState.onboardingDismissed,
+      loginWithGoogle,
+      loginWithFacebook,
+      loginWithEmail,
+      signUp,
+      logout,
+      updateProfile,
+      refreshProfile,
+      refreshSession,
+      clearAuthError,
+      dismissOnboarding,
+      completeOnboarding,
+      triggerOnboarding,
+    ]
+  );
 
   // Handler for when React splash screen finishes (email login only)
   const handleSplashComplete = useCallback(() => {
-    setState(prev => ({ 
-      ...prev, 
+    setState((prev) => ({
+      ...prev,
       showSplashScreen: false,
       showWelcomeToast: true,
     }));
@@ -1876,23 +2067,22 @@ export function AuthProvider({ children }) {
   return (
     <AuthContext.Provider value={value}>
       {children}
-      
+
       {/* Splash Screen - full-screen branded loading shown on fresh login */}
-      {state.showSplashScreen && (
-        <SplashScreen
-          duration={2000}
-          onComplete={handleSplashComplete}
-        />
-      )}
-      
+      {state.showSplashScreen && <SplashScreen duration={2000} onComplete={handleSplashComplete} />}
+
       {/* Welcome Toast - shown briefly after splash completes */}
       {state.showWelcomeToast && !state.showSplashScreen && (
         <WelcomeToast
-          userName={state.profile?.display_name || state.user?.user_metadata?.name || state.user?.email?.split('@')[0]}
-          onDismiss={() => setState(prev => ({ ...prev, showWelcomeToast: false }))}
+          userName={
+            state.profile?.display_name ||
+            state.user?.user_metadata?.name ||
+            state.user?.email?.split('@')[0]
+          }
+          onDismiss={() => setState((prev) => ({ ...prev, showWelcomeToast: false }))}
         />
       )}
-      
+
       {/* Onboarding Modal - shown for new users who haven't completed it */}
       {onboardingState.showOnboarding && state.isAuthenticated && (
         <OnboardingFlow

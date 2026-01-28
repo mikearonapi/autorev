@@ -40,6 +40,7 @@ import { Icons } from '@/components/ui/Icons';
 import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
 import { useGarageScore } from '@/hooks/useGarageScore';
+import { getCarHeroImage } from '@/lib/images';
 
 import styles from './page.module.css';
 
@@ -58,10 +59,10 @@ function MyPhotosContent() {
   const [slideshowOpen, setSlideshowOpen] = useState(false);
   const uploadSectionRef = useRef(null);
 
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const authModal = useAuthModal();
   const { builds, isLoading: buildsLoading } = useSavedBuilds();
-  const { vehicles } = useOwnedVehicles();
+  const { vehicles, updateVehicle } = useOwnedVehicles();
 
   // Garage score recalculation hook (uses vehicleId state set in useEffect below)
   const { recalculateScore } = useGarageScore(vehicleId);
@@ -265,6 +266,77 @@ function MyPhotosContent() {
                 </Link>
               </>
             )}
+          </div>
+        )}
+
+        {/* Stock Photo Management Section */}
+        {selectedCar && getCarHeroImage(selectedCar) && canUpload && (
+          <div className={styles.stockPhotoSection}>
+            <h3 className={styles.sectionTitle}>Stock Photo</h3>
+            <div className={styles.stockPhotoCard}>
+              <div className={styles.stockPhotoPreview}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={getCarHeroImage(selectedCar)}
+                  alt={`${selectedCar.name} - Stock Photo`}
+                  className={styles.stockPhotoImage}
+                />
+              </div>
+              <div className={styles.stockPhotoInfo}>
+                <p className={styles.stockPhotoDescription}>
+                  {currentVehicle?.hideStockImage
+                    ? 'The stock photo is hidden from your garage gallery.'
+                    : sortedImages.length > 0
+                      ? 'The stock photo is shown in your garage gallery alongside your uploaded photos.'
+                      : 'The stock photo is shown as your primary garage image until you upload your own photos.'}
+                </p>
+                {sortedImages.length > 0 && (
+                  <button
+                    type="button"
+                    className={`${styles.stockPhotoToggle} ${currentVehicle?.hideStockImage ? styles.showBtn : styles.hideBtn}`}
+                    onClick={async () => {
+                      const newValue = !currentVehicle?.hideStockImage;
+                      try {
+                        const response = await fetch(
+                          `/api/users/${user?.id}/vehicles/${vehicleId}`,
+                          {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ hide_stock_image: newValue }),
+                          }
+                        );
+
+                        if (!response.ok) {
+                          throw new Error('Failed to update stock photo visibility');
+                        }
+
+                        // Update local state via provider
+                        await updateVehicle(vehicleId, { hideStockImage: newValue });
+                      } catch (err) {
+                        console.error('[MyPhotos] Toggle stock photo error:', err);
+                      }
+                    }}
+                  >
+                    {currentVehicle?.hideStockImage ? (
+                      <>
+                        <Icons.eye size={16} />
+                        Show Stock Photo
+                      </>
+                    ) : (
+                      <>
+                        <Icons.eyeOff size={16} />
+                        Hide Stock Photo
+                      </>
+                    )}
+                  </button>
+                )}
+                {sortedImages.length === 0 && (
+                  <p className={styles.stockPhotoNote}>
+                    Upload your own photos to enable hiding the stock image.
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
         )}
 

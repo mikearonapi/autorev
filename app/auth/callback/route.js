@@ -1,12 +1,12 @@
 /**
  * OAuth Callback Route
- * 
+ *
  * Handles the redirect from OAuth providers (Google, etc.)
  * Exchanges the code for a session and redirects to the intended page
- * 
+ *
  * FIX 2024-12-27: Explicitly transfer cookies to redirect response
  * The cookieStore.set() calls don't automatically transfer to NextResponse.redirect()
- * 
+ *
  * UPDATE 2024-12-28: Added welcome email trigger for new signups
  * UPDATE 2024-12-28: Added referral processing for users who signed up via referral link
  * UPDATE 2024-12-28: Added session verification and auth timestamp for reliability
@@ -43,12 +43,12 @@ const DEFAULT_POST_LOGIN_PATH = '/garage';
 
 /**
  * Validate and sanitize the `next` redirect parameter to prevent open redirect attacks.
- * 
+ *
  * A valid `next` must be:
  * - A relative path starting with `/`
  * - NOT a protocol-relative URL (`//evil.com`)
  * - NOT containing a protocol (`https://`, `http://`, `javascript:`, etc.)
- * 
+ *
  * @param {string|null} next - The raw `next` query parameter
  * @returns {string} - A safe relative path, defaulting to /insights if invalid
  */
@@ -57,14 +57,14 @@ function validateRedirectPath(next) {
   if (!next || typeof next !== 'string') {
     return DEFAULT_POST_LOGIN_PATH;
   }
-  
+
   const trimmed = next.trim();
-  
+
   // Empty string → default to insights
   if (trimmed === '') {
     return DEFAULT_POST_LOGIN_PATH;
   }
-  
+
   // SECURITY: Reject protocol-relative URLs (e.g., `//evil.com`)
   // These would redirect to evil.com while appearing relative
   if (trimmed.startsWith('//')) {
@@ -72,7 +72,7 @@ function validateRedirectPath(next) {
     console.warn('[Auth Callback] Rejected protocol-relative redirect:', trimmed);
     return DEFAULT_POST_LOGIN_PATH;
   }
-  
+
   // SECURITY: Reject absolute URLs with any protocol
   // Catches http://, https://, javascript:, data:, etc.
   if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) {
@@ -80,7 +80,7 @@ function validateRedirectPath(next) {
     console.warn('[Auth Callback] Rejected absolute URL redirect:', trimmed);
     return DEFAULT_POST_LOGIN_PATH;
   }
-  
+
   // SECURITY: Must start with `/` to be a valid relative path
   // This rejects things like `evil.com` (would resolve relative to current path)
   if (!trimmed.startsWith('/')) {
@@ -88,13 +88,13 @@ function validateRedirectPath(next) {
     console.warn('[Auth Callback] Rejected non-rooted redirect path:', trimmed);
     return DEFAULT_POST_LOGIN_PATH;
   }
-  
+
   // If user is being redirected to homepage, send them to insights instead
   // This ensures logged-in users always land in the app, not the marketing page
   if (trimmed === '/') {
     return DEFAULT_POST_LOGIN_PATH;
   }
-  
+
   // Valid relative path - return as-is
   return trimmed;
 }
@@ -105,40 +105,48 @@ function validateRedirectPath(next) {
  */
 async function verifySessionWithRetry(supabase) {
   let lastError = null;
-  
+
   for (let attempt = 1; attempt <= MAX_VERIFICATION_RETRIES; attempt++) {
     try {
-      const { data: { user }, error } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+
       if (error) {
         lastError = error;
         // eslint-disable-next-line no-console
-        console.warn(`[Auth Callback] Session verification attempt ${attempt}/${MAX_VERIFICATION_RETRIES} failed:`, error.message);
+        console.warn(
+          `[Auth Callback] Session verification attempt ${attempt}/${MAX_VERIFICATION_RETRIES} failed:`,
+          error.message
+        );
       } else if (user) {
         // eslint-disable-next-line no-console
         console.log(`[Auth Callback] Session verified on attempt ${attempt}`);
         return { user, error: null };
       } else {
         // eslint-disable-next-line no-console
-        console.warn(`[Auth Callback] Session verification attempt ${attempt}/${MAX_VERIFICATION_RETRIES}: no user returned`);
+        console.warn(
+          `[Auth Callback] Session verification attempt ${attempt}/${MAX_VERIFICATION_RETRIES}: no user returned`
+        );
       }
-      
+
       if (attempt < MAX_VERIFICATION_RETRIES) {
         const delay = VERIFICATION_RETRY_DELAY * Math.pow(2, attempt - 1);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     } catch (err) {
       lastError = err;
       // eslint-disable-next-line no-console
       console.error(`[Auth Callback] Session verification attempt ${attempt} threw:`, err);
-      
+
       if (attempt < MAX_VERIFICATION_RETRIES) {
         const delay = VERIFICATION_RETRY_DELAY * Math.pow(2, attempt - 1);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
   }
-  
+
   return { user: null, error: lastError || new Error('Session verification failed after retries') };
 }
 
@@ -148,7 +156,7 @@ export async function GET(request) {
   const rawNext = requestUrl.searchParams.get('next');
   const error = requestUrl.searchParams.get('error');
   const errorDescription = requestUrl.searchParams.get('error_description');
-  
+
   // SECURITY: Validate redirect path to prevent open redirect attacks
   const next = validateRedirectPath(rawNext);
 
@@ -157,7 +165,10 @@ export async function GET(request) {
     // eslint-disable-next-line no-console
     console.error('[Auth Callback] OAuth error:', error, errorDescription);
     return NextResponse.redirect(
-      new URL(`/auth/error?error=${encodeURIComponent(errorDescription || error)}`, requestUrl.origin)
+      new URL(
+        `/auth/error?error=${encodeURIComponent(errorDescription || error)}`,
+        requestUrl.origin
+      )
     );
   }
 
@@ -165,10 +176,61 @@ export async function GET(request) {
   const cookiesToSet = [];
   let verifiedUser = null;
 
+  // MULTI-SESSION FIX: Check for existing session BEFORE attempting code exchange
+  // This helps when user is already logged in (e.g., another browser session)
+  // and the OAuth flow state has expired or is invalid
+  if (code) {
+    const cookieStore = await cookies();
+
+    // Create a temporary client to check for existing session
+    const checkClient = createServerClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+      {
+        cookies: {
+          getAll() {
+            return cookieStore.getAll();
+          },
+          setAll() {
+            // Don't set cookies during check
+          },
+        },
+      }
+    );
+
+    try {
+      const {
+        data: { user: existingUser },
+      } = await checkClient.auth.getUser();
+      if (existingUser) {
+        // eslint-disable-next-line no-console
+        console.log(
+          '[Auth Callback] User already has valid session:',
+          existingUser.id?.slice(0, 8) + '...'
+        );
+
+        // User is already logged in - redirect to destination without re-exchanging code
+        // This handles the case where user started OAuth but already has a valid session
+        const redirectUrl = new URL(next, requestUrl.origin);
+        redirectUrl.searchParams.set('already_authenticated', '1');
+
+        // eslint-disable-next-line no-console
+        console.log(
+          `[Auth Callback] Redirecting already-authenticated user to ${redirectUrl.pathname}`
+        );
+        return NextResponse.redirect(redirectUrl);
+      }
+    } catch (checkErr) {
+      // No existing session or error checking - proceed with code exchange
+      // eslint-disable-next-line no-console
+      console.log('[Auth Callback] No existing session found, proceeding with code exchange');
+    }
+  }
+
   // Exchange code for session
   if (code) {
     const cookieStore = await cookies();
-    
+
     const supabase = createServerClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL,
       process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
@@ -195,28 +257,79 @@ export async function GET(request) {
         },
       }
     );
-    
+
     try {
       const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
-      
+
       if (exchangeError) {
         // eslint-disable-next-line no-console
         console.error('[Auth Callback] Code exchange error:', exchangeError);
+
+        // MULTI-SESSION FIX: Handle flow_state_not_found error specifically
+        // This often happens when:
+        // 1. User has multiple browser sessions and OAuth state expired
+        // 2. User refreshed during OAuth redirect
+        // 3. Cookies were cleared mid-flow
+        const isFlowStateError =
+          exchangeError.message?.toLowerCase().includes('flow state') ||
+          exchangeError.message?.toLowerCase().includes('pkce') ||
+          exchangeError.code === 'flow_state_not_found';
+
+        if (isFlowStateError) {
+          // eslint-disable-next-line no-console
+          console.log(
+            '[Auth Callback] Flow state error - checking if user has existing session...'
+          );
+
+          // Try one more time to check for existing session (it may have been established by another tab)
+          try {
+            const {
+              data: { user: retryUser },
+            } = await supabase.auth.getUser();
+            if (retryUser) {
+              // eslint-disable-next-line no-console
+              console.log(
+                '[Auth Callback] Found existing session after flow state error:',
+                retryUser.id?.slice(0, 8) + '...'
+              );
+
+              const redirectUrl = new URL(next, requestUrl.origin);
+              redirectUrl.searchParams.set('already_authenticated', '1');
+              return NextResponse.redirect(redirectUrl);
+            }
+          } catch (retryErr) {
+            // Still no session - redirect to error page
+            // eslint-disable-next-line no-console
+            console.log('[Auth Callback] No existing session found after flow state error');
+          }
+        }
+
+        // Determine error code for better error page handling
+        const errorCode = isFlowStateError ? 'flow_state_not_found' : 'authentication_failed';
         return NextResponse.redirect(
-          new URL(`/auth/error?error=${encodeURIComponent(exchangeError.message)}`, requestUrl.origin)
+          new URL(
+            `/auth/error?error=${encodeURIComponent(exchangeError.message)}&error_code=${errorCode}`,
+            requestUrl.origin
+          )
         );
       }
 
       // eslint-disable-next-line no-console
-      console.log('[Auth Callback] Code exchanged successfully, cookies to set:', cookiesToSet.length);
+      console.log(
+        '[Auth Callback] Code exchanged successfully, cookies to set:',
+        cookiesToSet.length
+      );
 
       // CRITICAL: Verify session is actually valid before redirecting
       // This prevents race conditions where cookies haven't propagated yet
       const { user: verified, error: verifyError } = await verifySessionWithRetry(supabase);
-      
+
       if (verifyError || !verified) {
         // eslint-disable-next-line no-console
-        console.error('[Auth Callback] Session verification failed after exchange:', verifyError?.message);
+        console.error(
+          '[Auth Callback] Session verification failed after exchange:',
+          verifyError?.message
+        );
         // Don't fail hard - the client will retry via initializeSessionWithRetry
         // But log it for debugging
       } else {
@@ -231,7 +344,7 @@ export async function GET(request) {
       if (user) {
         const createdAt = new Date(user.created_at);
         const now = new Date();
-        const isNewUser = (now - createdAt) < 60000;
+        const isNewUser = now - createdAt < 60000;
 
         if (isNewUser) {
           // Gather acquisition context from cookies/headers
@@ -250,7 +363,7 @@ export async function GET(request) {
           try {
             const twoMinutesLater = new Date(createdAt);
             twoMinutesLater.setMinutes(twoMinutesLater.getMinutes() + 2);
-            
+
             const { data: firstActivity } = await supabase
               .from('user_activity')
               .select('event_type')
@@ -263,13 +376,14 @@ export async function GET(request) {
 
             if (firstActivity) {
               const actionLabels = {
-                'car_favorited': '⭐ Favorited a car',
-                'build_started': '🔧 Started building',
-                'ai_mechanic_used': '🤖 Asked AL',
-                'comparison_started': '⚖️ Started comparison',
-                'car_viewed': '👀 Viewed car details',
+                car_favorited: '⭐ Favorited a car',
+                build_started: '🔧 Started building',
+                ai_mechanic_used: '🤖 Asked AL',
+                comparison_started: '⚖️ Started comparison',
+                car_viewed: '👀 Viewed car details',
               };
-              signupContext.first_action = actionLabels[firstActivity.event_type] || firstActivity.event_type;
+              signupContext.first_action =
+                actionLabels[firstActivity.event_type] || firstActivity.event_type;
             }
           } catch (activityErr) {
             // Gracefully handle if activity check fails
@@ -277,80 +391,92 @@ export async function GET(request) {
             console.log('[Auth Callback] Could not fetch first activity:', activityErr.message);
           }
 
-          notifySignup({
-            id: user.id,
-            email: user.email,
-            provider: user.app_metadata?.provider || 'email',
-          }, signupContext).catch(err => {
+          notifySignup(
+            {
+              id: user.id,
+              email: user.email,
+              provider: user.app_metadata?.provider || 'email',
+            },
+            signupContext
+          ).catch((err) => {
             // eslint-disable-next-line no-console
             console.error('[Auth Callback] Discord signup notification failed:', err);
           });
-          
+
           // Send welcome email (fire-and-forget)
-          sendWelcomeEmail(user).catch(err => {
+          sendWelcomeEmail(user).catch((err) => {
             // eslint-disable-next-line no-console
             console.error('[Auth Callback] Welcome email failed:', err);
           });
-          
+
           // Send Meta Conversions API Lead event (fire-and-forget)
           sendLeadEvent(user, {
-            eventSourceUrl: sourcePage ? `https://autorev.app${sourcePage}` : 'https://autorev.app/signup',
+            eventSourceUrl: sourcePage
+              ? `https://autorev.app${sourcePage}`
+              : 'https://autorev.app/signup',
             userAgent: request.headers.get('user-agent'),
-            clientIpAddress: request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
+            clientIpAddress:
+              request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip'),
             customData: {
               signup_method: user.app_metadata?.provider || 'email',
               ...(carContext && { car_context: carContext }),
             },
-          }).catch(err => {
+          }).catch((err) => {
             // eslint-disable-next-line no-console
             console.error('[Auth Callback] Meta Lead event failed:', err);
           });
-          
+
           // Track signup event and save attribution (fire-and-forget)
           const utmSource = cookieStore.get('utm_source')?.value;
           const utmMedium = cookieStore.get('utm_medium')?.value;
           const utmCampaign = cookieStore.get('utm_campaign')?.value;
-          
+
           // Insert signup event
-          supabaseAdmin.from('user_events').insert({
-            event_name: 'signup_completed',
-            event_category: 'onboarding',
-            user_id: user.id,
-            session_id: `auth-${user.id.slice(0, 8)}-${Date.now()}`,
-            properties: { method: user.app_metadata?.provider || 'email' },
-            utm_source: utmSource || null,
-            utm_medium: utmMedium || null,
-            utm_campaign: utmCampaign || null
-          }).then(() => {
-            // eslint-disable-next-line no-console
-            console.log('[Auth Callback] Signup event tracked');
-          })
-            .catch(err => {
+          supabaseAdmin
+            .from('user_events')
+            .insert({
+              event_name: 'signup_completed',
+              event_category: 'onboarding',
+              user_id: user.id,
+              session_id: `auth-${user.id.slice(0, 8)}-${Date.now()}`,
+              properties: { method: user.app_metadata?.provider || 'email' },
+              utm_source: utmSource || null,
+              utm_medium: utmMedium || null,
+              utm_campaign: utmCampaign || null,
+            })
+            .then(() => {
+              // eslint-disable-next-line no-console
+              console.log('[Auth Callback] Signup event tracked');
+            })
+            .catch((err) => {
               // eslint-disable-next-line no-console
               console.error('[Auth Callback] Failed to track signup event:', err);
             });
-          
+
           // Save user attribution
-          supabaseAdmin.from('user_attribution').insert({
-            user_id: user.id,
-            first_touch_source: utmSource || signupContext.referrer || 'direct',
-            first_touch_medium: utmMedium || null,
-            first_touch_campaign: utmCampaign || null,
-            first_touch_referrer: signupContext.referrer || null,
-            first_touch_landing_page: sourcePage || '/',
-            first_touch_at: new Date().toISOString(),
-            last_touch_source: utmSource || signupContext.referrer || 'direct',
-            last_touch_medium: utmMedium || null,
-            last_touch_campaign: utmCampaign || null,
-            last_touch_at: new Date().toISOString(),
-            signup_page: sourcePage || '/',
-            signup_device: 'Unknown',
-            signup_country: null
-          }).then(() => {
-            // eslint-disable-next-line no-console
-            console.log('[Auth Callback] User attribution saved');
-          })
-            .catch(err => {
+          supabaseAdmin
+            .from('user_attribution')
+            .insert({
+              user_id: user.id,
+              first_touch_source: utmSource || signupContext.referrer || 'direct',
+              first_touch_medium: utmMedium || null,
+              first_touch_campaign: utmCampaign || null,
+              first_touch_referrer: signupContext.referrer || null,
+              first_touch_landing_page: sourcePage || '/',
+              first_touch_at: new Date().toISOString(),
+              last_touch_source: utmSource || signupContext.referrer || 'direct',
+              last_touch_medium: utmMedium || null,
+              last_touch_campaign: utmCampaign || null,
+              last_touch_at: new Date().toISOString(),
+              signup_page: sourcePage || '/',
+              signup_device: 'Unknown',
+              signup_country: null,
+            })
+            .then(() => {
+              // eslint-disable-next-line no-console
+              console.log('[Auth Callback] User attribution saved');
+            })
+            .catch((err) => {
               // Ignore duplicate errors (user already has attribution)
               if (!err.message?.includes('duplicate')) {
                 // eslint-disable-next-line no-console
@@ -364,16 +490,18 @@ export async function GET(request) {
             // eslint-disable-next-line no-console
             console.log(`[Auth Callback] Processing referral signup with code: ${refCode}`);
             processReferralSignup(user.id, refCode)
-              .then(result => {
+              .then((result) => {
                 if (result.success) {
                   // eslint-disable-next-line no-console
-                  console.log(`[Auth Callback] Referral processed: +${result.refereeCredits} credits for new user`);
+                  console.log(
+                    `[Auth Callback] Referral processed: +${result.refereeCredits} credits for new user`
+                  );
                 } else {
                   // eslint-disable-next-line no-console
                   console.log(`[Auth Callback] Referral not processed: ${result.error}`);
                 }
               })
-              .catch(err => {
+              .catch((err) => {
                 // eslint-disable-next-line no-console
                 console.error('[Auth Callback] Referral processing failed:', err);
               });
@@ -391,16 +519,16 @@ export async function GET(request) {
 
   // Build redirect URL
   const redirectUrl = new URL(next, requestUrl.origin);
-  
+
   // Only set fresh auth signals if code exchange was actually attempted
   // This prevents false positives when someone navigates to /auth/callback without an OAuth flow
   const codeExchangeAttempted = !!code;
-  
+
   if (codeExchangeAttempted) {
     // Add auth timestamp to help client detect fresh auth
     redirectUrl.searchParams.set('auth_ts', Date.now().toString());
   }
-  
+
   // Create redirect response
   const response = NextResponse.redirect(redirectUrl);
 
@@ -432,13 +560,17 @@ export async function GET(request) {
         sameSite: 'lax',
       });
     }
-    
+
     // eslint-disable-next-line no-console
-    console.log(`[Auth Callback] Redirecting to ${redirectUrl.pathname}${redirectUrl.search} with ${cookiesToSet.length} auth cookies + fresh login signals`);
+    console.log(
+      `[Auth Callback] Redirecting to ${redirectUrl.pathname}${redirectUrl.search} with ${cookiesToSet.length} auth cookies + fresh login signals`
+    );
   } else {
     // eslint-disable-next-line no-console
-    console.log(`[Auth Callback] Redirecting to ${redirectUrl.pathname} (no code - no fresh login signals)`);
+    console.log(
+      `[Auth Callback] Redirecting to ${redirectUrl.pathname} (no code - no fresh login signals)`
+    );
   }
-  
+
   return response;
 }
