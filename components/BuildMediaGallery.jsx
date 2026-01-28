@@ -38,6 +38,7 @@ function formatDuration(seconds) {
  * Simplified: Hero selection happens directly in the gallery.
  * Tap any image to set it as your hero (displayed at top of Upgrade Center).
  * Includes stock image option so users can switch back from their uploads.
+ * Stock image can be hidden once user has uploaded their own photos.
  */
 export default function BuildMediaGallery({
   car,
@@ -46,16 +47,28 @@ export default function BuildMediaGallery({
   onSetPrimary,
   onSetStockHero,
   onDelete,
+  onHideStockImage,
+  hideStockImage = false,
   readOnly = false,
 }) {
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
 
-  // Get stock image URL
-  const stockImageUrl = car ? getCarHeroImage(car) : null;
+  // Get stock image URL (only if not hidden by user)
+  const rawStockImageUrl = car ? getCarHeroImage(car) : null;
 
   // Filter images only (not videos)
   const uploadedImages = media.filter((m) => m.media_type !== 'video');
+
+  // Stock image is only shown if: exists AND (not hidden OR user has no uploaded images)
+  // This ensures users can't hide the stock image if they have no alternatives
+  const hasUploadedImages = uploadedImages.length > 0;
+  const stockImageUrl =
+    rawStockImageUrl && (!hideStockImage || !hasUploadedImages) ? rawStockImageUrl : null;
+
+  // Can user hide/delete the stock image? Only if they have uploaded images
+  const canHideStock =
+    !readOnly && rawStockImageUrl && hasUploadedImages && !hideStockImage && onHideStockImage;
 
   // Check if stock is currently the hero (no uploaded image has is_primary)
   const isStockHero = !uploadedImages.some((img) => img.is_primary);
@@ -69,8 +82,8 @@ export default function BuildMediaGallery({
     setLightboxOpen(false);
   }, []);
 
-  // Total items for lightbox (includes stock image if available)
-  const lightboxTotal = media.length + (car && getCarHeroImage(car) ? 1 : 0);
+  // Total items for lightbox (includes stock image if shown)
+  const lightboxTotal = media.length + (stockImageUrl ? 1 : 0);
 
   const handlePrevious = useCallback(() => {
     setLightboxIndex((prev) => (prev > 0 ? prev - 1 : lightboxTotal - 1));
@@ -109,6 +122,24 @@ export default function BuildMediaGallery({
     [readOnly, onSetStockHero]
   );
 
+  // Hide/delete the stock image from gallery
+  const handleHideStockImage = useCallback(
+    async (e) => {
+      e.stopPropagation();
+      if (readOnly || !canHideStock) return;
+
+      const confirmed = window.confirm(
+        'Hide the stock photo from your gallery? You can show it again from your vehicle settings.'
+      );
+      if (!confirmed) return;
+
+      if (onHideStockImage) {
+        await onHideStockImage();
+      }
+    },
+    [readOnly, canHideStock, onHideStockImage]
+  );
+
   // Delete a media item
   const handleDelete = useCallback(
     async (e, mediaId) => {
@@ -144,7 +175,7 @@ export default function BuildMediaGallery({
         )}
 
         <div className={styles.mediaGrid}>
-          {/* Stock Image - Always first */}
+          {/* Stock Image - First in gallery (if not hidden) */}
           {stockImageUrl && (
             <div
               className={`${styles.mediaItem} ${styles.stockItem} ${isStockHero ? styles.heroItem : ''}`}
@@ -176,6 +207,19 @@ export default function BuildMediaGallery({
                     Set as Hero
                   </button>
                 )
+              )}
+
+              {/* Hide/Delete button - only when user has uploaded their own images */}
+              {canHideStock && (
+                <button
+                  type="button"
+                  className={styles.deleteBtn}
+                  onClick={handleHideStockImage}
+                  title="Hide stock photo"
+                  aria-label="Hide stock photo"
+                >
+                  <Icons.x />
+                </button>
               )}
             </div>
           )}

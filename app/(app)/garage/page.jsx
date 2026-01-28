@@ -13,11 +13,13 @@
  */
 
 import React, { useState, useEffect, useRef, Suspense, useCallback, useMemo } from 'react';
-import { createPortal } from 'react-dom';
+
 
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+
+import { createPortal } from 'react-dom';
 
 import AddVehicleModal from '@/components/AddVehicleModal';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
@@ -3021,6 +3023,7 @@ function HeroVehicleDisplay({
                   <BuildMediaGallery
                     car={car}
                     media={carImages}
+                    hideStockImage={item.vehicle?.hideStockImage}
                     onSetPrimary={async (imageId) => {
                       await setCarHeroImage(imageId);
                     }}
@@ -3228,7 +3231,7 @@ function ConfirmationModal({
 function DrivingCharacterModal({
   isOpen,
   onClose,
-  carName,
+  carName: _carName,
   engineCharacter,
   transmissionFeel,
   steeringFeel,
@@ -3930,7 +3933,14 @@ function GarageContent() {
     // The tempCarFromVehicle fallback provides enough data to render the UI
     // Individual cards will show loading states via _isCarDataLoading flag
     return vehiclesLoading;
-  }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading, loadingTimedOut, vehicles.length]);
+  }, [
+    authLoading,
+    isAuthenticated,
+    isDataFetchReady,
+    vehiclesLoading,
+    loadingTimedOut,
+    vehicles.length,
+  ]);
 
   // Merge favorites with full car data (from database)
   // Guard: ensure allCars is an array before using array methods

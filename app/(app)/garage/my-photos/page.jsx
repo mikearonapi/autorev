@@ -45,10 +45,10 @@ function MyPhotosContent() {
   const [vehicleId, setVehicleId] = useState(null);
   const uploadSectionRef = useRef(null);
 
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const authModal = useAuthModal();
   const { builds, isLoading: buildsLoading } = useSavedBuilds();
-  const { vehicles } = useOwnedVehicles();
+  const { vehicles, updateVehicle } = useOwnedVehicles();
 
   // Garage score recalculation hook (uses vehicleId state set in useEffect below)
   const { recalculateScore } = useGarageScore(vehicleId);
@@ -105,15 +105,16 @@ function MyPhotosContent() {
     }
   }, [buildIdParam, carSlugParam, allCars, builds, buildsLoading, fallbackCar]);
 
-  // Find vehicle ID for this car
+  // Find the current vehicle for the selected car
+  const currentVehicle =
+    selectedCar && vehicles ? vehicles.find((v) => v.matchedCarSlug === selectedCar.slug) : null;
+
+  // Set vehicle ID when current vehicle changes
   useEffect(() => {
-    if (selectedCar && vehicles) {
-      const vehicle = vehicles.find((v) => v.matchedCarSlug === selectedCar.slug);
-      if (vehicle) {
-        setVehicleId(vehicle.id);
-      }
+    if (currentVehicle) {
+      setVehicleId(currentVehicle.id);
     }
-  }, [selectedCar, vehicles]);
+  }, [currentVehicle]);
 
   // Handle action=upload to scroll to and highlight upload section
   useEffect(() => {
@@ -186,7 +187,7 @@ function MyPhotosContent() {
           currentBuildId && (
             <ShareBuildButton
               build={currentBuild}
-              vehicle={vehicles?.find((v) => v.matchedCarSlug === selectedCar?.slug)}
+              vehicle={currentVehicle}
               car={selectedCar}
               existingImages={currentBuild?.uploadedImages || []}
             />
@@ -251,12 +252,38 @@ function MyPhotosContent() {
             <BuildMediaGallery
               car={selectedCar}
               media={carImages || []}
+              hideStockImage={currentVehicle?.hideStockImage}
               onSetPrimary={async (imageId) => {
                 await setCarHeroImage(imageId);
               }}
               onSetStockHero={async () => {
                 await clearCarHeroImage();
               }}
+              onHideStockImage={
+                canUpload && vehicleId
+                  ? async () => {
+                      try {
+                        const response = await fetch(
+                          `/api/users/${user?.id}/vehicles/${vehicleId}`,
+                          {
+                            method: 'PATCH',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ hide_stock_image: true }),
+                          }
+                        );
+
+                        if (!response.ok) {
+                          throw new Error('Failed to hide stock image');
+                        }
+
+                        // Update local state via provider
+                        await updateVehicle(vehicleId, { hideStockImage: true });
+                      } catch (err) {
+                        console.error('[MyPhotos] Hide stock image error:', err);
+                      }
+                    }
+                  : undefined
+              }
               onDelete={
                 canUpload
                   ? async (imageId) => {

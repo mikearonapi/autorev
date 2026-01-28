@@ -327,8 +327,8 @@ export default function RootLayout({ children }) {
         <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
 
         {/* Apple Touch Icons - REQUIRED for "Add to Home Screen" on iOS */}
-        <link rel="apple-touch-icon" href="/apple-touch-icon-v3.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-v3.png" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon-v4.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon-v4.png" />
 
         {/* PWA manifest - REQUIRED for "Add to Home Screen" prompt */}
         <link rel="manifest" href="/manifest.json" />

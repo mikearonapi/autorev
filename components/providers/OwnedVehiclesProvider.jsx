@@ -204,6 +204,8 @@ function transformVehicle(row) {
       : null,
     // Display order for custom garage sorting
     displayOrder: row.display_order ?? 0,
+    // Hide stock image preference
+    hideStockImage: row.hide_stock_image ?? false,
   };
 }
 
@@ -642,6 +644,8 @@ export function OwnedVehiclesProvider({ children }) {
           // Display should always calculate from installed_modifications.
           total_hp_gain: updates._cachedHpGain ?? updates.totalHpGain,
           modified_at: updates.modifiedAt,
+          // Stock image visibility preference
+          hide_stock_image: updates.hideStockImage,
         };
 
         // Remove undefined values

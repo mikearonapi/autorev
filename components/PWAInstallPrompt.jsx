@@ -218,7 +218,7 @@ export default function PWAInstallPrompt({
           <div className={styles.modalHeader}>
             <div className={styles.appIconWrapper}>
               <Image
-                src="/apple-touch-icon-v3.png"
+                src="/apple-touch-icon-v4.png"
                 alt="AutoRev"
                 width={64}
                 height={64}
@@ -311,7 +311,7 @@ export default function PWAInstallPrompt({
           <div className={styles.modalHeader}>
             <div className={styles.appIconWrapper}>
               <Image
-                src="/apple-touch-icon-v3.png"
+                src="/apple-touch-icon-v4.png"
                 alt="AutoRev"
                 width={64}
                 height={64}
@@ -367,7 +367,7 @@ export default function PWAInstallPrompt({
       <div className={styles.bannerContent}>
         <div className={styles.bannerLeft}>
           <Image
-            src="/apple-touch-icon-v3.png"
+            src="/apple-touch-icon-v4.png"
             alt="AutoRev"
             width={44}
             height={44}

@@ -400,24 +400,39 @@ export default function CommunityBuildsPage() {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [goToNext, goToPrev, goToNextImage, goToPrevImage, showComments]);
 
-  // Touch handling
-  const handleTouchStart = useCallback((e) => {
+  // Touch handling - using refs for event handlers to allow preventDefault
+  // Note: We use non-passive listeners attached via useEffect to prevent
+  // browser's native pull-to-refresh on Android
+  const handleTouchStartRef = useRef(null);
+  const handleTouchMoveRef = useRef(null);
+  const handleTouchEndRef = useRef(null);
+
+  handleTouchStartRef.current = useCallback((e) => {
     touchStartY.current = e.touches[0].clientY;
     touchStartX.current = e.touches[0].clientX;
     touchStartTime.current = Date.now();
     swipeDirection.current = null;
   }, []);
 
-  const handleTouchMove = useCallback((e) => {
-    if (swipeDirection.current) return;
+  handleTouchMoveRef.current = useCallback((e) => {
     const deltaX = Math.abs(e.touches[0].clientX - touchStartX.current);
     const deltaY = Math.abs(e.touches[0].clientY - touchStartY.current);
-    if (deltaX > 10 || deltaY > 10) {
+
+    // Determine swipe direction once threshold is met
+    if (!swipeDirection.current && (deltaX > 10 || deltaY > 10)) {
       swipeDirection.current = deltaX > deltaY ? 'horizontal' : 'vertical';
+    }
+
+    // CRITICAL: Prevent browser's native pull-to-refresh when:
+    // 1. User is swiping vertically (navigating between builds)
+    // 2. Not in a sheet/modal
+    // This allows our custom swipe-to-previous-build to work on Android
+    if (swipeDirection.current === 'vertical') {
+      e.preventDefault();
     }
   }, []);
 
-  const handleTouchEnd = useCallback(
+  handleTouchEndRef.current = useCallback(
     (e) => {
       const touchEndY = e.changedTouches[0].clientY;
       const touchEndX = e.changedTouches[0].clientX;
@@ -443,6 +458,28 @@ export default function CommunityBuildsPage() {
     },
     [goToNext, goToPrev, goToNextImage, goToPrevImage, showDetails, showComments]
   );
+
+  // Attach non-passive touch event listeners to prevent native pull-to-refresh
+  // React's synthetic events are passive by default and can't preventDefault()
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const onTouchStart = (e) => handleTouchStartRef.current?.(e);
+    const onTouchMove = (e) => handleTouchMoveRef.current?.(e);
+    const onTouchEnd = (e) => handleTouchEndRef.current?.(e);
+
+    // Use { passive: false } to allow preventDefault() in touchmove
+    container.addEventListener('touchstart', onTouchStart, { passive: true });
+    container.addEventListener('touchmove', onTouchMove, { passive: false });
+    container.addEventListener('touchend', onTouchEnd, { passive: true });
+
+    return () => {
+      container.removeEventListener('touchstart', onTouchStart);
+      container.removeEventListener('touchmove', onTouchMove);
+      container.removeEventListener('touchend', onTouchEnd);
+    };
+  }, []);
 
   // Mouse wheel
   useEffect(() => {
@@ -611,9 +648,8 @@ export default function CommunityBuildsPage() {
     <div
       className={styles.container}
       ref={containerRef}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
+      // Touch events attached via useEffect with { passive: false } to allow preventDefault
+      // This prevents browser's native pull-to-refresh on Android while allowing swipe navigation
     >
       {/* Handle legacy ?tab= URLs - wrapped in Suspense for useSearchParams */}
       <Suspense fallback={null}>
