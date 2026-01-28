@@ -39,16 +39,16 @@
 }
 
 .title {
-  font-family: var(--font-display);
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--color-text-primary);
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  color: var(--color-text-primary, #ffffff);
+  text-transform: uppercase;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
   margin: 0;
-  letter-spacing: 0.02em;
 }
 
 .headerControls {
@@ -467,10 +467,6 @@
     max-width: 600px;
     margin: 0 auto;
     padding: var(--space-6);
-  }
-
-  .title {
-    font-size: 1.5rem;
   }
 
   .entry {

@@ -7,6 +7,9 @@
   padding: 8px 16px 12px;
   position: relative;
   z-index: 9000;
+  /* Prevent horizontal overflow */
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .selectorButton {

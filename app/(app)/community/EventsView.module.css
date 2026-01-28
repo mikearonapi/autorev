@@ -85,12 +85,13 @@
 }
 
 .title {
-  font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: var(--font-size-lg, 18px);
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: var(--font-size-3xl);
   font-weight: 700;
-  color: var(--brand-text-primary, #ffffff);
+  color: var(--color-text-primary, #ffffff);
   margin: 0;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
 }
 
 /* Title Dropdown */

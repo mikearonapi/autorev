@@ -129,6 +129,57 @@ const GaugeIcon = ({ size = 18 }) => (
   </svg>
 );
 
+const SpeedIcon = ({ size = 18 }) => (
+  <svg
+    viewBox="0 0 24 24"
+    width={size}
+    height={size}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+  >
+    <path d="M12 2v4" />
+    <path d="m4.93 10.93 2.83 2.83" />
+    <path d="M2 18h2" />
+    <path d="M20 18h2" />
+    <path d="m19.07 10.93-2.83 2.83" />
+    <path d="M22 22H2" />
+    <path d="m16 6-4 4" />
+  </svg>
+);
+
+const TargetIcon = ({ size = 18 }) => (
+  <svg
+    viewBox="0 0 24 24"
+    width={size}
+    height={size}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <circle cx="12" cy="12" r="6" />
+    <circle cx="12" cy="12" r="2" />
+  </svg>
+);
+
+const WeightIcon = ({ size = 18 }) => (
+  <svg
+    viewBox="0 0 24 24"
+    width={size}
+    height={size}
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+  >
+    <circle cx="12" cy="5" r="3" />
+    <path d="M6.5 8a2 2 0 0 0-1.905 1.46L2.1 18.5A2 2 0 0 0 4 21h16a2 2 0 0 0 1.9-2.5l-2.495-9.04A2 2 0 0 0 17.5 8h-11Z" />
+  </svg>
+);
+
 // Performance Metric Row with bar visualization
 // Enhanced with data source badge support
 function MetricRow({
@@ -148,11 +199,11 @@ function MetricRow({
   const formatValue = (val) => {
     if (val === null || val === undefined) return '-';
     if (unit === 's' || unit === 'g') return val.toFixed(1);
-    if (unit === 'ft') return Math.round(val);
+    if (unit === 'ft' || unit === 'mph' || unit === 'hp/ton') return Math.round(val);
     return Math.round(val).toLocaleString();
   };
 
-  const maxValues = { hp: 1200, s: 8, ft: 150, g: 1.6 };
+  const maxValues = { hp: 1200, s: 8, ft: 150, g: 1.6, mph: 200, 'hp/ton': 400 };
   const maxValue = maxValues[unit.trim()] || maxValues.hp;
 
   const stockPercent = isLowerBetter
@@ -374,6 +425,18 @@ export default function BuildDetailSheet({
   const finalLateralG =
     computedPerformance?.upgraded?.lateralG ?? buildData?.final_lateral_g ?? stockLateralG;
 
+  // Additional metrics aligned with Data tab
+  const stockQuarterMile =
+    computedPerformance?.stock?.quarterMile ?? carData?.quarter_mile ?? null;
+  const finalQuarterMile =
+    computedPerformance?.upgraded?.quarterMile ?? stockQuarterMile;
+
+  const stockTrapSpeed = computedPerformance?.stock?.trapSpeed ?? null;
+  const finalTrapSpeed = computedPerformance?.upgraded?.trapSpeed ?? stockTrapSpeed;
+
+  const stockPowerToWeight = computedPerformance?.stock?.powerToWeight ?? null;
+  const finalPowerToWeight = computedPerformance?.upgraded?.powerToWeight ?? stockPowerToWeight;
+
   // Data source tracking - check if user has dyno data
   const performanceDataSources = computedPerformance?.dataSources || null;
   const hasUserDynoData =
@@ -468,7 +531,7 @@ export default function BuildDetailSheet({
                   sourceDetail={dynoShop}
                 />
 
-                {/* 0-60 - Use stored values from buildData (single source of truth) */}
+                {/* 0-60 */}
                 <MetricRow
                   icon={StopwatchIcon}
                   label="0-60"
@@ -481,10 +544,40 @@ export default function BuildDetailSheet({
                   sourceDetail={hasUserDynoData ? 'Based on dyno HP' : null}
                 />
 
-                {/* Braking - Use stored values from buildData */}
+                {/* 1/4 Mile */}
+                {stockQuarterMile && (
+                  <MetricRow
+                    icon={GaugeIcon}
+                    label="1/4 Mile"
+                    stockValue={parseFloat(stockQuarterMile)}
+                    upgradedValue={parseFloat(finalQuarterMile || stockQuarterMile)}
+                    unit="s"
+                    improvementPrefix="-"
+                    isLowerBetter={true}
+                    dataSource={hasUserDynoData ? 'calibrated' : getSource('quarterMile')}
+                    sourceDetail={hasUserDynoData ? 'Based on dyno HP' : null}
+                  />
+                )}
+
+                {/* Trap Speed */}
+                {stockTrapSpeed && (
+                  <MetricRow
+                    icon={SpeedIcon}
+                    label="Trap Speed"
+                    stockValue={Math.round(stockTrapSpeed)}
+                    upgradedValue={Math.round(finalTrapSpeed || stockTrapSpeed)}
+                    unit="mph"
+                    improvementPrefix="+"
+                    isLowerBetter={false}
+                    dataSource={hasUserDynoData ? 'calibrated' : getSource('trapSpeed')}
+                    sourceDetail={hasUserDynoData ? 'Based on dyno HP' : null}
+                  />
+                )}
+
+                {/* 60-0 Braking */}
                 <MetricRow
                   icon={BrakeIcon}
-                  label="BRAKING"
+                  label="60-0 Braking"
                   stockValue={stockBraking}
                   upgradedValue={finalBraking}
                   unit="ft"
@@ -493,10 +586,10 @@ export default function BuildDetailSheet({
                   dataSource={getSource('braking')}
                 />
 
-                {/* Grip - Use stored values from buildData */}
+                {/* Lateral G */}
                 <MetricRow
-                  icon={GaugeIcon}
-                  label="GRIP"
+                  icon={TargetIcon}
+                  label="Lateral G"
                   stockValue={parseFloat(stockLateralG)}
                   upgradedValue={parseFloat(finalLateralG)}
                   unit="g"
@@ -504,6 +597,20 @@ export default function BuildDetailSheet({
                   isLowerBetter={false}
                   dataSource={getSource('lateralG')}
                 />
+
+                {/* Power/Weight */}
+                {stockPowerToWeight && (
+                  <MetricRow
+                    icon={WeightIcon}
+                    label="Power/Weight"
+                    stockValue={Math.round(stockPowerToWeight)}
+                    upgradedValue={Math.round(finalPowerToWeight || stockPowerToWeight)}
+                    unit="hp/ton"
+                    improvementPrefix="+"
+                    isLowerBetter={false}
+                    dataSource={hasUserDynoData ? 'calibrated' : null}
+                  />
+                )}
               </div>
             </div>
 

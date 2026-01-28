@@ -529,7 +529,7 @@ export default function SettingsPage() {
                 placeholder="Your name"
                 autoComplete="name"
               />
-              <button onClick={handleSave} disabled={isSaving || !displayName.trim()} className={styles.inlineSaveBtn}>
+              <button onClick={handleSave} disabled={!displayName.trim()} className={styles.inlineSaveBtn}>
                 {saveSuccess ? <CheckIcon size={14} /> : 'Save'}
               </button>
             </div>

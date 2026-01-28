@@ -12,6 +12,9 @@
   background: transparent;
   /* Must be higher than GarageVehicleSelector (z-index: 9000) so dropdown appears on top */
   z-index: 10000;
+  /* Prevent horizontal overflow */
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* Back Button - Left positioned */

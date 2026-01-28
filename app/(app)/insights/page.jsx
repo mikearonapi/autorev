@@ -13,6 +13,8 @@
 
 import { Suspense } from 'react';
 
+import LoadingSpinner from '@/components/LoadingSpinner';
+
 import InsightsClient from './InsightsClient';
 import styles from './page.module.css';
 
@@ -27,22 +29,21 @@ export const metadata = {
 
 export default function InsightsPage() {
   return (
-    <Suspense fallback={<InsightsSkeleton />}>
+    <Suspense fallback={<InsightsLoadingScreen />}>
       <InsightsClient />
     </Suspense>
   );
 }
 
-function InsightsSkeleton() {
+function InsightsLoadingScreen() {
   return (
     <div className={styles.page}>
-      <div className={styles.skeleton}>
-        <div className={styles.skeletonHeader} />
-        <div className={styles.skeletonVehicleSelector} />
-        <div className={styles.skeletonCard} />
-        <div className={styles.skeletonCard} />
-        <div className={styles.skeletonCard} />
-      </div>
+      <LoadingSpinner
+        variant="branded"
+        text="Loading Your Insights"
+        subtext="Preparing your daily briefing..."
+        fullPage
+      />
     </div>
   );
 }

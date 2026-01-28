@@ -8,6 +8,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { TITLES } from '@/app/(app)/dashboard/components/UserGreeting';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import { DataSourceIndicator } from '@/components/ui';
@@ -619,8 +620,16 @@ export default function CommunityBuildsPage() {
         <LegacyTabRedirect />
       </Suspense>
 
-      {/* Loading - Skeleton that matches build feed layout */}
-      {isLoading && <BuildFeedSkeleton />}
+      {/* Loading - Branded loading for consistent UX */}
+      {/* Only show loading if we don't have cached builds (stale-while-revalidate) */}
+      {isLoading && builds.length === 0 && (
+        <LoadingSpinner
+          variant="branded"
+          text="Loading Community"
+          subtext="Discovering builds..."
+          fullPage
+        />
+      )}
 
       {/* Error/Empty */}
       {!isLoading && (error || builds.length === 0) && (
@@ -700,7 +709,10 @@ export default function CommunityBuildsPage() {
                           currentBuild.computedPerformance?.upgraded?.hp ||
                             currentBuild.car_specs?.hp
                         )}
-                        {/* Show indicator when HP is from dyno data */}
+                      </span>
+                      <span className={styles.statLabel}>
+                        HP
+                        {/* Show DYNO indicator when HP is from dyno data */}
                         <DataSourceIndicator
                           source={
                             currentBuild.computedPerformance?.dataSources?.hp ||
@@ -708,7 +720,6 @@ export default function CommunityBuildsPage() {
                           }
                         />
                       </span>
-                      <span className={styles.statLabel}>HP</span>
                     </div>
                   )}
 
@@ -720,6 +731,9 @@ export default function CommunityBuildsPage() {
                           currentBuild.computedPerformance?.upgraded?.torque ||
                             currentBuild.car_specs?.torque
                         )}
+                      </span>
+                      <span className={styles.statLabel}>
+                        LB-FT
                         <DataSourceIndicator
                           source={
                             currentBuild.computedPerformance?.dataSources?.torque ||
@@ -727,7 +741,6 @@ export default function CommunityBuildsPage() {
                           }
                         />
                       </span>
-                      <span className={styles.statLabel}>LB-FT</span>
                     </div>
                   )}
 

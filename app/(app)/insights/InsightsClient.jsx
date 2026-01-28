@@ -33,7 +33,7 @@ import KnownIssuesAlert from '@/components/KnownIssuesAlert';
 import NextUpgradeRecommendation from '@/components/NextUpgradeRecommendation';
 import PlatformInsights from '@/components/PlatformInsights';
 import { useAuth } from '@/components/providers/AuthProvider';
-import { InsightsSkeleton } from '@/components/ui/Skeleton';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import { useCarBySlug } from '@/hooks/useCarData';
 import { useTuningProfile } from '@/hooks/useTuningProfile';
 import { useUserInsights } from '@/hooks/useUserData';
@@ -54,7 +54,7 @@ import styles from './page.module.css';
 // ==========================================================================
 const INSIGHT_SECTIONS = {
   buildProgress: { label: 'Build Progress', description: 'Power, handling, reliability rings' },
-  drivingCharacter: { label: 'Driving Character', description: 'Engine feel, steering, sound' },
+  // drivingCharacter removed - now accessible via info button on garage car image
   stageAnalysis: { label: 'Stage Analysis', description: 'Stage 1/2/3 progression' },
   valueAnalysis: { label: 'Value Analysis', description: 'Cost efficiency & ROI' },
   nextUpgrade: { label: 'Next Upgrade', description: 'Recommended mods' },
@@ -1078,12 +1078,16 @@ export default function InsightsClient() {
       </div>
     );
 
-  // Loading state (show skeleton only if no cached data)
-  // ANDROID FIX: Use skeleton instead of spinner for faster perceived loading
+  // Loading state - branded loading for consistent UX
   if (loading && !feedItems.length)
     return (
       <div className={styles.page}>
-        <InsightsSkeleton />
+        <LoadingSpinner
+          variant="branded"
+          text="Loading Your Insights"
+          subtext={authLoading ? 'Verifying your session...' : 'Analyzing your builds...'}
+          fullPage
+        />
       </div>
     );
 
@@ -1337,47 +1341,7 @@ export default function InsightsClient() {
         </div>
       )}
 
-      {/* Driving Character - Engine feel, steering, sound */}
-      {sectionFilters.drivingCharacter &&
-        selectedVehicleId &&
-        selectedVehicleId !== 'all' &&
-        fullCarData &&
-        (fullCarData.engineCharacter || fullCarData.steeringFeel || fullCarData.soundSignature) && (
-          <section className={styles.drivingCharacterSection}>
-            <div className={styles.drivingCharacterCard}>
-              <div className={styles.drivingCharacterHeader}>
-                <CarIcon size={18} />
-                <span className={styles.drivingCharacterTitle}>Driving Character</span>
-              </div>
-              <div className={styles.drivingCharacterItems}>
-                {fullCarData.engineCharacter && (
-                  <div className={styles.drivingCharacterItem}>
-                    <span className={styles.drivingCharacterLabel}>Engine Feel</span>
-                    <p className={styles.drivingCharacterText}>{fullCarData.engineCharacter}</p>
-                  </div>
-                )}
-                {fullCarData.transmissionFeel && (
-                  <div className={styles.drivingCharacterItem}>
-                    <span className={styles.drivingCharacterLabel}>Transmission</span>
-                    <p className={styles.drivingCharacterText}>{fullCarData.transmissionFeel}</p>
-                  </div>
-                )}
-                {fullCarData.steeringFeel && (
-                  <div className={styles.drivingCharacterItem}>
-                    <span className={styles.drivingCharacterLabel}>Steering</span>
-                    <p className={styles.drivingCharacterText}>{fullCarData.steeringFeel}</p>
-                  </div>
-                )}
-                {fullCarData.soundSignature && (
-                  <div className={styles.drivingCharacterItem}>
-                    <span className={styles.drivingCharacterLabel}>Sound</span>
-                    <p className={styles.drivingCharacterText}>{fullCarData.soundSignature}</p>
-                  </div>
-                )}
-              </div>
-            </div>
-          </section>
-        )}
+      {/* Driving Character section removed - now accessible via info button on garage car image */}
     </div>
   );
 }

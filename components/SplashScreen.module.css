@@ -48,8 +48,13 @@
   pointer-events: none;
 }
 
-/* Logo container - centered with subtle entrance animation */
+/* Logo container - DEAD CENTER using absolute positioning
+   This ensures perfect centering regardless of safe area insets */
 .logoContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -59,18 +64,18 @@
 @keyframes logoEnter {
   from {
     opacity: 0;
-    transform: scale(0.95);
+    transform: translate(-50%, -50%) scale(0.95);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
 /* Logo image styling */
 .logoImage {
-  /* Mobile-first: 50% larger for better visibility */
-  width: clamp(270px, 75vw, 420px);
+  /* Mobile-first sizing */
+  width: clamp(220px, 60vw, 340px);
   height: auto;
   /* Prevent dragging/selection */
   user-select: none;
@@ -93,6 +98,6 @@
 /* Desktop: larger logo */
 @media screen and (min-width: 481px) {
   .logoImage {
-    width: clamp(330px, 60vw, 480px);
+    width: clamp(280px, 50vw, 400px);
   }
 }

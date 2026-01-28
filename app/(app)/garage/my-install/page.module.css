@@ -13,6 +13,11 @@
   /* Transparent to show body gradient */
   background: transparent;
   padding-bottom: var(--page-bottom-padding);
+  /* Prevent horizontal overflow on mobile - use 100% not 100vw (100vw includes scrollbar) */
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
 }
 
 .loadingContainer {
@@ -25,10 +30,13 @@
 .content {
   padding: var(--space-4, 16px);
   max-width: 800px;
+  width: 100%;
   margin: 0 auto;
   /* Prevent horizontal overflow */
   overflow-x: hidden;
   box-sizing: border-box;
+  /* Allow flex children to shrink */
+  min-width: 0;
 }
 
 /* ==========================================================================
@@ -44,6 +52,10 @@
   justify-content: space-between;
   align-items: baseline;
   margin-bottom: var(--space-3, 12px);
+  /* Prevent flex children from overflowing */
+  gap: var(--space-2, 8px);
+  min-width: 0;
+  max-width: 100%;
 }
 
 .pageTitle {
@@ -52,12 +64,18 @@
   font-size: var(--text-h2, 24px);
   font-weight: 600;
   color: var(--color-text-primary, #fff);
+  /* Allow shrinking in flex context */
+  min-width: 0;
+  flex-shrink: 1;
 }
 
 .progressText {
   margin: 0;
   font-size: var(--text-sm, 14px);
   color: var(--color-text-secondary, #94a3b8);
+  /* Prevent from pushing content out */
+  flex-shrink: 0;
+  white-space: nowrap;
 }
 
 .progressBar {
@@ -307,6 +325,9 @@
 .continueCtaContainer {
   padding: var(--space-4, 16px);
   padding-bottom: calc(var(--space-4, 16px) + 60px); /* Space for bottom tab bar */
+  max-width: 800px;
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .continueCta {

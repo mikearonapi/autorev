@@ -13,6 +13,7 @@
  */
 
 import React, { useState, useEffect, useRef, Suspense, useCallback, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -949,6 +950,9 @@ function HeroVehicleDisplay({
   const [enrichmentStatus, setEnrichmentStatus] = useState('none'); // 'none', 'checking', 'available', 'enriching', 'enriched', 'error'
   const [enrichmentError, setEnrichmentError] = useState(null);
 
+  // Driving Character modal state
+  const [showDrivingCharacter, setShowDrivingCharacter] = useState(false);
+
   // Initialize VIN from vehicle data (reset all VIN state when vehicle changes)
   useEffect(() => {
     // Always reset VIN state when the selected vehicle changes
@@ -975,6 +979,8 @@ function HeroVehicleDisplay({
     setEnrichmentData(null);
     setEnrichmentStatus('none');
     setEnrichmentError(null);
+    // Reset driving character modal
+    setShowDrivingCharacter(false);
   }, [item?.vehicle?.id, item?.matchedCar?.slug]);
 
   // Check enrichment status for unmatched vehicles (daily drivers)
@@ -1443,6 +1449,18 @@ function HeroVehicleDisplay({
     refreshImages: refreshCarImages,
   } = useCarImages(carSlugForImages, { enabled: !!carSlugForImages });
 
+  // Fetch full car data for driving character fields (engine feel, steering, sound)
+  const { data: fullCarData } = useCarBySlug(carSlugForImages, {
+    enabled: !!carSlugForImages,
+  });
+
+  // Check if car has driving character data
+  const hasDrivingCharacter =
+    fullCarData?.engineCharacter ||
+    fullCarData?.transmissionFeel ||
+    fullCarData?.steeringFeel ||
+    fullCarData?.soundSignature;
+
   // Determine if user has a custom hero image
   const hasCustomHero = !!userHeroImage;
 
@@ -1712,6 +1730,22 @@ function HeroVehicleDisplay({
             <span className={styles.heroImageCounterDivider}>/</span>
             <span>{totalItems}</span>
           </div>
+        )}
+
+        {/* Driving Character Info Button - Top left overlay on image */}
+        {hasDrivingCharacter && panelState === 'collapsed' && (
+          <button
+            className={styles.drivingCharacterBtn}
+            onClick={(e) => {
+              e.stopPropagation();
+              e.preventDefault();
+              setShowDrivingCharacter(true);
+            }}
+            aria-label="View driving character"
+            title="Driving Character"
+          >
+            <Icons.info size={16} />
+          </button>
         )}
       </div>
 
@@ -3027,6 +3061,19 @@ function HeroVehicleDisplay({
           maintenanceSpecs={maintenanceData?.specs}
         />
       )}
+
+      {/* Driving Character Modal */}
+      {showDrivingCharacter && hasDrivingCharacter && (
+        <DrivingCharacterModal
+          isOpen={showDrivingCharacter}
+          onClose={() => setShowDrivingCharacter(false)}
+          carName={displayName}
+          engineCharacter={fullCarData?.engineCharacter}
+          transmissionFeel={fullCarData?.transmissionFeel}
+          steeringFeel={fullCarData?.steeringFeel}
+          soundSignature={fullCarData?.soundSignature}
+        />
+      )}
     </div>
   );
 }
@@ -3174,6 +3221,91 @@ function ConfirmationModal({
       </div>
     </div>
   );
+}
+
+// Driving Character Modal - Shows engine feel, transmission, steering, sound
+// Uses createPortal to render at document.body level for proper z-index stacking
+function DrivingCharacterModal({
+  isOpen,
+  onClose,
+  carName,
+  engineCharacter,
+  transmissionFeel,
+  steeringFeel,
+  soundSignature,
+}) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!isOpen || !mounted) return null;
+
+  // Handle close with event stopping to prevent bubbling
+  const handleClose = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    onClose();
+  };
+
+  const modalContent = (
+    <div
+      className={styles.drivingCharacterOverlay}
+      onClick={handleClose}
+      onTouchEnd={(e) => e.stopPropagation()}
+    >
+      <div
+        className={styles.drivingCharacterModal}
+        onClick={(e) => e.stopPropagation()}
+        onTouchEnd={(e) => e.stopPropagation()}
+      >
+        <div className={styles.drivingCharacterModalHeader}>
+          <div className={styles.drivingCharacterModalTitle}>
+            <Icons.car size={20} />
+            <span>Driving Character</span>
+          </div>
+          <button
+            className={styles.drivingCharacterCloseBtn}
+            onClick={handleClose}
+            onTouchEnd={(e) => e.stopPropagation()}
+            aria-label="Close"
+          >
+            <Icons.x size={20} />
+          </button>
+        </div>
+
+        <div className={styles.drivingCharacterModalBody}>
+          {engineCharacter && (
+            <div className={styles.drivingCharacterModalItem}>
+              <span className={styles.drivingCharacterModalLabel}>Engine Feel</span>
+              <p className={styles.drivingCharacterModalText}>{engineCharacter}</p>
+            </div>
+          )}
+          {transmissionFeel && (
+            <div className={styles.drivingCharacterModalItem}>
+              <span className={styles.drivingCharacterModalLabel}>Transmission</span>
+              <p className={styles.drivingCharacterModalText}>{transmissionFeel}</p>
+            </div>
+          )}
+          {steeringFeel && (
+            <div className={styles.drivingCharacterModalItem}>
+              <span className={styles.drivingCharacterModalLabel}>Steering</span>
+              <p className={styles.drivingCharacterModalText}>{steeringFeel}</p>
+            </div>
+          )}
+          {soundSignature && (
+            <div className={styles.drivingCharacterModalItem}>
+              <span className={styles.drivingCharacterModalLabel}>Sound</span>
+              <p className={styles.drivingCharacterModalText}>{soundSignature}</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
+  return createPortal(modalContent, document.body);
 }
 
 // Thumbnail Strip Component
@@ -3780,6 +3912,11 @@ function GarageContent() {
     // Safety hatch: if loading times out, show content anyway
     if (loadingTimedOut) return false;
 
+    // STALE-WHILE-REVALIDATE: If we already have vehicles data, don't show loading
+    // This prevents loading screens when navigating between tabs - existing data shows instantly
+    // while any background refresh happens silently
+    if (vehicles.length > 0) return false;
+
     // Always show loading during auth check
     if (authLoading) return true;
 
@@ -3793,7 +3930,7 @@ function GarageContent() {
     // The tempCarFromVehicle fallback provides enough data to render the UI
     // Individual cards will show loading states via _isCarDataLoading flag
     return vehiclesLoading;
-  }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading, loadingTimedOut]);
+  }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading, loadingTimedOut, vehicles.length]);
 
   // Merge favorites with full car data (from database)
   // Guard: ensure allCars is an array before using array methods

@@ -102,6 +102,40 @@
 }
 
 /* =============================================================================
+   INDICATOR LABEL - "DYNO" text for measured/verified data
+   ============================================================================= */
+
+.indicatorLabel {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 5px;
+  font-size: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 3px;
+  line-height: 1.2;
+}
+
+.indicatorLabel--teal {
+  background: rgba(20, 184, 166, 0.2);
+  color: var(--color-teal-400, #2dd4bf);
+  border: 1px solid rgba(20, 184, 166, 0.4);
+}
+
+.indicatorLabel--lime {
+  background: rgba(163, 230, 53, 0.2);
+  color: var(--color-lime-400, #a3e635);
+  border: 1px solid rgba(163, 230, 53, 0.4);
+}
+
+.indicatorLabel--blue {
+  background: rgba(59, 130, 246, 0.2);
+  color: var(--color-blue-400, #60a5fa);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+/* =============================================================================
    METRIC WITH SOURCE - Value + badge combination
    ============================================================================= */
 

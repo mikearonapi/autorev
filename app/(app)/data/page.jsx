@@ -31,7 +31,7 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
-import { DataPageSkeleton } from '@/components/ui/Skeleton';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import VirtualDynoChart from '@/components/VirtualDynoChart';
 import { useCarsList } from '@/hooks/useCarData';
 import { useDynoResults } from '@/hooks/useUserData';
@@ -479,11 +479,14 @@ function DynoPageContent() {
   // Loading state
   const isDataLoading = useMemo(() => {
     if (loadingTimedOut) return false;
+    // STALE-WHILE-REVALIDATE: If we already have vehicles data, don't show loading
+    // This prevents loading screens when navigating between tabs
+    if (userVehicles.length > 0) return false;
     if (authLoading) return true;
     if (!isAuthenticated) return false;
     if (!isDataFetchReady) return true;
     return vehiclesLoading;
-  }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading, loadingTimedOut]);
+  }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading, loadingTimedOut, userVehicles.length]);
 
   // Not authenticated - show sign in prompt
   // NOTE: Keep messaging consistent with original combined page
@@ -507,11 +510,16 @@ function DynoPageContent() {
     );
   }
 
-  // Loading state - use skeleton that matches content shape
+  // Loading state - branded loading for consistent UX
   if (isDataLoading) {
     return (
       <div className={styles.pageContent}>
-        <DataPageSkeleton />
+        <LoadingSpinner
+          variant="branded"
+          text="Loading Your Data"
+          subtext={authLoading ? 'Verifying your session...' : 'Fetching performance data...'}
+          fullPage
+        />
       </div>
     );
   }
@@ -824,7 +832,12 @@ export default function DataPage() {
     <Suspense
       fallback={
         <div className={styles.pageContent}>
-          <DataPageSkeleton />
+          <LoadingSpinner
+            variant="branded"
+            text="Loading Your Data"
+            subtext="Preparing performance view..."
+            fullPage
+          />
         </div>
       }
     >

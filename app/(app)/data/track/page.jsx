@@ -489,11 +489,14 @@ function TrackPageContent() {
   // Loading state
   const isDataLoading = useMemo(() => {
     if (loadingTimedOut) return false;
+    // STALE-WHILE-REVALIDATE: If we already have vehicles data, don't show loading
+    // This prevents loading screens when navigating between tabs
+    if (userVehicles.length > 0) return false;
     if (authLoading) return true;
     if (!isAuthenticated) return false;
     if (!isDataFetchReady) return true;
     return vehiclesLoading;
-  }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading, loadingTimedOut]);
+  }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading, loadingTimedOut, userVehicles.length]);
 
   // Not authenticated - show sign in prompt
   // NOTE: Keep messaging consistent with original combined page

@@ -97,19 +97,36 @@ export function DataSourceBadge({
 /**
  * DataSourceIndicator - Inline indicator for a single metric
  *
- * Shows a small colored dot/icon next to a metric value to indicate its source.
+ * Shows a small colored indicator next to a metric value to indicate its source.
+ * For measured/verified data, shows "DYNO" label to clearly communicate the source.
  * Less prominent than the badge, good for tables and dense layouts.
  *
  * @param {Object} props
  * @param {string} props.source - Data source type
+ * @param {string} props.variant - 'dot' (default) or 'label' for explicit "DYNO" text
  * @param {string} props.className - Additional CSS class
  */
-export function DataSourceIndicator({ source = 'estimated', className = '' }) {
+export function DataSourceIndicator({ source = 'estimated', variant = 'label', className = '' }) {
   const config = SOURCE_CONFIG[source] || SOURCE_CONFIG.estimated;
 
   // Don't show indicator for estimated data (it's the default)
   if (source === 'estimated') {
     return null;
+  }
+
+  // For measured/verified sources, show "DYNO" label instead of dot
+  const showLabel = variant === 'label' && (source === 'measured' || source === 'verified');
+
+  if (showLabel) {
+    return (
+      <span
+        className={`${styles.indicatorLabel} ${styles[`indicatorLabel--${config.color}`]} ${className}`}
+        title={config.description}
+        aria-label={`${config.label} data`}
+      >
+        DYNO
+      </span>
+    );
   }
 
   return (

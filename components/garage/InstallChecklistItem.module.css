@@ -18,8 +18,10 @@
   box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
   overflow: hidden;
   transition: all 0.2s ease;
-  /* Prevent overflow */
+  /* Prevent overflow - ensure tiles fit within container */
+  width: 100%;
   max-width: 100%;
+  min-width: 0;
   box-sizing: border-box;
 }
 

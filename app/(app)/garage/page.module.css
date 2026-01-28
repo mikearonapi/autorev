@@ -1009,6 +1009,38 @@
   margin: 0 2px;
 }
 
+/* Driving Character Info Button - Top left overlay on image */
+.drivingCharacterBtn {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.drivingCharacterBtn:hover {
+  background: rgba(0, 0, 0, 0.75);
+  color: var(--brand-teal);
+  border-color: var(--brand-teal);
+  transform: scale(1.05);
+}
+
+.drivingCharacterBtn:active {
+  transform: scale(0.95);
+}
+
 /* CF-008: Mobile - Full width image with proper layout */
 @media (min-width: 768px) {
   .heroImageContainer {
@@ -6002,6 +6034,169 @@
 .confirmBtnDanger:hover {
   background: var(--brand-error-dark);
   box-shadow: 0 4px 16px rgba(220, 38, 38, 0.4);
+}
+
+/* ===========================================
+   DRIVING CHARACTER MODAL
+   Fullscreen immersive modal - matches OnboardingPopup style
+   Shows engine feel, steering, sound info
+   =========================================== */
+
+.drivingCharacterOverlay {
+  position: fixed;
+  inset: 0;
+  /* Highest z-index - matches OnboardingPopup to ensure it's above everything */
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-md, 16px);
+  /* Dark overlay with strong blur for immersive feel */
+  background: var(--color-bg-overlay, rgba(26, 26, 26, 0.92));
+  backdrop-filter: blur(12px) saturate(180%);
+  -webkit-backdrop-filter: blur(12px) saturate(180%);
+  animation: drivingCharacterOverlayFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+@keyframes drivingCharacterOverlayFadeIn {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(12px) saturate(180%);
+  }
+}
+
+/* Centered modal card - dark theme version of OnboardingPopup */
+.drivingCharacterModal {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: linear-gradient(145deg, rgba(30, 35, 42, 0.98), rgba(20, 25, 30, 0.98));
+  border-radius: var(--radius-xl, 20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+  animation: drivingCharacterPopupSlideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+@keyframes drivingCharacterPopupSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.drivingCharacterModalHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  flex-shrink: 0;
+}
+
+.drivingCharacterModalTitle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: var(--font-size-xl, 20px);
+  font-weight: 600;
+  color: var(--brand-text-primary, #ffffff);
+}
+
+.drivingCharacterModalTitle svg {
+  color: var(--brand-teal, #10b981);
+}
+
+.drivingCharacterCloseBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  border-radius: 50%;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.drivingCharacterCloseBtn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--brand-text-primary, #ffffff);
+  transform: rotate(90deg);
+}
+
+.drivingCharacterModalBody {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.drivingCharacterModalItem {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drivingCharacterModalLabel {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: var(--text-xs, 11px);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--brand-teal, #10b981);
+}
+
+.drivingCharacterModalText {
+  font-size: var(--text-body, 15px);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0;
+}
+
+/* Responsive - slightly larger on desktop */
+@media (min-width: 768px) {
+  .drivingCharacterModal {
+    max-width: 480px;
+  }
+  
+  .drivingCharacterModalHeader {
+    padding: 24px 28px;
+  }
+  
+  .drivingCharacterModalBody {
+    padding: 28px;
+    gap: 28px;
+  }
+  
+  .drivingCharacterModalTitle {
+    font-size: var(--font-size-2xl, 24px);
+  }
+  
+  .drivingCharacterModalText {
+    font-size: var(--text-lg, 16px);
+  }
 }
 
 /* ===========================================

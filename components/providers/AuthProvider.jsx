@@ -3,6 +3,9 @@
 import { createContext, useContext, useState, useEffect, useCallback, useMemo, useRef } from 'react';
 
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
+
+import { useQueryClient } from '@tanstack/react-query';
 
 import { 
   signInWithGoogle,
@@ -580,6 +583,8 @@ export function AuthProvider({ children }) {
   const [state, setState] = useState(defaultAuthState);
   const [onboardingState, setOnboardingState] = useState(defaultOnboardingState);
   const { resetProgress } = useLoadingProgress();
+  const router = useRouter();
+  const queryClient = useQueryClient();
   const refreshIntervalRef = useRef(null);
   const initAttemptRef = useRef(0);
   const lastVisibilityChangeRef = useRef(Date.now());
@@ -593,6 +598,8 @@ export function AuthProvider({ children }) {
   // Refs for values used in auth state change listener to avoid stale closures
   const resetProgressRef = useRef(resetProgress);
   const stateProfileRef = useRef(state.profile);
+  const queryClientRef = useRef(queryClient);
+  const routerRef = useRef(router);
   
   // Keep refs in sync with values
   useEffect(() => {
@@ -602,6 +609,14 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     stateProfileRef.current = state.profile;
   }, [state.profile]);
+  
+  useEffect(() => {
+    queryClientRef.current = queryClient;
+  }, [queryClient]);
+  
+  useEffect(() => {
+    routerRef.current = router;
+  }, [router]);
   
   // Keep the ref in sync with state
   useEffect(() => {
@@ -1098,6 +1113,17 @@ export function AuthProvider({ children }) {
         isAuthenticatedRef.current = true;
         if (isFreshLogin) {
           isFreshLoginRef.current = true;
+          
+          // CACHE CLEARING: Clear all cached data on fresh login to ensure user sees latest content
+          // This prevents stale data from guest browsing or previous sessions
+          console.log('[AuthProvider] Fresh login - clearing all caches');
+          
+          // Clear React Query cache (in-memory data cache)
+          queryClientRef.current.clear();
+          
+          // Refresh Next.js Router Cache (server component cache)
+          // This ensures any server-rendered content is re-fetched
+          routerRef.current.refresh();
         }
         
         // Update state - keep isDataFetchReady false until prefetch completes
@@ -1184,6 +1210,8 @@ export function AuthProvider({ children }) {
         clearPrefetchCache();
         // Clear session cache to ensure fresh check on next login
         clearSessionCache();
+        // Clear React Query cache to prevent data leaks between users
+        queryClientRef.current.clear();
         // Reset loading progress screen state
         resetProgressRef.current();
         // NOTE: isDataFetchReady must be TRUE so child providers can clear their user data
@@ -1288,6 +1316,12 @@ export function AuthProvider({ children }) {
           // Mark as fresh login (inline splash is already showing)
           hasShownSplashRef.current = true;
           isFreshLoginRef.current = true;
+          
+          // CACHE CLEARING: Clear all cached data on fresh login to ensure user sees latest content
+          // This prevents stale data from guest browsing or previous sessions
+          console.log('[AuthProvider] Fresh login via INITIAL_SESSION - clearing all caches');
+          queryClientRef.current.clear();
+          routerRef.current.refresh();
           
           // GA4 tracking: Check if new signup vs returning user
           const userCreatedAt = new Date(session.user.created_at);

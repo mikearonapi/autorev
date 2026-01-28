@@ -128,12 +128,15 @@ async function handleGet(request, { params }) {
     }
 
     // Fetch latest dyno result if vehicle is linked
+    // Use vehicleData.id (the user_vehicles record ID) as the vehicle_id
+    // vehicleData comes directly from the RPC, while post.user_vehicle_id may not be populated
     let latestDynoResult = null;
-    if (post?.user_vehicle_id) {
+    const userVehicleId = vehicleData?.id || post?.user_vehicle_id;
+    if (userVehicleId) {
       const { data: dynoResult } = await supabaseAdmin
         .from('user_dyno_results')
         .select('whp, wtq, boost_psi, dyno_shop, dyno_date, is_verified')
-        .eq('user_vehicle_id', post.user_vehicle_id)
+        .eq('user_vehicle_id', userVehicleId)
         .order('dyno_date', { ascending: false })
         .limit(1)
         .single();
@@ -216,6 +219,33 @@ async function handleGet(request, { params }) {
         const finalTorque =
           hasUserDynoData && dynoData?.wtq ? dynoData.wtq : stockTorque + torqueGain;
 
+        // Calculate additional performance metrics
+        const stockWeight = carData.curb_weight || 3500;
+        const driverWeight = 180;
+        const totalWeight = stockWeight + driverWeight;
+
+        // Calculate HP gain ratio for derived metrics
+        const hpGainRatio = finalHp / stockHp;
+
+        // 1/4 Mile: Improve based on power increase (cube root relationship)
+        const stockQuarterMile = carData.quarter_mile || null;
+        const upgradedQuarterMile = stockQuarterMile
+          ? stockQuarterMile / Math.pow(hpGainRatio, 0.333)
+          : null;
+
+        // Trap Speed: Improve with cube root of power increase
+        // Base formula: trap = 234 * (hp/weight)^0.333
+        const stockTrapSpeed = stockQuarterMile
+          ? 234 * Math.pow(stockHp / totalWeight, 0.333)
+          : null;
+        const upgradedTrapSpeed = stockTrapSpeed
+          ? stockTrapSpeed * Math.pow(hpGainRatio, 0.333)
+          : null;
+
+        // Power/Weight ratio (hp/ton)
+        const stockPowerToWeight = (stockHp / totalWeight) * 2000;
+        const upgradedPowerToWeight = (finalHp / totalWeight) * 2000;
+
         computedPerformance = {
           stock: {
             hp: stockHp,
@@ -223,6 +253,9 @@ async function handleGet(request, { params }) {
             zeroToSixty: carData.zero_to_sixty,
             braking60To0: carData.braking_60_0,
             lateralG: carData.lateral_g,
+            quarterMile: stockQuarterMile,
+            trapSpeed: stockTrapSpeed,
+            powerToWeight: stockPowerToWeight,
           },
           upgraded: {
             hp: finalHp,
@@ -232,6 +265,9 @@ async function handleGet(request, { params }) {
               : null,
             braking60To0: carData.braking_60_0,
             lateralG: carData.lateral_g,
+            quarterMile: upgradedQuarterMile,
+            trapSpeed: upgradedTrapSpeed,
+            powerToWeight: upgradedPowerToWeight,
           },
           hpGain: hasUserDynoData ? finalHp - stockHp : hpGain,
           torqueGain: hasUserDynoData ? finalTorque - stockTorque : torqueGain,
@@ -250,6 +286,9 @@ async function handleGet(request, { params }) {
                     : 'measured'
                   : 'estimated',
                 zeroToSixty: 'calibrated',
+                quarterMile: 'calibrated',
+                trapSpeed: 'calibrated',
+                powerToWeight: 'calibrated',
                 braking: 'estimated',
                 lateralG: 'estimated',
               }
