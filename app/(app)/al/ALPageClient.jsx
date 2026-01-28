@@ -1413,6 +1413,8 @@ export default function ALPageClient() {
           queryText,
           responseText: message.content?.substring(0, 2000), // Truncate for storage
           toolsUsed: message.toolsUsed || [],
+          carContextSlug: selectedCar?.slug || message.carContextSlug || null,
+          agentType: message.agentType || null,
         }),
       });
     } catch (err) {
@@ -1462,6 +1464,8 @@ export default function ALPageClient() {
           queryText,
           responseText: message?.content?.substring(0, 2000),
           toolsUsed: message?.toolsUsed || [],
+          carContextSlug: selectedCar?.slug || message?.carContextSlug || null,
+          agentType: message?.agentType || null,
         }),
       });
     } catch (err) {
@@ -1530,7 +1534,7 @@ export default function ALPageClient() {
             >
               <LocalIcons.x size={18} />
             </button>
-            <span className={styles.historyTitle}>Chats</span>
+            <span className={styles.historyTitle}>Conversation History</span>
             <button
               className={styles.newChatBtn}
               onClick={() => {
@@ -1791,7 +1795,7 @@ export default function ALPageClient() {
                 }}
               >
                 <LocalIcons.history size={18} />
-                <span>Chats</span>
+                <span>Conversation History</span>
                 <LocalIcons.chevronRight size={16} />
               </button>
 

@@ -360,6 +360,87 @@ Investigate these known issues:
 3. Check if Claude is generating text after receiving tool results
 4. Check streaming flush() logic
 
+### 8.3 Parts Not Saving to Database (INVESTIGATED 2026-01-28)
+
+**Symptoms:** AL researches parts via "AL's Top Picks" button, returns great Top 5 list, but parts don't appear in `al_part_recommendations` table.
+
+**Root Cause Found:** The AI was NOT generating the `<parts_to_save>` JSON block at the end of its response.
+
+**Evidence:**
+
+- Conversation ID: `5725cd33-dcbd-45d4-89f0-b1d762554d7c` (Track Coilovers for Mustang SVT Cobra)
+- Full Top 5 response existed in `al_messages` with product names, prices, URLs
+- BUT response had NO `<parts_to_save>` block
+- `extractAndSavePartsFromResponse()` looks for: `/<parts_to_save>\s*([\s\S]*?)\s*<\/parts_to_save>/i`
+- Without this block, nothing gets extracted or saved
+
+**Why It Happened:**
+
+1. System prompt (`partsResearchPrompt.js`) has `<parts_to_save>` instructions
+2. BUT user-generated prompts from "AL's Top Picks" had very detailed formatting instructions
+3. AI followed user prompt formatting closely and ignored/forgot system prompt persistence instructions
+
+**Fix Applied (2026-01-28):**
+
+- Added explicit `<parts_to_save>` instructions to user-generated prompts in:
+  - `components/ALQuickActionsPopup.jsx` (lines 271-288)
+  - `components/tuning-shop/PartsSelector.jsx` (lines 484-502)
+
+**Files Changed:**
+
+```
+components/ALQuickActionsPopup.jsx - generatePartsPageActions() prompt
+components/tuning-shop/PartsSelector.jsx - handleSeeOptions() prompt
+```
+
+**Verification:**
+
+- Run "AL's Top Picks" for any upgrade
+- Check that response includes `<parts_to_save>` block at end
+- Verify parts appear in `al_part_recommendations` table with correct `car_id` and `upgrade_key`
+
+### 8.4 Car Name Missing Brand (FIXED 2026-01-28)
+
+**Context:** Database `cars.name` field was updated to remove brand prefix (e.g., "Ford Mustang SVT Cobra" → "Mustang SVT Cobra") to avoid duplication like "Ford Ford Mustang".
+
+**Impact on Parts Research:**
+
+- `carName` passed to prompts was just model name (e.g., "Mustang SVT Cobra")
+- `carSlug` still has brand (e.g., "ford-mustang-svt-cobra-sn95")
+- Prompts were unclear about the make/brand
+
+**Fix Applied (2026-01-28):**
+
+- Updated components to accept `carBrand` prop
+- Construct `fullCarName` by combining `brand + " " + name` when brand is available
+- Example: `carName="Mustang SVT Cobra"` + `carBrand="Ford"` → `fullCarName="Ford Mustang SVT Cobra"`
+
+**Files Changed:**
+
+```
+components/ALQuickActionsPopup.jsx
+  - generatePartsPageActions() now accepts options.carBrand
+  - Constructs fullCarName for all prompts
+
+components/tuning-shop/PartsSelector.jsx
+  - Added carBrand prop
+  - Constructs fullCarName for prompts and chat context
+
+components/tuning-shop/ALRecommendationsButton.jsx
+  - Added carBrand prop
+  - Constructs fullCarName for prompts and chat context
+  - Passes carBrand to generatePartsPageActions()
+
+app/(app)/garage/my-parts/page.jsx
+  - Passes carBrand={selectedCar.brand} to PartsSelector and ALRecommendationsButton
+```
+
+**Result:**
+
+- Prompts now say "Find me the best X for my **Ford Mustang SVT Cobra**"
+- AI has clear context about the make/model
+- Parts research is more accurate
+
 ---
 
 ## Part 9: Output Checklist

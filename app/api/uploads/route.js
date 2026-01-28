@@ -33,10 +33,11 @@ import {
 import { compressFile, isCompressible } from '@/lib/tinify';
 
 // File size limits
-// NOTE: Vercel serverless has 4.5MB body limit, so this route can't handle large files
-// Use client upload flow for files > 4MB (see /api/uploads/client-token)
-const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB advertised (but 4.5MB effective)
-const MAX_VIDEO_SIZE = 500 * 1024 * 1024; // 500MB (requires client upload)
+// NOTE: Vercel serverless has 4.5MB body limit, so files must be resized on client
+// before reaching this endpoint. Client resizes to ~1.5MB target.
+// This 4MB limit is a safety check - properly resized files will be under this.
+const MAX_IMAGE_SIZE = 4 * 1024 * 1024; // 4MB server limit (client resizes before upload)
+const MAX_VIDEO_SIZE = 500 * 1024 * 1024; // 500MB (requires client upload via /api/uploads/client-token)
 
 // Allowed file types
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -108,12 +109,12 @@ async function handlePost(request) {
   const maxSize = mediaType === 'video' ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE;
 
   if (file.size > maxSize) {
-    return NextResponse.json(
-      {
-        error: `File too large. Maximum size: ${maxSize / 1024 / 1024}MB for ${mediaType}s`,
-      },
-      { status: 400 }
-    );
+    // This shouldn't happen if client compression is working correctly
+    const isImage = mediaType === 'image';
+    const errorMsg = isImage
+      ? 'Image too large after compression. Please try a smaller image or refresh and try again.'
+      : `File too large. Maximum size: ${maxSize / 1024 / 1024}MB for ${mediaType}s`;
+    return NextResponse.json({ error: errorMsg }, { status: 400 });
   }
 
   // Generate unique filename

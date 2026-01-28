@@ -1,0 +1,334 @@
+/**
+ * Sortable Photo Gallery Styles
+ * 
+ * Styles for the drag-and-drop photo reordering component.
+ * Premium GRAVL-style design matching the rest of the garage.
+ */
+
+.gallery {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.hint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.8125rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.hint svg {
+  color: var(--brand-teal);
+  opacity: 0.8;
+}
+
+/* Photo Grid - 2 columns on mobile, 3+ on larger screens */
+.photoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 480px) {
+  .photoGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .photoGrid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+}
+
+/* Individual Photo Item */
+.photoItem {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 12px;
+  overflow: hidden;
+  background: linear-gradient(135deg, rgba(30, 40, 55, 0.8) 0%, rgba(20, 30, 45, 0.8) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.08);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.photoItem:hover {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Hero item highlight - uses TEAL for selection state */
+.heroItem {
+  border: 2.5px solid var(--brand-teal) !important;
+  box-shadow:
+    0 0 0 3px rgba(var(--brand-teal-rgb), 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+/* Drag Handle */
+.dragHandle {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: grab;
+  touch-action: none;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dragHandle:hover {
+  background: rgba(0, 0, 0, 0.85);
+  color: var(--brand-lime);
+  border-color: rgba(var(--brand-lime-rgb), 0.3);
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+  color: var(--brand-lime);
+  transform: scale(1.05);
+}
+
+/* Photo Content */
+.photoContent {
+  position: absolute;
+  inset: 0;
+}
+
+/* Video styles */
+.videoItem {
+  /* Video items styling */
+}
+
+.videoThumbnail {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(30, 30, 30, 1), rgba(20, 20, 20, 1));
+}
+
+.videoPlaceholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.playOverlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(var(--brand-error-rgb), 0.9);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  transition:
+    transform 0.2s,
+    background 0.2s;
+}
+
+.photoItem:hover .playOverlay {
+  transform: translate(-50%, -50%) scale(1.1);
+  background: var(--brand-error);
+}
+
+.duration {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  padding: 3px 8px;
+  background: rgba(0, 0, 0, 0.85);
+  color: var(--brand-text-primary);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  border-radius: 4px;
+}
+
+/* Hero Badge */
+.heroBadge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 5;
+  padding: 4px 8px;
+  background: linear-gradient(135deg, var(--brand-teal), #0d9668);
+  color: var(--brand-bg-primary);
+  font-size: 0.625rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  border-radius: 5px;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  box-shadow: 0 2px 8px rgba(var(--brand-teal-rgb), 0.4);
+}
+
+/* Position Badge - Shows current order */
+.positionBadge {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  z-index: 5;
+  width: 22px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.75);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.6875rem;
+  font-weight: 700;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+/* Action Buttons Container */
+.actions {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  z-index: 10;
+  display: flex;
+  gap: 6px;
+}
+
+/* Set Hero Button */
+.setHeroBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Expanded touch target (44px) */
+.setHeroBtn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+}
+
+.setHeroBtn:hover {
+  background: linear-gradient(135deg, var(--brand-teal), #0d9668);
+  color: var(--brand-bg-primary);
+  border-color: var(--brand-teal);
+  transform: scale(1.05);
+}
+
+/* Delete Button */
+.deleteBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Expanded touch target (44px) */
+.deleteBtn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+}
+
+.deleteBtn:hover {
+  background: rgba(var(--brand-error-rgb), 0.95);
+  color: white;
+  border-color: var(--brand-error);
+  transform: scale(1.05);
+}
+
+/* Drag Overlay - the floating copy while dragging */
+.photoItemOverlay {
+  background: var(--card-surface-elevated, rgba(30, 40, 50, 0.98));
+  border: 2px solid var(--brand-lime) !important;
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.5),
+    0 0 0 2px rgba(var(--brand-lime-rgb), 0.3);
+  transform: scale(1.05) rotate(2deg);
+  cursor: grabbing;
+}
+
+.photoItemOverlay .dragHandle {
+  color: var(--brand-lime);
+  background: rgba(var(--brand-lime-rgb), 0.2);
+  border-color: var(--brand-lime);
+}
+
+/* Mobile: Always show action buttons */
+@media (max-width: 768px) {
+  .actions {
+    opacity: 1;
+  }
+
+  .setHeroBtn,
+  .deleteBtn {
+    width: 36px;
+    height: 36px;
+  }
+}
+
+/* Desktop: Show actions on hover */
+@media (min-width: 769px) {
+  .actions {
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .photoItem:hover .actions {
+    opacity: 1;
+  }
+}

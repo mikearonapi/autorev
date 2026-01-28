@@ -20,12 +20,14 @@ import { upload } from '@vercel/blob/client';
 import styles from './ImageUploader.module.css';
 
 // File size limits
-const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB for images
+// Accept large files - we'll resize them on client before upload
+const MAX_IMAGE_SIZE = 25 * 1024 * 1024; // 25MB for images (resized on client)
 const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB for videos
 // Images larger than this will be resized on client before upload
-const CLIENT_RESIZE_THRESHOLD = 3 * 1024 * 1024; // 3MB
-// Target size after resize (allows room for server compression)
-const TARGET_RESIZE_SIZE = 2 * 1024 * 1024; // 2MB
+// Vercel serverless has 4.5MB body limit, so we must resize anything larger
+const CLIENT_RESIZE_THRESHOLD = 2 * 1024 * 1024; // 2MB - resize anything larger
+// Target size after resize (must stay under 4.5MB Vercel limit)
+const TARGET_RESIZE_SIZE = 1.5 * 1024 * 1024; // 1.5MB target after resize
 
 // Allowed file types
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -85,8 +87,8 @@ async function resizeImageIfNeeded(file) {
     img.onload = () => {
       URL.revokeObjectURL(img.src);
 
-      // Calculate new dimensions (max 2048px on longest side)
-      const MAX_DIMENSION = 2048;
+      // Calculate new dimensions (max 1920px on longest side for HD quality)
+      const MAX_DIMENSION = 1920;
       let { width, height } = img;
 
       if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
@@ -108,8 +110,9 @@ async function resizeImageIfNeeded(file) {
 
       // Determine output type and quality
       const outputType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
-      // Start with high quality, reduce if still too large
-      let quality = 0.85;
+      // Start with high quality (0.92 is nearly imperceptible from original)
+      // Only reduce quality as last resort for very complex images
+      let quality = 0.92;
 
       const tryCompress = () => {
         canvas.toBlob(
@@ -119,9 +122,10 @@ async function resizeImageIfNeeded(file) {
               return;
             }
 
-            // If still too large and quality can be reduced, try again
-            if (blob.size > TARGET_RESIZE_SIZE && quality > 0.5) {
-              quality -= 0.1;
+            // If still too large, reduce quality incrementally
+            // Stop at 0.70 - below this quality loss becomes noticeable
+            if (blob.size > TARGET_RESIZE_SIZE && quality > 0.7) {
+              quality -= 0.05; // Smaller steps to preserve quality
               tryCompress();
               return;
             }
@@ -208,7 +212,10 @@ export default function ImageUploader({
 
     if (file.size > maxSize) {
       const sizeMB = maxSize / 1024 / 1024;
-      return `File too large. Maximum size: ${sizeMB}MB for ${isVideo ? 'videos' : 'images'}`;
+      if (isVideo) {
+        return `Video too large. Maximum size: ${sizeMB}MB`;
+      }
+      return `Image too large (${(file.size / 1024 / 1024).toFixed(1)}MB). Maximum: ${sizeMB}MB. Try a smaller image.`;
     }
     return null;
   };

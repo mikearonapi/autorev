@@ -2,10 +2,10 @@
 
 /**
  * AL Feedback Buttons Component
- * 
+ *
  * Provides thumbs up/down feedback buttons for AL responses.
  * Handles feedback submission and shows confirmation.
- * 
+ *
  * Usage:
  *   <ALFeedbackButtons
  *     messageId="uuid"
@@ -21,14 +21,14 @@ import styles from './ALFeedbackButtons.module.css';
 
 // SVG Icons as inline components for consistency
 const ThumbsUpIcon = ({ filled }) => (
-  <svg 
-    width="16" 
-    height="16" 
-    viewBox="0 0 24 24" 
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
     fill={filled ? 'currentColor' : 'none'}
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
     strokeLinejoin="round"
   >
     <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
@@ -36,14 +36,14 @@ const ThumbsUpIcon = ({ filled }) => (
 );
 
 const ThumbsDownIcon = ({ filled }) => (
-  <svg 
-    width="16" 
-    height="16" 
-    viewBox="0 0 24 24" 
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
     fill={filled ? 'currentColor' : 'none'}
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
     strokeLinejoin="round"
   >
     <path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3zm7-13h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17" />
@@ -51,14 +51,14 @@ const ThumbsDownIcon = ({ filled }) => (
 );
 
 const CheckIcon = () => (
-  <svg 
-    width="14" 
-    height="14" 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
+  <svg
+    width="14"
+    height="14"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
     strokeWidth="2.5"
-    strokeLinecap="round" 
+    strokeLinecap="round"
     strokeLinejoin="round"
   >
     <polyline points="20 6 9 17 4 12" />
@@ -87,6 +87,8 @@ export default function ALFeedbackButtons({
   queryText = null,
   responseText = null,
   toolsUsed = [],
+  carContextSlug = null,
+  agentType = null,
   promptVersionId = null,
   onFeedbackSubmit = null,
   compact = false,
@@ -98,65 +100,87 @@ export default function ALFeedbackButtons({
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
-  const submitFeedback = useCallback(async (feedbackType, feedbackCategory = null) => {
-    if (!messageId || isSubmitting) return;
-    
-    setIsSubmitting(true);
-    
-    try {
-      const response = await fetch('/api/al/feedback', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          messageId,
-          conversationId,
-          feedbackType,
-          feedbackCategory,
-          queryText,
-          responseText,
-          toolsUsed,
-          promptVersionId,
-        }),
-      });
+  const submitFeedback = useCallback(
+    async (feedbackType, feedbackCategory = null) => {
+      if (!messageId || isSubmitting) return;
 
-      const data = await response.json();
-      
-      if (data.success) {
-        setFeedback(feedbackType);
-        setCategory(feedbackCategory);
-        setSubmitted(true);
-        setShowCategoryPicker(false);
-        
-        if (onFeedbackSubmit) {
-          onFeedbackSubmit({ feedbackType, feedbackCategory });
+      setIsSubmitting(true);
+
+      try {
+        const response = await fetch('/api/al/feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            messageId,
+            conversationId,
+            feedbackType,
+            feedbackCategory,
+            queryText,
+            responseText,
+            toolsUsed,
+            carContextSlug,
+            agentType,
+            promptVersionId,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          setFeedback(feedbackType);
+          setCategory(feedbackCategory);
+          setSubmitted(true);
+          setShowCategoryPicker(false);
+
+          if (onFeedbackSubmit) {
+            onFeedbackSubmit({ feedbackType, feedbackCategory });
+          }
+        } else {
+          console.error('Feedback submission failed:', data.error);
         }
-      } else {
-        console.error('Feedback submission failed:', data.error);
+      } catch (err) {
+        console.error('Feedback submission error:', err);
+      } finally {
+        setIsSubmitting(false);
       }
-    } catch (err) {
-      console.error('Feedback submission error:', err);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [messageId, conversationId, queryText, responseText, toolsUsed, promptVersionId, isSubmitting, onFeedbackSubmit]);
+    },
+    [
+      messageId,
+      conversationId,
+      queryText,
+      responseText,
+      toolsUsed,
+      carContextSlug,
+      agentType,
+      promptVersionId,
+      isSubmitting,
+      onFeedbackSubmit,
+    ]
+  );
 
-  const handleThumbClick = useCallback((type) => {
-    if (submitted) return;
-    
-    if (showCategories && !compact) {
-      // Show category picker
-      setFeedback(type);
-      setShowCategoryPicker(true);
-    } else {
-      // Submit immediately
-      submitFeedback(type);
-    }
-  }, [submitted, showCategories, compact, submitFeedback]);
+  const handleThumbClick = useCallback(
+    (type) => {
+      if (submitted) return;
 
-  const handleCategorySelect = useCallback((categoryValue) => {
-    setCategory(categoryValue);
-    submitFeedback(feedback, categoryValue);
-  }, [feedback, submitFeedback]);
+      if (showCategories && !compact) {
+        // Show category picker
+        setFeedback(type);
+        setShowCategoryPicker(true);
+      } else {
+        // Submit immediately
+        submitFeedback(type);
+      }
+    },
+    [submitted, showCategories, compact, submitFeedback]
+  );
+
+  const handleCategorySelect = useCallback(
+    (categoryValue) => {
+      setCategory(categoryValue);
+      submitFeedback(feedback, categoryValue);
+    },
+    [feedback, submitFeedback]
+  );
 
   const handleSkipCategory = useCallback(() => {
     submitFeedback(feedback, null);
@@ -177,14 +201,14 @@ export default function ALFeedbackButtons({
   // Category picker state
   if (showCategoryPicker && feedback) {
     const categories = FEEDBACK_CATEGORIES[feedback] || [];
-    
+
     return (
       <div className={`${styles.container} ${styles.categoryPicker}`}>
         <span className={styles.categoryPrompt}>
           {feedback === 'thumbs_up' ? 'What did you like?' : 'What went wrong?'}
         </span>
         <div className={styles.categoryOptions}>
-          {categories.map(cat => (
+          {categories.map((cat) => (
             <button
               key={cat.value}
               className={styles.categoryButton}

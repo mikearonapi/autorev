@@ -1,6 +1,6 @@
 /**
  * Garage Components - Premium GRAVL-inspired Design
- * 
+ *
  * Export all garage-related components for easy importing.
  */
 
@@ -27,7 +27,7 @@ export { default as MyGarageSubNav } from './MyGarageSubNav';
 export { default as GarageVehicleSelector } from './GarageVehicleSelector';
 
 // Vehicle info bar (below navigation, at top of content)
-export { 
+export {
   default as VehicleInfoBar,
   UpgradeCountStat,
   HpGainStat,
@@ -39,3 +39,6 @@ export { default as ObjectiveBanner } from './ObjectiveBanner';
 
 // Build guidance card with conditional trust signals
 export { default as BuildGuidanceCard } from './BuildGuidanceCard';
+
+// Sortable photo gallery for drag-and-drop reordering
+export { default as SortablePhotoGallery } from './SortablePhotoGallery';

@@ -2,7 +2,7 @@
 
 /**
  * My Parts Page - Vehicle-Specific Parts Shopping List
- * 
+ *
  * Shows the parts shopping list based on selected upgrades:
  * - List of parts needed for the build
  * - AL recommendations for finding the right parts
@@ -36,14 +36,14 @@ import { getPerformanceProfile } from '@/lib/performanceCalculator';
 
 import styles from './page.module.css';
 
-// Empty State - no vehicle selected  
+// Empty State - no vehicle selected
 function NoVehicleSelectedState() {
   return (
     <EmptyState
       icon={Icons.box}
       title="No Vehicle Selected"
       description="Select a vehicle to see your parts shopping list based on your build configuration."
-      action={{ label: "Go to My Garage", href: "/garage" }}
+      action={{ label: 'Go to My Garage', href: '/garage' }}
       variant="centered"
       size="lg"
     />
@@ -75,44 +75,44 @@ function MyPartsContent() {
   const [selectedCar, setSelectedCar] = useState(null);
   const [currentBuildId, setCurrentBuildId] = useState(null);
   const partsSelectorRef = useRef(null);
-  
+
   // Parts state - for PartsSelector component
   const [selectedParts, setSelectedParts] = useState([]);
-  
+
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const authModal = useAuthModal();
   const { builds, isLoading: buildsLoading, updateBuild } = useSavedBuilds();
   const { vehicles } = useOwnedVehicles();
-  
+
   // Get the vehicle ID for this car to enable garage score updates
-  const vehicleForCar = vehicles?.find(v => v.matchedCarSlug === selectedCar?.slug);
+  const vehicleForCar = vehicles?.find((v) => v.matchedCarSlug === selectedCar?.slug);
   const { recalculateScore } = useGarageScore(vehicleForCar?.id);
-  
+
   // Use cached cars data from React Query hook
   const { data: allCars = [] } = useCarsList();
-  
+
   // Get URL params
   const buildIdParam = searchParams.get('build');
   const carSlugParam = searchParams.get('car');
   const actionParam = searchParams.get('action');
-  
+
   // Fallback: fetch single car in parallel with full list
   // This provides faster data when the full list is slow or unavailable
-  const carFromList = carSlugParam ? allCars.find(c => c.slug === carSlugParam) : null;
+  const carFromList = carSlugParam ? allCars.find((c) => c.slug === carSlugParam) : null;
   const { data: fallbackCar } = useCarBySlug(carSlugParam, {
     enabled: !!carSlugParam && !carFromList && !selectedCar,
   });
-  
+
   // Pre-fetch user's hero image for this car (used by GarageVehicleSelector)
   useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
-  
+
   // Load build or car from URL params (with fallback support)
   useEffect(() => {
     if (allCars.length > 0) {
       if (buildIdParam && !buildsLoading) {
-        const build = builds.find(b => b.id === buildIdParam);
+        const build = builds.find((b) => b.id === buildIdParam);
         if (build) {
-          const car = allCars.find(c => c.slug === build.carSlug);
+          const car = allCars.find((c) => c.slug === build.carSlug);
           if (car) {
             setSelectedCar(car);
             setCurrentBuildId(build.id);
@@ -122,11 +122,11 @@ function MyPartsContent() {
           }
         }
       } else if (carSlugParam) {
-        const car = allCars.find(c => c.slug === carSlugParam);
+        const car = allCars.find((c) => c.slug === carSlugParam);
         if (car) {
           setSelectedCar(car);
           // Find the most recent build for this car
-          const carBuilds = builds.filter(b => b.carSlug === carSlugParam);
+          const carBuilds = builds.filter((b) => b.carSlug === carSlugParam);
           if (carBuilds.length > 0) {
             const latestBuild = carBuilds[carBuilds.length - 1];
             setCurrentBuildId(latestBuild.id);
@@ -139,7 +139,7 @@ function MyPartsContent() {
       // Fallback: use directly fetched car when list is unavailable
       setSelectedCar(fallbackCar);
       // Find builds for this car
-      const carBuilds = builds.filter(b => b.carSlug === carSlugParam);
+      const carBuilds = builds.filter((b) => b.carSlug === carSlugParam);
       if (carBuilds.length > 0) {
         const latestBuild = carBuilds[carBuilds.length - 1];
         setCurrentBuildId(latestBuild.id);
@@ -148,23 +148,23 @@ function MyPartsContent() {
       }
     }
   }, [buildIdParam, carSlugParam, builds, buildsLoading, allCars, fallbackCar]);
-  
+
   // Get current build data
   const currentBuild = useMemo(() => {
     if (!currentBuildId) return null;
-    return builds.find(b => b.id === currentBuildId);
+    return builds.find((b) => b.id === currentBuildId);
   }, [currentBuildId, builds]);
-  
+
   // Get selected upgrades from build
   // IMPORTANT: Normalize to string keys - getPerformanceProfile expects ['intake', 'stage1-tune', ...]
   // The database may store full objects or just keys depending on how the build was saved
   const effectiveModules = useMemo(() => {
     if (!currentBuild?.upgrades) return [];
-    
+
     // Normalize: if upgrades are objects, extract keys; if strings, use directly
-    return currentBuild.upgrades.map(u => typeof u === 'string' ? u : u.key).filter(Boolean);
+    return currentBuild.upgrades.map((u) => (typeof u === 'string' ? u : u.key)).filter(Boolean);
   }, [currentBuild]);
-  
+
   // Calculate performance profile for HP gain display
   const profile = useMemo(() => {
     if (!selectedCar) {
@@ -176,40 +176,43 @@ function MyPartsContent() {
     }
     return getPerformanceProfile(selectedCar, effectiveModules);
   }, [selectedCar, effectiveModules]);
-  
+
   // Calculate total cost
   const totalCost = useMemo(() => {
     if (!selectedCar) return { low: 0, high: 0 };
     return calculateTotalCost(profile.selectedUpgrades, selectedCar);
   }, [profile.selectedUpgrades, selectedCar]);
-  
+
   const hpGain = profile.upgradedMetrics.hp - profile.stockMetrics.hp;
-  
+
   // Handle parts change - save to build with auto-save
-  const handlePartsChange = useCallback(async (newParts) => {
-    setSelectedParts(newParts);
-    
-    // Auto-save to build if we have a build ID
-    if (currentBuildId && updateBuild) {
-      try {
-        await updateBuild(currentBuildId, {
-          selectedParts: newParts,
-        });
-        
-        // Recalculate garage score if parts have brand/model details (parts_specified category)
-        const partsWithDetails = newParts.filter(p => p.brandName || p.partName);
-        if (partsWithDetails.length > 0 && vehicleForCar?.id) {
-          // Non-blocking score recalculation
-          recalculateScore().catch(err => {
-            console.warn('[MyParts] Score recalculation failed:', err);
+  const handlePartsChange = useCallback(
+    async (newParts) => {
+      setSelectedParts(newParts);
+
+      // Auto-save to build if we have a build ID
+      if (currentBuildId && updateBuild) {
+        try {
+          await updateBuild(currentBuildId, {
+            selectedParts: newParts,
           });
+
+          // Recalculate garage score if parts have brand/model details (parts_specified category)
+          const partsWithDetails = newParts.filter((p) => p.brandName || p.partName);
+          if (partsWithDetails.length > 0 && vehicleForCar?.id) {
+            // Non-blocking score recalculation
+            recalculateScore().catch((err) => {
+              console.warn('[MyParts] Score recalculation failed:', err);
+            });
+          }
+        } catch (err) {
+          console.error('[MyParts] Failed to save parts:', err);
         }
-      } catch (err) {
-        console.error('[MyParts] Failed to save parts:', err);
       }
-    }
-  }, [currentBuildId, updateBuild, vehicleForCar?.id, recalculateScore]);
-  
+    },
+    [currentBuildId, updateBuild, vehicleForCar?.id, recalculateScore]
+  );
+
   // Handle action=add to scroll to and highlight parts selector
   useEffect(() => {
     if (actionParam === 'add' && selectedCar && partsSelectorRef.current) {
@@ -228,68 +231,63 @@ function MyPartsContent() {
   const handleBack = () => {
     router.push('/garage');
   };
-  
+
   // Loading state - only block on auth and builds, NOT carsLoading
   // The fallbackCar mechanism ensures we have car data when needed
   const isLoading = authLoading || buildsLoading;
-  
+
   if (isLoading) {
     return (
       <div className={styles.page}>
-        <LoadingSpinner 
-          variant="branded" 
-          text="Loading Parts" 
+        <LoadingSpinner
+          variant="branded"
+          text="Loading Parts"
           subtext="Fetching your parts list..."
-          fullPage 
+          fullPage
         />
       </div>
     );
   }
-  
+
   // No car selected
   if (!selectedCar) {
     return (
       <div className={styles.page}>
-        <MyGarageSubNav 
-          carSlug={carSlugParam}
-          buildId={buildIdParam}
-          onBack={handleBack}
-        />
+        <MyGarageSubNav carSlug={carSlugParam} buildId={buildIdParam} onBack={handleBack} />
         <NoVehicleSelectedState />
         <AuthModal {...authModal.props} />
       </div>
     );
   }
-  
+
   return (
     <div className={styles.page}>
-      <MyGarageSubNav 
+      <MyGarageSubNav
         carSlug={selectedCar.slug}
         buildId={currentBuildId}
         onBack={handleBack}
         rightAction={
-          isAuthenticated && currentBuildId && (
+          isAuthenticated &&
+          currentBuildId && (
             <ShareBuildButton
               build={currentBuild}
-              vehicle={vehicles?.find(v => v.matchedCarSlug === selectedCar?.slug)}
+              vehicle={vehicles?.find((v) => v.matchedCarSlug === selectedCar?.slug)}
               car={selectedCar}
               existingImages={currentBuild?.uploadedImages || []}
             />
           )
         }
       />
-      
-      <GarageVehicleSelector 
-        selectedCarSlug={selectedCar.slug}
-        buildId={currentBuildId}
-      />
-      
+
+      <GarageVehicleSelector selectedCarSlug={selectedCar.slug} buildId={currentBuildId} />
+
       {/* AL Parts Recommendations - shows when there are upgrades */}
       {effectiveModules.length > 0 && (
         <div className={styles.alRecommendationsContainer}>
-          <ALRecommendationsButton 
+          <ALRecommendationsButton
             carName={selectedCar.name}
             carSlug={selectedCar.slug}
+            carBrand={selectedCar.brand}
             upgrades={profile.selectedUpgrades}
             selectedParts={selectedParts}
             totalHpGain={hpGain}
@@ -297,10 +295,9 @@ function MyPartsContent() {
           />
         </div>
       )}
-      
+
       {/* Parts Content */}
       <div className={styles.content} ref={partsSelectorRef}>
-        
         {/* If no upgrades, show prompt to configure build */}
         {effectiveModules.length === 0 ? (
           <NoBuildState carSlug={selectedCar.slug} carName={selectedCar.name} />
@@ -312,6 +309,7 @@ function MyPartsContent() {
             onPartsChange={handlePartsChange}
             carName={selectedCar.name}
             carSlug={selectedCar.slug}
+            carBrand={selectedCar.brand}
             buildId={currentBuildId}
             totalHpGain={hpGain}
             totalCostRange={{ low: totalCost.low, high: totalCost.high }}
@@ -319,12 +317,16 @@ function MyPartsContent() {
           />
         )}
       </div>
-      
+
       {/* Continue to Install CTA - shown when parts are selected */}
       {effectiveModules.length > 0 && (
         <div className={styles.continueCtaContainer}>
-          <Link 
-            href={currentBuildId ? `/garage/my-install?build=${currentBuildId}` : `/garage/my-install?car=${selectedCar.slug}`}
+          <Link
+            href={
+              currentBuildId
+                ? `/garage/my-install?build=${currentBuildId}`
+                : `/garage/my-install?car=${selectedCar.slug}`
+            }
             className={styles.continueCta}
           >
             <div className={styles.ctaContent}>
@@ -337,7 +339,7 @@ function MyPartsContent() {
           </Link>
         </div>
       )}
-      
+
       <AuthModal {...authModal.props} />
     </div>
   );
@@ -351,21 +353,28 @@ function PartsListSkeleton() {
       <div className={styles.alRecommendationsContainer}>
         <Skeleton height={64} width="100%" variant="rounded" />
       </div>
-      
+
       {/* Parts List Skeleton */}
       <div className={styles.content}>
         {/* Header Skeleton with inline cost */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '8px',
+          }}
+        >
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Skeleton height={20} width={20} variant="circular" />
             <Skeleton height={18} width={140} variant="rounded" />
           </div>
           <Skeleton height={16} width={100} variant="rounded" />
         </div>
-        
+
         {/* Status Summary Skeleton */}
         <Skeleton height={36} width={200} variant="rounded" />
-        
+
         {/* List Items Skeleton */}
         <ListSkeleton count={4} hasAvatar={false} />
       </div>

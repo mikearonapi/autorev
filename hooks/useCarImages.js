@@ -1,16 +1,16 @@
 /**
  * useCarImages Hook
- * 
+ *
  * Manages car images that are shared across Garage and Tuning Shop.
  * Images are linked by car_slug so they appear in both features.
- * 
+ *
  * Features:
  * - Fetch all images for a specific car (from both vehicles and builds)
  * - Set/clear hero image (syncs across features)
  * - Optimistic updates for responsive UI
- * 
+ *
  * Updated to use React Query for caching and deduplication.
- * 
+ *
  * @module hooks/useCarImages
  */
 
@@ -48,7 +48,7 @@ async function fetchCarImages(userId, carSlug) {
 
 /**
  * Hook to manage car images shared across Garage and Tuning Shop
- * 
+ *
  * @param {string} carSlug - The car slug to fetch images for
  * @param {Object} options - Options
  * @param {boolean} options.enabled - Whether to fetch images (default: true)
@@ -94,7 +94,7 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
       const previousImages = queryClient.getQueryData(queryKey);
 
       queryClient.setQueryData(queryKey, (old) =>
-        (old || []).map(img => ({
+        (old || []).map((img) => ({
           ...img,
           is_primary: img.id === imageId,
           isPrimary: img.id === imageId,
@@ -133,7 +133,7 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
       const previousImages = queryClient.getQueryData(queryKey);
 
       queryClient.setQueryData(queryKey, (old) =>
-        (old || []).map(img => ({
+        (old || []).map((img) => ({
           ...img,
           is_primary: false,
           isPrimary: false,
@@ -159,10 +159,10 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
 
   // Get the current hero image from API data (is_primary = true, and is an image not a video)
   const heroImageFromApi = useMemo(
-    () => images.find(img => img.is_primary && img.media_type !== 'video') || null,
+    () => images.find((img) => img.is_primary && img.media_type !== 'video') || null,
     [images]
   );
-  
+
   // Use API data when available, otherwise fall back to prefetched
   // This ensures we always have the most up-to-date hero image after API loads
   const heroImage = heroImageFromApi;
@@ -172,18 +172,21 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
    * @param {string} imageId - The ID of the image to set as hero
    * @returns {Promise<boolean>} - Success status
    */
-  const setHeroImage = useCallback(async (imageId) => {
-    if (!isAuthenticated || !user?.id || !carSlug) {
-      return false;
-    }
+  const setHeroImage = useCallback(
+    async (imageId) => {
+      if (!isAuthenticated || !user?.id || !carSlug) {
+        return false;
+      }
 
-    try {
-      await setHeroMutation.mutateAsync(imageId);
-      return true;
-    } catch {
-      return false;
-    }
-  }, [isAuthenticated, user?.id, carSlug, setHeroMutation]);
+      try {
+        await setHeroMutation.mutateAsync(imageId);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [isAuthenticated, user?.id, carSlug, setHeroMutation]
+  );
 
   /**
    * Clear the hero image (revert to stock)
@@ -202,30 +205,101 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
     }
   }, [isAuthenticated, user?.id, carSlug, clearHeroMutation]);
 
+  // Mutation for reordering images
+  const reorderMutation = useMutation({
+    mutationFn: async (newOrder) => {
+      const response = await fetch(`/api/users/${user.id}/car-images/reorder`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ carSlug, imageIds: newOrder }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to reorder images');
+      }
+
+      return response.json();
+    },
+    // Optimistic update
+    onMutate: async (newOrder) => {
+      await queryClient.cancelQueries({ queryKey });
+      const previousImages = queryClient.getQueryData(queryKey);
+
+      // Reorder images locally based on newOrder array
+      queryClient.setQueryData(queryKey, (old) => {
+        if (!old) return old;
+        const imageMap = new Map(old.map((img) => [img.id, img]));
+        return newOrder
+          .map((id, index) => {
+            const img = imageMap.get(id);
+            if (img) {
+              return { ...img, display_order: index + 1 };
+            }
+            return null;
+          })
+          .filter(Boolean);
+      });
+
+      return { previousImages };
+    },
+    onError: (err, newOrder, context) => {
+      console.error('[useCarImages] Reorder error:', err);
+      queryClient.setQueryData(queryKey, context?.previousImages);
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey });
+    },
+  });
+
+  /**
+   * Reorder images by providing new order of image IDs
+   * @param {string[]} newOrder - Array of image IDs in desired order
+   * @returns {Promise<boolean>} - Success status
+   */
+  const reorderImages = useCallback(
+    async (newOrder) => {
+      if (!isAuthenticated || !user?.id || !carSlug) {
+        return false;
+      }
+
+      try {
+        await reorderMutation.mutateAsync(newOrder);
+        return true;
+      } catch {
+        return false;
+      }
+    },
+    [isAuthenticated, user?.id, carSlug, reorderMutation]
+  );
+
   /**
    * Add uploaded images to the local cache
    * Called by ImageUploader after successful upload
-   * 
+   *
    * @param {Array} newImages - Array of newly uploaded images
    */
-  const addImages = useCallback((newImages) => {
-    queryClient.setQueryData(queryKey, (old) => {
-      const existingIds = new Set((old || []).map(img => img.id));
-      const uniqueNew = newImages.filter(img => !existingIds.has(img.id));
-      return [...(old || []), ...uniqueNew];
-    });
-  }, [queryClient, queryKey]);
+  const addImages = useCallback(
+    (newImages) => {
+      queryClient.setQueryData(queryKey, (old) => {
+        const existingIds = new Set((old || []).map((img) => img.id));
+        const uniqueNew = newImages.filter((img) => !existingIds.has(img.id));
+        return [...(old || []), ...uniqueNew];
+      });
+    },
+    [queryClient, queryKey]
+  );
 
   /**
    * Remove an image from local cache
-   * 
+   *
    * @param {string} imageId - The ID of the image to remove
    */
-  const removeImage = useCallback((imageId) => {
-    queryClient.setQueryData(queryKey, (old) =>
-      (old || []).filter(img => img.id !== imageId)
-    );
-  }, [queryClient, queryKey]);
+  const removeImage = useCallback(
+    (imageId) => {
+      queryClient.setQueryData(queryKey, (old) => (old || []).filter((img) => img.id !== imageId));
+    },
+    [queryClient, queryKey]
+  );
 
   // Compute the best available hero image URL
   // Priority: API data > prefetched data
@@ -252,6 +326,7 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
     error: queryError?.message || null,
     setHeroImage,
     clearHeroImage,
+    reorderImages,
     refreshImages,
     addImages,
     removeImage,

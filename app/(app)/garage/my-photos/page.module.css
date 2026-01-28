@@ -9,9 +9,11 @@
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
+
   /* Transparent to show body gradient */
   background: transparent;
   color: var(--color-white);
+
   /* Bottom padding for tab bar - uses standardized token */
   padding-bottom: var(--page-bottom-padding);
   display: flex;
@@ -124,16 +126,22 @@
 
 /* Highlight animation when navigated to via action=upload */
 .uploadSection.highlight {
-  box-shadow: 0 0 0 2px var(--brand-lime, #d4ff00), 0 0 20px rgba(212, 255, 0, 0.3);
+  box-shadow:
+    0 0 0 2px var(--brand-lime, #d4ff00),
+    0 0 20px rgba(212, 255, 0, 0.3);
   animation: uploadHighlight 2s ease-out;
 }
 
 @keyframes uploadHighlight {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: none;
   }
+
   50% {
-    box-shadow: 0 0 0 2px var(--brand-lime, #d4ff00), 0 0 30px rgba(212, 255, 0, 0.4);
+    box-shadow:
+      0 0 0 2px var(--brand-lime, #d4ff00),
+      0 0 30px rgba(212, 255, 0, 0.4);
   }
 }
 
@@ -199,6 +207,58 @@
   padding: 12px;
 }
 
+/* Gallery Header with Slideshow Button */
+.galleryHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.galleryHeader .sectionTitle {
+  margin: 0;
+}
+
+.slideshowBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  color: var(--brand-teal);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slideshowBtn:hover {
+  background: rgba(var(--brand-teal-rgb), 0.15);
+  border-color: var(--brand-teal);
+  transform: translateY(-1px);
+}
+
+.slideshowBtn:active {
+  transform: translateY(0);
+}
+
+.slideshowBtn svg {
+  flex-shrink: 0;
+}
+
+/* Loading gallery placeholder */
+.loadingGallery {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 16px;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.875rem;
+}
+
 /* No Photos */
 .noPhotos {
   display: flex;
@@ -226,16 +286,16 @@
   .emptyTitle {
     font-size: 1.25rem;
   }
-  
+
   .emptyText {
     font-size: 0.875rem;
   }
-  
+
   .emptyAction {
     padding: 12px 20px;
     font-size: 0.875rem;
   }
-  
+
   .uploadSection,
   .gallerySection {
     padding: 14px;

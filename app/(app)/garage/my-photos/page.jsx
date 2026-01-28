@@ -11,20 +11,26 @@
  * - Parts: Research and buy parts
  * - Photos: Manage vehicle photos (this page)
  *
+ * Features:
+ * - Drag-and-drop photo reordering (controls display on community build page)
+ * - Fullscreen slideshow with auto-advance
+ * - Hero image selection
+ *
  * URL: /garage/my-photos?car=<carSlug> or ?build=<buildId>
  */
 
 import React, { useState, useEffect, Suspense, useRef } from 'react';
 
+import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
-import BuildMediaGallery from '@/components/BuildMediaGallery';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { MyGarageSubNav, GarageVehicleSelector } from '@/components/garage';
 import ImageUploader from '@/components/ImageUploader';
 import LoadingSpinner from '@/components/LoadingSpinner';
+import PhotoSlideshow from '@/components/PhotoSlideshow';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
@@ -37,18 +43,25 @@ import { useGarageScore } from '@/hooks/useGarageScore';
 
 import styles from './page.module.css';
 
+// Dynamically import SortablePhotoGallery to avoid loading @dnd-kit on initial render
+const SortablePhotoGallery = dynamic(() => import('@/components/garage/SortablePhotoGallery'), {
+  loading: () => <div className={styles.loadingGallery}>Loading gallery...</div>,
+  ssr: false,
+});
+
 function MyPhotosContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [selectedCar, setSelectedCar] = useState(null);
   const [currentBuildId, setCurrentBuildId] = useState(null);
   const [vehicleId, setVehicleId] = useState(null);
+  const [slideshowOpen, setSlideshowOpen] = useState(false);
   const uploadSectionRef = useRef(null);
 
-  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const authModal = useAuthModal();
   const { builds, isLoading: buildsLoading } = useSavedBuilds();
-  const { vehicles, updateVehicle } = useOwnedVehicles();
+  const { vehicles } = useOwnedVehicles();
 
   // Garage score recalculation hook (uses vehicleId state set in useEffect below)
   const { recalculateScore } = useGarageScore(vehicleId);
@@ -75,8 +88,18 @@ function MyPhotosContent() {
     images: carImages,
     refreshImages: refreshCarImages,
     setHeroImage: setCarHeroImage,
-    clearHeroImage: clearCarHeroImage,
+    reorderImages: reorderCarImages,
   } = useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
+
+  // Sort images by display_order for consistent display
+  const sortedImages = React.useMemo(() => {
+    if (!carImages || carImages.length === 0) return [];
+    return [...carImages].sort((a, b) => {
+      const orderA = a.display_order || a.displayOrder || 999;
+      const orderB = b.display_order || b.displayOrder || 999;
+      return orderA - orderB;
+    });
+  }, [carImages]);
 
   // Handle URL params - load build or car (with fallback support)
   useEffect(() => {
@@ -247,46 +270,36 @@ function MyPhotosContent() {
 
         {/* Gallery Section */}
         <div className={styles.gallerySection}>
-          <h3 className={styles.sectionTitle}>Your Photos</h3>
-          {carImages?.length > 0 || selectedCar ? (
-            <BuildMediaGallery
-              car={selectedCar}
-              media={carImages || []}
-              hideStockImage={currentVehicle?.hideStockImage}
+          <div className={styles.galleryHeader}>
+            <h3 className={styles.sectionTitle}>Your Photos</h3>
+            {sortedImages.length > 0 && (
+              <button
+                type="button"
+                className={styles.slideshowBtn}
+                onClick={() => setSlideshowOpen(true)}
+                aria-label="Start slideshow"
+              >
+                <Icons.slideshow size={18} />
+                <span>Slideshow</span>
+              </button>
+            )}
+          </div>
+
+          {sortedImages.length > 0 ? (
+            <SortablePhotoGallery
+              images={sortedImages}
+              onReorder={async (newOrder) => {
+                await reorderCarImages(newOrder);
+              }}
               onSetPrimary={async (imageId) => {
                 await setCarHeroImage(imageId);
               }}
-              onSetStockHero={async () => {
-                await clearCarHeroImage();
-              }}
-              onHideStockImage={
-                canUpload && vehicleId
-                  ? async () => {
-                      try {
-                        const response = await fetch(
-                          `/api/users/${user?.id}/vehicles/${vehicleId}`,
-                          {
-                            method: 'PATCH',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ hide_stock_image: true }),
-                          }
-                        );
-
-                        if (!response.ok) {
-                          throw new Error('Failed to hide stock image');
-                        }
-
-                        // Update local state via provider
-                        await updateVehicle(vehicleId, { hideStockImage: true });
-                      } catch (err) {
-                        console.error('[MyPhotos] Hide stock image error:', err);
-                      }
-                    }
-                  : undefined
-              }
               onDelete={
                 canUpload
                   ? async (imageId) => {
+                      const confirmed = window.confirm('Delete this photo? This cannot be undone.');
+                      if (!confirmed) return;
+
                       try {
                         const response = await fetch(`/api/uploads?id=${imageId}`, {
                           method: 'DELETE',
@@ -307,7 +320,6 @@ function MyPhotosContent() {
                         }
                       } catch (err) {
                         console.error('[MyPhotos] Delete error:', err);
-                        // Could add toast notification here
                       }
                     }
                   : undefined
@@ -323,6 +335,14 @@ function MyPhotosContent() {
           )}
         </div>
       </div>
+
+      {/* Fullscreen Slideshow */}
+      <PhotoSlideshow
+        images={sortedImages.filter((img) => img.media_type !== 'video')}
+        isOpen={slideshowOpen}
+        onClose={() => setSlideshowOpen(false)}
+        interval={5000}
+      />
 
       <AuthModal {...authModal.props} />
     </div>

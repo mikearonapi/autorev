@@ -20,7 +20,10 @@ import Image from 'next/image';
 
 import { useAIChat } from '@/components/AIChatContext';
 import { Icons } from '@/components/ui/Icons';
-import { usePartRecommendations, getRecommendationsForUpgrade } from '@/hooks/usePartRecommendations';
+import {
+  usePartRecommendations,
+  getRecommendationsForUpgrade,
+} from '@/hooks/usePartRecommendations';
 import { UI_IMAGES } from '@/lib/images';
 import { getUpgradeByKey } from '@/lib/upgrades';
 
@@ -87,12 +90,14 @@ function ShoppingListItem({
 
   const hasPartDetails = partDetails?.brandName || partDetails?.partName;
   // Show all recommendations, use manufacturerUrl as fallback if no productUrl
-  const recommendationsToShow = recommendations.map((rec) => ({
-    ...rec,
-    // Use productUrl if available, otherwise fall back to manufacturerUrl
-    displayUrl: rec.productUrl || rec.manufacturerUrl,
-    urlType: rec.productUrl ? 'buy' : (rec.manufacturerUrl ? 'manufacturer' : null),
-  })).filter((rec) => rec.displayUrl); // Only show if we have SOME url
+  const recommendationsToShow = recommendations
+    .map((rec) => ({
+      ...rec,
+      // Use productUrl if available, otherwise fall back to manufacturerUrl
+      displayUrl: rec.productUrl || rec.manufacturerUrl,
+      urlType: rec.productUrl ? 'buy' : rec.manufacturerUrl ? 'manufacturer' : null,
+    }))
+    .filter((rec) => rec.displayUrl); // Only show if we have SOME url
   const hasRecommendations = recommendationsToShow.length > 0;
 
   const handleSave = () => {
@@ -123,11 +128,7 @@ function ShoppingListItem({
   };
 
   return (
-    <div
-      className={styles.listItem}
-      role="listitem"
-      aria-label={upgrade.name}
-    >
+    <div className={styles.listItem} role="listitem" aria-label={upgrade.name}>
       <div className={styles.itemHeader}>
         {/* Top row: Name and AL's top picks button */}
         <div className={styles.itemTopRow}>
@@ -152,47 +153,48 @@ function ShoppingListItem({
         {hasRecommendations && !isEditing && (
           <div className={styles.recommendationsList}>
             {recommendationsToShow.slice(0, 5).map((rec) => {
-                // Use manufacturerName if available, fall back to brandName
-                const displayBrand = rec.manufacturerName || rec.brandName;
-                const vendorInfo = rec.vendorName ? `from ${rec.vendorName}` : '';
-                const buttonText = rec.urlType === 'buy' ? 'BUY' : 'VIEW';
-                const buttonTitle = rec.urlType === 'buy' 
-                  ? (vendorInfo || 'Buy from retailer')
+              // Use manufacturerName if available, fall back to brandName
+              const displayBrand = rec.manufacturerName || rec.brandName;
+              const vendorInfo = rec.vendorName ? `from ${rec.vendorName}` : '';
+              const buttonText = rec.urlType === 'buy' ? 'BUY' : 'VIEW';
+              const buttonTitle =
+                rec.urlType === 'buy'
+                  ? vendorInfo || 'Buy from retailer'
                   : 'View on manufacturer site';
-                // Check if this recommendation is currently selected
-                const isSelected = partDetails?.partId === rec.partId;
-                
-                return (
-                  <label
-                    key={rec.partId}
-                    className={`${styles.recommendationItem} ${isSelected ? styles.recommendationItemSelected : ''}`}
+              // Check if this recommendation is currently selected
+              const isSelected = partDetails?.partId === rec.partId;
+
+              return (
+                <label
+                  key={rec.partId}
+                  className={`${styles.recommendationItem} ${isSelected ? styles.recommendationItemSelected : ''}`}
+                >
+                  <input
+                    type="radio"
+                    name={`rec-${upgrade.key}`}
+                    className={styles.recommendationRadio}
+                    checked={isSelected}
+                    onChange={() => onSelectRecommendation?.(rec, upgrade)}
+                    aria-label={`Select ${displayBrand} ${rec.name}`}
+                  />
+                  <span className={styles.recBrand} title={vendorInfo || 'Manufacturer'}>
+                    {displayBrand}
+                  </span>
+                  <span className={styles.recName}>{rec.name}</span>
+                  <a
+                    href={rec.displayUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.recBuyBtn}
+                    onClick={(e) => e.stopPropagation()}
+                    aria-label={`${buttonText} ${displayBrand} ${rec.name}`}
+                    title={buttonTitle}
                   >
-                    <input
-                      type="radio"
-                      name={`rec-${upgrade.key}`}
-                      className={styles.recommendationRadio}
-                      checked={isSelected}
-                      onChange={() => onSelectRecommendation?.(rec, upgrade)}
-                      aria-label={`Select ${displayBrand} ${rec.name}`}
-                    />
-                    <span className={styles.recBrand} title={vendorInfo || 'Manufacturer'}>
-                      {displayBrand}
-                    </span>
-                    <span className={styles.recName}>{rec.name}</span>
-                    <a
-                      href={rec.displayUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className={styles.recBuyBtn}
-                      onClick={(e) => e.stopPropagation()}
-                      aria-label={`${buttonText} ${displayBrand} ${rec.name}`}
-                      title={buttonTitle}
-                    >
-                      {buttonText}
-                    </a>
-                  </label>
-                );
-              })}
+                    {buttonText}
+                  </a>
+                </label>
+              );
+            })}
           </div>
         )}
 
@@ -320,12 +322,20 @@ export default function PartsSelector({
   onPartsChange,
   carName,
   carSlug,
-  buildId = null, // Optional build ID for linking to install page
+  carBrand = null, // Brand name for constructing full display name
+  buildId: _buildId = null, // Optional build ID for linking to install page
   totalHpGain = 0,
   totalCostRange = null, // { low, high }
   hideALRecommendations = false, // Hide AL button when rendered at page level
 }) {
   const { openChatWithPrompt } = useAIChat();
+
+  // Construct full display name with brand if available (e.g., "Ford Mustang SVT Cobra")
+  // This ensures the AI knows the exact make/model for parts research
+  const fullCarName =
+    carBrand && carName && !carName.toLowerCase().startsWith(carBrand.toLowerCase())
+      ? `${carBrand} ${carName}`
+      : carName;
 
   // Fetch AL recommendations for all upgrade types (up to 5 per category)
   const { data: recommendations = {} } = usePartRecommendations(carSlug, {
@@ -406,7 +416,7 @@ export default function PartsSelector({
     (rec, upgrade) => {
       // Use manufacturerName if available (new schema), fall back to brandName (legacy)
       const manufacturerName = rec.manufacturerName || rec.brandName;
-      
+
       const partData = {
         upgradeKey: upgrade.key,
         upgradeName: upgrade.name,
@@ -440,8 +450,8 @@ export default function PartsSelector({
     (upgrade, slug) => {
       // Use upgrade.key for consistent database storage/retrieval
       const upgradeKey = upgrade.key || upgrade.name.toLowerCase().replace(/\s+/g, '-');
-      
-      const prompt = `Find me the best ${upgrade.name.toLowerCase()} options for my ${carName}.
+
+      const prompt = `Find me the best ${upgrade.name.toLowerCase()} options for my ${fullCarName}.
 
 USE THE research_parts_live TOOL with these parameters:
 - car_slug: "${slug}"
@@ -449,7 +459,7 @@ USE THE research_parts_live TOOL with these parameters:
 
 Then format the results as a Top 5 list like this:
 
-## Top 5 ${upgrade.name} Picks for ${carName}
+## Top 5 ${upgrade.name} Picks for ${fullCarName}
 
 For each pick, include:
 
@@ -479,19 +489,39 @@ IMPORTANT:
 2. Use the ACTUAL prices from the search results
 3. Focus on parts from reputable vendors (Summit Racing, manufacturer direct, etc.)
 4. Include a mix of price points if available
-5. Mention if fitment should be verified on the vendor's website`;
+5. Mention if fitment should be verified on the vendor's website
+
+REQUIRED: After your user-facing response, include a <parts_to_save> JSON block at the very end (this gets saved to the database and is stripped before display):
+<parts_to_save>
+{
+  "car_slug": "${slug}",
+  "upgrade_key": "${upgradeKey}",
+  "parts": [
+    {
+      "brand_name": "...",
+      "product_name": "...",
+      "price": 1299,
+      "source_url": "https://...",
+      "rank": 1,
+      "why_recommended": "...",
+      "best_for": "Stage 1-2 builds",
+      "fitment_confidence": "confirmed"
+    }
+  ]
+}
+</parts_to_save>`;
 
       openChatWithPrompt(
         prompt,
         {
-          category: `${upgrade.name} for ${carName}`,
+          category: `${upgrade.name} for ${fullCarName}`,
           carSlug: slug,
         },
-        `Top 5 ${upgrade.name} for ${carName}`,
+        `Top 5 ${upgrade.name} for ${fullCarName}`,
         { autoSend: true }
       );
     },
-    [carName, openChatWithPrompt]
+    [fullCarName, openChatWithPrompt]
   );
 
   // AL Build Review - comprehensive analysis of the entire build
@@ -508,7 +538,7 @@ IMPORTANT:
         ? `Parts cost so far: $${totalCost.toLocaleString()}`
         : '';
 
-    const reviewPrompt = `Please review my ${carName} build and provide expert feedback.
+    const reviewPrompt = `Please review my ${fullCarName} build and provide expert feedback.
 
 ## My Build Configuration:
 ${buildSummary}
@@ -540,20 +570,20 @@ ${specifiedParts ? `## Parts I've Selected:\n${specifiedParts}\n` : ''}
 
 6. **Optimization Suggestions** - Any modifications I should add or swap to get better results?
 
-Be specific to my ${carName} and this exact build configuration.`;
+Be specific to my ${fullCarName} and this exact build configuration.`;
 
     openChatWithPrompt(
       reviewPrompt,
       {
-        category: `Build Review for ${carName}`,
+        category: `Build Review for ${fullCarName}`,
         carSlug,
       },
-      `Review my ${carName} build (${upgrades.length} mods, +${totalHpGain} HP)`
+      `Review my ${fullCarName} build (${upgrades.length} mods, +${totalHpGain} HP)`
     );
   }, [
     upgrades,
     selectedParts,
-    carName,
+    fullCarName,
     carSlug,
     totalHpGain,
     totalCost,

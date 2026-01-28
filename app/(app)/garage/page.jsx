@@ -14,7 +14,6 @@
 
 import React, { useState, useEffect, useRef, Suspense, useCallback, useMemo } from 'react';
 
-
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -1573,6 +1572,26 @@ function HeroVehicleDisplay({
 
   const brand = getBrand();
 
+  // Get model display name (strips brand prefix to avoid "Porsche Porsche Panamera")
+  const getModelDisplayName = () => {
+    // For user-owned vehicles, use their model field
+    const modelSource = item?.vehicle?.model || car?.name || displayName;
+    if (!modelSource) return displayName;
+
+    // Get the brand to strip (from vehicle make, car brand, or derived)
+    const brandToStrip = item?.vehicle?.make || car?.brand || brand;
+    if (!brandToStrip) return modelSource;
+
+    // Strip brand prefix if present (case-insensitive match)
+    const brandLower = brandToStrip.toLowerCase();
+    const modelLower = modelSource.toLowerCase();
+    if (modelLower.startsWith(brandLower + ' ')) {
+      return modelSource.slice(brandToStrip.length + 1);
+    }
+
+    return modelSource;
+  };
+
   // Get sub-info text (year only, category in details)
   // For owned vehicles: prefer VIN-decoded year if available, otherwise use stored year
   const getSubInfo = () => {
@@ -1633,9 +1652,7 @@ function HeroVehicleDisplay({
                 {item?.vehicle?.year || car?.years?.split('-')[0] || car?.year}
               </span>
             </div>
-            <h2 className={styles.heroVehicleName}>
-              {car?.model || item?.vehicle?.model || displayName}
-            </h2>
+            <h2 className={styles.heroVehicleName}>{getModelDisplayName()}</h2>
           </div>
           <div className={styles.vehicleHeaderActions}>
             {/* View Toggle - Gallery/List */}
@@ -1936,9 +1953,7 @@ function HeroVehicleDisplay({
                 <span className={styles.vehicleYear}>{getSubInfo()}</span>
               </div>
               <div className={styles.heroVehicleNameRow}>
-                <h2 className={styles.heroVehicleName}>
-                  {car?.model || item?.vehicle?.model || displayName}
-                </h2>
+                <h2 className={styles.heroVehicleName}>{getModelDisplayName()}</h2>
                 {/* Modified badge for owned vehicles with modifications */}
                 {isOwnedVehicle && item.vehicle?.isModified && (
                   <span className={styles.modifiedBadge}>

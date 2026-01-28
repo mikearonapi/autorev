@@ -202,12 +202,27 @@ export default function ALQuickActionsPopup({
 /**
  * Generate dynamic quick actions based on user's selected upgrades
  * @param {Array} upgrades - Array of upgrade objects with name, key, category
- * @param {string} carName - Name of the car
+ * @param {string} carName - Name of the car (model name without brand)
  * @param {string} carSlug - Car slug for database operations
+ * @param {Object} [options] - Additional options
+ * @param {string} [options.carBrand] - Brand name (e.g., "Ford") to construct full display name
  * @returns {Array} Array of action objects - one for each upgrade plus compatibility check
  */
-export function generatePartsPageActions(upgrades = [], carName = 'my car', carSlug = null) {
+export function generatePartsPageActions(
+  upgrades = [],
+  carName = 'my car',
+  carSlug = null,
+  options = {}
+) {
   const actions = [];
+
+  // Construct full display name with brand if available (e.g., "Ford Mustang SVT Cobra")
+  // This ensures the AI knows the exact make/model for parts research
+  const { carBrand } = options;
+  const fullCarName =
+    carBrand && carName && !carName.toLowerCase().startsWith(carBrand.toLowerCase())
+      ? `${carBrand} ${carName}`
+      : carName;
 
   // Get upgrade names list for prompts
   const upgradeNames = upgrades.map(getUpgradeName).filter((n) => n !== 'Unknown');
@@ -217,7 +232,7 @@ export function generatePartsPageActions(upgrades = [], carName = 'my car', carS
   if (upgrades.length > 0 && upgradeNameList) {
     actions.push({
       label: 'Check my build compatibility',
-      prompt: `Please review my ${carName} build for any compatibility issues. I have selected: ${upgradeNameList}. Are there any conflicts? What supporting mods might I be missing?`,
+      prompt: `Please review my ${fullCarName} build for any compatibility issues. I have selected: ${upgradeNameList}. Are there any conflicts? What supporting mods might I be missing?`,
     });
   }
 
@@ -227,13 +242,14 @@ export function generatePartsPageActions(upgrades = [], carName = 'my car', carS
     .map((upgrade) => {
       const name = getUpgradeName(upgrade);
       // Use the actual upgrade key for consistent database storage/retrieval
-      const upgradeKey = typeof upgrade === 'object' 
-        ? (upgrade.key || name.toLowerCase().replace(/\s+/g, '-')) 
-        : name.toLowerCase().replace(/\s+/g, '-');
+      const upgradeKey =
+        typeof upgrade === 'object'
+          ? upgrade.key || name.toLowerCase().replace(/\s+/g, '-')
+          : name.toLowerCase().replace(/\s+/g, '-');
       if (name === 'Unknown') return null;
       return {
         label: `See ${name} Options`,
-        prompt: `Find me the best ${name.toLowerCase()} options for my ${carName}.
+        prompt: `Find me the best ${name.toLowerCase()} options for my ${fullCarName}.
 
 USE THE research_parts_live TOOL with these parameters:
 - car_slug: "${carSlug || ''}"
@@ -241,7 +257,7 @@ USE THE research_parts_live TOOL with these parameters:
 
 Then format the results as a Top 5 list:
 
-## Top 5 ${name} Picks for ${carName}
+## Top 5 ${name} Picks for ${fullCarName}
 
 For each pick:
 
@@ -266,7 +282,27 @@ For each pick:
 - **Best value:** [Pick name] - [one line why]
 - **Best for performance:** [Pick name] - [one line why]
 
-Use the ACTUAL URLs and prices from research_parts_live results.`,
+Use the ACTUAL URLs and prices from research_parts_live results.
+
+IMPORTANT: After your user-facing response, you MUST include a <parts_to_save> JSON block at the very end (this gets saved to the database and is stripped before display):
+<parts_to_save>
+{
+  "car_slug": "${carSlug || ''}",
+  "upgrade_key": "${upgradeKey}",
+  "parts": [
+    {
+      "brand_name": "...",
+      "product_name": "...",
+      "price": 1299,
+      "source_url": "https://...",
+      "rank": 1,
+      "why_recommended": "...",
+      "best_for": "Stage 1-2 builds",
+      "fitment_confidence": "confirmed"
+    }
+  ]
+}
+</parts_to_save>`,
       };
     })
     .filter(Boolean);
@@ -277,7 +313,7 @@ Use the ACTUAL URLs and prices from research_parts_live results.`,
   if (upgradeNameList) {
     actions.push({
       label: 'What should I upgrade next?',
-      prompt: `Based on my ${carName} with these mods: ${upgradeNameList}, what modification should I do next for the best performance gains? Consider cost-effectiveness and supporting mods.`,
+      prompt: `Based on my ${fullCarName} with these mods: ${upgradeNameList}, what modification should I do next for the best performance gains? Consider cost-effectiveness and supporting mods.`,
     });
   }
 
