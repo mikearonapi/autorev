@@ -73,10 +73,13 @@ describe('TEST 1: Formatter startsWithContent() Pattern Recognition', () => {
     expect(startsWithContent('#### Installation Notes')).toBe(true);
   });
 
-  it('1.2: Recognizes structured response markers', () => {
-    expect(startsWithContent('RESPONSE_TYPE: parts_recommendation')).toBe(true);
-    expect(startsWithContent('ITEM 1:\n- name: APR Intake')).toBe(true);
-    expect(startsWithContent('TITLE: Best Exhausts for BMW M3')).toBe(true);
+  it('1.2: Recognizes structured markers as needing cleanup', () => {
+    // These markers are now STRIPPED, not passed through - so startsWithContent returns false
+    // indicating they need formatting/cleanup
+    expect(startsWithContent('RESPONSE_TYPE: parts_recommendation')).toBe(false);
+    expect(startsWithContent('TITLE: Best Exhausts for BMW M3')).toBe(false);
+    // But the actual content after markers should be recognized
+    expect(startsWithContent('## Best Exhausts for BMW M3')).toBe(true);
   });
 
   it('1.3: Recognizes bold content starts', () => {

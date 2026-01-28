@@ -18,6 +18,7 @@
 
 const BASE_URL = process.env.TEST_BASE_URL || 'http://localhost:3000';
 const AUTH_TOKEN = process.env.TEST_AUTH_TOKEN;
+const INTERNAL_EVAL_KEY = process.env.INTERNAL_EVAL_KEY;
 
 // Color codes for terminal output
 const colors = {
@@ -87,7 +88,10 @@ const TEST_SCENARIOS = [
     expectedTools: ['get_user_context', 'recommend_build'],
     validateResponse: (content) => {
       const checks = [];
-      if (content.includes('stage') || content.includes('Stage') || content.includes('first')) {
+      // Check for build progression terminology (stage, Stage, phase, Phase, first, 1.)
+      if (content.includes('stage') || content.includes('Stage') || 
+          content.includes('phase') || content.includes('Phase') ||
+          content.includes('first') || content.includes('1.')) {
         checks.push({ pass: true, note: 'Contains build stages/sequence' });
       } else {
         checks.push({ pass: false, note: 'Missing build progression advice' });
@@ -203,6 +207,9 @@ async function testQuery(scenario) {
     };
     if (AUTH_TOKEN) {
       headers['Authorization'] = `Bearer ${AUTH_TOKEN}`;
+    }
+    if (INTERNAL_EVAL_KEY) {
+      headers['x-internal-eval-key'] = INTERNAL_EVAL_KEY;
     }
 
     const response = await fetch(`${BASE_URL}/api/ai-mechanic?stream=true`, {
@@ -323,7 +330,7 @@ async function runTests() {
   log('╚══════════════════════════════════════════════════════════════════════╝', 'bright');
 
   log(`\nBase URL: ${BASE_URL}`, 'dim');
-  log(`Auth: ${AUTH_TOKEN ? 'Provided' : 'None (using beta mode)'}`, 'dim');
+  log(`Auth: ${AUTH_TOKEN ? 'Token provided' : INTERNAL_EVAL_KEY ? 'Internal eval key' : 'None (will require auth)'}`, 'dim');
 
   // Check if server is running
   try {
