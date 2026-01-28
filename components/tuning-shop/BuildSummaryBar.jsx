@@ -2,15 +2,15 @@
 
 /**
  * Build Summary Bottom Bar Component
- * 
+ *
  * Sticky bottom bar showing:
  * - HP gain summary
  * - Total cost
  * - Save Build CTA
  * - Expand to see full build summary
- * 
+ *
  * Mobile-first: Fixed at bottom on mobile, inline on desktop.
- * 
+ *
  * @module components/tuning-shop/BuildSummaryBar
  */
 
@@ -19,45 +19,81 @@ import { useState, useCallback, useMemo } from 'react';
 import styles from './BuildSummaryBar.module.css';
 
 const ChevronIcon = ({ direction = 'up' }) => (
-  <svg 
-    width={16} 
-    height={16} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
+  <svg
+    width={16}
+    height={16}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
     strokeLinejoin="round"
     style={{ transform: direction === 'down' ? 'rotate(180deg)' : undefined }}
   >
-    <polyline points="6 9 12 15 18 9"/>
+    <polyline points="6 9 12 15 18 9" />
   </svg>
 );
 
 const SaveIcon = () => (
-  <svg width={16} height={16} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-    <polyline points="17 21 17 13 7 13 7 21"/>
-    <polyline points="7 3 7 8 15 8"/>
+  <svg
+    width={16}
+    height={16}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+    <polyline points="17 21 17 13 7 13 7 21" />
+    <polyline points="7 3 7 8 15 8" />
   </svg>
 );
 
 const BoltIcon = () => (
-  <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+  <svg
+    width={14}
+    height={14}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
   </svg>
 );
 
 const DollarIcon = () => (
-  <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="12" y1="1" x2="12" y2="23"/>
-    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+  <svg
+    width={14}
+    height={14}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <line x1="12" y1="1" x2="12" y2="23" />
+    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
   </svg>
 );
 
 const WrenchIcon = () => (
-  <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+  <svg
+    width={14}
+    height={14}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
   </svg>
 );
 
@@ -105,13 +141,13 @@ export default function BuildSummaryBar({
   const [isExpanded, setIsExpanded] = useState(showExpanded);
 
   const toggleExpanded = useCallback(() => {
-    setIsExpanded(prev => !prev);
+    setIsExpanded((prev) => !prev);
   }, []);
 
   // Group upgrades by category for expanded view
   const groupedUpgrades = useMemo(() => {
     const groups = {};
-    selectedUpgrades.forEach(upgrade => {
+    selectedUpgrades.forEach((upgrade) => {
       const category = upgrade.category || 'other';
       if (!groups[category]) groups[category] = [];
       groups[category].push(upgrade);
@@ -132,21 +168,17 @@ export default function BuildSummaryBar({
           <div className={styles.expandedHeader}>
             <h4 className={styles.expandedTitle}>Build Summary</h4>
             {onClearBuild && (
-              <button 
-                className={styles.clearBtn}
-                onClick={onClearBuild}
-                disabled={disabled}
-              >
+              <button className={styles.clearBtn} onClick={onClearBuild} disabled={disabled}>
                 Clear All
               </button>
             )}
           </div>
-          
+
           <div className={styles.upgradesList}>
             {Object.entries(groupedUpgrades).map(([category, upgrades]) => (
               <div key={category} className={styles.categoryGroup}>
                 <h5 className={styles.categoryName}>{formatCategoryName(category)}</h5>
-                {upgrades.map(upgrade => (
+                {upgrades.map((upgrade) => (
                   <div key={upgrade.key} className={styles.upgradeItem}>
                     <span className={styles.upgradeName}>{upgrade.name}</span>
                     <div className={styles.upgradeStats}>
@@ -186,7 +218,7 @@ export default function BuildSummaryBar({
       {/* Main Bar */}
       <div className={styles.bar}>
         {/* Expand Toggle */}
-        <button 
+        <button
           className={styles.expandBtn}
           onClick={toggleExpanded}
           aria-expanded={isExpanded}
@@ -221,14 +253,8 @@ export default function BuildSummaryBar({
           onClick={onSaveBuild}
           disabled={disabled || !canSave || isSaving}
         >
-          {isSaving ? (
-            <span className={styles.spinner} />
-          ) : (
-            <SaveIcon />
-          )}
-          <span className={styles.saveBtnText}>
-            {isSaving ? 'Saving...' : 'Save Build'}
-          </span>
+          {isSaving ? <span className={styles.spinner} /> : <SaveIcon />}
+          <span className={styles.saveBtnText}>{isSaving ? 'Saving...' : 'Save Build'}</span>
         </button>
       </div>
     </div>
@@ -237,25 +263,33 @@ export default function BuildSummaryBar({
 
 /**
  * Format category key to display name
+ * Aligned with lib/upgradeCategories.js labels
  */
 function formatCategoryName(category) {
   const names = {
-    power: 'Power',
-    turbo: 'Turbo/Supercharger',
-    chassis: 'Chassis',
-    suspension: 'Suspension',
+    // Primary categories (from UPGRADE_CATEGORIES)
+    power: 'Engine & Performance',
+    forcedInduction: 'Forced Induction',
+    exhaust: 'Exhaust',
+    chassis: 'Suspension & Handling',
     brakes: 'Brakes',
+    cooling: 'Cooling',
+    wheels: 'Wheels & Tires',
+    aero: 'Body & Aero',
     drivetrain: 'Drivetrain',
+    safety: 'Safety / Track',
+    other: 'Other',
+    // Legacy aliases
+    turbo: 'Forced Induction',
+    forced_induction: 'Forced Induction',
+    suspension: 'Suspension & Handling',
+    wheels_tires: 'Wheels & Tires',
+    // Sub-categories
+    intake: 'Intake',
+    fuel: 'Fuel System',
+    engine: 'Engine',
     exterior: 'Exterior',
     interior: 'Interior',
-    engine: 'Engine',
-    intake: 'Intake',
-    exhaust: 'Exhaust',
-    cooling: 'Cooling',
-    fuel: 'Fuel System',
-    wheels_tires: 'Wheels & Tires',
-    forced_induction: 'Forced Induction',
-    other: 'Other',
   };
   return names[category] || category;
 }
@@ -263,11 +297,7 @@ function formatCategoryName(category) {
 /**
  * Minimal version for inline use (not sticky)
  */
-export function InlineBuildSummary({
-  totalHpGain = 0,
-  totalCost = 0,
-  upgradeCount = 0,
-}) {
+export function InlineBuildSummary({ totalHpGain = 0, totalCost = 0, upgradeCount = 0 }) {
   if (upgradeCount === 0) return null;
 
   return (
@@ -287,15 +317,3 @@ export function InlineBuildSummary({
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-

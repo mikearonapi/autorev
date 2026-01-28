@@ -4,12 +4,17 @@
  * GET /api/community/leaderboard - Get points leaderboard
  *
  * Returns top users by points earned. Supports both monthly and all-time views.
+ * Uses pre-computed monthly_leaderboard table for fast, accurate results.
  *
  * @route /api/community/leaderboard
  */
 
 // Force dynamic to prevent static prerendering (uses cookies/headers)
 export const dynamic = 'force-dynamic';
+// Disable fetch caching at runtime
+export const fetchCache = 'force-no-store';
+// Revalidate every request
+export const revalidate = 0;
 
 import { NextResponse } from 'next/server';
 
@@ -29,12 +34,13 @@ const supabaseAdmin = createClient(
 );
 
 /**
- * Get the start of the current month in ISO format
+ * Get current year-month string in YYYY-MM format
  */
-function getMonthStart() {
+function getCurrentYearMonth() {
   const now = new Date();
-  const monthStart = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1));
-  return monthStart.toISOString();
+  const year = now.getUTCFullYear();
+  const month = String(now.getUTCMonth() + 1).padStart(2, '0');
+  return `${year}-${month}`;
 }
 
 /**
@@ -43,6 +49,18 @@ function getMonthStart() {
 function getCurrentMonthName() {
   return new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
 }
+
+/**
+ * Standard no-cache headers for all responses
+ */
+const NO_CACHE_HEADERS = {
+  'Cache-Control': 'private, no-store, no-cache, must-revalidate, max-age=0',
+  Pragma: 'no-cache',
+  Expires: '0',
+  'Surrogate-Control': 'no-store',
+  'CDN-Cache-Control': 'no-store',
+  'Vercel-CDN-Cache-Control': 'no-store',
+};
 
 /**
  * GET /api/community/leaderboard
@@ -60,80 +78,82 @@ async function handleGet(request) {
   const period = searchParams.get('period') || 'monthly';
 
   const isAllTime = period === 'all-time';
-  const monthStart = getMonthStart();
 
-  // For all-time, we can use the pre-aggregated total_points from user_profiles
+  // For all-time, use the pre-aggregated total_points from user_profiles
   if (isAllTime) {
     return handleAllTimeLeaderboard(request, limit, offset);
   }
 
-  // Monthly leaderboard - aggregate from history
-  // Step 1: Get all points earned this month
-  const { data: pointsData, error: pointsError } = await supabaseAdmin
-    .from('user_points_history')
-    .select('user_id, points')
-    .gte('created_at', monthStart);
+  // Monthly leaderboard - use pre-computed monthly_leaderboard table
+  const currentYearMonth = getCurrentYearMonth();
 
-  if (pointsError) {
-    console.error('[Leaderboard API] Points query error:', pointsError);
-    return errors.database('Failed to fetch points data');
+  // Get total count first
+  const { count: total, error: countError } = await supabaseAdmin
+    .from('monthly_leaderboard')
+    .select('*', { count: 'exact', head: true })
+    .eq('year_month', currentYearMonth)
+    .gt('total_points', 0);
+
+  if (countError) {
+    console.error('[Leaderboard API] Count query error:', countError);
+    return errors.database('Failed to fetch leaderboard count');
   }
 
-  // Step 2: Aggregate points by user
-  const pointsMap = new Map();
-  for (const row of pointsData || []) {
-    const current = pointsMap.get(row.user_id) || 0;
-    pointsMap.set(row.user_id, current + (row.points || 0));
+  // If no data in monthly_leaderboard, return empty
+  if (!total || total === 0) {
+    return NextResponse.json(
+      {
+        leaderboard: [],
+        period: 'monthly',
+        periodLabel: getCurrentMonthName(),
+        currentUserRank: null,
+        hasMore: false,
+        total: 0,
+      },
+      { headers: NO_CACHE_HEADERS }
+    );
   }
 
-  // If no points this month, return empty leaderboard
-  const userIds = Array.from(pointsMap.keys());
-  if (userIds.length === 0) {
-    return NextResponse.json({
-      leaderboard: [],
-      period: 'monthly',
-      periodLabel: getCurrentMonthName(),
-      currentUserRank: null,
-      hasMore: false,
-      total: 0,
-    });
+  // Get paginated leaderboard with user profiles joined
+  const { data: leaderboardData, error: leaderboardError } = await supabaseAdmin
+    .from('monthly_leaderboard')
+    .select(
+      `
+      user_id,
+      total_points,
+      user_profiles!inner (
+        id,
+        display_name,
+        avatar_url,
+        selected_title,
+        total_points
+      )
+    `
+    )
+    .eq('year_month', currentYearMonth)
+    .gt('total_points', 0)
+    .not('user_profiles.display_name', 'is', null)
+    .order('total_points', { ascending: false })
+    .range(offset, offset + limit - 1);
+
+  if (leaderboardError) {
+    console.error('[Leaderboard API] Leaderboard query error:', leaderboardError);
+    return errors.database('Failed to fetch leaderboard data');
   }
 
-  // Step 3: Get user profiles for users with points
-  const { data: profiles, error: profileError } = await supabaseAdmin
-    .from('user_profiles')
-    .select('id, display_name, avatar_url, selected_title, total_points')
-    .in('id', userIds);
-
-  if (profileError) {
-    console.error('[Leaderboard API] Profile query error:', profileError);
-    return errors.database('Failed to fetch user profiles');
-  }
-
-  // Step 4: Build complete sorted list then paginate
-  const allUsers = (profiles || [])
-    .filter((p) => p.display_name) // Only users with display names
-    .map((profile) => ({
-      userId: profile.id,
-      displayName: profile.display_name,
-      avatarUrl: profile.avatar_url,
-      selectedTitle: profile.selected_title,
-      totalPoints: profile.total_points || 0,
-      points: pointsMap.get(profile.id) || 0,
-    }))
-    .filter((u) => u.points > 0)
-    .sort((a, b) => b.points - a.points);
-
-  const total = allUsers.length;
-
-  // Apply pagination with correct rank numbers
-  const finalLeaderboard = allUsers.slice(offset, offset + limit).map((user, index) => ({
-    ...user,
-    rank: offset + index + 1, // Rank considers offset
+  // Build final leaderboard
+  const finalLeaderboard = (leaderboardData || []).map((entry, index) => ({
+    userId: entry.user_id,
+    displayName: entry.user_profiles.display_name,
+    avatarUrl: entry.user_profiles.avatar_url,
+    selectedTitle: entry.user_profiles.selected_title,
+    totalPoints: entry.user_profiles.total_points || 0,
+    points: entry.total_points,
+    rank: offset + index + 1,
   }));
 
-  // Step 5: Get current user's rank if authenticated
-  const currentUserRank = await getCurrentUserRank(request, pointsMap, 'monthly');
+  // Get current user's rank if authenticated
+  const currentUserRank = await getCurrentUserRankMonthly(request, currentYearMonth);
 
   return NextResponse.json(
     {
@@ -141,19 +161,10 @@ async function handleGet(request) {
       period: 'monthly',
       periodLabel: getCurrentMonthName(),
       currentUserRank,
-      hasMore: offset + limit < total,
-      total,
+      hasMore: offset + limit < (total || 0),
+      total: total || 0,
     },
-    {
-      headers: {
-        'Cache-Control': 'private, no-store, no-cache, must-revalidate, max-age=0',
-        Pragma: 'no-cache',
-        Expires: '0',
-        'Surrogate-Control': 'no-store',
-        'CDN-Cache-Control': 'no-store',
-        'Vercel-CDN-Cache-Control': 'no-store',
-      },
-    }
+    { headers: NO_CACHE_HEADERS }
   );
 }
 
@@ -190,23 +201,11 @@ async function handleAllTimeLeaderboard(request, limit, offset) {
     selectedTitle: profile.selected_title,
     totalPoints: profile.total_points || 0,
     points: profile.total_points || 0,
-    rank: offset + index + 1, // Rank considers offset
+    rank: offset + index + 1,
   }));
 
-  // Build points map for current user rank calculation
-  const pointsMap = new Map();
-
-  // Get all users' total points for accurate ranking
-  const { data: allPoints } = await supabaseAdmin
-    .from('user_profiles')
-    .select('id, total_points')
-    .gt('total_points', 0);
-
-  for (const row of allPoints || []) {
-    pointsMap.set(row.id, row.total_points || 0);
-  }
-
-  const currentUserRank = await getCurrentUserRank(request, pointsMap, 'all-time');
+  // Get current user's rank
+  const currentUserRank = await getCurrentUserRankAllTime(request);
 
   return NextResponse.json(
     {
@@ -217,23 +216,14 @@ async function handleAllTimeLeaderboard(request, limit, offset) {
       hasMore: offset + limit < (total || 0),
       total: total || 0,
     },
-    {
-      headers: {
-        'Cache-Control': 'private, no-store, no-cache, must-revalidate, max-age=0',
-        Pragma: 'no-cache',
-        Expires: '0',
-        'Surrogate-Control': 'no-store',
-        'CDN-Cache-Control': 'no-store',
-        'Vercel-CDN-Cache-Control': 'no-store',
-      },
-    }
+    { headers: NO_CACHE_HEADERS }
   );
 }
 
 /**
- * Get current user's rank from the points map
+ * Get current user's monthly rank from monthly_leaderboard table
  */
-async function getCurrentUserRank(request, pointsMap, _period) {
+async function getCurrentUserRankMonthly(request, yearMonth) {
   try {
     const bearerToken = getBearerToken(request);
     const supabase = bearerToken
@@ -246,21 +236,73 @@ async function getCurrentUserRank(request, pointsMap, _period) {
       } = bearerToken ? await supabase.auth.getUser(bearerToken) : await supabase.auth.getUser();
 
       if (user) {
-        const userPoints = pointsMap.get(user.id) || 0;
-        if (userPoints > 0) {
-          // Count how many users have more points
-          const usersAbove = Array.from(pointsMap.entries()).filter(
-            ([_, points]) => points > userPoints
-          ).length;
+        // Get user's points for this month
+        const { data: userEntry } = await supabaseAdmin
+          .from('monthly_leaderboard')
+          .select('total_points')
+          .eq('user_id', user.id)
+          .eq('year_month', yearMonth)
+          .single();
+
+        if (userEntry && userEntry.total_points > 0) {
+          // Count how many users have more points this month
+          const { count: usersAbove } = await supabaseAdmin
+            .from('monthly_leaderboard')
+            .select('*', { count: 'exact', head: true })
+            .eq('year_month', yearMonth)
+            .gt('total_points', userEntry.total_points);
+
           return {
-            rank: usersAbove + 1,
-            points: userPoints,
+            rank: (usersAbove || 0) + 1,
+            points: userEntry.total_points,
           };
         }
       }
     }
   } catch (authError) {
-    // Ignore auth errors - user just won't see their rank
+    console.warn('[Leaderboard API] Auth check failed:', authError.message);
+  }
+  return null;
+}
+
+/**
+ * Get current user's all-time rank from user_profiles
+ */
+async function getCurrentUserRankAllTime(request) {
+  try {
+    const bearerToken = getBearerToken(request);
+    const supabase = bearerToken
+      ? createAuthenticatedClient(bearerToken)
+      : await createServerSupabaseClient();
+
+    if (supabase) {
+      const {
+        data: { user },
+      } = bearerToken ? await supabase.auth.getUser(bearerToken) : await supabase.auth.getUser();
+
+      if (user) {
+        // Get user's total points
+        const { data: profile } = await supabaseAdmin
+          .from('user_profiles')
+          .select('total_points')
+          .eq('id', user.id)
+          .single();
+
+        if (profile && profile.total_points > 0) {
+          // Count how many users have more points
+          const { count: usersAbove } = await supabaseAdmin
+            .from('user_profiles')
+            .select('*', { count: 'exact', head: true })
+            .gt('total_points', profile.total_points);
+
+          return {
+            rank: (usersAbove || 0) + 1,
+            points: profile.total_points,
+          };
+        }
+      }
+    }
+  } catch (authError) {
     console.warn('[Leaderboard API] Auth check failed:', authError.message);
   }
   return null;

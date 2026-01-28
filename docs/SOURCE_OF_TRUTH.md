@@ -23,6 +23,7 @@
 | `dyno`, `torque`, `curve`                                             | [Data Visualization Components](#data-visualization-components)      | `VirtualDynoChart` component                                                                   |
 | `lap time`, `track`, `estimate`                                       | [Data Visualization Components](#data-visualization-components)      | `LapTimeEstimator`, `lapTimeService.js`                                                        |
 | `tire`, `tires`, `wheel`, `compound`, `grip`                          | [Service Files](#service-files)                                      | `lib/tireConfig.js` - unified tire config (SSOT)                                               |
+| `upgrade`, `category`, `safety`, `track`                              | [Service Files](#service-files)                                      | `lib/upgradeCategories.js` - canonical upgrade categories                                      |
 | `score`, `rating`, `tunability`                                       | [Scoring & Weights](#scoring--weights)                               | `lib/scoring.js`, `tunabilityCalculator.js`                                                    |
 | `component`, `jsx`, `ui`                                              | [Components](#components)                                            | Component registry by feature                                                                  |
 | `api`, `route`, `endpoint`                                            | [API Routes](#api-routes)                                            | Route patterns and auth requirements                                                           |
@@ -2016,6 +2017,69 @@ const compound = getTireCompound('max-summer');
 - Use `normalizeTireKey()` when accepting tire input from external sources
 - Use `getTireCompound()` to get full compound data including educational content
 
+##### Upgrade Categories (Single Source of Truth)
+
+**Location**: `lib/upgradeCategories.js`
+
+All upgrade category definitions are centralized for consistency across UI and data:
+
+```javascript
+import {
+  UPGRADE_CATEGORIES, // Array of { key, label, icon, color }
+  normalizeCategory, // Convert any key to canonical category
+  getCategoriesForGoal, // Get recommended categories for build goal
+  GOAL_CATEGORY_MAP, // Build goal → category priorities
+} from '@/lib/upgradeCategories';
+
+// Example: Normalize legacy/alias category key
+const canonical = normalizeCategory('suspension'); // Returns 'chassis'
+```
+
+**Canonical Categories (10 total)**:
+
+| Key               | Label                 | Description                                         |
+| ----------------- | --------------------- | --------------------------------------------------- |
+| `power`           | Engine & Performance  | Engine internals, intake, ECU tuning                |
+| `forcedInduction` | Forced Induction      | Turbos, superchargers, intercoolers                 |
+| `exhaust`         | Exhaust               | Cat-backs, headers, downpipes, sound mods           |
+| `chassis`         | Suspension & Handling | Suspension, coilovers, sway bars, bracing           |
+| `brakes`          | Brakes                | Pads, rotors, BBK, fluid                            |
+| `cooling`         | Cooling               | Oil cooler, radiator, trans cooler                  |
+| `wheels`          | Wheels & Tires        | Wheels, tire compounds                              |
+| `aero`            | Body & Aero           | Splitters, wings, diffusers, body kits              |
+| `drivetrain`      | Drivetrain            | Clutch, diff, flywheel                              |
+| `safety`          | Safety / Track        | Harnesses, seats, roll bars/cages, fire suppression |
+
+**Exhaust Category Upgrades**:
+
+- `exhaust-catback` / `cat-back-exhaust` - Cat-back exhaust system
+- `exhaust-axleback` - Axle-back exhaust
+- `headers` - Long-tube or shorty headers
+- `downpipe` - High-flow downpipe (turbo cars)
+- `resonator-delete` - Resonator delete
+- `muffler-delete` - Muffler delete
+
+**Safety Category Upgrades**:
+
+- `racing-harness` - 5/6-point harness
+- `racing-seat` - Fixed-back racing seat
+- `roll-bar` - Rollover protection (bolt-in/weld-in)
+- `roll-cage` - Full cage for competition
+- `fire-extinguisher` - Handheld or onboard system
+- `helmet` - Racing helmet (required for track)
+
+**Build Goal Prioritization**:
+
+```javascript
+const { primary, secondary } = getCategoriesForGoal('track');
+// primary: ['brakes', 'cooling', 'chassis', 'aero', 'safety']
+// secondary: ['power', 'forcedInduction', 'exhaust', 'drivetrain', 'wheels']
+
+const { primary, secondary } = getCategoriesForGoal('street');
+// primary: ['power', 'forcedInduction', 'exhaust', 'chassis']
+// secondary: ['brakes', 'aero', 'drivetrain', 'wheels']
+```
+
 ##### Lateral G
 
 Multi-factor physics model:
@@ -2419,6 +2483,7 @@ export const GET = withErrorLogging(
 | `maintenanceService.js`          | Maintenance data                    | Maintenance schedules                                                                                                                                |
 | `fitmentService.js`              | Wheel/tire fitment data             | `fetchCarFitments()`, `getFitmentWarnings()`, `formatWheelSpecs()`                                                                                   |
 | `tireConfig.js`                  | Unified tire compound config (SSOT) | `TIRE_COMPOUNDS`, `getTireCompound()`, `getGripCoefficient()`, `getLapTimePercent()`, `normalizeTireKey()`                                           |
+| `upgradeCategories.js`           | Canonical upgrade categories (SSOT) | `UPGRADE_CATEGORIES`, `normalizeCategory()`, `getCategoriesForGoal()`, `GOAL_CATEGORY_MAP`                                                           |
 | `communityService.js`            | Community features                  | Posts, builds, insights                                                                                                                              |
 | `alTools.js`                     | AI assistant tools                  | AL tool definitions, `searchKnowledge()` with reranking                                                                                              |
 | `alConversationService.js`       | AI conversations (uses RPC)         | `getUserConversations()`, `createConversation()`, `addMessage()`                                                                                     |

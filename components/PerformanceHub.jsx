@@ -150,15 +150,18 @@ function PackageDescription({
  * Format category key to human-readable name
  */
 function formatCategoryName(key) {
+  // Aligned with lib/upgradeCategories.js labels
   const categoryNames = {
-    power: 'Power',
+    power: 'Engine & Performance',
     forcedInduction: 'Forced Induction',
-    chassis: 'Chassis',
+    exhaust: 'Exhaust',
+    chassis: 'Suspension & Handling',
     brakes: 'Brakes',
     cooling: 'Cooling',
-    wheels: 'Wheels',
-    aero: 'Aero',
+    wheels: 'Wheels & Tires',
+    aero: 'Body & Aero',
     drivetrain: 'Drivetrain',
+    safety: 'Safety / Track',
   };
   return (
     categoryNames[key] || key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1')

@@ -20,7 +20,7 @@ import styles from './BuildEditor.module.css';
 
 const BASIC_CATEGORIES = {
   power: {
-    label: 'Power',
+    label: 'Engine & Performance',
     icon: '⚡',
     mods: [
       { key: 'intake', label: 'Intake' },
@@ -31,7 +31,7 @@ const BASIC_CATEGORIES = {
     ],
   },
   tune: {
-    label: 'Tune',
+    label: 'ECU Tune',
     icon: '🎛️',
     mods: [
       { key: 'stage1-tune', label: 'Stage 1' },
@@ -40,7 +40,7 @@ const BASIC_CATEGORIES = {
     ],
   },
   turbo: {
-    label: 'Turbo/Power Adder',
+    label: 'Forced Induction',
     icon: '🌀',
     mods: [
       { key: 'turbo-upgrade-existing', label: 'Upgraded Turbo' },
@@ -49,7 +49,7 @@ const BASIC_CATEGORIES = {
     ],
   },
   fuel: {
-    label: 'Fuel',
+    label: 'Fuel System',
     icon: '⛽',
     mods: [
       { key: 'flex-fuel-e85', label: 'E85/Flex Fuel' },
@@ -58,7 +58,7 @@ const BASIC_CATEGORIES = {
     ],
   },
   suspension: {
-    label: 'Suspension',
+    label: 'Suspension & Handling',
     icon: '🔧',
     mods: [
       { key: 'lowering-springs', label: 'Lowering Springs' },
@@ -85,7 +85,7 @@ const BASIC_CATEGORIES = {
     ],
   },
   aero: {
-    label: 'Aero',
+    label: 'Body & Aero',
     icon: '🏎️',
     mods: [
       { key: 'wing', label: 'Wing' },

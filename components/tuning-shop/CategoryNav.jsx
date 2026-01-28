@@ -161,6 +161,7 @@ const categoryIcons = {
       <circle cx="12" cy="12" r="4" />
     </svg>
   ),
+  // Exhaust / Sound - volume speaker with sound waves
   exhaust: (
     <svg
       viewBox="0 0 24 24"
@@ -170,9 +171,9 @@ const categoryIcons = {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="M18 6L6 18" />
-      <path d="M6 6l12 12" />
-      <circle cx="12" cy="12" r="9" />
+      <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+      <path d="M15.54 8.46a5 5 0 0 1 0 7.07" />
+      <path d="M19.07 4.93a10 10 0 0 1 0 14.14" />
     </svg>
   ),
   cooling: (
@@ -348,35 +349,62 @@ const categoryIcons = {
       <circle cx="12" cy="19" r="1" />
     </svg>
   ),
+  // Safety / Track - shield icon
+  safety: (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+  ),
+  // Alias for safety
+  'safety-track': (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+    </svg>
+  ),
 };
 
-// Category display names
+// Category display names - aligned with lib/upgradeCategories.js labels
 const categoryNames = {
-  power: 'Power',
-  turbo: 'Turbo',
-  // forcedInduction (camelCase) - canonical key from upgradeCategories.js
+  // Primary categories (from UPGRADE_CATEGORIES)
+  power: 'Engine & Performance',
   forcedInduction: 'Forced Induction',
-  // Legacy alias - kept for backward compatibility
-  forced_induction: 'Forced Induction',
-  chassis: 'Chassis',
-  suspension: 'Suspension',
-  brakes: 'Brakes',
-  drivetrain: 'Drivetrain',
-  intake: 'Intake',
   exhaust: 'Exhaust',
+  chassis: 'Suspension & Handling',
+  brakes: 'Brakes',
   cooling: 'Cooling',
+  wheels: 'Wheels & Tires',
+  aero: 'Body & Aero',
+  drivetrain: 'Drivetrain',
+  safety: 'Safety / Track',
+  other: 'Other',
+  // Legacy aliases - kept for backward compatibility
+  turbo: 'Forced Induction',
+  forced_induction: 'Forced Induction',
+  suspension: 'Suspension & Handling',
+  wheels_tires: 'Wheels & Tires',
+  'safety-track': 'Safety / Track',
+  // Sub-categories (displayed as-is when shown separately)
+  intake: 'Intake',
   fuel: 'Fuel',
   fuel_system: 'Fuel System',
   tune: 'Tune',
   engine: 'Engine',
-  // wheels (canonical key from upgradeCategories.js)
-  wheels: 'Wheels & Tires',
-  // Legacy alias
-  wheels_tires: 'Wheels & Tires',
   exterior: 'Exterior',
   interior: 'Interior',
-  aero: 'Aero',
-  other: 'Other',
 };
 
 /**

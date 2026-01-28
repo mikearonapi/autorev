@@ -59,12 +59,14 @@ export type UpgradeObjective = 'streetSport' | 'trackPack' | 'timeAttack' | 'ult
 export type UpgradeCategory =
   | 'power'
   | 'forcedInduction'
+  | 'exhaust'
   | 'chassis'
   | 'brakes'
   | 'wheels'
   | 'cooling'
   | 'aero'
-  | 'drivetrain';
+  | 'drivetrain'
+  | 'safety';
 
 /**
  * Structure of upgrades_by_objective in car_tuning_profiles

@@ -43,11 +43,11 @@ export const PERFORMANCE_GAINS_DISCLAIMER =
 export const upgradeCategories = {
   power: {
     key: 'power',
-    name: 'Power & Engine',
+    name: 'Engine & Performance',
     icon: 'bolt',
     description:
       'Bolt-on upgrades that increase horsepower, torque, and throttle response. These modifications help your engine breathe better, burn fuel more efficiently, and produce more power.',
-    color: '#e74c3c',
+    color: '#f59e0b',
   },
   forcedInduction: {
     key: 'forcedInduction',
@@ -55,31 +55,31 @@ export const upgradeCategories = {
     icon: 'turbo',
     description:
       'Superchargers, turbochargers, and supporting modifications for massive power gains. The most effective way to add significant horsepower to naturally aspirated engines.',
-    color: '#9b59b6',
+    color: '#ef4444',
   },
   exhaust: {
     key: 'exhaust',
-    name: 'Exhaust & Sound',
+    name: 'Exhaust',
     icon: 'sound',
     description:
       "Exhaust modifications improve flow, reduce restriction, and change your car's voice. From subtle tone improvements to aggressive race notes.",
-    color: '#8e44ad',
+    color: '#a855f7',
   },
   suspension: {
     key: 'suspension',
-    name: 'Suspension & Chassis',
+    name: 'Suspension & Handling',
     icon: 'car',
     description:
       'Suspension upgrades transform how your car handles corners, responds to driver input, and manages weight transfer. The foundation of any serious build.',
-    color: '#3498db',
+    color: '#10b981',
   },
   brakes: {
     key: 'brakes',
-    name: 'Brakes & Stopping',
+    name: 'Brakes',
     icon: 'brake',
     description:
       'Brake upgrades improve stopping power, fade resistance, and pedal feel. Critical for track use and spirited driving.',
-    color: '#f39c12',
+    color: '#dc2626',
   },
   wheels: {
     key: 'wheels',
@@ -87,35 +87,35 @@ export const upgradeCategories = {
     icon: 'tire',
     description:
       'The only thing connecting your car to the road. Quality wheels and tires are often the single biggest performance upgrade you can make.',
-    color: '#2ecc71',
+    color: '#8b5cf6',
   },
   cooling: {
     key: 'cooling',
-    name: 'Cooling & Reliability',
+    name: 'Cooling',
     icon: 'thermometer',
     description:
       'Keep your engine, transmission, and brakes running cool under stress. Essential for track days and hot climates.',
-    color: '#1abc9c',
+    color: '#3b82f6',
   },
   aero: {
     key: 'aero',
-    name: 'Aerodynamics',
+    name: 'Body & Aero',
     icon: 'wind',
     description:
       'Aerodynamic upgrades create downforce and improve high-speed stability. From subtle improvements to full race aero packages.',
-    color: '#34495e',
+    color: '#06b6d4',
   },
   drivetrain: {
     key: 'drivetrain',
-    name: 'Drivetrain & Gearing',
+    name: 'Drivetrain',
     icon: 'gears',
     description:
       'Upgrades to the clutch, flywheel, differential, and driveline components. Critical for putting power to the ground reliably.',
-    color: '#e67e22',
+    color: '#f97316',
   },
   safety: {
     key: 'safety',
-    name: 'Safety & Track Prep',
+    name: 'Safety / Track',
     icon: 'shield',
     description:
       'Safety equipment for track use: harnesses, seats, roll protection, and fire suppression. Required for competitive events.',
