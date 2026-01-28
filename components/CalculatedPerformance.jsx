@@ -15,6 +15,7 @@ import React from 'react';
 
 import { DataSourceBadge, PerformanceSourceSummary } from '@/components/ui';
 import { Icons } from '@/components/ui/Icons';
+import { getZeroToSixtyMultiplier, normalizeTireKey } from '@/lib/tireConfig';
 
 import styles from './CalculatedPerformance.module.css';
 
@@ -213,16 +214,10 @@ export default function CalculatedPerformance({
   const effectiveWeight = totalWeight - wheelWeightDiff;
   const stockEffectiveWeight = stockTotalWeight;
 
-  // Tire grip multiplier
-  const tireKMultiplier = {
-    'all-season': 1.08,
-    summer: 1.0,
-    'max-performance': 0.97,
-    'r-comp': 0.93,
-    'drag-radial': 0.85,
-    slick: 0.82,
-  };
-  const kTire = tireKMultiplier[tireCompound] || 1.0;
+  // Tire grip multiplier - uses unified tire config
+  // Normalizes any tire key (legacy or new) to get consistent multiplier
+  const normalizedCompound = normalizeTireKey(tireCompound);
+  const kTire = getZeroToSixtyMultiplier(normalizedCompound);
 
   // Drivetrain coefficient
   const drivetrainK = {
@@ -249,8 +244,9 @@ export default function CalculatedPerformance({
   const estimated060 = Math.max(2.0, (stock060 / Math.sqrt(hpGainRatio)) * kTire);
 
   // 1/4 mile: Use actual data if available
+  // Traction bonus for slicks/r-compound (uses normalized compound)
   const tractionBonus =
-    tireCompound === 'drag-radial' ? 0.94 : tireCompound === 'slick' ? 0.92 : 1.0;
+    normalizedCompound === 'slicks' ? 0.92 : normalizedCompound === 'r-compound' ? 0.94 : 1.0;
   const calculatedQuarter = 5.825 * Math.pow(stockWeightToHp, 0.333);
   const stockQuarter = stockQuarterMile ?? calculatedQuarter;
   // Quarter mile improves roughly with cube root of power increase
@@ -283,8 +279,14 @@ export default function CalculatedPerformance({
     if (upgradedComfort === null) {
       // Suspension mods reduce comfort slightly
       if (hasSuspension) score = Math.max(5, score - 1.2);
-      // Stiffer tires reduce comfort
-      if (tireCompound === 'r-comp' || tireCompound === 'slick') score = Math.max(5, score - 0.8);
+      // Stiffer tires reduce comfort (uses normalized compound)
+      if (
+        normalizedCompound === 'r-compound' ||
+        normalizedCompound === 'slicks' ||
+        normalizedCompound === 'track-200tw'
+      ) {
+        score = Math.max(5, score - 0.8);
+      }
     }
     return score;
   };

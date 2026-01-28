@@ -22,6 +22,7 @@
 | `build`, `project`, `upgrades`                                        | [Build & Vehicle Data Model](#build--vehicle-data-model)             | `SavedBuildsProvider`, `user_projects` table                                                   |
 | `dyno`, `torque`, `curve`                                             | [Data Visualization Components](#data-visualization-components)      | `VirtualDynoChart` component                                                                   |
 | `lap time`, `track`, `estimate`                                       | [Data Visualization Components](#data-visualization-components)      | `LapTimeEstimator`, `lapTimeService.js`                                                        |
+| `tire`, `tires`, `wheel`, `compound`, `grip`                          | [Service Files](#service-files)                                      | `lib/tireConfig.js` - unified tire config (SSOT)                                               |
 | `score`, `rating`, `tunability`                                       | [Scoring & Weights](#scoring--weights)                               | `lib/scoring.js`, `tunabilityCalculator.js`                                                    |
 | `component`, `jsx`, `ui`                                              | [Components](#components)                                            | Component registry by feature                                                                  |
 | `api`, `route`, `endpoint`                                            | [API Routes](#api-routes)                                            | Route patterns and auth requirements                                                           |
@@ -1952,11 +1953,68 @@ Physics-based with tire compound awareness:
 
 ```javascript
 import { estimateBrakingDistance } from '@/lib/performanceCalculator';
+import { getGripCoefficient } from '@/lib/tireConfig';
 
-// Tire grip coefficients:
-// - Stock: 0.90, Performance: 0.95, Track: 1.05, R-compound: 1.15, Slicks: 1.30
+// Get grip coefficient from unified tire config
+const tireGrip = getGripCoefficient('max-summer'); // Returns 1.00
 const braking = estimateBrakingDistance(weight, brakeModBonus, tireGrip, stockBraking);
 ```
+
+##### Tire Configuration (Single Source of Truth)
+
+**Location**: `lib/tireConfig.js`
+
+All tire compound definitions, grip coefficients, and performance metrics are centralized:
+
+```javascript
+import {
+  TIRE_COMPOUNDS, // Full compound definitions
+  getTireCompound, // Get compound by ID (handles legacy keys)
+  getGripCoefficient, // For braking/lateral G calculations
+  getZeroToSixtyMultiplier, // For 0-60 calculations
+  getLapTimePercent, // For lap time estimates
+  getLateralGBonus, // For lateral G improvements
+  normalizeTireKey, // Convert any key to canonical ID
+} from '@/lib/tireConfig';
+
+// Example: Get full compound data
+const compound = getTireCompound('max-summer');
+// Returns: { id, label, gripCoefficient: 1.00, lateralGBonus: 0.08, ... }
+```
+
+**Tire Compounds (Canonical IDs)**:
+
+| ID                   | Label                  | Grip Coef | Lateral G Bonus | 0-60 Mult |
+| -------------------- | ---------------------- | --------- | --------------- | --------- |
+| `touring-all-season` | Touring All-Season     | 0.88      | 0               | 1.08      |
+| `uhp-all-season`     | UHP All-Season         | 0.93      | +0.03g          | 1.04      |
+| `max-summer`         | Max Performance Summer | 1.00      | +0.08g          | 1.00      |
+| `extreme-summer`     | Extreme Performance    | 1.08      | +0.12g          | 0.97      |
+| `track-200tw`        | 200TW Track            | 1.15      | +0.18g          | 0.94      |
+| `r-compound`         | R-Compound             | 1.25      | +0.25g          | 0.90      |
+| `slicks`             | Racing Slicks          | 1.35      | +0.35g          | 0.85      |
+
+**Legacy Key Mapping**: The system automatically converts legacy keys:
+
+- `'all-season'` → `'touring-all-season'`
+- `'summer'` → `'max-summer'`
+- `'max-performance'` → `'extreme-summer'`
+- `'track'` → `'track-200tw'`
+- `'r-comp'` → `'r-compound'`
+- `'performance-tires'` → `'max-summer'`
+- `'competition-tires'` → `'track-200tw'`
+
+**❌ DO NOT**:
+
+- Hardcode tire grip values in components
+- Create new tire coefficient constants
+- Use legacy keys directly without normalization
+
+**✅ DO**:
+
+- Import from `@/lib/tireConfig` for all tire-related calculations
+- Use `normalizeTireKey()` when accepting tire input from external sources
+- Use `getTireCompound()` to get full compound data including educational content
 
 ##### Lateral G
 
@@ -1964,9 +2022,11 @@ Multi-factor physics model:
 
 ```javascript
 import { estimateLateralG } from '@/lib/performanceCalculator';
+import { getGripCoefficient } from '@/lib/tireConfig';
 
 // Factors: Tire compound (60%), suspension (20%), aero (10%), weight (10%)
-// R-compound tires can add ~0.15-0.20g over stock
+// See lib/tireConfig.js for grip coefficients: touring-all-season (0.88) to slicks (1.35)
+const tireGrip = getGripCoefficient('r-compound'); // Returns 1.25
 const lateralG = estimateLateralG(baseLateralG, upgradeKeys, tireGrip);
 ```
 
@@ -2345,56 +2405,57 @@ export const GET = withErrorLogging(
 
 ### Core Services (lib/)
 
-| File                             | Responsibility                     | Key Exports                                                                                                                                          |
-| -------------------------------- | ---------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `supabase.js`                    | Browser Supabase client            | `supabase`, `isSupabaseConfigured`                                                                                                                   |
-| `supabaseServer.js`              | Server Supabase client             | `supabaseServiceRole`                                                                                                                                |
-| `carResolver.js`                 | Slug→ID resolution                 | `resolveCarId()`, `resolveCarIds()`                                                                                                                  |
-| `carsClient.js`                  | Car data (client)                  | `getCars()`, `getCarBySlug()`                                                                                                                        |
-| `carsCache.js`                   | Car data (server)                  | Cached car data                                                                                                                                      |
-| `userDataService.js`             | User CRUD operations               | Favorites, vehicles, projects                                                                                                                        |
-| `scoring.js`                     | Car scoring                        | `calculateWeightedScore()`                                                                                                                           |
-| `upgrades.js`                    | Upgrade data lookups               | `getUpgradeByKey()`                                                                                                                                  |
-| `eventsService.js`               | Events data                        | Event CRUD                                                                                                                                           |
-| `maintenanceService.js`          | Maintenance data                   | Maintenance schedules                                                                                                                                |
-| `fitmentService.js`              | Wheel/tire fitment data            | `fetchCarFitments()`, `getFitmentWarnings()`, `formatWheelSpecs()`                                                                                   |
-| `communityService.js`            | Community features                 | Posts, builds, insights                                                                                                                              |
-| `alTools.js`                     | AI assistant tools                 | AL tool definitions, `searchKnowledge()` with reranking                                                                                              |
-| `alConversationService.js`       | AI conversations (uses RPC)        | `getUserConversations()`, `createConversation()`, `addMessage()`                                                                                     |
-| `alConfig.js`                    | AL configuration                   | `buildALSystemPrompt()`, `MODEL_TIERS`, `selectModelForQuery()`                                                                                      |
-| `alUsageService.js`              | AL usage/credits                   | `getUserBalance()`, `deductUsage()`, `processMonthlyRefill()`                                                                                        |
-| `alEvaluationService.js`         | LLM-as-judge evaluation            | `evaluateResponse()`, `runGoldenDatasetEvaluation()`, `EVALUATION_DIMENSIONS`                                                                        |
-| `alFeedbackService.js`           | Response feedback                  | `recordFeedback()`, `getFeedbackStats()`, `getFeedbackTrend()`                                                                                       |
-| `alIntelligence.js`              | Content gap detection              | `getUnresolvedGaps()`, `analyzeConversationForGaps()`                                                                                                |
-| `alContentGapResolver.js`        | Gap resolution                     | `resolveGap()`, `getGapsForReview()`                                                                                                                 |
-| `aiCircuitBreaker.js`            | API circuit breaker                | `executeWithCircuitBreaker()`, `aiCircuitBreaker`, `CIRCUIT_STATES`                                                                                  |
-| `emailService.js`                | Email sending (Resend)             | `sendEmail()`, email templates                                                                                                                       |
-| `unsubscribeToken.js`            | Secure unsubscribe tokens          | `generateUnsubscribeToken()`, `verifyUnsubscribeToken()`                                                                                             |
-| `errorLogger.js`                 | Client error logging               | `logError()`                                                                                                                                         |
-| `serverErrorLogger.js`           | Server error logging               | `withErrorLogging()`, `logCronError()`                                                                                                               |
-| `adminAccess.js`                 | Admin auth verification            | `requireAdmin()`, `isAdminEmail()`, `getAdminFromRequest()`                                                                                          |
-| `apiErrors.js`                   | Standardized API error responses   | `errors.unauthorized()`, `errors.forbidden()`, `errors.badRequest()`, `errors.notFound()`, `errors.database()`                                       |
-| `activityTracker.js`             | Analytics tracking                 | `trackEvent()`                                                                                                                                       |
-| `garageScoreService.js`          | Garage completeness scoring        | `getVehicleScore()`, `recalculateScore()`                                                                                                            |
-| `lapTimeService.js`              | Lap time estimation from real data | `estimateLapTime()`, `getTrackBaseline()`                                                                                                            |
-| `rateLimit.js`                   | API rate limiting                  | `rateLimit()`, `RateLimitPresets`, `withRateLimit()`, `distributedRateLimit()`                                                                       |
-| `queryKeys.js`                   | TanStack Query key factory         | `carKeys`, `userKeys`, `eventKeys`, `alKeys`, `partsKeys`, `communityKeys`                                                                           |
-| `schemas/index.js`               | Zod validation schemas             | `feedbackSchema`, `contactSchema`, `communityPostSchema`, `dynoResultSchema`, `trackTimeSchema`, `validateWithSchema()`, `validationErrorResponse()` |
-| `images.js`                      | Image utilities                    | `getCarImageUrl()`, `getOptimizedImageUrl()`                                                                                                         |
-| `imageUploadService.js`          | Image upload handling              | `uploadImage()`, `deleteImage()`                                                                                                                     |
-| `cohereRerank.js`                | Cohere reranking for search        | `rerankDocuments()`, `rerankALResults()`                                                                                                             |
-| `rrfRerank.js`                   | Reciprocal Rank Fusion             | `reciprocalRankFusion()`, `mergeRRFWithDocuments()`                                                                                                  |
-| `alIntentClassifier.js`          | Query intent classification        | `classifyQueryIntent()`, `getRecommendedTools()`                                                                                                     |
-| `env.js`                         | Environment variable validation    | `serverEnv`, `clientEnv`, `isSupabaseConfigured()`                                                                                                   |
-| `featureFlags.js`                | Feature flags & A/B testing        | `useFeatureFlag()`, `FLAGS`, `ABTest`                                                                                                                |
-| `analytics/events.js`            | Typed analytics events             | `EVENTS`, `FUNNELS`, `SCHEMA_VERSION`, `trackEvent()`, `trackExperiment()`                                                                           |
-| `analytics/types.ts`             | TypeScript event schemas           | `AnalyticsEvent`, property interfaces                                                                                                                |
-| `analytics/index.js`             | Analytics barrel export            | Re-exports all analytics functions                                                                                                                   |
-| `analytics/manager.js`           | Unified analytics abstraction      | `analytics`, `AnalyticsManager` class                                                                                                                |
-| `analytics/offlineQueue.js`      | PWA offline event queue            | `offlineQueue`, auto-flush on reconnect                                                                                                              |
-| `analytics/providers/posthog.js` | PostHog adapter                    | `posthogProvider`                                                                                                                                    |
-| `analytics/providers/ga4.js`     | GA4 adapter                        | `ga4Provider`                                                                                                                                        |
-| `analytics/providers/custom.js`  | Custom backend adapter             | `customProvider`                                                                                                                                     |
+| File                             | Responsibility                      | Key Exports                                                                                                                                          |
+| -------------------------------- | ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `supabase.js`                    | Browser Supabase client             | `supabase`, `isSupabaseConfigured`                                                                                                                   |
+| `supabaseServer.js`              | Server Supabase client              | `supabaseServiceRole`                                                                                                                                |
+| `carResolver.js`                 | Slug→ID resolution                  | `resolveCarId()`, `resolveCarIds()`                                                                                                                  |
+| `carsClient.js`                  | Car data (client)                   | `getCars()`, `getCarBySlug()`                                                                                                                        |
+| `carsCache.js`                   | Car data (server)                   | Cached car data                                                                                                                                      |
+| `userDataService.js`             | User CRUD operations                | Favorites, vehicles, projects                                                                                                                        |
+| `scoring.js`                     | Car scoring                         | `calculateWeightedScore()`                                                                                                                           |
+| `upgrades.js`                    | Upgrade data lookups                | `getUpgradeByKey()`                                                                                                                                  |
+| `eventsService.js`               | Events data                         | Event CRUD                                                                                                                                           |
+| `maintenanceService.js`          | Maintenance data                    | Maintenance schedules                                                                                                                                |
+| `fitmentService.js`              | Wheel/tire fitment data             | `fetchCarFitments()`, `getFitmentWarnings()`, `formatWheelSpecs()`                                                                                   |
+| `tireConfig.js`                  | Unified tire compound config (SSOT) | `TIRE_COMPOUNDS`, `getTireCompound()`, `getGripCoefficient()`, `getLapTimePercent()`, `normalizeTireKey()`                                           |
+| `communityService.js`            | Community features                  | Posts, builds, insights                                                                                                                              |
+| `alTools.js`                     | AI assistant tools                  | AL tool definitions, `searchKnowledge()` with reranking                                                                                              |
+| `alConversationService.js`       | AI conversations (uses RPC)         | `getUserConversations()`, `createConversation()`, `addMessage()`                                                                                     |
+| `alConfig.js`                    | AL configuration                    | `buildALSystemPrompt()`, `MODEL_TIERS`, `selectModelForQuery()`                                                                                      |
+| `alUsageService.js`              | AL usage/credits                    | `getUserBalance()`, `deductUsage()`, `processMonthlyRefill()`                                                                                        |
+| `alEvaluationService.js`         | LLM-as-judge evaluation             | `evaluateResponse()`, `runGoldenDatasetEvaluation()`, `EVALUATION_DIMENSIONS`                                                                        |
+| `alFeedbackService.js`           | Response feedback                   | `recordFeedback()`, `getFeedbackStats()`, `getFeedbackTrend()`                                                                                       |
+| `alIntelligence.js`              | Content gap detection               | `getUnresolvedGaps()`, `analyzeConversationForGaps()`                                                                                                |
+| `alContentGapResolver.js`        | Gap resolution                      | `resolveGap()`, `getGapsForReview()`                                                                                                                 |
+| `aiCircuitBreaker.js`            | API circuit breaker                 | `executeWithCircuitBreaker()`, `aiCircuitBreaker`, `CIRCUIT_STATES`                                                                                  |
+| `emailService.js`                | Email sending (Resend)              | `sendEmail()`, email templates                                                                                                                       |
+| `unsubscribeToken.js`            | Secure unsubscribe tokens           | `generateUnsubscribeToken()`, `verifyUnsubscribeToken()`                                                                                             |
+| `errorLogger.js`                 | Client error logging                | `logError()`                                                                                                                                         |
+| `serverErrorLogger.js`           | Server error logging                | `withErrorLogging()`, `logCronError()`                                                                                                               |
+| `adminAccess.js`                 | Admin auth verification             | `requireAdmin()`, `isAdminEmail()`, `getAdminFromRequest()`                                                                                          |
+| `apiErrors.js`                   | Standardized API error responses    | `errors.unauthorized()`, `errors.forbidden()`, `errors.badRequest()`, `errors.notFound()`, `errors.database()`                                       |
+| `activityTracker.js`             | Analytics tracking                  | `trackEvent()`                                                                                                                                       |
+| `garageScoreService.js`          | Garage completeness scoring         | `getVehicleScore()`, `recalculateScore()`                                                                                                            |
+| `lapTimeService.js`              | Lap time estimation from real data  | `estimateLapTime()`, `getTrackBaseline()`                                                                                                            |
+| `rateLimit.js`                   | API rate limiting                   | `rateLimit()`, `RateLimitPresets`, `withRateLimit()`, `distributedRateLimit()`                                                                       |
+| `queryKeys.js`                   | TanStack Query key factory          | `carKeys`, `userKeys`, `eventKeys`, `alKeys`, `partsKeys`, `communityKeys`                                                                           |
+| `schemas/index.js`               | Zod validation schemas              | `feedbackSchema`, `contactSchema`, `communityPostSchema`, `dynoResultSchema`, `trackTimeSchema`, `validateWithSchema()`, `validationErrorResponse()` |
+| `images.js`                      | Image utilities                     | `getCarImageUrl()`, `getOptimizedImageUrl()`                                                                                                         |
+| `imageUploadService.js`          | Image upload handling               | `uploadImage()`, `deleteImage()`                                                                                                                     |
+| `cohereRerank.js`                | Cohere reranking for search         | `rerankDocuments()`, `rerankALResults()`                                                                                                             |
+| `rrfRerank.js`                   | Reciprocal Rank Fusion              | `reciprocalRankFusion()`, `mergeRRFWithDocuments()`                                                                                                  |
+| `alIntentClassifier.js`          | Query intent classification         | `classifyQueryIntent()`, `getRecommendedTools()`                                                                                                     |
+| `env.js`                         | Environment variable validation     | `serverEnv`, `clientEnv`, `isSupabaseConfigured()`                                                                                                   |
+| `featureFlags.js`                | Feature flags & A/B testing         | `useFeatureFlag()`, `FLAGS`, `ABTest`                                                                                                                |
+| `analytics/events.js`            | Typed analytics events              | `EVENTS`, `FUNNELS`, `SCHEMA_VERSION`, `trackEvent()`, `trackExperiment()`                                                                           |
+| `analytics/types.ts`             | TypeScript event schemas            | `AnalyticsEvent`, property interfaces                                                                                                                |
+| `analytics/index.js`             | Analytics barrel export             | Re-exports all analytics functions                                                                                                                   |
+| `analytics/manager.js`           | Unified analytics abstraction       | `analytics`, `AnalyticsManager` class                                                                                                                |
+| `analytics/offlineQueue.js`      | PWA offline event queue             | `offlineQueue`, auto-flush on reconnect                                                                                                              |
+| `analytics/providers/posthog.js` | PostHog adapter                     | `posthogProvider`                                                                                                                                    |
+| `analytics/providers/ga4.js`     | GA4 adapter                         | `ga4Provider`                                                                                                                                        |
+| `analytics/providers/custom.js`  | Custom backend adapter              | `customProvider`                                                                                                                                     |
 
 ### Notification Services (lib/)
 

@@ -63,7 +63,8 @@ export type UpgradeCategory =
   | 'brakes'
   | 'wheels'
   | 'cooling'
-  | 'aero';
+  | 'aero'
+  | 'drivetrain';
 
 /**
  * Structure of upgrades_by_objective in car_tuning_profiles

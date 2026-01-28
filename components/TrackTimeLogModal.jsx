@@ -18,6 +18,8 @@ import { useState, useEffect } from 'react';
 
 import { createPortal } from 'react-dom';
 
+import { getStreetLegalCompounds } from '@/lib/tireConfig';
+
 import styles from './TrackTimeLogModal.module.css';
 
 // SVG Icons
@@ -68,13 +70,12 @@ const POPULAR_TRACKS = [
 ];
 
 // Tire compound options
-const TIRE_COMPOUNDS = [
-  { value: 'all-season', label: 'All-Season' },
-  { value: 'summer', label: 'Summer Performance' },
-  { value: 'max-performance-summer', label: 'Max Performance Summer' },
-  { value: 'r-compound', label: 'R-Compound / Track' },
-  { value: 'slicks', label: 'Slicks' },
-];
+// Get tire compounds from unified config (lib/tireConfig.js)
+// Uses canonical IDs and labels for consistency across the app
+const TIRE_COMPOUNDS = getStreetLegalCompounds().map((c) => ({
+  value: c.id,
+  label: c.label,
+}));
 
 // Session type options
 const SESSION_TYPES = [

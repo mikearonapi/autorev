@@ -2,16 +2,17 @@
 
 /**
  * Wheel & Tire Configurator - Redesigned
- * 
+ *
  * Clean, intuitive interface for wheel and tire selection
  * with performance impact visualization.
- * 
+ *
  * @module components/tuning-shop/WheelTireConfigurator
  */
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 
-import { fetchCarFitments, formatWheelSpecs, formatTireSpecs } from '@/lib/fitmentService';
+import { fetchCarFitments } from '@/lib/fitmentService';
+import { getTireCompoundsForUI, getTireCompound, normalizeTireKey } from '@/lib/tireConfig';
 
 import styles from './WheelTireConfigurator.module.css';
 
@@ -22,7 +23,7 @@ import styles from './WheelTireConfigurator.module.css';
 function logWheelTireChange(car, field, oldValue, newValue, oemValue) {
   // Skip if no actual change
   if (oldValue === newValue) return;
-  
+
   const changeData = {
     timestamp: new Date().toISOString(),
     carSlug: car?.slug,
@@ -37,13 +38,13 @@ function logWheelTireChange(car, field, oldValue, newValue, oemValue) {
     // Special flag for compound changes (always important for performance)
     affectsPerformance: field === 'compound',
   };
-  
+
   // Log to console for development
   console.log('[WheelTireConfig] User change detected:', changeData);
-  
+
   // TODO: Send to analytics endpoint when ready
   // trackEvent('wheel_tire_config_change', changeData);
-  
+
   // Store in sessionStorage for debugging
   try {
     const existingLogs = JSON.parse(sessionStorage.getItem('wheelTireChanges') || '[]');
@@ -58,80 +59,75 @@ function logWheelTireChange(car, field, oldValue, newValue, oemValue) {
 
 // Icons
 const ChevronIcon = ({ isOpen }) => (
-  <svg 
-    width={16} 
-    height={16} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
+  <svg
+    width={16}
+    height={16}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
     strokeLinejoin="round"
     className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`}
   >
-    <polyline points="6 9 12 15 18 9"/>
+    <polyline points="6 9 12 15 18 9" />
   </svg>
 );
 
 const WheelIcon = () => (
-  <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="10"/>
-    <circle cx="12" cy="12" r="3"/>
-    <line x1="12" y1="2" x2="12" y2="6"/>
-    <line x1="12" y1="18" x2="12" y2="22"/>
-    <line x1="2" y1="12" x2="6" y2="12"/>
-    <line x1="18" y1="12" x2="22" y2="12"/>
+  <svg
+    width={20}
+    height={20}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="10" />
+    <circle cx="12" cy="12" r="3" />
+    <line x1="12" y1="2" x2="12" y2="6" />
+    <line x1="12" y1="18" x2="12" y2="22" />
+    <line x1="2" y1="12" x2="6" y2="12" />
+    <line x1="18" y1="12" x2="22" y2="12" />
   </svg>
 );
 
 const CheckIcon = () => (
-  <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12"/>
+  <svg
+    width={14}
+    height={14}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="20 6 9 17 4 12" />
   </svg>
 );
 
 const EditIcon = () => (
-  <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+  <svg
+    width={14}
+    height={14}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
   </svg>
 );
 
-// Tire compound options with performance impact
-const TIRE_COMPOUNDS = [
-  { 
-    id: 'all-season', 
-    label: 'All-Season', 
-    desc: 'Year-round versatility',
-    grip: 0,
-    wear: '+',
-    icon: '🌤️'
-  },
-  { 
-    id: 'summer', 
-    label: 'Summer Performance', 
-    desc: 'Better dry & wet grip',
-    grip: 0.05,
-    wear: '',
-    icon: '☀️'
-  },
-  { 
-    id: 'max-performance', 
-    label: 'Max Performance Summer', 
-    desc: 'Track-ready street tire',
-    grip: 0.10,
-    wear: '-',
-    icon: '🔥'
-  },
-  { 
-    id: 'track', 
-    label: '200TW Track Tire', 
-    desc: 'Competition compound',
-    grip: 0.20,
-    wear: '--',
-    icon: '🏁'
-  },
-];
+// Get tire compounds from unified config (street-legal only for this UI)
+// This is the Single Source of Truth - see lib/tireConfig.js
+const TIRE_COMPOUNDS_UI = getTireCompoundsForUI({ streetLegalOnly: true });
 
 // Lightweight wheels upgrade info
 const LIGHTWEIGHT_WHEELS = {
@@ -160,7 +156,7 @@ export default function WheelTireConfigurator({
   const [error, setError] = useState(null);
   const [fitmentData, setFitmentData] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
-  
+
   // Configuration state
   // Default to 'all-season' as the baseline stock compound
   const [wheelConfig, setWheelConfig] = useState({
@@ -186,19 +182,19 @@ export default function WheelTireConfigurator({
     }
 
     let cancelled = false;
-    
+
     const loadData = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       const { data, error: fetchError } = await fetchCarFitments(car.slug);
-      
+
       if (!cancelled) {
         if (fetchError) {
           setError(fetchError.message || 'Failed to load fitment data');
         } else {
           setFitmentData(data);
-          
+
           // Initialize with OEM specs if available
           if (data?.oem) {
             initializeFromOEM(data.oem);
@@ -209,39 +205,45 @@ export default function WheelTireConfigurator({
     };
 
     loadData();
-    
-    return () => { cancelled = true; };
+
+    return () => {
+      cancelled = true;
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [car?.slug]);
 
   // Initialize wheel config from OEM data
   const initializeFromOEM = useCallback((oem) => {
     if (!oem) return;
-    
+
     // Parse wheel specs like "20×9.5" and "20×10.5"
     const parseFront = parseWheelSize(oem.wheelSizeFront);
     const parseRear = parseWheelSize(oem.wheelSizeRear || oem.wheelSizeFront);
-    
+
     // Get tire sizes, ensuring rim diameter matches wheel diameter
     let tireSizeFront = oem.tireSizeFront || '';
     let tireSizeRear = oem.tireSizeRear || oem.tireSizeFront || '';
-    
+
     // Fix tire size rim diameter if it doesn't match wheel diameter
     if (parseFront.diameter && tireSizeFront) {
       const tireRimFront = getTireSizeRimDiameter(tireSizeFront);
       if (tireRimFront && tireRimFront !== parseFront.diameter) {
-        console.warn(`[WheelTireConfig] Fixing tire/wheel mismatch: front tire rim ${tireRimFront}" → wheel ${parseFront.diameter}"`);
+        console.warn(
+          `[WheelTireConfig] Fixing tire/wheel mismatch: front tire rim ${tireRimFront}" → wheel ${parseFront.diameter}"`
+        );
         tireSizeFront = updateTireSizeRimDiameter(tireSizeFront, parseFront.diameter);
       }
     }
     if (parseRear.diameter && tireSizeRear) {
       const tireRimRear = getTireSizeRimDiameter(tireSizeRear);
       if (tireRimRear && tireRimRear !== parseRear.diameter) {
-        console.warn(`[WheelTireConfig] Fixing tire/wheel mismatch: rear tire rim ${tireRimRear}" → wheel ${parseRear.diameter}"`);
+        console.warn(
+          `[WheelTireConfig] Fixing tire/wheel mismatch: rear tire rim ${tireRimRear}" → wheel ${parseRear.diameter}"`
+        );
         tireSizeRear = updateTireSizeRimDiameter(tireSizeRear, parseRear.diameter);
       }
     }
-    
+
     setWheelConfig({
       diameterFront: parseFront.diameter || '',
       diameterRear: parseRear.diameter || '',
@@ -262,54 +264,69 @@ export default function WheelTireConfigurator({
   }, [selectedFitment, initializeFromOEM]);
 
   // Handle config changes with logging
-  const handleConfigChange = useCallback((field, value) => {
-    setWheelConfig(prev => {
-      const oldValue = prev[field];
-      
-      // Get OEM value if available for comparison
-      const oemValue = fitmentData?.oem ? (
-        field === 'compound' ? 'all-season' :
-        field === 'diameterFront' ? parseWheelSize(fitmentData.oem.wheelSizeFront).diameter :
-        field === 'diameterRear' ? parseWheelSize(fitmentData.oem.wheelSizeRear || fitmentData.oem.wheelSizeFront).diameter :
-        field === 'widthFront' ? parseWheelSize(fitmentData.oem.wheelSizeFront).width :
-        field === 'widthRear' ? parseWheelSize(fitmentData.oem.wheelSizeRear || fitmentData.oem.wheelSizeFront).width :
-        field === 'tireSizeFront' ? fitmentData.oem.tireSizeFront :
-        field === 'tireSizeRear' ? fitmentData.oem.tireSizeRear || fitmentData.oem.tireSizeFront :
-        null
-      ) : null;
-      
-      // Log the change for analytics
-      logWheelTireChange(car, field, oldValue, value, oemValue);
-      
-      const updated = { ...prev, [field]: value };
-      
-      // Auto-sync rear to front if not staggered
-      if (!prev.isStaggered) {
-        if (field === 'diameterFront') updated.diameterRear = value;
-        if (field === 'widthFront') updated.widthRear = value;
-        if (field === 'tireSizeFront') updated.tireSizeRear = value;
-      }
-      
-      // When wheel diameter changes, update tire size rim diameter to match
-      if (field === 'diameterFront' && value) {
-        updated.tireSizeFront = updateTireSizeRimDiameter(prev.tireSizeFront, value);
-        // Also update rear if not staggered
+  const handleConfigChange = useCallback(
+    (field, value) => {
+      setWheelConfig((prev) => {
+        const oldValue = prev[field];
+
+        // Get OEM value if available for comparison
+        const oemValue = fitmentData?.oem
+          ? field === 'compound'
+            ? 'all-season'
+            : field === 'diameterFront'
+              ? parseWheelSize(fitmentData.oem.wheelSizeFront).diameter
+              : field === 'diameterRear'
+                ? parseWheelSize(fitmentData.oem.wheelSizeRear || fitmentData.oem.wheelSizeFront)
+                    .diameter
+                : field === 'widthFront'
+                  ? parseWheelSize(fitmentData.oem.wheelSizeFront).width
+                  : field === 'widthRear'
+                    ? parseWheelSize(
+                        fitmentData.oem.wheelSizeRear || fitmentData.oem.wheelSizeFront
+                      ).width
+                    : field === 'tireSizeFront'
+                      ? fitmentData.oem.tireSizeFront
+                      : field === 'tireSizeRear'
+                        ? fitmentData.oem.tireSizeRear || fitmentData.oem.tireSizeFront
+                        : null
+          : null;
+
+        // Log the change for analytics
+        logWheelTireChange(car, field, oldValue, value, oemValue);
+
+        const updated = { ...prev, [field]: value };
+
+        // Auto-sync rear to front if not staggered
         if (!prev.isStaggered) {
+          if (field === 'diameterFront') updated.diameterRear = value;
+          if (field === 'widthFront') updated.widthRear = value;
+          if (field === 'tireSizeFront') updated.tireSizeRear = value;
+        }
+
+        // When wheel diameter changes, update tire size rim diameter to match
+        if (field === 'diameterFront' && value) {
+          updated.tireSizeFront = updateTireSizeRimDiameter(prev.tireSizeFront, value);
+          // Also update rear if not staggered
+          if (!prev.isStaggered) {
+            updated.tireSizeRear = updateTireSizeRimDiameter(prev.tireSizeRear, value);
+          }
+        }
+        if (field === 'diameterRear' && value && prev.isStaggered) {
           updated.tireSizeRear = updateTireSizeRimDiameter(prev.tireSizeRear, value);
         }
-      }
-      if (field === 'diameterRear' && value && prev.isStaggered) {
-        updated.tireSizeRear = updateTireSizeRimDiameter(prev.tireSizeRear, value);
-      }
-      
-      return updated;
-    });
-  }, [car, fitmentData]);
+
+        return updated;
+      });
+    },
+    [car, fitmentData]
+  );
 
   // Apply configuration and notify parent
   const applyConfig = useCallback(() => {
-    const compound = TIRE_COMPOUNDS.find(c => c.id === wheelConfig.compound);
-    
+    // Use unified tire config for performance data
+    const normalizedCompound = normalizeTireKey(wheelConfig.compound);
+    const compound = getTireCompound(normalizedCompound);
+
     const fitment = {
       id: 'custom',
       fitmentType: 'custom',
@@ -318,16 +335,17 @@ export default function WheelTireConfigurator({
       wheelSizeRear: `${wheelConfig.diameterRear}×${wheelConfig.widthRear}`,
       tireSizeFront: wheelConfig.tireSizeFront,
       tireSizeRear: wheelConfig.tireSizeRear,
-      tireCompound: wheelConfig.compound,
+      tireCompound: normalizedCompound,
       isCustom: true,
-      // Performance impact from compound
-      gripBonus: compound?.grip || 0,
-      recommendedFor: compound?.id === 'track' ? ['track', 'competition'] : 
-                       compound?.id === 'max-performance' ? ['spirited', 'track'] :
-                       compound?.id === 'summer' ? ['street', 'spirited'] :
-                       ['daily', 'street'],
+      // Performance impact from unified config
+      gripBonus: compound.lateralGBonus,
+      gripCoefficient: compound.gripCoefficient,
+      brakingImprovement: compound.brakingImprovement,
+      lapTimePercent: compound.lapTimePercent,
+      zeroToSixtyMultiplier: compound.zeroToSixtyMultiplier,
+      recommendedFor: compound.bestFor,
     };
-    
+
     onSelect?.(fitment);
     setIsEditing(false);
   }, [wheelConfig, onSelect]);
@@ -341,51 +359,68 @@ export default function WheelTireConfigurator({
     setIsEditing(false);
   }, [fitmentData, initializeFromOEM, onSelect]);
 
-  // Calculate performance impact
+  // Calculate performance impact using unified config
   const performanceImpact = useMemo(() => {
-    const compound = TIRE_COMPOUNDS.find(c => c.id === wheelConfig.compound);
+    const compound = getTireCompound(wheelConfig.compound);
+    const gripGain = compound.lateralGBonus;
     return {
-      gripGain: compound?.grip || 0,
-      label: compound?.grip > 0.15 ? 'Significant' : 
-             compound?.grip > 0.05 ? 'Moderate' : 
-             compound?.grip > 0 ? 'Slight' : 'Baseline',
+      gripGain,
+      label:
+        gripGain > 0.15
+          ? 'Significant'
+          : gripGain > 0.08
+            ? 'Moderate'
+            : gripGain > 0
+              ? 'Slight'
+              : 'Baseline',
     };
   }, [wheelConfig.compound]);
 
   // Auto-apply compound changes immediately (affects performance metrics)
   useEffect(() => {
-    const compound = TIRE_COMPOUNDS.find(c => c.id === wheelConfig.compound);
-    
+    // Use unified tire config for performance data
+    const normalizedCompound = normalizeTireKey(wheelConfig.compound);
+    const compound = getTireCompound(normalizedCompound);
+
     // Only auto-apply if we have valid fitment data
     if (wheelConfig.diameterFront || fitmentData?.oem) {
       const fitment = {
         id: 'current',
         fitmentType: 'current',
         displayName: 'Current Setup',
-        wheelSizeFront: wheelConfig.diameterFront 
+        wheelSizeFront: wheelConfig.diameterFront
           ? `${wheelConfig.diameterFront}×${wheelConfig.widthFront}`
           : fitmentData?.oem?.wheelSizeFront || '',
-        wheelSizeRear: wheelConfig.diameterRear 
+        wheelSizeRear: wheelConfig.diameterRear
           ? `${wheelConfig.diameterRear}×${wheelConfig.widthRear}`
           : fitmentData?.oem?.wheelSizeRear || '',
         tireSizeFront: wheelConfig.tireSizeFront || fitmentData?.oem?.tireSizeFront || '',
         tireSizeRear: wheelConfig.tireSizeRear || fitmentData?.oem?.tireSizeRear || '',
-        tireCompound: wheelConfig.compound,
+        tireCompound: normalizedCompound,
         // Mark as custom to prevent re-initialization when passed back
         isCustom: true,
-        // Performance impact from compound - this is what affects metrics
-        gripBonus: compound?.grip || 0,
-        recommendedFor: compound?.id === 'track' ? ['track', 'competition'] : 
-                        compound?.id === 'max-performance' ? ['spirited', 'track'] :
-                        compound?.id === 'summer' ? ['street', 'spirited'] :
-                        ['daily', 'street'],
+        // Performance impact from unified config
+        gripBonus: compound.lateralGBonus,
+        gripCoefficient: compound.gripCoefficient,
+        brakingImprovement: compound.brakingImprovement,
+        lapTimePercent: compound.lapTimePercent,
+        zeroToSixtyMultiplier: compound.zeroToSixtyMultiplier,
+        recommendedFor: compound.bestFor,
       };
-      
+
       onSelect?.(fitment);
     }
-  }, [wheelConfig.compound, wheelConfig.diameterFront, wheelConfig.widthFront, 
-      wheelConfig.diameterRear, wheelConfig.widthRear, wheelConfig.tireSizeFront,
-      wheelConfig.tireSizeRear, fitmentData?.oem, onSelect]);
+  }, [
+    wheelConfig.compound,
+    wheelConfig.diameterFront,
+    wheelConfig.widthFront,
+    wheelConfig.diameterRear,
+    wheelConfig.widthRear,
+    wheelConfig.tireSizeFront,
+    wheelConfig.tireSizeRear,
+    fitmentData?.oem,
+    onSelect,
+  ]);
 
   if (!car) return null;
 
@@ -393,7 +428,7 @@ export default function WheelTireConfigurator({
     <div className={`${styles.container} ${compact ? styles.compact : ''}`}>
       {/* Header */}
       <div className={styles.header}>
-        <button 
+        <button
           className={styles.headerToggle}
           onClick={() => setIsExpanded(!isExpanded)}
           aria-expanded={isExpanded}
@@ -413,16 +448,16 @@ export default function WheelTireConfigurator({
           {isExpanded && (
             <button
               className={`${styles.headerEditBtn} ${isEditing ? styles.headerEditBtnActive : ''}`}
-              onClick={(e) => { e.stopPropagation(); setIsEditing(!isEditing); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditing(!isEditing);
+              }}
             >
               {isEditing ? <CheckIcon /> : <EditIcon />}
               <span className={styles.headerEditLabel}>{isEditing ? 'Done' : 'Edit'}</span>
             </button>
           )}
-          <button 
-            className={styles.chevronBtn}
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
+          <button className={styles.chevronBtn} onClick={() => setIsExpanded(!isExpanded)}>
             <ChevronIcon isOpen={isExpanded} />
           </button>
         </div>
@@ -558,19 +593,17 @@ export default function WheelTireConfigurator({
               <div className={styles.compoundSection}>
                 <h4 className={styles.sectionTitle}>
                   Tire Compound
-                  <span className={styles.performanceTag}>
-                    Affects Grip
-                  </span>
+                  <span className={styles.performanceTag}>Affects Grip</span>
                 </h4>
                 {/* Icon Row - always interactive for compound selection */}
                 <div className={styles.compoundIconRow}>
-                  {TIRE_COMPOUNDS.map(compound => (
+                  {TIRE_COMPOUNDS_UI.map((compound) => (
                     <button
                       key={compound.id}
-                      className={`${styles.compoundIconBtn} ${wheelConfig.compound === compound.id ? styles.compoundIconBtnActive : ''}`}
+                      className={`${styles.compoundIconBtn} ${normalizeTireKey(wheelConfig.compound) === compound.id ? styles.compoundIconBtnActive : ''}`}
                       onClick={() => handleConfigChange('compound', compound.id)}
                       disabled={disabled}
-                      title={`${compound.label}${compound.grip > 0 ? ` (+${(compound.grip * 100).toFixed(0)}% grip)` : ' (stock)'}`}
+                      title={`${compound.label}${compound.grip > 0 ? ` (+${(compound.grip * 100).toFixed(0)}% grip)` : ' (baseline)'}`}
                     >
                       <span className={styles.compoundIconEmoji}>{compound.icon}</span>
                     </button>
@@ -578,19 +611,22 @@ export default function WheelTireConfigurator({
                 </div>
                 {/* Selected Compound Info */}
                 {(() => {
-                  const selected = TIRE_COMPOUNDS.find(c => c.id === wheelConfig.compound);
-                  return selected && (
-                    <div className={styles.compoundInfo}>
-                      <span className={styles.compoundInfoLabel}>{selected.label}</span>
-                      <span className={styles.compoundInfoDesc}>{selected.desc}</span>
-                      {selected.grip > 0 ? (
-                        <span className={styles.compoundInfoGrip}>
-                          +{(selected.grip * 100).toFixed(0)}% grip
-                        </span>
-                      ) : (
-                        <span className={styles.compoundInfoStock}>Stock</span>
-                      )}
-                    </div>
+                  const normalizedId = normalizeTireKey(wheelConfig.compound);
+                  const selected = TIRE_COMPOUNDS_UI.find((c) => c.id === normalizedId);
+                  return (
+                    selected && (
+                      <div className={styles.compoundInfo}>
+                        <span className={styles.compoundInfoLabel}>{selected.label}</span>
+                        <span className={styles.compoundInfoDesc}>{selected.description}</span>
+                        {selected.grip > 0 ? (
+                          <span className={styles.compoundInfoGrip}>
+                            +{(selected.grip * 100).toFixed(0)}% grip
+                          </span>
+                        ) : (
+                          <span className={styles.compoundInfoStock}>Baseline</span>
+                        )}
+                      </div>
+                    )
                   );
                 })()}
               </div>
@@ -604,7 +640,9 @@ export default function WheelTireConfigurator({
                     onClick={() => onUpgradeToggle(LIGHTWEIGHT_WHEELS.key)}
                     disabled={disabled}
                   >
-                    <div className={`${styles.upgradeCheckbox} ${selectedUpgrades.includes(LIGHTWEIGHT_WHEELS.key) ? styles.upgradeCheckboxActive : ''}`}>
+                    <div
+                      className={`${styles.upgradeCheckbox} ${selectedUpgrades.includes(LIGHTWEIGHT_WHEELS.key) ? styles.upgradeCheckboxActive : ''}`}
+                    >
                       <CheckIcon />
                     </div>
                     <div className={styles.upgradeInfo}>
@@ -637,11 +675,11 @@ export default function WheelTireConfigurator({
 /**
  * Individual Spec Field Component
  */
-function SpecField({ 
-  label, 
-  value, 
-  onChange, 
-  suffix = '', 
+function SpecField({
+  label,
+  value,
+  onChange,
+  suffix = '',
   placeholder = '',
   isEditing = false,
   disabled = false,
@@ -682,13 +720,13 @@ function SpecField({
  */
 function parseWheelSize(sizeStr) {
   if (!sizeStr) return { diameter: '', width: '' };
-  
+
   // Try to match patterns like "20×9.5", "20x9.5", "20 x 9.5"
   const match = sizeStr.match(/(\d+\.?\d*)\s*[×x]\s*(\d+\.?\d*)/i);
   if (match) {
     return { diameter: match[1], width: match[2] };
   }
-  
+
   return { diameter: '', width: '' };
 }
 
@@ -699,15 +737,15 @@ function parseWheelSize(sizeStr) {
  */
 function updateTireSizeRimDiameter(tireSize, newDiameter) {
   if (!tireSize || !newDiameter) return tireSize;
-  
+
   // Match patterns like "235/40ZR19", "255/35R20", "265/40ZR19"
   // Captures: width, aspect ratio, speed rating (optional Z), and rim diameter
   const match = tireSize.match(/^(\d+)\/(\d+)(Z?R)(\d+)$/i);
   if (match) {
-    const [, width, aspect, speedRating, ] = match;
+    const [, width, aspect, speedRating] = match;
     return `${width}/${aspect}${speedRating}${newDiameter}`;
   }
-  
+
   return tireSize;
 }
 
@@ -717,7 +755,7 @@ function updateTireSizeRimDiameter(tireSize, newDiameter) {
  */
 function getTireSizeRimDiameter(tireSize) {
   if (!tireSize) return null;
-  
+
   const match = tireSize.match(/^(\d+)\/(\d+)Z?R(\d+)$/i);
   return match ? match[3] : null;
 }
@@ -727,15 +765,15 @@ function getTireSizeRimDiameter(tireSize) {
  */
 export function useWheelTireSelection(initialFitment = null) {
   const [selectedFitment, setSelectedFitment] = useState(initialFitment);
-  
+
   const selectFitment = useCallback((fitment) => {
     setSelectedFitment(fitment);
   }, []);
-  
+
   const clearSelection = useCallback(() => {
     setSelectedFitment(null);
   }, []);
-  
+
   return {
     selectedFitment,
     selectFitment,

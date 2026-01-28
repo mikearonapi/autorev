@@ -39,7 +39,6 @@ import UpgradeConfigPanel, {
 import UpgradeDetailModal from './UpgradeDetailModal';
 import VideoPlayer from './VideoPlayer';
 
-
 // Add swap alias to Icons (not in shared library)
 Icons.swap = ({ size = 16 }) => (
   <svg
@@ -884,9 +883,7 @@ export default function UpgradeCenter({
   // Goal-filtered and sorted categories
   // Categories filtered to those with available upgrades
   const sortedCategories = useMemo(() => {
-    return UPGRADE_CATEGORIES.filter(
-      (cat) => cat.key !== 'wheels' && (upgradesByCategory[cat.key]?.length || 0) > 0
-    );
+    return UPGRADE_CATEGORIES.filter((cat) => (upgradesByCategory[cat.key]?.length || 0) > 0);
   }, [upgradesByCategory]);
 
   // Construct build summary object - Single Source of Truth
