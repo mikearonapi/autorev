@@ -114,25 +114,12 @@ async function handleGet(request) {
     );
   }
 
-  // Get paginated leaderboard with user profiles joined
+  // Get paginated leaderboard data (sorted by points)
   const { data: leaderboardData, error: leaderboardError } = await supabaseAdmin
     .from('monthly_leaderboard')
-    .select(
-      `
-      user_id,
-      total_points,
-      user_profiles!inner (
-        id,
-        display_name,
-        avatar_url,
-        selected_title,
-        total_points
-      )
-    `
-    )
+    .select('user_id, total_points')
     .eq('year_month', currentYearMonth)
     .gt('total_points', 0)
-    .not('user_profiles.display_name', 'is', null)
     .order('total_points', { ascending: false })
     .range(offset, offset + limit - 1);
 
@@ -141,16 +128,58 @@ async function handleGet(request) {
     return errors.database('Failed to fetch leaderboard data');
   }
 
-  // Build final leaderboard
-  const finalLeaderboard = (leaderboardData || []).map((entry, index) => ({
-    userId: entry.user_id,
-    displayName: entry.user_profiles.display_name,
-    avatarUrl: entry.user_profiles.avatar_url,
-    selectedTitle: entry.user_profiles.selected_title,
-    totalPoints: entry.user_profiles.total_points || 0,
-    points: entry.total_points,
-    rank: offset + index + 1,
-  }));
+  // Get user IDs from leaderboard
+  const userIds = (leaderboardData || []).map((entry) => entry.user_id);
+
+  // If no users in result, return empty
+  if (userIds.length === 0) {
+    return NextResponse.json(
+      {
+        leaderboard: [],
+        period: 'monthly',
+        periodLabel: getCurrentMonthName(),
+        currentUserRank: null,
+        hasMore: false,
+        total: total || 0,
+      },
+      { headers: NO_CACHE_HEADERS }
+    );
+  }
+
+  // Get user profiles for these users
+  const { data: profiles, error: profileError } = await supabaseAdmin
+    .from('user_profiles')
+    .select('id, display_name, avatar_url, selected_title, total_points')
+    .in('id', userIds);
+
+  if (profileError) {
+    console.error('[Leaderboard API] Profile query error:', profileError);
+    return errors.database('Failed to fetch user profiles');
+  }
+
+  // Create profile lookup map
+  const profileMap = new Map();
+  for (const profile of profiles || []) {
+    profileMap.set(profile.id, profile);
+  }
+
+  // Build final leaderboard (maintain order from leaderboardData)
+  const finalLeaderboard = (leaderboardData || [])
+    .map((entry, index) => {
+      const profile = profileMap.get(entry.user_id);
+      // Skip users without display names
+      if (!profile || !profile.display_name) return null;
+      return {
+        userId: entry.user_id,
+        displayName: profile.display_name,
+        avatarUrl: profile.avatar_url,
+        selectedTitle: profile.selected_title,
+        totalPoints: profile.total_points || 0,
+        points: entry.total_points,
+        rank: offset + index + 1,
+      };
+    })
+    .filter(Boolean);
 
   // Get current user's rank if authenticated
   const currentUserRank = await getCurrentUserRankMonthly(request, currentYearMonth);
