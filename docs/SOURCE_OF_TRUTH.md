@@ -12,100 +12,101 @@
 
 **Search by keyword to find what you need:**
 
-| Keyword                                                               | Section                                                              | What You'll Find                                                                               |
-| --------------------------------------------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
-| `hp`, `horsepower`, `power calculation`                               | [Performance Calculations](#performance-calculations)                | `calculateSmartHpGain()` in `lib/performanceCalculator`                                        |
-| `car`, `vehicle`, `car_id`, `car_slug`                                | [Car Data & Resolution](#car-data--resolution)                       | `resolveCarId()` in `lib/carResolver.js`                                                       |
-| `user`, `auth`, `session`                                             | [State Management](#state-management)                                | `AuthProvider`, `useAuth()`                                                                    |
-| `favorites`, `save`, `bookmark`                                       | [State Management](#state-management)                                | `FavoritesProvider`, `useFavorites()`                                                          |
-| `garage`, `owned`, `my car`                                           | [Garage Feature Architecture](#garage-feature-architecture)          | `OwnedVehiclesProvider`, garage pages                                                          |
-| `build`, `project`, `upgrades`                                        | [Build & Vehicle Data Model](#build--vehicle-data-model)             | `SavedBuildsProvider`, `user_projects` table                                                   |
-| `dyno`, `torque`, `curve`                                             | [Data Visualization Components](#data-visualization-components)      | `VirtualDynoChart` component                                                                   |
-| `lap time`, `track`, `estimate`                                       | [Data Visualization Components](#data-visualization-components)      | `LapTimeEstimator`, `lapTimeService.js`                                                        |
-| `tire`, `tires`, `wheel`, `compound`, `grip`                          | [Service Files](#service-files)                                      | `lib/tireConfig.js` - unified tire config (SSOT)                                               |
-| `upgrade`, `category`, `safety`, `track`                              | [Service Files](#service-files)                                      | `lib/upgradeCategories.js` - canonical upgrade categories                                      |
-| `score`, `rating`, `tunability`                                       | [Scoring & Weights](#scoring--weights)                               | `lib/scoring.js`, `tunabilityCalculator.js`                                                    |
-| `component`, `jsx`, `ui`                                              | [Components](#components)                                            | Component registry by feature                                                                  |
-| `api`, `route`, `endpoint`                                            | [API Routes](#api-routes)                                            | Route patterns and auth requirements                                                           |
-| `database`, `table`, `supabase`                                       | [Database Tables](#database-tables)                                  | Table schemas and relationships                                                                |
-| `provider`, `context`, `state`                                        | [State Management](#state-management)                                | Provider responsibility matrix                                                                 |
-| `import`, `export`, `module`                                          | [Import Rules](#import-rules)                                        | Correct import patterns                                                                        |
-| `create`, `new file`, `add`                                           | [Creating New Code](#creating-new-code)                              | Decision tree and checklist                                                                    |
-| `error`, `bug`, `mistake`                                             | [Anti-Patterns](#anti-patterns--common-mistakes)                     | Common mistakes to avoid                                                                       |
-| `events`, `calendar`, `meet`                                          | [Events](#events)                                                    | Events pages and services                                                                      |
-| `community`, `posts`, `share`                                         | [Community Features](#community-features)                            | Community posts and builds                                                                     |
-| `al`, `ai`, `mechanic`, `chat`                                        | [AI/AL Features](#aial-features)                                     | AL tools, conversation service, evaluation                                                     |
-| `rerank`, `cohere`, `rag`, `retrieval`                                | [Service Files](#service-files)                                      | `lib/cohereRerank.js`, `lib/rrfRerank.js`                                                      |
-| `circuit breaker`, `resilience`, `failover`                           | [Service Files](#service-files)                                      | `lib/aiCircuitBreaker.js`                                                                      |
-| `evaluation`, `llm judge`, `golden dataset`                           | [AL Evaluation](#al-evaluation-testsdata-libalEvaluationServicejs)   | `lib/alEvaluationService.js`, `tests/data/al-golden-dataset.json`                              |
-| `feedback`, `thumbs up`, `thumbs down`                                | [AI/AL Features](#aial-features)                                     | `lib/alFeedbackService.js`, `components/ALFeedbackButtons.jsx`                                 |
-| `model tier`, `cost optimization`                                     | [AI/AL Features](#aial-features)                                     | `MODEL_TIERS`, `selectModelForQuery()` in `lib/alConfig.js`                                    |
-| `prompt cache`, `anthropic cache`                                     | [AI/AL Features](#aial-features)                                     | `cache_control` in `app/api/ai-mechanic/route.js`                                              |
-| `confidence`, `knowledge quality`                                     | [AI/AL Tables](#aial-tables)                                         | `document_chunks.confidence_level`                                                             |
-| `safety test`, `red team`, `jailbreak`                                | [AL Evaluation](#al-evaluation-testsdata-libalEvaluationServicejs)   | `tests/safety/al-safety.test.js`                                                               |
-| `image`, `upload`, `photo`                                            | [Service Files](#service-files)                                      | `lib/images.js`, `lib/imageUploadService.js`                                                   |
-| `stripe`, `payment`, `subscription`                                   | [Billing System](#billing-system)                                    | Stripe integration                                                                             |
-| `email`, `notification`                                               | [Email System](#email-system)                                        | Email templates and sending                                                                    |
-| `naming`, `convention`, `file name`, `handler`                        | [Naming Conventions](#-naming-conventions)                           | File and function naming patterns                                                              |
-| `analytics`, `event`, `tracking`, `gtag`                              | [Analytics Event Naming](#analytics-event-naming)                    | Event naming convention, EVENTS                                                                |
-| `funnel`, `conversion`, `step tracking`                               | [Funnel Tracking](#funnel-tracking)                                  | `trackFunnelStep()`, `FUNNELS`                                                                 |
-| `posthog`, `product analytics`, `session replay`                      | [Product Analytics](#product-analytics-posthog)                      | PostHogProvider, usePostHog()                                                                  |
-| `tracking plan`, `event properties`, `event owners`                   | [docs/TRACKING_PLAN.md](./TRACKING_PLAN.md)                          | All events documented with properties                                                          |
-| `abtest`, `experiment`, `variant`                                     | [A/B Testing Components](#ab-testing-components)                     | `ABTest`, `FeatureFlag`, `useFeatureFlag()`                                                    |
-| `offline queue`, `pwa analytics`                                      | [Service Files](#service-files)                                      | `lib/analytics/offlineQueue.js`                                                                |
-| `analytics manager`, `provider abstraction`                           | [Service Files](#service-files)                                      | `lib/analytics/manager.js`                                                                     |
-| `gdpr`, `delete data`, `export data`, `right to be forgotten`         | [API Routes](#api-routes)                                            | `/api/user/delete-data`, `/api/user/export-data`                                               |
-| `avatar`, `profile photo`, `upload avatar`                            | [Settings Page](#core-app-pages-authenticated)                       | Avatar upload in `app/(app)/settings/page.jsx`                                                 |
-| `username`, `public slug`, `profile url`                              | [API Routes](#api-routes)                                            | `/api/user/check-username`, `is_public_slug_available()`                                       |
-| `speed insights`, `web vitals`, `cwv`, `lcp`, `inp`                   | [Observability](#observability)                                      | SpeedInsights, `/api/admin/web-vitals/collect`                                                 |
-| `slo`, `error budget`, `availability target`                          | [docs/SLO.md](./SLO.md)                                              | Service Level Objectives                                                                       |
-| `schema version`, `event versioning`                                  | [Analytics Event Naming](#analytics-event-naming)                    | `SCHEMA_VERSION` in `lib/analytics/events.js`                                                  |
-| `css audit`, `hardcoded colors`, `design tokens`                      | [CSS Audit & Maintenance](#css-audit--maintenance-scripts)           | `npm run audit:css`, `npm run fix:colors`                                                      |
-| `color`, `hex`, `css variable`, `design token`                        | [Color Variable Reference](#color-variable-reference)                | Hex to variable mapping, 195 mappings in `scripts/color-token-map.json`                        |
-| `purple`, `pink`, `category color`, `dashboard color`                 | [Color Variable Reference](#color-variable-reference)                | Extended category colors: `--color-accent-purple`, `--color-accent-pink`, `--color-accent-red` |
-| `media query`, `mobile-first`, `min-width`, `max-width`, `responsive` | [CSS Audit & Maintenance](#css-audit--maintenance-scripts)           | Mobile-first patterns, `npm run audit:media-queries`                                           |
-| `breakpoint`, `responsive`, `tablet`, `desktop`                       | [CSS Audit & Maintenance](#css-audit--maintenance-scripts)           | `min-width: 768px` patterns, breakpoint utilities                                              |
-| `100vw`, `horizontal overflow`, `ios safari`, `viewport width`        | [Anti-Patterns](#-css-anti-patterns)                                 | Use `max-width: 100%` not `100vw`                                                              |
-| `design system`, `tokens`, `typography`, `spacing`                    | [docs/DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md)                          | Comprehensive design reference                                                                 |
-| `background`, `immersive`, `overlay`, `elevated`, `6-level`           | [Color Variable Reference](#color-variable-reference)                | 6-level background hierarchy                                                                   |
-| `touch target`, `accessibility`, `focus`, `wcag`                      | [Accessibility Requirements](#accessibility-requirements-wcag-21-aa) | Touch targets, focus states, form inputs                                                       |
-| `aria`, `inputMode`, `error state`, `screen reader`                   | [Accessibility Requirements](#accessibility-requirements-wcag-21-aa) | ARIA attributes, mobile keyboards                                                              |
-| `rate limit`, `throttle`, `429`                                       | [Service Files](#service-files)                                      | `rateLimit()` in `lib/rateLimit.js`                                                            |
-| `validation`, `zod`, `schema`                                         | [Service Files](#service-files)                                      | `lib/schemas/index.js` validation schemas                                                      |
-| `reduced motion`, `animation`, `a11y`                                 | [Custom Hooks](#custom-hooks)                                        | `useReducedMotion()` hook                                                                      |
-| `safe area`, `notch`, `status bar`, `pwa`                             | [Custom Hooks](#custom-hooks)                                        | `useSafeAreaColor()` hook                                                                      |
-| `skip link`, `accessibility`, `keyboard`                              | [Components](#components)                                            | `SkipLink` component                                                                           |
-| `security`, `csp`, `headers`                                          | [Security](#security)                                                | `next.config.js`, `middleware.js`                                                              |
-| `webhook`, `signature`, `verification`                                | [Webhook Security](#webhook-security)                                | Stripe, Vercel, Resend webhook handlers                                                        |
-| `cron`, `cron_secret`, `scheduled job`                                | [Cron Job Authentication](#cron-job-authentication)                  | `isAuthorized()` pattern                                                                       |
-| `sentry`, `error tracking`, `monitoring`                              | [Error Tracking](#error-tracking-sentry)                             | Sentry config, ErrorBoundary                                                                   |
-| `subscription`, `tier`, `billing`, `stripe`                           | [Subscription Hooks](#subscription-hooks)                            | `useSubscription()` hook                                                                       |
-| `feature flag`, `a/b test`, `experiment`                              | [Feature Flags](#feature-flags--ab-testing)                          | `useFeatureFlag()`, `FLAGS`                                                                    |
-| `env`, `environment`, `validation`                                    | [Environment Validation](#environment-validation)                    | `lib/env.js`                                                                                   |
-| `commitlint`, `conventional commits`                                  | [Code Quality](#code-quality)                                        | `commitlint.config.js`                                                                         |
-| `stylelint`, `css lint`                                               | [Code Quality](#code-quality)                                        | Lint CSS files                                                                                 |
-| `trial`, `dunning`, `payment failed`                                  | [Subscription Polish](#subscription-polish)                          | Trial emails, PaymentFailedBanner                                                              |
-| `dark mode`, `theme`, `next-themes`                                   | [Theme System](#theme-system)                                        | ThemeProvider, ThemeToggle                                                                     |
-| `e2e`, `playwright`, `test`                                           | [Testing](#testing)                                                  | E2E test specs                                                                                 |
-| `vitest`, `unit test`, `react testing`                                | [Testing](#testing)                                                  | Unit tests with Vitest                                                                         |
-| `llm judge`, `eval`, `golden dataset`                                 | [Testing](#testing)                                                  | AL evaluation pipeline                                                                         |
-| `query key`, `tanstack`, `cache invalidation`                         | [Query Key Factory](#query-key-factory)                              | `lib/queryKeys.js`, detailed docs in Documentation section                                     |
-| `dynamic import`, `code split`, `lazy load`                           | [Components](#components)                                            | `components/dynamic.js`                                                                        |
-| `adr`, `architecture decision`                                        | [Documentation](#documentation)                                      | `docs/adr/` folder                                                                             |
-| `intent`, `classifier`, `routing`                                     | [AL Assistant](#al-assistant)                                        | `lib/alIntentClassifier.js`                                                                    |
-| `gesture`, `pull to refresh`, `swipe`, `mobile`                       | [Components](#components)                                            | `PullToRefresh`, `SwipeableRow` in `components/ui/`                                            |
-| `drag`, `drop`, `reorder`, `sortable`                                 | [Garage Feature Architecture](#garage-feature-architecture)          | `@dnd-kit` in garage list view                                                                 |
-| `optimistic`, `instant ui`, `background save`                         | [State Management](#state-management)                                | Optimistic patterns in providers                                                               |
-| `paired tokens`, `card foreground`, `theming`                         | [Color Variable Reference](#color-variable-reference)                | `--color-card`, `--color-card-foreground`                                                      |
-| `notification`, `bell`, `in-app alert`                                | [Notification System](#notification-system)                          | `NotificationCenter`, `notificationService.js`                                                 |
-| `preferences`, `quiet hours`, `notification settings`                 | [Notification System](#notification-system)                          | `NotificationPreferences`, preference APIs                                                     |
-| `streak`, `daily streak`, `activity streak`                           | [Engagement & Streaks](#engagement--streaks)                         | `StreakIndicator`, `engagementService.js`                                                      |
-| `callsign`, `title`, `user greeting`, `tier color`                    | [Engagement & Streaks](#engagement--streaks)                         | `UserGreeting.jsx`, `getCallsignColor()`                                                       |
-| `fatigue`, `notification fatigue`, `dismiss rate`                     | [Notification System](#notification-system)                          | `notificationFatigueService.js`                                                                |
-| `milestone`, `achievement`, `celebration`                             | [Engagement & Streaks](#engagement--streaks)                         | `StreakMilestoneModal`, notification triggers                                                  |
-| `page`, `route`, `url`, `site map`, `audit`                           | [Site Index](#️-site-index-official-page-structure)                   | Official list of all 26 pages                                                                  |
-| `seo`, `metadata`, `og`, `twitter`, `schema`, `json-ld`               | [SEO & Metadata](#-seo--metadata)                                    | Metadata patterns, noindex rules, structured data                                              |
-| `sitemap`, `robots`, `canonical`, `noindex`                           | [SEO & Metadata](#-seo--metadata)                                    | `app/sitemap.js`, `app/robots.js`, seoUtils.js                                                 |
+| Keyword                                                                 | Section                                                              | What You'll Find                                                                               |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `hp`, `horsepower`, `power calculation`                                 | [Performance Calculations](#performance-calculations)                | `calculateSmartHpGain()` in `lib/performanceCalculator`                                        |
+| `car`, `vehicle`, `car_id`, `car_slug`                                  | [Car Data & Resolution](#car-data--resolution)                       | `resolveCarId()` in `lib/carResolver.js`                                                       |
+| `user`, `auth`, `session`                                               | [State Management](#state-management)                                | `AuthProvider`, `useAuth()`                                                                    |
+| `favorites`, `save`, `bookmark`                                         | [State Management](#state-management)                                | `FavoritesProvider`, `useFavorites()`                                                          |
+| `garage`, `owned`, `my car`                                             | [Garage Feature Architecture](#garage-feature-architecture)          | `OwnedVehiclesProvider`, garage pages                                                          |
+| `build`, `project`, `upgrades`                                          | [Build & Vehicle Data Model](#build--vehicle-data-model)             | `SavedBuildsProvider`, `user_projects` table                                                   |
+| `dyno`, `torque`, `curve`                                               | [Data Visualization Components](#data-visualization-components)      | `VirtualDynoChart` component                                                                   |
+| `lap time`, `track`, `estimate`                                         | [Data Visualization Components](#data-visualization-components)      | `LapTimeEstimator`, `lapTimeService.js`                                                        |
+| `tire`, `tires`, `wheel`, `compound`, `grip`                            | [Service Files](#service-files)                                      | `lib/tireConfig.js` - unified tire config (SSOT)                                               |
+| `upgrade`, `category`, `safety`, `track`                                | [Service Files](#service-files)                                      | `lib/upgradeCategories.js` - canonical upgrade categories                                      |
+| `score`, `rating`, `tunability`                                         | [Scoring & Weights](#scoring--weights)                               | `lib/scoring.js`, `tunabilityCalculator.js`                                                    |
+| `component`, `jsx`, `ui`                                                | [Components](#components)                                            | Component registry by feature                                                                  |
+| `api`, `route`, `endpoint`                                              | [API Routes](#api-routes)                                            | Route patterns and auth requirements                                                           |
+| `database`, `table`, `supabase`                                         | [Database Tables](#database-tables)                                  | Table schemas and relationships                                                                |
+| `provider`, `context`, `state`                                          | [State Management](#state-management)                                | Provider responsibility matrix                                                                 |
+| `import`, `export`, `module`                                            | [Import Rules](#import-rules)                                        | Correct import patterns                                                                        |
+| `create`, `new file`, `add`                                             | [Creating New Code](#creating-new-code)                              | Decision tree and checklist                                                                    |
+| `error`, `bug`, `mistake`                                               | [Anti-Patterns](#anti-patterns--common-mistakes)                     | Common mistakes to avoid                                                                       |
+| `events`, `calendar`, `meet`                                            | [Events](#events)                                                    | Events pages and services                                                                      |
+| `community`, `posts`, `share`                                           | [Community Features](#community-features)                            | Community posts and builds                                                                     |
+| `al`, `ai`, `mechanic`, `chat`                                          | [AI/AL Features](#aial-features)                                     | AL tools, conversation service, evaluation                                                     |
+| `al ui`, `al drawer`, `al menu`, `quick actions`, `contextual greeting` | [AL UI Components](#al-ui-components)                                | AL page layout, hamburger drawer, quick actions                                                |
+| `rerank`, `cohere`, `rag`, `retrieval`                                  | [Service Files](#service-files)                                      | `lib/cohereRerank.js`, `lib/rrfRerank.js`                                                      |
+| `circuit breaker`, `resilience`, `failover`                             | [Service Files](#service-files)                                      | `lib/aiCircuitBreaker.js`                                                                      |
+| `evaluation`, `llm judge`, `golden dataset`                             | [AL Evaluation](#al-evaluation-testsdata-libalEvaluationServicejs)   | `lib/alEvaluationService.js`, `tests/data/al-golden-dataset.json`                              |
+| `feedback`, `thumbs up`, `thumbs down`                                  | [AI/AL Features](#aial-features)                                     | `lib/alFeedbackService.js`, `components/ALFeedbackButtons.jsx`                                 |
+| `model tier`, `cost optimization`                                       | [AI/AL Features](#aial-features)                                     | `MODEL_TIERS`, `selectModelForQuery()` in `lib/alConfig.js`                                    |
+| `prompt cache`, `anthropic cache`                                       | [AI/AL Features](#aial-features)                                     | `cache_control` in `app/api/ai-mechanic/route.js`                                              |
+| `confidence`, `knowledge quality`                                       | [AI/AL Tables](#aial-tables)                                         | `document_chunks.confidence_level`                                                             |
+| `safety test`, `red team`, `jailbreak`                                  | [AL Evaluation](#al-evaluation-testsdata-libalEvaluationServicejs)   | `tests/safety/al-safety.test.js`                                                               |
+| `image`, `upload`, `photo`                                              | [Service Files](#service-files)                                      | `lib/images.js`, `lib/imageUploadService.js`                                                   |
+| `stripe`, `payment`, `subscription`                                     | [Billing System](#billing-system)                                    | Stripe integration                                                                             |
+| `email`, `notification`                                                 | [Email System](#email-system)                                        | Email templates and sending                                                                    |
+| `naming`, `convention`, `file name`, `handler`                          | [Naming Conventions](#-naming-conventions)                           | File and function naming patterns                                                              |
+| `analytics`, `event`, `tracking`, `gtag`                                | [Analytics Event Naming](#analytics-event-naming)                    | Event naming convention, EVENTS                                                                |
+| `funnel`, `conversion`, `step tracking`                                 | [Funnel Tracking](#funnel-tracking)                                  | `trackFunnelStep()`, `FUNNELS`                                                                 |
+| `posthog`, `product analytics`, `session replay`                        | [Product Analytics](#product-analytics-posthog)                      | PostHogProvider, usePostHog()                                                                  |
+| `tracking plan`, `event properties`, `event owners`                     | [docs/TRACKING_PLAN.md](./TRACKING_PLAN.md)                          | All events documented with properties                                                          |
+| `abtest`, `experiment`, `variant`                                       | [A/B Testing Components](#ab-testing-components)                     | `ABTest`, `FeatureFlag`, `useFeatureFlag()`                                                    |
+| `offline queue`, `pwa analytics`                                        | [Service Files](#service-files)                                      | `lib/analytics/offlineQueue.js`                                                                |
+| `analytics manager`, `provider abstraction`                             | [Service Files](#service-files)                                      | `lib/analytics/manager.js`                                                                     |
+| `gdpr`, `delete data`, `export data`, `right to be forgotten`           | [API Routes](#api-routes)                                            | `/api/user/delete-data`, `/api/user/export-data`                                               |
+| `avatar`, `profile photo`, `upload avatar`                              | [Settings Page](#core-app-pages-authenticated)                       | Avatar upload in `app/(app)/settings/page.jsx`                                                 |
+| `username`, `public slug`, `profile url`                                | [API Routes](#api-routes)                                            | `/api/user/check-username`, `is_public_slug_available()`                                       |
+| `speed insights`, `web vitals`, `cwv`, `lcp`, `inp`                     | [Observability](#observability)                                      | SpeedInsights, `/api/admin/web-vitals/collect`                                                 |
+| `slo`, `error budget`, `availability target`                            | [docs/SLO.md](./SLO.md)                                              | Service Level Objectives                                                                       |
+| `schema version`, `event versioning`                                    | [Analytics Event Naming](#analytics-event-naming)                    | `SCHEMA_VERSION` in `lib/analytics/events.js`                                                  |
+| `css audit`, `hardcoded colors`, `design tokens`                        | [CSS Audit & Maintenance](#css-audit--maintenance-scripts)           | `npm run audit:css`, `npm run fix:colors`                                                      |
+| `color`, `hex`, `css variable`, `design token`                          | [Color Variable Reference](#color-variable-reference)                | Hex to variable mapping, 195 mappings in `scripts/color-token-map.json`                        |
+| `purple`, `pink`, `category color`, `dashboard color`                   | [Color Variable Reference](#color-variable-reference)                | Extended category colors: `--color-accent-purple`, `--color-accent-pink`, `--color-accent-red` |
+| `media query`, `mobile-first`, `min-width`, `max-width`, `responsive`   | [CSS Audit & Maintenance](#css-audit--maintenance-scripts)           | Mobile-first patterns, `npm run audit:media-queries`                                           |
+| `breakpoint`, `responsive`, `tablet`, `desktop`                         | [CSS Audit & Maintenance](#css-audit--maintenance-scripts)           | `min-width: 768px` patterns, breakpoint utilities                                              |
+| `100vw`, `horizontal overflow`, `ios safari`, `viewport width`          | [Anti-Patterns](#-css-anti-patterns)                                 | Use `max-width: 100%` not `100vw`                                                              |
+| `design system`, `tokens`, `typography`, `spacing`                      | [docs/DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md)                          | Comprehensive design reference                                                                 |
+| `background`, `immersive`, `overlay`, `elevated`, `6-level`             | [Color Variable Reference](#color-variable-reference)                | 6-level background hierarchy                                                                   |
+| `touch target`, `accessibility`, `focus`, `wcag`                        | [Accessibility Requirements](#accessibility-requirements-wcag-21-aa) | Touch targets, focus states, form inputs                                                       |
+| `aria`, `inputMode`, `error state`, `screen reader`                     | [Accessibility Requirements](#accessibility-requirements-wcag-21-aa) | ARIA attributes, mobile keyboards                                                              |
+| `rate limit`, `throttle`, `429`                                         | [Service Files](#service-files)                                      | `rateLimit()` in `lib/rateLimit.js`                                                            |
+| `validation`, `zod`, `schema`                                           | [Service Files](#service-files)                                      | `lib/schemas/index.js` validation schemas                                                      |
+| `reduced motion`, `animation`, `a11y`                                   | [Custom Hooks](#custom-hooks)                                        | `useReducedMotion()` hook                                                                      |
+| `safe area`, `notch`, `status bar`, `pwa`                               | [Custom Hooks](#custom-hooks)                                        | `useSafeAreaColor()` hook                                                                      |
+| `skip link`, `accessibility`, `keyboard`                                | [Components](#components)                                            | `SkipLink` component                                                                           |
+| `security`, `csp`, `headers`                                            | [Security](#security)                                                | `next.config.js`, `middleware.js`                                                              |
+| `webhook`, `signature`, `verification`                                  | [Webhook Security](#webhook-security)                                | Stripe, Vercel, Resend webhook handlers                                                        |
+| `cron`, `cron_secret`, `scheduled job`                                  | [Cron Job Authentication](#cron-job-authentication)                  | `isAuthorized()` pattern                                                                       |
+| `sentry`, `error tracking`, `monitoring`                                | [Error Tracking](#error-tracking-sentry)                             | Sentry config, ErrorBoundary                                                                   |
+| `subscription`, `tier`, `billing`, `stripe`                             | [Subscription Hooks](#subscription-hooks)                            | `useSubscription()` hook                                                                       |
+| `feature flag`, `a/b test`, `experiment`                                | [Feature Flags](#feature-flags--ab-testing)                          | `useFeatureFlag()`, `FLAGS`                                                                    |
+| `env`, `environment`, `validation`                                      | [Environment Validation](#environment-validation)                    | `lib/env.js`                                                                                   |
+| `commitlint`, `conventional commits`                                    | [Code Quality](#code-quality)                                        | `commitlint.config.js`                                                                         |
+| `stylelint`, `css lint`                                                 | [Code Quality](#code-quality)                                        | Lint CSS files                                                                                 |
+| `trial`, `dunning`, `payment failed`                                    | [Subscription Polish](#subscription-polish)                          | Trial emails, PaymentFailedBanner                                                              |
+| `dark mode`, `theme`, `next-themes`                                     | [Theme System](#theme-system)                                        | ThemeProvider, ThemeToggle                                                                     |
+| `e2e`, `playwright`, `test`                                             | [Testing](#testing)                                                  | E2E test specs                                                                                 |
+| `vitest`, `unit test`, `react testing`                                  | [Testing](#testing)                                                  | Unit tests with Vitest                                                                         |
+| `llm judge`, `eval`, `golden dataset`                                   | [Testing](#testing)                                                  | AL evaluation pipeline                                                                         |
+| `query key`, `tanstack`, `cache invalidation`                           | [Query Key Factory](#query-key-factory)                              | `lib/queryKeys.js`, detailed docs in Documentation section                                     |
+| `dynamic import`, `code split`, `lazy load`                             | [Components](#components)                                            | `components/dynamic.js`                                                                        |
+| `adr`, `architecture decision`                                          | [Documentation](#documentation)                                      | `docs/adr/` folder                                                                             |
+| `intent`, `classifier`, `routing`                                       | [AL Assistant](#al-assistant)                                        | `lib/alIntentClassifier.js`                                                                    |
+| `gesture`, `pull to refresh`, `swipe`, `mobile`                         | [Components](#components)                                            | `PullToRefresh`, `SwipeableRow` in `components/ui/`                                            |
+| `drag`, `drop`, `reorder`, `sortable`                                   | [Garage Feature Architecture](#garage-feature-architecture)          | `@dnd-kit` in garage list view                                                                 |
+| `optimistic`, `instant ui`, `background save`                           | [State Management](#state-management)                                | Optimistic patterns in providers                                                               |
+| `paired tokens`, `card foreground`, `theming`                           | [Color Variable Reference](#color-variable-reference)                | `--color-card`, `--color-card-foreground`                                                      |
+| `notification`, `bell`, `in-app alert`                                  | [Notification System](#notification-system)                          | `NotificationCenter`, `notificationService.js`                                                 |
+| `preferences`, `quiet hours`, `notification settings`                   | [Notification System](#notification-system)                          | `NotificationPreferences`, preference APIs                                                     |
+| `streak`, `daily streak`, `activity streak`                             | [Engagement & Streaks](#engagement--streaks)                         | `StreakIndicator`, `engagementService.js`                                                      |
+| `callsign`, `title`, `user greeting`, `tier color`                      | [Engagement & Streaks](#engagement--streaks)                         | `UserGreeting.jsx`, `getCallsignColor()`                                                       |
+| `fatigue`, `notification fatigue`, `dismiss rate`                       | [Notification System](#notification-system)                          | `notificationFatigueService.js`                                                                |
+| `milestone`, `achievement`, `celebration`                               | [Engagement & Streaks](#engagement--streaks)                         | `StreakMilestoneModal`, notification triggers                                                  |
+| `page`, `route`, `url`, `site map`, `audit`                             | [Site Index](#️-site-index-official-page-structure)                   | Official list of all 26 pages                                                                  |
+| `seo`, `metadata`, `og`, `twitter`, `schema`, `json-ld`                 | [SEO & Metadata](#-seo--metadata)                                    | Metadata patterns, noindex rules, structured data                                              |
+| `sitemap`, `robots`, `canonical`, `noindex`                             | [SEO & Metadata](#-seo--metadata)                                    | `app/sitemap.js`, `app/robots.js`, seoUtils.js                                                 |
 
 ---
 
@@ -2398,6 +2399,93 @@ query = query.eq('car_id', carId); // al_content_gaps has index on car_id
 - `al_response_feedback` - User feedback on responses
 - `al_prompt_versions` - Prompt version tracking for A/B testing
 
+### AL UI Components
+
+**SOURCE OF TRUTH**: `app/(app)/al/ALPageClient.jsx`, `app/(app)/al/page.module.css`
+
+The AL page uses a Claude-inspired minimal design with progressive disclosure via a hamburger menu drawer.
+
+| Component/Element         | Location                                 | Purpose                                  |
+| ------------------------- | ---------------------------------------- | ---------------------------------------- |
+| `ALPageClient`            | `app/(app)/al/ALPageClient.jsx`          | Main AL chat page component              |
+| `ALMascot`                | Internal to ALPageClient                 | AL avatar (48px default, teal ring)      |
+| `ALAttachmentMenu`        | `components/ALAttachmentMenu.jsx`        | Photo/file attachment picker             |
+| `ALPreferencesPanel`      | `components/ALPreferencesPanel.jsx`      | AL settings panel (response style, etc.) |
+| `ALSourcesList`           | `components/ALSourcesList.jsx`           | Perplexity-style source citations        |
+| `FormattedMessage`        | Internal to ALPageClient                 | Markdown rendering for AL responses      |
+| `FeedbackDimensionsModal` | `components/FeedbackDimensionsModal.jsx` | Enhanced feedback collection             |
+
+**Page Structure (Claude-inspired)**:
+
+```
+┌────────────────────────────────┐
+│ [≡ Menu]        AL       [+]  │  ← Simplified header
+│                                │
+│         [AL icon 48px]         │
+│   "How can I help you this     │  ← Contextual greeting (time-aware)
+│         evening?"              │
+│                                │
+│ [What should I mod?] [Compare] │  ← Quick action chips
+│ [Diagnose an issue]            │
+│                                │
+│ ┌────────────────────────────┐ │
+│ │ 📷  🎤  Ask AL anything... ↑ │ │  ← Input area
+│ └────────────────────────────┘ │
+│                                │
+│ [GARAGE] [DATA] [INSIGHTS]...  │  ← App tab bar
+└────────────────────────────────┘
+```
+
+**Hamburger Menu Drawer** (slides in from left):
+
+| Section  | Content                                 |
+| -------- | --------------------------------------- |
+| Header   | AL mascot (32px) + "AL" branding        |
+| New Chat | Teal button to start fresh conversation |
+| Chats    | Opens conversation history view         |
+| Settings | Opens AL preferences panel              |
+| Share    | Generate share link (if conversation)   |
+| Footer   | Tier badge + query count + user profile |
+
+**Contextual Greetings** (`getContextualGreeting()`):
+
+- Time-aware: "How can I help you this morning/afternoon/evening/tonight?"
+- Car-aware (50% chance if car selected): "What's on your mind about the M3?"
+
+**Quick Actions** (`QUICK_ACTIONS` constant):
+
+| ID         | Label                     | Prompt                                               |
+| ---------- | ------------------------- | ---------------------------------------------------- |
+| `mod`      | "What should I mod next?" | "What modifications should I consider next..."       |
+| `compare`  | "Compare parts"           | "Help me compare different options for upgrading..." |
+| `diagnose` | "Diagnose an issue"       | "I have an issue with my car I need help..."         |
+
+**Key CSS Classes** (in `page.module.css`):
+
+| Class                | Purpose                            |
+| -------------------- | ---------------------------------- |
+| `.menuBtn`           | Hamburger menu button (44px touch) |
+| `.headerTitle`       | Centered "AL" text                 |
+| `.drawerOverlay`     | Semi-transparent backdrop          |
+| `.drawer`            | Slide-in drawer (280px, left side) |
+| `.drawerNewChat`     | Teal new chat button               |
+| `.drawerMenuItem`    | Menu item with icon + chevron      |
+| `.quickActions`      | Centered chip container            |
+| `.quickActionBtn`    | Pill-shaped suggestion chip        |
+| `.emptyStateContent` | Centered greeting + avatar         |
+
+**Design Principles**:
+
+1. **Minimalism** - Header has only 3 elements (menu, title, new chat)
+2. **Progressive Disclosure** - Settings, history, tier info in drawer
+3. **Contextual Awareness** - Time-based and car-aware greetings
+4. **Touch Accessibility** - All buttons 44px minimum touch targets
+5. **Mobile-First** - Drawer width max 85vw, responsive spacing
+
+**❌ DO NOT**: Add controls to the header (use drawer instead)
+**❌ DO NOT**: Use static greetings (use `getContextualGreeting()`)
+**✅ DO**: Keep empty state minimal with quick actions below greeting
+
 ### Community Features
 
 **SOURCE OF TRUTH**:
@@ -2621,6 +2709,10 @@ The following files have been consolidated into `lib/performanceCalculator/`:
 | Car Selection   | `CarSelectionProvider`          | `components/providers/CarSelectionProvider.jsx` |
 | Accessibility   | `SkipLink`                      | `components/SkipLink.jsx`                       |
 | Dynamic Imports | `DynamicVirtualDynoChart`, etc. | `components/dynamic.js`                         |
+| AL Chat Page    | `ALPageClient`                  | `app/(app)/al/ALPageClient.jsx`                 |
+| AL Attachments  | `ALAttachmentMenu`              | `components/ALAttachmentMenu.jsx`               |
+| AL Preferences  | `ALPreferencesPanel`            | `components/ALPreferencesPanel.jsx`             |
+| AL Sources      | `ALSourcesList`                 | `components/ALSourcesList.jsx`                  |
 | AL Feedback     | `ALFeedbackButtons`             | `components/ALFeedbackButtons.jsx`              |
 
 ### Dynamic Imports (Code Splitting)

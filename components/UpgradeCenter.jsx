@@ -75,6 +75,7 @@ const _PACKAGES = [...BUILD_RECOMMENDATIONS, CUSTOM_BUILD];
 const ICON_NAME_TO_COMPONENT = {
   bolt: Icons.bolt,
   turbo: Icons.turbo,
+  sound: Icons.sound, // Exhaust category
   target: Icons.target,
   disc: Icons.disc,
   thermometer: Icons.thermometer,
@@ -88,11 +89,13 @@ const ICON_NAME_TO_COMPONENT = {
  * UPGRADE_CATEGORIES - derived from shared definitions
  * This ensures consistency with BuildModsList and other components.
  * Icon names are mapped to local Icon components for rendering.
+ * Note: 'safety' category is hidden from UI per product decision (track prep is niche)
  */
-const UPGRADE_CATEGORIES = SHARED_UPGRADE_CATEGORIES.map((cat) => ({
-  ...cat,
-  icon: ICON_NAME_TO_COMPONENT[cat.icon] || Icons.settings,
-}));
+const UPGRADE_CATEGORIES = SHARED_UPGRADE_CATEGORIES.filter((cat) => cat.key !== 'safety') // Safety/Track hidden from main UI
+  .map((cat) => ({
+    ...cat,
+    icon: ICON_NAME_TO_COMPONENT[cat.icon] || Icons.settings,
+  }));
 
 /* VirtualDynoChart extracted to components/VirtualDynoChart.jsx */
 

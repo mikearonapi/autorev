@@ -2,14 +2,15 @@
 
 /**
  * Scrape Working Sources v2 - Improved
- * 
+ *
  * Better URL generation and data extraction for Cars.com
  */
 
-import { createClient } from '@supabase/supabase-js';
-import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -20,7 +21,7 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const supabase = createClient(supabaseUrl, supabaseKey, {
-  auth: { persistSession: false }
+  auth: { persistSession: false },
 });
 
 // Parse args
@@ -37,12 +38,13 @@ const SKIP = args.skip ? parseInt(args.skip) : 0;
 const DELAY = args.delay ? parseInt(args.delay) : 3000;
 
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 const HEADERS = {
-  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-  'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+  'User-Agent':
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
   'Accept-Language': 'en-US,en;q=0.9',
 };
 
@@ -60,7 +62,7 @@ const CARSCOM_MODELS = {
   'Porsche 911 GT3 997': { make: 'porsche', model: '911', trim: 'gt3' },
   'Porsche 911 Turbo 997.1': { make: 'porsche', model: '911', trim: 'turbo' },
   'Porsche 911 Turbo 997.2': { make: 'porsche', model: '911', trim: 'turbo' },
-  
+
   // BMW
   'BMW M2 Competition': { make: 'bmw', model: 'm2' },
   'BMW M3 E46': { make: 'bmw', model: 'm3' },
@@ -73,15 +75,19 @@ const CARSCOM_MODELS = {
   'BMW M5 F90 Competition': { make: 'bmw', model: 'm5' },
   'BMW 1 Series M Coupe': { make: 'bmw', model: '1_series_m' },
   'BMW Z4 M Coupe/Roadster': { make: 'bmw', model: 'z4_m' },
-  
+
   // Corvette
   'C7 Corvette Grand Sport': { make: 'chevrolet', model: 'corvette', trim: 'grand_sport' },
   'C7 Corvette Z06': { make: 'chevrolet', model: 'corvette', trim: 'z06' },
   'C8 Corvette Stingray': { make: 'chevrolet', model: 'corvette_stingray' },
   'Chevrolet Corvette C5 Z06': { make: 'chevrolet', model: 'corvette', trim: 'z06' },
-  'Chevrolet Corvette C6 Grand Sport': { make: 'chevrolet', model: 'corvette', trim: 'grand_sport' },
+  'Chevrolet Corvette C6 Grand Sport': {
+    make: 'chevrolet',
+    model: 'corvette',
+    trim: 'grand_sport',
+  },
   'Chevrolet Corvette C6 Z06': { make: 'chevrolet', model: 'corvette', trim: 'z06' },
-  
+
   // Muscle
   'Camaro SS 1LE': { make: 'chevrolet', model: 'camaro', trim: 'ss' },
   'Camaro ZL1': { make: 'chevrolet', model: 'camaro', trim: 'zl1' },
@@ -89,14 +95,14 @@ const CARSCOM_MODELS = {
   'Shelby GT350': { make: 'ford', model: 'mustang_shelby_gt350' },
   'Shelby GT500': { make: 'ford', model: 'mustang_shelby_gt500' },
   'Ford Mustang Boss 302': { make: 'ford', model: 'mustang', trim: 'boss_302' },
-  
+
   // Dodge
   'Dodge Challenger Hellcat': { make: 'dodge', model: 'challenger', trim: 'srt_hellcat' },
   'Dodge Challenger SRT 392': { make: 'dodge', model: 'challenger', trim: 'srt_392' },
   'Dodge Charger Hellcat': { make: 'dodge', model: 'charger', trim: 'srt_hellcat' },
   'Dodge Charger SRT 392': { make: 'dodge', model: 'charger', trim: 'srt_392' },
   'Dodge Viper': { make: 'dodge', model: 'viper' },
-  
+
   // Japanese
   'Honda Civic Type R FK8': { make: 'honda', model: 'civic_type_r' },
   'Honda Civic Type R FL5': { make: 'honda', model: 'civic_type_r' },
@@ -122,7 +128,7 @@ const CARSCOM_MODELS = {
   'Nissan 300ZX Twin Turbo Z32': { make: 'nissan', model: '300zx' },
   'Mitsubishi Lancer Evolution VIII/IX': { make: 'mitsubishi', model: 'lancer_evolution' },
   'Mitsubishi Lancer Evolution X': { make: 'mitsubishi', model: 'lancer' },
-  
+
   // European
   'Audi R8 V10': { make: 'audi', model: 'r8' },
   'Audi R8 V8': { make: 'audi', model: 'r8' },
@@ -147,7 +153,7 @@ const CARSCOM_MODELS = {
   'Aston Martin V8 Vantage': { make: 'aston_martin', model: 'v8_vantage' },
   'Maserati GranTurismo': { make: 'maserati', model: 'granturismo' },
   'Lamborghini Gallardo': { make: 'lamborghini', model: 'gallardo' },
-  
+
   // Other
   'Acura Integra Type R': { make: 'acura', model: 'integra' },
   'Cadillac CTS-V Gen 2': { make: 'cadillac', model: 'cts-v' },
@@ -166,64 +172,63 @@ const CARSCOM_MODELS = {
 async function scrapeCarsComForCar(car) {
   // Get mapping or generate from name
   const mapping = CARSCOM_MODELS[car.name];
-  
+
   let make, model, trim;
-  
+
   if (mapping) {
     make = mapping.make;
     model = mapping.model;
     trim = mapping.trim;
   } else {
     // Fallback: generate from car data
+    // Note: car.name no longer includes brand prefix (removed Jan 2026)
     make = (car.brand || car.name.split(' ')[0]).toLowerCase().replace(/\s+/g, '_');
-    model = car.name.split(' ').slice(1).join('_').toLowerCase()
-      .replace(/[()]/g, '')
-      .replace(/\s+/g, '_');
+    model = car.name.toLowerCase().replace(/[()]/g, '').replace(/\s+/g, '_');
   }
-  
+
   // Get year range
   const yearMatch = car.years?.match(/(\d{4})/g);
   const startYear = yearMatch ? parseInt(yearMatch[0]) : 2015;
   const endYear = yearMatch && yearMatch[1] ? parseInt(yearMatch[1]) : startYear + 5;
-  
+
   try {
     let url = `https://www.cars.com/shopping/results/?makes[]=${make}&models[]=${make}-${model}&maximum_distance=all&stock_type=all&year_min=${startYear}&year_max=${endYear}`;
-    
+
     // Add trim filter if available
     if (trim) {
       url += `&trims[]=${make}-${model}-${trim}`;
     }
-    
+
     const response = await fetch(url, { headers: HEADERS });
-    
+
     if (!response.ok) {
       return null;
     }
-    
+
     const html = await response.text();
-    
+
     // Extract prices from primary-price class
     const prices = [];
     const priceMatches = html.matchAll(/primary-price[^>]*>\s*\$(\d{1,3}(?:,\d{3})*)/gi);
-    
+
     for (const match of priceMatches) {
       const price = parseInt(match[1].replace(/,/g, ''));
       if (price >= 10000 && price <= 1000000) {
         prices.push(price);
       }
     }
-    
+
     if (prices.length === 0) {
       return null;
     }
-    
+
     // Calculate stats
     const sortedPrices = prices.sort((a, b) => a - b);
     const avgPrice = Math.round(prices.reduce((a, b) => a + b, 0) / prices.length);
     const medianPrice = sortedPrices[Math.floor(sortedPrices.length / 2)];
     const minPrice = sortedPrices[0];
     const maxPrice = sortedPrices[sortedPrices.length - 1];
-    
+
     return {
       carscom_avg_price: avgPrice,
       carscom_median_price: medianPrice,
@@ -239,14 +244,14 @@ async function scrapeCarsComForCar(car) {
 
 async function saveCarsComData(carSlug, data) {
   if (!data) return false;
-  
+
   try {
     const { data: existing } = await supabase
       .from('car_market_pricing')
       .select('id')
       .eq('car_slug', carSlug)
       .single();
-    
+
     if (existing) {
       const { error } = await supabase
         .from('car_market_pricing')
@@ -270,63 +275,51 @@ async function main() {
   console.log('='.repeat(70));
   console.log(`Limit: ${LIMIT}, Skip: ${SKIP}, Delay: ${DELAY}ms`);
   console.log('='.repeat(70));
-  
+
   const { data: cars, error } = await supabase
     .from('cars')
     .select('slug, name, brand, years')
     .order('name')
     .range(SKIP, SKIP + LIMIT - 1);
-  
+
   if (error || !cars) {
     console.error('Error fetching cars:', error?.message);
     process.exit(1);
   }
-  
+
   console.log(`\nProcessing ${cars.length} cars...\n`);
-  
+
   let success = 0;
   let failed = 0;
-  
+
   for (let i = 0; i < cars.length; i++) {
     const car = cars[i];
-    
+
     process.stdout.write(`[${i + 1}/${cars.length}] ${car.name.padEnd(40)}`);
-    
+
     const data = await scrapeCarsComForCar(car);
     const saved = await saveCarsComData(car.slug, data);
-    
+
     if (saved && data) {
       success++;
       const priceStr = `$${data.carscom_avg_price.toLocaleString()}`;
       const rangeStr = `($${data.carscom_min_price.toLocaleString()}-$${data.carscom_max_price.toLocaleString()})`;
-      console.log(` ✅ ${priceStr.padStart(10)} ${rangeStr} [${data.carscom_listing_count} listings]`);
+      console.log(
+        ` ✅ ${priceStr.padStart(10)} ${rangeStr} [${data.carscom_listing_count} listings]`
+      );
     } else {
       failed++;
       console.log(' ❌ No data');
     }
-    
+
     if (i < cars.length - 1) {
       await sleep(DELAY);
     }
   }
-  
+
   console.log('\n' + '='.repeat(70));
   console.log(`Summary: ${success} success, ${failed} failed`);
   console.log('='.repeat(70));
 }
 
 main().catch(console.error);
-
-
-
-
-
-
-
-
-
-
-
-
-
-

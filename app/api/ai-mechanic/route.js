@@ -411,6 +411,7 @@ async function executeToolsInParallel({
   correlationId,
   cacheScopeKey,
   onToolResult, // callback for streaming updates
+  onToolProgress, // callback for tool progress updates (for long-running tools)
 }) {
   const results = [];
   const timings = [];
@@ -447,6 +448,15 @@ async function executeToolsInParallel({
         correlationId,
         cacheScopeKey,
         meta,
+        // Pass progress callback for tools that support it (e.g., research_parts_live)
+        onProgress: onToolProgress
+          ? (progress) =>
+              onToolProgress({
+                tool: toolUse.name,
+                id: toolUse.id,
+                ...progress,
+              })
+          : undefined,
       });
 
       const durationMs = Date.now() - toolStartTime;
@@ -854,6 +864,10 @@ async function handleStreamingResponse({
               onToolResult: (toolResult) => {
                 sendSSE(controller, 'tool_result', toolResult);
               },
+              onToolProgress: (progress) => {
+                // Send progress updates for long-running tools (e.g., research_parts_live)
+                sendSSE(controller, 'tool_progress', progress);
+              },
             });
 
             toolCallsUsed.push(...newToolCalls);
@@ -929,17 +943,20 @@ async function handleStreamingResponse({
         }
 
         // Extract and save parts from response (async, non-blocking)
-        // Only if research_parts_live was used and we have a car context
-        if (toolCallsUsed.includes('research_parts_live') && context.car?.id && fullResponse) {
-          console.log(`[AL ${correlationId}] research_parts_live was used - attempting parts extraction`);
+        // The extraction function can resolve car_slug from the response if context.car.id is not available
+        if (toolCallsUsed.includes('research_parts_live') && fullResponse) {
+          console.log(
+            `[AL ${correlationId}] research_parts_live was used - attempting parts extraction` +
+              (context.car?.id
+                ? ` (car context: ${context.car.id})`
+                : ' (will resolve from response)')
+          );
           extractAndSavePartsFromResponse(
             fullResponse,
-            context.car.id,
+            context.car?.id || null, // May be null - extraction function will resolve from car_slug in response
             correlationId,
             activeConversationId
           );
-        } else if (toolCallsUsed.includes('research_parts_live')) {
-          console.warn(`[AL ${correlationId}] research_parts_live used but missing car context (${context.car?.id}) or response`);
         }
 
         // Send final metadata event
@@ -1655,17 +1672,18 @@ async function handlePost(request) {
     }
 
     // Extract and save parts from response (async, non-blocking)
-    // Only if research_parts_live was used and we have a car context
-    if (toolCallsUsed.includes('research_parts_live') && context.car?.id && aiResponse) {
-      console.log(`[AL ${correlationId}] research_parts_live was used - attempting parts extraction`);
+    // The extraction function can resolve car_slug from the response if context.car.id is not available
+    if (toolCallsUsed.includes('research_parts_live') && aiResponse) {
+      console.log(
+        `[AL ${correlationId}] research_parts_live was used - attempting parts extraction` +
+          (context.car?.id ? ` (car context: ${context.car.id})` : ' (will resolve from response)')
+      );
       extractAndSavePartsFromResponse(
         aiResponse,
-        context.car.id,
+        context.car?.id || null, // May be null - extraction function will resolve from car_slug in response
         correlationId,
         activeConversationId
       );
-    } else if (toolCallsUsed.includes('research_parts_live')) {
-      console.warn(`[AL ${correlationId}] research_parts_live used but missing car context (${context.car?.id}) or response`);
     }
 
     const res = NextResponse.json({

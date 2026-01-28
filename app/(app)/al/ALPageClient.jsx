@@ -39,6 +39,47 @@ import { UI_IMAGES } from '@/lib/images';
 
 import styles from './page.module.css';
 
+/**
+ * Clean up user messages that may contain internal technical instructions.
+ * These instructions are meant for AL's processing, not for display to users.
+ *
+ * Examples of content to strip:
+ * - "USE THE research_parts_live TOOL with these parameters:..."
+ * - "Then format the results as a Top 5 list:..."
+ * - Multi-line formatting instructions
+ */
+const cleanUserMessage = (content) => {
+  if (!content) return content;
+
+  // Pattern 1: Strip "USE THE [tool] TOOL..." instructions and everything after
+  // This captures prompts like "Find me the best X. USE THE research_parts_live TOOL..."
+  let cleaned = content.replace(/\s*USE THE \w+(?:_\w+)* TOOL[\s\S]*/gi, '');
+
+  // Pattern 2: Strip "Then format the results..." instructions
+  cleaned = cleaned.replace(/\s*Then format the results[\s\S]*/gi, '');
+
+  // Pattern 3: Strip parameter blocks like "- car_slug: ..."
+  cleaned = cleaned.replace(/\n-\s*(?:car_slug|upgrade_type|limit):\s*"[^"]*"/gi, '');
+
+  // Pattern 4: Strip markdown instruction blocks (## format instructions)
+  cleaned = cleaned.replace(/\n##\s*(?:Top|For each|Quick Buying)[\s\S]*/gi, '');
+
+  // Pattern 5: Strip IMPORTANT sections with numbered instructions
+  cleaned = cleaned.replace(/\s*IMPORTANT:\s*\n(?:\d+\..*\n?)*/gi, '');
+
+  // Clean up trailing whitespace and periods
+  cleaned = cleaned.trim();
+
+  // If we stripped everything, return a fallback
+  if (!cleaned) {
+    // Try to extract the first sentence as a fallback
+    const firstSentence = content.match(/^[^.!?\n]+[.!?]?/);
+    return firstSentence ? firstSentence[0].trim() : content.slice(0, 100);
+  }
+
+  return cleaned;
+};
+
 // Simple markdown formatter for AL responses
 const FormattedMessage = ({ content }) => {
   if (!content) return null;
@@ -205,7 +246,7 @@ const FormattedMessage = ({ content }) => {
 };
 
 // AL Mascot component - Teal ring for brand consistency
-const ALMascot = ({ size = 80 }) => (
+const ALMascot = ({ size = 48 }) => (
   <Image
     src={UI_IMAGES.alMascotFull}
     alt="AL - AutoRev AI"
@@ -217,11 +258,58 @@ const ALMascot = ({ size = 80 }) => (
       height: size,
       borderRadius: '50%',
       objectFit: 'cover',
-      border: '3px solid var(--color-accent-teal, #10b981)',
-      boxShadow: '0 4px 20px rgba(16, 185, 129, 0.3)',
+      border: size > 40 ? '2px solid var(--color-accent-teal, #10b981)' : 'none',
+      boxShadow: size > 40 ? '0 4px 16px rgba(16, 185, 129, 0.25)' : 'none',
     }}
   />
 );
+
+// Contextual greeting based on time of day
+const getContextualGreeting = (carName) => {
+  const hour = new Date().getHours();
+  let timeGreeting;
+
+  if (hour >= 5 && hour < 12) {
+    timeGreeting = 'this morning';
+  } else if (hour >= 12 && hour < 17) {
+    timeGreeting = 'this afternoon';
+  } else if (hour >= 17 && hour < 21) {
+    timeGreeting = 'this evening';
+  } else {
+    timeGreeting = 'tonight';
+  }
+
+  // If user has a car selected, occasionally reference it
+  if (carName && Math.random() > 0.5) {
+    const carGreetings = [
+      `What's on your mind about the ${carName}?`,
+      `How can I help with your ${carName}?`,
+      `Ready to talk ${carName}?`,
+    ];
+    return carGreetings[Math.floor(Math.random() * carGreetings.length)];
+  }
+
+  return `How can I help you ${timeGreeting}?`;
+};
+
+// Quick action suggestions for empty state
+const QUICK_ACTIONS = [
+  {
+    id: 'mod',
+    label: 'What should I mod next?',
+    prompt: 'What modifications should I consider next for my car?',
+  },
+  {
+    id: 'compare',
+    label: 'Compare parts',
+    prompt: 'Help me compare different options for upgrading my car',
+  },
+  {
+    id: 'diagnose',
+    label: 'Diagnose an issue',
+    prompt: 'I have an issue with my car I need help diagnosing',
+  },
+];
 
 // Local aliases for icons with newChat and history mappings
 const LocalIcons = {
@@ -244,6 +332,11 @@ const LocalIcons = {
   mic: Icons.mic,
   share: Icons.share,
   x: Icons.x,
+  // Hamburger menu
+  menu: Icons.menu,
+  star: Icons.star,
+  user: Icons.user,
+  chevronRight: Icons.chevronRight,
 };
 
 // Helper to check if a message is from AL (assistant)
@@ -270,6 +363,80 @@ const formatRelativeTime = (dateString) => {
   if (diffDays === 1) return 'Yesterday';
   if (diffDays < 7) return `${diffDays}d ago`;
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+};
+
+// Helper to strip markdown and technical prompts from preview text for cleaner display
+const stripMarkdown = (text) => {
+  if (!text) return '';
+
+  // First, clean any technical prompt instructions
+  const cleaned = cleanUserMessage(text);
+
+  return (
+    cleaned
+      // Remove headers (## Header)
+      .replace(/^#{1,6}\s+/gm, '')
+      // Remove bold (**text** or __text__)
+      .replace(/\*\*([^*]+)\*\*/g, '$1')
+      .replace(/__([^_]+)__/g, '$1')
+      // Remove italic (*text* or _text_)
+      .replace(/\*([^*]+)\*/g, '$1')
+      .replace(/_([^_]+)_/g, '$1')
+      // Remove numbered lists (1. item, 1) item, **1) item)
+      .replace(/^\s*\*?\*?\d+[.)]\s*/gm, '')
+      // Remove bullet points (- item, * item)
+      .replace(/^\s*[-*]\s+/gm, '')
+      // Remove markdown links [text](url)
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      // Remove inline code `code`
+      .replace(/`([^`]+)`/g, '$1')
+      // Remove extra whitespace
+      .replace(/\s+/g, ' ')
+      .trim()
+  );
+};
+
+// Helper to get date group for a conversation (Today, Yesterday, Previous 7 Days, Previous 30 Days, Older)
+const getDateGroup = (dateString) => {
+  if (!dateString) return 'Older';
+  const date = new Date(dateString);
+  const now = new Date();
+
+  // Reset to start of day for comparison
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const weekAgo = new Date(today);
+  weekAgo.setDate(weekAgo.getDate() - 7);
+  const monthAgo = new Date(today);
+  monthAgo.setDate(monthAgo.getDate() - 30);
+
+  if (date >= today) return 'Today';
+  if (date >= yesterday) return 'Yesterday';
+  if (date >= weekAgo) return 'Previous 7 Days';
+  if (date >= monthAgo) return 'Previous 30 Days';
+  return 'Older';
+};
+
+// Helper to group conversations by date
+const groupConversationsByDate = (conversations) => {
+  const groups = {
+    Today: [],
+    Yesterday: [],
+    'Previous 7 Days': [],
+    'Previous 30 Days': [],
+    Older: [],
+  };
+
+  conversations.forEach((conv) => {
+    const group = getDateGroup(conv.created_at || conv.updated_at);
+    groups[group].push(conv);
+  });
+
+  // Return as array of { label, conversations } objects, filtering out empty groups
+  return Object.entries(groups)
+    .filter(([, convs]) => convs.length > 0)
+    .map(([label, convs]) => ({ label, conversations: convs }));
 };
 
 // Helper to copy text to clipboard
@@ -376,7 +543,7 @@ const _getToolActivityLabel = (toolName) => {
 };
 
 // Daily usage counter component - shows "X queries today" with beta badge
-const ALQueryCounter = ({ queriesToday, isBeta, isUnlimited }) => {
+const _ALQueryCounter = ({ queriesToday, isBeta, isUnlimited }) => {
   return (
     <div className={styles.queryCounter}>
       <span className={styles.queryCountNumber}>{queriesToday}</span>
@@ -447,6 +614,7 @@ export default function ALPageClient() {
   const [showShareModal, setShowShareModal] = useState(false); // Share modal
   const [shareUrl, setShareUrl] = useState(null); // Share URL
   const [isSharing, setIsSharing] = useState(false); // Loading state for sharing
+  const [showDrawer, setShowDrawer] = useState(false); // Hamburger menu drawer
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -1003,8 +1171,38 @@ export default function ALPageClient() {
                   setActiveTools((prev) => {
                     // Avoid duplicates
                     if (prev.some((t) => t.name === data.tool)) return prev;
-                    return [...prev, { name: data.tool, label: data.label, status: 'running' }];
+                    return [
+                      ...prev,
+                      { name: data.tool, label: data.label, status: 'running', subSteps: [] },
+                    ];
                   });
+                }
+              } else if (currentEventType === 'tool_progress') {
+                // Progress update for long-running tools (e.g., research_parts_live)
+                // Update the tool's subSteps to show what's being searched
+                if (data.tool) {
+                  setActiveTools((prev) =>
+                    prev.map((t) =>
+                      t.name === data.tool
+                        ? {
+                            ...t,
+                            subSteps: [
+                              ...(t.subSteps || []),
+                              {
+                                step: data.step,
+                                label: data.stepLabel || data.step,
+                                status: data.status,
+                                sites: data.sites || [],
+                                resultCount: data.resultCount,
+                              },
+                            ],
+                            // Update progress counts
+                            completedCount: data.completedCount,
+                            totalCount: data.totalCount,
+                          }
+                        : t
+                    )
+                  );
                 }
               } else if (currentEventType === 'tool_result') {
                 // Tool completed - mark it as done
@@ -1184,19 +1382,6 @@ export default function ALPageClient() {
   // Keep ref updated for useCallback that references sendMessage
   sendMessageRef.current = sendMessage;
 
-  // Format date for conversation list
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diff = now - date;
-    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-
-    if (days === 0) return 'Today';
-    if (days === 1) return 'Yesterday';
-    if (days < 7) return `${days}d ago`;
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-  };
-
   // Handle feedback submission
   const handleFeedback = async (messageIndex, rating) => {
     const message = messages[messageIndex];
@@ -1326,13 +1511,14 @@ export default function ALPageClient() {
   // History view
   if (showHistory) {
     const displayedConversations = searchResults !== null ? searchResults : conversations;
+    // Group conversations by date when not searching
+    const groupedConversations =
+      searchResults !== null ? null : groupConversationsByDate(displayedConversations);
 
     return (
       <div className={styles.container}>
         <div className={styles.historyView}>
           <div className={styles.historyHeader}>
-            <LocalIcons.history size={18} />
-            <span>HISTORY</span>
             <button
               className={styles.closeHistoryBtn}
               onClick={() => {
@@ -1340,8 +1526,21 @@ export default function ALPageClient() {
                 setHistorySearchQuery('');
                 setSearchResults(null);
               }}
+              aria-label="Close history"
             >
-              ✕
+              <LocalIcons.x size={18} />
+            </button>
+            <span className={styles.historyTitle}>Chats</span>
+            <button
+              className={styles.newChatBtn}
+              onClick={() => {
+                startNewChat();
+                setShowHistory(false);
+              }}
+              title="New chat"
+              aria-label="New chat"
+            >
+              <LocalIcons.newChat size={18} />
             </button>
           </div>
 
@@ -1369,6 +1568,7 @@ export default function ALPageClient() {
                   setHistorySearchQuery('');
                   setSearchResults(null);
                 }}
+                aria-label="Clear search"
               >
                 <LocalIcons.x size={14} />
               </button>
@@ -1378,22 +1578,31 @@ export default function ALPageClient() {
           <PullToRefresh onRefresh={refetchConversations}>
             <div className={styles.conversationsList}>
               {conversationsLoading || isSearchingHistory ? (
-                <div className={styles.loadingConversations}>Loading...</div>
+                <div className={styles.loadingConversations}>
+                  <div className={styles.loadingDots}>
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                </div>
               ) : displayedConversations.length === 0 ? (
                 <div className={styles.noConversations}>
                   {searchResults !== null ? (
                     <>
+                      <LocalIcons.search size={32} />
                       <p>No matching conversations</p>
                       <p className={styles.noConversationsHint}>Try different keywords</p>
                     </>
                   ) : (
                     <>
+                      <LocalIcons.sparkles size={32} />
                       <p>No conversations yet</p>
                       <p className={styles.noConversationsHint}>Start chatting with AL!</p>
                     </>
                   )}
                 </div>
-              ) : (
+              ) : searchResults !== null ? (
+                // Flat list when searching
                 displayedConversations.map((conv) => (
                   <button
                     key={conv.id}
@@ -1407,36 +1616,85 @@ export default function ALPageClient() {
                         {conv.title || 'New conversation'}
                       </span>
                       {conv.preview && (
-                        <span className={styles.conversationPreview}>{conv.preview}</span>
-                      )}
-                      {isLoadingConversationDirect && selectedConversationId === conv.id && (
-                        <span className={styles.conversationLoading}>Loading...</span>
+                        <span className={styles.conversationPreview}>
+                          {stripMarkdown(conv.preview)}
+                        </span>
                       )}
                     </div>
-                    <div className={styles.conversationMeta}>
-                      <span className={styles.conversationDate}>{formatDate(conv.created_at)}</span>
-                      <span
-                        role="button"
-                        tabIndex={0}
-                        className={styles.deleteConversationBtn}
-                        onClick={(e) => {
+                    {isLoadingConversationDirect && selectedConversationId === conv.id && (
+                      <div className={styles.conversationLoadingIndicator} />
+                    )}
+                    <span
+                      role="button"
+                      tabIndex={0}
+                      className={styles.deleteConversationBtn}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                        setDeleteConfirm({ conversationId: conv.id, title: conv.title });
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
                           e.stopPropagation();
                           e.preventDefault();
                           setDeleteConfirm({ conversationId: conv.id, title: conv.title });
-                        }}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
+                        }
+                      }}
+                      title="Delete conversation"
+                    >
+                      <LocalIcons.trash size={14} />
+                    </span>
+                  </button>
+                ))
+              ) : (
+                // Grouped by date
+                groupedConversations.map((group) => (
+                  <div key={group.label} className={styles.conversationGroup}>
+                    <div className={styles.groupLabel}>{group.label}</div>
+                    {group.conversations.map((conv) => (
+                      <button
+                        key={conv.id}
+                        type="button"
+                        className={`${styles.conversationItem} ${conv.id === currentConversationId ? styles.conversationItemActive : ''} ${isLoadingConversationDirect && selectedConversationId === conv.id ? styles.conversationItemLoading : ''}`}
+                        onClick={() => !isLoadingConversationDirect && loadConversation(conv.id)}
+                        disabled={isLoadingConversationDirect}
+                      >
+                        <div className={styles.conversationContent}>
+                          <span className={styles.conversationTitle}>
+                            {conv.title || 'New conversation'}
+                          </span>
+                          {conv.preview && (
+                            <span className={styles.conversationPreview}>
+                              {stripMarkdown(conv.preview)}
+                            </span>
+                          )}
+                        </div>
+                        {isLoadingConversationDirect && selectedConversationId === conv.id && (
+                          <div className={styles.conversationLoadingIndicator} />
+                        )}
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          className={styles.deleteConversationBtn}
+                          onClick={(e) => {
                             e.stopPropagation();
                             e.preventDefault();
                             setDeleteConfirm({ conversationId: conv.id, title: conv.title });
-                          }
-                        }}
-                        title="Delete conversation"
-                      >
-                        <LocalIcons.trash size={14} />
-                      </span>
-                    </div>
-                  </button>
+                          }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.stopPropagation();
+                              e.preventDefault();
+                              setDeleteConfirm({ conversationId: conv.id, title: conv.title });
+                            }
+                          }}
+                          title="Delete conversation"
+                        >
+                          <LocalIcons.trash size={14} />
+                        </span>
+                      </button>
+                    ))}
+                  </div>
                 ))
               )}
             </div>
@@ -1470,52 +1728,147 @@ export default function ALPageClient() {
   // Main chat view
   return (
     <div className={styles.container}>
-      {/* Header */}
+      {/* Header - Simplified Claude-style */}
       <div className={styles.header}>
         <button
-          className={styles.historyBtn}
+          className={styles.menuBtn}
           onClick={() => {
             refetchConversations();
-            setShowHistory(true);
+            setShowDrawer(true);
           }}
-          title="Chat history"
+          title="Menu"
+          aria-label="Open menu"
         >
-          <LocalIcons.history size={18} />
+          <LocalIcons.menu size={20} />
         </button>
 
-        {/* Daily query counter - centered in header */}
-        <ALQueryCounter
-          queriesToday={dailyUsage.queriesToday}
-          isBeta={dailyUsage.isBeta}
-          isUnlimited={dailyUsage.isUnlimited}
-        />
+        {/* Centered AL branding - subtle */}
+        <span className={styles.headerTitle}>AL</span>
 
-        <div className={styles.headerRight}>
-          {/* Share button - only show when there's a saved conversation */}
-          {messages.length > 0 && currentConversationId && (
-            <button
-              className={styles.settingsBtn}
-              onClick={generateShareLink}
-              disabled={isSharing}
-              title="Share conversation"
-            >
-              <LocalIcons.share size={18} />
-            </button>
-          )}
-
-          <button
-            className={styles.settingsBtn}
-            onClick={() => setShowPreferences(!showPreferences)}
-            title="AL preferences"
-          >
-            <LocalIcons.settings size={18} />
-          </button>
-
-          <button className={styles.newChatHeaderBtn} onClick={startNewChat} title="New chat">
-            <LocalIcons.newChat size={18} />
-          </button>
-        </div>
+        <button className={styles.newChatHeaderBtn} onClick={startNewChat} title="New chat">
+          <LocalIcons.newChat size={20} />
+        </button>
       </div>
+
+      {/* Hamburger Menu Drawer */}
+      {showDrawer && (
+        <div className={styles.drawerOverlay} onClick={() => setShowDrawer(false)}>
+          <div className={styles.drawer} onClick={(e) => e.stopPropagation()}>
+            {/* Drawer Header */}
+            <div className={styles.drawerHeader}>
+              <div className={styles.drawerBrand}>
+                <ALMascot size={32} />
+                <span className={styles.drawerBrandText}>AL</span>
+              </div>
+              <button
+                className={styles.drawerClose}
+                onClick={() => setShowDrawer(false)}
+                aria-label="Close menu"
+              >
+                <LocalIcons.x size={18} />
+              </button>
+            </div>
+
+            {/* New Chat Button */}
+            <button
+              className={styles.drawerNewChat}
+              onClick={() => {
+                startNewChat();
+                setShowDrawer(false);
+              }}
+            >
+              <LocalIcons.newChat size={16} />
+              <span>New Chat</span>
+            </button>
+
+            {/* Drawer Menu Items */}
+            <div className={styles.drawerMenu}>
+              <button
+                className={styles.drawerMenuItem}
+                onClick={() => {
+                  setShowDrawer(false);
+                  setShowHistory(true);
+                }}
+              >
+                <LocalIcons.history size={18} />
+                <span>Chats</span>
+                <LocalIcons.chevronRight size={16} />
+              </button>
+
+              <button
+                className={styles.drawerMenuItem}
+                onClick={() => {
+                  setShowDrawer(false);
+                  setShowPreferences(true);
+                }}
+              >
+                <LocalIcons.settings size={18} />
+                <span>Settings</span>
+                <LocalIcons.chevronRight size={16} />
+              </button>
+
+              {/* Share - only when conversation exists */}
+              {messages.length > 0 && currentConversationId && (
+                <button
+                  className={styles.drawerMenuItem}
+                  onClick={() => {
+                    setShowDrawer(false);
+                    generateShareLink();
+                  }}
+                  disabled={isSharing}
+                >
+                  <LocalIcons.share size={18} />
+                  <span>Share Conversation</span>
+                  <LocalIcons.chevronRight size={16} />
+                </button>
+              )}
+            </div>
+
+            {/* Tier & Usage Info */}
+            <div className={styles.drawerFooter}>
+              <div className={styles.drawerTierInfo}>
+                <div className={styles.drawerTierBadge}>
+                  {dailyUsage.isBeta ? (
+                    <span className={styles.tierBadgeBeta}>Unlimited (Beta)</span>
+                  ) : dailyUsage.isUnlimited ? (
+                    <span className={styles.tierBadgeUnlimited}>Unlimited</span>
+                  ) : (
+                    <span className={styles.tierBadgeFree}>Free Tier</span>
+                  )}
+                </div>
+                <div className={styles.drawerUsageCount}>
+                  <span className={styles.usageNumber}>{dailyUsage.queriesToday}</span>
+                  <span className={styles.usageLabel}>
+                    {dailyUsage.queriesToday === 1 ? 'query today' : 'queries today'}
+                  </span>
+                </div>
+              </div>
+
+              {/* User Profile */}
+              {user && (
+                <div className={styles.drawerUser}>
+                  <div className={styles.drawerUserAvatar}>
+                    {user.avatar_url ? (
+                      <Image
+                        src={user.avatar_url}
+                        alt={user.display_name || 'User'}
+                        width={32}
+                        height={32}
+                        className={styles.userAvatarImg}
+                      />
+                    ) : (
+                      <LocalIcons.user size={16} />
+                    )}
+                  </div>
+                  <span className={styles.drawerUserName}>
+                    {user.display_name || user.email?.split('@')[0] || 'User'}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Preferences Panel - Rendered via Portal */}
       {showPreferences &&
@@ -1575,14 +1928,31 @@ export default function ALPageClient() {
                 </div>
               </div>
             ) : (
-              // Standard empty state
+              // Standard empty state - Claude-inspired minimal design
               // NOTE: We intentionally show generic text, not localStorage-selected car.
               // AL determines car context from user's message and server-side owned vehicles.
-              <div className={styles.emptyStateContent}>
-                <ALMascot size={80} />
-                <h2 className={styles.emptyTitle}>How can I help?</h2>
-                <p className={styles.emptySubtitle}>Ask me anything about cars</p>
-              </div>
+              <>
+                <div className={styles.emptyStateContent}>
+                  <ALMascot size={48} />
+                  <h2 className={styles.emptyTitle}>{getContextualGreeting(selectedCar?.name)}</h2>
+                </div>
+
+                {/* Quick Action Suggestions */}
+                <div className={styles.quickActions}>
+                  {QUICK_ACTIONS.map((action) => (
+                    <button
+                      key={action.id}
+                      className={styles.quickActionBtn}
+                      onClick={() => {
+                        setInput(action.prompt);
+                        inputRef.current?.focus();
+                      }}
+                    >
+                      {action.label}
+                    </button>
+                  ))}
+                </div>
+              </>
             )}
           </div>
         ) : (
@@ -1636,7 +2006,9 @@ export default function ALPageClient() {
                         )}
                       </>
                     ) : (
-                      msg.content
+                      // Clean up technical instructions from user messages
+                      // (e.g., "USE THE research_parts_live TOOL..." instructions)
+                      cleanUserMessage(msg.content)
                     )}
 
                     {/* Action buttons for AL messages - ALWAYS visible */}
@@ -1754,7 +2126,7 @@ export default function ALPageClient() {
                       </div>
                     )}
 
-                    {/* Show active tools with status */}
+                    {/* Show active tools with status and sub-steps */}
                     {activeTools.length > 0 && (
                       <div className={styles.toolActivity}>
                         {activeTools.map((tool, idx) => (
@@ -1762,14 +2134,50 @@ export default function ALPageClient() {
                             key={`${tool.name}-${idx}`}
                             className={`${styles.toolActivityItem} ${tool.status === 'completed' ? styles.toolCompleted : ''}`}
                           >
-                            <span
-                              className={
-                                tool.status === 'completed'
-                                  ? styles.toolCheckmark
-                                  : styles.toolSpinner
-                              }
-                            />
-                            <span>{tool.label}</span>
+                            <div className={styles.toolMainRow}>
+                              <span
+                                className={
+                                  tool.status === 'completed'
+                                    ? styles.toolCheckmark
+                                    : styles.toolSpinner
+                                }
+                              />
+                              <span className={styles.toolLabel}>{tool.label}</span>
+                              {/* Show progress count if available */}
+                              {tool.totalCount > 0 && (
+                                <span className={styles.toolProgressCount}>
+                                  {tool.completedCount || 0}/{tool.totalCount}
+                                </span>
+                              )}
+                            </div>
+                            {/* Show sub-steps for long-running tools */}
+                            {tool.subSteps?.length > 0 && (
+                              <div className={styles.toolSubSteps}>
+                                {tool.subSteps.map((step, stepIdx) => (
+                                  <div
+                                    key={`${step.step}-${stepIdx}`}
+                                    className={`${styles.toolSubStep} ${step.status === 'completed' ? styles.subStepCompleted : step.status === 'error' ? styles.subStepError : ''}`}
+                                  >
+                                    <span
+                                      className={
+                                        step.status === 'completed'
+                                          ? styles.subStepCheck
+                                          : step.status === 'error'
+                                            ? styles.subStepErrorIcon
+                                            : styles.subStepSpinner
+                                      }
+                                    />
+                                    <span className={styles.subStepLabel}>{step.label}</span>
+                                    {/* Show site names if available */}
+                                    {step.sites?.length > 0 && (
+                                      <span className={styles.subStepSites}>
+                                        ({step.sites.join(', ')})
+                                      </span>
+                                    )}
+                                  </div>
+                                ))}
+                              </div>
+                            )}
                           </div>
                         ))}
                       </div>
