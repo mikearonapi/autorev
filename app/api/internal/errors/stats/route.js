@@ -8,10 +8,10 @@
 import { NextResponse } from 'next/server';
 
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+import { getServiceClient } from '@/lib/supabaseServer';
 
 // Force dynamic rendering - this route uses request.url
 export const dynamic = 'force-dynamic';
-import { getServiceClient } from '@/lib/supabaseServer';
 
 async function handleGet(request) {
   const supabase = getServiceClient();
@@ -96,7 +96,7 @@ async function handleGet(request) {
     }
 
     // Get top recurring errors (last 24 hours)
-    const { data: recurringData, error: recurringError } = await supabase
+    const { data: recurringData, error: _recurringError } = await supabase
       .from('user_feedback')
       .select('message, error_hash, severity, feature_context, occurrence_count, created_at')
       .eq('category', 'auto-error')

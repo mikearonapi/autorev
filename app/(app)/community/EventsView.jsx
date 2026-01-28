@@ -25,6 +25,7 @@ import styles from './EventsView.module.css';
 // View modes
 const VIEW_MODES = {
   FIND: 'find',
+  POPULAR: 'popular',
   MY_EVENTS: 'my_events',
 };
 
@@ -114,6 +115,13 @@ const RepeatIcon = ({ size = 12 }) => (
   </svg>
 );
 
+const TrendingIcon = ({ size = 16 }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/>
+    <polyline points="17 6 23 6 23 12"/>
+  </svg>
+);
+
 
 // Fallback event types - matches database seed data
 // Used if API fails to load types
@@ -157,22 +165,47 @@ function getDateParts(dateStr) {
 }
 
 /**
+ * Known major event names that should NOT be treated as locations.
+ * These are industry events, shows, and named events that users search by name.
+ */
+const KNOWN_EVENT_NAMES = new Set([
+  'sema', 'pri', 'nyias', 'naias', 'laas', 'goodwood', 'monterey', 'pebble',
+  'concours', 'radwood', 'gridlife', 'formula', 'imsa', 'indycar', 'nascar',
+  'daytona', 'lemans', 'bathurst', 'nurburgring', 'spa', 'monza', 'silverstone',
+  'hpde', 'scca', 'nasa', 'bmwcca', 'pcars', 'porsche', 'ferrari', 'lamborghini',
+  'mclaren', 'pagani', 'bugatti', 'koenigsegg', 'hennessey', 'shelby', 'saleen',
+  'barrett', 'mecum', 'bonhams', 'gooding', 'rmsothebys', 'bringatrailer', 'bat',
+  'dub', 'h2oi', 'wekfest', 'stancenation', 'importalliance', 'eibach',
+]);
+
+/**
  * Detect if search query looks like a location (city name, ZIP code, or "City, ST")
  * Used to trigger geocoded radius search vs text search on event name
  */
 function looksLikeLocation(query) {
   if (!query || query.length < 2) return false;
   const trimmed = query.trim();
+  const lowerTrimmed = trimmed.toLowerCase();
+  
+  // Check if it's a known event name - these are NEVER locations
+  if (KNOWN_EVENT_NAMES.has(lowerTrimmed)) return false;
+  
+  // Also check for partial matches (e.g., "SEMA Show", "PRI 2026")
+  for (const eventName of KNOWN_EVENT_NAMES) {
+    if (lowerTrimmed.includes(eventName) && eventName.length >= 3) return false;
+  }
   
   // ZIP code pattern (5 digits, optionally with +4)
   if (/^\d{5}(-\d{4})?$/.test(trimmed)) return true;
   
-  // "City, ST" or "City, State" pattern
+  // "City, ST" or "City, State" pattern - this is clearly a location
   if (/^[a-zA-Z\s]+,\s*[A-Z]{2}$/i.test(trimmed)) return true;
   
-  // Single word that could be a city (4+ chars, letters only)
-  // Avoid triggering on short words or words with numbers (likely event names)
-  if (/^[a-zA-Z]{4,}$/.test(trimmed)) return true;
+  // Single word that could be a city - but be more restrictive:
+  // - Must be 5+ chars (shorter words are likely abbreviations/event names)
+  // - Must NOT be all caps (event names like "SEMA" are often all caps)
+  // - Must start with capital and have lowercase (proper city name format)
+  if (/^[A-Z][a-z]{4,}$/.test(trimmed)) return true;
   
   return false;
 }
@@ -203,8 +236,10 @@ export default function EventsView() {
   // Data state
   const [events, setEvents] = useState([]);
   const [myEvents, setMyEvents] = useState([]);
+  const [popularEvents, setPopularEvents] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMyEvents, setIsLoadingMyEvents] = useState(false);
+  const [isLoadingPopular, setIsLoadingPopular] = useState(false);
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState(null);
   
@@ -271,6 +306,42 @@ export default function EventsView() {
     fetchMyEvents();
   }, [viewMode, isAuthenticated, user?.id]);
   
+  // Fetch popular events (sorted by RSVP count) when switching to "Popular" mode
+  useEffect(() => {
+    async function fetchPopularEvents() {
+      if (viewMode !== VIEW_MODES.POPULAR) {
+        return;
+      }
+      
+      try {
+        setIsLoadingPopular(true);
+        setError(null);
+        
+        const params = new URLSearchParams();
+        params.set('limit', '30');
+        params.set('sort', 'popularity');
+        params.set('group_recurring', 'true');
+        
+        const res = await fetch(`/api/events?${params.toString()}`);
+        
+        if (!res.ok) {
+          throw new Error('Failed to fetch popular events');
+        }
+        
+        const data = await res.json();
+        setPopularEvents(data.events || []);
+      } catch (err) {
+        console.error('[EventsView] Error fetching popular events:', err);
+        setError('Unable to load popular events');
+        setPopularEvents([]);
+      } finally {
+        setIsLoadingPopular(false);
+      }
+    }
+    
+    fetchPopularEvents();
+  }, [viewMode]);
+  
   // Fetch event types on mount (with fallback)
   useEffect(() => {
     async function fetchEventTypes() {
@@ -308,7 +379,7 @@ export default function EventsView() {
         const isLocationSearch = queryTrimmed && looksLikeLocation(queryTrimmed);
         
         // Determine if we're doing a location-based search
-        const doingLocationSearch = (queryTrimmed && looksLikeLocation(queryTrimmed)) || (nearMeEnabled && userLocation);
+        const doingLocationSearch = isLocationSearch || (nearMeEnabled && userLocation);
         
         // Add search query - either as location or text search
         if (queryTrimmed) {
@@ -375,8 +446,8 @@ export default function EventsView() {
   const handleViewModeChange = useCallback((mode) => {
     setViewMode(mode);
     setIsDropdownOpen(false);
-    // Clear filters when switching modes
-    if (mode === VIEW_MODES.MY_EVENTS) {
+    // Clear filters when switching to non-search modes
+    if (mode === VIEW_MODES.MY_EVENTS || mode === VIEW_MODES.POPULAR) {
       setSearchQuery('');
       setSelectedType(null);
       setNearMeEnabled(false);
@@ -384,16 +455,35 @@ export default function EventsView() {
   }, []);
   
   // Get the display events based on view mode
-  const displayEvents = viewMode === VIEW_MODES.MY_EVENTS ? myEvents : events;
-  const isLoadingEvents = viewMode === VIEW_MODES.MY_EVENTS ? isLoadingMyEvents : isLoading;
+  const displayEvents = viewMode === VIEW_MODES.MY_EVENTS 
+    ? myEvents 
+    : viewMode === VIEW_MODES.POPULAR 
+      ? popularEvents 
+      : events;
+  const isLoadingEvents = viewMode === VIEW_MODES.MY_EVENTS 
+    ? isLoadingMyEvents 
+    : viewMode === VIEW_MODES.POPULAR 
+      ? isLoadingPopular 
+      : isLoading;
 
   if (isLoadingEvents) {
+    const loadingText = viewMode === VIEW_MODES.MY_EVENTS 
+      ? "Loading Your Events" 
+      : viewMode === VIEW_MODES.POPULAR 
+        ? "Loading Popular Events" 
+        : "Loading Events";
+    const loadingSubtext = viewMode === VIEW_MODES.MY_EVENTS 
+      ? "Getting your RSVPs and saved events..." 
+      : viewMode === VIEW_MODES.POPULAR 
+        ? "Finding the most popular events..." 
+        : "Finding car events near you...";
+    
     return (
       <div className={styles.loadingContainer}>
         <LoadingSpinner 
           variant="branded" 
-          text={viewMode === VIEW_MODES.MY_EVENTS ? "Loading Your Events" : "Loading Events"}
-          subtext={viewMode === VIEW_MODES.MY_EVENTS ? "Getting your RSVPs and saved events..." : "Finding car events near you..."}
+          text={loadingText}
+          subtext={loadingSubtext}
         />
       </div>
     );
@@ -427,7 +517,11 @@ export default function EventsView() {
               aria-haspopup="listbox"
             >
               <h2 className={styles.title}>
-                {viewMode === VIEW_MODES.FIND ? 'Find Events' : 'My Events'}
+                {viewMode === VIEW_MODES.FIND 
+                  ? 'Find Events' 
+                  : viewMode === VIEW_MODES.POPULAR 
+                    ? 'Popular Events' 
+                    : 'My Events'}
               </h2>
               <ChevronDownIcon size={16} />
             </button>
@@ -443,6 +537,16 @@ export default function EventsView() {
                   <CalendarIcon size={16} />
                   <span>Find Events</span>
                   {viewMode === VIEW_MODES.FIND && <CheckCircleIcon size={14} />}
+                </button>
+                <button
+                  className={`${styles.dropdownItem} ${viewMode === VIEW_MODES.POPULAR ? styles.dropdownItemActive : ''}`}
+                  onClick={() => handleViewModeChange(VIEW_MODES.POPULAR)}
+                  role="option"
+                  aria-selected={viewMode === VIEW_MODES.POPULAR}
+                >
+                  <TrendingIcon size={16} />
+                  <span>Popular Events</span>
+                  {viewMode === VIEW_MODES.POPULAR && <CheckCircleIcon size={14} />}
                 </button>
                 <button
                   className={`${styles.dropdownItem} ${viewMode === VIEW_MODES.MY_EVENTS ? styles.dropdownItemActive : ''}`}
@@ -585,6 +689,17 @@ export default function EventsView() {
         )}
       </div>
       
+      {/* Popular Events Mode Header */}
+      {viewMode === VIEW_MODES.POPULAR && (
+        <div className={styles.myEventsHeader}>
+          {popularEvents.length > 0 && !error ? (
+            <p className={styles.myEventsCount}>
+              Sorted by most RSVPs
+            </p>
+          ) : null}
+        </div>
+      )}
+      
       {/* My Events Mode Header */}
       {viewMode === VIEW_MODES.MY_EVENTS && (
         <div className={styles.myEventsHeader}>
@@ -597,6 +712,36 @@ export default function EventsView() {
               {myEvents.length} event{myEvents.length !== 1 ? 's' : ''} you&apos;re interested in
             </p>
           ) : null}
+        </div>
+      )}
+      
+      {/* Popular Events Error State - shown within container so dropdown is accessible */}
+      {viewMode === VIEW_MODES.POPULAR && error && !isSearching && (
+        <div className={styles.emptyState}>
+          <TrendingIcon size={48} />
+          <p className={styles.emptyTitle}>{error}</p>
+          <span className={styles.emptySubtext}>
+            There was a problem loading popular events
+          </span>
+          <button 
+            className={styles.retryBtn}
+            onClick={() => {
+              setError(null);
+              setIsLoadingPopular(true);
+              // Re-trigger the useEffect by toggling view mode
+              setViewMode(VIEW_MODES.FIND);
+              setTimeout(() => setViewMode(VIEW_MODES.POPULAR), 100);
+            }}
+          >
+            Try Again
+          </button>
+          <button 
+            className={styles.clearFiltersLinkBtn}
+            onClick={() => handleViewModeChange(VIEW_MODES.FIND)}
+            style={{ marginTop: 'var(--space-sm, 12px)' }}
+          >
+            Browse All Events
+          </button>
         </div>
       )}
       
@@ -631,10 +776,24 @@ export default function EventsView() {
       )}
 
       {/* Events List */}
-      {/* Skip if showing error state for My Events mode */}
-      {!(viewMode === VIEW_MODES.MY_EVENTS && error && !isSearching) && displayEvents.length === 0 ? (
+      {/* Skip if showing error state for Popular or My Events mode */}
+      {!((viewMode === VIEW_MODES.MY_EVENTS || viewMode === VIEW_MODES.POPULAR) && error && !isSearching) && displayEvents.length === 0 ? (
         <div className={styles.emptyState}>
-          {viewMode === VIEW_MODES.MY_EVENTS ? (
+          {viewMode === VIEW_MODES.POPULAR ? (
+            <>
+              <TrendingIcon size={48} />
+              <p className={styles.emptyTitle}>No RSVPs yet</p>
+              <span className={styles.emptySubtext}>
+                Events will appear here once people start RSVP&apos;ing
+              </span>
+              <button 
+                className={styles.clearFiltersLinkBtn}
+                onClick={() => handleViewModeChange(VIEW_MODES.FIND)}
+              >
+                Browse Events
+              </button>
+            </>
+          ) : viewMode === VIEW_MODES.MY_EVENTS ? (
             <>
               <HeartIcon size={48} />
               <p className={styles.emptyTitle}>
@@ -684,7 +843,7 @@ export default function EventsView() {
             </>
           )}
         </div>
-      ) : !(viewMode === VIEW_MODES.MY_EVENTS && error && !isSearching) ? (
+      ) : !((viewMode === VIEW_MODES.MY_EVENTS || viewMode === VIEW_MODES.POPULAR) && error && !isSearching) ? (
         <div className={styles.eventsList}>
           {displayEvents.map((event) => {
             const dateParts = getDateParts(event.start_date);

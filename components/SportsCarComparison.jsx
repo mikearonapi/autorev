@@ -16,7 +16,7 @@ import {
   getDynamicRecommendationTypes,
   DEFAULT_WEIGHTS,
 } from '@/lib/scoring.js';
-import { savePreferences, loadPreferences } from '@/lib/stores/userPreferencesStore';
+import { savePreferences } from '@/lib/stores/userPreferencesStore';
 
 import CarActionMenu from './CarActionMenu';
 import CarImage from './CarImage';
@@ -56,7 +56,7 @@ function getPriceLow(car) {
 // Car data, categories, and tier config are imported from src/data/cars.js
 
 // Recommendation types with icons for UI (static - these rarely change)
-const recommendationTypesWithIcons = [
+const _recommendationTypesWithIcons = [
   { key: 'top', label: 'Top Match', icon: Icons.trophy, colorVar: '--rec-top' },
   { key: 'sound', label: 'Best Sound & Feel', icon: Icons.sound, colorVar: '--rec-sound' },
   { key: 'track', label: 'Best for Track', icon: Icons.track, colorVar: '--rec-track' },
@@ -101,7 +101,7 @@ export default function SportsCarComparison() {
     tierConfig, 
     categories, 
     priorityDescriptors,
-    isLoading: configLoading 
+    isLoading: _configLoading 
   } = useAppConfig();
 
   // Build derived config values from database configs
@@ -303,7 +303,7 @@ export default function SportsCarComparison() {
   }, [carData, weights, sortBy, priceMin, priceMax, searchTerm, mustHaveFilters, calculateTotal, getCarOrigin, matchesStyle]);
 
   // Get user's top priorities for ranking display
-  const topPriorities = useMemo(() => 
+  const _topPriorities = useMemo(() => 
     getTopPriorities(weights, 3).map(p => ({
       ...p,
       ...categoriesWithIcons.find(c => c.key === p.key)
@@ -353,7 +353,7 @@ export default function SportsCarComparison() {
   }, [recommendations, weights, mustHaveFilters, priceMin, priceMax, searchTerm]);
 
   // Active priorities for summary display (legacy, kept for potential future use)
-  const activePriorities = useMemo(() => 
+  const _activePriorities = useMemo(() => 
     categoriesWithIcons
       .filter(cat => weights[cat.key] > 1)
       .map(cat => ({ ...cat, weight: weights[cat.key] })),

@@ -15,7 +15,8 @@ import {
   runFullEvaluation, 
   getRecentRuns,
 } from '@/lib/alEvaluationRunner';
-import { getEvalDatasetStats } from '@/lib/alEvaluations';
+// getEvalDatasetStats available but not currently used
+// import { getEvalDatasetStats } from '@/lib/alEvaluations';
 import { notifyDiscord, notifyCronFailure } from '@/lib/discord';
 import { withErrorLogging, logCronError } from '@/lib/serverErrorLogger';
 

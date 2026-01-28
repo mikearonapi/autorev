@@ -6,7 +6,6 @@ import Image from 'next/image';
 
 import { Icons } from '@/components/ui/Icons';
 import { UI_IMAGES } from '@/lib/images';
-import { CAR_COUNT_DISPLAY } from '@/lib/marketingStats';
 
 import styles from './FeatureBreakdown.module.css';
 

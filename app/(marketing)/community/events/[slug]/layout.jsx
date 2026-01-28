@@ -8,7 +8,7 @@
  */
 
 import SchemaOrg from '@/components/SchemaOrg';
-import { generateEventMetadata, generateEventSchema, generateBreadcrumbSchema, SITE_URL } from '@/lib/seoUtils';
+import { generateEventMetadata, generateEventSchema, generateBreadcrumbSchema } from '@/lib/seoUtils';
 import { supabase } from '@/lib/supabase';
 
 /**

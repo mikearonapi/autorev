@@ -235,7 +235,7 @@ function SummaryStats({ totals, topUser }) {
 }
 
 // Main Component
-export function ALUserUsage({ token, range = 'month', loading: externalLoading }) {
+export function ALUserUsage({ token: _token, range = 'month', loading: externalLoading }) {
   const [expanded, setExpanded] = useState(false);
   
   // Use React Query hook for AL usage

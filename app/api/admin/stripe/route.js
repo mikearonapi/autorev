@@ -16,13 +16,10 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import Stripe from 'stripe';
 
-import { requireAdmin, isAdminEmail } from '@/lib/adminAccess';
+import { requireAdmin } from '@/lib/adminAccess';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { 
-  SUBSCRIPTION_TIERS, 
-  AL_CREDIT_PACKS, 
   getTierFromPriceId,
-  getCreditPackFromPriceId,
 } from '@/lib/stripe';
 
 // Stripe client - only initialize if key exists
@@ -30,8 +27,8 @@ const stripe = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY) 
   : null;
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const _supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const _supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 /**
  * Get date range based on period
@@ -116,7 +113,7 @@ function groupSubscriptionsByTier(subscriptions) {
 /**
  * Group payments by type (subscription, credit pack, donation)
  */
-function categorizePayments(paymentIntents, charges) {
+function categorizePayments(paymentIntents, _charges) {
   const categories = {
     subscriptions: { count: 0, amount: 0 },
     creditPacks: { count: 0, amount: 0, credits: 0 },
@@ -158,10 +155,9 @@ async function handleGet(request) {
   const { searchParams } = new URL(request.url);
   const range = searchParams.get('range') || 'month';
 
-  if (!supabaseUrl || !supabaseServiceKey) {
-    return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
-  }
-
+  // Note: supabaseUrl and supabaseServiceKey are available but Supabase client
+  // is not needed for this route - all data comes from Stripe directly
+  
   // Check if Stripe is configured
   if (!stripe) {
     return NextResponse.json({ 
@@ -171,7 +167,7 @@ async function handleGet(request) {
     }, { status: 503 });
   }
 
-  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+  const _supabase = createClient(_supabaseUrl, _supabaseServiceKey);
 
   try {
     const { startTime, endTime } = getDateRange(range);
@@ -201,7 +197,7 @@ async function handleGet(request) {
         created: { gte: startTime, lte: endTime },
       }),
 
-      // Charges in range (includes refund info)
+      // Charges in range (includes refund info) - used for categorization
       stripe.charges.list({
         limit: 100,
         created: { gte: startTime, lte: endTime },

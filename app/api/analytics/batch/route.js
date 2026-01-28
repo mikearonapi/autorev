@@ -56,7 +56,7 @@ async function handlePost(request) {
 
     // Get client info from headers
     const userAgent = request.headers.get('user-agent') || null;
-    const clientIp = request.headers.get('x-forwarded-for')?.split(',')[0] || null;
+    const _clientIp = request.headers.get('x-forwarded-for')?.split(',')[0] || null;
 
     // Transform events for storage
     const records = events.map(event => ({

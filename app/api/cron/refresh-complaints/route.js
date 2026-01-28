@@ -132,7 +132,7 @@ async function handleGet(request) {
     const startedAt = Date.now();
 
     // Process cars with concurrency
-    const perCar = await mapWithConcurrency(carsToProcess, concurrency, async (car, index) => {
+    const perCar = await mapWithConcurrency(carsToProcess, concurrency, async (car, _index) => {
       const carStartTime = Date.now();
 
       try {

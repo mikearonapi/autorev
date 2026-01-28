@@ -15,8 +15,9 @@ import { useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 
 import { useAuth } from '@/components/providers/AuthProvider';
+import { preloadGarageComponents } from '@/components/dynamic';
 import apiClient from '@/lib/apiClient';
-import { userKeys, carKeys, communityKeys, alKeys } from '@/lib/queryKeys';
+import { userKeys, carKeys, communityKeys, alKeys, eventKeys } from '@/lib/queryKeys';
 
 // Cache times (aligned with useCarData.js)
 const CACHE_TIMES = {
@@ -62,6 +63,29 @@ const fetchers = {
   carsList: async () => {
     const data = await apiClient.get('/api/cars');
     return data.cars || data;
+  },
+  
+  // Popular events
+  popularEvents: async () => {
+    const params = new URLSearchParams();
+    params.set('limit', '10');
+    params.set('sort', 'popularity');
+    params.set('group_recurring', 'true');
+    const response = await fetch(`/api/events?${params.toString()}`);
+    if (!response.ok) throw new Error('Failed to fetch events');
+    return response.json();
+  },
+  
+  // Event types (for filtering)
+  eventTypes: async () => {
+    const response = await fetch('/api/events/types');
+    if (!response.ok) throw new Error('Failed to fetch event types');
+    return response.json();
+  },
+  
+  // User track times
+  trackTimes: async (userId) => {
+    return apiClient.get(`/api/users/${userId}/track-times`);
   },
 };
 
@@ -115,18 +139,30 @@ export function usePrefetchNavigation() {
       queryFn: fetchers.carsList,
       staleTime: CACHE_TIMES.FAST,
     });
+    
+    // Preload garage-specific dynamic components (dnd-kit, ServiceCenterFinder)
+    // This ensures drag-and-drop works instantly when user arrives at garage
+    preloadGarageComponents();
   }, [queryClient, userId]);
 
   /**
-   * Prefetch data page (vehicles + cars)
+   * Prefetch data page (vehicles + track times)
    */
   const prefetchData = useCallback(() => {
     if (!userId) return;
     
+    // Prefetch vehicles for the data page
     queryClient.prefetchQuery({
       queryKey: userKeys.vehicles(userId),
       queryFn: () => fetchers.vehicles(userId),
       staleTime: CACHE_TIMES.STANDARD,
+    });
+    
+    // Prefetch track times for the Track tab
+    queryClient.prefetchQuery({
+      queryKey: userKeys.trackTimes(userId),
+      queryFn: () => fetchers.trackTimes(userId),
+      staleTime: CACHE_TIMES.FAST,
     });
   }, [queryClient, userId]);
 
@@ -144,13 +180,27 @@ export function usePrefetchNavigation() {
   }, [queryClient, userId]);
 
   /**
-   * Prefetch community page data
+   * Prefetch community page data (builds + events)
    */
   const prefetchCommunity = useCallback(() => {
+    // Prefetch community builds feed
     queryClient.prefetchQuery({
       queryKey: communityKeys.builds({}),
       queryFn: fetchers.communityBuilds,
       staleTime: CACHE_TIMES.FAST,
+    });
+    
+    // Also prefetch popular events and event types for the events tab
+    queryClient.prefetchQuery({
+      queryKey: eventKeys.list({ sort: 'popularity', limit: 10 }),
+      queryFn: fetchers.popularEvents,
+      staleTime: CACHE_TIMES.FAST,
+    });
+    
+    queryClient.prefetchQuery({
+      queryKey: eventKeys.types(),
+      queryFn: fetchers.eventTypes,
+      staleTime: CACHE_TIMES.STANDARD, // Types rarely change
     });
   }, [queryClient]);
 
@@ -165,6 +215,12 @@ export function usePrefetchNavigation() {
       queryFn: () => fetchers.conversations(userId),
       staleTime: CACHE_TIMES.FAST,
     });
+    
+    // Preload AL mascot image for instant display
+    if (typeof window !== 'undefined') {
+      const img = new Image();
+      img.src = '/images/al-robot-full.png';
+    }
   }, [queryClient, userId]);
 
   /**
@@ -200,6 +256,8 @@ export function usePrefetchNavigation() {
         break;
         
       case '/community':
+      case '/community/events':
+      case '/community/leaderboard':
         prefetchCommunity();
         break;
         

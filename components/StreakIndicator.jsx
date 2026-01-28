@@ -27,6 +27,7 @@ export default function StreakIndicator({ compact = false, showTooltip = true })
     }
 
     fetchStreakData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAuthenticated, user?.id]);
 
   const fetchStreakData = async () => {

@@ -45,13 +45,13 @@ const BLOB_READ_WRITE_TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
 const LOGOS_TO_UPLOAD = [
   {
     name: 'autorev-logo-transparent.png',
-    localPath: path.join(PROJECT_ROOT, 'public/images/autorev-logo-transparent.png'),
+    localPath: path.join(PROJECT_ROOT, 'public/autorev-logo-transparent.png'),
     blobPath: 'brand/autorev-logo-transparent.png',
     description: 'Transparent logo (for use on dark backgrounds)',
   },
   {
     name: 'autorev-logo-navy.png',
-    localPath: path.join(PROJECT_ROOT, 'public/images/autorev-logo-navy.png'),
+    localPath: path.join(PROJECT_ROOT, 'public/autorev-logo-navy.png'),
     blobPath: 'brand/autorev-logo-navy.png',
     description: 'Navy background logo (for favicon, PWA, etc.)',
   },

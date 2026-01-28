@@ -20,7 +20,7 @@ export default function VehicleBuildPanel({
   vehicleId,
   carSlug,
   stockHp = 0,
-  stockTorque = 0,
+  stockTorque: _stockTorque = 0,
   installedMods = [],
   customSpecs = {},
   onUpdateBuild,
@@ -35,7 +35,7 @@ export default function VehicleBuildPanel({
   
   // Mutation for saving build
   const updateBuildMutation = useUpdateVehicleBuild();
-  const saving = updateBuildMutation.isPending;
+  const _saving = updateBuildMutation.isPending;
 
   // Handle save
   const handleSave = useCallback(async (buildData) => {

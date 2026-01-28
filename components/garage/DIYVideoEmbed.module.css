@@ -261,8 +261,8 @@
 .spinner {
   width: 24px;
   height: 24px;
-  border: 2px solid var(--color-border-subtle, #e2e8f0);
-  border-top-color: var(--color-bg-base, #0f172a);
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--color-accent-lime, #d4ff00);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
@@ -271,7 +271,7 @@
   to { transform: rotate(360deg); }
 }
 
-/* Primary YouTube search button (for empty/error states) */
+/* Primary search button (for empty/error states) */
 .searchYouTubePrimary {
   display: inline-flex;
   align-items: center;
@@ -279,45 +279,57 @@
   margin-top: var(--space-3, 12px);
   padding: var(--space-3, 12px) var(--space-4, 16px);
   
-  background: var(--color-error, #ff0000);
+  background: var(--color-accent-lime, #d4ff00);
+  border: none;
   border-radius: var(--radius-md, 8px);
   
   font-size: var(--text-sm, 14px);
   font-weight: 600;
-  color: var(--color-text-primary, #ffffff);
-  text-decoration: none;
+  color: var(--color-bg-base, #0d1b2a);
+  cursor: pointer;
   
   transition: all 0.15s ease;
 }
 
-.searchYouTubePrimary:hover {
-  background: var(--color-error, #cc0000);
+.searchYouTubePrimary:hover:not(:disabled) {
+  background: var(--color-accent-lime-hover, #c4ed00);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 0, 0, 0.3);
+  box-shadow: 0 4px 12px rgba(212, 255, 0, 0.3);
 }
 
-/* Secondary YouTube search link (for "find more" after results) */
+.searchYouTubePrimary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Secondary search button (for "find more" after results) */
 .searchYouTube {
   display: inline-flex;
   align-items: center;
   gap: var(--space-2, 8px);
   padding: var(--space-2, 8px) var(--space-3, 12px);
   
-  background: var(--color-text-primary, #ffffff);
-  border: 1px solid var(--color-border-subtle, #e2e8f0);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md, 8px);
   
   font-size: var(--text-sm, 13px);
   font-weight: 500;
-  color: var(--color-text-tertiary, #64748b);
-  text-decoration: none;
+  color: var(--color-text-secondary, #94a3b8);
+  cursor: pointer;
   
   transition: all 0.15s ease;
 }
 
-.searchYouTube:hover {
-  background: var(--color-bg-muted, #f1f5f9);
-  color: var(--color-bg-base, #0f172a);
+.searchYouTube:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-primary, #ffffff);
+}
+
+.searchYouTube:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .moreVideosLink {

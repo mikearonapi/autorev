@@ -222,7 +222,7 @@ export default function CarPipelinePage() {
   };
 
   // Format date
-  const formatDate = (dateString) => {
+  const _formatDate = (dateString) => {
     if (!dateString) return '';
     return new Date(dateString).toLocaleDateString('en-US', {
       month: 'short',

@@ -22,15 +22,11 @@ import styles from '@/app/(marketing)/page.module.css';
 import HeroCta from '@/components/HeroCta';
 import ScrollIndicator from '@/components/ScrollIndicator';
 
-// Hero image dimensions (actual image size for aspect ratio calculation)
-const HERO_WIDTH = 1920;
-const HERO_HEIGHT = 1080;
-
 // Hero image - Green 718 Cayman GT4 RS overhead view
 // Next.js will optimize this to AVIF/WebP at appropriate sizes
 const heroImageUrl = 'https://abqnp7qrs0nhv5pw.public.blob.vercel-storage.com/pages/home/hero-v2.webp';
 
-export default function HeroSection({ carCount = 188 }) {
+export default function HeroSection({ carCount: _carCount = 188 }) {
   return (
     <section className={styles.hero}>
       {/* Hero background image - Server rendered for optimal LCP */}

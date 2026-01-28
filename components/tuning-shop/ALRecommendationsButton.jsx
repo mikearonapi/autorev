@@ -141,7 +141,7 @@ export default function ALRecommendationsButton({
         onClose={() => setShowQuickActions(false)}
         title="Ask AL About Parts"
         subtitle={upgrades.length > 0 ? `${upgrades.length} upgrades selected` : 'Get help finding parts'}
-        actions={upgrades.length > 0 ? generatePartsPageActions(upgrades, carName) : defaultPartsPageActions}
+        actions={upgrades.length > 0 ? generatePartsPageActions(upgrades, carName, carSlug) : defaultPartsPageActions}
         context={{
           carName,
           carSlug,

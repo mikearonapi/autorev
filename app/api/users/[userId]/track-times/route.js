@@ -170,7 +170,17 @@ async function handlePost(request, { params }) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
     }
 
-    const body = await request.json();
+    // Parse request body with explicit error handling
+    let body;
+    try {
+      body = await request.json();
+    } catch (parseError) {
+      console.error('[TrackTimes] JSON parse error:', parseError);
+      return NextResponse.json(
+        { error: 'Invalid request body. Please try again.' },
+        { status: 400 }
+      );
+    }
 
     // Validate with Zod schema
     const validation = validateWithSchema(trackTimeSchema, body);
@@ -278,6 +288,28 @@ async function handlePost(request, { params }) {
         );
       }
 
+      // Trigger function error (e.g., resolve_car_id_from_slug)
+      if (error.code === 'P0001' || error.message?.includes('trigger')) {
+        console.error('[TrackTimes] Trigger error:', error);
+        return NextResponse.json(
+          {
+            error: 'Database processing error. Please try again or contact support.',
+          },
+          { status: 500 }
+        );
+      }
+
+      // Check constraint violation
+      if (error.code === '23514') {
+        console.error('[TrackTimes] Check constraint violation:', error);
+        return NextResponse.json(
+          {
+            error: 'Invalid data value. Please check your inputs.',
+          },
+          { status: 400 }
+        );
+      }
+
       console.error('[TrackTimes] Error inserting track time:', error);
       return NextResponse.json(
         {
@@ -293,7 +325,14 @@ async function handlePost(request, { params }) {
     return NextResponse.json({ success: true, trackTime: data });
   } catch (err) {
     console.error('[TrackTimes] Unexpected error:', err);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    // Provide more specific error message based on error type
+    const errorMessage = err?.message || 'An unexpected error occurred';
+    return NextResponse.json(
+      {
+        error: `Failed to save track time: ${errorMessage}`,
+      },
+      { status: 500 }
+    );
   }
 }
 

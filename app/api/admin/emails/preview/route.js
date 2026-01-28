@@ -9,28 +9,18 @@
 
 import { NextResponse } from 'next/server';
 
-// Force dynamic rendering - this route uses request.headers and request.url
-export const dynamic = 'force-dynamic';
 import { createClient } from '@supabase/supabase-js';
 
-import { requireAdmin, isAdminEmail } from '@/lib/adminAccess';
+import { requireAdmin } from '@/lib/adminAccess';
 import { generateWelcomeEmailHtml, EMAIL_TEMPLATES } from '@/lib/emailService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { generateUnsubscribeToken } from '@/lib/unsubscribeToken';
 
+// Force dynamic rendering - this route uses request.headers and request.url
+export const dynamic = 'force-dynamic';
+
 // For local dev, use localhost; for production, use the production URL
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://autorev.app';
-
-/**
- * Extract bearer token from request Authorization header
- */
-function getBearerToken(request) {
-  const authHeader = request.headers.get('authorization') || request.headers.get('Authorization');
-  if (!authHeader?.startsWith('Bearer ')) {
-    return null;
-  }
-  return authHeader.slice(7);
-}
 
 /**
  * Get image base URL from request (for local dev support)

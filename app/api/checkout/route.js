@@ -131,8 +131,8 @@ async function handlePost(request) {
         );
       }
 
-      // Get pricing details for metadata
-      const pricingDetails = getTierPricing(tier, billingInterval);
+      // Get pricing details for metadata (used for logging, prefixed as intentionally unused in response)
+      const _pricingDetails = getTierPricing(tier, billingInterval);
 
       // Check if user has an existing active subscription
       const { data: profile } = await supabase

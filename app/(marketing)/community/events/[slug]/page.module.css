@@ -172,9 +172,94 @@
 
 /* Active/saved state for heart button */
 .actionRow button[class*="activeFavorite"],
-.actionRow button[class*="active"] {
+.actionRow button[class*="active"]:not([class*="rsvpBtn"]) {
   background: rgba(239, 68, 68, 0.1) !important;
   color: #ef4444 !important;
+}
+
+/* ===========================================
+   RSVP BUTTON - Light Theme Override
+   The RSVP button needs different treatment than
+   icon-only buttons since it displays text status.
+   =========================================== */
+
+/* Override the generic actionRow styles for RSVP button */
+.actionRow [class*="rsvpBtn"] {
+  width: auto !important;
+  height: 40px !important;
+  min-height: 40px !important;
+  padding: 0 14px !important;
+  background: #f3f4f6 !important;
+  border: none !important;
+  border-radius: 8px !important;
+  color: #6b7280 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  gap: 6px !important;
+}
+
+.actionRow [class*="rsvpBtn"]:hover {
+  background: #e5e7eb !important;
+  color: #374151 !important;
+  transform: none !important;
+  border: none !important;
+}
+
+/* RSVP "Going" state - Lime accent */
+.actionRow [class*="rsvpBtn"][class*="going"] {
+  background: var(--color-accent-lime, #d4ff00) !important;
+  color: #0d1b2a !important;
+}
+
+.actionRow [class*="rsvpBtn"][class*="going"]:hover {
+  background: var(--color-accent-lime-dark, #bfe600) !important;
+  color: #0d1b2a !important;
+}
+
+/* RSVP "Interested" state - Blue accent */
+.actionRow [class*="rsvpBtn"][class*="interested"] {
+  background: var(--color-accent-blue, #3b82f6) !important;
+  color: #ffffff !important;
+}
+
+.actionRow [class*="rsvpBtn"][class*="interested"]:hover {
+  background: var(--color-accent-blue-light, #60a5fa) !important;
+  color: #ffffff !important;
+}
+
+/* RSVP dropdown menu - Light theme override */
+.actionRow [class*="menu"] {
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+.actionRow [class*="menuItem"] {
+  width: auto !important;
+  height: auto !important;
+  padding: 12px 16px !important;
+  background: transparent !important;
+  color: #4b5563 !important;
+}
+
+.actionRow [class*="menuItem"]:hover {
+  background: #f9fafb !important;
+}
+
+.actionRow [class*="menuItemLabel"] {
+  color: #111827 !important;
+}
+
+.actionRow [class*="menuItemDesc"] {
+  color: #6b7280 !important;
+}
+
+.actionRow [class*="menuItemActive"] [class*="menuItemLabel"] {
+  color: #10b981 !important;
+}
+
+.actionRow [class*="menuDivider"] {
+  background: #e5e7eb !important;
 }
 
 /* Icon Button - Consistent styling for share button */
@@ -343,6 +428,64 @@
 .mapLink:hover {
   color: var(--color-accent-blue-dark, #2563eb);
   text-decoration: underline;
+}
+
+/* ===========================================
+   ATTENDEES PREVIEW OVERRIDES
+   The component uses dark-theme variables, so we
+   override them for this light-mode modal context.
+   =========================================== */
+
+.sectionContent :global(.container) {
+  color: var(--color-gray-600, #4b5563);
+}
+
+.sectionContent :global(.countHeader) {
+  color: var(--color-gray-600, #4b5563);
+}
+
+.sectionContent :global(.countHeader) strong {
+  color: var(--color-gray-900, #111827);
+}
+
+.sectionContent :global(.attendeeNameInline) {
+  color: var(--color-gray-900, #111827);
+}
+
+.sectionContent :global(.statusLabel) {
+  color: var(--color-gray-500, #6b7280);
+}
+
+.sectionContent :global(.statusLabel.going) {
+  color: #059669;
+}
+
+.sectionContent :global(.statusLabel.interested) {
+  color: #d97706;
+}
+
+.sectionContent :global(.youBadgeSmall) {
+  color: #3b82f6;
+}
+
+.sectionContent :global(.defaultAvatar) {
+  border-color: var(--color-white, #ffffff);
+}
+
+.sectionContent :global(.avatar) {
+  border-color: var(--color-white, #ffffff);
+}
+
+.sectionContent :global(.emptyText) {
+  color: var(--color-gray-500, #6b7280);
+}
+
+.sectionContent :global(.counts) {
+  color: var(--color-gray-600, #4b5563);
+}
+
+.sectionContent :global(.countItem) strong {
+  color: var(--color-gray-900, #111827);
 }
 
 /* Error State */

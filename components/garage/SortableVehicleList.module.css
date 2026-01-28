@@ -1,0 +1,164 @@
+/**
+ * Sortable Vehicle List Styles
+ * 
+ * Styles for the drag-and-drop vehicle reordering component.
+ * These are extracted from garage/page.module.css for the dynamically
+ * imported SortableVehicleList component.
+ */
+
+.vehicleListView {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;
+}
+
+.vehicleListItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.vehicleListItem:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.vehicleListItem:focus {
+  outline: none;
+  border-color: var(--brand-teal);
+  box-shadow: 0 0 0 2px rgba(var(--brand-teal-rgb), 0.3);
+}
+
+.vehicleListItem:focus-visible {
+  outline: none;
+  border-color: var(--brand-teal);
+  box-shadow: 0 0 0 2px rgba(var(--brand-teal-rgb), 0.3);
+}
+
+.vehicleListItem:active {
+  transform: scale(0.99);
+}
+
+/* Drag Handle */
+.dragHandle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 44px;
+  flex-shrink: 0;
+  color: rgba(255, 255, 255, 0.3);
+  cursor: grab;
+  touch-action: none;
+  transition: color 0.2s ease;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: -4px;
+}
+
+.dragHandle:hover {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.dragHandle:active {
+  cursor: grabbing;
+  color: var(--brand-lime);
+}
+
+/* Vehicle content area */
+.vehicleListContent {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+  cursor: pointer;
+}
+
+/* Vehicle thumbnail */
+.vehicleListImage {
+  width: 60px;
+  height: 45px;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.vehicleListImg {
+  object-fit: cover;
+}
+
+/* Vehicle info */
+.vehicleListInfo {
+  flex: 1;
+  min-width: 0;
+}
+
+.vehicleListName {
+  font-size: var(--text-body);
+  font-weight: 600;
+  color: var(--color-white);
+  margin: 0 0 2px 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.vehicleListHp {
+  font-size: var(--text-xs);
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Delete button */
+.deleteButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.deleteButton:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+}
+
+/* Drag overlay - the floating copy while dragging */
+.vehicleListItemOverlay {
+  background: var(--card-surface-elevated, rgba(30, 40, 50, 0.98));
+  border: 2px solid var(--brand-lime);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  transform: scale(1.02);
+  cursor: grabbing;
+}
+
+.vehicleListItemOverlay .dragHandle {
+  color: var(--brand-lime);
+}
+
+/* Hide drag handle on very small screens to save space */
+@media (max-width: 359px) {
+  .dragHandle {
+    width: 24px;
+  }
+}

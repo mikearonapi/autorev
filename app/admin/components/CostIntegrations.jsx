@@ -195,7 +195,7 @@ function ManualTrackingCard({ service, reason, currentCost, recommendation }) {
   );
 }
 
-export function CostIntegrations({ token, range = 'month', loading: externalLoading }) {
+export function CostIntegrations({ token: _token, range = 'month', loading: externalLoading }) {
   // Use React Query hook for external costs
   const { 
     data, 
@@ -235,7 +235,7 @@ export function CostIntegrations({ token, range = 'month', loading: externalLoad
     );
   }
   
-  const { configStatus, automated, internalTracking, manual, summary, manualTrackingRequired } = data || {};
+  const { configStatus, automated, internalTracking, summary, manualTrackingRequired } = data || {};
   
   // Count connected integrations
   const connectedCount = Object.values(configStatus || {}).filter(s => s.status === 'connected' || s.status === 'active').length;

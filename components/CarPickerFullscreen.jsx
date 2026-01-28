@@ -2,8 +2,6 @@
 
 import { useState, useMemo, useCallback, useEffect } from 'react';
 
-import Image from 'next/image';
-
 import { createPortal } from 'react-dom';
 
 import CarImage from '@/components/CarImage';

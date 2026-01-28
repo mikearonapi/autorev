@@ -201,7 +201,7 @@ async function runAIResearchInBackground(carName, scriptPath, dryRunFlag, verbos
  * GET /api/internal/add-car-ai
  * Get status of AI car addition jobs (future enhancement)
  */
-async function handleGet(request) {
+async function handleGet(_request) {
   return NextResponse.json({
     message: 'AI Car Addition Service',
     usage: {

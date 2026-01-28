@@ -54,7 +54,7 @@ function MyPhotosContent() {
   const { recalculateScore } = useGarageScore(vehicleId);
 
   // Use cached cars data from React Query hook
-  const { data: allCars = [], isLoading: carsLoading } = useCarsList();
+  const { data: allCars = [] } = useCarsList();
 
   // Check for action=upload query param
   const actionParam = searchParams.get('action');
@@ -66,14 +66,13 @@ function MyPhotosContent() {
   // Fallback: fetch single car in parallel with full list
   // This provides faster data when the full list is slow or unavailable
   const carFromList = carSlugParam ? allCars.find((c) => c.slug === carSlugParam) : null;
-  const { data: fallbackCar, isLoading: fallbackLoading } = useCarBySlug(carSlugParam, {
+  const { data: fallbackCar } = useCarBySlug(carSlugParam, {
     enabled: !!carSlugParam && !carFromList && !selectedCar,
   });
 
   // Get images for this car
   const {
     images: carImages,
-    heroImageUrl,
     refreshImages: refreshCarImages,
     setHeroImage: setCarHeroImage,
     clearHeroImage: clearCarHeroImage,
@@ -153,7 +152,6 @@ function MyPhotosContent() {
 
   // Get current build for display
   const currentBuild = builds.find((b) => b.id === currentBuildId);
-  const buildName = currentBuild?.name;
 
   // No car selected
   if (!selectedCar) {
@@ -203,7 +201,7 @@ function MyPhotosContent() {
         {canUpload ? (
           <div className={styles.uploadSection} ref={uploadSectionRef}>
             <ImageUploader
-              onUploadComplete={(media) => {
+              onUploadComplete={(_media) => {
                 refreshCarImages();
                 // Recalculate garage score after photo upload (photos_uploaded category)
                 if (vehicleId) {

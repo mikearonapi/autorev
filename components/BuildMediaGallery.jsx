@@ -225,7 +225,7 @@ export default function BuildMediaGallery({
                         title="Delete video"
                         aria-label="Delete video"
                       >
-                        <Icons.trash />
+                        <Icons.x />
                       </button>
                     )}
                   </div>
@@ -258,16 +258,16 @@ export default function BuildMediaGallery({
                       )
                     )}
 
-                    {/* Delete button - top right */}
+                    {/* Delete button - small X in top right */}
                     {!readOnly && onDelete && (
                       <button
                         type="button"
                         className={styles.deleteBtn}
                         onClick={(e) => handleDelete(e, item.id)}
-                        title="Delete image"
-                        aria-label="Delete image"
+                        title="Delete photo"
+                        aria-label="Delete photo"
                       >
-                        <Icons.trash />
+                        <Icons.x />
                       </button>
                     )}
                   </>

@@ -94,7 +94,7 @@ async function handleGet(request) {
       userUsageLogsResult,
       adminUsageLogsResult,
       ratesResult,
-      contentMetricsResult,
+      _contentMetricsResult,
     ] = await Promise.all([
       // AL Conversations for the period
       supabase.from('al_conversations')
@@ -228,7 +228,7 @@ async function handleGet(request) {
     // SUPABASE USAGE
     // =========================================================================
     // Get actual database size
-    const { data: sizeData } = await supabase.rpc('pg_database_size', { dbname: 'postgres' }).single();
+    const { data: _sizeData } = await supabase.rpc('pg_database_size', { dbname: 'postgres' }).single();
     const dbSizeMB = 98; // From earlier query - would need a proper function
     const dbSizeGB = dbSizeMB / 1024;
     

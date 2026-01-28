@@ -3,22 +3,13 @@
 /**
  * Parts Shopping List Component
  *
- * SCOPE: Shopping/purchasing workflow (planned → purchased)
- * Installation tracking is handled by the Install page (/garage/my-install)
- *
  * Shows the selected upgrades as a shopping list - items the user needs to buy.
  * Users can:
  * - See all upgrades they've selected as line items
- * - Track shopping status: planned → purchased
  * - Use "Find with AL" for one-click part recommendations
  * - Add/edit specific part details (brand, model, price, etc.)
  * - Get AL to review the entire build for compatibility and suggestions
- * - Link to Install page when parts are ready
- *
- * STATUS TRACKING (on this page):
- * - Planned: Selected upgrade, no part chosen yet (gray)
- * - Purchased: Part acquired, ready for installation (teal)
- * - Installed: Shows as complete (read-only, lime) - managed by Install page
+ * - Link to Install page for installation help
  *
  * @module components/tuning-shop/PartsSelector
  */
@@ -26,23 +17,14 @@
 import { useState, useMemo, useCallback } from 'react';
 
 import Image from 'next/image';
-import Link from 'next/link';
 
 import { useAIChat } from '@/components/AIChatContext';
 import { Icons } from '@/components/ui/Icons';
+import { usePartRecommendations, getRecommendationsForUpgrade } from '@/hooks/usePartRecommendations';
 import { UI_IMAGES } from '@/lib/images';
 import { getUpgradeByKey } from '@/lib/upgrades';
 
 import styles from './PartsSelector.module.css';
-
-// Status definitions
-// NOTE: Parts page only handles planned ↔ purchased (bidirectional)
-// The "installed" status is managed by the Install page
-const PART_STATUS = {
-  planned: { label: 'Planned', color: 'muted', next: 'purchased', canToggle: true },
-  purchased: { label: 'Purchased', color: 'teal', next: 'planned', canToggle: true }, // Can toggle back to planned
-  installed: { label: 'Installed', color: 'teal', next: null, canToggle: false }, // Read-only on Parts page (teal = completed/success)
-};
 
 /**
  * AL Avatar component - consistent with rest of site
@@ -80,59 +62,16 @@ function buildContextSummary(upgrades) {
 }
 
 /**
- * Status Badge Component
- * NOTE: On the Parts page, we only allow toggling between planned/purchased
- * The "installed" status is read-only here - managed by the Install page
- */
-function StatusBadge({ status, onClick, disabled, upgradeName }) {
-  const statusInfo = PART_STATUS[status] || PART_STATUS.planned;
-  const canClick = statusInfo.canToggle && statusInfo.next && !disabled;
-
-  // For installed parts, show as complete (non-interactive)
-  if (status === 'installed') {
-    return (
-      <span
-        className={`${styles.statusBadge} ${styles[`status${statusInfo.color}`]} ${styles.statusComplete}`}
-        title="Part installed - tracked on Install page"
-        aria-label={`${upgradeName}: ${statusInfo.label}`}
-      >
-        <Icons.check size={10} aria-hidden="true" />
-        {statusInfo.label}
-      </span>
-    );
-  }
-
-  return (
-    <button
-      className={`${styles.statusBadge} ${styles[`status${statusInfo.color}`]}`}
-      onClick={canClick ? onClick : undefined}
-      disabled={!canClick}
-      title={
-        canClick ? `Click to mark as ${PART_STATUS[statusInfo.next]?.label}` : statusInfo.label
-      }
-      aria-label={
-        canClick
-          ? `Mark ${upgradeName} as ${PART_STATUS[statusInfo.next]?.label}`
-          : `${upgradeName}: ${statusInfo.label}`
-      }
-      aria-pressed={status === 'purchased'}
-    >
-      {status === 'purchased' && <Icons.shoppingCart size={10} aria-hidden="true" />}
-      {statusInfo.label}
-    </button>
-  );
-}
-
-/**
  * Single shopping list item for an upgrade
  */
 function ShoppingListItem({
   upgrade,
   partDetails,
   onUpdatePart,
-  onStatusChange,
   onSeeOptions,
+  onSelectRecommendation,
   carSlug,
+  recommendations = [],
 }) {
   const [isEditing, setIsEditing] = useState(false);
 
@@ -147,8 +86,14 @@ function ShoppingListItem({
   });
 
   const hasPartDetails = partDetails?.brandName || partDetails?.partName;
-  const status = partDetails?.status || 'planned';
-  const statusInfo = PART_STATUS[status] || PART_STATUS.planned;
+  // Show all recommendations, use manufacturerUrl as fallback if no productUrl
+  const recommendationsToShow = recommendations.map((rec) => ({
+    ...rec,
+    // Use productUrl if available, otherwise fall back to manufacturerUrl
+    displayUrl: rec.productUrl || rec.manufacturerUrl,
+    urlType: rec.productUrl ? 'buy' : (rec.manufacturerUrl ? 'manufacturer' : null),
+  })).filter((rec) => rec.displayUrl); // Only show if we have SOME url
+  const hasRecommendations = recommendationsToShow.length > 0;
 
   const handleSave = () => {
     onUpdatePart({
@@ -156,7 +101,6 @@ function ShoppingListItem({
       upgradeKey: upgrade.key,
       upgradeName: upgrade.name,
       category: upgrade.category,
-      status: partDetails?.status || 'planned',
     });
     setIsEditing(false);
   };
@@ -174,127 +118,110 @@ function ShoppingListItem({
     setIsEditing(false);
   };
 
-  const handleStatusToggle = () => {
-    // Only allow toggling if status supports it and has a next state
-    if (!statusInfo.canToggle || !statusInfo.next) return;
-
-    const nextStatus = statusInfo.next;
-    const now = new Date().toISOString();
-
-    const statusUpdate = {
-      status: nextStatus,
-      // Set or clear purchasedAt based on direction
-      ...(nextStatus === 'purchased' ? { purchasedAt: now } : { purchasedAt: null }), // Clear when going back to planned
-      // NOTE: installed status is handled by Install page, not here
-    };
-
-    onStatusChange?.(upgrade.key, statusUpdate);
-  };
-
   const handleSeeOptions = () => {
     onSeeOptions?.(upgrade, carSlug);
   };
 
   return (
     <div
-      className={`${styles.listItem} ${hasPartDetails ? styles.hasDetails : ''} ${styles[`item${statusInfo.color}`]}`}
+      className={styles.listItem}
       role="listitem"
-      aria-label={`${upgrade.name}: ${statusInfo.label}`}
+      aria-label={upgrade.name}
     >
       <div className={styles.itemHeader}>
-        {/* Top row: Name + Status (Swapped for better hierarchy) */}
+        {/* Top row: Name and AL's top picks button */}
         <div className={styles.itemTopRow}>
           <div className={styles.itemInfo}>
             <span className={styles.itemName}>{upgrade.name}</span>
-            {hasPartDetails && (
-              <span className={styles.itemBrand}>
-                {partDetails.brandName} {partDetails.partName}
-              </span>
-            )}
           </div>
 
-          <div className={styles.itemStatus}>
-            <StatusBadge status={status} onClick={handleStatusToggle} upgradeName={upgrade.name} />
-          </div>
+          {/* AL's top picks - always show for live research */}
+          {!isEditing && (
+            <button
+              className={styles.seeOptionsInline}
+              onClick={handleSeeOptions}
+              aria-label={`See ${upgrade.name} options with AL recommendations`}
+            >
+              <span>AL's top picks</span>
+              <ALAvatar size={18} />
+            </button>
+          )}
         </div>
 
-        {/* See Options CTA - Only show when no part selected yet */}
-        {!hasPartDetails && !isEditing && (
-          <button
-            className={styles.seeOptionsBtn}
-            onClick={handleSeeOptions}
-            aria-label={`See ${upgrade.name} options with AL recommendations`}
-          >
-            <ALAvatar size={20} />
-            <span>See {upgrade.name} Options</span>
-            <Icons.chevronRight size={16} aria-hidden="true" />
-          </button>
+        {/* Inline recommendations - always show when available, highlight selected */}
+        {hasRecommendations && !isEditing && (
+          <div className={styles.recommendationsList}>
+            {recommendationsToShow.slice(0, 5).map((rec) => {
+                // Use manufacturerName if available, fall back to brandName
+                const displayBrand = rec.manufacturerName || rec.brandName;
+                const vendorInfo = rec.vendorName ? `from ${rec.vendorName}` : '';
+                const buttonText = rec.urlType === 'buy' ? 'BUY' : 'VIEW';
+                const buttonTitle = rec.urlType === 'buy' 
+                  ? (vendorInfo || 'Buy from retailer')
+                  : 'View on manufacturer site';
+                // Check if this recommendation is currently selected
+                const isSelected = partDetails?.partId === rec.partId;
+                
+                return (
+                  <label
+                    key={rec.partId}
+                    className={`${styles.recommendationItem} ${isSelected ? styles.recommendationItemSelected : ''}`}
+                  >
+                    <input
+                      type="radio"
+                      name={`rec-${upgrade.key}`}
+                      className={styles.recommendationRadio}
+                      checked={isSelected}
+                      onChange={() => onSelectRecommendation?.(rec, upgrade)}
+                      aria-label={`Select ${displayBrand} ${rec.name}`}
+                    />
+                    <span className={styles.recBrand} title={vendorInfo || 'Manufacturer'}>
+                      {displayBrand}
+                    </span>
+                    <span className={styles.recName}>{rec.name}</span>
+                    <a
+                      href={rec.displayUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={styles.recBuyBtn}
+                      onClick={(e) => e.stopPropagation()}
+                      aria-label={`${buttonText} ${displayBrand} ${rec.name}`}
+                      title={buttonTitle}
+                    >
+                      {buttonText}
+                    </a>
+                  </label>
+                );
+              })}
+          </div>
         )}
 
-        {/* Bottom row: Sub-details + Actions */}
+        {/* Bottom row: Manual add option */}
         <div className={styles.itemBottomRow}>
-          {/* Left side: Add button + text */}
+          {/* Left side: Add manually link (always available as fallback) */}
           <div className={styles.itemSubInfo}>
-            {!isEditing && !hasPartDetails && (
+            {!isEditing && (
               <button
-                className={styles.addPartBtn}
+                className={styles.addManuallyBtn}
                 onClick={() => setIsEditing(true)}
-                title="Add part manually"
-                aria-label={`Add part details for ${upgrade.name}`}
+                aria-label={`Add part details for ${upgrade.name} manually`}
               >
-                <Icons.plus size={14} aria-hidden="true" />
+                or add manually
               </button>
-            )}
-            {hasPartDetails ? (
-              <div className={styles.partDetailsRow}>
-                {(partDetails.price || partDetails.priceCents) && (
-                  <span className={styles.itemPrice}>
-                    ${Number(partDetails.price || partDetails.priceCents / 100).toLocaleString()}
-                  </span>
-                )}
-                {partDetails.vendorName && (
-                  <span className={styles.itemVendor}>{partDetails.vendorName}</span>
-                )}
-              </div>
-            ) : (
-              <span className={styles.noPartText}>or add manually</span>
             )}
           </div>
 
-          {/* Right side: Actions */}
+          {/* Right side: Edit button when part is selected */}
           <div className={styles.itemActions}>
             {!isEditing && hasPartDetails && (
-              <>
-                {/* See other options button - when part already selected */}
-                <button
-                  className={styles.seeOtherOptionsBtn}
-                  onClick={handleSeeOptions}
-                  title={`See other ${upgrade.name} options`}
-                  aria-label={`See other ${upgrade.name} options`}
-                >
-                  <ALAvatar size={16} />
-                </button>
-                {partDetails.productUrl && (
-                  <a
-                    href={partDetails.productUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={styles.viewLinkBtn}
-                    title="View product"
-                    aria-label={`View ${partDetails.brandName || ''} ${partDetails.partName || upgrade.name} product page (opens in new tab)`}
-                  >
-                    <Icons.externalLink size={14} aria-hidden="true" />
-                  </a>
-                )}
-                <button
-                  className={styles.editPartInline}
-                  onClick={() => setIsEditing(true)}
-                  title="Edit part details"
-                  aria-label={`Edit ${upgrade.name} part details`}
-                >
-                  <Icons.edit size={14} aria-hidden="true" />
-                </button>
-              </>
+              <button
+                className={styles.editPartInline}
+                onClick={() => setIsEditing(true)}
+                title="Edit part details"
+                aria-label={`Edit ${upgrade.name} part details`}
+              >
+                <Icons.edit size={14} aria-hidden="true" />
+              </button>
             )}
           </div>
         </div>
@@ -385,14 +312,12 @@ function ShoppingListItem({
 /**
  * Main Parts Shopping List Component
  *
- * SCOPE: This component handles SHOPPING (planned → purchased)
- * Installation tracking is handled by the Install page (/garage/my-install)
+ * Shows upgrades from the build as a shopping list for selecting specific parts.
  */
 export default function PartsSelector({
   selectedUpgrades = [],
   selectedParts = [],
   onPartsChange,
-  onStatusChange,
   carName,
   carSlug,
   buildId = null, // Optional build ID for linking to install page
@@ -401,6 +326,13 @@ export default function PartsSelector({
   hideALRecommendations = false, // Hide AL button when rendered at page level
 }) {
   const { openChatWithPrompt } = useAIChat();
+
+  // Fetch AL recommendations for all upgrade types (up to 5 per category)
+  const { data: recommendations = {} } = usePartRecommendations(carSlug, {
+    upgradeKeys: selectedUpgrades,
+    limit: 5,
+    enabled: !!carSlug && selectedUpgrades.length > 0,
+  });
 
   // Get full upgrade objects from keys
   const upgrades = useMemo(() => {
@@ -439,29 +371,6 @@ export default function PartsSelector({
     }, 0);
   }, [selectedParts]);
 
-  // Status counts for summary
-  const statusCounts = useMemo(() => {
-    const counts = { planned: 0, purchased: 0, installed: 0 };
-
-    // Count parts by status
-    selectedParts.forEach((p) => {
-      const status = p.status || 'planned';
-      if (counts[status] !== undefined) {
-        counts[status]++;
-      }
-    });
-
-    // Upgrades without parts are "planned"
-    const partsWithStatus = selectedParts.filter((p) => p.status).map((p) => p.upgradeKey);
-    upgrades.forEach((u) => {
-      if (!partsWithStatus.includes(u.key)) {
-        counts.planned++;
-      }
-    });
-
-    return counts;
-  }, [selectedParts, upgrades]);
-
   const handleUpdatePart = useCallback(
     (partData) => {
       const existingIndex = selectedParts.findIndex((p) => p.upgradeKey === partData.upgradeKey);
@@ -480,7 +389,6 @@ export default function PartsSelector({
           {
             ...partData,
             id: `part_${Date.now()}`,
-            status: 'planned',
           },
         ];
       }
@@ -490,34 +398,37 @@ export default function PartsSelector({
     [selectedParts, onPartsChange]
   );
 
-  // Handle status change for a part
-  const handleStatusChange = useCallback(
-    (upgradeKey, statusUpdate) => {
-      const existingIndex = selectedParts.findIndex((p) => p.upgradeKey === upgradeKey);
+  /**
+   * Handle selecting a recommendation - converts to part data
+   * This allows one-click selection from AL recommendations
+   */
+  const handleSelectRecommendation = useCallback(
+    (rec, upgrade) => {
+      // Use manufacturerName if available (new schema), fall back to brandName (legacy)
+      const manufacturerName = rec.manufacturerName || rec.brandName;
+      
+      const partData = {
+        upgradeKey: upgrade.key,
+        upgradeName: upgrade.name,
+        category: upgrade.category,
+        // Part details from recommendation
+        partId: rec.partId,
+        brandName: manufacturerName, // Display name (manufacturer)
+        manufacturerName: manufacturerName, // Explicit manufacturer field
+        manufacturerUrl: rec.manufacturerUrl || null, // Manufacturer website
+        partName: rec.name,
+        partNumber: rec.partNumber || '',
+        price: rec.price || '',
+        priceCents: rec.priceCents || null,
+        productUrl: rec.productUrl || '',
+        vendorName: rec.vendorName || '', // Retailer name (who sells it)
+        // Track that this came from AL recommendation
+        source: 'al_recommendation',
+      };
 
-      let newParts;
-      if (existingIndex >= 0) {
-        newParts = [...selectedParts];
-        newParts[existingIndex] = {
-          ...newParts[existingIndex],
-          ...statusUpdate,
-        };
-      } else {
-        // Create a new part entry just for status tracking
-        newParts = [
-          ...selectedParts,
-          {
-            id: `part_${Date.now()}`,
-            upgradeKey,
-            ...statusUpdate,
-          },
-        ];
-      }
-
-      onPartsChange?.(newParts);
-      onStatusChange?.(upgradeKey, statusUpdate);
+      handleUpdatePart(partData);
     },
-    [selectedParts, onPartsChange, onStatusChange]
+    [handleUpdatePart]
   );
 
   /**
@@ -527,11 +438,14 @@ export default function PartsSelector({
    */
   const handleSeeOptions = useCallback(
     (upgrade, slug) => {
+      // Use upgrade.key for consistent database storage/retrieval
+      const upgradeKey = upgrade.key || upgrade.name.toLowerCase().replace(/\s+/g, '-');
+      
       const prompt = `Find me the best ${upgrade.name.toLowerCase()} options for my ${carName}.
 
 USE THE research_parts_live TOOL with these parameters:
 - car_slug: "${slug}"
-- upgrade_type: "${upgrade.name.toLowerCase()}"
+- upgrade_type: "${upgradeKey}"
 
 Then format the results as a Top 5 list like this:
 
@@ -685,24 +599,6 @@ Be specific to my ${carName} and this exact build configuration.`;
         )}
       </div>
 
-      {/* Status Summary - Shopping focused (planned/purchased) */}
-      <div className={styles.statusSummary}>
-        <div className={`${styles.statusCount} ${styles.statusmuted}`}>
-          <span className={styles.statusCountNumber}>{statusCounts.planned}</span>
-          <span className={styles.statusCountLabel}>Planned</span>
-        </div>
-        <div className={`${styles.statusCount} ${styles.statusteal}`}>
-          <span className={styles.statusCountNumber}>{statusCounts.purchased}</span>
-          <span className={styles.statusCountLabel}>Purchased</span>
-        </div>
-        {statusCounts.installed > 0 && (
-          <div className={`${styles.statusCount} ${styles.statusteal}`}>
-            <span className={styles.statusCountNumber}>{statusCounts.installed}</span>
-            <span className={styles.statusCountLabel}>Installed</span>
-          </div>
-        )}
-      </div>
-
       <div className={styles.list}>
         {upgrades.map((upgrade) => (
           <ShoppingListItem
@@ -710,9 +606,10 @@ Be specific to my ${carName} and this exact build configuration.`;
             upgrade={upgrade}
             partDetails={partsByUpgrade[upgrade.key]}
             onUpdatePart={handleUpdatePart}
-            onStatusChange={handleStatusChange}
             onSeeOptions={handleSeeOptions}
+            onSelectRecommendation={handleSelectRecommendation}
             carSlug={carSlug}
+            recommendations={getRecommendationsForUpgrade(recommendations, upgrade.key)}
           />
         ))}
       </div>
@@ -722,27 +619,6 @@ Be specific to my ${carName} and this exact build configuration.`;
           <span>Estimated Total</span>
           <span className={styles.totalAmount}>${totalCost.toLocaleString()}</span>
         </div>
-      )}
-
-      {/* Ready to Install CTA - shows when there are purchased parts */}
-      {statusCounts.purchased > 0 && (
-        <Link
-          href={
-            buildId ? `/garage/my-install?build=${buildId}` : `/garage/my-install?car=${carSlug}`
-          }
-          className={styles.readyToInstallCta}
-        >
-          <div className={styles.readyToInstallCtaContent}>
-            <span className={styles.readyToInstallCtaTitle}>
-              {statusCounts.purchased} {statusCounts.purchased === 1 ? 'Part' : 'Parts'} Ready to
-              Install
-            </span>
-            <span className={styles.readyToInstallCtaSubtitle}>
-              Track your installation progress, find DIY videos, or locate service centers
-            </span>
-          </div>
-          <Icons.chevronRight size={20} className={styles.readyToInstallCtaIcon} />
-        </Link>
       )}
     </div>
   );

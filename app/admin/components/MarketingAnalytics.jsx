@@ -233,7 +233,7 @@ function EventsTable({ events }) {
 }
 
 // Main component
-export function MarketingAnalytics({ token, range = '30d', loading: externalLoading }) {
+export function MarketingAnalytics({ token: _token, range = '30d', loading: externalLoading }) {
   const [activeSection, setActiveSection] = useState('funnel');
   
   // Use React Query hook for marketing analytics

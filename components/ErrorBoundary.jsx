@@ -70,7 +70,7 @@ function DefaultFallback({ error, errorInfo, onRetry }) {
 }
 
 // Compact fallback for smaller sections
-export function CompactFallback({ error, onRetry }) {
+export function CompactFallback({ error: _error, onRetry }) {
   return (
     <div className={styles.compactError}>
       <span className={styles.compactIcon}>

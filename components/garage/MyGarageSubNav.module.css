@@ -84,6 +84,58 @@
   cursor: pointer;
   transition: all 0.2s ease;
   letter-spacing: 0.02em;
+  /* For glow animation */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Animated lime glow - draws attention to the dropdown */
+.dropdownTrigger::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    transparent 270deg,
+    var(--color-accent-lime, #d4ff00) 310deg,
+    var(--color-accent-lime, #d4ff00) 330deg,
+    transparent 360deg
+  );
+  transform-origin: center;
+  z-index: -1;
+  opacity: 0.85;
+  animation: glowSpin 2.5s linear infinite;
+}
+
+/* Inner mask to maintain button background */
+.dropdownTrigger::after {
+  content: '';
+  position: absolute;
+  inset: 1px;
+  border-radius: 11px;
+  background: rgba(30, 40, 50, 0.95);
+  z-index: -1;
+}
+
+@keyframes glowSpin {
+  from {
+    transform: translate(-50%, -50%) rotate(0deg);
+  }
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
+  }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .dropdownTrigger::before {
+    animation: none;
+    opacity: 0;
+  }
 }
 
 .dropdownTrigger:hover {

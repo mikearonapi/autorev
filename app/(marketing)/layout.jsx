@@ -6,7 +6,7 @@
  */
 
 import SchemaOrg from '@/components/SchemaOrg';
-import { generateBreadcrumbSchema, SITE_URL } from '@/lib/seoUtils';
+import { SITE_URL } from '@/lib/seoUtils';
 
 // Homepage metadata (since page.jsx is a client component)
 export const metadata = {

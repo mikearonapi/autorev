@@ -10,7 +10,6 @@
 import { useState } from 'react';
 
 import Image from 'next/image';
-import Link from 'next/link';
 
 import { useEventAttendees } from '@/hooks/useEventsData';
 
@@ -126,6 +125,40 @@ function AvatarStack({ attendees, maxVisible = 5, size = 32 }) {
 }
 
 /**
+ * Single attendee row with avatar and name
+ */
+function AttendeeRow({ attendee, size = 28 }) {
+  // Ensure we always have a display name
+  const name = attendee.displayName || 'Anonymous';
+  
+  return (
+    <div className={styles.attendeeRowCompact}>
+      <AttendeeAvatar attendee={attendee} size={size} />
+      <span className={styles.attendeeNameInline} style={{ color: '#111827' }}>
+        {name}
+        {attendee.isCurrentUser && <span className={styles.youBadgeSmall}>(You)</span>}
+      </span>
+      <span 
+        className={`${styles.statusLabel} ${styles[attendee.status]}`}
+        style={{ color: attendee.status === 'going' ? '#059669' : '#d97706' }}
+      >
+        {attendee.status === 'going' ? (
+          <>
+            <CheckIcon size={10} />
+            going
+          </>
+        ) : (
+          <>
+            <StarIcon size={10} />
+            interested
+          </>
+        )}
+      </span>
+    </div>
+  );
+}
+
+/**
  * EventAttendeesPreview component
  * 
  * @param {Object} props
@@ -142,7 +175,7 @@ export default function EventAttendeesPreview({
   showLink = true,
   onViewAll,
 }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated: _isAuthenticated } = useAuth();
   
   const { data, isLoading, error } = useEventAttendees(eventSlug, { limit: 20 });
   
@@ -173,10 +206,44 @@ export default function EventAttendeesPreview({
     );
   }
   
-  // Filter to "going" attendees for the preview
+  // Filter attendees by status
   const goingAttendees = attendees.filter(a => a.status === 'going');
   const interestedAttendees = attendees.filter(a => a.status === 'interested');
+  const allAttendees = [...goingAttendees, ...interestedAttendees];
   
+  // For compact variant with few attendees, show list with names
+  const showListFormat = variant === 'compact' && counts.total <= 5;
+  
+  if (showListFormat) {
+    return (
+      <div className={`${styles.container} ${styles[variant]} ${styles.listFormat}`}>
+        {/* Count header */}
+        <div className={styles.countHeader} style={{ color: '#6b7280' }}>
+          <strong style={{ color: '#111827' }}>{counts.total}</strong> {counts.total === 1 ? 'person' : 'people'}
+        </div>
+        
+        {/* Attendee list with names */}
+        <div className={styles.attendeeListCompact}>
+          {allAttendees.slice(0, maxAvatars).map(attendee => (
+            <AttendeeRow key={attendee.userId} attendee={attendee} size={28} />
+          ))}
+        </div>
+        
+        {/* See All Link */}
+        {showLink && counts.total > maxAvatars && (
+          <button 
+            className={styles.seeAllBtn}
+            onClick={onViewAll}
+            type="button"
+          >
+            See all
+          </button>
+        )}
+      </div>
+    );
+  }
+  
+  // Default/expanded layout with avatar stack
   return (
     <div className={`${styles.container} ${styles[variant]}`}>
       {/* Avatar Stack */}
@@ -207,8 +274,8 @@ export default function EventAttendeesPreview({
           )}
         </div>
         
-        {/* Names preview (expanded variant) */}
-        {variant === 'expanded' && goingAttendees.length > 0 && (
+        {/* Names preview (expanded variant or default with few attendees) */}
+        {(variant === 'expanded' || (variant === 'default' && counts.total <= 3)) && goingAttendees.length > 0 && (
           <div className={styles.names}>
             {goingAttendees.slice(0, 3).map((a, i) => (
               <span key={a.userId}>
@@ -269,7 +336,7 @@ export function EventAttendeesCompact({ eventSlug, counts }) {
 /**
  * Full attendee list modal/sheet component
  */
-export function EventAttendeesList({ eventSlug, onClose }) {
+export function EventAttendeesList({ eventSlug, onClose: _onClose }) {
   const [filter, setFilter] = useState(null); // null = all, 'going', 'interested'
   
   const { data, isLoading } = useEventAttendees(eventSlug, { 

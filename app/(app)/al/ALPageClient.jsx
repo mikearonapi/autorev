@@ -547,8 +547,10 @@ export default function ALPageClient() {
       const timer = setTimeout(() => {
         if (pendingPrompt && sendMessageRef.current) {
           const promptText = pendingPrompt.prompt;
+          const displayText = pendingPrompt.displayMessage;
           setPendingPrompt(null);
-          sendMessageRef.current(promptText);
+          // Pass both the full prompt and the user-friendly display message
+          sendMessageRef.current(promptText, displayText);
         }
       }, 100);
       return () => clearTimeout(timer);
@@ -820,8 +822,10 @@ export default function ALPageClient() {
   const handleSendPendingPrompt = useCallback(() => {
     if (pendingPrompt && sendMessageRef.current) {
       const promptText = pendingPrompt.prompt;
+      const displayText = pendingPrompt.displayMessage;
       setPendingPrompt(null);
-      sendMessageRef.current(promptText);
+      // Pass both the full prompt and the user-friendly display message
+      sendMessageRef.current(promptText, displayText);
     }
   }, [pendingPrompt]);
 
@@ -843,7 +847,9 @@ export default function ALPageClient() {
   }, []);
 
   // Send message
-  const sendMessage = async (messageText = input) => {
+  // @param {string} messageText - The actual prompt text to send to AL (may include technical instructions)
+  // @param {string} displayMessage - Optional user-friendly message to show in chat history (defaults to messageText)
+  const sendMessage = async (messageText = input, displayMessage = null) => {
     if (!messageText.trim() || isLoading) return;
 
     if (!isAuthenticated) {
@@ -851,7 +857,8 @@ export default function ALPageClient() {
       return;
     }
 
-    const userMessage = messageText.trim();
+    const actualPrompt = messageText.trim(); // Full prompt sent to AL
+    const visibleMessage = (displayMessage || messageText).trim(); // What user sees in chat
     const messageAttachments = [...attachments]; // Capture current attachments
     setInput('');
     // Reset textarea height after sending
@@ -870,7 +877,7 @@ export default function ALPageClient() {
         : ANALYTICS_EVENTS.AL_QUESTION_ASKED,
       {
         carSlug: selectedCar?.slug,
-        messageLength: userMessage.length,
+        messageLength: visibleMessage.length,
         isFirstMessage,
         hasAttachments: messageAttachments.length > 0,
         attachmentCount: messageAttachments.length,
@@ -878,21 +885,23 @@ export default function ALPageClient() {
     );
 
     if (isFirstMessage) {
-      trackALConversationStart(user?.id || 'anonymous', userMessage, selectedCar?.slug);
+      trackALConversationStart(user?.id || 'anonymous', visibleMessage, selectedCar?.slug);
     }
 
     // Build user message with attachment indicators and timestamp
+    // Display the user-friendly message, store the actual prompt for the API
     const newMessages = [
       ...messages,
       {
         role: 'user',
-        content: userMessage,
+        content: visibleMessage, // User sees this in chat
+        actualPrompt: actualPrompt !== visibleMessage ? actualPrompt : undefined, // Store full prompt if different
         attachments: messageAttachments, // Store attachments with message
         timestamp: new Date().toISOString(),
       },
     ];
     setMessages(newMessages);
-    setLastUserMessage(userMessage); // Track for regenerate feature
+    setLastUserMessage(actualPrompt); // Track full prompt for regenerate feature
     setIsLoading(true);
     setActiveTools([]); // Clear any previous tool activity indicators
     setCurrentPhase(null); // Clear any previous phase
@@ -913,7 +922,8 @@ export default function ALPageClient() {
           Accept: 'text/event-stream',
         },
         body: JSON.stringify({
-          message: userMessage,
+          message: actualPrompt, // Send full prompt to AL (may include technical instructions)
+          displayMessage: actualPrompt !== visibleMessage ? visibleMessage : undefined, // User-friendly version for history
           // carSlug intentionally omitted - let AL determine context from message
           userId: user?.id,
           conversationId: currentConversationId,

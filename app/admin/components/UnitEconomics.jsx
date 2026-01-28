@@ -93,9 +93,6 @@ export function UnitEconomics({
   // ARPU (Average Revenue Per User) - monthly
   const arpu = totalUsers > 0 ? monthlyRevenue / totalUsers : 0;
   
-  // ARPPU (Average Revenue Per Paying User)
-  const arppu = payingUsers > 0 ? monthlyRevenue / payingUsers : 0;
-  
   // CAC (Customer Acquisition Cost)
   // In early stage, use total marketing spend / new users acquired
   const newUsers = users?.newThisPeriod || totalUsers;

@@ -1,23 +1,17 @@
 'use client';
 
 /**
- * My Install Page - Installation Tracking & Guidance
- * 
- * SCOPE: Installation workflow (purchased → installed)
- * Shopping/purchasing is handled by the Parts page (/garage/my-parts)
+ * My Install Page - Installation Guidance
  * 
  * Choose Your Own Adventure:
  * - DIY Path: Tools needed, install videos, step-by-step guidance
  * - Service Center Path: Find nearby shops, get directions
  * 
  * Features:
- * - Part checklist with status indicators (purchased vs planned)
- * - Difficulty badges and time estimates
+ * - Part checklist with difficulty badges and time estimates
  * - Required tools display (from upgradeTools.js)
  * - DIY video search (YouTube + Exa fallback)
  * - Service center finder (Google Places)
- * - Mark parts as installed
- * - Celebration modal on completion
  */
 
 import React, { useState, useEffect, useMemo, Suspense, useCallback } from 'react';
@@ -26,26 +20,21 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
-import CelebrationModal from '@/components/CelebrationModal';
+import { DynamicServiceCenterFinder } from '@/components/dynamic';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { MyGarageSubNav, GarageVehicleSelector } from '@/components/garage';
-import DIYVideoEmbed from '@/components/garage/DIYVideoEmbed';
 import InstallChecklistItem from '@/components/garage/InstallChecklistItem';
-import InstallToolsPanel from '@/components/garage/InstallToolsPanel';
-import ServiceCenterFinder from '@/components/garage/ServiceCenterFinder';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import PremiumGate from '@/components/PremiumGate';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
-import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
 import ShareBuildButton from '@/components/ShareBuildButton';
+import EmptyState from '@/components/ui/EmptyState';
+import { Icons } from '@/components/ui/Icons';
+import { calculateBuildComplexity } from '@/data/upgradeTools';
 import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
-import { Icons } from '@/components/ui/Icons';
-import EmptyState from '@/components/ui/EmptyState';
-import { calculateBuildComplexity } from '@/data/upgradeTools';
-import { useGarageScore } from '@/hooks/useGarageScore';
 
 // Placeholder components - will be implemented in subsequent todos
 
@@ -93,26 +82,18 @@ function MyInstallContent() {
   // Path selection state (DIY or Service Center) - defaults to DIY
   const [activePath, setActivePath] = useState('diy'); // 'diy' | 'service'
   
-  // Celebration modal state
-  const [celebrationData, setCelebrationData] = useState(null);
-  
   // Expanded video/tools state
   const [expandedPartId, setExpandedPartId] = useState(null);
   const [showVideosFor, setShowVideosFor] = useState(null);
   const [showToolsFor, setShowToolsFor] = useState(null);
   
-  const { isAuthenticated, user, isLoading: authLoading } = useAuth();
-  const { showPointsEarned } = usePointsNotification();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const authModal = useAuthModal();
-  const { builds, isLoading: buildsLoading, updateBuild } = useSavedBuilds();
+  const { builds, isLoading: buildsLoading } = useSavedBuilds();
   const { vehicles } = useOwnedVehicles();
   
-  // Get the vehicle ID for this car to enable garage score updates
-  const vehicleForCar = vehicles?.find(v => v.matchedCarSlug === selectedCar?.slug);
-  const { recalculateScore } = useGarageScore(vehicleForCar?.id);
-  
   // Use cached cars data from React Query hook
-  const { data: allCars = [], isLoading: carsLoading } = useCarsList();
+  const { data: allCars = [] } = useCarsList();
   
   // Get URL params
   const buildIdParam = searchParams.get('build');
@@ -121,12 +102,12 @@ function MyInstallContent() {
   // Fallback: fetch single car in parallel with full list
   // This provides faster data when the full list is slow or unavailable
   const carFromList = carSlugParam ? allCars.find(c => c.slug === carSlugParam) : null;
-  const { data: fallbackCar, isLoading: fallbackLoading } = useCarBySlug(carSlugParam, {
+  const { data: fallbackCar } = useCarBySlug(carSlugParam, {
     enabled: !!carSlugParam && !carFromList && !selectedCar,
   });
   
-  // Get user's hero image for this car
-  const { heroImageUrl } = useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
+  // Get user's hero image for this car (used by GarageVehicleSelector)
+  useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
   
   // Load build or car from URL params (with fallback support)
   useEffect(() => {
@@ -181,22 +162,12 @@ function MyInstallContent() {
   }, [currentBuild]);
   
   // Get parts from build
-  // IMPORTANT: Uses the same data format as PartsSelector for sync between pages
-  // Status can be: 'planned', 'purchased', 'installed'
   const buildParts = useMemo(() => {
     if (!currentBuild) return [];
     
     // Get upgrade keys from build
     const upgradeKeys = currentBuild.upgrades || [];
     const partsData = currentBuild.parts || [];
-    
-    // Debug: Log when parts data changes
-    console.log('[MyInstall] buildParts recomputing:', {
-      buildId: currentBuild.id,
-      upgradeKeysCount: upgradeKeys.length,
-      partsDataCount: partsData.length,
-      installedInPartsData: partsData.filter(p => p.status === 'installed').map(p => p.upgradeKey),
-    });
     
     // Map upgrades to part objects with metadata
     // Handle both formats: string keys (old) and objects with key property (new)
@@ -215,138 +186,25 @@ function MyInstallContent() {
       
       const partData = partsData.find(p => p.upgradeKey === upgradeKey) || {};
       
-      // Determine installed status - use flat status field (standard format)
-      // Legacy metadata.installed_at format is no longer used
-      const isInstalled = partData.status === 'installed' || !!partData.installedAt;
-      const installedAtValue = partData.installedAt || null;
-      const installedByValue = partData.installedBy || null;
-      
       return {
         id: `${upgradeKey}-${index}`,
         upgradeKey: upgradeKey,
         name: displayName,
         brandName: partData.brandName || null,
         partName: partData.partName || null,
-        // Use consistent status field (matches PartsSelector format)
-        status: isInstalled ? 'installed' : (partData.status || 'planned'),
-        installed: isInstalled,
-        installedAt: installedAtValue,
-        installedBy: installedByValue,
         ...partData,
       };
     }).filter(part => part.upgradeKey); // Filter out any parts with empty keys
   }, [currentBuild]);
   
-  // Calculate install progress
-  const installProgress = useMemo(() => {
-    if (buildParts.length === 0) return { installed: 0, total: 0, percent: 0, purchased: 0, planned: 0 };
-    const installed = buildParts.filter(p => p.installed).length;
-    const purchased = buildParts.filter(p => p.status === 'purchased' && !p.installed).length;
-    const planned = buildParts.filter(p => (!p.status || p.status === 'planned') && !p.installed).length;
-    return {
-      installed,
-      total: buildParts.length,
-      percent: Math.round((installed / buildParts.length) * 100),
-      purchased,
-      planned,
-    };
-  }, [buildParts]);
+  // Calculate part count for display
+  const partCount = buildParts.length;
   
   // Calculate total estimated install time and complexity
   const buildComplexity = useMemo(() => {
     if (normalizedUpgradeKeys.length === 0) return null;
     return calculateBuildComplexity(normalizedUpgradeKeys);
   }, [normalizedUpgradeKeys]);
-  
-  // Handle marking part as installed
-  // IMPORTANT: Uses the same data format as PartsSelector for sync between pages
-  // Sets status: 'installed' and installedAt: timestamp (not metadata.installed_at)
-  const handleMarkInstalled = useCallback(async (partId, installedBy = 'self') => {
-    if (!currentBuild || !user?.id) {
-      console.warn('[MyInstall] Cannot mark installed - no build or user:', { hasBuild: !!currentBuild, hasUser: !!user?.id });
-      return;
-    }
-    
-    const part = buildParts.find(p => p.id === partId);
-    if (!part) {
-      console.warn('[MyInstall] Part not found for id:', partId);
-      return;
-    }
-    
-    console.log('[MyInstall] Marking part as installed:', { partId, upgradeKey: part.upgradeKey, partName: part.name });
-    
-    const now = new Date().toISOString();
-    
-    // Update the part with status field (matches PartsSelector format)
-    const updatedParts = (currentBuild.parts || []).map(p => {
-      if (p.upgradeKey === part.upgradeKey) {
-        return {
-          ...p,
-          // Use standard status field (not nested metadata)
-          status: 'installed',
-          installedAt: now,
-          installedBy: installedBy,
-        };
-      }
-      return p;
-    });
-    
-    // If part wasn't in the array, add it with proper status format
-    // Include upgradeKey both at top level (for client) and in metadata (for DB reconstruction)
-    if (!updatedParts.find(p => p.upgradeKey === part.upgradeKey)) {
-      console.log('[MyInstall] Part not in existing parts array, adding new entry');
-      updatedParts.push({
-        id: `part_${Date.now()}`,
-        upgradeKey: part.upgradeKey,
-        upgradeName: part.name,
-        status: 'installed',
-        installedAt: now,
-        installedBy: installedBy,
-        // metadata.upgradeKey is used by SavedBuildsProvider to reconstruct upgradeKey from DB
-        metadata: { upgradeKey: part.upgradeKey, upgradeName: part.name },
-      });
-    }
-    
-    console.log('[MyInstall] Updating build with parts:', { 
-      buildId: currentBuild.id, 
-      partsCount: updatedParts.length,
-      installedParts: updatedParts.filter(p => p.status === 'installed').map(p => p.upgradeKey),
-    });
-    
-    try {
-      // Use selectedParts key (matches PartsSelector/Parts page format)
-      const { error } = await updateBuild(currentBuild.id, { selectedParts: updatedParts });
-      
-      if (error) {
-        console.error('[MyInstall] Failed to save part installation:', error);
-        return;
-      }
-      
-      console.log('[MyInstall] Build updated successfully');
-      
-      // Auto-collapse the expanded item after successful install
-      setExpandedPartId(null);
-      
-      // Show points notification
-      showPointsEarned(50, 'Upgrade installed');
-      
-      // Show celebration
-      setCelebrationData({
-        partName: part.name,
-        installedCount: installProgress.installed + 1,
-        totalCount: installProgress.total,
-      });
-      
-      // Recalculate garage score (non-blocking)
-      if (vehicleForCar?.id) {
-        recalculateScore().catch(err => {
-          console.warn('[MyInstall] Score recalculation failed:', err);
-        });
-      }
-    } catch (err) {
-      console.error('[MyInstall] Failed to mark part as installed:', err);
-    }
-  }, [currentBuild, buildParts, installProgress, updateBuild, user?.id, showPointsEarned, vehicleForCar?.id, recalculateScore, setExpandedPartId]);
   
   // Handle back button
   const handleBack = useCallback(() => {
@@ -412,22 +270,16 @@ function MyInstallContent() {
         buildId={currentBuildId}
       />
       
-      {/* Premium Gate for Install Tracking */}
+      {/* Premium Gate for Install Guide */}
       <PremiumGate feature="installTracking" variant="default">
         <div className={styles.content}>
-          {/* Install Progress Header */}
+          {/* Install Guide Header */}
           <div className={styles.progressHeader}>
             <div className={styles.progressInfo}>
-              <h2 className={styles.pageTitle}>Installation Tracker</h2>
+              <h2 className={styles.pageTitle}>Installation Guide</h2>
               <p className={styles.progressText}>
-                {installProgress.installed} of {installProgress.total} parts installed
+                {partCount} {partCount === 1 ? 'part' : 'parts'} to install
               </p>
-            </div>
-            <div className={styles.progressBar}>
-              <div 
-                className={styles.progressFill} 
-                style={{ width: `${installProgress.percent}%` }}
-              />
             </div>
             
             {/* Estimated Total Time */}
@@ -466,7 +318,7 @@ function MyInstallContent() {
           {/* DIY Path Content */}
           {activePath === 'diy' && (
             <div className={styles.diyContent}>
-              {/* Parts Checklist - First (main focus) */}
+              {/* Parts Checklist */}
               <div className={styles.partsList}>
                 <h3 className={styles.sectionTitle}>
                   <Icons.list size={18} />
@@ -490,42 +342,16 @@ function MyInstallContent() {
                     onToggleTools={() => setShowToolsFor(
                       showToolsFor === part.id ? null : part.id
                     )}
-                    onMarkInstalled={() => handleMarkInstalled(part.id, 'self')}
                   />
                 ))}
-                
-                {/* Notice for parts not yet purchased */}
-                {installProgress.planned > 0 && (
-                  <Link 
-                    href={currentBuildId ? `/garage/my-parts?build=${currentBuildId}` : `/garage/my-parts?car=${selectedCar.slug}`}
-                    className={styles.needsPartsNotice}
-                  >
-                    <Icons.shoppingCart size={18} />
-                    <div className={styles.needsPartsText}>
-                      <span className={styles.needsPartsTitle}>
-                        {installProgress.planned} {installProgress.planned === 1 ? 'part' : 'parts'} not yet purchased
-                      </span>
-                      <span className={styles.needsPartsSubtitle}>
-                        Go to Parts page to find and order parts
-                      </span>
-                    </div>
-                    <Icons.chevronRight size={18} />
-                  </Link>
-                )}
               </div>
-              
-              {/* Tools Panel - Second (supporting info) */}
-              <InstallToolsPanel 
-                upgradeKeys={normalizedUpgradeKeys}
-                carName={selectedCar.name}
-              />
             </div>
           )}
           
           {/* Service Center Path Content */}
           {activePath === 'service' && (
             <div className={styles.serviceContent}>
-              <ServiceCenterFinder 
+              <DynamicServiceCenterFinder 
                 carName={selectedCar.name}
                 carMake={selectedCar.make}
                 buildParts={buildParts}
@@ -557,17 +383,6 @@ function MyInstallContent() {
             </div>
           </Link>
         </div>
-      )}
-      
-      {/* Celebration Modal */}
-      {celebrationData && (
-        <CelebrationModal
-          isOpen={!!celebrationData}
-          onClose={() => setCelebrationData(null)}
-          partName={celebrationData.partName}
-          installedCount={celebrationData.installedCount}
-          totalCount={celebrationData.totalCount}
-        />
       )}
       
       {/* Auth Modal */}

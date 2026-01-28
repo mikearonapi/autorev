@@ -68,7 +68,6 @@ export default function ImageQAPage() {
   }
 
   async function rejectWithIssues(article) {
-    const issues = [];
     const issueOptions = [
       'car_cutoff',
       'unrealistic_proportions', 

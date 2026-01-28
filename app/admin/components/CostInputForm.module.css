@@ -1,10 +1,10 @@
 /* CostInputForm Component Styles */
 
 .container {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 16px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 18px;
 }
 
 .container.editMode {
@@ -25,7 +25,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, var(--admin-accent-blue, var(--brand-blue)), var(--admin-accent-purple, var(--brand-purple-accent)));
+  background: linear-gradient(135deg, var(--brand-blue, #3b82f6), var(--brand-purple-accent));
   border-radius: 8px;
   color: white;
 }
@@ -37,7 +37,7 @@
 .title {
   font-size: 14px;
   font-weight: 600;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
   margin: 0;
 }
 
@@ -56,13 +56,13 @@
 .successMessage {
   background: rgba(var(--brand-success-rgb), 0.1);
   border: 1px solid rgba(var(--brand-success-rgb), 0.2);
-  color: var(--admin-positive, #22c55e);
+  color: var(--brand-success, #22c55e);
 }
 
 .errorMessage {
   background: rgba(var(--brand-error-rgb), 0.1);
   border: 1px solid rgba(var(--brand-error-rgb), 0.2);
-  color: var(--admin-negative, #ef4444);
+  color: var(--brand-error, #ef4444);
 }
 
 /* Form */
@@ -87,7 +87,7 @@
 .field label {
   font-size: 11px;
   font-weight: 500;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -98,7 +98,7 @@
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 6px;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
   font-size: 13px;
   transition: border-color 0.2s ease;
 }
@@ -106,11 +106,11 @@
 .field input:focus,
 .field select:focus {
   outline: none;
-  border-color: var(--admin-accent-blue, var(--brand-blue));
+  border-color: var(--brand-blue, #3b82f6);
 }
 
 .field input::placeholder {
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
 }
 
 .field select {
@@ -119,12 +119,12 @@
 
 .field select option {
   background: var(--brand-bg-card-dark);
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .field select optgroup {
   font-weight: 600;
-  color: var(--admin-accent-blue, var(--brand-blue));
+  color: var(--brand-blue, #3b82f6);
   background: var(--color-bg-base, #0f0f1a);
 }
 
@@ -132,7 +132,7 @@
   display: block;
   margin-top: 4px;
   font-size: 10px;
-  color: var(--admin-accent-purple, var(--brand-purple-accent));
+  color: var(--brand-purple-accent);
   font-style: italic;
 }
 
@@ -148,7 +148,7 @@
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
   cursor: pointer;
 }
 
@@ -181,16 +181,16 @@
 .cancelButton {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .cancelButton:hover {
   background: rgba(255, 255, 255, 0.08);
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .submitButton {
-  background: linear-gradient(135deg, var(--admin-accent-blue, var(--brand-blue)), var(--admin-accent-purple, var(--brand-purple-accent)));
+  background: linear-gradient(135deg, var(--brand-blue, #3b82f6), var(--brand-purple-accent));
   border: none;
   color: white;
 }

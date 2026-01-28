@@ -76,7 +76,7 @@ const tierLabels = {
 
 export default function FeedbackAdminPage() {
   const [feedback, setFeedback] = useState([]);
-  const [counts, setCounts] = useState([]);
+  const [_counts, setCounts] = useState([]);
   const [categoryStats, setCategoryStats] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);

@@ -40,7 +40,7 @@ async function handlePost(request) {
       referrer,
       landingPage,
       signupPage,
-      isFirstTouch = true
+      isFirstTouch: _isFirstTouch = true
     } = body;
     
     if (!userId) {

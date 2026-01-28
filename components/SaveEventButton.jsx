@@ -70,7 +70,7 @@ const SpinnerIcon = ({ size = 14 }) => (
  * @param {boolean} [props.showLabel] - Whether to show label text
  */
 export default function SaveEventButton({
-  eventId,
+  eventId: _eventId,
   eventSlug,
   eventName,
   isSaved: initialSaved = false,
@@ -80,7 +80,7 @@ export default function SaveEventButton({
   size = 'default',
   showLabel = false,
 }) {
-  const { isAuthenticated, user, profile, session } = useAuth();
+  const { isAuthenticated, user: _user, profile, session } = useAuth();
   const { openSignIn } = useAuthModal();
   const userTier = profile?.subscription_tier || 'free';
   

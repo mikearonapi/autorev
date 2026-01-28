@@ -30,7 +30,7 @@ function formatPrice(price) {
  * Market Value Section Component
  */
 export default function MarketValueSection({ carSlug, carName }) {
-  const { hasAccess } = usePremiumAccess('marketValue');
+  const { hasAccess: _hasAccess } = usePremiumAccess('marketValue');
   
   // Use React Query hooks for data fetching with caching
   const { 

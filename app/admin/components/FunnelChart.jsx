@@ -46,7 +46,7 @@ function generateInterpretiveTitle(funnel) {
   return `${funnel.signups} total signups tracked through conversion`;
 }
 
-export function FunnelChart({ funnel, title = 'Conversion Funnel' }) {
+export function FunnelChart({ funnel, title: _title = 'Conversion Funnel' }) {
   const stages = useMemo(() => {
     if (!funnel) return [];
     

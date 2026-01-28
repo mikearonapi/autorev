@@ -1,182 +1,212 @@
-/* ContentInventory Component Styles */
+/* ContentInventory Component Styles
+ * Mobile-First Design following Brand Guidelines v2.0
+ */
 
+/* ================================================================
+   CONTAINER
+   ================================================================ */
 .container {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 16px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 18px;
 }
 
+@media (min-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+}
+
+/* ================================================================
+   HEADER
+   ================================================================ */
 .header {
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .title {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--admin-text-secondary, #94a3b8);
+  letter-spacing: 0.06em;
+  color: var(--brand-text-secondary, #94a3b8);
   margin: 0;
 }
 
 .sectionTitle {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--admin-text-muted, #64748b);
-  margin: 0 0 10px 0;
+  letter-spacing: 0.06em;
+  color: var(--brand-text-tertiary, #64748b);
+  margin: 0 0 12px 0;
 }
 
-/* Content Grid */
+/* ================================================================
+   CONTENT GRID
+   ================================================================ */
 .grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-bottom: 16px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
 }
 
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ================================================================
+   CARD
+   ================================================================ */
 .card {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  border-radius: 8px;
+  gap: 12px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
   position: relative;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.card:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.1);
 }
 
 .cardIcon {
-  font-size: 18px;
+  font-size: 22px;
 }
 
 .cardContent {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 2px;
 }
 
 .cardValue {
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 700;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
 .cardLabel {
-  font-size: 9px;
-  color: var(--admin-text-muted, #64748b);
+  font-size: 11px;
+  color: var(--brand-text-tertiary, #64748b);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
 .trend {
   position: absolute;
-  top: 6px;
-  right: 8px;
-  font-size: 9px;
+  top: 8px;
+  right: 10px;
+  font-size: 11px;
   font-weight: 600;
 }
 
-.trend.up { color: var(--brand-success); }
-.trend.down { color: var(--brand-error); }
+.trend.up { color: var(--brand-success, #22c55e); }
+.trend.down { color: var(--brand-error, #ef4444); }
 
-/* Coverage Section */
+/* ================================================================
+   COVERAGE SECTION
+   ================================================================ */
 .coverage {
-  margin-bottom: 14px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .coverageGrid {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .coverageItem {
   display: grid;
-  grid-template-columns: 140px 1fr 60px;
-  align-items: center;
-  gap: 10px;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+
+@media (min-width: 480px) {
+  .coverageItem {
+    grid-template-columns: 140px 1fr 70px;
+    align-items: center;
+    gap: 12px;
+  }
 }
 
 .coverageLabel {
-  font-size: 10px;
-  color: var(--admin-text-secondary, #94a3b8);
+  font-size: 12px;
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .coverageBar {
-  height: 6px;
+  height: 8px;
   background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+  border-radius: 4px;
   overflow: hidden;
 }
 
 .coverageFill {
   height: 100%;
-  background: linear-gradient(90deg, var(--brand-blue), var(--brand-purple-accent));
-  border-radius: 3px;
+  background: linear-gradient(90deg, var(--brand-blue, #3b82f6), var(--brand-teal, #10b981));
+  border-radius: 4px;
   transition: width 0.3s ease;
 }
 
 .coverageValue {
-  font-size: 10px;
-  color: var(--admin-text-muted, #64748b);
+  font-size: 12px;
+  color: var(--brand-text-tertiary, #64748b);
   text-align: right;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
-/* Quick Stats */
+/* ================================================================
+   QUICK STATS
+   ================================================================ */
 .quickStats {
   display: flex;
   justify-content: space-around;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .quickStat {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 4px;
 }
 
 .quickValue {
-  font-size: 16px;
+  font-size: 20px;
   font-weight: 700;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
 .quickLabel {
-  font-size: 9px;
-  color: var(--admin-text-muted, #64748b);
+  font-size: 10px;
+  color: var(--brand-text-tertiary, #64748b);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
-/* States */
+/* ================================================================
+   STATES
+   ================================================================ */
 .loading,
 .emptyState {
-  padding: 30px;
+  padding: 40px 20px;
   text-align: center;
-  color: var(--admin-text-muted, #64748b);
-  font-size: 13px;
+  color: var(--brand-text-tertiary, #64748b);
+  font-size: 14px;
 }
-
-/* Responsive */
-@media (min-width: 481px) {
-  .grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  
-  .coverageItem {
-    grid-template-columns: 1fr 60px;
-    grid-template-rows: auto auto;
-  }
-  
-  .coverageLabel {
-    grid-column: 1 / -1;
-  }
-}
-

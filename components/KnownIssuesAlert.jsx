@@ -148,7 +148,7 @@ export default function KnownIssuesAlert({ issues, vehicleYear, carName, onFeedb
   const criticalHighIssues = processedIssues.filter(i => 
     ['critical', 'high'].includes(i.severity?.toLowerCase())
   );
-  const mediumIssues = processedIssues.filter(i => 
+  const _mediumIssues = processedIssues.filter(i => 
     i.severity?.toLowerCase() === 'medium'
   );
 

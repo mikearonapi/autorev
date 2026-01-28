@@ -222,7 +222,7 @@ export default function BuildModsList({ parts = [], buildData = null, isOwner = 
 
       {/* Category Cards */}
       <div className={styles.categoriesGrid}>
-        {sortedCategories.map((category, catIdx) => {
+        {sortedCategories.map((category, _catIdx) => {
           const catInfo = CATEGORY_BY_KEY[category] || CATEGORY_BY_KEY.other;
           const categoryMods = modsByCategory[category];
           const isExpanded = expandedCategories.has(category);
@@ -277,7 +277,7 @@ export default function BuildModsList({ parts = [], buildData = null, isOwner = 
               {isExpanded && (
                 <div className={styles.modsListWrapper}>
                   <div className={styles.modsList}>
-                    {categoryMods.map((mod, idx) => (
+                    {categoryMods.map((mod, _idx) => (
                       <div 
                         key={mod.id} 
                         className={`${styles.modItem} ${mod.hasDetails ? styles.hasDetails : styles.needsDetails}`}

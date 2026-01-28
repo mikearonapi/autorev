@@ -16,7 +16,7 @@ import { useMemo } from 'react';
 
 import styles from './MonthlyTrend.module.css';
 
-function formatCurrency(amount, compact = false) {
+function formatCurrency(amount, _compact = false) {
   const absAmount = Math.abs(amount);
   const formatted = absAmount.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   return amount < 0 ? `($${formatted})` : `$${formatted}`;
@@ -43,7 +43,7 @@ function generateInterpretiveTitle(data) {
   return `${formatCurrency(totalNet)} net income across ${months} month${months > 1 ? 's' : ''}`;
 }
 
-export function MonthlyTrend({ data = [], title = 'Monthly Financials', compact = false }) {
+export function MonthlyTrend({ data = [], title: _title = 'Monthly Financials', compact = false }) {
   // Sort and slice data first for interpretive title
   const sortedData = useMemo(() => {
     if (!data || data.length === 0) return [];

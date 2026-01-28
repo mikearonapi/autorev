@@ -14,7 +14,7 @@ import { NextResponse } from 'next/server';
 
 import { createClient } from '@supabase/supabase-js';
 
-import { answersToDbFields, POINTS_PER_QUESTION } from '@/data/insightQuestions';
+import { answersToDbFields } from '@/data/insightQuestions';
 import { errors } from '@/lib/apiErrors';
 import { awardPoints } from '@/lib/pointsService';
 import { preferencesQuestionnaireSchema, validateWithSchema, validationErrorResponse } from '@/lib/schemas/index.js';

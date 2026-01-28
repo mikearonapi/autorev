@@ -6,7 +6,7 @@ import Link from 'next/link';
 
 import { EventTypeIcon, TrackEventBadgeIcon } from '@/components/icons/EventIcons';
 import { Icons } from '@/components/ui/Icons';
-import { formatEventDateFull, parseDate } from '@/lib/dateUtils';
+import { formatEventDateFull } from '@/lib/dateUtils';
 
 import styles from './EventCalendarView.module.css';
 import PremiumGate from './PremiumGate';
@@ -32,14 +32,6 @@ function formatDate(year, month, day) {
   return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
-/**
- * Parse date string to components (local version for calendar)
- * Uses different return format than the imported parseDate
- */
-function parseDateLocal(dateStr) {
-  const [year, month, day] = dateStr.split('-').map(Number);
-  return { year, month: month - 1, day };
-}
 
 /**
  * Month names

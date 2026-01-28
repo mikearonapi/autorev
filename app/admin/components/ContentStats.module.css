@@ -1,10 +1,10 @@
 /* ContentStats Component Styles - Compact */
 
 .container {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 14px 16px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 18px;
 }
 
 .header {
@@ -19,14 +19,14 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
   margin: 0;
 }
 
 .totalBadge {
   font-size: 11px;
   font-weight: 500;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
   background: rgba(255, 255, 255, 0.05);
   padding: 3px 8px;
   border-radius: 4px;
@@ -68,14 +68,14 @@
 .itemLabel {
   font-size: 12px;
   font-weight: 500;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
   flex: 1;
 }
 
 .itemCount {
   font-size: 13px;
   font-weight: 700;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .barContainer {
@@ -110,17 +110,17 @@
 .percentage {
   font-size: 10px;
   font-weight: 500;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .target {
   font-size: 10px;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
 }
 
 .emptyState {
   padding: 30px;
   text-align: center;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
   font-size: 13px;
 }

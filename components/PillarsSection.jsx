@@ -58,7 +58,7 @@ const BookIcon = () => (
 );
 
 // Build Pivot: Focus on Build features only
-export default function PillarsSection({ carCount = 100 }) {
+export default function PillarsSection({ carCount: _carCount = 100 }) {
   const pillars = useMemo(() => [
     {
       icon: <ToolIcon />,

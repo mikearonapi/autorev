@@ -177,7 +177,6 @@ export function Tooltip({
   useEffect(() => {
     if (isVisible && tooltipRef.current && containerRef.current) {
       const tooltipRect = tooltipRef.current.getBoundingClientRect();
-      const containerRect = containerRef.current.getBoundingClientRect();
       
       if (tooltipRect.top < 0) {
         setTooltipPosition('bottom');

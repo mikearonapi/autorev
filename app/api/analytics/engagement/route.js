@@ -10,7 +10,7 @@
  * - Engagement score and tier
  */
 
-import { headers } from 'next/headers';
+// Note: 'headers' import removed - can be re-added if needed for request inspection
 
 import { createClient } from '@supabase/supabase-js';
 

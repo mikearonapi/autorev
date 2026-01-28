@@ -149,8 +149,8 @@ const getSuggestedGoals = (predictedWhp, predictedLapTime, predictedAccel) => {
 /**
  * GoalCard Component - Individual goal display
  */
-function GoalCard({ goal, onComplete, onDelete, onUpdate }) {
-  const [isExpanded, setIsExpanded] = useState(false);
+function GoalCard({ goal, onComplete, onDelete, onUpdate: _onUpdate }) {
+  const [_isExpanded, _setIsExpanded] = useState(false);
   
   const goalType = GOAL_TYPES[goal.type] || GOAL_TYPES.power;
   const progress = goal.achievedValue && goal.targetValue 
@@ -391,7 +391,7 @@ function AddGoalForm({ onAdd, onCancel, suggestions }) {
  * Main component for displaying and managing performance goals.
  */
 export default function PerformanceGoals({
-  vehicleId,
+  vehicleId: _vehicleId,
   predictedWhp,
   predictedLapTime,
   predictedAccel,
@@ -400,7 +400,7 @@ export default function PerformanceGoals({
   // Local state for goals (would be fetched from API in production)
   const [goals, setGoals] = useState([]);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [_isLoading, _setIsLoading] = useState(false);
   
   // Get suggested goals based on predictions
   const suggestions = getSuggestedGoals(predictedWhp, predictedLapTime, predictedAccel);

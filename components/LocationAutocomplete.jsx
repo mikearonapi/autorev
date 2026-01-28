@@ -486,6 +486,7 @@ export default function LocationAutocomplete({
           {/* Attribution based on source */}
           {!useFallback && googleLoaded && (
             <div className={styles.attribution}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img 
                 src="https://developers.google.com/static/maps/documentation/images/powered_by_google_on_white.png" 
                 alt="Powered by Google" 

@@ -6,9 +6,12 @@
  * Lazy-loading YouTube video embed that shows thumbnail first.
  * Clicking the thumbnail loads the YouTube iframe (saves bandwidth/load time).
  * Used in installation guidance to show DIY tutorial videos.
+ * 
+ * When no curated videos exist, the "Search YouTube" button triggers
+ * a live search via Exa API and embeds the results directly in-app.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 
 import Image from 'next/image';
 
@@ -130,11 +133,88 @@ export default function DIYVideoEmbed({
 /**
  * DIYVideoList - Multiple videos in a grid/list
  * 
- * Enhanced with better empty/error states and YouTube search fallback
+ * When no curated videos exist, clicking "Search YouTube" triggers a live
+ * search via our Exa-powered API and displays embedded results in-app.
+ * Users never have to leave AutoRev to watch install tutorials.
  */
-export function DIYVideoList({ videos = [], carName, category, isLoading, error }) {
-  // Build YouTube search URL for manual fallback
-  const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(`${carName} ${category} install tutorial DIY how to`)}`;
+export function DIYVideoList({ videos: initialVideos = [], carName, category, isLoading: parentLoading, error: parentError }) {
+  // Local state for triggered search
+  const [searchedVideos, setSearchedVideos] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchError, setSearchError] = useState(null);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [showYouTubeFallback, setShowYouTubeFallback] = useState(false);
+  
+  // Combine initial videos with searched videos
+  const videos = searchedVideos.length > 0 ? searchedVideos : initialVideos;
+  const isLoading = parentLoading || isSearching;
+  const error = searchError || parentError;
+  
+  // Build YouTube search URL for fallback
+  const youtubeSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(`${carName} ${category} install DIY`)}`;
+  
+  /**
+   * Trigger a live YouTube search via Exa API
+   */
+  const handleSearchYouTube = useCallback(async () => {
+    if (isSearching) return;
+    
+    setIsSearching(true);
+    setSearchError(null);
+    setShowYouTubeFallback(false);
+    
+    try {
+      const response = await fetch('/api/diy-videos/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          carName,
+          category,
+          limit: 5,
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Search failed: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      const results = data.videos || [];
+      
+      // Check for API errors that require fallback
+      if (data.errorCode) {
+        console.warn('[DIYVideoList] API error:', data.errorCode, data.warning);
+        setShowYouTubeFallback(true);
+      }
+      
+      // Normalize the video format
+      const normalizedVideos = results.map(v => ({
+        videoId: v.videoId || v.video_id,
+        title: v.title,
+        channelName: v.channelName || v.channel_name,
+        thumbnailUrl: v.thumbnailUrl || v.thumbnail_url || `https://img.youtube.com/vi/${v.videoId || v.video_id}/mqdefault.jpg`,
+        durationSeconds: v.durationSeconds || v.duration_seconds,
+      }));
+      
+      setSearchedVideos(normalizedVideos);
+      setHasSearched(true);
+      
+      // If no videos, show YouTube fallback
+      if (normalizedVideos.length === 0) {
+        setShowYouTubeFallback(true);
+        if (data.warning) {
+          setSearchError(data.warning);
+        }
+      }
+    } catch (err) {
+      console.error('[DIYVideoList] Search error:', err);
+      setSearchError(err.message || 'Failed to search for videos');
+      setShowYouTubeFallback(true);
+      setHasSearched(true);
+    } finally {
+      setIsSearching(false);
+    }
+  }, [carName, category, isSearching]);
   
   if (isLoading) {
     return (
@@ -147,14 +227,15 @@ export function DIYVideoList({ videos = [], carName, category, isLoading, error 
     );
   }
   
-  if (error) {
+  if (error && hasSearched && videos.length === 0) {
+    // Show error with YouTube fallback
     return (
       <div className={styles.listContainer}>
         <div className={styles.error}>
           <Icons.alertTriangle size={24} />
-          <span className={styles.errorTitle}>Unable to load videos</span>
+          <span className={styles.errorTitle}>Search unavailable</span>
           <p className={styles.errorSubtext}>
-            Our video search is temporarily unavailable. You can search YouTube directly for tutorials.
+            {error}
           </p>
           <a 
             href={youtubeSearchUrl}
@@ -163,7 +244,7 @@ export function DIYVideoList({ videos = [], carName, category, isLoading, error 
             className={styles.searchYouTubePrimary}
           >
             <YouTubeIcon size={16} />
-            Search on YouTube
+            Open YouTube Search
             <Icons.externalLink size={12} />
           </a>
         </div>
@@ -176,20 +257,42 @@ export function DIYVideoList({ videos = [], carName, category, isLoading, error 
       <div className={styles.listContainer}>
         <div className={styles.empty}>
           <Icons.video size={32} />
-          <span className={styles.emptyTitle}>No curated tutorials found</span>
+          <span className={styles.emptyTitle}>
+            {hasSearched ? 'No tutorials found' : 'No curated tutorials found'}
+          </span>
           <p className={styles.emptySubtext}>
-            We couldn&apos;t find specific tutorials for this part. Try searching YouTube directly for DIY install guides.
+            {error 
+              ? error
+              : hasSearched 
+                ? 'We couldn\'t find install videos for this specific part and car combination.'
+                : 'Click below to search YouTube for DIY install guides.'}
           </p>
-          <a 
-            href={youtubeSearchUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.searchYouTubePrimary}
-          >
-            <YouTubeIcon size={16} />
-            Search "{carName} {category} install" on YouTube
-            <Icons.externalLink size={12} />
-          </a>
+          
+          {/* Show search button if haven't searched yet */}
+          {!hasSearched && (
+            <button 
+              onClick={handleSearchYouTube}
+              className={styles.searchYouTubePrimary}
+              disabled={isSearching}
+            >
+              <Icons.search size={16} />
+              Find Install Videos
+            </button>
+          )}
+          
+          {/* Show YouTube fallback link when API fails or no results */}
+          {showYouTubeFallback && (
+            <a 
+              href={youtubeSearchUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.searchYouTubePrimary}
+            >
+              <YouTubeIcon size={16} />
+              Open YouTube Search
+              <Icons.externalLink size={12} />
+            </a>
+          )}
         </div>
       </div>
     );
@@ -200,29 +303,27 @@ export function DIYVideoList({ videos = [], carName, category, isLoading, error 
       <div className={styles.videoGrid}>
         {videos.map((video) => (
           <DIYVideoEmbed
-            key={video.video_id || video.videoId}
-            videoId={video.video_id || video.videoId}
+            key={video.videoId || video.video_id}
+            videoId={video.videoId || video.video_id}
             title={video.title}
-            channelName={video.channel_name || video.channelName}
-            thumbnailUrl={video.thumbnail_url || video.thumbnailUrl}
-            durationSeconds={video.duration_seconds || video.durationSeconds}
+            channelName={video.channelName || video.channel_name}
+            thumbnailUrl={video.thumbnailUrl || video.thumbnail_url}
+            durationSeconds={video.durationSeconds || video.duration_seconds}
             variant="card"
           />
         ))}
       </div>
       
-      {/* Always show "Search for more" link when we have some videos */}
+      {/* Show "Search for more" button to refresh/find additional videos */}
       <div className={styles.moreVideosLink}>
-        <a 
-          href={youtubeSearchUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+        <button 
+          onClick={handleSearchYouTube}
           className={styles.searchYouTube}
+          disabled={isSearching}
         >
-          <YouTubeIcon size={14} />
-          Find more tutorials on YouTube
-          <Icons.externalLink size={12} />
-        </a>
+          <Icons.refresh size={14} />
+          {isSearching ? 'Searching...' : 'Find More Tutorials'}
+        </button>
       </div>
     </div>
   );

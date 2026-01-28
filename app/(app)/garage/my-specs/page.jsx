@@ -210,7 +210,12 @@ function MySpecsContent() {
   const [specsConfirmed, setSpecsConfirmed] = useState(false);
   const [confirmingSpecs, setConfirmingSpecs] = useState(false);
   const [confirmSuccess, setConfirmSuccess] = useState(false);
+  const [showFeedbackForm, setShowFeedbackForm] = useState(false);
+  const [feedbackText, setFeedbackText] = useState('');
+  const [submittingFeedback, setSubmittingFeedback] = useState(false);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
   const confirmButtonRef = useRef(null);
+  const feedbackTextareaRef = useRef(null);
 
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const authModal = useAuthModal();
@@ -250,7 +255,7 @@ function MySpecsContent() {
 
   // Fetch full car details for driving character fields (not in list view)
   const {
-    data: fullCarData,
+    data: _fullCarData,
     error: fullCarError,
     refetch: refetchFullCar,
   } = useCarBySlug(selectedCar?.slug, {
@@ -285,16 +290,6 @@ function MySpecsContent() {
     refetchFullCar,
     refetchMaintenance,
   ]);
-
-  // Merge full car data with selected car for driving character fields
-  const carWithDetails = useMemo(() => {
-    if (!selectedCar) return null;
-    return {
-      ...selectedCar,
-      // Override with full data if available (has driving character fields)
-      ...(fullCarData || {}),
-    };
-  }, [selectedCar, fullCarData]);
 
   // Find the user's vehicle for this car (to get specs_confirmed status and vehicle ID)
   const userVehicle = vehicles?.find((v) => v.matchedCarSlug === selectedCar?.slug);
@@ -352,6 +347,53 @@ function MySpecsContent() {
     }
   }, [user?.id, userVehicle?.id, refreshVehicles]);
 
+  // Handler to show feedback form when specs are inaccurate
+  const handleSpecsInaccurate = useCallback(() => {
+    setShowFeedbackForm(true);
+    // Focus the textarea after it renders
+    setTimeout(() => {
+      feedbackTextareaRef.current?.focus();
+    }, 100);
+  }, []);
+
+  // Handler to submit spec inaccuracy feedback
+  const handleSubmitFeedback = useCallback(async () => {
+    if (!feedbackText.trim()) return;
+
+    setSubmittingFeedback(true);
+    try {
+      const response = await fetch('/api/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          feedback_type: 'bug',
+          category: 'data',
+          message: `[Spec Inaccuracy Report]\n\nVehicle: ${selectedCar?.name || 'Unknown'}\nSlug: ${selectedCar?.slug || 'Unknown'}\nUser: ${user?.email || user?.id || 'Anonymous'}\n\nIssue:\n${feedbackText}`,
+          car_slug: selectedCar?.slug,
+          page_url: typeof window !== 'undefined' ? window.location.href : null,
+          page_title: `My Specs - ${selectedCar?.name || 'Unknown'}`,
+          email: user?.email || null,
+          tags: ['specs-inaccuracy', 'user-reported'],
+          severity: 'minor',
+          featureContext: 'garage-my-specs',
+          userTier: user?.tier || 'free',
+        }),
+      });
+
+      if (response.ok) {
+        setFeedbackSubmitted(true);
+        setFeedbackText('');
+        setShowFeedbackForm(false);
+      } else {
+        console.error('[MySpecs] Failed to submit feedback');
+      }
+    } catch (err) {
+      console.error('[MySpecs] Error submitting feedback:', err);
+    } finally {
+      setSubmittingFeedback(false);
+    }
+  }, [feedbackText, selectedCar, user]);
+
   // Get URL params
   const buildIdParam = searchParams.get('build');
 
@@ -397,7 +439,7 @@ function MySpecsContent() {
   //
   // IMPORTANT: When user has dyno data, that takes PRIORITY over calculations
   // NOTE: This must be called before any early returns (React hooks rules)
-  const { hpGain, finalHp, hasBuildUpgrades, hasUserDynoData, dynoData, performanceDataSources } =
+  const { hasUserDynoData, dynoData, performanceDataSources } =
     useMemo(() => {
       const installedMods = userVehicle?.installedModifications || [];
       const customSpecs = userVehicle?.customSpecs || {};
@@ -532,44 +574,13 @@ function MySpecsContent() {
             <div className={styles.cardHeader}>
               <h3 className={styles.cardTitle} id="performance-specs">
                 <Icons.zap size={16} />
-                Performance
+                Stock Performance
               </h3>
             </div>
-            <SpecTable caption="Performance specifications" aria-labelledby="performance-specs">
-              {hasBuildUpgrades || hasUserDynoData ? (
-                <SpecRow
-                  label="Horsepower"
-                  stockValue={selectedCar.hp}
-                  modifiedValue={finalHp}
-                  gain={hpGain}
-                  unit="HP"
-                  dataSource={performanceDataSources?.hp}
-                  sourceDetail={dynoData?.dynoShop}
-                />
-              ) : (
-                <SpecRow label="Horsepower" value={selectedCar.hp} unit="HP" />
-              )}
-              {/* If user has dyno torque data, show it */}
-              {hasUserDynoData && dynoData?.crankTq ? (
-                <SpecRow
-                  label="Torque"
-                  stockValue={selectedCar.torque}
-                  modifiedValue={dynoData.crankTq}
-                  gain={dynoData.crankTq - (selectedCar.torque || 0)}
-                  unit="lb-ft"
-                  dataSource={performanceDataSources?.torque}
-                  sourceDetail={dynoData?.dynoShop}
-                />
-              ) : (
-                <SpecRow label="Torque" value={selectedCar.torque} unit="lb-ft" />
-              )}
-              <SpecRow
-                label="0-60 mph"
-                value={selectedCar.zeroToSixty}
-                unit="s"
-                dataSource={hasUserDynoData ? 'calibrated' : null}
-                sourceDetail={hasUserDynoData ? 'Based on dyno HP' : null}
-              />
+            <SpecTable caption="Stock performance specifications" aria-labelledby="performance-specs">
+              <SpecRow label="Horsepower" value={selectedCar.hp} unit="HP" />
+              <SpecRow label="Torque" value={selectedCar.torque} unit="lb-ft" />
+              <SpecRow label="0-60 mph" value={selectedCar.zeroToSixty} unit="s" />
               <SpecRow label="1/4 Mile" value={selectedCar.quarterMile} unit="s" />
               <SpecRow label="Top Speed" value={selectedCar.topSpeed} unit="mph" />
               <SpecRow label="60-0 Braking" value={selectedCar.braking60To0} unit="ft" />
@@ -616,110 +627,12 @@ function MySpecsContent() {
             </SpecTable>
           </div>
 
-          {/* Track Capability - Uses definition list for description content */}
-          {(carWithDetails?.trackReadiness || carWithDetails?.chassisDynamics) && (
-            <div className={styles.specCard}>
-              <div className={styles.cardHeader}>
-                <h3 className={styles.cardTitle} id="track-specs">
-                  <Icons.flag size={16} />
-                  Track Capability
-                </h3>
-              </div>
-              <dl className={styles.specDescriptionList} aria-labelledby="track-specs">
-                {carWithDetails?.trackReadiness && (
-                  <div className={styles.specItemDescription}>
-                    <dt className={styles.specLabel}>Track Ready</dt>
-                    <dd className={styles.specDescription}>{carWithDetails.trackReadiness}</dd>
-                  </div>
-                )}
-                {carWithDetails?.chassisDynamics && (
-                  <div className={styles.specItemDescription}>
-                    <dt className={styles.specLabel}>Chassis</dt>
-                    <dd className={styles.specDescription}>{carWithDetails.chassisDynamics}</dd>
-                  </div>
-                )}
-                {carWithDetails?.communityStrength && (
-                  <div className={styles.specItemDescription}>
-                    <dt className={styles.specLabel}>Community</dt>
-                    <dd className={styles.specDescription}>{carWithDetails.communityStrength}</dd>
-                  </div>
-                )}
-              </dl>
-            </div>
-          )}
-
-          {/* Fluids & Maintenance - Semantic table for accessibility */}
-          {maintenanceData?.data?.specs && (
-            <div className={styles.specCard}>
-              <div className={styles.cardHeader}>
-                <h3 className={styles.cardTitle} id="fluids-specs">
-                  <Icons.wrench size={16} />
-                  Fluids & Maintenance
-                </h3>
-              </div>
-              <SpecTable
-                caption="Fluids and maintenance specifications"
-                aria-labelledby="fluids-specs"
-              >
-                <SpecRow label="Oil Type" value={maintenanceData.data.specs.oil_viscosity} />
-                <SpecRow
-                  label="Oil Capacity"
-                  value={maintenanceData.data.specs.oil_capacity_liters}
-                  unit="L"
-                />
-                <SpecRow label="Coolant" value={maintenanceData.data.specs.coolant_type} />
-                <SpecRow label="Brake Fluid" value={maintenanceData.data.specs.brake_fluid_type} />
-                <SpecRow label="Spark Plugs" value={maintenanceData.data.specs.spark_plug_type} />
-              </SpecTable>
-            </div>
-          )}
-
-          {/* Wheels & Tires - Semantic table for accessibility */}
-          {maintenanceData?.data?.specs &&
-            (maintenanceData.data.specs.tire_size_front ||
-              maintenanceData.data.specs.wheel_bolt_pattern) && (
-              <div className={styles.specCard}>
-                <div className={styles.cardHeader}>
-                  <h3 className={styles.cardTitle} id="wheels-specs">
-                    <Icons.tire size={16} />
-                    Wheels & Tires
-                  </h3>
-                </div>
-                <SpecTable caption="Wheels and tires specifications" aria-labelledby="wheels-specs">
-                  <SpecRow label="Front Tires" value={maintenanceData.data.specs.tire_size_front} />
-                  {maintenanceData.data.specs.tire_size_rear !==
-                    maintenanceData.data.specs.tire_size_front && (
-                    <SpecRow label="Rear Tires" value={maintenanceData.data.specs.tire_size_rear} />
-                  )}
-                  <SpecRow
-                    label="Tire Pressure (F)"
-                    value={maintenanceData.data.specs.tire_pressure_front_psi}
-                    unit="PSI"
-                  />
-                  <SpecRow
-                    label="Tire Pressure (R)"
-                    value={maintenanceData.data.specs.tire_pressure_rear_psi}
-                    unit="PSI"
-                  />
-                  <SpecRow
-                    label="Bolt Pattern"
-                    value={maintenanceData.data.specs.wheel_bolt_pattern}
-                  />
-                  <SpecRow
-                    label="Center Bore"
-                    value={maintenanceData.data.specs.wheel_center_bore_mm}
-                    unit="mm"
-                  />
-                </SpecTable>
-              </div>
-            )}
-
-          {/* Service Info - Battery, fluids, lug specs, wipers */}
+          {/* Service Info - All maintenance specs the user needs */}
           {maintenanceData?.data?.specs && (
             <div className={styles.specCard}>
               <div className={styles.cardHeader}>
                 <h3 className={styles.cardTitle} id="service-specs">
-                  <Icons.settings size={16} />
+                  <Icons.wrench size={16} />
                   Service Info
                 </h3>
               </div>
@@ -742,7 +655,29 @@ function MySpecsContent() {
                         : null
                   }
                 />
-                <SpecRow label="Trans Fluid" value={maintenanceData.data.specs.trans_fluid_type} />
+                {/* Show trans fluid - auto and/or manual depending on what's available */}
+                {maintenanceData.data.specs.trans_fluid_auto &&
+                  maintenanceData.data.specs.trans_fluid_auto !== 'N/A' && (
+                    <SpecRow
+                      label="Trans Fluid (Auto)"
+                      value={
+                        maintenanceData.data.specs.trans_fluid_auto_capacity
+                          ? `${maintenanceData.data.specs.trans_fluid_auto} (${maintenanceData.data.specs.trans_fluid_auto_capacity} qt)`
+                          : maintenanceData.data.specs.trans_fluid_auto
+                      }
+                    />
+                  )}
+                {maintenanceData.data.specs.trans_fluid_manual &&
+                  maintenanceData.data.specs.trans_fluid_manual !== 'N/A' && (
+                    <SpecRow
+                      label="Trans Fluid (Manual)"
+                      value={
+                        maintenanceData.data.specs.trans_fluid_manual_capacity
+                          ? `${maintenanceData.data.specs.trans_fluid_manual} (${maintenanceData.data.specs.trans_fluid_manual_capacity} qt)`
+                          : maintenanceData.data.specs.trans_fluid_manual
+                      }
+                    />
+                  )}
                 <SpecRow
                   label="Lug Pattern"
                   value={maintenanceData.data.specs.wheel_bolt_pattern}
@@ -754,7 +689,7 @@ function MySpecsContent() {
                 />
                 <SpecRow
                   label="Spark Plug Gap"
-                  value={maintenanceData.data.specs.spark_plug_gap}
+                  value={maintenanceData.data.specs.spark_plug_gap_mm}
                   unit="mm"
                 />
                 <SpecRow
@@ -770,256 +705,23 @@ function MySpecsContent() {
             </div>
           )}
 
-          {/* Custom Specs - User's modifications to wheels/tires/etc */}
-          {userVehicle?.hasCustomSpecs && userVehicle?.customSpecs && (
-            <div className={styles.specCard}>
-              <div className={styles.cardHeader}>
-                <h3 className={styles.cardTitle}>
-                  <Icons.wrench size={16} />
-                  My Custom Specs
-                </h3>
-                <Link
-                  href={`/garage/my-build?car=${selectedCar?.slug}`}
-                  className={styles.editLink}
-                >
-                  Edit
-                </Link>
-              </div>
-              <div className={styles.specItems}>
-                {/* Wheels */}
-                {userVehicle.customSpecs.wheels && (
-                  <>
-                    {userVehicle.customSpecs.wheels.front && (
-                      <div className={styles.specItem}>
-                        <span>Front Wheels</span>
-                        <span>
-                          {userVehicle.customSpecs.wheels.front.size || ''}
-                          {userVehicle.customSpecs.wheels.front.brand &&
-                            ` ${userVehicle.customSpecs.wheels.front.brand}`}
-                          {userVehicle.customSpecs.wheels.front.model &&
-                            ` ${userVehicle.customSpecs.wheels.front.model}`}
-                          {userVehicle.customSpecs.wheels.front.offset &&
-                            ` (${userVehicle.customSpecs.wheels.front.offset})`}
-                        </span>
-                      </div>
-                    )}
-                    {userVehicle.customSpecs.wheels.rear &&
-                      JSON.stringify(userVehicle.customSpecs.wheels.rear) !==
-                        JSON.stringify(userVehicle.customSpecs.wheels.front) && (
-                        <div className={styles.specItem}>
-                          <span>Rear Wheels</span>
-                          <span>
-                            {userVehicle.customSpecs.wheels.rear.size || ''}
-                            {userVehicle.customSpecs.wheels.rear.brand &&
-                              ` ${userVehicle.customSpecs.wheels.rear.brand}`}
-                            {userVehicle.customSpecs.wheels.rear.model &&
-                              ` ${userVehicle.customSpecs.wheels.rear.model}`}
-                            {userVehicle.customSpecs.wheels.rear.offset &&
-                              ` (${userVehicle.customSpecs.wheels.rear.offset})`}
-                          </span>
-                        </div>
-                      )}
-                  </>
-                )}
-                {/* Tires */}
-                {userVehicle.customSpecs.tires && (
-                  <>
-                    {userVehicle.customSpecs.tires.front && (
-                      <div className={styles.specItem}>
-                        <span>Front Tires</span>
-                        <span>
-                          {userVehicle.customSpecs.tires.front.size || ''}
-                          {userVehicle.customSpecs.tires.front.brand &&
-                            ` ${userVehicle.customSpecs.tires.front.brand}`}
-                          {userVehicle.customSpecs.tires.front.model &&
-                            ` ${userVehicle.customSpecs.tires.front.model}`}
-                        </span>
-                      </div>
-                    )}
-                    {userVehicle.customSpecs.tires.rear &&
-                      JSON.stringify(userVehicle.customSpecs.tires.rear) !==
-                        JSON.stringify(userVehicle.customSpecs.tires.front) && (
-                        <div className={styles.specItem}>
-                          <span>Rear Tires</span>
-                          <span>
-                            {userVehicle.customSpecs.tires.rear.size || ''}
-                            {userVehicle.customSpecs.tires.rear.brand &&
-                              ` ${userVehicle.customSpecs.tires.rear.brand}`}
-                            {userVehicle.customSpecs.tires.rear.model &&
-                              ` ${userVehicle.customSpecs.tires.rear.model}`}
-                          </span>
-                        </div>
-                      )}
-                  </>
-                )}
-                {/* Suspension */}
-                {userVehicle.customSpecs.suspension && (
-                  <>
-                    {userVehicle.customSpecs.suspension.type && (
-                      <div className={styles.specItem}>
-                        <span>Suspension</span>
-                        <span>
-                          {userVehicle.customSpecs.suspension.brand &&
-                            `${userVehicle.customSpecs.suspension.brand} `}
-                          {userVehicle.customSpecs.suspension.type}
-                        </span>
-                      </div>
-                    )}
-                    {userVehicle.customSpecs.suspension.drop && (
-                      <div className={styles.specItem}>
-                        <span>Lowered</span>
-                        <span>{userVehicle.customSpecs.suspension.drop}</span>
-                      </div>
-                    )}
-                  </>
-                )}
-                {/* Brakes */}
-                {userVehicle.customSpecs.brakes && (
-                  <>
-                    {userVehicle.customSpecs.brakes.front && (
-                      <div className={styles.specItem}>
-                        <span>Front Brakes</span>
-                        <span>
-                          {userVehicle.customSpecs.brakes.front.brand &&
-                            `${userVehicle.customSpecs.brakes.front.brand} `}
-                          {userVehicle.customSpecs.brakes.front.size ||
-                            userVehicle.customSpecs.brakes.front.type ||
-                            ''}
-                        </span>
-                      </div>
-                    )}
-                    {userVehicle.customSpecs.brakes.rear && (
-                      <div className={styles.specItem}>
-                        <span>Rear Brakes</span>
-                        <span>
-                          {userVehicle.customSpecs.brakes.rear.brand &&
-                            `${userVehicle.customSpecs.brakes.rear.brand} `}
-                          {userVehicle.customSpecs.brakes.rear.size ||
-                            userVehicle.customSpecs.brakes.rear.type ||
-                            ''}
-                        </span>
-                      </div>
-                    )}
-                  </>
-                )}
-                {/* Engine/Dyno - Show with verified/measured badges */}
-                {(userVehicle.customSpecs.engine || userVehicle.customSpecs.dyno) && (
-                  <>
-                    {(userVehicle.customSpecs.engine?.dynoWhp ||
-                      userVehicle.customSpecs.dyno?.whp) && (
-                      <div className={styles.specItem}>
-                        <span className={styles.specItemLabel}>
-                          Dyno WHP
-                          <DataSourceBadge
-                            source={dynoData?.isVerified ? 'verified' : 'measured'}
-                            variant="minimal"
-                            detail={dynoData?.dynoShop}
-                          />
-                        </span>
-                        <span className={styles.customSpecHighlight}>
-                          {userVehicle.customSpecs.engine?.dynoWhp ||
-                            userVehicle.customSpecs.dyno?.whp}{' '}
-                          WHP
-                        </span>
-                      </div>
-                    )}
-                    {(userVehicle.customSpecs.engine?.dynoWtq ||
-                      userVehicle.customSpecs.dyno?.wtq) && (
-                      <div className={styles.specItem}>
-                        <span className={styles.specItemLabel}>
-                          Dyno WTQ
-                          <DataSourceBadge
-                            source={dynoData?.isVerified ? 'verified' : 'measured'}
-                            variant="minimal"
-                          />
-                        </span>
-                        <span className={styles.customSpecHighlight}>
-                          {userVehicle.customSpecs.engine?.dynoWtq ||
-                            userVehicle.customSpecs.dyno?.wtq}{' '}
-                          lb-ft
-                        </span>
-                      </div>
-                    )}
-                    {/* Show boost if available */}
-                    {(userVehicle.customSpecs.engine?.boostPsi ||
-                      userVehicle.customSpecs.dyno?.boostPsi) && (
-                      <div className={styles.specItem}>
-                        <span className={styles.specItemLabel}>
-                          Peak Boost
-                          <DataSourceBadge
-                            source={dynoData?.isVerified ? 'verified' : 'measured'}
-                            variant="minimal"
-                          />
-                        </span>
-                        <span className={styles.customSpecHighlight}>
-                          {userVehicle.customSpecs.engine?.boostPsi ||
-                            userVehicle.customSpecs.dyno?.boostPsi}{' '}
-                          PSI
-                        </span>
-                      </div>
-                    )}
-                    {/* Show dyno shop if available */}
-                    {(userVehicle.customSpecs.engine?.dynoShop ||
-                      userVehicle.customSpecs.dyno?.dynoShop) && (
-                      <div className={styles.specItem}>
-                        <span>Dyno Shop</span>
-                        <span>
-                          {userVehicle.customSpecs.engine?.dynoShop ||
-                            userVehicle.customSpecs.dyno?.dynoShop}
-                        </span>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </div>
-          )}
         </div>
-
-        {/* Pros & Cons - with proper list semantics */}
-        {(selectedCar.pros?.length > 0 || selectedCar.cons?.length > 0) && (
-          <div className={styles.prosConsRow}>
-            {selectedCar.pros?.length > 0 && (
-              <div className={styles.prosCard} role="region" aria-labelledby="pros-heading">
-                <div className={styles.cardHeader}>
-                  <h3 className={styles.cardTitle} id="pros-heading">
-                    <Icons.thumbsUp size={16} />
-                    Pros
-                  </h3>
-                </div>
-                <ul className={styles.prosList} aria-label="Vehicle advantages">
-                  {selectedCar.pros.slice(0, 5).map((pro, i) => (
-                    <li key={i}>
-                      <span aria-hidden="true">✓</span> {pro}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {selectedCar.cons?.length > 0 && (
-              <div className={styles.consCard} role="region" aria-labelledby="cons-heading">
-                <div className={styles.cardHeader}>
-                  <h3 className={styles.cardTitle} id="cons-heading">
-                    <Icons.thumbsDown size={16} />
-                    Cons
-                  </h3>
-                </div>
-                <ul className={styles.consList} aria-label="Vehicle disadvantages">
-                  {selectedCar.cons.slice(0, 5).map((con, i) => (
-                    <li key={i}>
-                      <span aria-hidden="true">✗</span> {con}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        )}
 
         {/* Confirm Specs Section */}
         {isAuthenticated && userVehicle && (
           <div className={styles.confirmSection} ref={confirmButtonRef}>
-            {specsConfirmed ? (
+            {feedbackSubmitted ? (
+              <div className={styles.feedbackSubmittedBanner}>
+                <span className={styles.confirmedIcon}>✓</span>
+                <div className={styles.confirmedText}>
+                  <strong>Thank You for Your Feedback!</strong>
+                  <span>
+                    We&apos;ve received your report and will review the specs for your{' '}
+                    {selectedCar.name}. We&apos;ll update the data and notify you once corrected.
+                  </span>
+                </div>
+              </div>
+            ) : specsConfirmed ? (
               <div className={styles.confirmedBanner}>
                 <span className={styles.confirmedIcon}>✓</span>
                 <div className={styles.confirmedText}>
@@ -1029,29 +731,88 @@ function MySpecsContent() {
                   </span>
                 </div>
               </div>
+            ) : showFeedbackForm ? (
+              <div className={styles.feedbackForm}>
+                <div className={styles.feedbackHeader}>
+                  <strong>What&apos;s not accurate?</strong>
+                  <span>
+                    Help us improve the specs for your {selectedCar.name}. Please describe what
+                    needs to be corrected.
+                  </span>
+                </div>
+                <textarea
+                  ref={feedbackTextareaRef}
+                  className={styles.feedbackTextarea}
+                  value={feedbackText}
+                  onChange={(e) => setFeedbackText(e.target.value)}
+                  placeholder="e.g., The horsepower is listed as 300 but my model has 320hp. The torque spec also seems off..."
+                  rows={4}
+                  aria-label="Describe what specs are inaccurate"
+                />
+                <div className={styles.feedbackActions}>
+                  <button
+                    className={styles.cancelButton}
+                    onClick={() => {
+                      setShowFeedbackForm(false);
+                      setFeedbackText('');
+                    }}
+                    type="button"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    className={styles.submitFeedbackButton}
+                    onClick={handleSubmitFeedback}
+                    disabled={submittingFeedback || !feedbackText.trim()}
+                    type="button"
+                  >
+                    {submittingFeedback ? (
+                      <>
+                        <span className={styles.spinner} />
+                        Sending...
+                      </>
+                    ) : (
+                      <>
+                        <Icons.send size={16} />
+                        Send Feedback
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
             ) : (
               <div className={styles.confirmPrompt}>
                 <div className={styles.confirmText}>
                   <strong>Are these specs accurate?</strong>
                   <span>Review the specs above and confirm they match your {selectedCar.name}</span>
                 </div>
-                <button
-                  className={styles.confirmButton}
-                  onClick={handleConfirmSpecs}
-                  disabled={confirmingSpecs}
-                >
-                  {confirmingSpecs ? (
-                    <>
-                      <span className={styles.spinner} />
-                      Confirming...
-                    </>
-                  ) : (
-                    <>
-                      <span className={styles.checkIcon}>✓</span>
-                      Yes, These Specs Are Accurate
-                    </>
-                  )}
-                </button>
+                <div className={styles.confirmButtons}>
+                  <button
+                    className={styles.confirmButton}
+                    onClick={handleConfirmSpecs}
+                    disabled={confirmingSpecs}
+                  >
+                    {confirmingSpecs ? (
+                      <>
+                        <span className={styles.spinner} />
+                        Confirming...
+                      </>
+                    ) : (
+                      <>
+                        <span className={styles.checkIcon}>✓</span>
+                        Yes, Accurate
+                      </>
+                    )}
+                  </button>
+                  <button
+                    className={styles.inaccurateButton}
+                    onClick={handleSpecsInaccurate}
+                    type="button"
+                  >
+                    <span className={styles.xIcon}>✗</span>
+                    No, Something&apos;s Wrong
+                  </button>
+                </div>
               </div>
             )}
             {confirmSuccess && (

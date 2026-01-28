@@ -1,83 +1,109 @@
-/* PLStatement Component Styles */
+/* PLStatement Component Styles
+ * Mobile-First Design following Brand Guidelines v2.0
+ */
 
+/* ================================================================
+   CONTAINER
+   ================================================================ */
 .container {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 16px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 18px;
 }
 
+@media (min-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+}
+
+/* ================================================================
+   HEADER
+   ================================================================ */
 .header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+@media (min-width: 480px) {
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
 .title {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--admin-text-primary, #f8fafc);
+  letter-spacing: 0.06em;
+  color: var(--brand-text-primary, #ffffff);
   margin: 0;
 }
 
 .period {
-  font-size: 11px;
-  color: var(--admin-text-muted, #64748b);
-  background: rgba(255, 255, 255, 0.05);
-  padding: 4px 8px;
-  border-radius: 4px;
+  font-size: 12px;
+  color: var(--brand-text-tertiary, #64748b);
+  background: rgba(255, 255, 255, 0.06);
+  padding: 6px 12px;
+  border-radius: 8px;
 }
 
-/* Sections */
+/* ================================================================
+   SECTIONS
+   ================================================================ */
 .section {
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .sectionTitle {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--admin-text-muted, #64748b);
-  margin: 8px 0 6px 0;
+  color: var(--brand-text-tertiary, #64748b);
+  margin: 12px 0 10px 0;
 }
 
-/* Rows */
+/* ================================================================
+   ROWS
+   ================================================================ */
 .row,
 .subtotalRow,
 .totalRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 4px 0;
-  font-size: 12px;
+  padding: 8px 0;
+  font-size: 14px;
 }
 
 .row {
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .subtotalRow {
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
   font-weight: 500;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  margin-top: 4px;
-  padding-top: 6px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  margin-top: 8px;
+  padding-top: 10px;
 }
 
 .totalRow {
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
   font-weight: 600;
-  font-size: 13px;
-  background: rgba(255, 255, 255, 0.03);
-  padding: 8px;
-  margin: 8px -8px;
-  border-radius: 6px;
+  font-size: 15px;
+  background: rgba(255, 255, 255, 0.04);
+  padding: 12px;
+  margin: 12px -12px;
+  border-radius: 10px;
 }
 
 .label {
@@ -87,87 +113,96 @@
 .values {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
 }
 
 .amount {
-  min-width: 80px;
+  min-width: 90px;
   text-align: right;
   font-variant-numeric: tabular-nums;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
 .positive {
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .negative {
-  color: var(--admin-negative, #ef4444);
+  color: var(--brand-error, #ef4444);
 }
 
 .percentage {
-  font-size: 10px;
-  color: var(--admin-text-muted, #64748b);
-  min-width: 40px;
+  font-size: 12px;
+  color: var(--brand-text-tertiary, #64748b);
+  min-width: 50px;
   text-align: right;
 }
 
-/* Net Income special styling */
+/* ================================================================
+   NET INCOME
+   ================================================================ */
 .netIncome {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 2px solid rgba(255, 255, 255, 0.1);
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 2px solid rgba(255, 255, 255, 0.12);
 }
 
 .netIncome .totalRow {
-  background: linear-gradient(135deg, rgba(var(--brand-blue-rgb), 0.1), rgba(var(--brand-purple-rgb), 0.1));
-  font-size: 14px;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12), rgba(16, 185, 129, 0.08));
+  font-size: 16px;
 }
 
-/* Note */
+/* ================================================================
+   NOTE
+   ================================================================ */
 .note {
-  margin-top: 12px;
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 6px;
-  border-left: 3px solid var(--admin-accent-blue, var(--brand-blue));
+  margin-top: 16px;
+  padding: 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  border-left: 4px solid var(--brand-blue, #3b82f6);
 }
 
 .note p {
-  font-size: 11px;
-  color: var(--admin-text-muted, #64748b);
+  font-size: 13px;
+  color: var(--brand-text-tertiary, #64748b);
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
-/* Breakdown section */
+/* ================================================================
+   BREAKDOWN
+   ================================================================ */
 .breakdown {
-  margin-top: 12px;
-  padding: 12px;
-  background: rgba(var(--brand-error-rgb), 0.05);
-  border: 1px solid rgba(var(--brand-error-rgb), 0.1);
-  border-radius: 8px;
+  margin-top: 16px;
+  padding: 16px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.15);
+  border-radius: 12px;
 }
 
 .breakdownRow {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
-  color: var(--admin-text-secondary, #94a3b8);
-  padding: 4px 0;
+  font-size: 13px;
+  color: var(--brand-text-secondary, #94a3b8);
+  padding: 6px 0;
 }
 
 .breakdownTotal {
   font-weight: 600;
-  color: var(--admin-text-primary, #f8fafc);
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
-  margin-top: 6px;
-  padding-top: 8px;
+  color: var(--brand-text-primary, #ffffff);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  margin-top: 10px;
+  padding-top: 12px;
 }
 
+/* ================================================================
+   EMPTY STATE
+   ================================================================ */
 .emptyState {
-  padding: 30px;
+  padding: 40px 20px;
   text-align: center;
-  color: var(--admin-text-muted, #64748b);
-  font-size: 13px;
+  color: var(--brand-text-tertiary, #64748b);
+  font-size: 14px;
 }
-

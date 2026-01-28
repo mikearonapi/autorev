@@ -42,9 +42,9 @@ async function handleGet(_request) {
     }
     
     const now = new Date();
-    const today = now.toISOString().split('T')[0];
+    const _today = now.toISOString().split('T')[0];
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000).toISOString();
-    const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
+    const _monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000).toISOString();
     
     // Parallel queries for better performance
     const [
@@ -142,7 +142,7 @@ async function handleGet(_request) {
     
     // Trend calculation from snapshots
     const snapshots = snapshotsResult.data || [];
-    const todaySnapshot = snapshots.find(s => s.snapshot_date === today);
+    const _todaySnapshot = snapshots.find(s => s.snapshot_date === _today);
     const yesterdaySnapshot = snapshots[1];
     
     // Recent errors for display

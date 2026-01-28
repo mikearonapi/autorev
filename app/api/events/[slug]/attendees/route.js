@@ -69,6 +69,8 @@ async function handleGet(request, { params }) {
   }
 
   // Build query for attendees with user profiles
+  // Note: Use LEFT JOIN (no !inner) so RSVPs still show even if profile isn't accessible
+  // This works because we handle null profiles gracefully in the transform step
   let query = supabase
     .from('event_rsvps')
     .select(`
@@ -78,7 +80,7 @@ async function handleGet(request, { params }) {
       visibility,
       notes,
       created_at,
-      user_profiles!inner (
+      user_profiles (
         display_name,
         avatar_url
       )

@@ -203,9 +203,10 @@ export default function ALQuickActionsPopup({
  * Generate dynamic quick actions based on user's selected upgrades
  * @param {Array} upgrades - Array of upgrade objects with name, key, category
  * @param {string} carName - Name of the car
+ * @param {string} carSlug - Car slug for database operations
  * @returns {Array} Array of action objects - one for each upgrade plus compatibility check
  */
-export function generatePartsPageActions(upgrades = [], carName = 'my car') {
+export function generatePartsPageActions(upgrades = [], carName = 'my car', carSlug = null) {
   const actions = [];
 
   // Get upgrade names list for prompts
@@ -225,14 +226,18 @@ export function generatePartsPageActions(upgrades = [], carName = 'my car') {
   const upgradeActions = upgrades
     .map((upgrade) => {
       const name = getUpgradeName(upgrade);
-      const _key = typeof upgrade === 'object' ? upgrade.key || name : name;
+      // Use the actual upgrade key for consistent database storage/retrieval
+      const upgradeKey = typeof upgrade === 'object' 
+        ? (upgrade.key || name.toLowerCase().replace(/\s+/g, '-')) 
+        : name.toLowerCase().replace(/\s+/g, '-');
       if (name === 'Unknown') return null;
       return {
         label: `See ${name} Options`,
         prompt: `Find me the best ${name.toLowerCase()} options for my ${carName}.
 
 USE THE research_parts_live TOOL with these parameters:
-- upgrade_type: "${name.toLowerCase()}"
+- car_slug: "${carSlug || ''}"
+- upgrade_type: "${upgradeKey}"
 
 Then format the results as a Top 5 list:
 

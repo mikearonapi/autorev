@@ -9,7 +9,7 @@
 
 import { useState, useEffect } from 'react';
 
-import { WrenchIcon, AlertIcon, CheckIcon, XIcon } from './Icons';
+import { WrenchIcon, AlertIcon, CheckIcon } from './Icons';
 import styles from './PartsQualityDashboard.module.css';
 
 // Health score color coding

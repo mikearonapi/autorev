@@ -138,9 +138,9 @@ const PHASE_CONFIG = [
 
 export default function CarPipelineDetailPage({ params }) {
   const { slug } = use(params);
-  const router = useRouter();
+  const _router = useRouter();
   
-  const [run, setRun] = useState(null);
+  const [_run, setRun] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isSaving, setIsSaving] = useState(false);

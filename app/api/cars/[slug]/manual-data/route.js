@@ -141,8 +141,8 @@ export const POST = withErrorLogging(handlePost, { route: 'cars/manual-data', fe
  * Update pricing aggregate from manual entry
  */
 async function updatePricingFromManualEntry(slug, entry) {
-  // Get existing pricing data
-  const existing = await enrichedDataService.getMarketPricing(slug);
+  // Get existing pricing data (kept for potential future use)
+  const _existing = await enrichedDataService.getMarketPricing(slug);
   
   // Add the manual price to consensus calculation
   // This is a simplified approach - in production you might want
@@ -171,8 +171,9 @@ async function updatePricingFromManualEntry(slug, entry) {
 /**
  * Data templates for different types
  * Returned when client needs to know what fields to collect
+ * (Kept for documentation/future API endpoint)
  */
-const DATA_TEMPLATES = {
+const _DATA_TEMPLATES = {
   pricing: {
     price: 'number - Estimated market value',
     condition: 'string - excellent, good, fair, poor',

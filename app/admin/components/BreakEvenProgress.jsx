@@ -35,7 +35,7 @@ function generateInterpretiveTitle(breakEven) {
   return `Early stage: ${remaining} paying user${remaining !== 1 ? 's' : ''} to break-even`;
 }
 
-export function BreakEvenProgress({ breakEven, title = 'Path to Break-Even', compact = false }) {
+export function BreakEvenProgress({ breakEven, title: _title = 'Path to Break-Even', compact = false }) {
   // Generate interpretive title
   const interpretiveTitle = useMemo(() => {
     return generateInterpretiveTitle(breakEven);

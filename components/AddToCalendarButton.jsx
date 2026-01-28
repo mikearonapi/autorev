@@ -273,7 +273,7 @@ function generateYahooCalendarUrl(event) {
  * @param {Object} props.event - Event object with date/time/location
  * @param {string} [props.variant] - 'default' | 'compact'
  */
-export default function AddToCalendarButton({ event, variant = 'default' }) {
+export default function AddToCalendarButton({ event, variant: _variant = 'default' }) {
   const { isAuthenticated, profile } = useAuth();
   const { openSignIn } = useAuthModal();
   const userTier = profile?.subscription_tier || 'free';

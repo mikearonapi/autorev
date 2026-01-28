@@ -37,11 +37,6 @@ function getAvailableMonths() {
   return months;
 }
 
-const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
-];
-
 const SHORT_MONTH_NAMES = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
   'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
@@ -89,10 +84,6 @@ export function MonthYearSelector({
       onChange(month, year);
     }
   };
-  
-  const displayLabel = isAllTime 
-    ? 'All Time' 
-    : `${MONTH_NAMES[selectedMonth - 1]} ${selectedYear}`;
   
   return (
     <div className={styles.container}>

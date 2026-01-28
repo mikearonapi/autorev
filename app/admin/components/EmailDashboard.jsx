@@ -174,7 +174,6 @@ export default function EmailDashboard({ token }) {
   const [analytics, setAnalytics] = useState(null);
   const [logs, setLogs] = useState([]);
   const [queue, setQueue] = useState({ items: [], stats: {} });
-  const [templates, setTemplates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [testEmail, setTestEmail] = useState('');

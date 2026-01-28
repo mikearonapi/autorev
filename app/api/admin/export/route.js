@@ -68,7 +68,7 @@ async function handleGet(request) {
     
     const { searchParams } = new URL(request.url);
     const exportType = searchParams.get('type') || 'monthly';
-    const format = searchParams.get('format') || 'csv';
+    const _format = searchParams.get('format') || 'csv';
     const year = searchParams.get('year');
     const month = searchParams.get('month');
     

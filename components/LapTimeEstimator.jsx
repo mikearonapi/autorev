@@ -28,13 +28,13 @@ export default function LapTimeEstimator({
   stockHp,
   estimatedHp,
   weight = 3500,
-  drivetrain = 'RWD',
+  drivetrain: _drivetrain = 'RWD',
   tireCompound = 'summer',
   suspensionSetup = {},
   brakeSetup = {},
   aeroSetup = {},
   weightMod = 0,
-  driverWeight = 180,
+  driverWeight: _driverWeight = 180,
   user = null,
   carSlug = null,
   carName = null,
@@ -52,13 +52,13 @@ export default function LapTimeEstimator({
   const [analysis, setAnalysis] = useState(null);
   
   // Fetch tracks using React Query (cached)
-  const { data: allTracks = [], isLoading: tracksLoading } = useTracks();
+  const { data: allTracks = [], isLoading: _tracksLoading } = useTracks();
   
   // React Query hooks for track times
   const { 
     data: trackHistory = [], 
     isLoading: isLoadingHistory,
-    refetch: refetchHistory,
+    refetch: _refetchHistory,
   } = useUserTrackTimes(user?.id, carSlug, { 
     enabled: showHistory && !!user?.id,
     limit: 10,
@@ -137,7 +137,7 @@ export default function LapTimeEstimator({
   });
   
   // Get track statistics for context
-  const { data: trackStats } = useTrackStats(selectedTrackSlug, {
+  const { data: _trackStats } = useTrackStats(selectedTrackSlug, {
     enabled: !!selectedTrackSlug,
   });
 
@@ -215,11 +215,11 @@ export default function LapTimeEstimator({
   const hasModifications = safeEstimatedHp > safeStockHp;
   const timeImprovement = realizedTotal >= 0.01 ? realizedTotal.toFixed(2) : '0';
   
-  const lapTimePrompt = carName
+  const _lapTimePrompt = carName
     ? `Help me understand my ${carName}'s lap time estimates at ${selectedTrack?.name || 'track'}. ${hasModifications ? `With my mods, I'm estimated to gain ${timeImprovement}s per lap, going from ${formatTime(stockLapTime)} to ${formatTime(moddedLapTime)}.` : 'It\'s currently stock.'} As a ${skill.label.toLowerCase()} driver, what mods would help me most on this track? Should I focus on power, grip, or driver skill improvement?`
     : `Explain these lap time estimates: ${formatTime(stockLapTime)} stock to ${formatTime(moddedLapTime)} modified at ${selectedTrack?.name || 'this track'}. What factors affect lap times most?`;
   
-  const lapTimeDisplayMessage = hasModifications
+  const _lapTimeDisplayMessage = hasModifications
     ? `How can I get faster at ${selectedTrack?.shortName || 'track'}?`
     : 'What mods help lap times most?';
 

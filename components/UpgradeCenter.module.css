@@ -2134,42 +2134,6 @@
   transform: translateX(2px);
 }
 
-/* Goal Indicator for Build Objective */
-.goalIndicator {
-  display: flex;
-  align-items: center;
-  padding: 8px 10px;
-  margin-bottom: 8px;
-  background: rgba(16, 185, 129, 0.08);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  border-radius: 8px;
-}
-
-.goalLabel {
-  font-size: var(--text-xs);
-  font-weight: 600;
-  color: var(--color-accent-teal, #10b981);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-/* Recommended badge for goal-aligned categories */
-.recommendedBadge {
-  color: var(--color-accent-teal, #10b981);
-  font-size: var(--text-2xs);
-  margin-left: -4px;
-}
-
-/* Subtle highlight for goal-recommended categories */
-.catBtnRecommended {
-  background: rgba(16, 185, 129, 0.04);
-  border-color: rgba(16, 185, 129, 0.15);
-}
-
-.catBtnRecommended:hover {
-  background: rgba(16, 185, 129, 0.08);
-}
-
 /* ===========================================
    CATEGORY POPUP - Upgrade Selection Modal
    =========================================== */

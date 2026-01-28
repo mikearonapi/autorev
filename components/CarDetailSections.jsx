@@ -327,7 +327,7 @@ export function SafetyRatingsSection({ carSlug }) {
  * Price by Year Section (Best Value Years)
  * Uses React Query for caching
  */
-export function PriceByYearSection({ carSlug, carName }) {
+export function PriceByYearSection({ carSlug, carName: _carName }) {
   const { 
     data, 
     isLoading, 

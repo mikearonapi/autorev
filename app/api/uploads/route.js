@@ -118,7 +118,7 @@ async function handlePost(request) {
     // Compress image with TinyPNG before uploading (skip for videos)
     let fileToUpload = file;
     const originalFileSize = file.size;
-    let compressionApplied = false;
+    let _compressionApplied = false;
     let compressionSavings = 0;
 
     if (mediaType === 'image' && isCompressible(file.type)) {
@@ -126,7 +126,7 @@ async function handlePost(request) {
         const compressed = await compressFile(file);
         if (compressed) {
           fileToUpload = compressed.blob;
-          compressionApplied = true;
+          _compressionApplied = true;
           compressionSavings = compressed.savings;
           console.log(`[Uploads API] Compressed: ${(originalFileSize / 1024).toFixed(0)}KB → ${(compressed.compressedSize / 1024).toFixed(0)}KB (-${(compressionSavings * 100).toFixed(1)}%)`);
         }

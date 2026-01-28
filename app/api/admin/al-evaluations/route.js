@@ -13,7 +13,6 @@ import { NextResponse } from 'next/server';
 
 import { requireAdmin } from '@/lib/adminAccess';
 import { 
-  ALEvaluationRunner, 
   runSpotCheck, 
   runFullEvaluation,
   getRecentRuns,

@@ -6,10 +6,10 @@
  */
 
 .container {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 20px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 18px;
 }
 
 /* Header with Interpretive Title */
@@ -48,7 +48,7 @@
 .title {
   font-size: 15px;
   font-weight: 600;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
   margin: 0;
   line-height: 1.3;
 }
@@ -57,12 +57,12 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
 }
 
 .period {
   font-size: 11px;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
   background: rgba(255, 255, 255, 0.05);
   padding: 4px 10px;
   border-radius: 4px;
@@ -97,7 +97,7 @@
 .statValue {
   font-size: 22px;
   font-weight: 700;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
   line-height: 1.1;
 }
 
@@ -105,12 +105,12 @@
   font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
 }
 
 .statInsight {
   font-size: 11px;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
   line-height: 1.3;
   padding-top: 4px;
   border-top: 1px solid rgba(255, 255, 255, 0.04);
@@ -119,7 +119,7 @@
 /* Chart Introduction (replaces separate legend) */
 .chartIntro {
   font-size: 12px;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
   margin-bottom: 12px;
   padding-bottom: 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -191,7 +191,7 @@
 .rank {
   font-size: 12px;
   font-weight: 600;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
   width: 24px;
   flex-shrink: 0;
 }
@@ -206,7 +206,7 @@
 .userName {
   font-size: 13px;
   font-weight: 500;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -230,7 +230,7 @@
 
 .messageCount {
   font-size: 10px;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
 }
 
 /* Bars Container */
@@ -257,7 +257,7 @@
   justify-content: flex-end;
   font-size: 12px;
   font-weight: 500;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .colorDot {
@@ -320,7 +320,7 @@
   padding-top: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   font-size: 12px;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
 }
 
 .macroInsight svg {
@@ -328,7 +328,7 @@
 }
 
 .macroInsight strong {
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 /* Loading State */
@@ -372,7 +372,7 @@
   justify-content: center;
   gap: 12px;
   padding: 50px 20px;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
   font-size: 13px;
 }
 

@@ -37,7 +37,7 @@ import styles from './PremiumGate.module.css';
 /**
  * Default upgrade prompt shown when user doesn't have access
  */
-function DefaultUpgradePrompt({ feature, featureConfig, upgradeCTA, variant = 'default' }) {
+function DefaultUpgradePrompt({ feature: _feature, featureConfig, upgradeCTA, variant = 'default' }) {
   const tierConfig = TIER_CONFIG[upgradeCTA.tier];
   
   if (variant === 'inline') {

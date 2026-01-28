@@ -10,8 +10,6 @@
 
 import React from 'react';
 
-import Link from 'next/link';
-
 import { Icons } from '@/components/ui/Icons';
 import { useCarDynoRuns, useCarLapTimes } from '@/hooks/useCarData';
 import { TEASER_LIMITS } from '@/lib/tierAccess';
@@ -322,7 +320,7 @@ export function LapTimesSection({ carSlug, carName, limit = null, isTeaser = fal
  * Shows both dyno and lap times in a unified view
  */
 export default function PerformanceDataPanel({ carSlug, carName }) {
-  const { hasAccess } = usePremiumAccess('dynoDatabase');
+  const { hasAccess: _hasAccess } = usePremiumAccess('dynoDatabase');
   
   return (
     <PremiumGate 

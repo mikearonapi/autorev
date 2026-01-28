@@ -85,7 +85,7 @@ export default function AeroBalanceChart({ aeroSetup, weight }) {
       ) : (
         <>
           <div className={styles.aeroChart}>
-            {aeroData.map((data, i) => (
+            {aeroData.map((data, _i) => (
               <div key={data.speed} className={styles.aeroBar}>
                 <div className={styles.aeroBarLabel}>{data.speed}</div>
                 <div className={styles.aeroBarTrack}>

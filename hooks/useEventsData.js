@@ -330,8 +330,8 @@ export function useSetEventRsvp() {
     onSuccess: (data, { eventSlug }) => {
       // Invalidate RSVP status cache
       queryClient.invalidateQueries({ queryKey: rsvpKeys.rsvp(eventSlug) });
-      // Invalidate attendees cache
-      queryClient.invalidateQueries({ queryKey: rsvpKeys.attendees(eventSlug, {}) });
+      // Invalidate ALL attendees queries for this event (use partial key match)
+      queryClient.invalidateQueries({ queryKey: [...rsvpKeys.all, 'attendees', eventSlug] });
       // Update event detail if cached
       queryClient.invalidateQueries({ queryKey: eventsKeys.detail(eventSlug) });
     },
@@ -360,8 +360,8 @@ export function useRemoveEventRsvp() {
     onSuccess: (data, { eventSlug }) => {
       // Invalidate RSVP status cache
       queryClient.invalidateQueries({ queryKey: rsvpKeys.rsvp(eventSlug) });
-      // Invalidate attendees cache
-      queryClient.invalidateQueries({ queryKey: rsvpKeys.attendees(eventSlug, {}) });
+      // Invalidate ALL attendees queries for this event (use partial key match)
+      queryClient.invalidateQueries({ queryKey: [...rsvpKeys.all, 'attendees', eventSlug] });
       // Update event detail if cached
       queryClient.invalidateQueries({ queryKey: eventsKeys.detail(eventSlug) });
     },

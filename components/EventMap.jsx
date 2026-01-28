@@ -59,7 +59,7 @@ export default function EventMap({
   height = '500px',
 }) {
   const mapRef = useRef(null);
-  const [mapError, setMapError] = useState(false);
+  const [_mapError, setMapError] = useState(false);
   const [zoom, setZoom] = useState(DEFAULT_ZOOM);
   const [center, setCenter] = useState(DEFAULT_CENTER);
   const [showList, setShowList] = useState(false);
@@ -170,8 +170,8 @@ export default function EventMap({
         
         if (tileY < 0 || tileY >= scale) continue;
         
-        const offsetX = (dx * 256) + (mapWidth / 2) - ((center.lng + 180) / 360 * scale * 256 / scale % 256);
-        const offsetY = (dy * 256) + (mapHeight / 2) - (((1 - Math.log(Math.tan(centerLatRad) + 1 / Math.cos(centerLatRad)) / Math.PI) / 2 * scale * 256 / scale) % 256);
+        const _offsetX = (dx * 256) + (mapWidth / 2) - ((center.lng + 180) / 360 * scale * 256 / scale % 256);
+        const _offsetY = (dy * 256) + (mapHeight / 2) - (((1 - Math.log(Math.tan(centerLatRad) + 1 / Math.cos(centerLatRad)) / Math.PI) / 2 * scale * 256 / scale) % 256);
         
         tiles.push({
           x: tileX,
@@ -213,7 +213,8 @@ export default function EventMap({
         <div className={styles.mapContainer} ref={mapRef}>
           {/* Map Tiles */}
           <div className={styles.tileLayer}>
-            {visibleTiles.map((tile, i) => (
+            {visibleTiles.map((tile, _i) => (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 key={`${tile.z}-${tile.x}-${tile.y}`}
                 src={getTileUrl(tile.x, tile.y, tile.z)}

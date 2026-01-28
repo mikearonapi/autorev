@@ -29,11 +29,6 @@
   transform: translateY(-1px);
 }
 
-.item.installed {
-  border-color: rgba(16, 185, 129, 0.3);
-  background: rgba(16, 185, 129, 0.08);
-}
-
 /* ==========================================================================
    MAIN ROW - Compact single-line layout
    ========================================================================== */
@@ -46,50 +41,6 @@
   cursor: pointer;
   min-width: 0; /* Allow flex children to shrink */
   overflow: hidden;
-}
-
-/* ==========================================================================
-   STATUS ICON - Compact
-   ========================================================================== */
-
-.statusIcon {
-  flex-shrink: 0;
-  width: 20px;
-  height: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.checkmark {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  background: var(--color-accent-teal, #10b981);
-  border-radius: 50%;
-  color: var(--color-text-primary, #ffffff);
-}
-
-.pendingCircle {
-  width: 18px;
-  height: 18px;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
-}
-
-/* Purchased - part is ready to install */
-.purchasedCircle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 20px;
-  height: 20px;
-  background: rgba(16, 185, 129, 0.15);
-  border: 2px solid var(--color-accent-teal, #10b981);
-  border-radius: 50%;
-  color: var(--color-accent-teal, #10b981);
 }
 
 /* ==========================================================================
@@ -198,32 +149,6 @@
   color: var(--color-accent-teal, #10b981);
 }
 
-/* Ready to Install badge - for purchased parts */
-.readyBadge {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  border-radius: var(--radius-full, 9999px);
-  font-size: var(--text-xs, 11px);
-  font-weight: 600;
-  color: var(--color-accent-teal, #10b981);
-}
-
-/* Not Purchased badge - for planned parts (still need to buy) */
-.plannedBadge {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-full, 9999px);
-  font-size: var(--text-xs, 11px);
-  font-weight: 500;
-  color: var(--color-text-tertiary, #64748b);
-}
-
 /* Time detail badge - with icon, for expanded view */
 .timeDetailBadge {
   display: inline-flex;
@@ -304,7 +229,8 @@
 
 .actionButtons {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: row;
+  flex-wrap: nowrap;
   gap: var(--space-2, 8px);
   margin-top: var(--space-3, 12px);
 }
@@ -312,16 +238,17 @@
 .actionBtn {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2, 8px);
-  padding: var(--space-2, 8px) var(--space-3, 12px);
+  gap: 6px;
+  padding: 6px 10px;
   
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md, 8px);
   
-  font-size: var(--text-sm, 14px);
+  font-size: 13px;
   font-weight: 500;
   color: var(--color-text-secondary, #94a3b8);
+  white-space: nowrap;
   
   cursor: pointer;
   transition: all 0.15s ease;
@@ -337,29 +264,6 @@
   background: rgba(59, 130, 246, 0.15);
   border-color: rgba(59, 130, 246, 0.3);
   color: var(--color-accent-blue, #3b82f6);
-}
-
-.markInstalledBtn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2, 8px);
-  padding: var(--space-2, 8px) var(--space-3, 12px);
-  
-  background: var(--color-accent-teal, #10b981);
-  border: none;
-  border-radius: var(--radius-md, 8px);
-  
-  font-size: var(--text-sm, 14px);
-  font-weight: 600;
-  color: var(--color-text-primary, #ffffff);
-  
-  cursor: pointer;
-  transition: all 0.15s ease;
-}
-
-.markInstalledBtn:hover {
-  background: var(--color-accent-teal, #059669);
-  transform: translateY(-1px);
 }
 
 /* ==========================================================================
@@ -386,23 +290,84 @@
 .toolsList {
   display: flex;
   flex-direction: column;
-  gap: var(--space-3, 12px);
+  gap: var(--space-4, 16px);
 }
 
 .toolGroup {
   display: flex;
   flex-direction: column;
-  gap: var(--space-1, 4px);
+  gap: var(--space-3, 12px);
 }
 
 .toolGroupLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2, 8px);
+  font-size: var(--text-sm, 14px);
+  font-weight: 600;
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.essentialDot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-accent-teal, #10b981);
+  border-radius: 50%;
+}
+
+.recommendedDot {
+  width: 8px;
+  height: 8px;
+  background: var(--color-accent-blue, #3b82f6);
+  border-radius: 50%;
+}
+
+.toolsGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-2, 8px);
+}
+
+@media (min-width: 480px) {
+  .toolsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  }
+}
+
+.toolCard {
+  padding: var(--space-3, 12px);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-md, 8px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-left: 3px solid var(--color-accent-teal, #10b981);
+}
+
+.toolCard.toolCardRecommended {
+  border-left-color: var(--color-accent-blue, #3b82f6);
+}
+
+.toolName {
+  font-size: var(--text-body, 14px);
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  margin-bottom: var(--space-1, 4px);
+}
+
+.toolDescription {
+  font-size: var(--text-sm, 13px);
+  color: var(--color-text-secondary, #94a3b8);
+  line-height: 1.4;
+  margin-bottom: var(--space-2, 8px);
+}
+
+.toolCategory {
   font-size: var(--text-xs, 11px);
   font-weight: 600;
-  color: var(--color-text-tertiary, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
+/* Legacy tool tag styles (kept for backwards compatibility) */
 .toolTags {
   display: flex;
   flex-wrap: wrap;
@@ -468,19 +433,6 @@
 }
 
 /* ==========================================================================
-   INSTALLED INFO
-   ========================================================================== */
-
-.installedInfo {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2, 8px);
-  margin-top: var(--space-3, 12px);
-  font-size: var(--text-sm, 14px);
-  color: var(--color-accent-teal, #10b981);
-}
-
-/* ==========================================================================
    RESPONSIVE
    ========================================================================== */
 
@@ -502,7 +454,8 @@
     padding: 2px 8px;
   }
   
-  .actionButtons {
-    flex-direction: row;
+  .actionBtn {
+    padding: var(--space-2, 8px) var(--space-3, 12px);
+    font-size: var(--text-sm, 14px);
   }
 }

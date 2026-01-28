@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useEffect } from 'react';
 
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 import { createPortal } from 'react-dom';
@@ -125,14 +124,14 @@ export default function BuildWizard({
   const [mounted, setMounted] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [animating, setAnimating] = useState(false);
-  const [direction, setDirection] = useState('forward');
+  const [_direction, setDirection] = useState('forward');
   
   // Build data
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [selectedCar, setSelectedCar] = useState(initialCar);
   const [carSearchQuery, setCarSearchQuery] = useState('');
-  const [carSearchResults, setCarSearchResults] = useState([]);
-  const [isSearching, setIsSearching] = useState(false);
+  const [_carSearchResults, setCarSearchResults] = useState([]);
+  const [_isSearching, setIsSearching] = useState(false);
   const [selectedGoal, setSelectedGoal] = useState(null);
   const [currentSetup, setCurrentSetup] = useState(null);
   const [budgetRange, setBudgetRange] = useState(null);
@@ -302,7 +301,7 @@ export default function BuildWizard({
   }, [onClose, onAddVehicle]);
   
   // Select car (fallback for search - deprecated but kept for compatibility)
-  const handleSelectCar = useCallback((car) => {
+  const _handleSelectCar = useCallback((car) => {
     setSelectedCar(car);
     setCarSearchQuery('');
     setCarSearchResults([]);
@@ -584,13 +583,6 @@ const CloseIcon = () => (
 const BackIcon = () => (
   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <polyline points="15 18 9 12 15 6"/>
-  </svg>
-);
-
-const SearchIcon = () => (
-  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="11" cy="11" r="8"/>
-    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
   </svg>
 );
 

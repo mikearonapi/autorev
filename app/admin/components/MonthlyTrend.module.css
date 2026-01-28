@@ -1,217 +1,170 @@
-/* MonthlyTrend Component Styles */
+/* MonthlyTrend Component Styles
+ * Mobile-First Design following Brand Guidelines v2.0
+ */
 
+/* ================================================================
+   CONTAINER
+   ================================================================ */
 .container {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 16px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 18px;
 }
 
-/* Interpretive title (Rule 4.1) */
+@media (min-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+}
+
+/* ================================================================
+   HEADER
+   ================================================================ */
+.header {
+  margin-bottom: 16px;
+}
+
 .title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--admin-text-primary, #f8fafc);
-  margin: 0;
-  line-height: 1.3;
-}
-
-/* Category subtitle */
-.subtitle {
-  display: block;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--admin-text-muted, #64748b);
-  margin: 4px 0 12px 0;
+  letter-spacing: 0.06em;
+  color: var(--brand-text-secondary, #94a3b8);
+  margin: 0;
 }
 
-.tableWrapper {
-  overflow-x: auto;
+/* ================================================================
+   CHART WRAPPER
+   ================================================================ */
+.chartWrapper {
+  width: 100%;
+  min-height: 160px;
 }
 
-.table {
+/* ================================================================
+   DATA TABLE
+   ================================================================ */
+.dataTable {
   width: 100%;
   border-collapse: collapse;
-  font-size: 12px;
 }
 
-.table th {
-  font-size: 10px;
+.dataTable th,
+.dataTable td {
+  padding: 12px 8px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.dataTable th {
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--admin-text-muted, #64748b);
-  padding: 8px 6px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  text-align: left;
+  color: var(--brand-text-secondary, #94a3b8);
+  background: rgba(0, 0, 0, 0.15);
 }
 
-.table td {
-  padding: 8px 6px;
-  color: var(--admin-text-secondary, #94a3b8);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
-  font-variant-numeric: tabular-nums;
+.dataTable td {
+  font-size: 13px;
+  color: var(--brand-text-primary, #ffffff);
 }
 
-.table tbody tr:hover {
-  background: rgba(255, 255, 255, 0.02);
+.dataTable tbody tr:hover {
+  background: rgba(255, 255, 255, 0.04);
 }
 
-.currentRow {
-  background: rgba(var(--brand-blue-rgb), 0.05);
+.dataTable tbody tr:last-child td {
+  border-bottom: none;
 }
 
-.currentRow td {
-  color: var(--admin-text-primary, #f8fafc);
+.monthCell {
   font-weight: 500;
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
-.right {
-  text-align: right;
+.valueCell {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-weight: 600;
 }
 
-.period {
-  font-weight: 500;
-  color: var(--admin-text-primary, #f8fafc);
+.valueCell.positive {
+  color: var(--brand-success, #22c55e);
 }
 
-.positive {
-  color: var(--admin-positive, #22c55e);
+.valueCell.negative {
+  color: var(--brand-error, #ef4444);
 }
 
-.negative {
-  color: var(--admin-negative, #ef4444);
-}
-
-/* Summary */
-.summary {
+/* ================================================================
+   SUMMARY ROW
+   ================================================================ */
+.summaryRow {
   display: flex;
   justify-content: space-between;
-  margin-top: 12px;
-  padding-top: 12px;
+  margin-top: 16px;
+  padding-top: 14px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .summaryItem {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .summaryLabel {
-  font-size: 10px;
-  color: var(--admin-text-muted, #64748b);
+  font-size: 11px;
+  color: var(--brand-text-tertiary, #64748b);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.05em;
 }
 
 .summaryValue {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--admin-text-primary, #f8fafc);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--brand-text-primary, #ffffff);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
-.emptyState {
-  padding: 30px;
-  text-align: center;
-  color: var(--admin-text-muted, #64748b);
-  font-size: 13px;
-}
-
-/* Compact variant */
+/* ================================================================
+   COMPACT VARIANT
+   ================================================================ */
 .compact {
-  padding: 12px;
+  padding: 14px 16px;
 }
 
 .compact .title {
-  font-size: 11px;
-  margin-bottom: 10px;
-}
-
-.compactList {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.compactRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 6px 8px;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 6px;
-}
-
-.compactRow.currentRow {
-  background: rgba(var(--brand-blue-rgb), 0.08);
-}
-
-.compactPeriod {
-  font-size: 11px;
-  font-weight: 500;
-  color: var(--admin-text-secondary, #94a3b8);
-}
-
-.compactRow.currentRow .compactPeriod {
-  color: var(--admin-text-primary, #f8fafc);
-}
-
-.compactValues {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.compactCosts {
-  font-size: 11px;
-  color: var(--admin-text-muted, #64748b);
-  font-variant-numeric: tabular-nums;
-}
-
-.compactNet {
   font-size: 12px;
-  font-weight: 600;
-  font-variant-numeric: tabular-nums;
+  margin-bottom: 12px;
 }
 
-.compactFooter {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 10px;
+.compact .chartWrapper {
+  min-height: 120px;
+}
+
+.compact .dataTable th,
+.compact .dataTable td {
+  padding: 8px 6px;
+  font-size: 12px;
+}
+
+.compact .summaryRow {
+  margin-top: 12px;
   padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.compactLabel {
-  font-size: 10px;
-  color: var(--admin-text-muted, #64748b);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.compactTotal {
+.compact .summaryValue {
   font-size: 14px;
-  font-weight: 700;
 }
 
-/* Responsive */
-@media (min-width: 641px) {
-  .table {
-    font-size: 11px;
-  }
-  
-  .table th,
-  .table td {
-    padding: 6px 4px;
-  }
-  
-  .summary {
-    flex-wrap: wrap;
-    gap: 12px;
-  }
+/* ================================================================
+   EMPTY STATE
+   ================================================================ */
+.emptyState {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--brand-text-tertiary, #64748b);
+  font-size: 14px;
 }
-

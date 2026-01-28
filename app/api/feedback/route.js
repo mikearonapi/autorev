@@ -1,6 +1,6 @@
 import { errors } from '@/lib/apiErrors';
 import { resolveCarId } from '@/lib/carResolver';
-import { notifyFeedback , notifyAggregatedError } from '@/lib/discord';
+import { notifyFeedback } from '@/lib/discord';
 import { rateLimit } from '@/lib/rateLimit';
 import { feedbackSchema, validateWithSchema, validationErrorResponse } from '@/lib/schemas';
 import { withErrorLogging } from '@/lib/serverErrorLogger';

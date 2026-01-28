@@ -22,9 +22,9 @@ const supabaseAdmin = createClient(
 );
 
 /**
- * Verify admin access
+ * Verify admin access (currently unused - kept for future use)
  */
-async function verifyAdmin(request) {
+async function _verifyAdmin(_request) {
   const headersList = headers();
   const authHeader = headersList.get('authorization');
 
@@ -57,7 +57,7 @@ async function verifyAdmin(request) {
   return user;
 }
 
-async function handleGet(request) {
+async function handleGet(_request) {
   try {
     // For now, allow access without strict auth for dashboard
     // In production, uncomment the admin verification below:

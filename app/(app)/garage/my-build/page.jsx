@@ -69,8 +69,6 @@ function MyBuildContent() {
     upgradeCount: 0,
     selectedUpgrades: [],
   });
-  // Build goal (track, street, show, daily) - determines which upgrade categories are prioritized
-  const [currentGoal, setCurrentGoal] = useState(null);
 
   // Hooks
   const { isAuthenticated, isLoading: authLoading } = useAuth();
@@ -132,8 +130,6 @@ function MyBuildContent() {
               setCurrentBuildId(build.id);
               if (build.factoryConfig) setFactoryConfig(build.factoryConfig);
               if (build.wheelFitment) selectFitment(build.wheelFitment);
-              // Load build goal if set
-              if (build.goal) setCurrentGoal(build.goal);
             });
           }
         }
@@ -160,7 +156,6 @@ function MyBuildContent() {
                 setCurrentBuildId(existingBuild.id);
                 if (existingBuild.factoryConfig) setFactoryConfig(existingBuild.factoryConfig);
                 if (existingBuild.wheelFitment) selectFitment(existingBuild.wheelFitment);
-                if (existingBuild.goal) setCurrentGoal(existingBuild.goal);
               });
               return;
             }
@@ -214,7 +209,6 @@ function MyBuildContent() {
       setSelectedCar(car);
       setCurrentBuildId(null);
       setFactoryConfig(null);
-      setCurrentGoal(null);
       clearFitmentSelection();
       // Reset save protection refs for new car (no existing build to protect)
       initialLoadCompleteRef.current = true;
@@ -234,8 +228,6 @@ function MyBuildContent() {
         setSelectedCar(result.car);
         if (result.factoryConfig) setFactoryConfig(result.factoryConfig);
         if (result.wheelFitment) selectFitment(result.wheelFitment);
-        // Set the build goal if provided by the wizard
-        if (result.goal) setCurrentGoal(result.goal);
         window.history.pushState({}, '', `/garage/my-build?car=${result.car.slug}`);
       }
       setShowBuildWizard(false);
@@ -309,7 +301,6 @@ function MyBuildContent() {
           name: currentBuildId
             ? builds.find((b) => b.id === currentBuildId)?.name
             : `${selectedCar.name} Build`,
-          goal: currentGoal,
           selectedUpgrades: summary.selectedUpgrades?.map((u) => u.key) || [],
           totalHpGain: summary.totalHpGain || 0,
           factoryConfig,
@@ -356,7 +347,6 @@ function MyBuildContent() {
         name: currentBuildId
           ? builds.find((b) => b.id === currentBuildId)?.name
           : `${selectedCar.name} Build`,
-        goal: currentGoal,
         selectedUpgrades: upgradeKeys,
         totalHpGain: hpGain,
         factoryConfig,
@@ -367,7 +357,6 @@ function MyBuildContent() {
     [
       selectedCar,
       currentBuildId,
-      currentGoal,
       factoryConfig,
       selectedFitment,
       vehicles,
@@ -520,7 +509,6 @@ function MyBuildContent() {
           carSlug={selectedCar.slug}
           selectedUpgrades={buildSummary.selectedUpgrades || []}
           totalHpGain={buildSummary.totalHpGain || 0}
-          goal={currentGoal}
         />
       </div>
 
@@ -532,8 +520,6 @@ function MyBuildContent() {
           factoryConfig={factoryConfig}
           wheelFitment={selectedFitment}
           onBuildSummaryUpdate={handleBuildSummaryUpdate}
-          goal={currentGoal}
-          onGoalChange={setCurrentGoal}
         />
       </div>
 

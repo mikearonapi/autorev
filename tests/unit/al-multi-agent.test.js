@@ -306,7 +306,7 @@ describe('AL Multi-Agent System', () => {
         skipLLM: true,
       });
       expect(result.intent).toBe(INTENT_TYPES.GENERALIST);
-      expect(result.reasoning).toContain('Follow-up');
+      expect(result.reasoning).toContain('follow-up');
     });
 
     test('classifyIntent should detect jokes as generalist', async () => {
@@ -380,6 +380,183 @@ describe('AL Multi-Agent System', () => {
       });
       expect(result.confidence).toBeGreaterThan(0);
       expect(result.confidence).toBeLessThanOrEqual(1);
+    });
+  });
+
+  describe('Orchestrator - Parts Research vs Build Planning Routing', () => {
+    // CRITICAL: These tests ensure parts queries go to Parts Research, not Build Planning
+
+    test('"Stage 1 tune" should route to PARTS_RESEARCH (product search)', async () => {
+      const result = await classifyIntent({
+        messages: [{ role: 'user', content: 'Stage 1 tune for my RS5' }],
+        context: {},
+        skipLLM: true,
+      });
+      expect(result.intent).toBe(INTENT_TYPES.PARTS_RESEARCH);
+    });
+
+    test('"Stage 1 ECU tune options" should route to PARTS_RESEARCH', async () => {
+      const result = await classifyIntent({
+        messages: [{ role: 'user', content: 'Stage 1 ECU tune options for Audi RS5' }],
+        context: {},
+        skipLLM: true,
+      });
+      expect(result.intent).toBe(INTENT_TYPES.PARTS_RESEARCH);
+    });
+
+    test('"What stage should I do" should route to BUILD_PLANNING (strategy)', async () => {
+      const result = await classifyIntent({
+        messages: [{ role: 'user', content: 'What stage should I do next?' }],
+        context: {},
+        skipLLM: true,
+      });
+      expect(result.intent).toBe(INTENT_TYPES.BUILD_PLANNING);
+    });
+
+    test('"Best cold air intake" should route to PARTS_RESEARCH', async () => {
+      const result = await classifyIntent({
+        messages: [{ role: 'user', content: 'Best cold air intake for my car' }],
+        context: {},
+        skipLLM: true,
+      });
+      expect(result.intent).toBe(INTENT_TYPES.PARTS_RESEARCH);
+    });
+
+    test('"Top 5 brake fluid options" should route to PARTS_RESEARCH', async () => {
+      const result = await classifyIntent({
+        messages: [{ role: 'user', content: 'Top 5 brake fluid options' }],
+        context: {},
+        skipLLM: true,
+      });
+      expect(result.intent).toBe(INTENT_TYPES.PARTS_RESEARCH);
+    });
+
+    test('"APR vs Unitronic tune" should route to PARTS_RESEARCH', async () => {
+      const result = await classifyIntent({
+        messages: [{ role: 'user', content: 'APR vs Unitronic tune comparison' }],
+        context: {},
+        skipLLM: true,
+      });
+      expect(result.intent).toBe(INTENT_TYPES.PARTS_RESEARCH);
+    });
+
+    test('"Where to buy coilovers" should route to PARTS_RESEARCH', async () => {
+      const result = await classifyIntent({
+        messages: [{ role: 'user', content: 'Where to buy coilovers for my M3?' }],
+        context: {},
+        skipLLM: true,
+      });
+      expect(result.intent).toBe(INTENT_TYPES.PARTS_RESEARCH);
+    });
+
+    test('"Review my build" should route to BUILD_PLANNING', async () => {
+      const result = await classifyIntent({
+        messages: [{ role: 'user', content: 'Can you review my build?' }],
+        context: {},
+        skipLLM: true,
+      });
+      expect(result.intent).toBe(INTENT_TYPES.BUILD_PLANNING);
+    });
+
+    test('"What mods should I do first" should route to BUILD_PLANNING', async () => {
+      const result = await classifyIntent({
+        messages: [{ role: 'user', content: 'What mods should I do first?' }],
+        context: {},
+        skipLLM: true,
+      });
+      expect(result.intent).toBe(INTENT_TYPES.BUILD_PLANNING);
+    });
+
+    test('explicit "USE THE research_parts_live TOOL" should route to PARTS_RESEARCH', async () => {
+      const result = await classifyIntent({
+        messages: [
+          {
+            role: 'user',
+            content: 'Find brake fluid for my car. USE THE research_parts_live TOOL.',
+          },
+        ],
+        context: {},
+        skipLLM: true,
+      });
+      expect(result.intent).toBe(INTENT_TYPES.PARTS_RESEARCH);
+      expect(result.confidence).toBeGreaterThanOrEqual(0.9);
+    });
+  });
+
+  describe('Orchestrator - Knowledge vs Car Discovery Routing', () => {
+    test('"How does a turbo work" should route to KNOWLEDGE', async () => {
+      const result = await classifyIntent({
+        messages: [{ role: 'user', content: 'How does a turbo work?' }],
+        context: {},
+        skipLLM: true,
+      });
+      expect(result.intent).toBe(INTENT_TYPES.KNOWLEDGE);
+    });
+
+    test('"What is forced induction" should route to KNOWLEDGE', async () => {
+      const result = await classifyIntent({
+        messages: [{ role: 'user', content: 'What is forced induction?' }],
+        context: {},
+        skipLLM: true,
+      });
+      expect(result.intent).toBe(INTENT_TYPES.KNOWLEDGE);
+    });
+
+    test('"What is the best sports car" should NOT route to KNOWLEDGE', async () => {
+      const result = await classifyIntent({
+        messages: [{ role: 'user', content: 'What is the best sports car under 60k?' }],
+        context: {},
+        skipLLM: true,
+      });
+      // Should be CAR_DISCOVERY, not KNOWLEDGE
+      expect(result.intent).not.toBe(INTENT_TYPES.KNOWLEDGE);
+    });
+
+    test('"Is the M3 reliable" should route to CAR_DISCOVERY', async () => {
+      const result = await classifyIntent({
+        messages: [{ role: 'user', content: 'Is the M3 reliable?' }],
+        context: {},
+        skipLLM: true,
+      });
+      expect(result.intent).toBe(INTENT_TYPES.CAR_DISCOVERY);
+    });
+  });
+
+  describe('Orchestrator - Generalist Fallback', () => {
+    test('short responses like "ok" should route to GENERALIST', async () => {
+      const result = await classifyIntent({
+        messages: [{ role: 'user', content: 'ok' }],
+        context: {},
+        skipLLM: true,
+      });
+      expect(result.intent).toBe(INTENT_TYPES.GENERALIST);
+    });
+
+    test('"thanks" should route to GENERALIST', async () => {
+      const result = await classifyIntent({
+        messages: [{ role: 'user', content: 'thanks' }],
+        context: {},
+        skipLLM: true,
+      });
+      expect(result.intent).toBe(INTENT_TYPES.GENERALIST);
+    });
+
+    test('"hi" should route to GENERALIST', async () => {
+      const result = await classifyIntent({
+        messages: [{ role: 'user', content: 'hi' }],
+        context: {},
+        skipLLM: true,
+      });
+      expect(result.intent).toBe(INTENT_TYPES.GENERALIST);
+    });
+
+    test('platform questions should route to GENERALIST', async () => {
+      const result = await classifyIntent({
+        messages: [{ role: 'user', content: 'How do I earn points on AutoRev?' }],
+        context: {},
+        skipLLM: true,
+      });
+      expect(result.intent).toBe(INTENT_TYPES.GENERALIST);
     });
   });
 

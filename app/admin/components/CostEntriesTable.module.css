@@ -1,9 +1,9 @@
 /* CostEntriesTable Component Styles */
 
 .container {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
   overflow: hidden;
 }
 
@@ -20,7 +20,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .headerTitle h3 {
@@ -31,7 +31,7 @@
 
 .entryCount {
   font-size: 11px;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
   background: rgba(255, 255, 255, 0.05);
   padding: 2px 8px;
   border-radius: 10px;
@@ -52,13 +52,13 @@
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 6px;
   padding: 4px 8px;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .filterSelect {
   background: transparent;
   border: none;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
   font-size: 12px;
   cursor: pointer;
   outline: none;
@@ -66,7 +66,7 @@
 
 .filterSelect option {
   background: var(--brand-bg-card-dark);
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .refreshButton {
@@ -78,14 +78,14 @@
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 6px;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .refreshButton:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.06);
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .refreshButton:disabled {
@@ -119,7 +119,7 @@
 
 .totalLabel {
   font-size: 11px;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -127,11 +127,11 @@
 .totalValue {
   font-size: 14px;
   font-weight: 600;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .totalValue.rAndD {
-  color: var(--admin-accent-purple, var(--brand-purple-accent));
+  color: var(--brand-purple-accent);
 }
 
 /* Table */
@@ -154,7 +154,7 @@
   text-align: left;
   font-size: 11px;
   font-weight: 600;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
   text-transform: uppercase;
   letter-spacing: 0.03em;
   white-space: nowrap;
@@ -167,7 +167,7 @@
 }
 
 .table th.sortable:hover {
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .table th svg {
@@ -203,14 +203,14 @@
 
 .table td {
   padding: 12px;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
   vertical-align: middle;
 }
 
 /* Cells */
 .dateCell {
   font-size: 12px;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
   white-space: nowrap;
 }
 
@@ -234,7 +234,7 @@
 
 .recurringBadge {
   font-size: 12px;
-  color: var(--admin-accent-blue, var(--brand-blue));
+  color: var(--brand-blue, #3b82f6);
   cursor: help;
 }
 
@@ -251,7 +251,7 @@
 
 .typeBadge {
   font-size: 11px;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
 }
 
 .amountCell {
@@ -277,7 +277,7 @@
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 6px;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
   cursor: pointer;
   transition: all 0.2s ease;
   margin: 0 2px;
@@ -286,13 +286,13 @@
 .editButton:hover {
   background: rgba(var(--brand-blue-rgb), 0.15);
   border-color: rgba(var(--brand-blue-rgb), 0.3);
-  color: var(--admin-accent-blue, var(--brand-blue));
+  color: var(--brand-blue, #3b82f6);
 }
 
 .deleteButton:hover {
   background: rgba(var(--brand-error-rgb), 0.15);
   border-color: rgba(var(--brand-error-rgb), 0.3);
-  color: var(--admin-negative, #ef4444);
+  color: var(--brand-error, #ef4444);
 }
 
 /* Delete Confirmation */
@@ -301,7 +301,7 @@
   align-items: center;
   gap: 6px;
   font-size: 11px;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .confirmYes,
@@ -317,7 +317,7 @@
 .confirmYes {
   background: rgba(var(--brand-error-rgb), 0.15);
   border: 1px solid rgba(var(--brand-error-rgb), 0.3);
-  color: var(--admin-negative, #ef4444);
+  color: var(--brand-error, #ef4444);
 }
 
 .confirmYes:hover {
@@ -327,12 +327,12 @@
 .confirmNo {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .confirmNo:hover {
   background: rgba(255, 255, 255, 0.08);
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 /* Empty State */
@@ -348,13 +348,13 @@
 .emptyState p {
   font-size: 14px;
   font-weight: 500;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
   margin: 0 0 4px 0;
 }
 
 .emptyState span {
   font-size: 12px;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
 }
 
 /* Responsive */

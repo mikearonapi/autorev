@@ -492,7 +492,7 @@
 }
 
 .errorText {
-  color: var(--color-error-light, #fca5a5);
+  color: var(--color-text-primary, #ffffff);
   font-size: var(--text-body, 16px);
   line-height: 1.5;
 }

@@ -18,6 +18,7 @@ import { createPortal } from 'react-dom';
 
 import AddToCalendarButton from '@/components/AddToCalendarButton';
 import EventAttendeesPreview from '@/components/EventAttendeesPreview';
+import EventRSVPButton from '@/components/EventRSVPButton';
 import { useAuth } from '@/components/providers/AuthProvider';
 import SaveEventButton from '@/components/SaveEventButton';
 import { useUserSavedEvents } from '@/hooks/useUserData';
@@ -330,6 +331,13 @@ export default function CommunityEventDetailPage() {
               size="small"
               theme="light"
             />
+            {!isPastEvent && (
+              <EventRSVPButton
+                eventSlug={slug}
+                eventName={name}
+                variant="compact"
+              />
+            )}
             {!isPastEvent && <AddToCalendarButton event={event} variant="compact" />}
             <button 
               className={styles.iconBtn}

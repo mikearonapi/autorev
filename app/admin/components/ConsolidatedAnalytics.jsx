@@ -26,7 +26,7 @@ import {
 } from '@/hooks/useAdminData';
 
 import styles from './ConsolidatedAnalytics.module.css';
-import { Tooltip, METRIC_DEFINITIONS } from './Tooltip';
+import { Tooltip } from './Tooltip';
 
 // NOTE: "Visitors" must be unique visitors. Do NOT sum per-page visitors (double counts).
 
@@ -522,7 +522,7 @@ function LifecycleGrid({ lifecycle }) {
 }
 
 // Main component
-export function ConsolidatedAnalytics({ token, range = '7d' }) {
+export function ConsolidatedAnalytics({ token: _token, range = '7d' }) {
   const [detailTab, setDetailTab] = useState('pages');
   const [funnelTab, setFunnelTab] = useState('funnel');
   

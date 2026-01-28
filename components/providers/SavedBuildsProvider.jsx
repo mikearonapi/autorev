@@ -227,11 +227,6 @@ return {
             fitmentNotes: p.fitment_notes,
             fitmentSourceUrl: p.fitment_source_url,
             metadata: p.metadata,
-            // Status tracking fields
-            status: p.status || 'planned',
-            purchasedAt: p.purchased_at,
-            installedAt: p.installed_at,
-            installedBy: p.installed_by,
             // Extract upgradeKey from metadata if present
             upgradeKey: p.metadata?.upgradeKey || p.category,
             createdAt: p.created_at,
@@ -368,11 +363,6 @@ return {
             fitmentNotes: p.fitment_notes,
             fitmentSourceUrl: p.fitment_source_url,
             metadata: p.metadata,
-            // Status tracking fields
-            status: p.status || 'planned',
-            purchasedAt: p.purchased_at,
-            installedAt: p.installed_at,
-            installedBy: p.installed_by,
             // Extract upgradeKey from metadata if present
             upgradeKey: p.metadata?.upgradeKey || p.category,
             createdAt: p.created_at,

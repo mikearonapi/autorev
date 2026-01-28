@@ -25,14 +25,6 @@ const CATEGORY_COLORS = {
   other: '#93c5fd',           // blue-300
 };
 
-const CATEGORY_LABELS = {
-  infrastructure: 'Infrastructure',
-  development: 'Development Tools',
-  ai: 'AI Services',
-  variable: 'Variable',
-  other: 'Other',
-};
-
 // Safe number conversion
 const safeNum = (val, defaultVal = 0) => {
   if (val === null || val === undefined) return defaultVal;
@@ -58,7 +50,7 @@ function generateInterpretiveTitle(breakdown) {
   return `${percentage}% of $${monthlyTotal}/mo goes to ${primaryCategory}`;
 }
 
-export function CostBreakdown({ costs, title = 'Fixed Cost Breakdown' }) {
+export function CostBreakdown({ costs, title: _title = 'Fixed Cost Breakdown' }) {
   const breakdown = useMemo(() => {
     if (!costs) return null;
     

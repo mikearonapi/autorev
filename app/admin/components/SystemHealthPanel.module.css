@@ -1,298 +1,376 @@
-/* SystemHealthPanel Component Styles */
+/* SystemHealthPanel Component Styles
+ * Mobile-First Design following Brand Guidelines v2.0
+ */
 
+/* ================================================================
+   CONTAINER
+   ================================================================ */
 .container {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 16px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 18px;
 }
 
+@media (min-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+}
+
+/* ================================================================
+   HEADER
+   ================================================================ */
 .header {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+@media (min-width: 480px) {
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
 }
 
 .title {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--admin-text-secondary, #94a3b8);
+  letter-spacing: 0.06em;
+  color: var(--brand-text-secondary, #94a3b8);
   margin: 0;
 }
 
 .statusBadge {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 4px 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 12px;
+  gap: 8px;
+  padding: 6px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 20px;
 }
 
 .statusDot {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
   border-radius: 50%;
 }
 
 .statusText {
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
-  color: var(--admin-text-secondary, #94a3b8);
+  letter-spacing: 0.04em;
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
+/* ================================================================
+   SECTION TITLES
+   ================================================================ */
 .sectionTitle {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--admin-text-muted, #64748b);
-  margin: 0 0 10px 0;
+  letter-spacing: 0.06em;
+  color: var(--brand-text-tertiary, #64748b);
+  margin: 0 0 12px 0;
 }
 
-/* Alerts */
+/* ================================================================
+   ALERTS SECTION
+   ================================================================ */
 .alertsSection {
-  margin-bottom: 14px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .alertsList {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .alertItem {
   display: flex;
   align-items: flex-start;
-  gap: 8px;
-  padding: 8px 10px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.02);
-  border-left: 3px solid;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border-left: 4px solid;
 }
 
-.alertItem.critical { border-color: var(--brand-error); background: rgba(var(--brand-error-rgb), 0.1); }
-.alertItem.high { border-color: var(--color-accent-amber, #f97316); background: rgba(249, 115, 22, 0.08); }
-.alertItem.medium { border-color: var(--brand-warning); background: rgba(var(--brand-warning-rgb), 0.08); }
-.alertItem.low { border-color: var(--brand-blue); background: rgba(var(--brand-blue-rgb), 0.08); }
+.alertItem.critical { 
+  border-color: var(--brand-error, #ef4444); 
+  background: rgba(239, 68, 68, 0.12); 
+}
+.alertItem.high { 
+  border-color: #f97316; 
+  background: rgba(249, 115, 22, 0.1); 
+}
+.alertItem.medium { 
+  border-color: var(--brand-warning, #f59e0b); 
+  background: rgba(245, 158, 11, 0.1); 
+}
+.alertItem.low { 
+  border-color: var(--brand-blue, #3b82f6); 
+  background: rgba(59, 130, 246, 0.1); 
+}
 
 .alertIcon {
-  font-size: 12px;
+  font-size: 14px;
   font-weight: bold;
 }
 
 .alertContent {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .alertMessage {
-  font-size: 11px;
-  color: var(--admin-text-primary, #f8fafc);
+  font-size: 13px;
+  color: var(--brand-text-primary, #ffffff);
+  line-height: 1.4;
 }
 
 .alertAction {
-  font-size: 10px;
-  color: var(--admin-text-muted, #64748b);
+  font-size: 12px;
+  color: var(--brand-text-tertiary, #64748b);
 }
 
-/* Error Section */
+/* ================================================================
+   ERROR SECTION
+   ================================================================ */
 .errorsSection {
-  margin-bottom: 14px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  margin-bottom: 18px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .errorStats {
   display: flex;
-  gap: 16px;
-  margin-bottom: 8px;
+  gap: 24px;
+  margin-bottom: 12px;
 }
 
 .errorStatsSecondary {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 8px 10px;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 6px;
-  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  margin-bottom: 14px;
 }
 
 .secondaryStat {
-  font-size: 10px;
-  color: var(--admin-text-muted, #64748b);
+  font-size: 12px;
+  color: var(--brand-text-tertiary, #64748b);
 }
 
 .secondaryValue {
   font-weight: 600;
-  color: var(--brand-success);
+  color: var(--brand-success, #22c55e);
 }
 
 .secondaryDivider {
-  color: rgba(255, 255, 255, 0.1);
-  font-size: 10px;
+  color: rgba(255, 255, 255, 0.15);
+  font-size: 12px;
 }
 
 .errorStat, .pipelineStat {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .statValue {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: 700;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
 .statLabel {
-  font-size: 9px;
-  color: var(--admin-text-muted, #64748b);
+  font-size: 11px;
+  color: var(--brand-text-tertiary, #64748b);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
 .recentLabel {
   display: block;
-  font-size: 9px;
-  color: var(--admin-text-muted, #64748b);
+  font-size: 11px;
+  color: var(--brand-text-tertiary, #64748b);
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  margin-bottom: 8px;
+  letter-spacing: 0.04em;
+  margin-bottom: 10px;
 }
 
 .recentErrors, .recentJobs {
-  margin-top: 10px;
+  margin-top: 12px;
 }
 
 .errorRow {
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 6px;
-  margin-bottom: 6px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  margin-bottom: 8px;
 }
 
 .errorHeader {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 4px;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 6px;
 }
 
 .severityBadge {
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 3px;
+  padding: 4px 8px;
+  border-radius: 6px;
   text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-.severityBadge.blocking { background: rgba(var(--brand-error-rgb), 0.2); color: var(--brand-error); }
-.severityBadge.major { background: rgba(249, 115, 22, 0.2); color: var(--color-accent-amber, #f97316); }
-.severityBadge.minor { background: rgba(var(--brand-warning-rgb), 0.2); color: var(--brand-warning); }
-.severityBadge.unknown { background: rgba(100, 116, 139, 0.2); color: var(--brand-text-tertiary); }
+.severityBadge.blocking { 
+  background: rgba(239, 68, 68, 0.2); 
+  color: var(--brand-error, #ef4444); 
+}
+.severityBadge.major { 
+  background: rgba(249, 115, 22, 0.2); 
+  color: #f97316; 
+}
+.severityBadge.minor { 
+  background: rgba(245, 158, 11, 0.2); 
+  color: var(--brand-warning, #f59e0b); 
+}
+.severityBadge.unknown { 
+  background: rgba(100, 116, 139, 0.2); 
+  color: var(--brand-text-tertiary, #64748b); 
+}
 
 .errorStatus {
-  font-size: 9px;
-  color: var(--admin-text-muted, #64748b);
+  font-size: 11px;
+  color: var(--brand-text-tertiary, #64748b);
 }
 
 .occurrences {
-  font-size: 9px;
-  color: var(--admin-accent-purple, var(--brand-purple-accent));
+  font-size: 11px;
+  color: var(--brand-teal, #10b981);
   font-weight: 600;
 }
 
 .errorMessage {
-  font-size: 11px;
-  color: var(--admin-text-secondary, #94a3b8);
+  font-size: 13px;
+  color: var(--brand-text-secondary, #94a3b8);
   margin: 0;
   line-height: 1.4;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
 }
 
 .errorPage {
-  font-size: 9px;
-  color: var(--admin-text-muted, #64748b);
+  font-size: 11px;
+  color: var(--brand-text-tertiary, #64748b);
   display: block;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
-/* Pipeline Section */
+/* ================================================================
+   PIPELINE SECTION
+   ================================================================ */
 .pipelineSection {}
 
 .pipelineStats {
   display: flex;
-  gap: 16px;
-  margin-bottom: 10px;
+  gap: 24px;
+  margin-bottom: 12px;
 }
 
 .subStats {
   display: flex;
-  gap: 12px;
-  font-size: 10px;
-  color: var(--admin-text-muted, #64748b);
-  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 12px;
+  color: var(--brand-text-tertiary, #64748b);
+  margin-bottom: 12px;
 }
 
 .subStatsLabel {
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .pipelineJob {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 8px;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 4px;
-  margin-bottom: 4px;
-  font-size: 10px;
+  gap: 10px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
 }
 
 .jobStatus {
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 3px;
+  padding: 4px 8px;
+  border-radius: 6px;
   text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-.jobStatus.completed { background: rgba(var(--brand-success-rgb), 0.2); color: var(--brand-success); }
-.jobStatus.pending { background: rgba(var(--brand-warning-rgb), 0.2); color: var(--brand-warning); }
-.jobStatus.failed { background: rgba(var(--brand-error-rgb), 0.2); color: var(--brand-error); }
-.jobStatus.in_progress { background: rgba(var(--brand-blue-rgb), 0.2); color: var(--brand-blue); }
+.jobStatus.completed { 
+  background: rgba(34, 197, 94, 0.2); 
+  color: var(--brand-success, #22c55e); 
+}
+.jobStatus.pending { 
+  background: rgba(245, 158, 11, 0.2); 
+  color: var(--brand-warning, #f59e0b); 
+}
+.jobStatus.failed { 
+  background: rgba(239, 68, 68, 0.2); 
+  color: var(--brand-error, #ef4444); 
+}
+.jobStatus.in_progress { 
+  background: rgba(59, 130, 246, 0.2); 
+  color: var(--brand-blue, #3b82f6); 
+}
 
 .jobType {
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .jobCar {
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
 }
 
 .jobError {
-  color: var(--brand-error);
-  font-size: 9px;
+  color: var(--brand-error, #ef4444);
+  font-size: 11px;
   margin-left: auto;
 }
 
-/* States */
+/* ================================================================
+   STATES
+   ================================================================ */
 .loading,
 .emptyState {
-  padding: 30px;
+  padding: 40px 20px;
   text-align: center;
-  color: var(--admin-text-muted, #64748b);
-  font-size: 13px;
+  color: var(--brand-text-tertiary, #64748b);
+  font-size: 14px;
 }
-

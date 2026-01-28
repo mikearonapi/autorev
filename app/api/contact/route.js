@@ -20,7 +20,7 @@ async function handlePost(request) {
     return validationErrorResponse(validation.errors);
   }
   
-  const { name, email, subject, message, website } = validation.data;
+  const { name, email, subject: _subject, message, website } = validation.data;
   const { interest, car } = body; // Keep original fields for backwards compat
 
   // Honeypot check - if website field is filled, it's a bot

@@ -13,7 +13,6 @@ import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
-import { Icons } from '@/components/ui/Icons';
 import Modal from '@/components/ui/Modal';
 import { getFacebookShareUrl, getTwitterShareUrl, getInstagramShareInfo, getNativeShareData } from '@/lib/communityService';
 import { platform } from '@/lib/platform';
@@ -27,7 +26,7 @@ export default function ShareBuildModal({
   vehicle,    // Vehicle data from garage
   carSlug,
   carName,
-  userId,
+  userId: _userId,
   existingImages = [], // Images already uploaded in UpgradeCenter
   linkedCommunityPost = null, // Existing community post data if already shared
   onShareChange,

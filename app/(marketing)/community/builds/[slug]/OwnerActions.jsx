@@ -13,7 +13,7 @@ import { useAuth } from '@/components/providers/AuthProvider';
 
 import styles from './OwnerActions.module.css';
 
-export default function OwnerActions({ postId, ownerId, buildSlug, carSlug, userBuildId }) {
+export default function OwnerActions({ postId: _postId, ownerId, buildSlug: _buildSlug, carSlug, userBuildId }) {
   const { user, isAuthenticated } = useAuth();
   const router = useRouter();
 

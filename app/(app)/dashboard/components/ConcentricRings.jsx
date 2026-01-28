@@ -51,7 +51,7 @@ const getComputedColor = (colorVar) => {
 export default function ConcentricRings({
   weeklyActivity = { al: 0, community: 0, data: 0, garage: 0 },
   currentStreak = 0,
-  longestStreak = 0,
+  longestStreak: _longestStreak = 0,
   garageScore = 0,
   profileCompleteness = 0,
   points = { weekly: 0, monthly: 0, lifetime: 0 },
@@ -81,7 +81,6 @@ export default function ConcentricRings({
     );
   }, []);
   const [animatedGarageScore, setAnimatedGarageScore] = useState(animated ? 0 : garageScore);
-  const [animatedProfileScore, setAnimatedProfileScore] = useState(animated ? 0 : profileCompleteness);
   const [animatedWeeklyPoints, setAnimatedWeeklyPoints] = useState(animated ? 0 : points.weekly);
   const [showExplainer, setShowExplainer] = useState(false);
 
@@ -147,7 +146,7 @@ export default function ConcentricRings({
 
     const duration = 1200;
     const startTime = Date.now();
-    const startValue = animatedWeeklyPoints;
+    const startValue = 0;
 
     const animatePoints = () => {
       const elapsed = Date.now() - startTime;

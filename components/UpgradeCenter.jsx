@@ -24,18 +24,13 @@ import {
   calculateHandlingScore,
 } from '@/lib/performanceCalculator';
 import { calculateTunability } from '@/lib/tunabilityCalculator.js';
-import {
-  UPGRADE_CATEGORIES as SHARED_UPGRADE_CATEGORIES,
-  GOAL_CATEGORY_MAP,
-  sortCategoriesByGoal,
-  isCategoryPrimaryForGoal,
-} from '@/lib/upgradeCategories.js';
+import { UPGRADE_CATEGORIES as SHARED_UPGRADE_CATEGORIES } from '@/lib/upgradeCategories.js';
 import { getUpgradeByKey } from '@/lib/upgrades.js';
 
 import { useAuth } from './providers/AuthProvider';
 import { useOwnedVehicles } from './providers/OwnedVehiclesProvider';
 import { useSavedBuilds } from './providers/SavedBuildsProvider';
-import { CategoryNav, WheelTireConfigurator } from './tuning-shop';
+import { CategoryNav } from './tuning-shop';
 import styles from './UpgradeCenter.module.css';
 import UpgradeConfigPanel, {
   calculateConfigHpModifier,
@@ -574,12 +569,9 @@ export default function UpgradeCenter({
   factoryConfig = null,
   onFactoryConfigChange: _onFactoryConfigChange = null,
   selectedWheelFitment = null,
-  onWheelFitmentChange = null,
+  onWheelFitmentChange: _onWheelFitmentChange = null,
   openSaveModalOnMount = false,
   onSaveModalOpened = null,
-  // Build goal (track, street, show, daily) - used to prioritize upgrade categories
-  goal = null,
-  onGoalChange = null,
 }) {
   const { isAuthenticated: _isAuthenticated, user: _user } = useAuth();
   const { saveBuild, updateBuild, getBuildById, canSave } = useSavedBuilds();
@@ -856,8 +848,8 @@ export default function UpgradeCenter({
     if (!car || effectiveModules.length === 0) {
       return { isValid: true, critical: [], warnings: [], info: [], synergies: [], totalIssues: 0 };
     }
-    return validateUpgradeSelection(effectiveModules, car, { usageProfile: goal || 'mixed' });
-  }, [effectiveModules, car, goal]);
+    return validateUpgradeSelection(effectiveModules, car, { usageProfile: 'mixed' });
+  }, [effectiveModules, car]);
 
   // Get required upgrades (hard dependencies)
   const requiredUpgrades = useMemo(() => {
@@ -890,26 +882,12 @@ export default function UpgradeCenter({
   }, [upgradesByCategory, effectiveModules]);
 
   // Goal-filtered and sorted categories
-  const goalInfo = useMemo(() => {
-    if (!goal) return null;
-    return GOAL_CATEGORY_MAP[goal] || null;
-  }, [goal]);
-
-  // Categories sorted by goal priority (goal-aligned categories first)
+  // Categories filtered to those with available upgrades
   const sortedCategories = useMemo(() => {
-    // Filter to categories with available upgrades
-    const availableCats = UPGRADE_CATEGORIES.filter(
+    return UPGRADE_CATEGORIES.filter(
       (cat) => cat.key !== 'wheels' && (upgradesByCategory[cat.key]?.length || 0) > 0
     );
-
-    if (!goal) return availableCats;
-
-    // Sort with goal-aligned categories first
-    const catKeys = availableCats.map((c) => c.key);
-    const sortedKeys = sortCategoriesByGoal(catKeys, goal);
-
-    return sortedKeys.map((key) => availableCats.find((c) => c.key === key)).filter(Boolean);
-  }, [upgradesByCategory, goal]);
+  }, [upgradesByCategory]);
 
   // Construct build summary object - Single Source of Truth
   const buildSummary = useMemo(() => {
@@ -1010,23 +988,9 @@ export default function UpgradeCenter({
     return Object.values(upgradesByCategory).flat();
   }, [upgradesByCategory]);
 
-  // Map preset packages to build goals
-  // When a user selects a preset, auto-set the corresponding goal
-  const PRESET_TO_GOAL = {
-    streetSport: 'street',
-    trackPack: 'track',
-    drag: 'track', // Drag builds prioritize track-focused categories
-    // 'custom' and 'stock' don't auto-set a goal
-  };
-
   const handlePackageSelect = (pkgKey) => {
     setSelectedPackage(pkgKey);
     if (pkgKey !== 'custom') setSelectedModules([]);
-
-    // Auto-set goal when selecting a preset (if onGoalChange callback exists)
-    if (onGoalChange && PRESET_TO_GOAL[pkgKey]) {
-      onGoalChange(PRESET_TO_GOAL[pkgKey]);
-    }
   };
 
   const handleModuleToggle = useCallback(
@@ -1410,12 +1374,6 @@ export default function UpgradeCenter({
               <span className={styles.sidebarCardTitle}>Upgrade Categories</span>
             </div>
             <div className={styles.sidebarCardContent}>
-              {/* Goal indicator if goal is set */}
-              {goalInfo && (
-                <div className={styles.goalIndicator}>
-                  <span className={styles.goalLabel}>Building for: {goalInfo.label}</span>
-                </div>
-              )}
               <div className={styles.categoryList}>
                 <CategoryNav
                   categories={sortedCategories.map((c) => c.key)}
@@ -1423,28 +1381,12 @@ export default function UpgradeCenter({
                   onCategoryChange={setActiveCategory}
                   selectedCounts={selectedByCategory}
                   variant="list"
-                  recommendedCategories={sortedCategories
-                    .filter((c) => goal && isCategoryPrimaryForGoal(c.key, goal))
-                    .map((c) => c.key)}
                 />
               </div>
             </div>
           </div>
 
-          {/* Wheels & Tires - After Upgrade Categories */}
-          <div className={styles.sidebarCard}>
-            <WheelTireConfigurator
-              car={car}
-              selectedFitment={selectedWheelFitment}
-              onSelect={onWheelFitmentChange}
-              showCostEstimates={true}
-              defaultExpanded={false}
-              compact={true}
-              selectedUpgrades={effectiveModules}
-              onUpgradeToggle={(key) => handleModuleToggle(key, 'Lightweight Wheels', null)}
-            />
-          </div>
-
+          {/* NOTE: Wheels & Tires section removed - fitment data not available */}
           {/* NOTE: Advanced Tuning section removed - using Basic mode only */}
         </div>
 

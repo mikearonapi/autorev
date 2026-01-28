@@ -25,7 +25,7 @@
   padding: 0;
   border: none;
   background: transparent;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
   cursor: pointer;
   border-radius: 4px;
   transition: all 0.2s ease;
@@ -33,7 +33,7 @@
 
 .navButton:hover:not(:disabled) {
   background: rgba(255, 255, 255, 0.05);
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .navButton:disabled {
@@ -50,7 +50,7 @@
     rgba(var(--brand-blue-rgb), 0.15), 
     rgba(var(--brand-purple-rgb), 0.15)
   );
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -77,8 +77,8 @@
 }
 
 .dropdown option {
-  background: var(--admin-bg-card, #1e293b);
-  color: var(--admin-text-primary, #f8fafc);
+  background: var(--brand-bg-secondary, #1b263b);
+  color: var(--brand-text-primary, #ffffff);
   padding: 8px;
 }
 
@@ -93,7 +93,7 @@
   padding: 4px 10px;
   border: 1px solid rgba(255, 255, 255, 0.08);
   background: rgba(255, 255, 255, 0.02);
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
   font-size: 11px;
   font-weight: 500;
   cursor: pointer;
@@ -105,16 +105,16 @@
 .quickButton:hover:not(:disabled):not(.active) {
   border-color: rgba(255, 255, 255, 0.15);
   background: rgba(255, 255, 255, 0.05);
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .quickButton.active {
-  border-color: var(--admin-accent-blue, var(--brand-blue));
+  border-color: var(--brand-blue, #3b82f6);
   background: linear-gradient(135deg, 
     rgba(var(--brand-blue-rgb), 0.2), 
     rgba(var(--brand-purple-rgb), 0.2)
   );
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .quickButton:disabled {

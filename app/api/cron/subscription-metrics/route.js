@@ -116,7 +116,7 @@ async function handlePost(request) {
 }
 
 // Also support GET for manual testing
-async function handleGet(request) {
+async function handleGet(_request) {
   // For GET requests, just return current metrics without saving
   // (useful for admin dashboard)
   try {

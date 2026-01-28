@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 
+import { Icons } from '@/components/ui/Icons';
 import { getMonthAbbrev, getDayOfMonth, getWeekdayAbbrev } from '@/lib/dateUtils';
 
 import styles from './EventCard.module.css';
@@ -123,9 +124,6 @@ const EVENT_TYPE_ICONS = {
     </svg>
   ),
 };
-
-// General Icons from shared library
-import { Icons } from '@/components/ui/Icons';
 
 function formatEventTime(timeStr) {
   if (!timeStr) return '';

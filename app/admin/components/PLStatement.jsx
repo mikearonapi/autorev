@@ -41,7 +41,7 @@ function PLSection({ title, children }) {
   );
 }
 
-export function PLStatement({ pnl, revenue, costs, period, title = 'Income Statement' }) {
+export function PLStatement({ pnl, revenue: _revenue, costs: _costs, period, title = 'Income Statement' }) {
   if (!pnl) {
     return (
       <div className={styles.container}>

@@ -81,7 +81,7 @@ async function handlePost(request) {
           body = `You're only ${nextMilestone - user.current_streak} day${nextMilestone - user.current_streak !== 1 ? 's' : ''} away from the ${nextMilestone}-day milestone! ${body}`;
         }
 
-        const { data, error } = await createNotification({
+        const { data: _data, error } = await createNotification({
           userId: user.user_id,
           category: NOTIFICATION_CATEGORIES.ENGAGEMENT,
           title: reminderCopy.title,
@@ -127,7 +127,7 @@ async function handlePost(request) {
 }
 
 // Also support GET for testing
-async function handleGet(request) {
+async function handleGet(_request) {
   // For testing - show status without sending
   return NextResponse.json({
     message: 'Streak reminders cron job endpoint',

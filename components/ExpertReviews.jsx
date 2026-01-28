@@ -151,13 +151,6 @@ export default function ExpertReviews({ carSlug, car }) {
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
-  // Get sentiment indicator class
-  const getSentimentClass = (sentiment) => {
-    if (sentiment > 0.3) return styles.positive;
-    if (sentiment < -0.3) return styles.negative;
-    return styles.neutral;
-  };
-
   return (
     <div className={styles.container}>
       {/* Compact Header */}

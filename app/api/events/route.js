@@ -32,7 +32,7 @@ export const dynamic = 'force-dynamic';
  *   - start_before: ISO date string, events before this date
  *   - limit: Max results (default 20, max 100)
  *   - offset: Pagination offset (default 0)
- *   - sort: Sort order - 'date', 'featured', or 'distance' (default 'date')
+ *   - sort: Sort order - 'date', 'featured', 'distance', or 'popularity' (default 'date')
  *   - group_recurring: Group recurring events into single entries (boolean, default false)
  * 
  * Response:

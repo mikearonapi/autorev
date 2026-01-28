@@ -111,15 +111,18 @@ async function saveToCache(carName, category, videos) {
 
 /**
  * Search Exa API for DIY videos
+ * @returns {Object} { videos: [], error: string|null }
  */
 async function searchExa(carName, category, limit) {
   if (!EXA_API_KEY) {
     console.warn('[diy-videos/search] EXA_API_KEY not configured');
-    return [];
+    return { videos: [], error: 'api_not_configured' };
   }
   
-  // Build search query
-  const searchQuery = `${carName} ${category} install tutorial DIY how to`;
+  // Build a more targeted search query
+  const searchQuery = `${carName} ${category} install tutorial`;
+  
+  console.log('[diy-videos/search] Searching Exa:', { carName, category, query: searchQuery });
   
   try {
     const response = await fetch('https://api.exa.ai/search', {
@@ -130,7 +133,7 @@ async function searchExa(carName, category, limit) {
       },
       body: JSON.stringify({
         query: searchQuery,
-        numResults: limit * 3, // Request extra to filter
+        numResults: limit * 2,
         type: 'auto',
         includeDomains: ['youtube.com'],
       }),
@@ -138,14 +141,24 @@ async function searchExa(carName, category, limit) {
     
     if (!response.ok) {
       const errorText = await response.text();
-      console.error('[diy-videos/search] Exa API error:', response.status, errorText.substring(0, 200));
-      return [];
+      console.error('[diy-videos/search] Exa API error:', response.status, errorText.substring(0, 300));
+      
+      // Parse specific error types
+      if (response.status === 402 || errorText.includes('credits') || errorText.includes('NO_MORE_CREDITS')) {
+        return { videos: [], error: 'credits_exhausted' };
+      }
+      if (response.status === 401 || response.status === 403) {
+        return { videos: [], error: 'api_auth_error' };
+      }
+      return { videos: [], error: 'api_error' };
     }
     
     const data = await response.json();
     const results = data.results || [];
     
-    // Filter and normalize results
+    console.log('[diy-videos/search] Exa returned', results.length, 'results');
+    
+    // Extract videos - be more lenient with filtering since Exa already handles relevance
     const videos = [];
     const seenIds = new Set();
     
@@ -153,24 +166,7 @@ async function searchExa(carName, category, limit) {
       const videoId = extractVideoId(result.url);
       if (!videoId || seenIds.has(videoId)) continue;
       
-      // Check if title looks like a tutorial
       const title = result.title || '';
-      const titleLower = title.toLowerCase();
-      const isLikelyTutorial = (
-        titleLower.includes('install') ||
-        titleLower.includes('how to') ||
-        titleLower.includes('diy') ||
-        titleLower.includes('tutorial') ||
-        titleLower.includes('guide') ||
-        titleLower.includes('step by step')
-      );
-      
-      // Also check if title mentions the car
-      const carParts = carName.toLowerCase().split(/\s+/).filter(p => p.length > 2);
-      const mentionsCar = carParts.some(part => titleLower.includes(part));
-      
-      // Prioritize results that match both criteria
-      if (!isLikelyTutorial && !mentionsCar) continue;
       
       seenIds.add(videoId);
       videos.push({
@@ -178,16 +174,18 @@ async function searchExa(carName, category, limit) {
         title,
         channelName: result.author || null,
         thumbnailUrl: `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`,
-        durationSeconds: null, // Exa doesn't provide duration
+        durationSeconds: null,
       });
       
       if (videos.length >= limit) break;
     }
     
-    return videos;
+    console.log('[diy-videos/search] Returning', videos.length, 'videos');
+    
+    return { videos, error: null };
   } catch (err) {
     console.error('[diy-videos/search] Exa search error:', err);
-    return [];
+    return { videos: [], error: 'search_failed' };
   }
 }
 
@@ -199,7 +197,7 @@ async function handlePost(request) {
     // Validate input
     if (!carName || !category) {
       return NextResponse.json(
-        { error: 'Missing required fields: carName, category' },
+        { error: 'Missing required fields: carName, category', videos: [] },
         { status: 400 }
       );
     }
@@ -216,14 +214,42 @@ async function handlePost(request) {
     }
     
     // 2. Search Exa API
-    const exaVideos = await searchExa(carName, category, safeLimit);
+    const { videos: exaVideos, error: exaError } = await searchExa(carName, category, safeLimit);
     
-    // 3. Cache the results
+    // 3. Handle specific API errors with helpful messages
+    if (exaError === 'api_not_configured') {
+      return NextResponse.json({
+        videos: cachedVideos,
+        source: 'cache',
+        errorCode: 'api_not_configured',
+        warning: 'Video search API not configured.',
+      });
+    }
+    
+    if (exaError === 'credits_exhausted') {
+      return NextResponse.json({
+        videos: cachedVideos,
+        source: 'cache',
+        errorCode: 'credits_exhausted',
+        warning: 'Video search credits exhausted. Use the YouTube link below.',
+      });
+    }
+    
+    if (exaError) {
+      return NextResponse.json({
+        videos: cachedVideos,
+        source: 'cache',
+        errorCode: exaError,
+        warning: 'Video search temporarily unavailable.',
+      });
+    }
+    
+    // 4. Cache the results
     if (exaVideos.length > 0) {
       await saveToCache(carName, category, exaVideos);
     }
     
-    // 4. Combine and dedupe
+    // 5. Combine and dedupe
     const seenIds = new Set(cachedVideos.map(v => v.videoId));
     const combined = [...cachedVideos];
     

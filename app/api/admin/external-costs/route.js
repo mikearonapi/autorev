@@ -118,7 +118,7 @@ async function fetchAnthropicCosts(startDate, endDate) {
  * Requires service account with Billing Viewer role
  * @see https://cloud.google.com/billing/docs/reference/rest
  */
-async function fetchGoogleCloudCosts(startDate, endDate) {
+async function fetchGoogleCloudCosts(_startDate, _endDate) {
   if (!GOOGLE_CLOUD_BILLING_KEY || !GOOGLE_CLOUD_PROJECT_ID) {
     return {
       available: false,

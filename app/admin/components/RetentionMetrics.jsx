@@ -75,7 +75,7 @@ function RetentionRing({ label, rate, cohortSize, retained, color }) {
   );
 }
 
-function FunnelBar({ label, count, total, percentage }) {
+function FunnelBar({ label, count, total: _total, percentage }) {
   return (
     <div className={styles.funnelItem}>
       <div className={styles.funnelHeader}>

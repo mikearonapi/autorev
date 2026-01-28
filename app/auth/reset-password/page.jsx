@@ -30,7 +30,7 @@ function validatePassword(password) {
 }
 
 function ResetPasswordContent() {
-  const searchParams = useSearchParams();
+  const _searchParams = useSearchParams();
   const router = useRouter();
   
   const [password, setPassword] = useState('');

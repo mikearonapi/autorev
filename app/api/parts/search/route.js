@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 import { errors } from '@/lib/apiErrors';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
-import { getPublicClient, isConfigured } from '@/lib/supabaseServer';
+import { getPublicClient } from '@/lib/supabaseServer';
 
 export const dynamic = 'force-dynamic';
 

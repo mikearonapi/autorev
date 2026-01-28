@@ -44,9 +44,9 @@ import { useCheckout } from '@/hooks/useCheckout';
 import usePWAInstall from '@/hooks/usePWAInstall';
 import { useUserCredits, useClearUserData, useZipLookup, useSaveLocation, useBillingPortal } from '@/hooks/useUserData';
 import { isAdminEmail } from '@/lib/adminAccess';
-import { AL_PLANS, AL_TOPUP_PACKAGES } from '@/lib/alConfig';
+import { AL_TOPUP_PACKAGES } from '@/lib/alConfig';
 import { UI_IMAGES } from '@/lib/images';
-import { IS_BETA, getEffectiveTier, getTrialStatus, TIER_CONFIG } from '@/lib/tierAccess';
+import { IS_BETA, getEffectiveTier, getTrialStatus } from '@/lib/tierAccess';
 
 import styles from './page.module.css';
 
@@ -112,7 +112,6 @@ export default function SettingsPage() {
   const { user, profile, isAuthenticated, isLoading, logout, updateProfile, triggerOnboarding } = useAuth();
   const { 
     shouldShowInstallPrompt, 
-    isIOS, 
     canPromptNatively, 
     promptInstall, 
     isInstalled 
@@ -168,7 +167,6 @@ export default function SettingsPage() {
   const { checkoutSubscription, checkoutCredits, isLoading: checkoutLoading } = useCheckout();
   
   const [displayName, setDisplayName] = useState('');
-  const [isSaving, setIsSaving] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
   const [locationZip, setLocationZip] = useState('');
   const [locationCity, setLocationCity] = useState('');
@@ -194,12 +192,16 @@ export default function SettingsPage() {
   const billingPortalMutation = useBillingPortal();
 
   // Use effective tier (considers trial status)
-  const baseTier = profile?.subscription_tier || 'free';
   const effectiveTier = getEffectiveTier(profile);
   const trialStatus = getTrialStatus(profile);
-  const planName = trialStatus 
-    ? `${PLAN_NAMES[effectiveTier]} Trial`
-    : PLAN_NAMES[effectiveTier] || 'Free';
+  
+  // Admin users always show "Admin" regardless of subscription tier
+  const userIsAdmin = isAdminEmail(user?.email);
+  const planName = userIsAdmin
+    ? 'Admin'
+    : trialStatus 
+      ? `${PLAN_NAMES[effectiveTier]} Trial`
+      : PLAN_NAMES[effectiveTier] || 'Free';
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) router.push('/garage');
@@ -627,7 +629,6 @@ export default function SettingsPage() {
                 const tierIndex = TIER_ORDER.indexOf(tier);
                 const currentIndex = TIER_ORDER.indexOf(effectiveTier);
                 const isUpgrade = tierIndex > currentIndex;
-                const isDowngrade = tierIndex < currentIndex;
                 
                 return (
                   <div 

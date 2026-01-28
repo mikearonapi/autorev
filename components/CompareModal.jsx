@@ -311,7 +311,7 @@ export default function CompareModal({ isOpen, onClose }) {
                 <div className={styles.attributeColumn}>
                   {/* Empty - label not needed */}
                 </div>
-                {carsWithFullData.map((car, index) => {
+                {carsWithFullData.map((car, _index) => {
                   const imageUrl = getCarHeroImage(car);
                   const isRecommended = recommendations && recommendations[0]?.slug === car.slug;
                   const prefMatch = carPreferenceMatches[car.slug];

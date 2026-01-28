@@ -132,7 +132,7 @@ export default function CustomSpecsEditor({
   onSave,
   onClear,
   isLoading = false,
-  vehicleId,
+  vehicleId: _vehicleId,
 }) {
   // Local state for form data
   const [formData, setFormData] = useState(() => ({

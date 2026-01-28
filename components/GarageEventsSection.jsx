@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import Link from 'next/link';
 
@@ -23,7 +23,7 @@ import styles from './GarageEventsSection.module.css';
 function CompactEventCard({ event }) {
   if (!event) return null;
   
-  const formattedDate = formatEventDateShort(event.start_date);
+  const _formattedDate = formatEventDateShort(event.start_date);
   
   return (
     <Link href={`/events/${event.slug}`} className={styles.compactCard}>

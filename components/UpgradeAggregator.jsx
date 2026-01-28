@@ -23,9 +23,7 @@
 
 import { useMemo } from 'react';
 
-import Link from 'next/link';
-
-import { useCarSelection, useBuildSummary } from '@/components/providers/CarSelectionProvider';
+import { useCarSelection } from '@/components/providers/CarSelectionProvider';
 import { Icons } from '@/components/ui/Icons';
 import { calculateSmartHpGain, formatHpDisplay, getConflictSummary } from '@/lib/performanceCalculator';
 
@@ -42,16 +40,6 @@ function formatCurrency(amount) {
     return `$${(amount / 1000).toFixed(amount % 1000 === 0 ? 0 : 1)}K`;
   }
   return `$${amount.toLocaleString()}`;
-}
-
-/**
- * Format HP for display
- * @param {number} hp 
- * @returns {string}
- */
-function formatHP(hp) {
-  if (!hp || hp === 0) return '0';
-  return `+${hp.toLocaleString()}`;
 }
 
 /**

@@ -32,7 +32,7 @@ const CheckIcon = ({ size = 12 }) => (
   </svg>
 );
 
-export default function HandlingBalanceIndicator({ suspensionSetup, aeroSetup, tireCompound, drivetrain }) {
+export default function HandlingBalanceIndicator({ suspensionSetup, aeroSetup, tireCompound: _tireCompound, drivetrain }) {
   // Calculate handling balance based on setup
   const calculateBalance = () => {
     let balance = 0; // -100 = understeer, +100 = oversteer, 0 = neutral

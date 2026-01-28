@@ -7,15 +7,16 @@
  * @route GET /api/admin/al-usage
  */
 
-import { createClient } from '@supabase/supabase-js';
-
-// Force dynamic rendering - this route uses request.headers and request.url
-export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
+
+import { createClient } from '@supabase/supabase-js';
 
 import { isAdminEmail } from '@/lib/adminAccess';
 import { ANTHROPIC_PRICING } from '@/lib/alConfig';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
+
+// Force dynamic rendering - this route uses request.headers and request.url
+export const dynamic = 'force-dynamic';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -23,7 +24,7 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 async function handleGet(request) {
   const { searchParams } = new URL(request.url);
   const range = searchParams.get('range') || 'month';
-  const limit = parseInt(searchParams.get('limit') || '50', 10);
+  const _limit = parseInt(searchParams.get('limit') || '50', 10);
   
   // Verify admin access
   const authHeader = request.headers.get('authorization');
@@ -82,7 +83,7 @@ async function handleGet(request) {
     const userIds = [...new Set(usageLogs?.map(log => log.user_id) || [])];
     
     // Fetch user profiles for these users
-    const { data: profiles, error: profilesError } = await supabase
+    const { data: profiles, error: _profilesError } = await supabase
       .from('user_profiles')
       .select('id, display_name, subscription_tier')
       .in('id', userIds);

@@ -18,7 +18,7 @@ import { searchNearbyShops } from '@/lib/serviceCenterService';
 async function handlePost(request) {
   try {
     const body = await request.json();
-    const { lat, lng, radius = 25, carMake, includeReviews = false } = body;
+    const { lat, lng, radius = 25, carMake, includeReviews: _includeReviews = false } = body;
     
     // Validate input
     if (!lat || !lng) {

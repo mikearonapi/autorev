@@ -3,15 +3,11 @@
 /**
  * My Parts Page - Vehicle-Specific Parts Shopping List
  * 
- * SCOPE: Shopping/purchasing workflow (planned → purchased)
- * Installation tracking is handled by the Install page (/garage/my-install)
- * 
  * Shows the parts shopping list based on selected upgrades:
- * - List of parts needed for the build (planned status)
- * - Parts you've purchased and are ready to install (purchased status)
+ * - List of parts needed for the build
  * - AL recommendations for finding the right parts
  * - Add/edit specific part details (brand, model, price, vendor)
- * - Link to Install page when parts are ready for installation
+ * - Link to Install page for installation help
  */
 
 import React, { useState, useEffect, useMemo, Suspense, useCallback, useRef } from 'react';
@@ -33,8 +29,8 @@ import EmptyState from '@/components/ui/EmptyState';
 import { Icons } from '@/components/ui/Icons';
 import { Skeleton, ListSkeleton } from '@/components/ui/Skeleton';
 import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
-import { useGarageScore } from '@/hooks/useGarageScore';
 import { useCarImages } from '@/hooks/useCarImages';
+import { useGarageScore } from '@/hooks/useGarageScore';
 import { calculateTotalCost } from '@/lib/performance.js';
 import { getPerformanceProfile } from '@/lib/performanceCalculator';
 
@@ -93,7 +89,7 @@ function MyPartsContent() {
   const { recalculateScore } = useGarageScore(vehicleForCar?.id);
   
   // Use cached cars data from React Query hook
-  const { data: allCars = [], isLoading: carsLoading } = useCarsList();
+  const { data: allCars = [] } = useCarsList();
   
   // Get URL params
   const buildIdParam = searchParams.get('build');
@@ -103,12 +99,12 @@ function MyPartsContent() {
   // Fallback: fetch single car in parallel with full list
   // This provides faster data when the full list is slow or unavailable
   const carFromList = carSlugParam ? allCars.find(c => c.slug === carSlugParam) : null;
-  const { data: fallbackCar, isLoading: fallbackLoading } = useCarBySlug(carSlugParam, {
+  const { data: fallbackCar } = useCarBySlug(carSlugParam, {
     enabled: !!carSlugParam && !carFromList && !selectedCar,
   });
   
-  // Get user's hero image for this car
-  const { heroImageUrl } = useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
+  // Pre-fetch user's hero image for this car (used by GarageVehicleSelector)
+  useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
   
   // Load build or car from URL params (with fallback support)
   useEffect(() => {
@@ -232,30 +228,6 @@ function MyPartsContent() {
   const handleBack = () => {
     router.push('/garage');
   };
-  
-  // Calculate parts specified count (must be before loading return for hooks rules)
-  const partsSpecifiedCount = selectedParts.filter(p => p.brandName || p.partName).length;
-  
-  // Calculate cost summary for parts page header (must be before loading return for hooks rules)
-  const costSummary = useMemo(() => {
-    const specifiedParts = selectedParts.filter(p => p.actualPrice && !isNaN(parseFloat(p.actualPrice)));
-    const specifiedTotal = specifiedParts.reduce((sum, p) => sum + parseFloat(p.actualPrice), 0);
-    const purchasedParts = specifiedParts.filter(p => p.status === 'purchased');
-    const purchasedTotal = purchasedParts.reduce((sum, p) => sum + parseFloat(p.actualPrice), 0);
-    const plannedParts = specifiedParts.filter(p => !p.status || p.status === 'planned');
-    const plannedTotal = plannedParts.reduce((sum, p) => sum + parseFloat(p.actualPrice), 0);
-    
-    return {
-      estimated: totalCost,
-      specifiedTotal,
-      specifiedCount: specifiedParts.length,
-      purchasedTotal,
-      purchasedCount: purchasedParts.length,
-      plannedTotal,
-      plannedCount: plannedParts.length,
-      unspecifiedCount: effectiveModules.length - specifiedParts.length,
-    };
-  }, [selectedParts, totalCost, effectiveModules.length]);
   
   // Loading state - only block on auth and builds, NOT carsLoading
   // The fallbackCar mechanism ensures we have car data when needed

@@ -287,7 +287,7 @@ function analyzeNotes(notes) {
 /**
  * Generate actionable recommendations
  */
-function generateRecommendations(analysis, trackTimes) {
+function generateRecommendations(analysis, _trackTimes) {
   const recommendations = [];
   
   // Low session count

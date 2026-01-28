@@ -1,40 +1,54 @@
-/* StripeDashboard Component Styles */
+/* StripeDashboard Component Styles
+ * Mobile-First Design following Brand Guidelines v2.0
+ */
 
+/* ================================================================
+   CONTAINER
+   ================================================================ */
 .container {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 28px;
 }
 
-/* Header */
+/* ================================================================
+   HEADER
+   ================================================================ */
 .header {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  flex-direction: column;
   gap: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (min-width: 640px) {
+  .header {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
 }
 
 .headerTitle {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .stripeLogoWrapper {
-  width: 44px;
-  height: 44px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--color-info, #635bff) 0%, var(--color-info, #8b7dff) 100%);
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #635bff 0%, #8b7dff 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(99, 91, 255, 0.3);
+  box-shadow: 0 4px 12px rgba(99, 91, 255, 0.35);
 }
 
 .stripeLogo {
-  width: 28px;
+  width: 32px;
   height: auto;
 }
 
@@ -44,30 +58,30 @@
 
 .headerTitle h3 {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .headerTitle p {
-  margin: 2px 0 0;
-  font-size: 12px;
-  color: var(--admin-text-secondary, #94a3b8);
+  margin: 4px 0 0;
+  font-size: 13px;
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .headerActions {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
 .refreshButton {
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--admin-text-secondary, #94a3b8);
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--brand-text-secondary, #94a3b8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -75,9 +89,10 @@
   transition: all 0.2s ease;
 }
 
-.refreshButton:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--admin-text-primary, #f8fafc);
+.refreshButton:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--brand-text-primary, #ffffff);
+  border-color: #635bff;
 }
 
 .refreshButton:disabled {
@@ -97,11 +112,12 @@
 .stripeLink {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  background: linear-gradient(135deg, var(--color-info, #635bff) 0%, var(--color-info, #8b7dff) 100%);
-  border-radius: 6px;
-  font-size: 12px;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 18px;
+  background: linear-gradient(135deg, #635bff, #8b7dff);
+  border-radius: 10px;
+  font-size: 13px;
   font-weight: 600;
   color: white;
   text-decoration: none;
@@ -109,82 +125,97 @@
 }
 
 .stripeLink:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(99, 91, 255, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(99, 91, 255, 0.4);
 }
 
-/* Sections */
+/* ================================================================
+   SECTIONS
+   ================================================================ */
 .section {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .sectionTitle {
   margin: 0;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--admin-text-secondary, #94a3b8);
+  letter-spacing: 0.06em;
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
-/* KPI Grid */
+/* ================================================================
+   KPI GRID
+   ================================================================ */
 .kpiGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  grid-template-columns: 1fr;
+  gap: 16px;
 }
 
-@media (min-width: 1025px) {
+@media (min-width: 480px) {
   .kpiGrid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (min-width: 601px) {
+@media (min-width: 1024px) {
   .kpiGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
-/* Subscriptions Section */
+/* ================================================================
+   SUBSCRIPTIONS GRID
+   ================================================================ */
 .subscriptionsGrid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  grid-template-columns: 1fr;
+  gap: 20px;
 }
 
-@media (min-width: 769px) {
+@media (min-width: 768px) {
   .subscriptionsGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 }
 
+/* ================================================================
+   CARDS
+   ================================================================ */
 .statsCard,
 .tiersCard {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
-  padding: 16px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 18px;
 }
 
 .statHeader {
-  margin-bottom: 12px;
+  margin-bottom: 14px;
 }
 
 .statLabel {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--admin-text-secondary, #94a3b8);
+  letter-spacing: 0.06em;
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .statsGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .statsGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 .statItem {
@@ -195,83 +226,89 @@
 }
 
 .statValue {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
 .statItem .statLabel {
-  margin-top: 4px;
-  font-size: 10px;
+  margin-top: 6px;
+  font-size: 11px;
 }
 
-/* Tiers */
+/* ================================================================
+   TIERS
+   ================================================================ */
 .tiersList {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .tierRow {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 8px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
 }
 
 .tierInfo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .tierBadge {
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
   font-weight: 600;
 }
 
 .tierCount {
-  font-size: 12px;
-  color: var(--admin-text-secondary, #94a3b8);
+  font-size: 13px;
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .tierMRR {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
-  color: var(--admin-positive, #22c55e);
+  color: var(--brand-success, #22c55e);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
-/* Revenue Breakdown */
+/* ================================================================
+   REVENUE BREAKDOWN
+   ================================================================ */
 .breakdownGrid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  grid-template-columns: 1fr;
+  gap: 16px;
 }
 
-@media (min-width: 769px) {
+@media (min-width: 768px) {
   .breakdownGrid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 .breakdownCard {
   display: flex;
   align-items: flex-start;
-  gap: 12px;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
+  gap: 14px;
+  padding: 18px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
 }
 
 .breakdownIcon {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -281,38 +318,41 @@
 .breakdownContent {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .breakdownLabel {
   font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: var(--admin-text-secondary, #94a3b8);
+  letter-spacing: 0.04em;
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .breakdownValue {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
 .breakdownSub {
-  font-size: 11px;
-  color: var(--admin-text-muted, #64748b);
+  font-size: 12px;
+  color: var(--brand-text-tertiary, #64748b);
 }
 
-/* Customers */
+/* ================================================================
+   CUSTOMERS GRID
+   ================================================================ */
 .customersGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
 }
 
-@media (min-width: 769px) {
+@media (min-width: 768px) {
   .customersGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -321,35 +361,39 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
+  padding: 18px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
 }
 
 .customerValue {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
 .customerLabel {
-  margin-top: 4px;
-  font-size: 11px;
+  margin-top: 6px;
+  font-size: 12px;
   font-weight: 500;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
-/* Payments Table */
+/* ================================================================
+   PAYMENTS TABLE
+   ================================================================ */
 .paymentsTable {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
   overflow: hidden;
 }
 
 .tableWrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .paymentsTable table {
@@ -359,27 +403,27 @@
 
 .paymentsTable th,
 .paymentsTable td {
-  padding: 12px 16px;
+  padding: 14px 18px;
   text-align: left;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .paymentsTable th {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--admin-text-secondary, #94a3b8);
-  background: rgba(255, 255, 255, 0.02);
+  letter-spacing: 0.06em;
+  color: var(--brand-text-secondary, #94a3b8);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .paymentsTable td {
-  font-size: 13px;
-  color: var(--admin-text-primary, #f8fafc);
+  font-size: 14px;
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .paymentsTable tbody tr:hover {
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .paymentsTable tbody tr:last-child td {
@@ -388,32 +432,35 @@
 
 .amountCell {
   font-weight: 600;
-  color: var(--admin-positive, #22c55e) !important;
+  color: var(--brand-success, #22c55e) !important;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
 .customerCell {
-  font-family: 'SF Mono', 'Fira Code', monospace;
-  font-size: 12px !important;
-  color: var(--admin-text-secondary, #94a3b8) !important;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px !important;
+  color: var(--brand-text-secondary, #94a3b8) !important;
 }
 
 .timeCell {
-  font-size: 12px !important;
-  color: var(--admin-text-muted, #64748b) !important;
+  font-size: 13px !important;
+  color: var(--brand-text-tertiary, #64748b) !important;
 }
 
 .paymentBadge {
-  padding: 3px 8px;
-  border-radius: 4px;
-  font-size: 10px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
   font-weight: 600;
 }
 
-/* Invoices */
+/* ================================================================
+   INVOICES GRID
+   ================================================================ */
 .invoicesGrid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 16px;
 }
 
 .invoiceStat {
@@ -421,51 +468,54 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
+  padding: 18px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
 }
 
 .invoiceStat.overdue {
-  border-color: rgba(var(--brand-error-rgb), 0.3);
-  background: rgba(var(--brand-error-rgb), 0.05);
+  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.08);
 }
 
 .invoiceStat.overdue .invoiceValue {
-  color: var(--admin-negative, #ef4444);
+  color: var(--brand-error, #ef4444);
 }
 
 .invoiceValue {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 700;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
 .invoiceLabel {
-  margin-top: 4px;
-  font-size: 11px;
+  margin-top: 6px;
+  font-size: 12px;
   font-weight: 500;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .invoiceAmount {
-  margin-top: 4px;
-  font-size: 12px;
+  margin-top: 6px;
+  font-size: 13px;
   font-weight: 600;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
 }
 
-/* Charges & Refunds Grid */
+/* ================================================================
+   CHARGES GRID
+   ================================================================ */
 .chargesGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
 }
 
-@media (min-width: 769px) {
+@media (min-width: 768px) {
   .chargesGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -474,66 +524,69 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
+  padding: 18px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
 }
 
 .chargeValue {
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 700;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
 .chargeLabel {
-  margin-top: 4px;
-  font-size: 11px;
+  margin-top: 6px;
+  font-size: 12px;
   font-weight: 500;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .chargeAmount {
-  margin-top: 4px;
-  font-size: 12px;
+  margin-top: 6px;
+  font-size: 14px;
   font-weight: 600;
 }
 
 .chargeAmount.positive {
-  color: var(--admin-positive, #22c55e);
+  color: var(--brand-success, #22c55e);
 }
 
 .chargeAmount.warning {
-  color: var(--admin-warning, #f59e0b);
+  color: var(--brand-warning, #f59e0b);
 }
 
 .chargeAmount.negative {
-  color: var(--admin-negative, #ef4444);
+  color: var(--brand-error, #ef4444);
 }
 
 .chargeStat.netRevenue {
-  background: linear-gradient(135deg, rgba(var(--brand-success-rgb), 0.1), rgba(var(--brand-success-rgb), 0.05));
-  border-color: rgba(var(--brand-success-rgb), 0.2);
+  background: linear-gradient(135deg, rgba(34, 197, 94, 0.12), rgba(34, 197, 94, 0.06));
+  border-color: rgba(34, 197, 94, 0.25);
 }
 
 .chargeStat.netRevenue .chargeValue {
-  color: var(--admin-positive, #22c55e);
+  color: var(--brand-success, #22c55e);
 }
 
-/* Disputes */
+/* ================================================================
+   DISPUTES
+   ================================================================ */
 .warningTitle {
-  color: var(--admin-warning, #f59e0b) !important;
+  color: var(--brand-warning, #f59e0b) !important;
 }
 
 .disputesGrid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
 }
 
-@media (min-width: 769px) {
+@media (min-width: 768px) {
   .disputesGrid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
 }
 
@@ -542,90 +595,100 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 14px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
+  padding: 16px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
 }
 
 .disputeStat.urgent {
-  background: rgba(var(--brand-error-rgb), 0.1);
-  border-color: rgba(var(--brand-error-rgb), 0.3);
+  background: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.35);
 }
 
 .disputeStat.urgent .disputeValue {
-  color: var(--admin-negative, #ef4444);
+  color: var(--brand-error, #ef4444);
 }
 
 .disputeStat.lost {
-  background: rgba(var(--brand-error-rgb), 0.05);
-  border-color: rgba(var(--brand-error-rgb), 0.2);
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.25);
 }
 
 .disputeStat.lost .disputeValue {
-  color: var(--admin-negative, #ef4444);
+  color: var(--brand-error, #ef4444);
 }
 
 .disputeValue {
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 700;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
 .disputeLabel {
-  margin-top: 4px;
-  font-size: 10px;
+  margin-top: 6px;
+  font-size: 11px;
   font-weight: 500;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
-/* Products Grid */
+/* ================================================================
+   PRODUCTS GRID
+   ================================================================ */
 .productsGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 12px;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 640px) {
+  .productsGrid {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
 }
 
 .productCard {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 14px 16px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
+  gap: 10px;
+  padding: 16px 18px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
   transition: all 0.2s ease;
 }
 
 .productCard:hover {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
 }
 
 .productHeader {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  gap: 12px;
+  gap: 14px;
 }
 
 .productName {
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 600;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .productPrice {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 700;
-  color: var(--admin-positive, #22c55e);
+  color: var(--brand-success, #22c55e);
   white-space: nowrap;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
 .productDescription {
-  font-size: 11px;
-  color: var(--admin-text-secondary, #94a3b8);
-  line-height: 1.4;
+  font-size: 13px;
+  color: var(--brand-text-secondary, #94a3b8);
+  line-height: 1.5;
   margin: 0;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -634,64 +697,66 @@
 }
 
 .productId {
-  font-size: 9px;
-  font-family: 'SF Mono', 'Fira Code', monospace;
-  color: var(--admin-text-muted, #64748b);
+  font-size: 11px;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  color: var(--brand-text-tertiary, #64748b);
 }
 
-/* Legacy product list (keeping for backwards compatibility) */
+/* Legacy product list */
 .productsList {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 
 .productItem {
   display: flex;
   flex-direction: column;
-  padding: 10px 14px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 8px;
+  padding: 12px 16px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
 }
 
-/* Empty State */
+/* ================================================================
+   STATES
+   ================================================================ */
 .emptyState {
   text-align: center;
-  padding: 24px;
-  font-size: 13px;
-  color: var(--admin-text-muted, #64748b);
+  padding: 32px;
+  font-size: 14px;
+  color: var(--brand-text-tertiary, #64748b);
 }
 
-/* Error State */
 .errorState {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  padding: 32px;
+  gap: 16px;
+  padding: 40px;
   text-align: center;
-  background: rgba(var(--brand-error-rgb), 0.05);
-  border: 1px solid rgba(var(--brand-error-rgb), 0.2);
-  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  border-radius: 14px;
 }
 
 .errorState p {
   margin: 0;
-  color: var(--admin-negative, #ef4444);
-  font-size: 13px;
+  color: var(--brand-error, #ef4444);
+  font-size: 14px;
 }
 
 .retryButton {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 20px;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 6px;
-  color: var(--admin-text-primary, #f8fafc);
-  font-size: 12px;
+  border-radius: 10px;
+  color: var(--brand-text-primary, #ffffff);
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -701,75 +766,77 @@
   background: rgba(255, 255, 255, 0.15);
 }
 
-/* Config Needed State */
+/* ================================================================
+   CONFIG NEEDED
+   ================================================================ */
 .configNeeded {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 40px;
+  padding: 50px 24px;
   text-align: center;
-  background: linear-gradient(135deg, rgba(99, 91, 255, 0.08), rgba(99, 91, 255, 0.02));
-  border: 1px solid rgba(99, 91, 255, 0.2);
-  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(99, 91, 255, 0.1), rgba(99, 91, 255, 0.04));
+  border: 1px solid rgba(99, 91, 255, 0.25);
+  border-radius: 16px;
 }
 
 .configIcon {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .stripeLogoLarge {
-  width: 80px;
+  width: 90px;
   height: auto;
-  opacity: 0.8;
+  opacity: 0.9;
 }
 
 .configTitle {
-  margin: 0 0 8px 0;
-  font-size: 20px;
+  margin: 0 0 10px 0;
+  font-size: 22px;
   font-weight: 700;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .configDesc {
-  margin: 0 0 24px 0;
-  font-size: 14px;
-  color: var(--admin-text-secondary, #94a3b8);
+  margin: 0 0 28px 0;
+  font-size: 15px;
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .configSteps {
   text-align: left;
   width: 100%;
-  max-width: 500px;
-  padding: 20px 24px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
-  margin-bottom: 24px;
+  max-width: 540px;
+  padding: 24px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  margin-bottom: 28px;
 }
 
 .configSteps h4 {
-  margin: 0 0 12px 0;
-  font-size: 12px;
+  margin: 0 0 16px 0;
+  font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--admin-text-secondary, #94a3b8);
+  letter-spacing: 0.06em;
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .configSteps ol {
   margin: 0;
-  padding-left: 20px;
+  padding-left: 24px;
 }
 
 .configSteps li {
-  margin-bottom: 10px;
-  font-size: 13px;
-  color: var(--admin-text-primary, #f8fafc);
-  line-height: 1.5;
+  margin-bottom: 14px;
+  font-size: 14px;
+  color: var(--brand-text-primary, #ffffff);
+  line-height: 1.6;
 }
 
 .configSteps a {
-  color: var(--color-info, #635bff);
+  color: #635bff;
   text-decoration: none;
   font-weight: 500;
 }
@@ -779,29 +846,29 @@
 }
 
 .configSteps code {
-  padding: 2px 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  font-family: 'SF Mono', 'Fira Code', monospace;
-  font-size: 11px;
-  color: var(--color-accent-blue-light, #a5b4fc);
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 12px;
+  color: #a5b4fc;
 }
 
 .configCode {
   display: block;
-  margin: 8px 0;
-  padding: 12px 16px;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 6px;
-  font-family: 'SF Mono', 'Fira Code', monospace;
-  font-size: 12px;
-  color: var(--brand-success);
+  margin: 10px 0;
+  padding: 14px 18px;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: 8px;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  font-size: 13px;
+  color: var(--brand-success, #22c55e);
   overflow-x: auto;
 }
 
 .configActions {
   display: flex;
-  gap: 12px;
+  gap: 14px;
   flex-wrap: wrap;
   justify-content: center;
 }
@@ -809,11 +876,12 @@
 .stripeButton {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 24px;
-  background: linear-gradient(135deg, var(--color-info, #635bff) 0%, var(--color-info, #8b7dff) 100%);
-  border-radius: 8px;
-  font-size: 14px;
+  gap: 10px;
+  min-height: 48px;
+  padding: 12px 28px;
+  background: linear-gradient(135deg, #635bff, #8b7dff);
+  border-radius: 12px;
+  font-size: 15px;
   font-weight: 600;
   color: white;
   text-decoration: none;
@@ -822,18 +890,19 @@
 
 .stripeButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(99, 91, 255, 0.4);
+  box-shadow: 0 8px 28px rgba(99, 91, 255, 0.45);
 }
 
-/* Footer */
+/* ================================================================
+   FOOTER
+   ================================================================ */
 .footer {
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
   text-align: right;
 }
 
 .footer span {
-  font-size: 10px;
-  color: var(--admin-text-muted, #64748b);
+  font-size: 11px;
+  color: var(--brand-text-tertiary, #64748b);
 }
-

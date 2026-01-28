@@ -10,7 +10,7 @@
  * providing a seamless "progressive disclosure" UX pattern.
  */
 
-import { useState, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { Icons } from '@/components/ui/Icons';
 
@@ -221,7 +221,7 @@ export default function UpgradeConfigPanel({
   configOptions,
   currentConfig = {},
   onChange,
-  selectedUpgrades = [],  // To check for dependency warnings
+  selectedUpgrades: _selectedUpgrades = [],  // To check for dependency warnings
   compact = false,  // New: flat design without outer container
 }) {
   // Handler for config changes

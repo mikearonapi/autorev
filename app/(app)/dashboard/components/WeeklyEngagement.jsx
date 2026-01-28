@@ -47,7 +47,7 @@ export default function WeeklyEngagement({
   dailyActivity = [], // Array of 7 days, each with { al, community, data, garage?, profile? } values
   monthlyActivity = [], // Array of days in current month, each with { day, al, community, data, garage?, profile? }
   yearlyActivity = [], // Array of 12 months, each with { month, al, community, data, garage?, profile? }
-  streak = { current: 0, longest: 0 },
+  streak: _streak = { current: 0, longest: 0 },
   animated = true,
 }) {
   const [view, setView] = useState('weekly'); // 'weekly', 'monthly', or 'yearly'

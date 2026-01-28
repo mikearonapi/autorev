@@ -1,127 +1,160 @@
-/* AlertsList Component Styles - Compact */
+/* AlertsList Component Styles
+ * Mobile-First Design following Brand Guidelines v2.0
+ */
 
+/* ================================================================
+   CONTAINER
+   ================================================================ */
 .container {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 14px 16px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 18px;
 }
 
+@media (min-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+}
+
+/* ================================================================
+   HEADER
+   ================================================================ */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .title {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--admin-text-secondary, #94a3b8);
+  letter-spacing: 0.06em;
+  color: var(--brand-text-secondary, #94a3b8);
   margin: 0;
 }
 
 .badge {
-  background: var(--admin-accent-blue, var(--brand-blue));
+  background: var(--brand-blue, #3b82f6);
   color: white;
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 8px;
-  min-width: 16px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  min-width: 24px;
   text-align: center;
 }
 
+/* ================================================================
+   LIST
+   ================================================================ */
 .list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 10px;
 }
 
+/* ================================================================
+   LIST ITEM
+   ================================================================ */
 .item {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border-left: 3px solid;
-  transition: transform 0.2s ease;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border-left: 4px solid;
+  transition: transform 0.2s ease, background 0.2s ease;
+  min-height: 48px;
 }
 
 .item:hover {
-  transform: translateX(2px);
+  transform: translateX(4px);
+  background: rgba(255, 255, 255, 0.03);
 }
 
+/* ================================================================
+   ITEM ICON
+   ================================================================ */
 .icon {
   flex-shrink: 0;
-  margin-top: 1px;
+  margin-top: 2px;
 }
 
 .icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ================================================================
+   ITEM CONTENT
+   ================================================================ */
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+}
+
+.message {
+  font-size: 14px;
+  color: var(--brand-text-primary, #ffffff);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.action {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--brand-blue, #3b82f6);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: color 0.2s ease;
+  min-height: 44px;
+  padding: 8px 0;
+}
+
+.action:hover {
+  color: var(--brand-teal, #10b981);
+}
+
+.action svg {
   width: 14px;
   height: 14px;
 }
 
-.content {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-}
-
-.message {
-  font-size: 12px;
-  color: var(--admin-text-primary, #f8fafc);
-  margin: 0;
-  line-height: 1.4;
-}
-
-.action {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--admin-accent-blue, var(--brand-blue));
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 3px;
-  transition: color 0.2s ease;
-}
-
-.action:hover {
-  color: var(--admin-accent-purple, var(--brand-purple-accent));
-}
-
-.action svg {
-  width: 10px;
-  height: 10px;
-}
-
-/* Empty state */
+/* ================================================================
+   EMPTY STATE
+   ================================================================ */
 .emptyState {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 24px 16px;
-  gap: 8px;
+  padding: 32px 20px;
+  gap: 12px;
 }
 
 .emptyIcon {
-  color: var(--admin-positive, #22c55e);
-  opacity: 0.6;
+  color: var(--brand-success, #22c55e);
+  opacity: 0.7;
 }
 
 .emptyIcon svg {
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
 }
 
 .emptyText {
-  font-size: 12px;
-  color: var(--admin-text-muted, #64748b);
+  font-size: 14px;
+  color: var(--brand-text-tertiary, #64748b);
 }

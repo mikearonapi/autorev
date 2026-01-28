@@ -236,6 +236,36 @@ export const DynamicSportsCarComparison = dynamic(
 );
 
 // =============================================================================
+// GARAGE COMPONENTS
+// =============================================================================
+
+/**
+ * Sortable Vehicle List - Drag-and-drop reordering for garage vehicles
+ * Heavy: Imports @dnd-kit/core, @dnd-kit/sortable, @dnd-kit/utilities (~317 KiB)
+ * Only loaded when user needs to reorder vehicles
+ */
+export const DynamicSortableVehicleList = dynamic(
+  () => import('./garage/SortableVehicleList'),
+  {
+    loading: () => null, // Parent shows the list immediately without drag support
+    ssr: false,
+  }
+);
+
+/**
+ * Service Center Finder - Google Maps integration for finding shops
+ * Heavy: Imports Google Maps/Places API integration
+ * Only loaded when user visits the Install page and needs service centers
+ */
+export const DynamicServiceCenterFinder = dynamic(
+  () => import('./garage/ServiceCenterFinder'),
+  {
+    loading: () => <CardSkeleton />,
+    ssr: false,
+  }
+);
+
+// =============================================================================
 // MODAL COMPONENTS
 // =============================================================================
 
@@ -282,7 +312,16 @@ export function preloadAnalysisComponents() {
   import('./NextUpgradeRecommendation');
 }
 
-export default {
+/**
+ * Preload garage components (dnd-kit for reordering)
+ * Call this when user hovers over garage navigation
+ */
+export function preloadGarageComponents() {
+  import('./garage/SortableVehicleList');
+  import('./garage/ServiceCenterFinder');
+}
+
+const dynamicComponents = {
   // Charts
   DynamicVirtualDynoChart,
   DynamicLapTimeEstimator,
@@ -302,6 +341,10 @@ export default {
   // Comparison
   DynamicSportsCarComparison,
 
+  // Garage
+  DynamicSortableVehicleList,
+  DynamicServiceCenterFinder,
+
   // Modals
   DynamicDynoLogModal,
   DynamicTrackTimeLogModal,
@@ -309,4 +352,7 @@ export default {
   // Utilities
   preloadChartComponents,
   preloadAnalysisComponents,
+  preloadGarageComponents,
 };
+
+export default dynamicComponents;

@@ -20,6 +20,7 @@ export async function GET(request) {
 
   // Validate required parameters
   if (!token_hash || !type) {
+    // eslint-disable-next-line no-console
     console.error('[Auth Confirm] Missing required parameters');
     return NextResponse.redirect(
       new URL('/auth/error?error=Invalid%20confirmation%20link', requestUrl.origin)
@@ -61,12 +62,14 @@ export async function GET(request) {
     });
 
     if (error) {
+      // eslint-disable-next-line no-console
       console.error('[Auth Confirm] Verification failed:', error.message);
       return NextResponse.redirect(
         new URL(`/auth/error?error=${encodeURIComponent(error.message)}`, requestUrl.origin)
       );
     }
 
+    // eslint-disable-next-line no-console
     console.log('[Auth Confirm] Email verified successfully for user:', data.user?.id?.slice(0, 8) + '...');
 
     // Build redirect URL
@@ -92,10 +95,12 @@ export async function GET(request) {
       sameSite: 'lax',
     });
 
+    // eslint-disable-next-line no-console
     console.log(`[Auth Confirm] Redirecting to ${redirectUrl.pathname} with email_confirmed=1`);
     return response;
 
   } catch (err) {
+    // eslint-disable-next-line no-console
     console.error('[Auth Confirm] Unexpected error:', err);
     return NextResponse.redirect(
       new URL('/auth/error?error=Confirmation%20failed', requestUrl.origin)

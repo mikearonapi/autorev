@@ -8,29 +8,29 @@
  * @route GET /api/admin/dashboard?range=week
  */
 
+import { NextResponse } from 'next/server';
+
 import { createClient } from '@supabase/supabase-js';
+
+import { isAdminEmail } from '@/lib/adminAccess';
+import { getTotalUsersCount, getUserTierBreakdown } from '@/lib/adminMetricsService';
+import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 // Force dynamic rendering - NEVER cache this API route
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 export const fetchCache = 'force-no-store';
 
-import { NextResponse } from 'next/server';
-
-import { isAdminEmail } from '@/lib/adminAccess';
-import { getTotalUsersCount, getUserTierBreakdown } from '@/lib/adminMetricsService';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
-
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-async function getAuthUsersTotalSafe(supabase) {
+async function _getAuthUsersTotalSafe(supabase) {
   try {
     const { data, error } = await supabase.auth.admin.listUsers({ page: 1, perPage: 1 });
     if (error) return null;
     if (typeof data?.total === 'number') return data.total;
     return Array.isArray(data?.users) ? data.users.length : null;
-  } catch (err) {
+  } catch (_err) {
     // Some environments/SDK versions can throw if options are unsupported
     try {
       const { data, error } = await supabase.auth.admin.listUsers();
@@ -251,7 +251,7 @@ async function handleGet(request) {
         .gte('created_at', dateRange.previousStart)
         .lte('created_at', dateRange.previousEnd) : Promise.resolve({ data: [] }),
       
-      // AL credit balances
+      // AL credit balances (prefixed as unused - data used for reference only)
       supabase.from('al_credit_balances').select('id, user_id, balance, lifetime_earned, lifetime_spent, last_activity_at, created_at'),
       
       // Events - use count queries instead of fetching all rows (can be 7000+)
@@ -326,7 +326,7 @@ async function handleGet(request) {
     // Process AL engagement data (include ALL users for consistent counts)
     const alConversations = alConversationsResult.data || [];
     const previousAlConversations = previousAlConversationsResult.data || [];
-    const alBalances = alBalancesResult.data || [];
+    const _alBalances = alBalancesResult.data || [];
     
     // Unique users with AL conversations
     const alUserIds = new Set(alConversations.map(c => c.user_id));

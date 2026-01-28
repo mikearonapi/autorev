@@ -53,7 +53,7 @@ const SpinnerIcon = ({ size = 14 }) => (
  */
 export default function EventRSVPButton({
   eventSlug,
-  eventName,
+  eventName: _eventName,
   initialRsvp = null,
   onRsvpChange,
   variant = 'default',
@@ -142,7 +142,8 @@ export default function EventRSVPButton({
       // Remove RSVP
       handleRemoveRsvp();
     }
-  }, [isAuthenticated, isLoading, rsvpStatus, showDropdown, openSignIn]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, isLoading, rsvpStatus, showDropdown]);
   
   /**
    * Set RSVP status

@@ -16,8 +16,6 @@
 
 import { useState, useEffect } from 'react';
 
-import Link from 'next/link';
-
 import { useSubscription } from '@/hooks/useSubscription';
 
 import styles from './PaymentFailedBanner.module.css';

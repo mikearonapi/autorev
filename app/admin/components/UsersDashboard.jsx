@@ -19,7 +19,6 @@ import {
   SearchIcon,
   ChevronDownIcon,
   ChevronUpIcon,
-  ExternalLinkIcon,
 } from './Icons';
 import styles from './UsersDashboard.module.css';
 
@@ -143,7 +142,7 @@ function ActivityIndicator({ level }) {
 }
 
 // Main component
-export function UsersDashboard({ token, range = '7d', currentUserId = null }) {
+export function UsersDashboard({ token, range: _range = '7d', currentUserId = null }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);

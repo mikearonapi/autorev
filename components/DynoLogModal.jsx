@@ -101,7 +101,7 @@ export default function DynoLogModal({
   vehicleInfo,
   predictedWhp,
   editingResult = null,
-  currentBuildInfo = null, // { upgrades: [], totalHpGain, estimatedHp }
+  currentBuildInfo: _currentBuildInfo = null, // { upgrades: [], totalHpGain, estimatedHp }
 }) {
   // Portal mounting - required for SSR compatibility
   const [isMounted, setIsMounted] = useState(false);
@@ -190,7 +190,7 @@ export default function DynoLogModal({
   }, [editingResult, isOpen]);
 
   // Calculate difference from prediction
-  const whpDiff = formData.whp && predictedWhp 
+  const _whpDiff = formData.whp && predictedWhp 
     ? parseInt(formData.whp) - predictedWhp 
     : null;
 
@@ -243,7 +243,7 @@ export default function DynoLogModal({
         dynoSheetUrl: URL.createObjectURL(file) // Temporary preview URL
       }));
       setErrors(prev => {
-        const { upload, ...rest } = prev;
+        const { upload: _upload, ...rest } = prev;
         return rest;
       });
     } catch (err) {

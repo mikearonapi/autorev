@@ -46,7 +46,7 @@ async function handleGet(request) {
     }
     
     const now = new Date();
-    const today = now.toISOString().split('T')[0];
+    const _today = now.toISOString().split('T')[0];
     
     // =========================================================================
     // Get Historical Retention Data (last 30 days)

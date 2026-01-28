@@ -30,6 +30,36 @@ describe('stripPreamble', () => {
     expect(result).toContain('Aeromotive 340 Stealth Fuel Pump');
   });
 
+  it('strips "I\'ll search...Based on the research results" preamble', () => {
+    // Exact text from Mike's screenshot - ECU tune recommendation
+    const input = `I'll search for the best Stage 1 ECU tunes for your Audi RS5 B9.Based on the research results, I'll compile the top Stage 1 ECU tunes for your Audi RS5 B9:
+
+Top 5 Stage 1 ECU Tune Picks for Audi RS5 B9
+
+1) Integrated Engineering (IE) Performance ECU Tune`;
+
+    const result = stripPreamble(input);
+
+    // Should strip all preamble
+    expect(result).not.toContain("I'll search for the best");
+    expect(result).not.toContain('Based on the research results');
+    expect(result).not.toContain("I'll compile");
+    // Should start with actual content
+    expect(result).toContain('Top 5 Stage 1 ECU Tune Picks');
+    expect(result).toContain('Integrated Engineering');
+  });
+
+  it('strips "Based on the research results" as standalone', () => {
+    const input = `Based on the research results, here are my top picks:
+
+## Best Exhausts for BMW M3`;
+
+    const result = stripPreamble(input);
+
+    expect(result).not.toContain('Based on the research results');
+    expect(result).toContain('## Best Exhausts for BMW M3');
+  });
+
   it('strips research announcements', () => {
     const input = "I'll research the best exhaust options for your car. ## Best Exhausts";
     const result = stripPreamble(input);

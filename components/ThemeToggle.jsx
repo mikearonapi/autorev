@@ -23,7 +23,7 @@ import styles from './ThemeToggle.module.css';
  * @param {'icon'|'text'|'both'} [props.variant='icon'] - Display variant
  */
 export default function ThemeToggle({ className, variant = 'icon' }) {
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const { theme: _theme, setTheme, resolvedTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
   
   // Prevent hydration mismatch

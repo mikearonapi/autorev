@@ -18,31 +18,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  DragOverlay,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
-
 import AddVehicleModal from '@/components/AddVehicleModal';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import BuildDetailView from '@/components/BuildDetailView';
 import BuildMediaGallery from '@/components/BuildMediaGallery';
 import CarActionMenu from '@/components/CarActionMenu';
 import CarImage from '@/components/CarImage';
+import { DynamicSortableVehicleList, preloadGarageComponents } from '@/components/dynamic';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import ImageUploader from '@/components/ImageUploader';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -3364,29 +3346,78 @@ function EmptyState({ icon: Icon, title, description, actionLabel, onAction }) {
   );
 }
 
-// Sortable Vehicle Item - Individual draggable item in the list
-function SortableVehicleItem({ item, onSelectVehicle, onDeleteVehicle, isDragging }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging: isSortableDragging,
-  } = useSortable({ id: item.vehicle?.id });
+// Vehicle List View Component - Uses dynamically imported sortable list
+// The DynamicSortableVehicleList component is lazy-loaded to avoid bundling
+// @dnd-kit (~317 KiB) on initial page load. This wrapper handles the data
+// transformation and provides the interface expected by the parent component.
+function VehicleListView({ items, onSelectVehicle, onDeleteVehicle, onReorder }) {
+  // Preload the sortable list component when this view mounts
+  useEffect(() => {
+    preloadGarageComponents();
+  }, []);
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isSortableDragging ? 0.5 : 1,
-    zIndex: isSortableDragging ? 1000 : 'auto',
-  };
+  // Transform items to the format expected by SortableVehicleList
+  const transformedItems = useMemo(() => {
+    return items.map((item) => ({
+      vehicle: item.vehicle,
+      car: item.matchedCar,
+      enrichedCar: item.enrichedCar,
+    }));
+  }, [items]);
 
+  // Handle vehicle selection - transform back to original item format
+  const handleSelectVehicle = useCallback(
+    (transformedItem) => {
+      const originalItem = items.find((item) => item.vehicle?.id === transformedItem.vehicle?.id);
+      if (originalItem && onSelectVehicle) {
+        onSelectVehicle(originalItem);
+      }
+    },
+    [items, onSelectVehicle]
+  );
+
+  // Handle vehicle deletion
+  const handleDeleteVehicle = useCallback(
+    (vehicleId) => {
+      const originalItem = items.find((item) => item.vehicle?.id === vehicleId);
+      if (originalItem && onDeleteVehicle) {
+        onDeleteVehicle(originalItem);
+      }
+    },
+    [items, onDeleteVehicle]
+  );
+
+  return (
+    <Suspense
+      fallback={
+        <div className={styles.vehicleListView}>
+          {items.map((item) => (
+            <VehicleListItemFallback
+              key={item.vehicle?.id}
+              item={item}
+              onSelectVehicle={onSelectVehicle}
+              onDeleteVehicle={onDeleteVehicle}
+            />
+          ))}
+        </div>
+      }
+    >
+      <DynamicSortableVehicleList
+        items={transformedItems}
+        onSelectVehicle={handleSelectVehicle}
+        onDeleteVehicle={handleDeleteVehicle}
+        onReorder={onReorder}
+      />
+    </Suspense>
+  );
+}
+
+// Simple fallback list item (no drag support) shown while sortable version loads
+function VehicleListItemFallback({ item, onSelectVehicle, onDeleteVehicle }) {
   const car = item.matchedCar;
   const vehicle = item.vehicle;
   const hasBuild = vehicle?.activeBuildId || vehicle?.installedModifications?.length > 0;
   const hpGain = item.build?.totalHpGain ?? vehicle?.totalHpGain ?? 0;
-  const totalCost = item.build?.totalCostLow || 0;
 
   const displayName =
     vehicle?.nickname ||
@@ -3394,197 +3425,67 @@ function SortableVehicleItem({ item, onSelectVehicle, onDeleteVehicle, isDraggin
     `${vehicle?.year || ''} ${vehicle?.make || ''} ${vehicle?.model || ''}`.trim();
   const subtitle = car?.name || `${vehicle?.year} ${vehicle?.make} ${vehicle?.model}`;
 
-  const handleItemClick = () => {
-    if (onSelectVehicle && !isDragging) {
-      onSelectVehicle(item);
-    }
-  };
-
-  const handleDelete = (e) => {
-    e.stopPropagation();
-    if (onDeleteVehicle) {
-      onDeleteVehicle(item);
-    }
-  };
-
   return (
-    <div ref={setNodeRef} style={style}>
-      <SwipeableRow
-        rightActions={[
-          {
-            icon: <Icons.trash size={18} />,
-            label: 'Delete',
-            onClick: () => onDeleteVehicle?.(item),
-            variant: 'danger',
-          },
-        ]}
-      >
-        <div
-          className={`${styles.vehicleListItem} ${isSortableDragging ? styles.vehicleListItemDragging : ''}`}
-          onClick={handleItemClick}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              handleItemClick();
-            }
-          }}
-          tabIndex={0}
-          role="button"
-          aria-label={`Select ${displayName}`}
-        >
-          {/* Drag Handle */}
-          <button
-            className={styles.dragHandle}
-            {...attributes}
-            {...listeners}
-            aria-label="Drag to reorder"
-            title="Drag to reorder"
-          >
-            <Icons.grip size={20} />
-          </button>
-
-          {/* Info */}
-          <div className={styles.vehicleListInfo}>
-            <h3 className={styles.vehicleListName}>{displayName}</h3>
-            <p className={styles.vehicleListSubtitle}>{subtitle !== displayName ? subtitle : ''}</p>
-
-            {/* Build stats */}
-            <div className={styles.vehicleListStats}>
-              {hasBuild && hpGain > 0 && (
-                <span className={styles.vehicleListStat}>
-                  <Icons.bolt size={14} />
-                  <span className={styles.vehicleListStatValue}>+{hpGain}</span>
-                  <span className={styles.vehicleListStatLabel}>HP</span>
-                </span>
-              )}
-              {totalCost > 0 && (
-                <span className={styles.vehicleListStat}>${totalCost.toLocaleString()}</span>
-              )}
-            </div>
-          </div>
-
-          {/* Actions (visible on desktop, hidden on mobile where swipe is available) */}
-          <div className={styles.vehicleListActions}>
-            <button className={styles.vehicleListAction} onClick={handleDelete} title="Delete">
-              <Icons.trash size={18} />
-            </button>
-          </div>
-        </div>
-      </SwipeableRow>
-    </div>
-  );
-}
-
-// Drag overlay item - shown while dragging (visual feedback)
-function DragOverlayItem({ item }) {
-  const car = item?.matchedCar;
-  const vehicle = item?.vehicle;
-
-  const displayName =
-    vehicle?.nickname ||
-    car?.name ||
-    `${vehicle?.year || ''} ${vehicle?.make || ''} ${vehicle?.model || ''}`.trim();
-
-  if (!item) return null;
-
-  return (
-    <div className={`${styles.vehicleListItem} ${styles.vehicleListItemOverlay}`}>
-      <div className={styles.dragHandle}>
-        <Icons.grip size={20} />
-      </div>
-      <div className={styles.vehicleListInfo}>
-        <h3 className={styles.vehicleListName}>{displayName}</h3>
-      </div>
-    </div>
-  );
-}
-
-// Vehicle List View Component - Compact list with drag-and-drop reordering
-function VehicleListView({ items, onSelectVehicle, onDeleteVehicle, onReorder }) {
-  const { heroImageUrl: _defaultHero } = useCarImages(null);
-  const [activeId, setActiveId] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
-
-  // Configure sensors for touch and pointer input
-  // activationConstraint prevents accidental drags on tap/click
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8, // Require 8px movement before drag starts
-      },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 150, // 150ms hold before drag starts on touch
-        tolerance: 5, // Allow 5px movement during delay
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  // Get the vehicle IDs for SortableContext
-  const vehicleIds = useMemo(() => items.map((item) => item.vehicle?.id).filter(Boolean), [items]);
-
-  const handleDragStart = useCallback((event) => {
-    setActiveId(event.active.id);
-    setIsDragging(true);
-  }, []);
-
-  const handleDragEnd = useCallback(
-    (event) => {
-      const { active, over } = event;
-      setActiveId(null);
-      setIsDragging(false);
-
-      if (over && active.id !== over.id) {
-        const oldIndex = items.findIndex((item) => item.vehicle?.id === active.id);
-        const newIndex = items.findIndex((item) => item.vehicle?.id === over.id);
-
-        if (oldIndex !== -1 && newIndex !== -1 && onReorder) {
-          // Create new array with reordered items
-          const newItems = arrayMove(items, oldIndex, newIndex);
-          // Extract vehicle IDs in new order and call reorder
-          const vehicleIds = newItems.map((item) => item.vehicle.id);
-          onReorder(vehicleIds);
-        }
-      }
-    },
-    [items, onReorder]
-  );
-
-  const handleDragCancel = useCallback(() => {
-    setActiveId(null);
-    setIsDragging(false);
-  }, []);
-
-  // Find the active item for the drag overlay
-  const activeItem = activeId ? items.find((item) => item.vehicle?.id === activeId) : null;
-
-  return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-      onDragCancel={handleDragCancel}
+    <SwipeableRow
+      rightActions={[
+        {
+          icon: <Icons.trash size={18} />,
+          label: 'Delete',
+          onClick: () => onDeleteVehicle?.(item),
+          variant: 'danger',
+        },
+      ]}
     >
-      <SortableContext items={vehicleIds} strategy={verticalListSortingStrategy}>
-        <div className={styles.vehicleListView}>
-          {items.map((item) => (
-            <SortableVehicleItem
-              key={item.vehicle?.id}
-              item={item}
-              onSelectVehicle={onSelectVehicle}
-              onDeleteVehicle={onDeleteVehicle}
-              isDragging={isDragging}
-            />
-          ))}
+      <div
+        className={styles.vehicleListItem}
+        onClick={() => onSelectVehicle?.(item)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onSelectVehicle?.(item);
+          }
+        }}
+        tabIndex={0}
+        role="button"
+        aria-label={`Select ${displayName}`}
+      >
+        {/* Placeholder for drag handle (maintains layout) */}
+        <div className={styles.dragHandle} style={{ opacity: 0.3 }}>
+          <Icons.grip size={20} />
         </div>
-      </SortableContext>
-      <DragOverlay>{activeId ? <DragOverlayItem item={activeItem} /> : null}</DragOverlay>
-    </DndContext>
+
+        {/* Info */}
+        <div className={styles.vehicleListInfo}>
+          <h3 className={styles.vehicleListName}>{displayName}</h3>
+          <p className={styles.vehicleListSubtitle}>{subtitle !== displayName ? subtitle : ''}</p>
+
+          {/* Build stats */}
+          <div className={styles.vehicleListStats}>
+            {hasBuild && hpGain > 0 && (
+              <span className={styles.vehicleListStat}>
+                <Icons.bolt size={14} />
+                <span className={styles.vehicleListStatValue}>+{hpGain}</span>
+                <span className={styles.vehicleListStatLabel}>HP</span>
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Actions */}
+        <div className={styles.vehicleListActions}>
+          <button
+            className={styles.vehicleListAction}
+            onClick={(e) => {
+              e.stopPropagation();
+              onDeleteVehicle?.(item);
+            }}
+            title="Delete"
+          >
+            <Icons.trash size={18} />
+          </button>
+        </div>
+      </div>
+    </SwipeableRow>
   );
 }
 

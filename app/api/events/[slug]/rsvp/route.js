@@ -12,7 +12,6 @@ import { NextResponse } from 'next/server';
 
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
-import { hasTierAccess, IS_BETA } from '@/lib/tierAccess';
 
 // Valid RSVP statuses
 const VALID_STATUSES = ['going', 'interested'];
@@ -150,11 +149,10 @@ async function handlePost(request, { params }) {
     .eq('id', user.id)
     .single();
 
-  const userTier = profile?.subscription_tier || 'free';
+  const _userTier = profile?.subscription_tier || 'free';
   
   // All authenticated users can RSVP (lowering barrier for community engagement)
-  // Could gate to Enthusiast+ tier if needed:
-  // const hasAccess = IS_BETA || hasTierAccess(userTier, 'collector');
+  // Could gate to Enthusiast+ tier if needed with: hasTierAccess(_userTier, 'collector')
   const hasAccess = true;
 
   if (!hasAccess) {

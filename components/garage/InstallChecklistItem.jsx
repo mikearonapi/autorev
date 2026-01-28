@@ -3,12 +3,12 @@
 /**
  * InstallChecklistItem Component
  * 
- * Individual part row in the installation checklist showing:
+ * Individual part row in the installation guide showing:
  * - Part name and brand (if specified)
  * - Difficulty badge (from upgradeTools.js)
  * - Estimated labor hours
  * - Warning badges (requires tune, etc.)
- * - Action buttons (Show Videos, Show Tools, Mark Installed)
+ * - Action buttons (Show Videos, Show Tools)
  * - DIY videos fetched from API when expanded
  */
 
@@ -17,7 +17,7 @@ import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { DIYVideoList } from '@/components/garage/DIYVideoEmbed';
 import { Icons } from '@/components/ui/Icons';
 import InfoTooltip from '@/components/ui/InfoTooltip';
-import { getToolsForUpgrade, difficultyLevels } from '@/data/upgradeTools';
+import { getToolsForUpgrade, difficultyLevels, tools, toolCategories } from '@/data/upgradeTools';
 
 import styles from './InstallChecklistItem.module.css';
 
@@ -32,9 +32,9 @@ const DIFFICULTY_COLORS = {
 };
 
 /**
- * InstallChecklistItem - Single part in the installation checklist
+ * InstallChecklistItem - Single part in the installation guide
  * 
- * @param {Object} part - Part data with id, upgradeKey, name, installed, etc.
+ * @param {Object} part - Part data with id, upgradeKey, name, etc.
  * @param {string} carName - Vehicle name for context
  * @param {string} carSlug - Vehicle slug for API calls
  * @param {boolean} isExpanded - Whether this item is expanded
@@ -43,7 +43,6 @@ const DIFFICULTY_COLORS = {
  * @param {function} onToggleVideos - Callback to toggle videos
  * @param {boolean} showTools - Whether to show tools section
  * @param {function} onToggleTools - Callback to toggle tools
- * @param {function} onMarkInstalled - Callback when marking as installed
  */
 export default function InstallChecklistItem({
   part,
@@ -55,7 +54,6 @@ export default function InstallChecklistItem({
   onToggleVideos,
   showTools,
   onToggleTools,
-  onMarkInstalled,
 }) {
   // Video loading state
   const [videos, setVideos] = useState([]);
@@ -127,24 +125,9 @@ export default function InstallChecklistItem({
     part.upgradeKey?.includes('downpipe');
   
   return (
-    <div className={`${styles.item} ${part.installed ? styles.installed : ''}`}>
+    <div className={styles.item}>
       {/* Main Row - Compact single-line layout */}
       <div className={styles.mainRow} onClick={onToggleExpand}>
-        {/* Checkbox/Status */}
-        <div className={styles.statusIcon}>
-          {part.installed ? (
-            <span className={styles.checkmark}>
-              <Icons.check size={14} />
-            </span>
-          ) : part.status === 'purchased' ? (
-            <span className={styles.purchasedCircle}>
-              <Icons.shoppingCart size={10} />
-            </span>
-          ) : (
-            <span className={styles.pendingCircle} />
-          )}
-        </div>
-        
         {/* Part Info - Compact layout */}
         <div className={styles.partInfo}>
           <span className={styles.partName}>
@@ -180,15 +163,8 @@ export default function InstallChecklistItem({
       {/* Expanded Content */}
       {isExpanded && (
         <div className={styles.expandedContent}>
-          {/* Status + Additional Badges Row */}
+          {/* Additional Badges Row */}
           <div className={styles.expandedBadges}>
-            {/* Part status */}
-            {part.status === 'purchased' && !part.installed && (
-              <span className={styles.readyBadge}>Ready to Install</span>
-            )}
-            {(!part.status || part.status === 'planned') && !part.installed && (
-              <span className={styles.plannedBadge}>Not Purchased</span>
-            )}
             {/* Time estimate */}
             {toolReqs?.timeEstimate && (
               <span className={styles.timeDetailBadge}>
@@ -221,7 +197,7 @@ export default function InstallChecklistItem({
               onClick={onToggleVideos}
             >
               <Icons.video size={16} />
-              {showVideos ? 'Hide Videos' : 'Show Install Videos'}
+              {showVideos ? 'Hide Videos' : 'Install Videos'}
             </button>
             
             <button 
@@ -229,18 +205,8 @@ export default function InstallChecklistItem({
               onClick={onToggleTools}
             >
               <Icons.wrench size={16} />
-              {showTools ? 'Hide Tools' : 'Show Required Tools'}
+              {showTools ? 'Hide Tools' : 'Required Tools'}
             </button>
-            
-            {!part.installed && (
-              <button 
-                className={styles.markInstalledBtn}
-                onClick={onMarkInstalled}
-              >
-                <Icons.check size={16} />
-                Mark Installed
-              </button>
-            )}
           </div>
           
           {/* Tools Section (inline for this specific part) */}
@@ -251,23 +217,55 @@ export default function InstallChecklistItem({
                 <div className={styles.toolsList}>
                   {toolReqs.essential?.length > 0 && (
                     <div className={styles.toolGroup}>
-                      <span className={styles.toolGroupLabel}>Essential:</span>
-                      <div className={styles.toolTags}>
-                        {toolReqs.essential.map(t => (
-                          <span key={t} className={styles.toolTag}>{t.split('-').join(' ')}</span>
-                        ))}
+                      <span className={styles.toolGroupLabel}>
+                        <span className={styles.essentialDot} />
+                        Essential Tools
+                      </span>
+                      <div className={styles.toolsGrid}>
+                        {toolReqs.essential.map(toolKey => {
+                          const tool = tools[toolKey];
+                          if (!tool) return null;
+                          const categoryInfo = toolCategories[tool.category] || {};
+                          return (
+                            <div key={toolKey} className={styles.toolCard}>
+                              <div className={styles.toolName}>{tool.name}</div>
+                              <div className={styles.toolDescription}>{tool.description}</div>
+                              <span 
+                                className={styles.toolCategory}
+                                style={{ color: categoryInfo.color }}
+                              >
+                                {categoryInfo.name || tool.category}
+                              </span>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
                   {toolReqs.recommended?.length > 0 && (
                     <div className={styles.toolGroup}>
-                      <span className={styles.toolGroupLabel}>Recommended:</span>
-                      <div className={styles.toolTags}>
-                        {toolReqs.recommended.map(t => (
-                          <span key={t} className={`${styles.toolTag} ${styles.toolTagRecommended}`}>
-                            {t.split('-').join(' ')}
-                          </span>
-                        ))}
+                      <span className={styles.toolGroupLabel}>
+                        <span className={styles.recommendedDot} />
+                        Recommended Tools
+                      </span>
+                      <div className={styles.toolsGrid}>
+                        {toolReqs.recommended.map(toolKey => {
+                          const tool = tools[toolKey];
+                          if (!tool) return null;
+                          const categoryInfo = toolCategories[tool.category] || {};
+                          return (
+                            <div key={toolKey} className={`${styles.toolCard} ${styles.toolCardRecommended}`}>
+                              <div className={styles.toolName}>{tool.name}</div>
+                              <div className={styles.toolDescription}>{tool.description}</div>
+                              <span 
+                                className={styles.toolCategory}
+                                style={{ color: categoryInfo.color }}
+                              >
+                                {categoryInfo.name || tool.category}
+                              </span>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   )}
@@ -298,15 +296,6 @@ export default function InstallChecklistItem({
                 isLoading={videosLoading}
                 error={videosError}
               />
-            </div>
-          )}
-          
-          {/* Installed Date */}
-          {part.installed && part.installedAt && (
-            <div className={styles.installedInfo}>
-              <Icons.checkCircle size={14} />
-              Installed {new Date(part.installedAt).toLocaleDateString()}
-              {part.installedBy && ` (${part.installedBy === 'self' ? 'DIY' : 'Shop'})`}
             </div>
           )}
         </div>

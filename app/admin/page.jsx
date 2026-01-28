@@ -29,63 +29,57 @@ import { isAdminEmail } from '@/lib/adminAccess';
 import { AlertsList } from './components/AlertsList';
 import { ALUserUsage } from './components/ALUserUsage';
 import { BreakEvenProgress } from './components/BreakEvenProgress';
+import { ConsolidatedAnalytics } from './components/ConsolidatedAnalytics';
 import { ContentInventory } from './components/ContentInventory';
-import { ContentStats } from './components/ContentStats';
 import { CostBreakdown } from './components/CostBreakdown';
+import { CostEntriesTable } from './components/CostEntriesTable';
+import { CostInputForm } from './components/CostInputForm';
+import { CostIntegrations } from './components/CostIntegrations';
+import EmailDashboard from './components/EmailDashboard';
+import { ExecutiveInsights } from './components/ExecutiveInsights';
+import { ExportButtons } from './components/ExportButtons';
 import { FunnelChart } from './components/FunnelChart';
 import { GrowthChart } from './components/GrowthChart';
+import {
+  ActivityIcon,
+  AlertCircleIcon,
+  ArrowLeftIcon,
+  BarChartIcon,
+  BugIcon,
+  CalendarIcon,
+  CarIcon,
+  CheckCircleIcon,
+  CreditCardIcon,
+  DollarSignIcon,
+  FlaskIcon,
+  GlobeIcon,
+  LockIcon,
+  MailIcon,
+  MessageCircleIcon,
+  PlusIcon,
+  RefreshIcon,
+  SettingsIcon,
+  TargetIcon,
+  TrendingUpIcon,
+  UsersIcon,
+  XIcon,
+} from './components/Icons';
 import { KPICard } from './components/KPICard';
+import { MonthlyTrend } from './components/MonthlyTrend';
 import { MonthYearSelector } from './components/MonthYearSelector';
+import { PLStatement } from './components/PLStatement';
+import { QuickActions } from './components/QuickActions';
+import { RetentionMetrics } from './components/RetentionMetrics';
+import { StripeDashboard } from './components/StripeDashboard';
+import { SystemHealth } from './components/SystemHealth';
+import { SystemHealthPanel } from './components/SystemHealthPanel';
 import { TabNav } from './components/TabNav';
 import { TimeRangeToggle } from './components/TimeRangeToggle';
-import { SystemHealth } from './components/SystemHealth';
-import { PLStatement } from './components/PLStatement';
-import { MonthlyTrend } from './components/MonthlyTrend';
-import { CostInputForm } from './components/CostInputForm';
-import { CostEntriesTable } from './components/CostEntriesTable';
-import { UnifiedAnalyticsDashboard } from './components/UnifiedAnalyticsDashboard';
 import { UnitEconomics } from './components/UnitEconomics';
 import { UsageEstimate } from './components/UsageEstimate';
-import { RetentionMetrics } from './components/RetentionMetrics';
-import { SystemHealthPanel } from './components/SystemHealthPanel';
-import { QuickActions } from './components/QuickActions';
-import { ExportButtons } from './components/ExportButtons';
-import { ExecutiveInsights } from './components/ExecutiveInsights';
 import { UsersDashboard } from './components/UsersDashboard';
 import { VercelStatus } from './components/VercelStatus';
 import { WebVitalsPanel } from './components/WebVitalsPanel';
-import EmailDashboard from './components/EmailDashboard';
-import { StripeDashboard } from './components/StripeDashboard';
-import { CostIntegrations } from './components/CostIntegrations';
-import { SiteAnalytics } from './components/SiteAnalytics';
-import { MarketingAnalytics } from './components/MarketingAnalytics';
-import { ConsolidatedAnalytics } from './components/ConsolidatedAnalytics';
-
-// Icons
-import {
-  UsersIcon,
-  TrendingUpIcon,
-  MessageCircleIcon,
-  TargetIcon,
-  BarChartIcon,
-  DollarSignIcon,
-  SettingsIcon,
-  RefreshIcon,
-  LockIcon,
-  ArrowLeftIcon,
-  FlaskIcon,
-  CalendarIcon,
-  BugIcon,
-  CarIcon,
-  ActivityIcon,
-  PlusIcon,
-  XIcon,
-  CreditCardIcon,
-  GlobeIcon,
-  MailIcon,
-  CheckCircleIcon,
-  AlertCircleIcon,
-} from './components/Icons';
 import styles from './page.module.css';
 
 // Time range mapping

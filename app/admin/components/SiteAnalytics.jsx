@@ -110,20 +110,6 @@ function DataTable({ title, data, columns, emptyMessage = 'No data' }) {
   );
 }
 
-// Progress bar for percentage displays
-function ProgressBar({ value, max, label }) {
-  const percent = max > 0 ? (value / max) * 100 : 0;
-  return (
-    <div className={styles.progressRow}>
-      <div className={styles.progressLabel}>{label}</div>
-      <div className={styles.progressBarWrapper}>
-        <div className={styles.progressBar} style={{ width: `${percent}%` }} />
-      </div>
-      <div className={styles.progressValue}>{value}</div>
-    </div>
-  );
-}
-
 // Country flag emoji helper
 function getCountryFlag(countryCode) {
   if (!countryCode || countryCode.length !== 2) return '🌍';
@@ -134,7 +120,7 @@ function getCountryFlag(countryCode) {
   return String.fromCodePoint(...codePoints);
 }
 
-export function SiteAnalytics({ token, range = '7d', loading: externalLoading }) {
+export function SiteAnalytics({ token: _token, range = '7d', loading: externalLoading }) {
   const [activeTab, setActiveTab] = useState('pages');
   
   // Use React Query hook for site analytics

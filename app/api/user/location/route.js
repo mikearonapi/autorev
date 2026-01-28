@@ -861,7 +861,7 @@ async function handlePost(request) {
  * DELETE /api/user/location
  * Clear user location from profile
  */
-async function handleDelete(request) {
+async function handleDelete(_request) {
   const supabase = await createServerSupabaseClient();
     
     // Get authenticated user

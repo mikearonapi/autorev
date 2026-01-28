@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import Link from 'next/link';
 
@@ -73,7 +73,7 @@ function EmptyState({ brand }) {
   );
 }
 
-export default function CarEventsSection({ carSlug, carName, brand }) {
+export default function CarEventsSection({ carSlug, carName: _carName, brand }) {
   // Build filter params for the query
   const filters = useMemo(() => {
     const f = { limit: 3, sort: 'date' };

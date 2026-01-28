@@ -93,7 +93,7 @@ export default function ALFeedbackButtons({
   showCategories = true,
 }) {
   const [feedback, setFeedback] = useState(null); // 'thumbs_up' | 'thumbs_down' | null
-  const [category, setCategory] = useState(null);
+  const [_category, setCategory] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [submitted, setSubmitted] = useState(false);

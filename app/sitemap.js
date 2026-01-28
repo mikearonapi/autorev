@@ -161,7 +161,9 @@ export default async function sitemap() {
     ...buildPages,
   ];
 
+  // eslint-disable-next-line no-console
   console.log(`[Sitemap] Generated: ${staticPages.length} static, ${eventPages.length} events, ${buildPages.length} public builds`);
+  // eslint-disable-next-line no-console
   console.log(`[Sitemap] Total URLs: ${allPages.length}`);
 
   return allPages;

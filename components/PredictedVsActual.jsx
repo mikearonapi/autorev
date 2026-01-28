@@ -14,7 +14,7 @@
  * - Amber (#f59e0b): Warnings only (sparingly)
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 
 import { formatDateSimple } from '@/lib/dateUtils';
 

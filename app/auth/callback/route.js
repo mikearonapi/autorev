@@ -68,6 +68,7 @@ function validateRedirectPath(next) {
   // SECURITY: Reject protocol-relative URLs (e.g., `//evil.com`)
   // These would redirect to evil.com while appearing relative
   if (trimmed.startsWith('//')) {
+    // eslint-disable-next-line no-console
     console.warn('[Auth Callback] Rejected protocol-relative redirect:', trimmed);
     return DEFAULT_POST_LOGIN_PATH;
   }
@@ -75,6 +76,7 @@ function validateRedirectPath(next) {
   // SECURITY: Reject absolute URLs with any protocol
   // Catches http://, https://, javascript:, data:, etc.
   if (/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(trimmed)) {
+    // eslint-disable-next-line no-console
     console.warn('[Auth Callback] Rejected absolute URL redirect:', trimmed);
     return DEFAULT_POST_LOGIN_PATH;
   }
@@ -82,6 +84,7 @@ function validateRedirectPath(next) {
   // SECURITY: Must start with `/` to be a valid relative path
   // This rejects things like `evil.com` (would resolve relative to current path)
   if (!trimmed.startsWith('/')) {
+    // eslint-disable-next-line no-console
     console.warn('[Auth Callback] Rejected non-rooted redirect path:', trimmed);
     return DEFAULT_POST_LOGIN_PATH;
   }
@@ -109,11 +112,14 @@ async function verifySessionWithRetry(supabase) {
       
       if (error) {
         lastError = error;
+        // eslint-disable-next-line no-console
         console.warn(`[Auth Callback] Session verification attempt ${attempt}/${MAX_VERIFICATION_RETRIES} failed:`, error.message);
       } else if (user) {
+        // eslint-disable-next-line no-console
         console.log(`[Auth Callback] Session verified on attempt ${attempt}`);
         return { user, error: null };
       } else {
+        // eslint-disable-next-line no-console
         console.warn(`[Auth Callback] Session verification attempt ${attempt}/${MAX_VERIFICATION_RETRIES}: no user returned`);
       }
       
@@ -123,6 +129,7 @@ async function verifySessionWithRetry(supabase) {
       }
     } catch (err) {
       lastError = err;
+      // eslint-disable-next-line no-console
       console.error(`[Auth Callback] Session verification attempt ${attempt} threw:`, err);
       
       if (attempt < MAX_VERIFICATION_RETRIES) {
@@ -147,6 +154,7 @@ export async function GET(request) {
 
   // Handle OAuth errors
   if (error) {
+    // eslint-disable-next-line no-console
     console.error('[Auth Callback] OAuth error:', error, errorDescription);
     return NextResponse.redirect(
       new URL(`/auth/error?error=${encodeURIComponent(errorDescription || error)}`, requestUrl.origin)
@@ -192,12 +200,14 @@ export async function GET(request) {
       const { error: exchangeError } = await supabase.auth.exchangeCodeForSession(code);
       
       if (exchangeError) {
+        // eslint-disable-next-line no-console
         console.error('[Auth Callback] Code exchange error:', exchangeError);
         return NextResponse.redirect(
           new URL(`/auth/error?error=${encodeURIComponent(exchangeError.message)}`, requestUrl.origin)
         );
       }
 
+      // eslint-disable-next-line no-console
       console.log('[Auth Callback] Code exchanged successfully, cookies to set:', cookiesToSet.length);
 
       // CRITICAL: Verify session is actually valid before redirecting
@@ -205,11 +215,13 @@ export async function GET(request) {
       const { user: verified, error: verifyError } = await verifySessionWithRetry(supabase);
       
       if (verifyError || !verified) {
+        // eslint-disable-next-line no-console
         console.error('[Auth Callback] Session verification failed after exchange:', verifyError?.message);
         // Don't fail hard - the client will retry via initializeSessionWithRetry
         // But log it for debugging
       } else {
         verifiedUser = verified;
+        // eslint-disable-next-line no-console
         console.log('[Auth Callback] Session verified for user:', verified.id?.slice(0, 8) + '...');
       }
 
@@ -261,6 +273,7 @@ export async function GET(request) {
             }
           } catch (activityErr) {
             // Gracefully handle if activity check fails
+            // eslint-disable-next-line no-console
             console.log('[Auth Callback] Could not fetch first activity:', activityErr.message);
           }
 
@@ -268,12 +281,16 @@ export async function GET(request) {
             id: user.id,
             email: user.email,
             provider: user.app_metadata?.provider || 'email',
-          }, signupContext).catch(err => console.error('[Auth Callback] Discord signup notification failed:', err));
+          }, signupContext).catch(err => {
+            // eslint-disable-next-line no-console
+            console.error('[Auth Callback] Discord signup notification failed:', err);
+          });
           
           // Send welcome email (fire-and-forget)
-          sendWelcomeEmail(user).catch(err => 
-            console.error('[Auth Callback] Welcome email failed:', err)
-          );
+          sendWelcomeEmail(user).catch(err => {
+            // eslint-disable-next-line no-console
+            console.error('[Auth Callback] Welcome email failed:', err);
+          });
           
           // Send Meta Conversions API Lead event (fire-and-forget)
           sendLeadEvent(user, {
@@ -284,9 +301,10 @@ export async function GET(request) {
               signup_method: user.app_metadata?.provider || 'email',
               ...(carContext && { car_context: carContext }),
             },
-          }).catch(err => 
-            console.error('[Auth Callback] Meta Lead event failed:', err)
-          );
+          }).catch(err => {
+            // eslint-disable-next-line no-console
+            console.error('[Auth Callback] Meta Lead event failed:', err);
+          });
           
           // Track signup event and save attribution (fire-and-forget)
           const utmSource = cookieStore.get('utm_source')?.value;
@@ -303,8 +321,14 @@ export async function GET(request) {
             utm_source: utmSource || null,
             utm_medium: utmMedium || null,
             utm_campaign: utmCampaign || null
-          }).then(() => console.log('[Auth Callback] Signup event tracked'))
-            .catch(err => console.error('[Auth Callback] Failed to track signup event:', err));
+          }).then(() => {
+            // eslint-disable-next-line no-console
+            console.log('[Auth Callback] Signup event tracked');
+          })
+            .catch(err => {
+              // eslint-disable-next-line no-console
+              console.error('[Auth Callback] Failed to track signup event:', err);
+            });
           
           // Save user attribution
           supabaseAdmin.from('user_attribution').insert({
@@ -322,10 +346,14 @@ export async function GET(request) {
             signup_page: sourcePage || '/',
             signup_device: 'Unknown',
             signup_country: null
-          }).then(() => console.log('[Auth Callback] User attribution saved'))
+          }).then(() => {
+            // eslint-disable-next-line no-console
+            console.log('[Auth Callback] User attribution saved');
+          })
             .catch(err => {
               // Ignore duplicate errors (user already has attribution)
               if (!err.message?.includes('duplicate')) {
+                // eslint-disable-next-line no-console
                 console.error('[Auth Callback] Failed to save attribution:', err);
               }
             });
@@ -333,20 +361,27 @@ export async function GET(request) {
           // Process referral if user signed up with a referral code
           const refCode = cookieStore.get('referral_code')?.value;
           if (refCode) {
+            // eslint-disable-next-line no-console
             console.log(`[Auth Callback] Processing referral signup with code: ${refCode}`);
             processReferralSignup(user.id, refCode)
               .then(result => {
                 if (result.success) {
+                  // eslint-disable-next-line no-console
                   console.log(`[Auth Callback] Referral processed: +${result.refereeCredits} credits for new user`);
                 } else {
+                  // eslint-disable-next-line no-console
                   console.log(`[Auth Callback] Referral not processed: ${result.error}`);
                 }
               })
-              .catch(err => console.error('[Auth Callback] Referral processing failed:', err));
+              .catch(err => {
+                // eslint-disable-next-line no-console
+                console.error('[Auth Callback] Referral processing failed:', err);
+              });
           }
         }
       }
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('[Auth Callback] Unexpected error:', err);
       return NextResponse.redirect(
         new URL('/auth/error?error=Authentication%20failed', requestUrl.origin)
@@ -398,8 +433,10 @@ export async function GET(request) {
       });
     }
     
+    // eslint-disable-next-line no-console
     console.log(`[Auth Callback] Redirecting to ${redirectUrl.pathname}${redirectUrl.search} with ${cookiesToSet.length} auth cookies + fresh login signals`);
   } else {
+    // eslint-disable-next-line no-console
     console.log(`[Auth Callback] Redirecting to ${redirectUrl.pathname} (no code - no fresh login signals)`);
   }
   

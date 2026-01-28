@@ -1,10 +1,12 @@
-/* UsageEstimate Component Styles */
+/* UsageEstimate Component Styles
+ * Mobile-First Design following Brand Guidelines v2.0
+ */
 
 .container {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 16px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 18px;
 }
 
 .header {
@@ -19,13 +21,13 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
   margin: 0;
 }
 
 .period {
   font-size: 10px;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
   background: rgba(255, 255, 255, 0.05);
   padding: 3px 8px;
   border-radius: 4px;
@@ -49,7 +51,7 @@
 
 .summaryLabel {
   font-size: 10px;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -57,7 +59,7 @@
 .summaryValue {
   font-size: 18px;
   font-weight: 700;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 /* Services */
@@ -84,13 +86,13 @@
 .serviceName {
   font-size: 12px;
   font-weight: 600;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .serviceCost {
   font-size: 13px;
   font-weight: 700;
-  color: var(--admin-accent-blue, var(--brand-blue));
+  color: var(--brand-blue, #3b82f6);
 }
 
 .serviceDetails {
@@ -107,7 +109,7 @@
 
 .metricLabel {
   font-size: 9px;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -115,13 +117,13 @@
 .metricValue {
   font-size: 12px;
   font-weight: 500;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .rates {
   margin-top: 6px;
   font-size: 9px;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
 }
 
 /* Progress Bar */
@@ -151,7 +153,7 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
   margin: 0 0 8px 0;
 }
 
@@ -167,17 +169,17 @@
   justify-content: space-between;
   align-items: center;
   font-size: 12px;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .projectionValue {
   font-weight: 700;
-  color: var(--admin-accent-purple, var(--brand-purple-accent));
+  color: var(--brand-purple-accent);
 }
 
 .projectionNote {
   font-size: 10px;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
   margin: 6px 0 0 0;
   font-style: italic;
 }
@@ -187,7 +189,7 @@
 .emptyState {
   padding: 30px;
   text-align: center;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
   font-size: 13px;
 }
 
@@ -228,13 +230,13 @@
   display: block;
   font-size: 16px;
   font-weight: 700;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .contentLabel {
   display: block;
   font-size: 9px;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.03em;
   margin-top: 2px;
@@ -269,7 +271,7 @@
 
 .compactLabel {
   font-size: 9px;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
   text-transform: uppercase;
   letter-spacing: 0.03em;
 }
@@ -277,7 +279,7 @@
 .compactValue {
   font-size: 16px;
   font-weight: 700;
-  color: var(--admin-text-primary, #f8fafc);
+  color: var(--brand-text-primary, #ffffff);
 }
 
 .compactServices {
@@ -297,13 +299,13 @@
 
 .compactServiceName {
   font-size: 11px;
-  color: var(--admin-text-secondary, #94a3b8);
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
 .compactServiceCost {
   font-size: 11px;
   font-weight: 600;
-  color: var(--admin-accent-blue, var(--brand-blue));
+  color: var(--brand-blue, #3b82f6);
   font-variant-numeric: tabular-nums;
 }
 
@@ -312,12 +314,12 @@
   padding-top: 10px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
   font-size: 10px;
-  color: var(--admin-text-muted, #64748b);
+  color: var(--brand-text-tertiary, #64748b);
 }
 
 .compactProjectionValue {
   font-weight: 600;
-  color: var(--admin-accent-purple, var(--brand-purple-accent));
+  color: var(--brand-purple-accent);
 }
 
 /* Responsive */

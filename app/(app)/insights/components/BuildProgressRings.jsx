@@ -272,8 +272,7 @@ export default function BuildProgressRings({
     };
   };
 
-  // Calculate max potential HP (stock + max gain)
-  const maxPotentialHp = stockHp + power.max;
+  // Calculate performance metrics
   const hpGain = power.current;
   const remainingPotential = power.max - power.current;
 

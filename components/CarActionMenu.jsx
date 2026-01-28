@@ -11,11 +11,12 @@
  * 5. See Car Profile (Details)
  */
 
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
+import { Icons } from '@/components/ui/Icons';
 import styles from './CarActionMenu.module.css';
 import { useCompare } from './providers/CompareProvider';
 import { useFavorites } from './providers/FavoritesProvider';
@@ -23,9 +24,6 @@ import { useOwnedVehicles } from './providers/OwnedVehiclesProvider';
 
 // Minimum time to show loading state (prevents flickering on fast operations)
 const MIN_LOADING_DURATION_MS = 400;
-
-// Icons - Premium Lucide-style SVGs
-import { Icons } from '@/components/ui/Icons';
 
 /**
  * Utility to extract make/model from car name
@@ -81,31 +79,31 @@ export default function CarActionMenu({
   const noopAsyncFn = useCallback(async () => {}, []);
   const noopCheckFn = useCallback(() => false, []);
   
-  let favorites = [], addFavorite = noopFn, removeFavorite = noopFn, isFavorite = noopCheckFn;
+  const _favorites = [];
+  let addFavorite = noopFn, removeFavorite = noopFn, isFavorite = noopCheckFn;
   let vehicles = [], addVehicle = noopAsyncFn;
-  let compareList = [], toggleCompare = noopFn, isCompareFull = false, isInCompare = noopCheckFn;
+  const _compareList = [];
+  let toggleCompare = noopFn, isCompareFull = false, isInCompare = noopCheckFn;
 
   try {
     const favUtils = useFavorites();
-    favorites = favUtils.favorites;
     addFavorite = favUtils.addFavorite;
     removeFavorite = favUtils.removeFavorite;
     isFavorite = favUtils.isFavorite;
-  } catch (e) { /* Provider missing */ }
+  } catch (_e) { /* Provider missing */ }
 
   try {
     const vehicleUtils = useOwnedVehicles();
     vehicles = vehicleUtils.vehicles;
     addVehicle = vehicleUtils.addVehicle;
-  } catch (e) { /* Provider missing */ }
+  } catch (_e) { /* Provider missing */ }
 
   try {
     const compareUtils = useCompare();
-    compareList = compareUtils.cars;
     toggleCompare = compareUtils.toggleCompare;
     isCompareFull = compareUtils.isFull;
     isInCompare = compareUtils.isInCompare;
-  } catch (e) { /* Provider missing */ }
+  } catch (_e) { /* Provider missing */ }
 
   // Check states (safe even if car is null)
   const isOwned = car && vehicles?.some(v => v.matchedCarSlug === car.slug);
@@ -192,18 +190,6 @@ export default function CarActionMenu({
     onAction?.('mod', car);
   };
 
-  // Handle View Profile
-  const handleViewProfile = (e) => {
-    e?.stopPropagation?.();
-    // For button elements, navigate programmatically
-    // Link elements will handle navigation themselves
-    const isLink = e?.currentTarget?.tagName === 'A' || e?.target?.closest('a');
-    if (!isLink) {
-      e?.preventDefault?.();
-      router.push(`/browse-cars/${car.slug}`);
-    }
-    onAction?.('view-profile', car);
-  };
 
   // Dropdown variant
   if (variant === 'dropdown') {
@@ -285,7 +271,7 @@ export default function CarActionMenu({
               <Link 
                 href={`/browse-cars/${car.slug}`}
                 className={styles.dropdownItem}
-                onClick={(e) => {
+                onClick={(_e) => {
                   setIsDropdownOpen(false);
                   onAction?.('view-profile', car);
                 }}
@@ -451,29 +437,29 @@ export function QuickActionButton({ car, action, size = 'default', showLabel = f
   const noopAsyncFn = useCallback(async () => {}, []);
   const noopCheckFn = useCallback(() => false, []);
   
-  let favorites = [], addFavorite = noopFn, removeFavorite = noopFn, isFavorite = noopCheckFn;
+  let addFavorite = noopFn, removeFavorite = noopFn, isFavorite = noopCheckFn;
   let vehicles = [], addVehicle = noopAsyncFn;
-  let compareList = [], toggleCompare = noopFn, isCompareFull = false, isInCompare = noopCheckFn;
+  let toggleCompare = noopFn, isCompareFull = false, isInCompare = noopCheckFn;
 
   try {
     const favUtils = useFavorites();
     addFavorite = favUtils.addFavorite;
     removeFavorite = favUtils.removeFavorite;
     isFavorite = favUtils.isFavorite;
-  } catch(e) {}
+  } catch(_e) {}
 
   try {
     const vehicleUtils = useOwnedVehicles();
     vehicles = vehicleUtils.vehicles;
     addVehicle = vehicleUtils.addVehicle;
-  } catch(e) {}
+  } catch(_e) {}
 
   try {
     const compareUtils = useCompare();
     toggleCompare = compareUtils.toggleCompare;
     isCompareFull = compareUtils.isFull;
     isInCompare = compareUtils.isInCompare;
-  } catch(e) {}
+  } catch(_e) {}
 
   const [isLoading, setIsLoading] = useState(false);
 

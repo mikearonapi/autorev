@@ -18,7 +18,7 @@ export default function PointsToast({
   duration = 2500 
 }) {
   // Start visible immediately - no delay for instant feedback
-  const [isVisible, setIsVisible] = useState(true);
+  const [_isVisible, _setIsVisible] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function PointsToast({
 
   return (
     <div 
-      className={`${styles.toast} ${isVisible ? styles.visible : ''} ${isExiting ? styles.exiting : ''}`}
+      className={`${styles.toast} ${styles.visible} ${isExiting ? styles.exiting : ''}`}
       onClick={handleDismiss}
       role="status"
       aria-live="polite"

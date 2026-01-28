@@ -15,8 +15,8 @@ import styles from '@/app/(marketing)/page.module.css';
 const brandSuffixes = ['ival', 'elation', 'olution'];
 
 export default function HeroCta() {
-  const [suffixIndex, setSuffixIndex] = useState(0);
-  const [suffixVisible, setSuffixVisible] = useState(true);
+  const [_suffixIndex, setSuffixIndex] = useState(0);
+  const [_suffixVisible, setSuffixVisible] = useState(true);
 
   // Cycle through brand suffixes every 1.5 seconds
   useEffect(() => {

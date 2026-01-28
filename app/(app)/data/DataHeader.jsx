@@ -15,7 +15,7 @@
 import { useState, useMemo, useEffect, useRef, useLayoutEffect, useCallback, Suspense } from 'react';
 
 import Link from 'next/link';
-import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 import { createPortal } from 'react-dom';
 
@@ -50,7 +50,6 @@ const PlusIcon = () => (
 
 function DataHeaderContent() {
   const router = useRouter();
-  const pathname = usePathname();
   const searchParams = useSearchParams();
   const { user, isAuthenticated, profile } = useAuth();
   const { vehicles, isLoading: vehiclesLoading } = useOwnedVehicles();

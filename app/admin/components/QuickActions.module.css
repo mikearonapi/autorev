@@ -1,100 +1,171 @@
-/* QuickActions Component Styles */
+/* QuickActions Component Styles
+ * Mobile-First Design following Brand Guidelines v2.0
+ */
 
+/* ================================================================
+   CONTAINER
+   ================================================================ */
 .container {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 16px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 18px;
 }
 
+@media (min-width: 768px) {
+  .container {
+    padding: 20px;
+  }
+}
+
+/* ================================================================
+   HEADER
+   ================================================================ */
 .header {
-  margin-bottom: 14px;
+  margin-bottom: 16px;
 }
 
 .title {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--admin-text-secondary, #94a3b8);
+  letter-spacing: 0.06em;
+  color: var(--brand-text-secondary, #94a3b8);
   margin: 0;
 }
 
-/* Actions List */
-.actionsList {
+/* ================================================================
+   ACTIONS LIST
+   ================================================================ */
+.actions {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
-.actionButton {
+/* ================================================================
+   ACTION BUTTON
+   ================================================================ */
+.action {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.03);
+  gap: 14px;
+  min-height: 52px;
+  padding: 14px 16px;
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
   transition: all 0.2s ease;
   text-align: left;
-  color: var(--admin-text-primary, #f8fafc);
+  width: 100%;
 }
 
-.actionButton:hover:not(:disabled) {
-  background: rgba(var(--brand-blue-rgb), 0.1);
-  border-color: rgba(var(--brand-blue-rgb), 0.3);
+.action:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateX(4px);
 }
 
-.actionButton:disabled {
-  opacity: 0.6;
+.action:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
+/* ================================================================
+   ACTION ICON
+   ================================================================ */
 .actionIcon {
-  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: rgba(59, 130, 246, 0.15);
+  border-radius: 10px;
+  flex-shrink: 0;
+  color: var(--brand-blue, #3b82f6);
+}
+
+.actionIcon svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Icon color variants */
+.action[data-color="teal"] .actionIcon {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--brand-teal, #10b981);
+}
+
+.action[data-color="amber"] .actionIcon {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--brand-warning, #f59e0b);
+}
+
+.action[data-color="purple"] .actionIcon {
+  background: rgba(139, 92, 246, 0.15);
+  color: #a78bfa;
+}
+
+/* ================================================================
+   ACTION CONTENT
+   ================================================================ */
+.actionContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
 }
 
 .actionLabel {
-  flex: 1;
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--brand-text-primary, #ffffff);
 }
 
-.spinIcon {
-  animation: spin 1s linear infinite;
+.actionDescription {
+  font-size: 12px;
+  color: var(--brand-text-tertiary, #64748b);
+}
+
+/* ================================================================
+   ACTION ARROW
+   ================================================================ */
+.actionArrow {
+  color: var(--brand-text-tertiary, #64748b);
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.action:hover .actionArrow {
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+/* ================================================================
+   LOADING SPINNER
+   ================================================================ */
+.spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-top-color: var(--brand-blue, #3b82f6);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-.resultIcon {
-  font-size: 12px;
-  font-weight: bold;
+/* ================================================================
+   EMPTY STATE
+   ================================================================ */
+.emptyState {
+  padding: 32px 20px;
+  text-align: center;
+  color: var(--brand-text-tertiary, #64748b);
+  font-size: 14px;
 }
-
-.resultIcon.success { color: var(--brand-success); }
-.resultIcon.error { color: var(--brand-error); }
-
-/* Links */
-.links {
-  display: flex;
-  gap: 12px;
-  margin-top: 14px;
-  padding-top: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
-  flex-wrap: wrap;
-}
-
-.link {
-  font-size: 11px;
-  color: var(--admin-accent-blue, var(--brand-blue));
-  text-decoration: none;
-  padding: 4px 0;
-}
-
-.link:hover {
-  text-decoration: underline;
-}
-

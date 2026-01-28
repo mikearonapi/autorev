@@ -1,208 +1,203 @@
-/* RetentionMetrics Component Styles */
+/* RetentionMetrics Component Styles
+ * Mobile-First Design following Brand Guidelines v2.0
+ */
 
+/* ================================================================
+   CONTAINER
+   ================================================================ */
 .container {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
-.header {
-  margin-bottom: 14px;
+/* ================================================================
+   GRID
+   ================================================================ */
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
 }
 
-/* Interpretive title (Rule 4.1) */
-.title {
-  font-size: 14px;
+@media (min-width: 640px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* ================================================================
+   CARD
+   ================================================================ */
+.card {
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cardLabel {
+  font-size: 12px;
   font-weight: 600;
-  color: var(--admin-text-primary, #f8fafc);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--brand-text-secondary, #94a3b8);
+}
+
+.cardValue {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--brand-text-primary, #ffffff);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+.cardTrend {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+.cardTrend.positive {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--brand-success, #22c55e);
+}
+
+.cardTrend.negative {
+  background: rgba(239, 68, 68, 0.15);
+  color: var(--brand-error, #ef4444);
+}
+
+.cardTrend.neutral {
+  background: rgba(148, 163, 184, 0.15);
+  color: var(--brand-text-secondary, #94a3b8);
+}
+
+.cardSubtext {
+  font-size: 13px;
+  color: var(--brand-text-tertiary, #64748b);
   margin: 0;
-  line-height: 1.3;
 }
 
-/* Category subtitle */
-.subtitle {
-  display: block;
-  font-size: 10px;
+/* ================================================================
+   COHORT TABLE
+   ================================================================ */
+.cohortSection {
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 18px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.cohortTitle {
+  font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--admin-text-muted, #64748b);
-  margin-top: 4px;
+  letter-spacing: 0.06em;
+  color: var(--brand-text-secondary, #94a3b8);
+  margin: 0 0 16px 0;
 }
 
-.sectionTitle {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--admin-text-muted, #64748b);
-  margin: 0 0 12px 0;
+.cohortTable {
+  width: 100%;
+  min-width: 500px;
+  border-collapse: collapse;
 }
 
-/* Retention Rings */
-.retentionSection {
-  margin-bottom: 16px;
-  padding-bottom: 14px;
+.cohortTable th,
+.cohortTable td {
+  padding: 12px 14px;
+  text-align: center;
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.ringsRow {
-  display: flex;
-  justify-content: space-around;
-  gap: 12px;
-}
-
-.ringContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
-
-.ringSvg {
-  width: 70px;
-  height: 70px;
-}
-
-.ringBg {
-  stroke: rgba(255, 255, 255, 0.1);
-}
-
-.ringFill {
-  transform: rotate(-90deg);
-  transform-origin: 50% 50%;
-  transition: stroke-dashoffset 0.5s ease;
-}
-
-.ringValue {
-  font-size: 12px;
-  font-weight: 700;
-  fill: var(--admin-text-primary, #f8fafc);
-  text-anchor: middle;
-}
-
-.ringLabel {
-  font-size: 8px;
+.cohortTable th {
+  font-size: 11px;
   font-weight: 600;
-  fill: var(--admin-text-muted, #64748b);
-  text-anchor: middle;
   text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--brand-text-secondary, #94a3b8);
+  background: rgba(0, 0, 0, 0.2);
 }
 
-.ringMeta {
-  font-size: 9px;
-  color: var(--admin-text-muted, #64748b);
+.cohortTable th:first-child {
+  text-align: left;
 }
 
-/* Active Users */
-.activeUsers {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 12px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(255, 255, 255, 0.04);
-}
-
-.activeUserItem {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 2px;
-}
-
-.activeLabel {
-  font-size: 9px;
-  color: var(--admin-text-muted, #64748b);
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-
-.activeValue {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--admin-text-primary, #f8fafc);
-}
-
-/* Funnel */
-.funnelSection {
-  margin-top: 14px;
-}
-
-.funnelList {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.funnelItem {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  grid-template-rows: auto auto;
-  gap: 4px 8px;
-  align-items: center;
-}
-
-.funnelHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-}
-
-.funnelLabel {
-  font-size: 11px;
-  color: var(--admin-text-secondary, #94a3b8);
-}
-
-.funnelCount {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--admin-text-primary, #f8fafc);
-}
-
-.funnelBarBg {
-  grid-column: 1 / 2;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
-  overflow: hidden;
-}
-
-.funnelBarFill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--brand-blue) 0%, var(--brand-purple-accent) 100%);
-  border-radius: 3px;
-  transition: width 0.3s ease;
-}
-
-.funnelPercentage {
-  grid-column: 2 / 3;
-  grid-row: 1 / 3;
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--admin-accent-blue, var(--brand-blue));
-  min-width: 40px;
-  text-align: right;
-}
-
-/* States */
-.loading,
-.emptyState {
-  padding: 30px;
-  text-align: center;
-  color: var(--admin-text-muted, #64748b);
+.cohortTable td {
   font-size: 13px;
+  color: var(--brand-text-primary, #ffffff);
 }
 
-/* Responsive */
-@media (min-width: 481px) {
-  .ringsRow {
-    flex-wrap: wrap;
-  }
-  
-  .activeUsers {
-    flex-wrap: wrap;
-  }
+.cohortTable td:first-child {
+  text-align: left;
+  font-weight: 500;
+  color: var(--brand-text-secondary, #94a3b8);
 }
 
+.cohortTable tbody tr:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.cohortTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.cohortCell {
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+.cohortCell.high {
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--brand-success, #22c55e);
+}
+
+.cohortCell.medium {
+  background: rgba(59, 130, 246, 0.12);
+  color: var(--brand-blue, #3b82f6);
+}
+
+.cohortCell.low {
+  background: rgba(245, 158, 11, 0.12);
+  color: var(--brand-warning, #f59e0b);
+}
+
+/* ================================================================
+   EMPTY STATE
+   ================================================================ */
+.emptyState {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--brand-text-tertiary, #64748b);
+  font-size: 14px;
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+}
+
+/* ================================================================
+   LOADING
+   ================================================================ */
+.loading {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--brand-text-tertiary, #64748b);
+  font-size: 14px;
+}

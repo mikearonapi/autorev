@@ -13,7 +13,7 @@
  * - Goal tracking
  */
 
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 
 import { 
   useAdminSiteAnalytics, 
@@ -31,43 +31,12 @@ import {
   TargetIcon,
   BarChartIcon,
   ActivityIcon,
-  ClockIcon,
-  LayersIcon,
-  AlertCircleIcon,
-  CheckCircleIcon,
   ZapIcon,
   InfoIcon,
 } from './Icons';
 import styles from './UnifiedAnalyticsDashboard.module.css';
 
 // SVG Icons for the dashboard
-function EyeIcon({ size = 20, className = '' }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-}
-
-function MousePointerIcon({ size = 20, className = '' }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />
-      <path d="M13 13l6 6" />
-    </svg>
-  );
-}
-
-function ScrollIcon({ size = 20, className = '' }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M8 21h12a2 2 0 0 0 2-2v-2H10v2a2 2 0 1 1-4 0V5a2 2 0 1 0-4 0v3h4" />
-      <path d="M19 17V5a2 2 0 0 0-2-2H4" />
-    </svg>
-  );
-}
-
 function TrophyIcon({ size = 20, className = '' }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -77,15 +46,6 @@ function TrophyIcon({ size = 20, className = '' }) {
       <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
       <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
       <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
-    </svg>
-  );
-}
-
-function SearchQueryIcon({ size = 20, className = '' }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.3-4.3" />
     </svg>
   );
 }
@@ -101,35 +61,6 @@ function UserPlusIcon({ size = 20, className = '' }) {
   );
 }
 
-function UserCheckIcon({ size = 20, className = '' }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-      <circle cx="8.5" cy="7" r="4" />
-      <polyline points="17 11 19 13 23 9" />
-    </svg>
-  );
-}
-
-function UserXIcon({ size = 20, className = '' }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-      <circle cx="8.5" cy="7" r="4" />
-      <line x1="18" y1="8" x2="23" y2="13" />
-      <line x1="23" y1="8" x2="18" y2="13" />
-    </svg>
-  );
-}
-
-function LinkIcon({ size = 20, className = '' }) {
-  return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-    </svg>
-  );
-}
 
 // Tooltip component with metric definitions
 function Tooltip({ children, content, target }) {
@@ -487,7 +418,7 @@ function formatGoalName(goalKey) {
   return goalKey?.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase()) || '';
 }
 
-export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
+export function UnifiedAnalyticsDashboard({ token: _token, range = '7d' }) {
   const [activeSection, setActiveSection] = useState('overview');
   
   // Use React Query hooks - these run in parallel automatically
@@ -504,13 +435,7 @@ export function UnifiedAnalyticsDashboard({ token, range = '7d' }) {
     refetchDashboard();
   };
   
-  // Combine data for components that expect the old structure
-  const data = useMemo(() => ({
-    site,
-    marketing,
-    advanced,
-    dashboard,
-  }), [site, marketing, advanced, dashboard]);
+  // Data objects are used directly below via site, marketing, advanced, dashboard
   
   const loading = siteLoading || marketingLoading;
   const error = siteError?.message || null;

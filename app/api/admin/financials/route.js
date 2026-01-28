@@ -13,7 +13,6 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 import { requireAdmin } from '@/lib/adminAccess';
-import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -229,7 +228,7 @@ export async function GET(request) {
         .eq('is_active', true),
     ]);
     
-    const userProfiles = userProfilesResult.data || [];
+    const _userProfiles = userProfilesResult.data || [];
     const alConversations = alConversationsResult.data || [];
     const costEntries = costEntriesResult.data || [];
     const monthlyFinancials = monthlyFinancialsResult.data || [];
@@ -310,7 +309,7 @@ export async function GET(request) {
       }, {});
     
     // Fixed vs variable (for backwards compatibility)
-    const fixedCosts = operatingExpenses;
+    const _fixedCosts = operatingExpenses;
     const variableCosts = cogsCosts;
     
     // Legacy costsByCategory for backwards compatibility (normalized to lowercase)

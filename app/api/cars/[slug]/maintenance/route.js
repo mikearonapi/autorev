@@ -43,8 +43,10 @@ async function handleGet(request, { params }) {
       });
     }
 
+    // NOTE: Column names must match actual DB schema exactly
+    // Verified against information_schema.columns for vehicle_maintenance_specs
     const MAINT_COLS =
-      'id, car_id, oil_type, oil_viscosity, oil_spec, oil_capacity_liters, oil_capacity_quarts, oil_change_interval_miles, oil_change_interval_months, oil_filter_oem_part, coolant_type, coolant_color, coolant_spec, coolant_capacity_liters, coolant_change_interval_miles, coolant_change_interval_years, brake_fluid_type, brake_fluid_spec, brake_fluid_change_interval_miles, brake_fluid_change_interval_years, trans_fluid_type, trans_fluid_spec, trans_fluid_interval_miles, diff_fluid_type, diff_fluid_spec, diff_fluid_interval_miles, spark_plug_type, spark_plug_gap, spark_plug_interval_miles, tire_pressure_front, tire_pressure_rear, wheel_bolt_pattern, wheel_center_bore_mm, wheel_lug_torque_ft_lbs, wheel_lug_torque_nm, battery_group_size, battery_cca, battery_agm, wiper_driver_size_inches, wiper_passenger_size_inches, wiper_rear_size_inches, created_at';
+      'id, car_id, oil_type, oil_viscosity, oil_spec, oil_capacity_liters, oil_capacity_quarts, oil_change_interval_miles, oil_change_interval_months, oil_filter_oem_part, coolant_type, coolant_color, coolant_spec, coolant_capacity_liters, coolant_change_interval_miles, coolant_change_interval_years, brake_fluid_type, brake_fluid_spec, brake_fluid_change_interval_miles, brake_fluid_change_interval_years, trans_fluid_auto, trans_fluid_auto_capacity, trans_fluid_manual, trans_fluid_manual_capacity, trans_fluid_change_interval_miles, diff_fluid_type, diff_fluid_change_interval_miles, spark_plug_type, spark_plug_gap_mm, spark_plug_change_interval_miles, tire_size_front, tire_size_rear, tire_pressure_front_psi, tire_pressure_rear_psi, wheel_bolt_pattern, wheel_center_bore_mm, wheel_lug_torque_ft_lbs, wheel_lug_torque_nm, battery_group_size, battery_cca, battery_agm, wiper_driver_size_inches, wiper_passenger_size_inches, wiper_rear_size_inches, created_at';
 
     // Fetch maintenance specs (uses car_id - car_slug column no longer exists)
     const { data: specs } = await supabase

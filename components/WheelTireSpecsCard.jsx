@@ -10,7 +10,7 @@
  * @module components/WheelTireSpecsCard
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 
 import { Icons } from '@/components/ui/Icons';
 

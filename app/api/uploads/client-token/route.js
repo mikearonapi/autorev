@@ -97,7 +97,7 @@ async function handlePost(request) {
           pathname: validatedPathname,
         };
       },
-      onUploadCompleted: async ({ blob, tokenPayload }) => {
+      onUploadCompleted: async ({ blob, tokenPayload: _tokenPayload }) => {
         // Called after successful upload
         // Log for debugging - actual DB save happens in the client callback
         console.log(`[ClientUpload] Completed: pathname=${blob.pathname}, url=${blob.url}`);

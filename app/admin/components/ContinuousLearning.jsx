@@ -65,19 +65,6 @@ const PlayIcon = ({ size = 16 }) => (
   </svg>
 );
 
-// Format number for display
-function formatNumber(num) {
-  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-  if (num >= 1000) return `${(num / 1000).toFixed(1)}K`;
-  return num?.toLocaleString() || '0';
-}
-
-// Format percentage
-function formatPercent(value) {
-  if (value === null || value === undefined) return 'N/A';
-  return `${Math.round(value)}%`;
-}
-
 export default function ContinuousLearning({ token }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
