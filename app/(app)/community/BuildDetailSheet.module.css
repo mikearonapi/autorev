@@ -4,14 +4,13 @@
    ========================================================================== */
 
 /* Full Screen Container */
+
 /* Level 3: Overlay background for focused build detail experience */
+
 /* z-index 1100: Above Header (1050) to ensure fullscreen experience */
 .fullScreen {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: calc(env(safe-area-inset-bottom, 0px) + 70px); /* Stop above bottom nav */
+  inset: 0 0 calc(env(safe-area-inset-bottom, 0px) + 70px); /* Stop above bottom nav */
   background: var(--brand-bg-overlay, #1a1a1a);
   z-index: 1100;
   display: flex;
@@ -20,8 +19,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* ==========================================================================
@@ -48,7 +52,7 @@
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 50%;
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary, #ffffff);
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
@@ -105,7 +109,7 @@
 .userName {
   font-size: 0.9375rem;
   font-weight: 700;
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary, #ffffff);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -138,7 +142,7 @@
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 50%;
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary, #ffffff);
   cursor: pointer;
   transition: all 0.2s ease;
   flex-shrink: 0;
@@ -165,7 +169,7 @@
   font-family: var(--font-display, 'Oswald', sans-serif);
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary, #ffffff);
   text-transform: uppercase;
   letter-spacing: 0.02em;
   margin: 0;
@@ -333,44 +337,6 @@
 }
 
 /* ==========================================================================
-   PHOTOS SECTION
-   ========================================================================== */
-
-.photosSection {
-  margin-top: 16px;
-}
-
-.photosSection .sectionTitle {
-  margin-bottom: 16px;
-}
-
-.photoGrid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-}
-
-.photoThumb {
-  position: relative;
-  aspect-ratio: 1;
-  border-radius: 12px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.05);
-  border: 2px solid transparent;
-  padding: 0;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.photoThumb:hover {
-  border-color: rgba(255, 255, 255, 0.3);
-}
-
-.photoThumb.photoActive {
-  border-color: var(--color-accent-lime, #d4ff00);
-}
-
-/* ==========================================================================
    LOADING STATE
    ========================================================================== */
 
@@ -394,7 +360,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ==========================================================================
@@ -409,11 +377,7 @@
     border-left: 1px solid rgba(255, 255, 255, 0.06);
     border-right: 1px solid rgba(255, 255, 255, 0.06);
   }
-  
-  .photoGrid {
-    grid-template-columns: repeat(5, 1fr);
-  }
-  
+
   .carName {
     font-size: 1.75rem;
   }

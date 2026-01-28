@@ -161,7 +161,14 @@
 
 .progressFill {
   height: 100%;
-  background: var(--gradient-improved, linear-gradient(90deg, var(--color-accent-teal, #10b981), var(--color-accent-teal-light, #34d399)));
+  background: var(
+    --gradient-improved,
+    linear-gradient(
+      90deg,
+      var(--color-accent-teal, #10b981),
+      var(--color-accent-teal-light, #34d399)
+    )
+  );
   border-radius: 100px;
   transition: width 0.5s ease;
 }
@@ -229,7 +236,11 @@
 .completedCard {
   text-align: center;
   padding: 24px;
-  background: linear-gradient(135deg, var(--color-accent-lime-muted, rgba(212, 255, 0, 0.1)), var(--color-accent-teal-muted, rgba(16, 185, 129, 0.15)));
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-lime-muted, rgba(212, 255, 0, 0.1)),
+    var(--color-accent-teal-muted, rgba(16, 185, 129, 0.15))
+  );
   border-radius: 12px;
   border: 1px solid var(--color-accent-lime-border, rgba(212, 255, 0, 0.3));
 }
@@ -337,46 +348,108 @@
   font-size: var(--text-sm, 13px);
 }
 
+/* Beyond Standard Stages Section */
+.beyondStagesSection {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.beyondStagesHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.beyondStagesTitle {
+  font-size: var(--text-xs, 11px);
+  font-weight: 600;
+  color: var(--color-accent-lime, #d4ff00);
+  text-transform: uppercase;
+  letter-spacing: var(--text-label-lg-tracking, 0.08em);
+}
+
+.beyondStagesBadge {
+  background: linear-gradient(135deg, rgba(212, 255, 0, 0.2), rgba(212, 255, 0, 0.1));
+  border: 1px solid rgba(212, 255, 0, 0.3);
+  color: var(--color-accent-lime, #d4ff00);
+  padding: 2px 8px;
+  border-radius: 100px;
+  font-size: var(--text-2xs, 10px);
+  font-weight: 700;
+}
+
+.beyondStagesDesc {
+  font-size: var(--text-xs, 11px);
+  color: var(--color-text-secondary, #94a3b8);
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.beyondStagesList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.beyondStagesMod {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: var(--text-xs, 11px);
+  font-weight: 500;
+  background: linear-gradient(135deg, rgba(212, 255, 0, 0.12), rgba(212, 255, 0, 0.06));
+  color: var(--color-accent-lime, #d4ff00);
+  border: 1px solid rgba(212, 255, 0, 0.2);
+}
+
+.beyondStagesMod svg {
+  color: var(--color-accent-lime, #d4ff00);
+}
+
 /* Tablet and Desktop */
 @media (min-width: 641px) {
   .buildProgress {
     padding: 16px;
   }
-  
+
   .stageTrack {
     padding: 0;
   }
-  
+
   .stageNumber {
     width: 24px;
     height: 24px;
     font-size: var(--text-2xs, 10px);
   }
-  
+
   .stageName {
     font-size: var(--text-2xs, 10px);
   }
-  
+
   .stageConnector {
     top: 12px;
     left: calc(50% + 14px);
     width: calc(100% - 28px);
   }
-  
+
   .componentsList {
     gap: 6px;
   }
-  
+
   .componentItem {
     padding: 5px 8px;
     font-size: var(--text-xs, 11px);
   }
-  
+
   .completionEstimate {
     grid-template-columns: 1fr;
     gap: 8px;
   }
-  
+
   .overviewStats {
     flex-direction: column;
     gap: 4px;

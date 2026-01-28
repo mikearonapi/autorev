@@ -146,7 +146,7 @@ const PLACEHOLDER_IMAGE = '/images/placeholder-car.jpg';
 /**
  * Skeleton loader for build feed - matches the build card layout
  */
-function BuildFeedSkeleton() {
+function _BuildFeedSkeleton() {
   return (
     <div className={styles.feedContent}>
       {/* Build Info Card Skeleton */}
@@ -874,13 +874,7 @@ export default function CommunityBuildsPage() {
 
           {/* Sheets render outside feedContent */}
           {showDetails && (
-            <BuildDetailSheet
-              build={currentBuild}
-              images={buildImages}
-              currentImageIndex={currentImageIndex}
-              onImageSelect={(idx) => setCurrentImageIndex(idx)}
-              onClose={() => setShowDetails(false)}
-            />
+            <BuildDetailSheet build={currentBuild} onClose={() => setShowDetails(false)} />
           )}
 
           {showComments && (

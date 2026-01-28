@@ -2,10 +2,10 @@
 
 /**
  * React Query Hook for Lap Time Estimation
- * 
+ *
  * Uses the centralized lapTimeService via API.
  * Provides cached, deduplicated lap time estimates.
- * 
+ *
  * @module hooks/useLapTimeEstimate
  */
 
@@ -34,7 +34,8 @@ export const DRIVER_SKILLS = {
     label: 'Beginner',
     description: '0-2 years track experience',
     tip: 'The best mod for you is seat time! Consider a driving school before spending on parts.',
-    insight: 'At your skill level, improving your driving will gain you 3-5x more time than any modification.',
+    insight:
+      'At your skill level, improving your driving will gain you 3-5x more time than any modification.',
   },
   intermediate: {
     label: 'Intermediate',
@@ -51,9 +52,23 @@ export const DRIVER_SKILLS = {
   professional: {
     label: 'Pro',
     description: 'Instructor / racer',
-    tip: 'You\'re extracting the car\'s full potential. Mods directly translate to lap time.',
+    tip: "You're extracting the car's full potential. Mods directly translate to lap time.",
     insight: 'This represents the theoretical maximum - what the modifications can truly deliver.',
   },
+};
+
+/**
+ * Estimation confidence tiers
+ * Tier 1: Statistical (10+ real times) - Most accurate
+ * Tier 2: Reference-scaled (pro reference) - Very reliable
+ * Tier 3: Similar car interpolation - Reasonable estimate
+ * Tier 4: Insufficient data - No reliable estimate
+ */
+export const ESTIMATION_TIERS = {
+  1: { label: 'Based on real lap time data', confidence: 0.9, icon: '●●●' },
+  2: { label: 'Based on professional reference', confidence: 0.8, icon: '●●○' },
+  3: { label: 'Estimated from similar vehicles', confidence: 0.65, icon: '●○○' },
+  4: { label: 'Insufficient data', confidence: 0, icon: '○○○' },
 };
 
 // =============================================================================
@@ -82,7 +97,7 @@ async function fetchTrackStats(trackSlug) {
 
 /**
  * Hook to get lap time estimate for a car at a track
- * 
+ *
  * @param {Object} params - Estimation parameters
  * @param {string} params.trackSlug - Track identifier
  * @param {number} params.stockHp - Stock horsepower
@@ -93,17 +108,10 @@ async function fetchTrackStats(trackSlug) {
  * @param {Object} options - Query options
  */
 export function useLapTimeEstimate(params, options = {}) {
-  const {
-    trackSlug,
-    stockHp,
-    currentHp,
-    weight,
-    driverSkill,
-    mods,
-  } = params || {};
-  
+  const { trackSlug, stockHp, currentHp, weight, driverSkill, mods } = params || {};
+
   const enabled = options.enabled !== false && !!trackSlug;
-  
+
   return useQuery({
     queryKey: lapTimeKeys.estimate({
       trackSlug,
@@ -113,14 +121,15 @@ export function useLapTimeEstimate(params, options = {}) {
       driverSkill,
       modsHash: JSON.stringify(mods || {}),
     }),
-    queryFn: () => fetchLapTimeEstimate({
-      trackSlug,
-      stockHp,
-      currentHp,
-      weight,
-      driverSkill,
-      mods,
-    }),
+    queryFn: () =>
+      fetchLapTimeEstimate({
+        trackSlug,
+        stockHp,
+        currentHp,
+        weight,
+        driverSkill,
+        mods,
+      }),
     enabled,
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 30 * 60 * 1000, // 30 minutes (React Query v5: gcTime replaces cacheTime)
@@ -130,13 +139,13 @@ export function useLapTimeEstimate(params, options = {}) {
 
 /**
  * Hook to get track statistics
- * 
+ *
  * @param {string} trackSlug - Track identifier
  * @param {Object} options - Query options
  */
 export function useTrackStats(trackSlug, options = {}) {
   const enabled = options.enabled !== false && !!trackSlug;
-  
+
   return useQuery({
     queryKey: lapTimeKeys.trackStats(trackSlug),
     queryFn: () => fetchTrackStats(trackSlug),
@@ -158,10 +167,12 @@ export function formatLapTime(seconds) {
   return `${mins}:${secs}`;
 }
 
-export default {
+const lapTimeEstimateModule = {
   useLapTimeEstimate,
   useTrackStats,
   DRIVER_SKILLS,
   formatLapTime,
   lapTimeKeys,
 };
+
+export default lapTimeEstimateModule;

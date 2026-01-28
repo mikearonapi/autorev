@@ -119,6 +119,18 @@ const COMPONENT_ALIASES = {
   e85: ['e85', 'flex-fuel', 'ethanol'],
 };
 
+// Format a mod key into a readable display name
+const formatModKeyForDisplay = (key) => {
+  if (!key) return '';
+  return key
+    .replace(/-/g, ' ')
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase())
+    .replace(/\bExisting\b/i, '')
+    .replace(/\bKit\b/i, 'Kit')
+    .trim();
+};
+
 // Check if a mod key matches a component from stage progressions
 const modMatchesComponent = (modKey, component) => {
   const normMod = normalizeUpgradeKey(modKey);
@@ -173,12 +185,26 @@ export default function BuildProgressAnalysis({
       .map((u) => (typeof u === 'string' ? u : u?.key))
       .filter(Boolean);
 
+    // Collect all stage components to find mods beyond stages
+    const allStageComponents = new Set();
+    stageProgressions.forEach((stage) => {
+      (stage.components || []).forEach((comp) => allStageComponents.add(comp));
+    });
+
+    // Track which installed mods matched any stage component
+    const matchedMods = new Set();
+
     // Analyze each stage
     const stages = stageProgressions.map((stage, idx) => {
       const components = stage.components || [];
-      const completedComponents = components.filter((comp) =>
-        installedKeys.some((mod) => modMatchesComponent(mod, comp))
-      );
+      const completedComponents = components.filter((comp) => {
+        const matched = installedKeys.some((mod) => {
+          const matches = modMatchesComponent(mod, comp);
+          if (matches) matchedMods.add(mod);
+          return matches;
+        });
+        return matched;
+      });
       const remainingComponents = components.filter(
         (comp) => !installedKeys.some((mod) => modMatchesComponent(mod, comp))
       );
@@ -202,6 +228,9 @@ export default function BuildProgressAnalysis({
         hpGainHigh: stage.hp_gain_high || 0,
       };
     });
+
+    // Find mods that don't match any stage component (beyond standard stages)
+    const beyondStageMods = installedKeys.filter((mod) => !matchedMods.has(mod));
 
     // Determine current stage
     let currentStageIdx = 0;
@@ -244,6 +273,8 @@ export default function BuildProgressAnalysis({
       hpAtStage,
       totalStages: stages.length,
       allComplete: stages.every((s) => s.isComplete),
+      beyondStageMods, // Mods that don't fit any stage component
+      hasBeyondStageMods: beyondStageMods.length > 0,
     };
   }, [stageProgressions, installedUpgrades, stockHp]);
 
@@ -270,8 +301,16 @@ export default function BuildProgressAnalysis({
     );
   }
 
-  const { stages, currentStageIdx, currentStage, estimatedRemainingCost, hpAtStage, allComplete } =
-    analysis;
+  const {
+    stages,
+    currentStageIdx,
+    currentStage,
+    estimatedRemainingCost,
+    hpAtStage,
+    allComplete,
+    beyondStageMods,
+    hasBeyondStageMods,
+  } = analysis;
 
   return (
     <div className={styles.buildProgress}>
@@ -399,6 +438,27 @@ export default function BuildProgressAnalysis({
           </div>
         ))}
       </div>
+
+      {/* Beyond Standard Stages - Mods not part of defined stage progressions */}
+      {hasBeyondStageMods && (
+        <div className={styles.beyondStagesSection}>
+          <div className={styles.beyondStagesHeader}>
+            <span className={styles.beyondStagesTitle}>Beyond Standard Stages</span>
+            <span className={styles.beyondStagesBadge}>+{beyondStageMods.length}</span>
+          </div>
+          <p className={styles.beyondStagesDesc}>
+            You&apos;ve added advanced modifications beyond the typical build path:
+          </p>
+          <div className={styles.beyondStagesList}>
+            {beyondStageMods.map((mod, idx) => (
+              <div key={idx} className={styles.beyondStagesMod}>
+                <CheckIcon size={12} />
+                <span>{formatModKeyForDisplay(mod)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

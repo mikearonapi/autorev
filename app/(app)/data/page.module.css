@@ -13,6 +13,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
+
   /* Prevent any child from causing horizontal overflow */
   overflow-x: hidden;
   width: 100%;
@@ -136,6 +137,7 @@
   text-decoration: none;
   transition: all 0.2s ease;
   white-space: nowrap;
+
   /* 44px min touch target */
   min-height: 44px;
 }
@@ -202,6 +204,7 @@
   text-transform: uppercase;
   letter-spacing: 0.02em;
   text-decoration: none;
+
   /* 44px min touch target */
   min-height: 48px;
 }
@@ -258,6 +261,7 @@
   transition: all 0.2s ease;
   text-transform: uppercase;
   letter-spacing: 0.02em;
+
   /* 44px min touch target */
   min-height: 44px;
 }
@@ -284,161 +288,284 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* ==========================================================================
-   LOG DATA SECTION - Dyno logging
+   LOG DATA SECTION - Dyno logging (Premium Design)
    ========================================================================== */
 
 .logDataSection {
   margin-top: 20px;
-  padding: 20px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 14px;
+  padding: 24px;
+
+  /* Premium glass effect with subtle gradient */
+  background: linear-gradient(
+    165deg,
+    rgba(16, 185, 129, 0.06) 0%,
+    rgba(255, 255, 255, 0.025) 40%,
+    rgba(0, 0, 0, 0.15) 100%
+  );
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  border-radius: 20px;
+
+  /* Subtle glow effect */
+  box-shadow:
+    0 0 0 1px rgba(16, 185, 129, 0.05) inset,
+    0 8px 32px -8px rgba(0, 0, 0, 0.4),
+    0 0 80px -40px rgba(16, 185, 129, 0.15);
+
+  /* Smooth backdrop blur for depth */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Premium ambient glow overlay */
+.logDataSection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(16, 185, 129, 0.4) 50%, transparent 100%);
 }
 
 .logDataHeader {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
 }
 
 .logDataTitleRow {
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-bottom: 4px;
+  gap: 12px;
+  margin-bottom: 6px;
 }
 
 .logDataIcon {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: rgba(16, 185, 129, 0.15);
-  border-radius: 8px;
+  width: 36px;
+  height: 36px;
+
+  /* Premium gradient background */
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(16, 185, 129, 0.1) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: 10px;
   color: var(--color-accent-teal, #10b981);
+
+  /* Subtle inner glow */
+  box-shadow:
+    0 0 12px rgba(16, 185, 129, 0.2) inset,
+    0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .logDataIcon svg {
   width: 18px;
   height: 18px;
+  filter: drop-shadow(0 0 4px rgba(16, 185, 129, 0.3));
 }
 
 .logDataTitle {
   font-family: var(--font-display, 'Oswald', sans-serif);
-  font-size: 1rem;
+  font-size: 1.125rem;
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   margin: 0;
+
+  /* Subtle text shadow for depth */
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .logDataSubtitle {
   font-size: 0.8125rem;
   color: var(--color-text-secondary, #94a3b8);
   margin: 0;
-  margin-left: 42px;
-  line-height: 1.4;
+  margin-left: 48px;
+  line-height: 1.5;
+  opacity: 0.9;
 }
 
 .logDataLoading {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 24px;
+  gap: 12px;
+  padding: 32px;
   color: var(--color-text-secondary, #94a3b8);
   font-size: 0.875rem;
 }
 
 .logDataEmpty {
   text-align: center;
-  padding: 24px 16px;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px dashed rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
-  margin-bottom: 16px;
+  padding: 32px 20px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+  border: 1px dashed rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  margin-bottom: 20px;
 }
 
 .logDataEmpty p {
   font-size: 0.9375rem;
   color: var(--color-text-secondary, #94a3b8);
-  margin: 0 0 4px;
+  margin: 0 0 6px;
+  font-weight: 500;
 }
 
 .logDataEmpty span {
   font-size: 0.75rem;
   color: var(--color-text-tertiary, #64748b);
+  opacity: 0.85;
 }
 
 .logDataCta {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   width: 100%;
-  padding: 14px 20px;
-  background: var(--color-accent-lime, #d4ff00);
+  padding: 16px 24px;
+
+  /* Premium lime gradient */
+  background: linear-gradient(135deg, #d4ff00 0%, #bfe600 100%);
   color: var(--color-bg-base, #0d1b2a);
   border: none;
-  border-radius: 10px;
+  border-radius: 12px;
   font-size: 0.9375rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
   /* 44px min touch target */
-  min-height: 48px;
+  min-height: 52px;
+
+  /* Premium shadow effect */
+  box-shadow:
+    0 4px 16px rgba(212, 255, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shine effect on hover */
+.logDataCta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  transition: left 0.5s ease;
+}
+
+.logDataCta:hover::before {
+  left: 100%;
 }
 
 .logDataCta:hover {
-  background: var(--color-accent-lime-dark, #bfe600);
-  box-shadow: 0 4px 20px rgba(212, 255, 0, 0.25);
-  transform: translateY(-1px);
+  background: linear-gradient(135deg, #e0ff33 0%, #d4ff00 100%);
+  box-shadow:
+    0 8px 32px rgba(212, 255, 0, 0.35),
+    0 0 0 1px rgba(255, 255, 255, 0.15) inset;
+  transform: translateY(-2px);
+}
+
+.logDataCta:active {
+  transform: translateY(0);
+  box-shadow:
+    0 2px 8px rgba(212, 255, 0, 0.2),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
 }
 
 .logDataCta svg {
   width: 18px;
   height: 18px;
+  transition: transform 0.2s ease;
+}
+
+.logDataCta:hover svg {
+  transform: scale(1.1);
 }
 
 /* ==========================================================================
-   DYNO RESULTS LIST - Redesigned Cards
+   DYNO RESULTS LIST - Premium Redesigned Cards
    ========================================================================== */
 
 .dynoResultsList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 16px;
+  margin-bottom: 20px;
 }
 
-/* New Card Design */
+/* Premium Card Design */
 .dynoResultCard {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 16px;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(255, 255, 255, 0.03) 100%);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  border-radius: 12px;
-  transition: all 0.2s ease;
+  gap: 14px;
+  padding: 20px;
+
+  /* Layered glass effect */
+  background:
+    linear-gradient(165deg, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(0, 0, 0, 0.08) 100%);
+  border: 1px solid rgba(16, 185, 129, 0.18);
+  border-radius: 16px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+
+  /* Premium shadow */
+  box-shadow:
+    0 4px 24px -4px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(16, 185, 129, 0.05) inset;
+}
+
+/* Subtle top highlight */
+.dynoResultCard::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.3), transparent);
 }
 
 .dynoResultCard:hover {
   border-color: rgba(16, 185, 129, 0.35);
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%);
+  background:
+    linear-gradient(165deg, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(0, 0, 0, 0.06) 100%);
+  box-shadow:
+    0 8px 32px -4px rgba(0, 0, 0, 0.4),
+    0 0 40px -20px rgba(16, 185, 129, 0.25),
+    0 0 0 1px rgba(16, 185, 129, 0.1) inset;
+  transform: translateY(-2px);
 }
 
 /* Power Display - Prominent */
 .dynoCardPower {
   display: flex;
   align-items: baseline;
-  gap: 20px;
+  gap: 0;
 }
 
 .dynoCardPowerMain {
@@ -448,110 +575,159 @@
 }
 
 .dynoCardWhp {
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-weight: 800;
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  color: var(--color-accent-teal, #10b981);
+
+  /* Premium teal gradient text */
+  background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   line-height: 1;
+
+  /* Subtle text shadow for glow effect */
+  filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.3));
+  letter-spacing: -0.02em;
 }
 
 .dynoCardWhpLabel {
-  font-size: 0.8125rem;
-  font-weight: 600;
+  font-size: 0.875rem;
+  font-weight: 700;
   color: var(--color-text-tertiary, #64748b);
   text-transform: uppercase;
-  letter-spacing: 0.02em;
+  letter-spacing: 0.04em;
+  opacity: 0.8;
 }
 
 .dynoCardTorque {
   display: flex;
   align-items: baseline;
   gap: 4px;
-  padding-left: 16px;
-  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  padding-left: 20px;
+  margin-left: 20px;
+
+  /* Premium separator line */
+  border-left: 2px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+/* Glow accent on separator */
+.dynoCardTorque::before {
+  content: '';
+  position: absolute;
+  left: -2px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2px;
+  height: 60%;
+  background: linear-gradient(180deg, transparent, rgba(16, 185, 129, 0.4), transparent);
 }
 
 .dynoCardWtq {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  color: var(--color-text-secondary, #94a3b8);
+  color: var(--color-text-primary, #ffffff);
   line-height: 1;
+  opacity: 0.85;
+  letter-spacing: -0.01em;
 }
 
 .dynoCardWtqLabel {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--color-text-tertiary, #64748b);
   text-transform: uppercase;
+  letter-spacing: 0.03em;
+  opacity: 0.7;
 }
 
 /* Comparison Row */
 .dynoCardComparison {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .dynoCardDiff {
   font-size: 0.875rem;
   font-weight: 700;
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  padding: 4px 10px;
-  border-radius: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  letter-spacing: 0.02em;
 }
 
 .dynoCardDiff.positive {
-  background: rgba(16, 185, 129, 0.15);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
   color: var(--color-accent-teal, #10b981);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.15);
 }
 
 .dynoCardDiff.negative {
-  background: rgba(245, 158, 11, 0.15);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(245, 158, 11, 0.1) 100%);
   color: var(--color-warning, #f59e0b);
+  border: 1px solid rgba(245, 158, 11, 0.2);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.1);
 }
 
 .dynoCardVs {
   font-size: 0.8125rem;
-  color: var(--color-text-tertiary, #64748b);
+  color: var(--color-text-secondary, #94a3b8);
+  font-weight: 500;
+  opacity: 0.9;
 }
 
-/* Contextual Message */
+/* Contextual Message - Premium styled */
 .dynoCardMessage {
   font-size: 0.8125rem;
   font-weight: 500;
-  padding: 10px 12px;
-  border-radius: 8px;
-  line-height: 1.4;
+  padding: 12px 14px;
+  border-radius: 10px;
+  line-height: 1.45;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle gradient overlay for all message types */
+.dynoCardMessage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.02) 100%);
+  pointer-events: none;
 }
 
 .dynoCardMessage.exceptional {
-  background: rgba(16, 185, 129, 0.12);
-  color: var(--color-accent-teal, #10b981);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.08) 100%);
+  color: #34d399;
   border-left: 3px solid var(--color-accent-teal, #10b981);
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
 }
 
 .dynoCardMessage.excellent {
-  background: rgba(16, 185, 129, 0.1);
-  color: var(--color-accent-teal, #10b981);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.06) 100%);
+  color: #34d399;
   border-left: 3px solid var(--color-accent-teal, #10b981);
 }
 
 .dynoCardMessage.good {
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--color-accent-blue, #3b82f6);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.12) 0%, rgba(59, 130, 246, 0.06) 100%);
+  color: #60a5fa;
   border-left: 3px solid var(--color-accent-blue, #3b82f6);
 }
 
 .dynoCardMessage.close {
-  background: rgba(148, 163, 184, 0.1);
+  background: linear-gradient(135deg, rgba(148, 163, 184, 0.12) 0%, rgba(148, 163, 184, 0.06) 100%);
   color: var(--color-text-secondary, #94a3b8);
-  border-left: 3px solid var(--color-text-secondary, #94a3b8);
+  border-left: 3px solid rgba(148, 163, 184, 0.5);
 }
 
 .dynoCardMessage.under {
-  background: rgba(245, 158, 11, 0.1);
-  color: var(--color-warning, #f59e0b);
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(245, 158, 11, 0.06) 100%);
+  color: #fbbf24;
   border-left: 3px solid var(--color-warning, #f59e0b);
 }
 
@@ -559,25 +735,29 @@
 .dynoCardMeta {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding-top: 8px;
+  gap: 8px;
+  padding-top: 12px;
+  margin-top: 2px;
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .dynoCardDate {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--color-text-secondary, #94a3b8);
+  font-weight: 500;
 }
 
 .dynoCardSeparator {
-  font-size: 0.625rem;
+  font-size: 0.5rem;
   color: var(--color-text-tertiary, #64748b);
+  opacity: 0.6;
 }
 
 .dynoCardDynoType {
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--color-text-tertiary, #64748b);
   text-transform: capitalize;
+  font-weight: 500;
 }
 
 .dynoCardEditBtn {
@@ -585,14 +765,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  background: rgba(255, 255, 255, 0.06);
-  border: none;
-  border-radius: 6px;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.04) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
   color: var(--color-text-tertiary, #64748b);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+
   /* 44px touch target via padding */
   padding: 8px;
   min-width: 44px;
@@ -600,15 +781,23 @@
 }
 
 .dynoCardEditBtn:hover {
-  background: rgba(255, 255, 255, 0.12);
-  color: var(--color-text-secondary, #94a3b8);
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.08) 100%);
+  border-color: rgba(16, 185, 129, 0.2);
+  color: var(--color-accent-teal, #10b981);
+  transform: scale(1.05);
+}
+
+.dynoCardEditBtn:active {
+  transform: scale(0.98);
 }
 
 .dynoResultsMore {
   text-align: center;
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   color: var(--color-text-tertiary, #64748b);
-  padding: 8px;
+  padding: 12px;
+  font-weight: 500;
+  opacity: 0.85;
 }
 
 /* Legacy styles kept for backwards compatibility */
@@ -644,24 +833,57 @@
     flex-direction: column;
     text-align: center;
   }
-  
+
   .buildPromptBtn {
     width: 100%;
     justify-content: center;
   }
 }
 
-/* Tablet and larger screens - allow side-by-side layout */
+/* Tablet and larger screens - enhanced premium design */
 @media (min-width: 600px) {
+  .logDataSection {
+    padding: 28px;
+  }
+
+  .dynoResultCard {
+    padding: 24px;
+  }
+
   .dynoCardPower {
-    gap: 24px;
+    gap: 0;
   }
-  
+
   .dynoCardWhp {
-    font-size: 2.25rem;
+    font-size: 3rem;
+    filter: drop-shadow(0 0 12px rgba(16, 185, 129, 0.35));
   }
-  
+
+  .dynoCardWhpLabel {
+    font-size: 0.9375rem;
+  }
+
+  .dynoCardTorque {
+    padding-left: 24px;
+    margin-left: 24px;
+  }
+
   .dynoCardWtq {
-    font-size: 1.5rem;
+    font-size: 1.75rem;
+  }
+
+  .dynoCardWtqLabel {
+    font-size: 0.8125rem;
+  }
+
+  .dynoCardMessage {
+    padding: 14px 16px;
+    font-size: 0.875rem;
+  }
+
+  .logDataCta {
+    font-size: 1rem;
+    padding: 18px 28px;
+    min-height: 56px;
   }
 }

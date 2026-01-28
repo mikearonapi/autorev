@@ -1,4 +1,5 @@
 /* BuildProgressRings.module.css - Apple Activity Rings for Build Progress */
+
 /* Adapted from ConcentricRings.module.css for consistency */
 
 .wrapper {
@@ -208,9 +209,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
   /* Minimum 44px touch target per WCAG 2.1 */
   min-width: 44px;
   min-height: 44px;
+
   /* Visual size smaller than touch target */
   width: 44px;
   height: 44px;
@@ -222,6 +225,7 @@
   transition: all 0.15s ease;
   margin-left: -8px; /* Negative margin to keep visual spacing tight while maintaining touch area */
   flex-shrink: 0;
+
   /* Visual indicator is just the icon, not the full touch area */
   position: relative;
 }
@@ -255,13 +259,11 @@
 }
 
 /* Modal Overlay - Full Screen */
+
 /* Level 3: Overlay background for focused progress detail experience */
 .modalOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: var(--brand-bg-overlay, #1a1a1a);
   display: flex;
   flex-direction: column;
@@ -272,8 +274,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* Modal Content - Full Screen */
@@ -299,11 +306,12 @@
 }
 
 @keyframes slideUp {
-  from { 
+  from {
     opacity: 0;
     transform: translateY(20px);
   }
-  to { 
+
+  to {
     opacity: 1;
     transform: translateY(0);
   }
@@ -335,38 +343,62 @@
   transform: scale(0.95);
 }
 
-/* Modal Header */
+/* Modal Header - Updated for professional icon design */
 .modalHeader {
   display: flex;
   align-items: center;
   gap: var(--space-3, 12px);
-  margin-bottom: var(--space-4, 16px);
-  padding-bottom: var(--space-4, 16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 0;
+  padding-right: 44px; /* Space for close button */
 }
 
-.modalIcon {
-  font-size: 32px;
+.modalHeaderLeft {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 12px);
+}
+
+.modalIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-lg, 12px);
+  flex-shrink: 0;
 }
 
 .modalTitle {
-  font-size: var(--text-h3); /* Mobile-first: extra small screens */
+  font-size: var(--text-lg); /* Mobile-first: extra small screens */
   font-weight: 700;
   margin: 0;
-  flex: 1;
 }
 
 /* Regular phones and up */
 @media (min-width: 375px) {
   .modalTitle {
-    font-size: var(--text-h2);
+    font-size: var(--text-xl);
   }
 }
 
 .modalPercent {
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
-  font-size: var(--text-h2);
+  font-size: var(--text-xl);
   font-weight: 700;
+  margin-left: auto;
+}
+
+/* Regular phones and up */
+@media (min-width: 375px) {
+  .modalPercent {
+    font-size: var(--text-h3);
+  }
+}
+
+/* Divider between header and content */
+.modalDivider {
+  height: 1px;
+  margin: var(--space-4, 16px) 0;
 }
 
 /* Modal Description */
@@ -393,6 +425,11 @@
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin: 0 0 var(--space-3, 12px) 0;
+}
+
+.breakdownList {
+  display: flex;
+  flex-direction: column;
 }
 
 .breakdownItem {
@@ -434,8 +471,15 @@
   margin-top: auto;
 }
 
-.tipIcon {
-  font-size: 20px;
+.tipIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  background: rgba(16, 185, 129, 0.2);
+  border-radius: var(--radius-md, 8px);
+  color: var(--color-accent-teal, #10b981);
   flex-shrink: 0;
 }
 
@@ -453,7 +497,7 @@
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
   }
-  
+
   .modalClose {
     top: calc(16px + env(safe-area-inset-top));
   }

@@ -14,7 +14,7 @@ export const contentType = 'image/png';
 export default async function AppleIcon() {
   // Fetch the pre-generated apple touch icon with logo
   const logoUrl = new URL(
-    '/apple-touch-icon-v2.png',
+    '/apple-touch-icon-v3.png',
     process.env.NEXT_PUBLIC_SITE_URL || 'https://autorev.app'
   );
 

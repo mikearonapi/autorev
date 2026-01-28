@@ -2,10 +2,10 @@
 
 /**
  * Media Uploader Component
- * 
+ *
  * Drag-and-drop image and video upload with preview.
  * Uses Vercel Blob client uploads to bypass serverless function size limits.
- * 
+ *
  * Supports:
  * - Images: JPEG, PNG, WebP, GIF (up to 25MB)
  * - Videos: MP4, WebM, MOV (up to 50MB)
@@ -20,8 +20,8 @@ import { upload } from '@vercel/blob/client';
 import styles from './ImageUploader.module.css';
 
 // File size limits - can be larger now with client uploads
-const MAX_IMAGE_SIZE = 25 * 1024 * 1024;  // 25MB for images
-const MAX_VIDEO_SIZE = 50 * 1024 * 1024;  // 50MB for videos
+const MAX_IMAGE_SIZE = 25 * 1024 * 1024; // 25MB for images
+const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB for videos
 
 // Allowed file types
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -61,14 +61,14 @@ async function getVideoDuration(file) {
   });
 }
 
-export default function ImageUploader({ 
+export default function ImageUploader({
   onUploadComplete,
   onUploadError,
   onVideoClick,
   maxFiles = 10,
   vehicleId,
   buildId,
-  carSlug,  // For cross-feature image sharing (Garage <-> Tuning Shop)
+  carSlug, // For cross-feature image sharing (Garage <-> Tuning Shop)
   existingImages = [],
   disabled = false,
   showPreviews = true, // Set to false when using a separate gallery component
@@ -78,6 +78,12 @@ export default function ImageUploader({
   const [uploading, setUploading] = useState(false);
   const [dragActive, setDragActive] = useState(false);
   const [error, setError] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState({
+    current: 0,
+    total: 0,
+    percentage: 0,
+    currentFileName: '',
+  });
   const fileInputRef = useRef(null);
 
   // Sync internal state when existingImages prop changes (e.g., loaded from database)
@@ -102,10 +108,10 @@ export default function ImageUploader({
     if (!ALLOWED_TYPES.includes(file.type)) {
       return `Invalid file type. Allowed: JPEG, PNG, WebP, GIF, MP4, WebM, MOV`;
     }
-    
+
     const isVideo = isVideoFile(file);
     const maxSize = isVideo ? MAX_VIDEO_SIZE : MAX_IMAGE_SIZE;
-    
+
     if (file.size > maxSize) {
       const sizeMB = maxSize / 1024 / 1024;
       return `File too large. Maximum size: ${sizeMB}MB for ${isVideo ? 'videos' : 'images'}`;
@@ -116,29 +122,52 @@ export default function ImageUploader({
   /**
    * Upload file using Vercel Blob client upload
    * This bypasses the 4.5MB serverless function limit
+   * @param {File} file - The file to upload
+   * @param {Function} onProgress - Progress callback (percentage: number)
    */
-  const uploadFile = async (file) => {
+  const uploadFile = async (file, onProgress) => {
     const isVideo = isVideoFile(file);
     const timestamp = Date.now();
-    
+
     // Determine extension
     let ext = file.type.split('/')[1];
     if (ext === 'jpeg') ext = 'jpg';
     if (ext === 'quicktime') ext = 'mov';
-    
+
     // Build pathname for the blob (user folder is enforced server-side)
     const folder = isVideo ? 'user-videos' : 'user-uploads';
     // Note: userId will be added by the server token handler
     const filename = `${timestamp}.${ext}`;
-    
-    // Upload directly to Vercel Blob (bypasses serverless function limit)
-    const blob = await upload(`${folder}/__USER__/${filename}`, file, {
-      access: 'public',
-      handleUploadUrl: '/api/uploads/client-token',
-    });
 
-    if (!blob.url) {
-      throw new Error('Upload failed - no URL returned');
+    // Upload directly to Vercel Blob (bypasses serverless function limit)
+    let blob;
+    try {
+      blob = await upload(`${folder}/__USER__/${filename}`, file, {
+        access: 'public',
+        handleUploadUrl: '/api/uploads/client-token',
+        onUploadProgress: (e) => {
+          if (onProgress) {
+            onProgress(e.percentage);
+          }
+        },
+      });
+    } catch (uploadError) {
+      console.error('[ImageUploader] Blob upload error:', uploadError);
+      // Provide more helpful error messages
+      if (uploadError.message?.includes('401') || uploadError.message?.includes('Unauthorized')) {
+        throw new Error('Please sign in to upload photos');
+      }
+      if (uploadError.message?.includes('413') || uploadError.message?.includes('too large')) {
+        throw new Error('File is too large. Please try a smaller image.');
+      }
+      if (uploadError.message?.includes('network') || uploadError.message?.includes('fetch')) {
+        throw new Error('Network error. Please check your connection and try again.');
+      }
+      throw new Error(uploadError.message || 'Upload failed. Please try again.');
+    }
+
+    if (!blob?.url) {
+      throw new Error('Upload failed - no URL returned from storage');
     }
 
     // Get video duration if applicable
@@ -148,30 +177,43 @@ export default function ImageUploader({
     }
 
     // Determine if this should be primary
-    const existingImages = uploads.filter(u => u.media_type !== 'video');
+    const existingImages = uploads.filter((u) => u.media_type !== 'video');
     const shouldBePrimary = !isVideo && existingImages.length === 0;
 
     // Save metadata to database via separate endpoint
-    const metadataResponse = await fetch('/api/uploads/save-metadata', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        blobUrl: blob.url,
-        blobPathname: blob.pathname,
-        fileName: file.name || filename,
-        fileSize: file.size,
-        contentType: file.type,
-        vehicleId: vehicleId || null,
-        buildId: buildId || null,
-        carSlug: carSlug || null,  // For cross-feature image sharing
-        isPrimary: shouldBePrimary,
-        duration: duration,
-      }),
-    });
+    let metadataResponse;
+    try {
+      metadataResponse = await fetch('/api/uploads/save-metadata', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          blobUrl: blob.url,
+          blobPathname: blob.pathname,
+          fileName: file.name || filename,
+          fileSize: file.size,
+          contentType: file.type,
+          vehicleId: vehicleId || null,
+          buildId: buildId || null,
+          carSlug: carSlug || null, // For cross-feature image sharing
+          isPrimary: shouldBePrimary,
+          duration: duration,
+        }),
+      });
+    } catch (fetchError) {
+      console.error('[ImageUploader] Metadata save fetch error:', fetchError);
+      throw new Error('Failed to save photo. Please try again.');
+    }
 
     if (!metadataResponse.ok) {
       const errorData = await metadataResponse.json().catch(() => ({}));
-      throw new Error(errorData.error || 'Failed to save upload metadata');
+      console.error('[ImageUploader] Metadata save error:', metadataResponse.status, errorData);
+      if (metadataResponse.status === 401) {
+        throw new Error('Please sign in to upload photos');
+      }
+      if (metadataResponse.status === 403) {
+        throw new Error('Permission denied. Please try signing out and back in.');
+      }
+      throw new Error(errorData.error || 'Failed to save photo metadata');
     }
 
     const data = await metadataResponse.json();
@@ -180,10 +222,10 @@ export default function ImageUploader({
 
   const handleFiles = async (files) => {
     if (disabled) return;
-    
+
     setError(null);
     const fileArray = Array.from(files);
-    
+
     // Check max files
     if (uploads.length + fileArray.length > maxFiles) {
       setError(`Maximum ${maxFiles} images allowed`);
@@ -200,22 +242,72 @@ export default function ImageUploader({
     }
 
     setUploading(true);
+    setUploadProgress({ current: 0, total: fileArray.length, percentage: 0, currentFileName: '' });
 
     try {
       const uploadedImages = [];
-      
-      for (const file of fileArray) {
-        const image = await uploadFile(file);
+
+      // Upload files with progress tracking
+      // Use parallel uploads for multiple files (up to 3 concurrent)
+      const CONCURRENT_UPLOADS = Math.min(3, fileArray.length);
+
+      if (fileArray.length === 1) {
+        // Single file - show detailed progress
+        const file = fileArray[0];
+        setUploadProgress((prev) => ({
+          ...prev,
+          current: 1,
+          currentFileName: file.name || 'photo',
+        }));
+
+        const image = await uploadFile(file, (percentage) => {
+          setUploadProgress((prev) => ({ ...prev, percentage: Math.round(percentage) }));
+        });
         uploadedImages.push(image);
+      } else {
+        // Multiple files - process in batches for speed
+        const fileProgressMap = new Map();
+        fileArray.forEach((_, idx) => fileProgressMap.set(idx, 0));
+
+        const updateOverallProgress = () => {
+          const totalProgress = Array.from(fileProgressMap.values()).reduce((a, b) => a + b, 0);
+          const overallPercentage = Math.round(totalProgress / fileArray.length);
+          const completed = Array.from(fileProgressMap.values()).filter((p) => p === 100).length;
+          setUploadProgress((prev) => ({
+            ...prev,
+            percentage: overallPercentage,
+            current: completed,
+          }));
+        };
+
+        // Process files in concurrent batches
+        for (let i = 0; i < fileArray.length; i += CONCURRENT_UPLOADS) {
+          const batch = fileArray.slice(i, i + CONCURRENT_UPLOADS);
+          const batchPromises = batch.map(async (file, batchIdx) => {
+            const fileIdx = i + batchIdx;
+            setUploadProgress((prev) => ({
+              ...prev,
+              currentFileName: `${fileIdx + 1} of ${fileArray.length}`,
+            }));
+
+            const image = await uploadFile(file, (percentage) => {
+              fileProgressMap.set(fileIdx, percentage);
+              updateOverallProgress();
+            });
+            return image;
+          });
+
+          const batchResults = await Promise.all(batchPromises);
+          uploadedImages.push(...batchResults);
+        }
       }
 
       const newUploads = [...uploads, ...uploadedImages];
       setUploads(newUploads);
-      
+
       if (onUploadComplete) {
         onUploadComplete(newUploads);
       }
-
     } catch (err) {
       console.error('[ImageUploader] Upload error:', err);
       setError(err.message || 'Upload failed');
@@ -224,19 +316,24 @@ export default function ImageUploader({
       }
     } finally {
       setUploading(false);
+      setUploadProgress({ current: 0, total: 0, percentage: 0, currentFileName: '' });
     }
   };
 
-  const handleDrop = useCallback((e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      handleFiles(e.dataTransfer.files);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [uploads, maxFiles, disabled]);
+  /* eslint-disable react-hooks/exhaustive-deps */
+  const handleDrop = useCallback(
+    (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setDragActive(false);
+
+      if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        handleFiles(e.dataTransfer.files);
+      }
+    },
+    [uploads, maxFiles, disabled]
+  );
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   const handleImageChange = (e) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -258,13 +355,12 @@ export default function ImageUploader({
         throw new Error('Failed to delete image');
       }
 
-      const newUploads = uploads.filter(img => img.id !== imageId);
+      const newUploads = uploads.filter((img) => img.id !== imageId);
       setUploads(newUploads);
-      
+
       if (onUploadComplete) {
         onUploadComplete(newUploads);
       }
-
     } catch (err) {
       console.error('[ImageUploader] Delete error:', err);
       setError(err.message);
@@ -274,18 +370,17 @@ export default function ImageUploader({
   const handleSetPrimary = async (imageId) => {
     try {
       // Update locally first for responsiveness
-      const newUploads = uploads.map(img => ({
+      const newUploads = uploads.map((img) => ({
         ...img,
         is_primary: img.id === imageId,
       }));
       setUploads(newUploads);
-      
+
       if (onUploadComplete) {
         onUploadComplete(newUploads);
       }
 
       // TODO: Update on server if needed
-      
     } catch (err) {
       console.error('[ImageUploader] Set primary error:', err);
     }
@@ -311,15 +406,33 @@ export default function ImageUploader({
           className={styles.fileInput}
           disabled={disabled}
         />
-        
+
         {uploading ? (
           <div className={styles.uploading}>
-            <div className={styles.spinner} />
-            <span>Uploading...</span>
+            <div className={styles.progressContainer}>
+              <div
+                className={styles.progressBar}
+                style={{ width: `${uploadProgress.percentage}%` }}
+              />
+            </div>
+            <div className={styles.progressInfo}>
+              <span className={styles.progressPercentage}>{uploadProgress.percentage}%</span>
+              <span className={styles.progressText}>
+                {uploadProgress.total > 1
+                  ? `Uploading ${uploadProgress.currentFileName}`
+                  : 'Uploading...'}
+              </span>
+            </div>
           </div>
         ) : compact ? (
           <div className={styles.dropContentCompact}>
-            <svg className={styles.uploadIconCompact} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              className={styles.uploadIconCompact}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="17 8 12 3 7 8" />
               <line x1="12" y1="3" x2="12" y2="15" />
@@ -328,14 +441,18 @@ export default function ImageUploader({
               <span className={styles.dropTextMain}>
                 {dragActive ? 'Drop files here' : 'Tap to upload photos or videos'}
               </span>
-              <span className={styles.dropTextSub}>
-                JPEG, PNG, WebP, GIF, MP4, WebM • Max 25MB
-              </span>
+              <span className={styles.dropTextSub}>JPEG, PNG, WebP, GIF, MP4, WebM • Max 25MB</span>
             </div>
           </div>
         ) : (
           <div className={styles.dropContent}>
-            <svg className={styles.uploadIcon} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <svg
+              className={styles.uploadIcon}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+            >
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
               <polyline points="17 8 12 3 7 8" />
               <line x1="12" y1="3" x2="12" y2="15" />
@@ -346,9 +463,7 @@ export default function ImageUploader({
             <span className={styles.dropHint}>
               JPEG, PNG, WebP, GIF • Max 10 images • 25MB each
             </span>
-            <span className={styles.dropHint}>
-              MP4, WebM, MOV • Max 50MB per video
-            </span>
+            <span className={styles.dropHint}>MP4, WebM, MOV • Max 50MB per video</span>
           </div>
         )}
       </div>
@@ -356,7 +471,17 @@ export default function ImageUploader({
       {/* Error Message */}
       {error && (
         <div className={styles.error}>
-          {error}
+          <span className={styles.errorText}>{error}</span>
+          <button
+            type="button"
+            className={styles.retryBtn}
+            onClick={() => {
+              setError(null);
+              fileInputRef.current?.click();
+            }}
+          >
+            Try Again
+          </button>
         </div>
       )}
 
@@ -365,10 +490,10 @@ export default function ImageUploader({
         <div className={styles.previews}>
           {uploads.map((media, index) => {
             const isVideo = media.media_type === 'video';
-            
+
             return (
-              <div 
-                key={media.id || index} 
+              <div
+                key={media.id || index}
                 className={`${styles.preview} ${media.is_primary ? styles.primary : ''} ${isVideo ? styles.videoPreview : ''}`}
                 onClick={() => isVideo && onVideoClick && onVideoClick(media)}
               >
@@ -386,7 +511,14 @@ export default function ImageUploader({
                         />
                       ) : (
                         <div className={styles.videoPlaceholder}>
-                          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+                          <svg
+                            width="32"
+                            height="32"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="1.5"
+                          >
                             <rect x="2" y="2" width="20" height="20" rx="2" />
                             <polygon points="10 8 16 12 10 16 10 8" fill="currentColor" />
                           </svg>
@@ -415,15 +547,11 @@ export default function ImageUploader({
                     className={styles.previewImage}
                   />
                 )}
-                
+
                 <div className={styles.previewOverlay}>
-                  {media.is_primary && (
-                    <span className={styles.primaryBadge}>Hero</span>
-                  )}
-                  {isVideo && (
-                    <span className={styles.videoBadge}>Video</span>
-                  )}
-                  
+                  {media.is_primary && <span className={styles.primaryBadge}>Hero</span>}
+                  {isVideo && <span className={styles.videoBadge}>Video</span>}
+
                   <div className={styles.previewActions}>
                     {!media.is_primary && !isVideo && (
                       <button
@@ -454,7 +582,7 @@ export default function ImageUploader({
               </div>
             );
           })}
-          
+
           {/* Add more button */}
           {uploads.length < maxFiles && (
             <button
@@ -472,4 +600,3 @@ export default function ImageUploader({
     </div>
   );
 }
-

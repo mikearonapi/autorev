@@ -100,6 +100,7 @@ const CONDITIONS = [
 const TIMING_SYSTEMS = [
   { value: '', label: 'Not specified' },
   { value: 'aim', label: 'AIM' },
+  { value: 'garmin_catalyst', label: 'Garmin Catalyst' },
   { value: 'racecapture', label: 'RaceCapture' },
   { value: 'trackaddict', label: 'TrackAddict' },
   { value: 'harrys_laptimer', label: "Harry's LapTimer" },

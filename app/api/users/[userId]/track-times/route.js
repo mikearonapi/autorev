@@ -65,64 +65,58 @@ async function handleGet(request, { params }) {
     });
 
     if (error) {
-      // If RPC doesn't exist yet (migration not run), fall back to direct query
-      // PostgREST returns PGRST202 when function is not in schema cache
-      // Postgres returns 42883 when function doesn't exist
-      const isMissingFunction =
-        error.code === '42883' ||
-        error.code === 'PGRST202' ||
-        error.message?.includes('does not exist') ||
-        error.message?.includes('Could not find the function');
+      // RPC function failed - fall back to direct query
+      // Common reasons: function doesn't exist (42883, PGRST202), type mismatch (42804), etc.
+      console.warn(
+        '[TrackTimes] RPC error, falling back to direct query:',
+        error.code,
+        error.message
+      );
 
-      if (isMissingFunction) {
-        const query = supabase
-          .from('user_track_times')
-          .select(
-            `
-            id,
-            track_name,
-            track_config,
-            lap_time_seconds,
-            session_date,
-            session_type,
-            conditions,
-            tire_compound,
-            mods_summary,
-            estimated_hp,
-            notes,
-            highlights,
-            areas_to_improve,
-            car_slug,
-            estimated_time_seconds,
-            driver_skill_level,
-            al_analysis,
-            created_at
+      const query = supabase
+        .from('user_track_times')
+        .select(
           `
-          )
-          .eq('user_id', userId)
-          .order('session_date', { ascending: false })
-          .order('created_at', { ascending: false })
-          .limit(limit);
+          id,
+          track_name,
+          track_config,
+          lap_time_seconds,
+          session_date,
+          session_type,
+          conditions,
+          tire_compound,
+          mods_summary,
+          estimated_hp,
+          notes,
+          highlights,
+          areas_to_improve,
+          car_slug,
+          estimated_time_seconds,
+          driver_skill_level,
+          al_analysis,
+          created_at
+        `
+        )
+        .eq('user_id', userId)
+        .order('session_date', { ascending: false })
+        .order('created_at', { ascending: false })
+        .limit(limit);
 
-        if (track) query.eq('track_name', track);
-        if (carSlug) query.eq('car_slug', carSlug);
+      if (track) query.eq('track_name', track);
+      if (carSlug) query.eq('car_slug', carSlug);
 
-        const { data: fallbackData, error: fallbackError } = await query;
+      const { data: fallbackData, error: fallbackError } = await query;
 
-        if (fallbackError) {
-          // Table might not exist yet
-          if (fallbackError.code === '42P01') {
-            return NextResponse.json({ times: [], message: 'Track times feature not yet enabled' });
-          }
-          console.error('[TrackTimes] Error fetching track times:', fallbackError);
-          return NextResponse.json({ error: 'Failed to fetch track times' }, { status: 500 });
+      if (fallbackError) {
+        // Table might not exist yet
+        if (fallbackError.code === '42P01') {
+          return NextResponse.json({ times: [], message: 'Track times feature not yet enabled' });
         }
-
-        return NextResponse.json({ times: fallbackData || [] });
+        console.error('[TrackTimes] Error fetching track times:', fallbackError);
+        return NextResponse.json({ error: 'Failed to fetch track times' }, { status: 500 });
       }
 
-      console.error('[TrackTimes] RPC error:', error);
-      return NextResponse.json({ error: 'Failed to fetch track times' }, { status: 500 });
+      return NextResponse.json({ times: fallbackData || [] });
     }
 
     return NextResponse.json({ times: data || [] });

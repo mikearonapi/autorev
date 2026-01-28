@@ -39,6 +39,11 @@ Thumbs.db
 # Generated images (local AI output before upload)
 generated-images/
 
+# Database backups (contain sensitive data)
+backups/
+*.sql
+*.sql.gz
+
 # Playwright
 playwright-report/
 test-results/

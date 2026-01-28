@@ -16,11 +16,7 @@
   text-align: center;
   cursor: pointer;
   transition: all 0.25s ease;
-  background: linear-gradient(
-    135deg,
-    rgba(30, 40, 55, 0.5) 0%,
-    rgba(20, 30, 45, 0.5) 100%
-  );
+  background: linear-gradient(135deg, rgba(30, 40, 55, 0.5) 0%, rgba(20, 30, 45, 0.5) 100%);
   position: relative;
   overflow: hidden;
 }
@@ -131,7 +127,9 @@
   width: 44px;
   height: 44px;
   color: rgba(255, 255, 255, 0.5);
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 
 .dropzone:hover .uploadIcon {
@@ -158,6 +156,69 @@
   align-items: center;
   gap: 0.75rem;
   color: rgba(255, 255, 255, 0.7);
+  width: 100%;
+  padding: 0 1rem;
+}
+
+.progressContainer {
+  width: 100%;
+  max-width: 280px;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand-gold) 0%, var(--brand-gold-light, #ffd54f) 100%);
+  border-radius: 4px;
+  transition: width 0.15s ease-out;
+  position: relative;
+}
+
+/* Animated shimmer on progress bar */
+.progressBar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  animation: progressShimmer 1.5s infinite;
+}
+
+@keyframes progressShimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.progressInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.progressPercentage {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--brand-gold);
+  font-variant-numeric: tabular-nums;
+}
+
+.progressText {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .spinner {
@@ -170,17 +231,47 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Error */
 .error {
-  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
   background: rgba(var(--brand-error-rgb), 0.1);
   border: 1px solid rgba(var(--brand-error-rgb), 0.3);
   border-radius: 8px;
   color: var(--brand-error-light);
   font-size: 0.875rem;
+  text-align: center;
+}
+
+.errorText {
+  font-weight: 500;
+}
+
+.retryBtn {
+  align-self: center;
+  padding: 0.5rem 1rem;
+  min-width: 100px;
+  min-height: 44px;
+  background: rgba(var(--brand-error-rgb), 0.2);
+  border: 1px solid rgba(var(--brand-error-rgb), 0.4);
+  border-radius: 6px;
+  color: var(--brand-error-light);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.retryBtn:hover {
+  background: rgba(var(--brand-error-rgb), 0.3);
+  border-color: rgba(var(--brand-error-rgb), 0.6);
 }
 
 /* Previews */
@@ -213,7 +304,7 @@
 .previewOverlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7) 0%, transparent 50%);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -331,7 +422,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s, transform 0.2s;
+  transition:
+    background 0.2s,
+    transform 0.2s;
 }
 
 .videoPreview:hover .playIconOverlay {
@@ -373,15 +466,14 @@
     width: 100px;
     height: 70px;
   }
-  
+
   .playIconOverlay {
     width: 28px;
     height: 28px;
   }
-  
+
   .playIconOverlay svg {
     width: 12px;
     height: 12px;
   }
 }
-

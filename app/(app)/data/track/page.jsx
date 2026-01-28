@@ -496,7 +496,14 @@ function TrackPageContent() {
     if (!isAuthenticated) return false;
     if (!isDataFetchReady) return true;
     return vehiclesLoading;
-  }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading, loadingTimedOut, userVehicles.length]);
+  }, [
+    authLoading,
+    isAuthenticated,
+    isDataFetchReady,
+    vehiclesLoading,
+    loadingTimedOut,
+    userVehicles.length,
+  ]);
 
   // Not authenticated - show sign in prompt
   // NOTE: Keep messaging consistent with original combined page
@@ -645,25 +652,64 @@ function TrackPageContent() {
                       {trackTimesWithPB.slice(0, 5).map((time) => (
                         <div
                           key={time.id}
-                          className={`${styles.trackTimeItem} ${time.isPB ? styles.trackTimeItemPB : ''}`}
+                          className={`${styles.trackTimeCard} ${time.isPB ? styles.trackTimeCardPB : ''}`}
                         >
-                          <div className={styles.trackTimeMain}>
-                            {/* PB Badge */}
+                          {/* Track Header */}
+                          <div className={styles.trackTimeHeader}>
+                            <div className={styles.trackTimeTrackInfo}>
+                              <span className={styles.trackTimeTrackName}>{time.track_name}</span>
+                              {time.track_config && (
+                                <span className={styles.trackTimeConfig}>{time.track_config}</span>
+                              )}
+                            </div>
+                            {/* Edit/Delete buttons */}
+                            <div className={styles.trackTimeActions}>
+                              <button
+                                className={styles.trackTimeActionBtn}
+                                onClick={() => {
+                                  setEditingTrackTime(time);
+                                  setShowTrackTimeModal(true);
+                                }}
+                                aria-label="Edit lap time"
+                                title="Edit"
+                              >
+                                <EditIcon size={16} />
+                              </button>
+                              <button
+                                className={`${styles.trackTimeActionBtn} ${styles.trackTimeDeleteBtn}`}
+                                onClick={() => handleDeleteTrackTime(time.id)}
+                                aria-label="Delete lap time"
+                                title="Delete"
+                                disabled={deleteTrackTime.isPending}
+                              >
+                                <TrashIcon size={16} />
+                              </button>
+                            </div>
+                          </div>
+
+                          {/* Lap Time Display */}
+                          <div className={styles.trackTimeLapRow}>
                             {time.isPB && (
                               <span className={styles.trackTimePBBadge} title="Personal Best">
-                                <TrophyIcon size={12} />
-                                PB
+                                <TrophyIcon size={14} />
+                                <span>PB</span>
                               </span>
                             )}
                             <span className={styles.trackTimeLap}>
                               {Math.floor(time.lap_time_seconds / 60)}:
                               {(time.lap_time_seconds % 60).toFixed(3).padStart(6, '0')}
                             </span>
-                            <span className={styles.trackTimeTrack}>{time.track_name}</span>
-                            {time.track_config && (
-                              <span className={styles.trackTimeConfig}>({time.track_config})</span>
+                            {time.estimated_time_seconds && (
+                              <span
+                                className={`${styles.trackTimeDiff} ${time.lap_time_seconds <= time.estimated_time_seconds ? styles.positive : styles.negative}`}
+                              >
+                                {time.lap_time_seconds <= time.estimated_time_seconds ? '' : '+'}
+                                {(time.lap_time_seconds - time.estimated_time_seconds).toFixed(2)}s
+                              </span>
                             )}
                           </div>
+
+                          {/* Metadata Row */}
                           <div className={styles.trackTimeMeta}>
                             <span className={styles.trackTimeDate}>
                               {new Date(time.session_date).toLocaleDateString('en-US', {
@@ -676,55 +722,19 @@ function TrackPageContent() {
                                   : 'numeric',
                               })}
                             </span>
+                            <span className={styles.trackTimeDot}>•</span>
                             <span className={styles.trackTimeConditions}>
-                              {time.conditions || 'dry'}
+                              {time.conditions || 'Dry'}
                             </span>
-                          </div>
-                          {time.estimated_time_seconds && (
-                            <div
-                              className={`${styles.trackTimeDiff} ${time.lap_time_seconds <= time.estimated_time_seconds ? styles.positive : styles.negative}`}
-                            >
-                              {time.lap_time_seconds <= time.estimated_time_seconds ? '' : '+'}
-                              {(time.lap_time_seconds - time.estimated_time_seconds).toFixed(2)}s vs
-                              estimate
-                            </div>
-                          )}
-                          {/* Track progress indicator */}
-                          {time.trackImprovement &&
-                            time.trackImprovement.total > 0 &&
-                            time.isPB && (
-                              <div className={styles.trackTimeProgress}>
-                                <span className={styles.trackTimeProgressArrow}>↓</span>
-                                <span className={styles.trackTimeProgressValue}>
-                                  {time.trackImprovement.total.toFixed(2)}s
+                            {/* Track progress indicator */}
+                            {time.trackImprovement &&
+                              time.trackImprovement.total > 0 &&
+                              time.isPB && (
+                                <span className={styles.trackTimeProgress}>
+                                  <span className={styles.trackTimeProgressArrow}>↓</span>
+                                  {time.trackImprovement.total.toFixed(2)}s improvement
                                 </span>
-                                <span className={styles.trackTimeProgressLabel}>
-                                  over {time.trackImprovement.sessions} sessions
-                                </span>
-                              </div>
-                            )}
-                          {/* Edit/Delete buttons */}
-                          <div className={styles.trackTimeActions}>
-                            <button
-                              className={styles.trackTimeEditBtn}
-                              onClick={() => {
-                                setEditingTrackTime(time);
-                                setShowTrackTimeModal(true);
-                              }}
-                              aria-label="Edit lap time"
-                              title="Edit"
-                            >
-                              <EditIcon size={14} />
-                            </button>
-                            <button
-                              className={styles.trackTimeDeleteBtn}
-                              onClick={() => handleDeleteTrackTime(time.id)}
-                              aria-label="Delete lap time"
-                              title="Delete"
-                              disabled={deleteTrackTime.isPending}
-                            >
-                              <TrashIcon size={14} />
-                            </button>
+                              )}
                           </div>
                         </div>
                       ))}

@@ -284,10 +284,12 @@ export function useAddTrackTime() {
       }
       return res.json();
     },
-    onSuccess: (data, { userId, trackTime }) => {
-      // Invalidate track times cache
-      queryClient.invalidateQueries({ queryKey: userKeys.trackTimes(userId, trackTime.carSlug) });
-      queryClient.invalidateQueries({ queryKey: userKeys.trackTimes(userId, null) });
+    onSuccess: (data, { userId }) => {
+      // Invalidate ALL track times queries for this user
+      // Using partial key match to ensure we catch queries with any carSlug value
+      queryClient.invalidateQueries({
+        queryKey: [...userKeys.all, userId, 'track-times'],
+      });
     },
   });
 }
@@ -338,9 +340,11 @@ export function useDeleteTrackTime() {
       return res.json();
     },
     onSuccess: (data, { userId }) => {
-      // Invalidate all track times caches for this user
-      queryClient.invalidateQueries({ queryKey: userKeys.trackTimes(userId, null) });
-      queryClient.invalidateQueries({ queryKey: [...userKeys.all, userId, 'track-times'] });
+      // Invalidate ALL track times queries for this user
+      // Using partial key match to ensure we catch queries with any carSlug value
+      queryClient.invalidateQueries({
+        queryKey: [...userKeys.all, userId, 'track-times'],
+      });
     },
   });
 }

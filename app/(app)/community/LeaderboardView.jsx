@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 import Image from 'next/image';
 
@@ -10,6 +10,12 @@ import { useAuth } from '@/components/providers/AuthProvider';
 import { ListSkeleton } from '@/components/ui/Skeleton';
 
 import styles from './LeaderboardView.module.css';
+
+// How often to auto-refresh when page is visible (5 minutes)
+const REFRESH_INTERVAL_MS = 5 * 60 * 1000;
+
+// Minimum time between refreshes (30 seconds) to prevent spam
+const MIN_REFRESH_INTERVAL_MS = 30 * 1000;
 
 /**
  * LeaderboardView - Points leaderboard with monthly/all-time toggle
@@ -87,47 +93,107 @@ export default function LeaderboardView() {
   const [hasMore, setHasMore] = useState(false);
   const [total, setTotal] = useState(0);
 
-  const fetchLeaderboard = useCallback(async (selectedPeriod, offset = 0, append = false) => {
-    try {
-      if (append) {
-        setIsLoadingMore(true);
-      } else {
-        setIsLoading(true);
-      }
-      setError(null);
+  // Track last fetch time to prevent spam refreshes
+  const lastFetchRef = useRef(0);
+  const intervalRef = useRef(null);
 
-      // v=2 cache bust for callsign fix (Jan 2026)
-      const res = await fetch(
-        `/api/community/leaderboard?limit=${ITEMS_PER_PAGE}&offset=${offset}&period=${selectedPeriod}&v=2`
-      );
-
-      if (!res.ok) {
-        throw new Error('Failed to fetch leaderboard');
+  const fetchLeaderboard = useCallback(
+    async (selectedPeriod, offset = 0, append = false, isBackgroundRefresh = false) => {
+      // Prevent refresh if recently fetched (unless it's a forced fetch like period change)
+      const now = Date.now();
+      if (isBackgroundRefresh && now - lastFetchRef.current < MIN_REFRESH_INTERVAL_MS) {
+        return;
       }
 
-      const data = await res.json();
+      try {
+        if (append) {
+          setIsLoadingMore(true);
+        } else if (!isBackgroundRefresh) {
+          // Only show loading state for initial loads, not background refreshes
+          setIsLoading(true);
+        }
+        setError(null);
 
-      if (append) {
-        setLeaderboard((prev) => [...prev, ...(data.leaderboard || [])]);
-      } else {
-        setLeaderboard(data.leaderboard || []);
+        // Add timestamp cache buster for fresh data
+        const timestamp = Date.now();
+        const res = await fetch(
+          `/api/community/leaderboard?limit=${ITEMS_PER_PAGE}&offset=${offset}&period=${selectedPeriod}&t=${timestamp}`,
+          { cache: 'no-store' }
+        );
+
+        if (!res.ok) {
+          throw new Error('Failed to fetch leaderboard');
+        }
+
+        const data = await res.json();
+        lastFetchRef.current = Date.now();
+
+        if (append) {
+          setLeaderboard((prev) => [...prev, ...(data.leaderboard || [])]);
+        } else {
+          setLeaderboard(data.leaderboard || []);
+        }
+
+        setPeriodLabel(data.periodLabel || '');
+        setCurrentUserRank(data.currentUserRank);
+        setHasMore(data.hasMore || false);
+        setTotal(data.total || 0);
+      } catch (err) {
+        console.error('[LeaderboardView] Error:', err);
+        // Only show error for non-background refreshes
+        if (!isBackgroundRefresh) {
+          setError('Unable to load leaderboard');
+        }
+      } finally {
+        setIsLoading(false);
+        setIsLoadingMore(false);
       }
+    },
+    []
+  );
 
-      setPeriodLabel(data.periodLabel || '');
-      setCurrentUserRank(data.currentUserRank);
-      setHasMore(data.hasMore || false);
-      setTotal(data.total || 0);
-    } catch (err) {
-      console.error('[LeaderboardView] Error:', err);
-      setError('Unable to load leaderboard');
-    } finally {
-      setIsLoading(false);
-      setIsLoadingMore(false);
-    }
-  }, []);
-
+  // Initial fetch when period changes
   useEffect(() => {
     fetchLeaderboard(period);
+  }, [period, fetchLeaderboard]);
+
+  // Auto-refresh on visibility change and periodic interval
+  useEffect(() => {
+    // Refresh when page becomes visible
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        fetchLeaderboard(period, 0, false, true);
+      }
+    };
+
+    // Refresh when window gains focus
+    const handleFocus = () => {
+      fetchLeaderboard(period, 0, false, true);
+    };
+
+    // Set up periodic refresh when visible
+    const setupInterval = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+      intervalRef.current = setInterval(() => {
+        if (document.visibilityState === 'visible') {
+          fetchLeaderboard(period, 0, false, true);
+        }
+      }, REFRESH_INTERVAL_MS);
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+    setupInterval();
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
   }, [period, fetchLeaderboard]);
 
   const handlePeriodChange = (newPeriod) => {

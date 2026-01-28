@@ -118,8 +118,8 @@ async function runTests() {
     results.failed++;
   }
 
-  // Test 5: estimateLapTime (requires DB connection)
-  console.log('\nTest 5: estimateLapTime (requires DB)');
+  // Test 5: estimateLapTime with tiered system (requires DB connection)
+  console.log('\nTest 5: estimateLapTime - Tiered Estimation (requires DB)');
   try {
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
       console.log('  ⚠️ Skipped - No Supabase connection');
@@ -136,18 +136,21 @@ async function runTests() {
         },
       });
 
-      if (estimate.source === 'real_data') {
-        console.log(`  ✅ Got estimate from real data (${estimate.sampleSize} samples)`);
-        console.log(
-          `     Stock: ${estimate.formatted?.stock}, Modded: ${estimate.formatted?.modded}`
-        );
-        console.log(`     Improvement: ${estimate.formatted?.improvement}`);
-        results.passed++;
-      } else if (estimate.source === 'unavailable') {
-        console.log('  ⚠️ No data available for this track');
+      // Tiered system: source can be 'statistical', 'reference_scaled', 'similar_car', or 'insufficient_data'
+      const validSources = ['statistical', 'reference_scaled', 'similar_car', 'insufficient_data'];
+
+      if (validSources.includes(estimate.source) && estimate.tier >= 1 && estimate.tier <= 4) {
+        console.log(`  ✅ Got estimate - Tier ${estimate.tier} (${estimate.source})`);
+        if (estimate.stockLapTime) {
+          console.log(
+            `     Stock: ${estimate.formatted?.stock}, Modded: ${estimate.formatted?.modded}`
+          );
+          console.log(`     Improvement: ${estimate.formatted?.improvement}`);
+          console.log(`     Confidence: ${(estimate.confidence * 100).toFixed(0)}%`);
+        }
         results.passed++;
       } else {
-        console.log(`  ❌ Unexpected source: ${estimate.source}`);
+        console.log(`  ❌ Unexpected source: ${estimate.source}, tier: ${estimate.tier}`);
         results.failed++;
       }
     }
@@ -199,20 +202,26 @@ async function runTests() {
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL) {
       console.log('  ⚠️ Skipped - No Supabase connection');
     } else {
-      // Test with a track that has mixed data (street cars + race cars)
+      // Test with Laguna Seca (has good data coverage for Tier 1)
       const beginnerEst = await lapTimeService.estimateLapTime({
-        trackSlug: 'vir-full',
+        trackSlug: 'laguna-seca',
         stockHp: 300,
         driverSkill: 'beginner',
       });
 
       const proEst = await lapTimeService.estimateLapTime({
-        trackSlug: 'vir-full',
+        trackSlug: 'laguna-seca',
         stockHp: 300,
         driverSkill: 'professional',
       });
 
-      if (beginnerEst.source === 'real_data' && proEst.source === 'real_data') {
+      // Check if we have reliable estimates (Tier 1-3)
+      if (
+        beginnerEst.tier <= 3 &&
+        proEst.tier <= 3 &&
+        beginnerEst.stockLapTime &&
+        proEst.stockLapTime
+      ) {
         const beginnerTime = beginnerEst.stockLapTime;
         const proTime = proEst.stockLapTime;
         const improvement = beginnerTime - proTime;
@@ -243,7 +252,7 @@ async function runTests() {
           results.failed++;
         }
       } else {
-        console.log('  ⚠️ No data for VIR track');
+        console.log(`  ⚠️ Insufficient data (Tier ${beginnerEst.tier}/${proEst.tier})`);
         results.passed++;
       }
     }

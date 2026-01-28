@@ -2,36 +2,40 @@
 
 /**
  * BuildProgressRings Component
- * 
+ *
  * Apple Watch-style concentric rings showing build progress across 3 dimensions:
  * - Power (outer ring) - HP gain vs max potential
  * - Handling (middle ring) - Handling mods score
  * - Reliability (inner ring) - Supporting mods balance
- * 
+ *
  * Shows: Stock → Current → Max Potential breakdown
  * Based on Dashboard's ConcentricRings component for visual consistency.
  */
 
 import { useEffect, useState } from 'react';
 
+import { createPortal } from 'react-dom';
+
+import { Icons } from '@/components/ui/Icons';
 import { useSafeAreaColor, SAFE_AREA_COLORS } from '@/hooks/useSafeAreaColor';
 
 import styles from './BuildProgressRings.module.css';
 
 // Info icon component
 const InfoIcon = ({ size = 12 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+  <svg
+    width={size}
+    height={size}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
     <circle cx="12" cy="12" r="10" />
     <line x1="12" y1="16" x2="12" y2="12" />
     <line x1="12" y1="8" x2="12.01" y2="8" />
-  </svg>
-);
-
-// Close icon for modal
-const CloseIcon = ({ size = 20 }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <line x1="18" y1="6" x2="6" y2="18" />
-    <line x1="6" y1="6" x2="18" y2="18" />
   </svg>
 );
 
@@ -40,10 +44,11 @@ const CloseIcon = ({ size = 20 }) => (
 const RING_INFO = {
   power: {
     title: 'Power',
-    icon: '⚡',
+    icon: Icons.zap,
     colorVar: '--color-error',
     colorFallback: '#ef4444',
-    description: 'How much of your vehicle\'s performance potential you\'ve unlocked through modifications.',
+    description:
+      "How much of your vehicle's performance potential you've unlocked through modifications.",
     breakdown: [
       { label: '0%', desc: 'Stock power - no modifications' },
       { label: '25%', desc: 'Light mods - intake, exhaust' },
@@ -55,10 +60,10 @@ const RING_INFO = {
   },
   handling: {
     title: 'Handling',
-    icon: '🎯',
+    icon: Icons.target,
     colorVar: '--color-accent-teal',
     colorFallback: '#10b981',
-    description: 'Your vehicle\'s cornering and control capability compared to its full potential.',
+    description: "Your vehicle's cornering and control capability compared to its full potential.",
     breakdown: [
       { label: '50%', desc: 'Stock - your car handles fine from the factory' },
       { label: '65%', desc: 'Lowering springs or basic suspension' },
@@ -70,10 +75,11 @@ const RING_INFO = {
   },
   reliability: {
     title: 'Reliability',
-    icon: '🛡️',
+    icon: Icons.shield,
     colorVar: '--color-accent-blue',
     colorFallback: '#3b82f6',
-    description: 'How well-supported your power modifications are. More power without support = more stress.',
+    description:
+      'How well-supported your power modifications are. More power without support = more stress.',
     breakdown: [
       { label: '100%', desc: 'Stock or well-supported build' },
       { label: '85%', desc: 'Moderate power with some support' },
@@ -87,44 +93,69 @@ const RING_INFO = {
 // Helper to get CSS variable value with fallback
 const getCssColor = (colorVar, fallback) => `var(${colorVar}, ${fallback})`;
 
-// Info Modal Component
+// Info Modal Component - Professional design matching app patterns
 const RingInfoModal = ({ ring, onClose, data }) => {
   if (!ring) return null;
-  
+
   const info = RING_INFO[ring];
   if (!info) return null;
-  
+
   const color = getCssColor(info.colorVar, info.colorFallback);
+  const IconComponent = info.icon;
 
   return (
     <div className={styles.modalOverlay} onClick={onClose} data-overlay-modal>
-      <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-        <button className={styles.modalClose} onClick={onClose}>
-          <CloseIcon />
-        </button>
-        
+      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+        {/* Header */}
         <div className={styles.modalHeader}>
-          <span className={styles.modalIcon}>{info.icon}</span>
-          <h3 className={styles.modalTitle} style={{ color }}>{info.title}</h3>
+          <div className={styles.modalHeaderLeft}>
+            <div
+              className={styles.modalIconWrapper}
+              style={{ backgroundColor: `${info.colorFallback}20`, color }}
+            >
+              <IconComponent size={22} />
+            </div>
+            <h3 className={styles.modalTitle} style={{ color }}>
+              {info.title}
+            </h3>
+          </div>
           <span className={styles.modalPercent} style={{ color }}>
             {data?.percent || 0}%
           </span>
+          <button className={styles.modalClose} onClick={onClose} aria-label="Close">
+            <Icons.x size={20} />
+          </button>
         </div>
-        
+
+        {/* Divider */}
+        <div
+          className={styles.modalDivider}
+          style={{ backgroundColor: `${info.colorFallback}30` }}
+        />
+
+        {/* Description */}
         <p className={styles.modalDescription}>{info.description}</p>
-        
+
+        {/* Breakdown */}
         <div className={styles.modalBreakdown}>
           <h4 className={styles.breakdownTitle}>What the percentages mean:</h4>
-          {info.breakdown.map((item, idx) => (
-            <div key={idx} className={styles.breakdownItem}>
-              <span className={styles.breakdownLabel} style={{ color }}>{item.label}</span>
-              <span className={styles.breakdownDesc}>{item.desc}</span>
-            </div>
-          ))}
+          <div className={styles.breakdownList}>
+            {info.breakdown.map((item, idx) => (
+              <div key={idx} className={styles.breakdownItem}>
+                <span className={styles.breakdownLabel} style={{ color }}>
+                  {item.label}
+                </span>
+                <span className={styles.breakdownDesc}>{item.desc}</span>
+              </div>
+            ))}
+          </div>
         </div>
-        
+
+        {/* Pro Tip */}
         <div className={styles.modalTip}>
-          <span className={styles.tipIcon}>💡</span>
+          <div className={styles.tipIconWrapper}>
+            <Icons.lightbulb size={16} />
+          </div>
           <span className={styles.tipText}>{info.tip}</span>
         </div>
       </div>
@@ -136,18 +167,37 @@ const RingInfoModal = ({ ring, onClose, data }) => {
 // Colors are semantic: Power (red/energy), Handling (green/control), Reliability (blue/trust)
 // Using CSS custom properties with fallbacks for design system consistency
 const RINGS = [
-  { key: 'power', label: 'Power', colorVar: '--color-error', colorFallback: '#ef4444', baselineColor: null },
-  { key: 'handling', label: 'Handling', colorVar: '--color-accent-teal', colorFallback: '#10b981', baselineColorVar: '--color-accent-teal', baselineOpacity: '40' },
-  { key: 'reliability', label: 'Reliable', colorVar: '--color-accent-blue', colorFallback: '#3b82f6', baselineColor: null },
+  {
+    key: 'power',
+    label: 'Power',
+    colorVar: '--color-error',
+    colorFallback: '#ef4444',
+    baselineColor: null,
+  },
+  {
+    key: 'handling',
+    label: 'Handling',
+    colorVar: '--color-accent-teal',
+    colorFallback: '#10b981',
+    baselineColorVar: '--color-accent-teal',
+    baselineOpacity: '40',
+  },
+  {
+    key: 'reliability',
+    label: 'Reliable',
+    colorVar: '--color-accent-blue',
+    colorFallback: '#3b82f6',
+    baselineColor: null,
+  },
 ];
 
 // Reliability status colors - using CSS custom properties
 const RELIABILITY_COLORS = {
-  'excellent': { colorVar: '--color-accent-teal', fallback: '#10b981' },  // Green - well balanced
-  'good': { colorVar: '--color-accent-blue', fallback: '#3b82f6' },       // Blue - healthy
-  'monitor': { colorVar: '--color-accent-amber', fallback: '#f59e0b' },   // Amber - needs attention
-  'at-risk': { colorVar: '--color-error', fallback: '#ef4444' },          // Red - risky
-  'stock': { colorVar: '--color-accent-blue', fallback: '#3b82f6' },      // Blue - stock
+  excellent: { colorVar: '--color-accent-teal', fallback: '#10b981' }, // Green - well balanced
+  good: { colorVar: '--color-accent-blue', fallback: '#3b82f6' }, // Blue - healthy
+  monitor: { colorVar: '--color-accent-amber', fallback: '#f59e0b' }, // Amber - needs attention
+  'at-risk': { colorVar: '--color-error', fallback: '#ef4444' }, // Red - risky
+  stock: { colorVar: '--color-accent-blue', fallback: '#3b82f6' }, // Blue - stock
 };
 
 export default function BuildProgressRings({
@@ -160,21 +210,33 @@ export default function BuildProgressRings({
   animated = true,
 }) {
   const [animatedProgress, setAnimatedProgress] = useState(
-    animated ? { power: 0, handling: 0, reliability: 0 } : { power: power.percent, handling: handling.percent, reliability: reliability.percent }
+    animated
+      ? { power: 0, handling: 0, reliability: 0 }
+      : { power: power.percent, handling: handling.percent, reliability: reliability.percent }
   );
   const [animatedTotalHp, setAnimatedTotalHp] = useState(animated ? stockHp : totalHp);
   const [activeInfoModal, setActiveInfoModal] = useState(null);
-  
+  const [mounted, setMounted] = useState(false);
+
   // Set safe area color when info modal is open
   useSafeAreaColor(SAFE_AREA_COLORS.OVERLAY, { enabled: !!activeInfoModal });
+
+  // Portal mounting - required for SSR compatibility
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Get ring data for modal
   const getRingData = (key) => {
     switch (key) {
-      case 'power': return power;
-      case 'handling': return handling;
-      case 'reliability': return reliability;
-      default: return { percent: 0 };
+      case 'power':
+        return power;
+      case 'handling':
+        return handling;
+      case 'reliability':
+        return reliability;
+      default:
+        return { percent: 0 };
     }
   };
 
@@ -240,7 +302,7 @@ export default function BuildProgressRings({
 
   // Calculate ring properties
   const getRingProps = (index) => {
-    const radius = (size / 2) - (strokeWidth / 2) - (index * ringSpacing);
+    const radius = size / 2 - strokeWidth / 2 - index * ringSpacing;
     const circumference = 2 * Math.PI * radius;
     return { radius, circumference };
   };
@@ -284,23 +346,18 @@ export default function BuildProgressRings({
       {/* Rings */}
       <div className={styles.ringsContainer}>
         <div className={styles.container} style={{ width: size, height: size }}>
-          <svg 
-            width={size} 
-            height={size} 
-            viewBox={`0 0 ${size} ${size}`} 
-            className={styles.svg}
-          >
+          <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className={styles.svg}>
             {RINGS.map((ring, index) => {
               const { radius, circumference } = getRingProps(index);
               const progress = getProgress(ring.key);
               const offset = circumference - (progress / 100) * circumference;
               const colorConfig = getRingColorConfig(ring);
-              
+
               // For handling, calculate baseline and upgrade portions separately
               const isHandling = ring.key === 'handling';
               const baselineProgress = isHandling ? HANDLING_BASELINE : 0;
               const baselineOffset = circumference - (baselineProgress / 100) * circumference;
-              
+
               return (
                 <g key={ring.key}>
                   {/* Background ring - use hex with opacity suffix for SVG */}
@@ -312,7 +369,7 @@ export default function BuildProgressRings({
                     stroke={`${colorConfig.hex}15`}
                     strokeWidth={strokeWidth}
                   />
-                  
+
                   {/* For handling: show baseline (stock) in dimmer color */}
                   {isHandling && baselineProgress > 0 && (
                     <circle
@@ -328,7 +385,7 @@ export default function BuildProgressRings({
                       className={styles.ringProgress}
                     />
                   )}
-                  
+
                   {/* Progress ring - use CSS variable for main stroke */}
                   <circle
                     cx={size / 2}
@@ -341,7 +398,9 @@ export default function BuildProgressRings({
                     strokeDasharray={circumference}
                     strokeDashoffset={offset}
                     className={styles.ringProgress}
-                    style={{ filter: progress > 0 ? `drop-shadow(0 0 4px ${colorConfig.hex}40)` : 'none' }}
+                    style={{
+                      filter: progress > 0 ? `drop-shadow(0 0 4px ${colorConfig.hex}40)` : 'none',
+                    }}
                   />
                 </g>
               );
@@ -369,7 +428,7 @@ export default function BuildProgressRings({
                 <span className={styles.legendPercent} style={{ color: colorConfig.cssVar }}>
                   {progress}%
                 </span>
-                <button 
+                <button
                   className={styles.infoButton}
                   onClick={() => setActiveInfoModal(ring.key)}
                   aria-label={`Learn about ${ring.label}`}
@@ -389,19 +448,31 @@ export default function BuildProgressRings({
           </div>
           <span className={styles.metricArrow}>+</span>
           <div className={styles.metric}>
-            <span className={styles.metricValue} style={{ color: hpGain > 0 ? 'var(--color-error)' : 'var(--color-text-tertiary)' }}>{hpGain}</span>
+            <span
+              className={styles.metricValue}
+              style={{ color: hpGain > 0 ? 'var(--color-error)' : 'var(--color-text-tertiary)' }}
+            >
+              {hpGain}
+            </span>
             <span className={styles.metricLabel}>Gained</span>
           </div>
           <span className={styles.metricArrow}>=</span>
           <div className={styles.metric}>
-            <span className={styles.metricValue} style={{ color: 'var(--color-accent-teal)' }}>{totalHp}</span>
+            <span className={styles.metricValue} style={{ color: 'var(--color-accent-teal)' }}>
+              {totalHp}
+            </span>
             <span className={styles.metricLabel}>Current</span>
           </div>
           {remainingPotential > 0 && (
             <>
               <span className={styles.metricDivider}>|</span>
               <div className={styles.metric}>
-                <span className={styles.metricValue} style={{ color: 'var(--color-text-tertiary)' }}>+{remainingPotential}</span>
+                <span
+                  className={styles.metricValue}
+                  style={{ color: 'var(--color-text-tertiary)' }}
+                >
+                  +{remainingPotential}
+                </span>
                 <span className={styles.metricLabel}>Avail</span>
               </div>
             </>
@@ -409,14 +480,17 @@ export default function BuildProgressRings({
         </div>
       </div>
 
-      {/* Info Modal */}
-      {activeInfoModal && (
-        <RingInfoModal 
-          ring={activeInfoModal}
-          data={getRingData(activeInfoModal)}
-          onClose={() => setActiveInfoModal(null)}
-        />
-      )}
+      {/* Info Modal - rendered via portal to avoid z-index stacking issues */}
+      {activeInfoModal &&
+        mounted &&
+        createPortal(
+          <RingInfoModal
+            ring={activeInfoModal}
+            data={getRingData(activeInfoModal)}
+            onClose={() => setActiveInfoModal(null)}
+          />,
+          document.body
+        )}
     </div>
   );
 }

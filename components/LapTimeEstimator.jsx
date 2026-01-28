@@ -2,10 +2,10 @@
 
 /**
  * Lap Time Estimator Component
- * 
+ *
  * Data-driven lap time estimation using real lap time data.
  * Uses the centralized lapTimeService for all calculations.
- * 
+ *
  * Features:
  * - Real data from 3,800+ lap times across 340+ tracks
  * - Driver skill-based estimation (beginner to pro)
@@ -13,11 +13,16 @@
  * - Track time logging and history
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 
 import { Icons } from '@/components/ui/Icons';
 import { useTracks } from '@/hooks/useEventsData';
-import { useLapTimeEstimate, useTrackStats, DRIVER_SKILLS, formatLapTime } from '@/hooks/useLapTimeEstimate';
+import {
+  useLapTimeEstimate,
+  useTrackStats,
+  DRIVER_SKILLS,
+  formatLapTime,
+} from '@/hooks/useLapTimeEstimate';
 import { useUserTrackTimes, useAddTrackTime, useAnalyzeTrackTimes } from '@/hooks/useUserData';
 import { formatDateSimple } from '@/lib/dateUtils';
 
@@ -50,92 +55,122 @@ export default function LapTimeEstimator({
   const [showTrackSelector, setShowTrackSelector] = useState(false);
   const [trackSearch, setTrackSearch] = useState('');
   const [analysis, setAnalysis] = useState(null);
-  
+
+  // Lock body scroll when track selector is open (mobile full-screen modal)
+  useEffect(() => {
+    if (showTrackSelector) {
+      // Save current scroll position and lock body
+      const scrollY = window.scrollY;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.overflow = 'hidden';
+
+      return () => {
+        // Restore scroll position when closing
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.overflow = '';
+        window.scrollTo(0, scrollY);
+      };
+    }
+  }, [showTrackSelector]);
+
   // Fetch tracks using React Query (cached)
   const { data: allTracks = [], isLoading: _tracksLoading } = useTracks();
-  
+
   // React Query hooks for track times
-  const { 
-    data: trackHistory = [], 
+  const {
+    data: trackHistory = [],
     isLoading: isLoadingHistory,
     refetch: _refetchHistory,
-  } = useUserTrackTimes(user?.id, carSlug, { 
+  } = useUserTrackTimes(user?.id, carSlug, {
     enabled: showHistory && !!user?.id,
     limit: 10,
   });
-  
+
   const addTrackTime = useAddTrackTime();
   const analyzeTrackTimes = useAnalyzeTrackTimes();
-  
+
   const isLoading = isLoadingHistory || analyzeTrackTimes.isPending;
   const isSaving = addTrackTime.isPending;
-  
+
   // Form state for logging a track time
   const [logForm, setLogForm] = useState({
     lapTimeMinutes: '',
     lapTimeSeconds: '',
     sessionDate: new Date().toISOString().split('T')[0],
     conditions: 'dry',
-    notes: ''
+    notes: '',
   });
-  
+
   // Use database tracks
   const tracks = allTracks;
-  const popularTracks = tracks.filter(t => t.isPopular).slice(0, 6);
-  
+  const popularTracks = tracks.filter((t) => t.isPopular).slice(0, 6);
+
   // Get currently selected track data (null if none selected)
-  const selectedTrack = selectedTrackSlug ? tracks.find(t => t.slug === selectedTrackSlug) : null;
-  
+  const selectedTrack = selectedTrackSlug ? tracks.find((t) => t.slug === selectedTrackSlug) : null;
+
   // Filter tracks for search
   const filteredTracks = useMemo(() => {
     if (!trackSearch.trim()) return tracks;
     const search = trackSearch.toLowerCase();
-    return tracks.filter(t => 
-      t.name.toLowerCase().includes(search) ||
-      t.shortName?.toLowerCase().includes(search) ||
-      t.state?.toLowerCase().includes(search) ||
-      t.city?.toLowerCase().includes(search)
+    return tracks.filter(
+      (t) =>
+        t.name.toLowerCase().includes(search) ||
+        t.shortName?.toLowerCase().includes(search) ||
+        t.state?.toLowerCase().includes(search) ||
+        t.city?.toLowerCase().includes(search)
     );
   }, [tracks, trackSearch]);
 
   // Safe values
-  const safeStockHp = (typeof stockHp === 'number' && !isNaN(stockHp) && stockHp > 0) ? stockHp : 300;
-  const safeEstimatedHp = (typeof estimatedHp === 'number' && !isNaN(estimatedHp) && estimatedHp > 0) ? estimatedHp : safeStockHp;
-  const safeWeight = (typeof weight === 'number' && !isNaN(weight) && weight > 0) ? weight : 3500;
+  const safeStockHp = typeof stockHp === 'number' && !isNaN(stockHp) && stockHp > 0 ? stockHp : 300;
+  const safeEstimatedHp =
+    typeof estimatedHp === 'number' && !isNaN(estimatedHp) && estimatedHp > 0
+      ? estimatedHp
+      : safeStockHp;
+  const safeWeight = typeof weight === 'number' && !isNaN(weight) && weight > 0 ? weight : 3500;
 
   // ==========================================================================
   // DATA-DRIVEN LAP TIME ESTIMATION (via lapTimeService)
   // ==========================================================================
-  
+
   // Build mods object for the service
-  const modsForEstimate = useMemo(() => ({
-    tireCompound,
-    suspension: suspensionSetup,
-    brakes: {
-      bbkFront: brakeSetup?.bbkFront,
-      pads: brakeSetup?.brakePads,
-      fluid: brakeSetup?.brakeFluid,
-      stainlessLines: brakeSetup?.stainlessLines,
-    },
-    aero: aeroSetup,
-    weightReduction: Math.abs(weightMod || 0),
-  }), [tireCompound, suspensionSetup, brakeSetup, aeroSetup, weightMod]);
-  
+  const modsForEstimate = useMemo(
+    () => ({
+      tireCompound,
+      suspension: suspensionSetup,
+      brakes: {
+        bbkFront: brakeSetup?.bbkFront,
+        pads: brakeSetup?.brakePads,
+        fluid: brakeSetup?.brakeFluid,
+        stainlessLines: brakeSetup?.stainlessLines,
+      },
+      aero: aeroSetup,
+      weightReduction: Math.abs(weightMod || 0),
+    }),
+    [tireCompound, suspensionSetup, brakeSetup, aeroSetup, weightMod]
+  );
+
   // Use the data-driven lap time estimation hook
-  const { 
-    data: lapTimeEstimate,
-    isLoading: isEstimateLoading,
-  } = useLapTimeEstimate({
-    trackSlug: selectedTrackSlug,
-    stockHp: safeStockHp,
-    currentHp: safeEstimatedHp,
-    weight: safeWeight,
-    driverSkill,
-    mods: modsForEstimate,
-  }, {
-    enabled: !!selectedTrackSlug,
-  });
-  
+  const { data: lapTimeEstimate, isLoading: isEstimateLoading } = useLapTimeEstimate(
+    {
+      trackSlug: selectedTrackSlug,
+      stockHp: safeStockHp,
+      currentHp: safeEstimatedHp,
+      weight: safeWeight,
+      driverSkill,
+      mods: modsForEstimate,
+    },
+    {
+      enabled: !!selectedTrackSlug,
+    }
+  );
+
   // Get track statistics for context
   const { data: _trackStats } = useTrackStats(selectedTrackSlug, {
     enabled: !!selectedTrackSlug,
@@ -143,29 +178,38 @@ export default function LapTimeEstimator({
 
   // Extract values from estimate (with fallbacks for loading state)
   const skill = DRIVER_SKILLS[driverSkill];
-  const hasRealData = lapTimeEstimate?.source === 'real_data';
+
+  // Tiered estimation - check tier level for display
+  const estimationTier = lapTimeEstimate?.tier || 4;
+  const hasReliableEstimate = estimationTier <= 3 && lapTimeEstimate?.stockLapTime;
+  const tierLabel = lapTimeEstimate?.tierLabel || 'Insufficient data';
+  const _confidence = lapTimeEstimate?.confidence || 0;
+
+  // Legacy compatibility: hasRealData now means tier 1-3
+  const hasRealData = hasReliableEstimate;
   const stockLapTime = lapTimeEstimate?.stockLapTime || 0;
   const moddedLapTime = lapTimeEstimate?.moddedLapTime || 0;
   const realizedTotal = lapTimeEstimate?.improvement || 0;
   const theoreticalTotal = lapTimeEstimate?.theoreticalImprovement || 0;
   const unrealizedGains = theoreticalTotal - realizedTotal;
   const sampleSize = lapTimeEstimate?.sampleSize || 0;
+  const dataQuality = lapTimeEstimate?.dataQuality || {};
 
   // Format time helper (use imported formatLapTime from hook)
   const formatTime = formatLapTime;
 
   const handleLogTime = async () => {
     if (!user?.id) return;
-    
+
     const minutes = parseInt(logForm.lapTimeMinutes || '0', 10);
     const seconds = parseFloat(logForm.lapTimeSeconds || '0');
-    const totalSeconds = (minutes * 60) + seconds;
-    
+    const totalSeconds = minutes * 60 + seconds;
+
     if (totalSeconds < 20 || totalSeconds > 1200) {
       alert('Please enter a valid lap time between 20 seconds and 20 minutes');
       return;
     }
-    
+
     try {
       await addTrackTime.mutateAsync({
         userId: user.id,
@@ -182,16 +226,16 @@ export default function LapTimeEstimator({
           estimatedTimeSeconds: moddedLapTime || null,
           driverSkillLevel: driverSkill,
           notes: logForm.notes,
-          carSlug: carSlug
-        }
+          carSlug: carSlug,
+        },
       });
-      
+
       setLogForm({
         lapTimeMinutes: '',
         lapTimeSeconds: '',
         sessionDate: new Date().toISOString().split('T')[0],
         conditions: 'dry',
-        notes: ''
+        notes: '',
       });
       setShowLogForm(false);
       setShowHistory(true);
@@ -214,11 +258,11 @@ export default function LapTimeEstimator({
   // Build contextual prompt for Ask AL
   const hasModifications = safeEstimatedHp > safeStockHp;
   const timeImprovement = realizedTotal >= 0.01 ? realizedTotal.toFixed(2) : '0';
-  
+
   const _lapTimePrompt = carName
-    ? `Help me understand my ${carName}'s lap time estimates at ${selectedTrack?.name || 'track'}. ${hasModifications ? `With my mods, I'm estimated to gain ${timeImprovement}s per lap, going from ${formatTime(stockLapTime)} to ${formatTime(moddedLapTime)}.` : 'It\'s currently stock.'} As a ${skill.label.toLowerCase()} driver, what mods would help me most on this track? Should I focus on power, grip, or driver skill improvement?`
+    ? `Help me understand my ${carName}'s lap time estimates at ${selectedTrack?.name || 'track'}. ${hasModifications ? `With my mods, I'm estimated to gain ${timeImprovement}s per lap, going from ${formatTime(stockLapTime)} to ${formatTime(moddedLapTime)}.` : "It's currently stock."} As a ${skill.label.toLowerCase()} driver, what mods would help me most on this track? Should I focus on power, grip, or driver skill improvement?`
     : `Explain these lap time estimates: ${formatTime(stockLapTime)} stock to ${formatTime(moddedLapTime)} modified at ${selectedTrack?.name || 'this track'}. What factors affect lap times most?`;
-  
+
   const _lapTimeDisplayMessage = hasModifications
     ? `How can I get faster at ${selectedTrack?.shortName || 'track'}?`
     : 'What mods help lap times most?';
@@ -229,7 +273,7 @@ export default function LapTimeEstimator({
         <div className={styles.lapTimeTitleRow}>
           <Icons.flag size={18} />
           <span>Lap Time Estimator</span>
-          <button 
+          <button
             className={styles.lapTimeInfoBtn}
             onClick={() => setShowInfo(!showInfo)}
             title="How this works"
@@ -243,27 +287,41 @@ export default function LapTimeEstimator({
       {showInfo && (
         <div className={styles.lapTimeInfoPanel}>
           <h4>How Lap Time Estimation Works</h4>
-          {hasRealData ? (
+          {hasReliableEstimate ? (
             <>
               <p>
-                <strong>Data-driven estimates</strong> using {sampleSize.toLocaleString()}+ real lap times 
-                from this track. We analyze times from similar cars to estimate yours.
+                <strong>{tierLabel}</strong>
+                {estimationTier === 1 &&
+                  ` using ${sampleSize.toLocaleString()}+ real lap times from this track.`}
+                {estimationTier === 2 && ` using professional lap time references.`}
+                {estimationTier === 3 && ` using data from similar vehicles.`}
               </p>
               <p>
-                Modifications raise the <em>ceiling</em> of what's possible, but your skill 
+                Modifications raise the <em>ceiling</em> of what's possible, but your skill
                 determines how much of that potential you can actually use.
               </p>
+              {estimationTier > 1 && (
+                <p className={styles.lapTimeInfoNote}>
+                  💡 More data improves accuracy. Log your times to help!
+                </p>
+              )}
             </>
           ) : (
-            <p>
-              Limited data for this track. Log your times to help build our database!
-            </p>
+            <p>Limited data for this track. Log your times to help build our database!</p>
           )}
           <ul>
-            <li><strong>Beginner:</strong> ~20% of mod potential (skill is the limiting factor)</li>
-            <li><strong>Intermediate:</strong> ~50% of mod potential</li>
-            <li><strong>Advanced:</strong> ~80% of mod potential</li>
-            <li><strong>Professional:</strong> ~95% of mod potential (theoretical max)</li>
+            <li>
+              <strong>Beginner:</strong> ~20% of mod potential (skill is the limiting factor)
+            </li>
+            <li>
+              <strong>Intermediate:</strong> ~50% of mod potential
+            </li>
+            <li>
+              <strong>Advanced:</strong> ~80% of mod potential
+            </li>
+            <li>
+              <strong>Professional:</strong> ~95% of mod potential (theoretical max)
+            </li>
           </ul>
           <p className={styles.lapTimeInfoHighlight}>
             The fastest path to quicker lap times is often improving YOUR skills, not adding parts!
@@ -273,19 +331,22 @@ export default function LapTimeEstimator({
 
       {/* Track Selector - WHERE are you racing? */}
       <div className={styles.trackSelectorWrapper}>
-        <button 
+        <button
           className={styles.trackSelectedBtn}
           onClick={() => setShowTrackSelector(!showTrackSelector)}
         >
           <div className={styles.trackSelectedInfo}>
-            <span className={styles.trackSelectedName}>{selectedTrack?.name || 'Select Track'}</span>
+            <span className={styles.trackSelectedName}>
+              {selectedTrack?.name || 'Select Track'}
+            </span>
             <span className={styles.trackSelectedMeta}>
               {selectedTrack ? (
                 <>
-                  {selectedTrack.city && selectedTrack.state 
-                    ? `${selectedTrack.city}, ${selectedTrack.state}` 
+                  {selectedTrack.city && selectedTrack.state
+                    ? `${selectedTrack.city}, ${selectedTrack.state}`
                     : selectedTrack.state || selectedTrack.country}
-                  {selectedTrack.length && ` • ${selectedTrack.length} mi • ${selectedTrack.corners} turns`}
+                  {selectedTrack.length &&
+                    ` • ${selectedTrack.length} mi • ${selectedTrack.corners} turns`}
                 </>
               ) : (
                 'Choose a track to estimate lap times'
@@ -294,10 +355,22 @@ export default function LapTimeEstimator({
           </div>
           <Icons.chevronDown size={16} />
         </button>
-        
+
         {/* Dropdown */}
         {showTrackSelector && (
           <div className={styles.trackDropdown}>
+            {/* Mobile header with close button */}
+            <div className={styles.trackDropdownHeader}>
+              <span className={styles.trackDropdownTitle}>Select Track</span>
+              <button
+                className={styles.trackDropdownClose}
+                onClick={() => setShowTrackSelector(false)}
+                aria-label="Close track selector"
+              >
+                <Icons.x size={18} />
+              </button>
+            </div>
+
             <div className={styles.trackSearchContainer}>
               <Icons.search size={14} />
               <input
@@ -309,45 +382,49 @@ export default function LapTimeEstimator({
                 autoFocus
               />
               {trackSearch && (
-                <button 
-                  className={styles.trackClearBtn}
-                  onClick={() => setTrackSearch('')}
-                >
+                <button className={styles.trackClearBtn} onClick={() => setTrackSearch('')}>
                   <Icons.x size={12} />
                 </button>
               )}
             </div>
-            
-            {!trackSearch && (
-              <div className={styles.trackQuickPicks}>
-                <span className={styles.trackQuickLabel}>Popular Tracks</span>
-                {popularTracks.slice(0, 6).map((t) => (
+
+            <div className={styles.trackScrollArea}>
+              {!trackSearch && (
+                <div className={styles.trackQuickPicks}>
+                  <span className={styles.trackQuickLabel}>Popular Tracks</span>
+                  {popularTracks.slice(0, 6).map((t) => (
+                    <button
+                      key={t.slug}
+                      className={`${styles.trackResultItem} ${selectedTrackSlug === t.slug ? styles.trackResultItemActive : ''}`}
+                      onClick={() => {
+                        setSelectedTrackSlug(t.slug);
+                        setShowTrackSelector(false);
+                      }}
+                    >
+                      <div className={styles.trackResultInfo}>
+                        <span className={styles.trackResultName}>{t.name}</span>
+                        <span className={styles.trackResultMeta}>
+                          {t.city && t.state ? `${t.city}, ${t.state}` : t.state}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <div className={styles.trackResultsSection}>
+                <span className={styles.trackQuickLabel}>
+                  {trackSearch ? `Results for "${trackSearch}"` : 'All Tracks'}
+                </span>
+                {(trackSearch ? filteredTracks : tracks).slice(0, 50).map((t) => (
                   <button
                     key={t.slug}
                     className={`${styles.trackResultItem} ${selectedTrackSlug === t.slug ? styles.trackResultItemActive : ''}`}
-                    onClick={() => { setSelectedTrackSlug(t.slug); setShowTrackSelector(false); }}
-                  >
-                    <div className={styles.trackResultInfo}>
-                      <span className={styles.trackResultName}>{t.name}</span>
-                      <span className={styles.trackResultMeta}>
-                        {t.city && t.state ? `${t.city}, ${t.state}` : t.state}
-                      </span>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            )}
-            
-            <div className={styles.trackResultsSection}>
-              <span className={styles.trackQuickLabel}>
-                {trackSearch ? `Results for "${trackSearch}"` : 'All Tracks'}
-              </span>
-              <div className={styles.trackResultsList}>
-                {(trackSearch ? filteredTracks : tracks).slice(0, 20).map((t) => (
-                  <button
-                    key={t.slug}
-                    className={`${styles.trackResultItem} ${selectedTrackSlug === t.slug ? styles.trackResultItemActive : ''}`}
-                    onClick={() => { setSelectedTrackSlug(t.slug); setShowTrackSelector(false); setTrackSearch(''); }}
+                    onClick={() => {
+                      setSelectedTrackSlug(t.slug);
+                      setShowTrackSelector(false);
+                      setTrackSearch('');
+                    }}
                   >
                     <div className={styles.trackResultInfo}>
                       <span className={styles.trackResultName}>{t.name}</span>
@@ -359,9 +436,7 @@ export default function LapTimeEstimator({
                   </button>
                 ))}
                 {trackSearch && filteredTracks.length === 0 && (
-                  <div className={styles.trackNoResults}>
-                    No tracks found for "{trackSearch}"
-                  </div>
+                  <div className={styles.trackNoResults}>No tracks found for "{trackSearch}"</div>
                 )}
               </div>
             </div>
@@ -391,16 +466,23 @@ export default function LapTimeEstimator({
         {!selectedTrack ? (
           <div className={styles.lapTimeNoData}>
             <p>Select a track above to see lap time estimates</p>
-            <p className={styles.lapTimeNoDataHint}>Choose from {tracks.length > 0 ? `${tracks.length} tracks` : 'popular tracks'} worldwide</p>
+            <p className={styles.lapTimeNoDataHint}>
+              Choose from {tracks.length > 0 ? `${tracks.length} tracks` : 'popular tracks'}{' '}
+              worldwide
+            </p>
           </div>
         ) : isEstimateLoading ? (
           <div className={styles.lapTimeLoading}>
             <span>Calculating estimate...</span>
           </div>
-        ) : !hasRealData ? (
+        ) : !hasReliableEstimate ? (
           <div className={styles.lapTimeNoData}>
             <p>Limited lap time data for this track.</p>
-            <p className={styles.lapTimeNoDataHint}>Log your times to help build the database!</p>
+            <p className={styles.lapTimeNoDataHint}>
+              {lapTimeEstimate?.dataAvailable?.totalTimes > 0
+                ? `${lapTimeEstimate.dataAvailable.totalTimes} lap times available, but not enough for reliable estimates.`
+                : 'Log your times to help build the database!'}
+            </p>
           </div>
         ) : (
           <div className={styles.lapTimeComparison}>
@@ -412,7 +494,9 @@ export default function LapTimeEstimator({
             </div>
             <div className={styles.lapTimeDelta}>
               <Icons.chevronsRight size={20} />
-              <span className={`${styles.lapTimeImprovement} ${realizedTotal > 0.5 ? styles.lapTimeGood : ''}`}>
+              <span
+                className={`${styles.lapTimeImprovement} ${realizedTotal > 0.5 ? styles.lapTimeGood : ''}`}
+              >
                 {realizedTotal >= 0.01 ? `-${realizedTotal.toFixed(2)}s` : '0.00s'}
               </span>
             </div>
@@ -424,42 +508,57 @@ export default function LapTimeEstimator({
             </div>
           </div>
         )}
-        
-        {/* Data source indicator */}
-        {selectedTrack && hasRealData && sampleSize > 0 && (
+
+        {/* Data source indicator with tier info */}
+        {selectedTrack && hasReliableEstimate && (
           <div className={styles.lapTimeDataSource}>
-            Based on {sampleSize.toLocaleString()} real lap times
+            <span className={styles.lapTimeTierBadge} data-tier={estimationTier}>
+              {estimationTier === 1 && '●●●'}
+              {estimationTier === 2 && '●●○'}
+              {estimationTier === 3 && '●○○'}
+            </span>
+            {estimationTier === 1 && `Based on ${sampleSize.toLocaleString()} real lap times`}
+            {estimationTier === 2 &&
+              `Based on professional reference${dataQuality.proTimes ? ` (${dataQuality.proTimes} pro times)` : ''}`}
+            {estimationTier === 3 &&
+              `Estimated from ${dataQuality.similarCarTimes || 'similar'} similar vehicles`}
           </div>
         )}
       </div>
-      
+
       {/* Contextual tip - only show when there's significant unrealized potential */}
       {selectedTrack && hasRealData && unrealizedGains > 1.5 && driverSkill !== 'professional' && (
         <div className={styles.lapTimeTip}>
           <span>{skill?.tip}</span>
         </div>
       )}
-      
+
       {/* Track Time Logging Section - only show when track is selected */}
       {selectedTrack && user && !hideLogging && (
         <div className={styles.trackTimeLogging}>
           <div className={styles.trackTimeActions}>
-            <button 
+            <button
               className={`${styles.trackTimeBtn} ${showLogForm ? styles.trackTimeBtnActive : ''}`}
-              onClick={() => { setShowLogForm(!showLogForm); setShowHistory(false); }}
+              onClick={() => {
+                setShowLogForm(!showLogForm);
+                setShowHistory(false);
+              }}
             >
               <Icons.plus size={14} />
               Log Your Time
             </button>
-            <button 
+            <button
               className={`${styles.trackTimeBtn} ${showHistory ? styles.trackTimeBtnActive : ''}`}
-              onClick={() => { setShowHistory(!showHistory); setShowLogForm(false); }}
+              onClick={() => {
+                setShowHistory(!showHistory);
+                setShowLogForm(false);
+              }}
             >
               <Icons.clock size={14} />
               History
             </button>
           </div>
-          
+
           {/* Log Form */}
           {showLogForm && (
             <div className={styles.logTimeForm}>
@@ -467,7 +566,7 @@ export default function LapTimeEstimator({
                 <h4>Log Track Time at {selectedTrack.name}</h4>
                 <p>Record your actual lap time to compare with estimates</p>
               </div>
-              
+
               <div className={styles.logTimeFields}>
                 <div className={styles.logTimeRow}>
                   <label className={styles.logTimeLabel}>Lap Time</label>
@@ -495,7 +594,7 @@ export default function LapTimeEstimator({
                     <span className={styles.logTimeInputLabel}>sec</span>
                   </div>
                 </div>
-                
+
                 <div className={styles.logTimeRow}>
                   <label className={styles.logTimeLabel}>Date</label>
                   <input
@@ -505,7 +604,7 @@ export default function LapTimeEstimator({
                     onChange={(e) => setLogForm({ ...logForm, sessionDate: e.target.value })}
                   />
                 </div>
-                
+
                 <div className={styles.logTimeRow}>
                   <label className={styles.logTimeLabel}>Conditions</label>
                   <select
@@ -521,7 +620,7 @@ export default function LapTimeEstimator({
                     <option value="optimal">Optimal</option>
                   </select>
                 </div>
-                
+
                 <div className={styles.logTimeRow}>
                   <label className={styles.logTimeLabel}>Notes</label>
                   <textarea
@@ -533,7 +632,7 @@ export default function LapTimeEstimator({
                   />
                 </div>
               </div>
-              
+
               <div className={styles.logTimeCompare}>
                 <div className={styles.logTimeCompareItem}>
                   <span className={styles.logTimeCompareLabel}>Estimated time:</span>
@@ -543,13 +642,16 @@ export default function LapTimeEstimator({
                   <div className={styles.logTimeCompareItem}>
                     <span className={styles.logTimeCompareLabel}>Your time:</span>
                     <span className={styles.logTimeCompareValue}>
-                      {formatLapTime((parseInt(logForm.lapTimeMinutes || '0', 10) * 60) + parseFloat(logForm.lapTimeSeconds || '0'))}
+                      {formatLapTime(
+                        parseInt(logForm.lapTimeMinutes || '0', 10) * 60 +
+                          parseFloat(logForm.lapTimeSeconds || '0')
+                      )}
                     </span>
                   </div>
                 )}
               </div>
-              
-              <button 
+
+              <button
                 className={styles.logTimeSaveBtn}
                 onClick={handleLogTime}
                 disabled={isSaving || (!logForm.lapTimeMinutes && !logForm.lapTimeSeconds)}
@@ -558,14 +660,14 @@ export default function LapTimeEstimator({
               </button>
             </div>
           )}
-          
+
           {/* History Panel */}
           {showHistory && (
             <div className={styles.trackHistoryPanel}>
               <div className={styles.trackHistoryHeader}>
                 <h4>Your Track Times</h4>
                 {trackHistory.length >= 2 && (
-                  <button 
+                  <button
                     className={styles.trackAnalyzeBtn}
                     onClick={requestAnalysis}
                     disabled={isLoading}
@@ -575,7 +677,7 @@ export default function LapTimeEstimator({
                   </button>
                 )}
               </div>
-              
+
               {isLoading && trackHistory.length === 0 ? (
                 <div className={styles.trackHistoryLoading}>Loading...</div>
               ) : trackHistory.length === 0 ? (
@@ -589,7 +691,9 @@ export default function LapTimeEstimator({
                     <div key={time.id || idx} className={styles.trackHistoryItem}>
                       <div className={styles.trackHistoryItemMain}>
                         <span className={styles.trackHistoryTrack}>{time.track_name}</span>
-                        <span className={styles.trackHistoryTime}>{formatLapTime(time.lap_time_seconds)}</span>
+                        <span className={styles.trackHistoryTime}>
+                          {formatLapTime(time.lap_time_seconds)}
+                        </span>
                       </div>
                       <div className={styles.trackHistoryItemMeta}>
                         <span>{formatDateSimple(time.session_date)}</span>
@@ -602,14 +706,12 @@ export default function LapTimeEstimator({
                           </span>
                         )}
                       </div>
-                      {time.notes && (
-                        <div className={styles.trackHistoryNotes}>{time.notes}</div>
-                      )}
+                      {time.notes && <div className={styles.trackHistoryNotes}>{time.notes}</div>}
                     </div>
                   ))}
                 </div>
               )}
-              
+
               {/* AL Analysis Results */}
               {analysis && (
                 <div className={styles.trackAnalysis}>
@@ -617,18 +719,21 @@ export default function LapTimeEstimator({
                     <Icons.brain size={16} />
                     <span>AL Analysis</span>
                   </div>
-                  
+
                   {analysis.insights?.length > 0 && (
                     <div className={styles.trackAnalysisSection}>
                       <h5>Insights</h5>
                       {analysis.insights.map((insight, idx) => (
-                        <div key={idx} className={`${styles.trackAnalysisItem} ${styles[`trackAnalysis${insight.type}`]}`}>
+                        <div
+                          key={idx}
+                          className={`${styles.trackAnalysisItem} ${styles[`trackAnalysis${insight.type}`]}`}
+                        >
                           {insight.message}
                         </div>
                       ))}
                     </div>
                   )}
-                  
+
                   {analysis.recommendations?.length > 0 && (
                     <div className={styles.trackAnalysisSection}>
                       <h5>Recommendations</h5>

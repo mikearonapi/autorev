@@ -23,7 +23,6 @@ import Image from 'next/image';
 
 import { createPortal } from 'react-dom';
 
-
 import { TITLES } from '@/app/(app)/dashboard/components/UserGreeting';
 import { DataSourceBadge, PerformanceSourceSummary } from '@/components/ui';
 import { useBuildDetail } from '@/hooks/useCommunityData';
@@ -271,13 +270,7 @@ function MetricRow({
 // We no longer recalculate here - we use the exact values the user saw when they saved.
 // This ensures consistency between what the user sees and what's shared to community.
 
-export default function BuildDetailSheet({
-  build,
-  images = [],
-  currentImageIndex = 0,
-  onImageSelect,
-  onClose,
-}) {
+export default function BuildDetailSheet({ build, onClose }) {
   // Set safe area color to match overlay background when sheet is visible
   useSafeAreaColor(SAFE_AREA_COLORS.OVERLAY, { enabled: !!build });
 
@@ -426,10 +419,8 @@ export default function BuildDetailSheet({
     computedPerformance?.upgraded?.lateralG ?? buildData?.final_lateral_g ?? stockLateralG;
 
   // Additional metrics aligned with Data tab
-  const stockQuarterMile =
-    computedPerformance?.stock?.quarterMile ?? carData?.quarter_mile ?? null;
-  const finalQuarterMile =
-    computedPerformance?.upgraded?.quarterMile ?? stockQuarterMile;
+  const stockQuarterMile = computedPerformance?.stock?.quarterMile ?? carData?.quarter_mile ?? null;
+  const finalQuarterMile = computedPerformance?.upgraded?.quarterMile ?? stockQuarterMile;
 
   const stockTrapSpeed = computedPerformance?.stock?.trapSpeed ?? null;
   const finalTrapSpeed = computedPerformance?.upgraded?.trapSpeed ?? stockTrapSpeed;
@@ -624,30 +615,6 @@ export default function BuildDetailSheet({
                     <span key={i} className={styles.modChip}>
                       {mod.name || formatModName(mod.key || mod)}
                     </span>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Photos */}
-            {images.length > 1 && (
-              <div className={styles.photosSection}>
-                <h2 className={styles.sectionTitle}>PHOTOS</h2>
-                <div className={styles.photoGrid}>
-                  {images.map((img, idx) => (
-                    <button
-                      key={img.id || idx}
-                      className={`${styles.photoThumb} ${idx === currentImageIndex ? styles.photoActive : ''}`}
-                      onClick={() => onImageSelect?.(idx)}
-                    >
-                      <Image
-                        src={img.thumbnail_url || img.blob_url}
-                        alt=""
-                        fill
-                        sizes="80px"
-                        style={{ objectFit: 'cover' }}
-                      />
-                    </button>
                   ))}
                 </div>
               </div>
