@@ -72,6 +72,25 @@ const InfoIcon = () => (
   </svg>
 );
 
+const RefreshIcon = ({ isSpinning }) => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    style={{
+      animation: isSpinning ? 'spin 1s linear infinite' : 'none',
+    }}
+  >
+    <path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+    <path d="M3 3v5h5" />
+    <path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16" />
+    <path d="M16 21h5v-5" />
+  </svg>
+);
+
 const PERIOD_OPTIONS = [
   { value: 'monthly', label: 'This Month' },
   { value: 'all-time', label: 'All Time' },
@@ -92,6 +111,7 @@ export default function LeaderboardView() {
   const [showPointsModal, setShowPointsModal] = useState(false);
   const [hasMore, setHasMore] = useState(false);
   const [total, setTotal] = useState(0);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   // Track last fetch time to prevent spam refreshes
   const lastFetchRef = useRef(0);
@@ -115,10 +135,17 @@ export default function LeaderboardView() {
         setError(null);
 
         // Add timestamp cache buster for fresh data
+        // Use aggressive no-cache headers for iOS Safari compatibility
         const timestamp = Date.now();
         const res = await fetch(
-          `/api/community/leaderboard?limit=${ITEMS_PER_PAGE}&offset=${offset}&period=${selectedPeriod}&t=${timestamp}`,
-          { cache: 'no-store' }
+          `/api/community/leaderboard?limit=${ITEMS_PER_PAGE}&offset=${offset}&period=${selectedPeriod}&_t=${timestamp}`,
+          {
+            cache: 'no-store',
+            headers: {
+              'Cache-Control': 'no-cache, no-store, must-revalidate',
+              Pragma: 'no-cache',
+            },
+          }
         );
 
         if (!res.ok) {
@@ -208,6 +235,16 @@ export default function LeaderboardView() {
     }
   };
 
+  // Manual refresh handler - bypasses the minimum interval check
+  const handleManualRefresh = async () => {
+    if (isRefreshing) return;
+    setIsRefreshing(true);
+    // Force fresh fetch by resetting lastFetchRef
+    lastFetchRef.current = 0;
+    await fetchLeaderboard(period, 0, false, false);
+    setIsRefreshing(false);
+  };
+
   // Format points with commas
   const formatPoints = (points) => {
     return points.toLocaleString();
@@ -248,6 +285,15 @@ export default function LeaderboardView() {
             aria-label="How to earn points"
           >
             <InfoIcon />
+          </button>
+          {/* Refresh button - inline with title */}
+          <button
+            className={styles.infoButtonInline}
+            onClick={handleManualRefresh}
+            disabled={isRefreshing}
+            aria-label="Refresh leaderboard"
+          >
+            <RefreshIcon isSpinning={isRefreshing} />
           </button>
         </h2>
         <div className={styles.headerControls}>

@@ -15,7 +15,7 @@
 }
 
 .menuContent {
-  background: var(--color-bg-elevated);
+  background: #1b263b;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   overflow: hidden;
@@ -160,7 +160,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Limit Reached */
@@ -183,7 +185,9 @@
 }
 
 /* ==================== */
+
 /* Attachment Preview   */
+
 /* ==================== */
 
 .preview {
@@ -290,7 +294,9 @@
 }
 
 /* ==================== */
+
 /* Attachments Bar      */
+
 /* ==================== */
 
 .attachmentsBar {

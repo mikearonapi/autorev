@@ -4,11 +4,11 @@
  * Media Uploader Component
  *
  * Drag-and-drop image and video upload with preview.
- * Uses Vercel Blob client uploads to bypass serverless function size limits.
+ * Uses direct server upload with client-side image resizing for reliability.
  *
  * Supports:
- * - Images: JPEG, PNG, WebP, GIF (up to 25MB)
- * - Videos: MP4, WebM, MOV (up to 50MB)
+ * - Images: JPEG, PNG, WebP, GIF (up to 10MB after resize)
+ * - Videos: MP4, WebM, MOV (up to 50MB via client upload)
  */
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
@@ -19,9 +19,13 @@ import { upload } from '@vercel/blob/client';
 
 import styles from './ImageUploader.module.css';
 
-// File size limits - can be larger now with client uploads
-const MAX_IMAGE_SIZE = 25 * 1024 * 1024; // 25MB for images
+// File size limits
+const MAX_IMAGE_SIZE = 10 * 1024 * 1024; // 10MB for images
 const MAX_VIDEO_SIZE = 50 * 1024 * 1024; // 50MB for videos
+// Images larger than this will be resized on client before upload
+const CLIENT_RESIZE_THRESHOLD = 3 * 1024 * 1024; // 3MB
+// Target size after resize (allows room for server compression)
+const TARGET_RESIZE_SIZE = 2 * 1024 * 1024; // 2MB
 
 // Allowed file types
 const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -58,6 +62,96 @@ async function getVideoDuration(file) {
     };
     video.onerror = () => resolve(null);
     video.src = URL.createObjectURL(file);
+  });
+}
+
+/**
+ * Resize an image file on the client to reduce upload size
+ * Returns a new File object with the resized image
+ */
+async function resizeImageIfNeeded(file) {
+  // Skip if file is small enough or not an image
+  if (file.size <= CLIENT_RESIZE_THRESHOLD || !file.type.startsWith('image/')) {
+    return file;
+  }
+
+  // Skip GIFs (would lose animation)
+  if (file.type === 'image/gif') {
+    return file;
+  }
+
+  return new Promise((resolve) => {
+    const img = new window.Image();
+    img.onload = () => {
+      URL.revokeObjectURL(img.src);
+
+      // Calculate new dimensions (max 2048px on longest side)
+      const MAX_DIMENSION = 2048;
+      let { width, height } = img;
+
+      if (width > MAX_DIMENSION || height > MAX_DIMENSION) {
+        if (width > height) {
+          height = Math.round((height * MAX_DIMENSION) / width);
+          width = MAX_DIMENSION;
+        } else {
+          width = Math.round((width * MAX_DIMENSION) / height);
+          height = MAX_DIMENSION;
+        }
+      }
+
+      // Create canvas and draw resized image
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+
+      // Determine output type and quality
+      const outputType = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+      // Start with high quality, reduce if still too large
+      let quality = 0.85;
+
+      const tryCompress = () => {
+        canvas.toBlob(
+          (blob) => {
+            if (!blob) {
+              resolve(file); // Fallback to original
+              return;
+            }
+
+            // If still too large and quality can be reduced, try again
+            if (blob.size > TARGET_RESIZE_SIZE && quality > 0.5) {
+              quality -= 0.1;
+              tryCompress();
+              return;
+            }
+
+            // Create new File from blob
+            const resizedFile = new File([blob], file.name, {
+              type: outputType,
+              lastModified: Date.now(),
+            });
+
+            console.log(
+              `[ImageUploader] Resized: ${(file.size / 1024).toFixed(0)}KB → ${(resizedFile.size / 1024).toFixed(0)}KB (${width}x${height}, q=${quality.toFixed(2)})`
+            );
+
+            resolve(resizedFile);
+          },
+          outputType,
+          quality
+        );
+      };
+
+      tryCompress();
+    };
+
+    img.onerror = () => {
+      console.warn('[ImageUploader] Failed to load image for resize, using original');
+      resolve(file);
+    };
+
+    img.src = URL.createObjectURL(file);
   });
 }
 
@@ -120,29 +214,101 @@ export default function ImageUploader({
   };
 
   /**
-   * Upload file using Vercel Blob client upload
-   * This bypasses the 4.5MB serverless function limit
+   * Upload image directly to server (simpler, more reliable)
+   * For images < 4MB, this uses direct FormData upload
    * @param {File} file - The file to upload
    * @param {Function} onProgress - Progress callback (percentage: number)
    */
-  const uploadFile = async (file, onProgress) => {
-    const isVideo = isVideoFile(file);
+  const uploadImageDirect = async (file, onProgress) => {
+    // Resize large images on client to ensure fast uploads
+    const processedFile = await resizeImageIfNeeded(file);
+
+    // Determine if this should be primary
+    const existingImages = uploads.filter((u) => u.media_type !== 'video');
+    const shouldBePrimary = existingImages.length === 0;
+
+    // Use FormData for direct server upload
+    const formData = new FormData();
+    formData.append('file', processedFile);
+    if (vehicleId) formData.append('vehicleId', vehicleId);
+    if (buildId) formData.append('buildId', buildId);
+    if (carSlug) formData.append('carSlug', carSlug);
+    formData.append('isPrimary', shouldBePrimary.toString());
+
+    console.log(
+      `[ImageUploader] Direct upload: ${processedFile.name}, ${(processedFile.size / 1024).toFixed(0)}KB`
+    );
+
+    // Use XMLHttpRequest for progress tracking
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+
+      xhr.upload.addEventListener('progress', (e) => {
+        if (e.lengthComputable && onProgress) {
+          const percentage = Math.round((e.loaded / e.total) * 100);
+          onProgress(percentage);
+        }
+      });
+
+      xhr.addEventListener('load', () => {
+        if (xhr.status >= 200 && xhr.status < 300) {
+          try {
+            const data = JSON.parse(xhr.responseText);
+            if (data.success && data.image) {
+              console.log('[ImageUploader] Upload complete:', data.image.blob_url);
+              resolve(data.image);
+            } else {
+              reject(new Error(data.error || 'Upload failed'));
+            }
+          } catch (e) {
+            reject(new Error('Invalid server response'));
+          }
+        } else if (xhr.status === 401) {
+          reject(new Error('Please sign in to upload photos'));
+        } else if (xhr.status === 413) {
+          reject(new Error('File too large. Please try a smaller image.'));
+        } else {
+          try {
+            const data = JSON.parse(xhr.responseText);
+            reject(new Error(data.error || `Upload failed (${xhr.status})`));
+          } catch (e) {
+            reject(new Error(`Upload failed (${xhr.status})`));
+          }
+        }
+      });
+
+      xhr.addEventListener('error', () => {
+        reject(new Error('Network error. Please check your connection.'));
+      });
+
+      xhr.addEventListener('timeout', () => {
+        reject(new Error('Upload timed out. Please try again.'));
+      });
+
+      xhr.open('POST', '/api/uploads');
+      xhr.timeout = 60000; // 60 second timeout
+      xhr.send(formData);
+    });
+  };
+
+  /**
+   * Upload video using Vercel Blob client upload (for large files)
+   * @param {File} file - The video file to upload
+   * @param {Function} onProgress - Progress callback (percentage: number)
+   */
+  const uploadVideoClient = async (file, onProgress) => {
     const timestamp = Date.now();
-
-    // Determine extension
     let ext = file.type.split('/')[1];
-    if (ext === 'jpeg') ext = 'jpg';
     if (ext === 'quicktime') ext = 'mov';
-
-    // Build pathname for the blob (user folder is enforced server-side)
-    const folder = isVideo ? 'user-videos' : 'user-uploads';
-    // Note: userId will be added by the server token handler
     const filename = `${timestamp}.${ext}`;
 
-    // Upload directly to Vercel Blob (bypasses serverless function limit)
+    console.log(
+      `[ImageUploader] Client upload video: ${filename}, ${(file.size / 1024 / 1024).toFixed(1)}MB`
+    );
+
     let blob;
     try {
-      blob = await upload(`${folder}/__USER__/${filename}`, file, {
+      blob = await upload(`user-videos/__USER__/${filename}`, file, {
         access: 'public',
         handleUploadUrl: '/api/uploads/client-token',
         onUploadProgress: (e) => {
@@ -152,72 +318,66 @@ export default function ImageUploader({
         },
       });
     } catch (uploadError) {
-      console.error('[ImageUploader] Blob upload error:', uploadError);
-      // Provide more helpful error messages
-      if (uploadError.message?.includes('401') || uploadError.message?.includes('Unauthorized')) {
-        throw new Error('Please sign in to upload photos');
+      console.error('[ImageUploader] Video upload error:', uploadError);
+      const errMsg = uploadError.message || '';
+      if (errMsg.includes('401') || errMsg.includes('Unauthorized')) {
+        throw new Error('Please sign in to upload videos');
       }
-      if (uploadError.message?.includes('413') || uploadError.message?.includes('too large')) {
-        throw new Error('File is too large. Please try a smaller image.');
+      if (errMsg.includes('413') || errMsg.includes('too large')) {
+        throw new Error('Video is too large. Maximum size is 50MB.');
       }
-      if (uploadError.message?.includes('network') || uploadError.message?.includes('fetch')) {
-        throw new Error('Network error. Please check your connection and try again.');
-      }
-      throw new Error(uploadError.message || 'Upload failed. Please try again.');
+      throw new Error(errMsg || 'Video upload failed. Please try again.');
     }
 
     if (!blob?.url) {
-      throw new Error('Upload failed - no URL returned from storage');
+      throw new Error('Upload failed - no URL returned');
     }
 
-    // Get video duration if applicable
-    let duration = null;
-    if (isVideo) {
-      duration = await getVideoDuration(file);
+    // Get video duration
+    const duration = await getVideoDuration(file);
+
+    // Save metadata
+    const response = await fetch('/api/uploads/save-metadata', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        blobUrl: blob.url,
+        blobPathname: blob.pathname,
+        fileName: file.name || filename,
+        fileSize: file.size,
+        contentType: file.type,
+        vehicleId: vehicleId || null,
+        buildId: buildId || null,
+        carSlug: carSlug || null,
+        isPrimary: false, // Videos are never primary
+        duration: duration,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || 'Failed to save video');
     }
 
-    // Determine if this should be primary
-    const existingImages = uploads.filter((u) => u.media_type !== 'video');
-    const shouldBePrimary = !isVideo && existingImages.length === 0;
-
-    // Save metadata to database via separate endpoint
-    let metadataResponse;
-    try {
-      metadataResponse = await fetch('/api/uploads/save-metadata', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          blobUrl: blob.url,
-          blobPathname: blob.pathname,
-          fileName: file.name || filename,
-          fileSize: file.size,
-          contentType: file.type,
-          vehicleId: vehicleId || null,
-          buildId: buildId || null,
-          carSlug: carSlug || null, // For cross-feature image sharing
-          isPrimary: shouldBePrimary,
-          duration: duration,
-        }),
-      });
-    } catch (fetchError) {
-      console.error('[ImageUploader] Metadata save fetch error:', fetchError);
-      throw new Error('Failed to save photo. Please try again.');
-    }
-
-    if (!metadataResponse.ok) {
-      const errorData = await metadataResponse.json().catch(() => ({}));
-      console.error('[ImageUploader] Metadata save error:', metadataResponse.status, errorData);
-      if (metadataResponse.status === 401) {
-        throw new Error('Please sign in to upload photos');
-      }
-      if (metadataResponse.status === 403) {
-        throw new Error('Permission denied. Please try signing out and back in.');
-      }
-      throw new Error(errorData.error || 'Failed to save photo metadata');
-    }
-
-    const data = await metadataResponse.json();
+    const data = await response.json();
     return data.image;
+  };
+
+  /**
+   * Main upload function - routes to appropriate upload method
+   * @param {File} file - The file to upload
+   * @param {Function} onProgress - Progress callback (percentage: number)
+   */
+  const uploadFile = async (file, onProgress) => {
+    const isVideo = isVideoFile(file);
+
+    if (isVideo) {
+      // Videos use client SDK upload (large files)
+      return uploadVideoClient(file, onProgress);
+    } else {
+      // Images use direct server upload (simpler, more reliable)
+      return uploadImageDirect(file, onProgress);
+    }
   };
 
   const handleFiles = async (files) => {

@@ -146,8 +146,12 @@ async function handleGet(request) {
     },
     {
       headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Cache-Control': 'private, no-store, no-cache, must-revalidate, max-age=0',
         Pragma: 'no-cache',
+        Expires: '0',
+        'Surrogate-Control': 'no-store',
+        'CDN-Cache-Control': 'no-store',
+        'Vercel-CDN-Cache-Control': 'no-store',
       },
     }
   );
@@ -215,8 +219,12 @@ async function handleAllTimeLeaderboard(request, limit, offset) {
     },
     {
       headers: {
-        'Cache-Control': 'no-store, no-cache, must-revalidate',
+        'Cache-Control': 'private, no-store, no-cache, must-revalidate, max-age=0',
         Pragma: 'no-cache',
+        Expires: '0',
+        'Surrogate-Control': 'no-store',
+        'CDN-Cache-Control': 'no-store',
+        'Vercel-CDN-Cache-Control': 'no-store',
       },
     }
   );
