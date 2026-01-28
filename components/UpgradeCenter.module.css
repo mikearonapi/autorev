@@ -1,3 +1,7 @@
+/* stylelint-disable no-duplicate-selectors -- TODO: This 7000+ line file has accumulated 
+   duplicate selectors with conflicting styles over time. Needs refactoring to consolidate
+   selectors and remove redundant declarations. Tracked as technical debt. */
+
 /* ===========================================
    UPGRADE CENTER - Premium Redesign
    Beautiful, cohesive vehicle modification interface
@@ -11,9 +15,9 @@
   max-width: 100%;
   background: var(--color-bg-base);
   color: var(--brand-text-primary);
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden auto;
   box-sizing: border-box;
+
   /* Removed excessive padding - parent page handles safe area */
   padding-bottom: 20px;
 }
@@ -26,7 +30,7 @@
 .heroSection {
   position: relative;
   padding: 32px 32px 40px;
-  background: 
+  background:
     radial-gradient(ellipse 80% 60% at 30% 20%, rgba(16, 185, 129, 0.06) 0%, transparent 50%),
     linear-gradient(180deg, rgba(16, 185, 129, 0.02) 0%, transparent 100%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -48,7 +52,7 @@
   border-radius: 16px;
   overflow: hidden;
   background: linear-gradient(135deg, #142536 0%, var(--color-bg-base, #0d1b2a) 100%);
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.5),
     0 0 0 1px rgba(255, 255, 255, 0.05) inset;
 }
@@ -100,7 +104,7 @@
   font-size: var(--text-hero);
   font-weight: 700;
   color: var(--brand-text-primary);
-  margin: 0 0 8px 0;
+  margin: 0 0 8px;
   line-height: 1.2;
   letter-spacing: -0.5px;
 }
@@ -372,7 +376,7 @@
   padding: 3px 8px;
   background: rgba(16, 185, 129, 0.2);
   border-radius: 4px;
-  color: rgba(255, 255, 255, 0.85);  /* Muted white on teal bg */
+  color: rgba(255, 255, 255, 0.85); /* Muted white on teal bg */
 }
 
 /* Body content - SMALLER than section headers */
@@ -467,7 +471,7 @@
 }
 
 .watchOutsCardList li {
-  color: rgba(245, 158, 11, 0.9);  /* Amber warning - consistent */
+  color: rgba(245, 158, 11, 0.9); /* Amber warning - consistent */
 }
 
 /* Legacy styles kept for compatibility */
@@ -480,14 +484,16 @@
   gap: 8px;
 }
 
-.insightsList, .watchOutsList {
+.insightsList,
+.watchOutsList {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
   align-items: baseline;
 }
 
-.insightsLabel, .watchOutsLabel {
+.insightsLabel,
+.watchOutsLabel {
   font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;
@@ -500,13 +506,14 @@
   color: var(--color-warning);
 }
 
-.insightItem, .watchOutItem {
+.insightItem,
+.watchOutItem {
   font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.7);
 }
 
 .watchOutItem {
-  color: rgba(245, 158, 11, 0.9);  /* Amber warning - consistent */
+  color: rgba(245, 158, 11, 0.9); /* Amber warning - consistent */
 }
 
 /* ===========================================
@@ -558,7 +565,7 @@
 
 /* Body content is SMALLER than section headers */
 .recommendationTextFull {
-  margin: 0 0 16px 0;
+  margin: 0 0 16px;
   font-size: 0.8125rem;
   line-height: 1.6;
   color: rgba(255, 255, 255, 0.85);
@@ -607,7 +614,7 @@
 }
 
 .watchOutsCardHeaderFull {
-  color: var(--color-warning);  /* Amber for warnings */
+  color: var(--color-warning); /* Amber for warnings */
 }
 
 .insightsCardListFull,
@@ -636,7 +643,7 @@
 }
 
 .watchBullet {
-  color: var(--color-warning);  /* Amber for warnings */
+  color: var(--color-warning); /* Amber for warnings */
   flex-shrink: 0;
 }
 
@@ -898,6 +905,7 @@
 }
 
 /* Ask AL button in section headers - LIME per brand guidelines */
+
 /* Ask AL CTA button - LIME per brand guidelines
    MUST MATCH: components/AskALButton.module.css .variantHeader exactly */
 .askAlBtn {
@@ -907,25 +915,25 @@
   justify-content: center;
   min-height: 28px;
   padding: 0 12px;
-  
+
   /* Appearance */
   background: var(--brand-lime, #d4ff00);
   color: var(--brand-bg-primary, #0d1b2a);
   border: none;
   border-radius: 14px;
-  
+
   /* Typography - use token for consistency */
   font-size: var(--text-xs);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   line-height: 1;
-  
+
   /* Layout */
   gap: 4px;
   flex-shrink: 0;
   margin-left: auto;
-  
+
   /* Interaction */
   cursor: pointer;
   transition: all 0.2s ease;
@@ -1098,7 +1106,7 @@
   color: rgba(255, 255, 255, 0.7);
 }
 
-.advancedCheckbox input[type="checkbox"] {
+.advancedCheckbox input[type='checkbox'] {
   width: 16px;
   height: 16px;
   accent-color: var(--brand-teal);
@@ -1207,8 +1215,14 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.4; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 /* Physics Estimate Summary */
@@ -1498,6 +1512,7 @@
 
 .dynoGainAnnotation {
   position: absolute;
+
   /* FIXED: Changed from right: -40px to prevent horizontal overflow on mobile */
   right: 4px;
   background: rgba(16, 185, 129, 0.2);
@@ -1512,7 +1527,11 @@
 
 /* Power Summary Card - replaces Physics-Based Estimate */
 .powerSummaryCard {
-  background: linear-gradient(135deg, rgba(var(--brand-warning-rgb), 0.12) 0%, rgba(var(--brand-warning-rgb), 0.03) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--brand-warning-rgb), 0.12) 0%,
+    rgba(var(--brand-warning-rgb), 0.03) 100%
+  );
   border: 1px solid rgba(var(--brand-warning-rgb), 0.3);
   border-radius: 16px;
   padding: 20px;
@@ -1946,11 +1965,16 @@
   font-size: var(--text-sm);
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
   text-align: center;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
   /* Force GPU layer for immediate repaints on mobile */
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
@@ -1974,6 +1998,7 @@
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(16, 185, 129, 0.08) 100%);
   border-color: rgba(16, 185, 129, 0.4);
   color: var(--brand-teal);
+
   /* Ensure active state is immediately visible */
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
@@ -2067,9 +2092,14 @@
   font-size: var(--text-sm);
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease, transform 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease,
+    transform 0.15s ease;
   text-align: left;
   width: 100%;
+
   /* Force GPU layer for immediate repaints on mobile */
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
@@ -2079,7 +2109,7 @@
 }
 
 .catBtn svg:first-child {
-  color: var(--cat-color, #888);
+  color: var(--cat-color, #888888);
   flex-shrink: 0;
 }
 
@@ -2101,6 +2131,7 @@
   background: rgba(var(--cat-color), 0.1);
   border-color: rgba(var(--cat-color), 0.3);
   color: var(--brand-text-primary);
+
   /* Ensure active state is immediately visible */
   transform: translateZ(0);
   -webkit-transform: translateZ(0);
@@ -2140,15 +2171,13 @@
 
 .popupOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(6px);
   display: flex;
   align-items: center;
   justify-content: center;
+
   /* z-index must be higher than GarageVehicleSelector (9000) */
   z-index: 10000;
   padding: 20px;
@@ -2164,7 +2193,7 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 16px 48px rgba(0,0,0,0.5);
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5);
 }
 
 .popupHeader {
@@ -2366,7 +2395,7 @@
   height: 18px;
   background: rgba(var(--brand-warning-rgb), 0.15);
   border-radius: 3px;
-  color: var(--color-warning);  /* Amber for conflicts */
+  color: var(--color-warning); /* Amber for conflicts */
   flex-shrink: 0;
 }
 
@@ -2384,7 +2413,9 @@
   border-radius: 50%;
   color: var(--color-text-tertiary, #64748b);
   cursor: pointer;
-  transition: color 0.15s ease, background-color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
   flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
 }
@@ -2424,7 +2455,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   z-index: 100;
-  box-shadow: 
+  box-shadow:
     0 8px 24px rgba(0, 0, 0, 0.4),
     0 2px 8px rgba(16, 185, 129, 0.2);
 }
@@ -2432,7 +2463,7 @@
 .saveBtn:hover:not(:disabled) {
   background: linear-gradient(135deg, #e6c04a 0%, var(--brand-teal) 100%);
   transform: translateX(-50%) translateY(-2px);
-  box-shadow: 
+  box-shadow:
     0 12px 32px rgba(0, 0, 0, 0.5),
     0 4px 12px rgba(16, 185, 129, 0.35);
 }
@@ -2520,7 +2551,7 @@
 
 .costEstimated {
   border-color: rgba(var(--brand-warning-rgb), 0.3);
-  color: var(--color-warning);  /* Amber for estimates */
+  color: var(--color-warning); /* Amber for estimates */
 }
 
 /* Performance Metrics - Compact Row Layout */
@@ -2675,13 +2706,13 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: rgba(255, 255, 255, 0.5);
-  margin: 0 0 16px 0;
+  margin: 0 0 16px;
 }
 
 .sectionHint {
   font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.5);
-  margin: -10px 0 16px 0;
+  margin: -10px 0 16px;
 }
 
 .loginHint {
@@ -2697,7 +2728,7 @@
 .sectionSubtitle {
   font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.4);
-  margin: -8px 0 16px 0;
+  margin: -8px 0 16px;
   line-height: 1.4;
 }
 
@@ -2833,7 +2864,7 @@
   font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.55);
   line-height: 1.5;
-  margin: 0 0 12px 0;
+  margin: 0 0 12px;
 }
 
 .upgradeStats {
@@ -2894,16 +2925,22 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideUp {
-  from { 
+  from {
     opacity: 0;
     transform: translateY(20px) scale(0.98);
   }
-  to { 
+
+  to {
     opacity: 1;
     transform: translateY(0) scale(1);
   }
@@ -2916,7 +2953,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 
+  box-shadow:
     0 25px 50px -12px rgba(0, 0, 0, 0.5),
     0 0 0 1px rgba(255, 255, 255, 0.05),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
@@ -3379,7 +3416,7 @@
   margin: 10px 0 0;
   padding: 8px 10px;
   font-size: var(--text-xs);
-  color: var(--color-warning);  /* Amber for warnings */
+  color: var(--color-warning); /* Amber for warnings */
   background: rgba(var(--brand-warning-rgb), 0.1);
   border: 1px solid rgba(var(--brand-warning-rgb), 0.2);
   border-radius: 8px;
@@ -3454,7 +3491,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Mobile adjustments for modal */
@@ -3466,34 +3505,34 @@
     align-items: flex-start; /* Start from top to avoid cutoff */
     overflow-y: auto;
   }
-  
+
   .saveModal {
     max-width: 100%;
     border-radius: 16px;
     max-height: none; /* Allow full height, parent handles scroll */
     margin-bottom: auto;
   }
-  
+
   .saveModalHeader {
     padding: 16px;
   }
-  
+
   .saveModalTitle {
     font-size: var(--text-h4);
   }
-  
+
   .saveModalBody {
     padding: 16px;
   }
-  
+
   .formInput {
     padding: 12px 14px;
   }
-  
+
   .saveModalActions {
     padding: 14px 16px;
   }
-  
+
   .cancelBtn,
   .confirmBtn {
     padding: 12px 16px;
@@ -3912,19 +3951,19 @@
 }
 
 .lapTimeInfoPanel h4 {
-  margin: 0 0 10px 0;
+  margin: 0 0 10px;
   font-size: var(--text-body);
   font-weight: 600;
   color: var(--color-success, #34c759);
 }
 
 .lapTimeInfoPanel p {
-  margin: 0 0 10px 0;
+  margin: 0 0 10px;
   line-height: 1.5;
 }
 
 .lapTimeInfoPanel ul {
-  margin: 0 0 12px 0;
+  margin: 0 0 12px;
   padding-left: 18px;
 }
 
@@ -4165,7 +4204,7 @@
 }
 
 .logTimeHeader h4 {
-  margin: 0 0 4px 0;
+  margin: 0 0 4px;
   font-size: var(--text-body);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.9);
@@ -4463,7 +4502,7 @@
 }
 
 .trackAnalysisSection h5 {
-  margin: 0 0 8px 0;
+  margin: 0 0 8px;
   font-size: var(--text-xs);
   font-weight: 600;
   color: rgba(255, 255, 255, 0.6);
@@ -4585,9 +4624,10 @@
   flex: 1;
   position: relative;
   height: 16px;
-  background: linear-gradient(90deg, 
-    rgba(var(--brand-blue-rgb), 0.3) 0%, 
-    rgba(16, 185, 129, 0.3) 50%, 
+  background: linear-gradient(
+    90deg,
+    rgba(var(--brand-blue-rgb), 0.3) 0%,
+    rgba(16, 185, 129, 0.3) 50%,
     rgba(var(--brand-error-rgb), 0.3) 100%
   );
   border-radius: 8px;
@@ -4758,7 +4798,11 @@
    =========================================== */
 
 .powerLimits {
-  background: linear-gradient(135deg, rgba(var(--brand-warning-rgb), 0.08) 0%, rgba(var(--brand-warning-rgb), 0.02) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--brand-warning-rgb), 0.08) 0%,
+    rgba(var(--brand-warning-rgb), 0.02) 100%
+  );
   border: 1px solid rgba(var(--brand-warning-rgb), 0.2);
   border-radius: 16px;
   padding: 20px;
@@ -4947,11 +4991,11 @@
     grid-template-columns: 1fr;
     gap: 24px;
   }
-  
+
   .heroImageContainer {
     max-height: 300px;
   }
-  
+
   .workspace {
     grid-template-columns: 260px 1fr;
     gap: 20px;
@@ -4963,54 +5007,52 @@
   .heroSection {
     padding: 16px;
   }
-  
+
   .heroImageContainer {
     aspect-ratio: 16/9;
     max-height: 240px;
   }
-  
+
   .heroStats {
     grid-template-columns: repeat(2, 1fr);
     gap: 10px;
     padding: 14px;
   }
-  
+
   .configSection {
     grid-template-columns: 1fr;
     padding: 0 16px 16px;
     margin-top: 16px;
   }
-  
+
   .workspace {
     grid-template-columns: 1fr;
     padding: 16px;
     gap: 16px;
   }
-  
+
   .sidebar {
     position: static;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-flow: row wrap;
     gap: 10px;
     max-height: none;
   }
-  
+
   .sidebarCard {
     flex: 1;
     min-width: 160px;
   }
-  
+
   .categoryList {
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-flow: row wrap;
     gap: 6px;
   }
-  
+
   .catBtn {
     padding: 8px 12px;
     font-size: var(--text-xs);
   }
-  
+
   .insightsGrid {
     grid-template-columns: 1fr;
     gap: 10px;
@@ -5024,33 +5066,33 @@
     overflow-x: hidden;
     box-sizing: border-box;
   }
-  
+
   /* Hero Section - More compact */
   .heroSection {
     padding: 12px;
     max-width: 100%;
     overflow-x: hidden;
   }
-  
+
   .heroHeader {
     gap: 10px;
   }
-  
+
   .heroYear {
     font-size: var(--text-2xs);
     letter-spacing: 1px;
     margin-bottom: 2px;
   }
-  
+
   .heroName {
     font-size: var(--text-h2);
     margin-bottom: 4px;
   }
-  
+
   .heroSubtitle {
     display: none; /* Hidden on mobile - info already in stats row */
   }
-  
+
   /* Mode Toggle Section - Mobile */
   .modeToggleSection {
     padding: 0 16px 16px;
@@ -5197,6 +5239,7 @@
 
   .dynoGainAnnotation {
     font-size: var(--text-2xs);
+
     /* FIXED: Changed from right: -32px to prevent horizontal overflow */
     right: 2px;
   }
@@ -5264,173 +5307,173 @@
     gap: 6px;
     padding: 10px 8px;
   }
-  
+
   .heroStat {
     padding: 6px 4px;
   }
-  
+
   .heroStatValue {
     font-size: var(--text-h4);
   }
-  
+
   .heroStatLabel {
     font-size: 8px;
     margin-top: 2px;
     letter-spacing: 0.4px;
   }
-  
+
   /* Recommendations Section - Mobile */
   .recommendationsSection {
     padding: 0 16px 16px;
   }
-  
+
   /* Recommendation Banner - Tighter */
   .recommendationBanner {
     padding: 12px;
   }
-  
+
   .recommendationHeader {
     gap: 8px;
     margin-bottom: 6px;
   }
-  
+
   .recommendationTitle {
     font-size: var(--text-2xs);
   }
-  
+
   .focusTag {
     font-size: var(--text-2xs);
     padding: 2px 6px;
   }
-  
+
   .recommendationText {
     font-size: var(--text-sm);
     line-height: 1.4;
   }
-  
+
   .insightsGrid {
     grid-template-columns: 1fr;
     gap: 8px;
     margin-top: 10px;
     padding-top: 10px;
   }
-  
+
   .insightsCard,
   .watchOutsCard {
     padding: 10px;
   }
-  
+
   /* Mobile: Keep header same size as Specs page (0.875rem) */
   .insightsCardHeader,
   .watchOutsCardHeader {
     font-size: 0.875rem;
     margin-bottom: 6px;
   }
-  
+
   .insightsCardList li,
   .watchOutsCardList li {
     font-size: 0.6875rem;
     padding-left: 10px;
   }
-  
+
   /* Full-width Recommendation Section - Mobile */
   .recommendationSection {
     padding: 12px;
   }
-  
+
   .recommendationBannerFull {
     padding: 14px;
   }
-  
+
   /* Mobile: Keep header same size as Specs page (0.875rem) */
   .recommendationTitleFull {
     font-size: 0.875rem;
   }
-  
+
   .focusTagFull {
     font-size: 0.625rem;
     padding: 3px 8px;
   }
-  
+
   /* Mobile body content - matches Specs page (0.8125rem = 13px) */
   .recommendationTextFull {
     font-size: 0.8125rem;
     line-height: 1.5;
     margin-bottom: 12px;
   }
-  
+
   .insightsGridFull {
     grid-template-columns: 1fr;
     gap: 10px;
     margin-top: 12px;
     padding-top: 12px;
   }
-  
+
   .insightsCardFull,
   .watchOutsCardFull {
     padding: 12px;
   }
-  
+
   /* Mobile: Keep header same size as Specs page (0.875rem) */
   .insightsCardHeaderFull,
   .watchOutsCardHeaderFull {
     font-size: 0.875rem;
     margin-bottom: 8px;
   }
-  
+
   /* Mobile body content - matches Specs page (0.8125rem = 13px) */
   .insightsCardListFull li,
   .watchOutsCardListFull li {
     font-size: 0.8125rem;
   }
-  
+
   .modGainFull {
     font-size: var(--text-2xs);
     padding: 2px 5px;
   }
-  
+
   /* Build Recommendations - Mobile */
   .buildRecommendationsSection {
     padding: 0 12px 12px;
   }
-  
+
   /* Mobile: Keep header same size as Specs page (0.875rem) */
   .buildRecommendationsHeader {
     font-size: 0.875rem;
     margin-bottom: 10px;
   }
-  
+
   .buildRecommendationsGrid {
     gap: 8px;
   }
-  
+
   .buildRecBtn {
     padding: 10px 12px;
     font-size: var(--text-xs);
     min-width: 60px;
     flex: 1;
   }
-  
+
   .buildRecommendationsCustomRow {
     margin-top: 8px;
   }
-  
+
   .buildRecBtnCustomFull {
     padding: 10px 12px;
     font-size: var(--text-xs);
   }
-  
+
   .buildRecBtnCustomFull .customBuildHint {
     font-size: var(--text-2xs);
   }
-  
+
   /* Config Section - Tighter */
   .configSection {
     padding: 0 12px 12px;
     gap: 10px;
     margin-top: 16px;
   }
-  
+
   /* Workspace - Compact padding & constrained */
   .workspace {
     padding: 12px;
@@ -5439,46 +5482,46 @@
     overflow-x: hidden;
     box-sizing: border-box;
   }
-  
+
   .mainPanel {
     max-width: 100%;
     overflow: hidden;
   }
-  
+
   .section {
     max-width: 100%;
     overflow: hidden;
     box-sizing: border-box;
   }
-  
+
   .sidebar {
     flex-direction: column;
     gap: 10px;
     max-width: 100%;
     overflow: hidden;
   }
-  
+
   .sidebarCard {
     min-width: 100%;
     max-width: 100%;
     overflow: hidden;
   }
-  
+
   .sidebarCardHeader {
     padding: 10px 12px;
   }
-  
+
   /* Mobile: Keep header same size as Specs page (0.875rem) */
   .sidebarCardTitle {
     font-size: 0.875rem;
   }
-  
+
   .sidebarCardContent {
     padding: 10px;
     max-width: 100%;
     overflow: hidden;
   }
-  
+
   /* Package Grid - Compact & constrained */
   .packageGrid {
     grid-template-columns: repeat(2, 1fr);
@@ -5486,7 +5529,7 @@
     max-width: 100%;
     overflow: hidden;
   }
-  
+
   .pkgBtn {
     padding: 10px 6px;
     font-size: var(--text-xs);
@@ -5494,23 +5537,23 @@
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  
+
   /* Category List - Compact */
   .categoryList {
     gap: 2px;
   }
-  
+
   .catBtn {
     padding: 10px 12px;
     font-size: var(--text-xs);
     gap: 8px;
   }
-  
+
   .catCount {
     padding: 2px 6px;
     font-size: var(--text-2xs);
   }
-  
+
   /* Performance Card - Compact & constrained */
   .performanceCard {
     padding: 12px;
@@ -5518,99 +5561,99 @@
     overflow: hidden;
     box-sizing: border-box;
   }
-  
+
   .performanceHeader {
     flex-wrap: wrap;
     gap: 8px;
     margin-bottom: 12px;
   }
-  
+
   .performanceTitle {
     font-size: var(--text-sm);
     gap: 6px;
   }
-  
+
   .buildStats {
     flex-wrap: wrap;
     gap: 6px;
   }
-  
+
   .hpBadge,
   .costBadge {
     padding: 4px 10px;
     font-size: var(--text-xs);
     white-space: nowrap;
   }
-  
+
   .cardTitle {
     font-size: var(--text-xs);
     margin-bottom: 10px;
   }
-  
+
   .performanceMetrics {
     gap: 8px;
     max-width: 100%;
     overflow: hidden;
   }
-  
+
   .metric {
     padding: 10px;
     max-width: 100%;
     overflow: hidden;
   }
-  
+
   .metricHeader {
     flex-wrap: wrap;
     gap: 4px;
   }
-  
+
   .metricLabel {
     font-size: var(--text-2xs);
   }
-  
+
   .metricValues {
     font-size: var(--text-xs);
     flex-wrap: wrap;
     gap: 4px;
   }
-  
+
   .metricValue {
     font-size: var(--text-sm);
   }
-  
+
   .metricGain {
     font-size: var(--text-2xs);
   }
-  
+
   /* Experience Scores - Compact & constrained */
   .scoreRow {
     padding: 8px 10px;
     max-width: 100%;
     overflow: hidden;
   }
-  
+
   .scoreHeader {
     flex-wrap: wrap;
     gap: 4px;
   }
-  
+
   .scoreLabel {
     font-size: var(--text-xs);
   }
-  
+
   .scoreValues {
     font-size: var(--text-xs);
     flex-wrap: wrap;
   }
-  
+
   .scoreName {
     font-size: var(--text-xs);
   }
-  
+
   .scoreValue {
     font-size: var(--text-xs);
   }
-  
+
   /* Save Button - Full width at bottom on mobile */
   .saveBtn {
     bottom: 0;
@@ -5626,320 +5669,320 @@
     z-index: 2147483647; /* Maximum z-index value - above everything */
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5);
   }
-  
+
   .saveBtn:hover:not(:disabled) {
     transform: none;
   }
-  
+
   /* Reduced padding - parent page handles safe area */
   .workspace {
     padding-bottom: 16px;
   }
-  
+
   /* ---- Tuning Insights Section - Extra Small Mobile ---- */
   .tuningInsightsSection {
     padding: 12px;
     max-width: 100%;
     overflow-x: hidden;
   }
-  
+
   .tuningInsightsHeader {
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
     margin-bottom: 12px;
   }
-  
+
   .tuningInsightsTitle {
     font-size: var(--text-sm);
     gap: 6px;
   }
-  
+
   .tuningInsightsTitle svg {
     width: 14px;
     height: 14px;
   }
-  
+
   .tuningEngineBadge {
     font-size: var(--text-2xs);
     padding: 2px 6px;
   }
-  
+
   .tuningStockPower {
     font-size: var(--text-xs);
   }
-  
+
   .tuningInsightsGrid {
     grid-template-columns: 1fr;
     gap: 10px;
     max-width: 100%;
     overflow: hidden;
   }
-  
+
   .tuningCard {
     padding: 12px;
     max-width: 100%;
     overflow: hidden;
   }
-  
+
   .tuningCardHeader {
     font-size: var(--text-xs);
     gap: 6px;
     padding-bottom: 8px;
     margin-bottom: 8px;
   }
-  
+
   .tuningCardHeader svg {
     width: 14px;
     height: 14px;
     flex-shrink: 0;
   }
-  
+
   .upgradeCount {
     font-size: var(--text-2xs);
     padding: 2px 4px;
   }
-  
+
   /* Upgrade items - extra small */
   .upgradeList {
     gap: 4px;
   }
-  
+
   .upgradeItem {
     padding: 8px;
     gap: 4px;
     border-left-width: 2px;
   }
-  
+
   .upgradeName {
     font-size: var(--text-xs);
     line-height: 1.25;
     word-break: break-word;
   }
-  
+
   .upgradeMetaRow {
     gap: 4px;
     flex-wrap: wrap;
   }
-  
+
   .upgradeGain {
     font-size: var(--text-2xs);
     padding: 2px 5px;
   }
-  
+
   .upgradeCost {
     font-size: var(--text-2xs);
   }
-  
+
   .upgradeMore {
     font-size: var(--text-2xs);
     padding: 6px;
   }
-  
+
   /* Power Limits - extra small */
   .limitsList {
     gap: 4px;
   }
-  
+
   .limitItem {
     padding: 8px;
     grid-template-columns: 1fr;
     gap: 2px;
   }
-  
+
   .limitName {
     font-size: var(--text-xs);
   }
-  
+
   .limitValue {
     font-size: var(--text-sm);
     text-align: left;
   }
-  
+
   .limitNotes {
     font-size: var(--text-2xs);
   }
-  
+
   /* Insights - extra small */
   .insightsList {
     gap: 4px;
   }
-  
+
   .insightStrength,
   .insightWeakness {
     font-size: var(--text-2xs);
     padding: 6px;
     gap: 6px;
   }
-  
+
   .insightStrength svg,
   .insightWeakness svg {
     width: 10px;
     height: 10px;
     flex-shrink: 0;
   }
-  
+
   /* Data source - extra small */
   .tuningDataSource {
     font-size: var(--text-2xs);
     margin-top: 10px;
     line-height: 1.4;
   }
-  
+
   .dataQualityBadge {
     font-size: 8px;
     padding: 2px 5px;
   }
-  
+
   /* Lap Time Estimator - Mobile */
   .lapTimeEstimator {
     padding: 14px;
   }
-  
+
   .lapTimeHeader {
     flex-direction: column;
     align-items: flex-start;
     gap: 12px;
   }
-  
+
   .trackSelector {
     width: 100%;
     justify-content: space-between;
   }
-  
+
   /* Track Selector - Mobile */
   .trackSelectedBtn {
     padding: 8px 10px;
   }
-  
+
   .trackSelectedName {
     font-size: var(--text-sm);
   }
-  
+
   .trackDetails {
     padding: 8px 10px;
   }
-  
+
   .trackDetailGrid {
     gap: 6px;
   }
-  
+
   .trackDetailLabel {
     font-size: var(--text-2xs);
   }
-  
+
   .trackDetailValue {
     font-size: var(--text-xs);
   }
-  
+
   .trackTag {
     font-size: var(--text-2xs);
     padding: 2px 6px;
   }
-  
+
   .trackDropdown {
     max-height: 350px;
     padding: 10px;
   }
-  
+
   .trackSearchInput {
     font-size: max(16px, var(--text-sm));
   }
-  
+
   .trackResultItem {
     padding: 8px;
   }
-  
+
   .trackResultName {
     font-size: var(--text-xs);
   }
-  
+
   .trackResultMeta {
     font-size: var(--text-2xs);
   }
-  
+
   .lapTimeBody {
     padding: 14px;
   }
-  
+
   .lapTimeStock {
     font-size: var(--text-h3);
   }
-  
+
   .lapTimeMod {
     font-size: var(--text-h2);
   }
-  
+
   .lapTimeImprovement {
     font-size: var(--text-xs);
     padding: 3px 8px;
   }
-  
+
   /* Handling Balance - Mobile */
   .handlingBalance {
     padding: 14px;
   }
-  
+
   .balanceEndLabel {
     font-size: 8px;
     width: 55px;
   }
-  
+
   /* Aero Balance - Mobile */
   .aeroBalance {
     padding: 14px;
   }
-  
+
   .aeroBarTrack {
     height: 60px;
     max-width: 40px;
   }
-  
+
   .aeroStats {
     gap: 8px;
   }
-  
+
   .aeroStatValue {
     font-size: var(--text-body);
   }
-  
+
   .aeroStatLabel {
     font-size: var(--text-2xs);
   }
-  
+
   /* Power Limits - Mobile */
   .powerLimits {
     padding: 14px;
   }
-  
+
   .powerLimitItem {
     grid-template-columns: 100px 1fr 60px;
     gap: 8px;
   }
-  
+
   .powerLimitLabel {
     font-size: var(--text-2xs);
   }
-  
+
   .powerLimitValue {
     font-size: var(--text-2xs);
   }
-  
+
   /* Brand Recommendations - Mobile */
   .brandRecs {
     padding: 14px;
   }
-  
+
   .brandRecCategory {
     flex-direction: column;
     align-items: flex-start;
     gap: 6px;
   }
-  
+
   .brandRecCategoryLabel {
     width: auto;
   }
-  
+
   .brandRecBrand {
     font-size: var(--text-2xs);
     padding: 3px 8px;
@@ -6316,156 +6359,156 @@
   .tuningInsightsSection {
     padding: 16px 12px;
   }
-  
+
   .tuningInsightsHeader {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
     margin-bottom: 16px;
   }
-  
+
   .tuningInsightsTitle {
     font-size: var(--text-body);
   }
-  
+
   .tuningEngineBadge {
     font-size: var(--text-xs);
     padding: 3px 8px;
   }
-  
+
   .tuningInsightsGrid {
     grid-template-columns: 1fr;
     gap: 12px;
   }
-  
+
   /* Tuning Cards - Better mobile spacing */
   .tuningCard {
     padding: 14px;
   }
-  
+
   .tuningCardHeader {
     font-size: var(--text-xs);
     padding-bottom: 8px;
     margin-bottom: 10px;
   }
-  
+
   /* Upgrade List - Mobile optimized */
   .upgradeList {
     gap: 6px;
   }
-  
+
   .upgradeItem {
     padding: 10px;
     gap: 4px;
   }
-  
+
   .upgradeName {
     font-size: var(--text-sm);
   }
-  
+
   .upgradeMetaRow {
     gap: 6px;
   }
-  
+
   .upgradeGain {
     font-size: var(--text-2xs);
     padding: 2px 6px;
   }
-  
+
   .upgradeCost {
     font-size: var(--text-2xs);
   }
-  
+
   /* Power Limits - Better mobile layout */
   .limitsList {
     gap: 6px;
   }
-  
+
   .limitItem {
     padding: 10px;
     grid-template-columns: 1fr;
     gap: 4px;
   }
-  
+
   .limitName {
     font-size: var(--text-xs);
     font-weight: 500;
     color: rgba(255, 255, 255, 0.8);
   }
-  
+
   .limitValue {
     font-size: var(--text-body);
     font-weight: 700;
     text-align: left;
   }
-  
+
   .limitNotes {
     font-size: var(--text-2xs);
     margin-top: 2px;
   }
-  
+
   /* Platform Insights - Mobile layout */
   .insightsList {
     gap: 6px;
   }
-  
+
   .insightStrength,
   .insightWeakness {
     font-size: var(--text-xs);
     padding: 8px;
   }
-  
+
   /* Stage Progressions - Mobile */
   .stageItem {
     padding: 10px;
   }
-  
+
   .stageName {
     font-size: var(--text-xs);
   }
-  
+
   .stageGain {
     font-size: var(--text-xs);
   }
-  
+
   .stageComponents {
     font-size: var(--text-xs);
   }
-  
+
   .stageCost,
   .stageTotalHp {
     font-size: var(--text-2xs);
   }
-  
+
   /* Platform List - Mobile */
   .platformItem {
     padding: 8px;
     grid-template-columns: 1fr;
     gap: 2px;
   }
-  
+
   .platformName {
     font-size: var(--text-xs);
   }
-  
+
   .platformPrice {
     font-size: var(--text-xs);
     text-align: left;
   }
-  
+
   /* Brands - Mobile */
   .brandCategory {
     padding: 8px;
   }
-  
+
   .brandCategoryName {
     font-size: var(--text-2xs);
   }
-  
+
   .brandNames {
     font-size: var(--text-xs);
   }
-  
+
   /* Data source footer */
   .tuningDataSource {
     font-size: var(--text-2xs);
@@ -6474,160 +6517,160 @@
     background: rgba(255, 255, 255, 0.02);
     border-radius: 6px;
   }
-  
+
   /* Data quality badge */
   .dataQualityBadge {
     font-size: var(--text-2xs);
     padding: 2px 6px;
   }
-  
+
   .upgradeCount {
     font-size: var(--text-2xs);
     padding: 2px 5px;
   }
-  
+
   /* Lap Time Estimator - Mobile */
   .skillSelector {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
-  
+
   .skillBtns {
     width: 100%;
   }
-  
+
   .skillBtn {
     padding: 10px 8px;
     font-size: var(--text-xs);
   }
-  
+
   .lapTimeInfoPanel {
     padding: 14px;
     font-size: var(--text-xs);
   }
-  
+
   .lapTimeInfoPanel h4 {
     font-size: var(--text-sm);
   }
-  
+
   .lapTimeInfoPanel ul {
     padding-left: 14px;
   }
-  
+
   .lapTimeInfoHighlight {
     font-size: var(--text-xs);
     padding: 8px 10px;
   }
-  
+
   .lapTimeBreakdown {
     padding: 10px 12px;
   }
-  
+
   .lapTimeBreakdownRow {
     font-size: var(--text-xs);
     padding: 5px 0;
   }
-  
+
   .lapTimeTip {
     font-size: var(--text-xs);
     padding: 8px 12px;
   }
-  
+
   .lapTimeCategoryBreakdown {
     padding: 10px;
   }
-  
+
   .lapTimeCategoryGrid {
     grid-template-columns: repeat(2, 1fr);
     gap: 6px;
   }
-  
+
   .lapTimeCategoryItem {
     padding: 6px;
   }
-  
+
   .lapTimeCategoryLabel {
     font-size: var(--text-2xs);
   }
-  
+
   .lapTimeCategoryValue {
     font-size: var(--text-xs);
   }
-  
+
   .lapTimeInsight {
     font-size: var(--text-xs);
     padding: 8px 12px;
   }
-  
+
   /* Track Time Logging - Mobile */
   .trackTimeLogging {
     margin-top: 16px;
     padding-top: 12px;
   }
-  
+
   .trackTimeActions {
     flex-direction: column;
     gap: 6px;
   }
-  
+
   .trackTimeBtn {
     padding: 12px;
     font-size: var(--text-sm);
   }
-  
+
   .logTimeForm {
     padding: 14px;
   }
-  
+
   .logTimeHeader h4 {
     font-size: var(--text-body);
   }
-  
+
   .logTimeInput {
     width: 60px;
     padding: 8px 10px;
     font-size: max(16px, var(--text-body));
   }
-  
+
   .logTimeCompare {
     flex-direction: column;
     gap: 10px;
   }
-  
+
   .trackHistoryPanel {
     padding: 14px;
   }
-  
+
   .trackHistoryHeader {
     flex-direction: column;
     align-items: flex-start;
     gap: 10px;
   }
-  
+
   .trackAnalyzeBtn {
     width: 100%;
     justify-content: center;
   }
-  
+
   .trackHistoryItemMain {
     flex-direction: column;
     align-items: flex-start;
     gap: 4px;
   }
-  
+
   .trackHistoryTime {
     font-size: var(--text-h3);
   }
-  
+
   .trackHistoryItemMeta {
     flex-wrap: wrap;
   }
-  
+
   .trackAnalysis {
     padding: 14px;
   }
-  
+
   .trackAnalysisItem,
   .trackAnalysisRec {
     padding: 8px 10px;
@@ -6647,7 +6690,8 @@
   display: none; /* Hidden - replaced by workspace */
 }
 
-.leftPanel, .rightPanel {
+.leftPanel,
+.rightPanel {
   display: none;
 }
 
@@ -6710,7 +6754,7 @@
   border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
-.insightsCardFull, 
+.insightsCardFull,
 .watchOutsCardFull {
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
@@ -6721,8 +6765,7 @@
 
 .insightsCardListFull {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-flow: row wrap;
   gap: 12px;
 }
 
@@ -6781,11 +6824,8 @@
 /* 2. Mode Toggle - Standard Light Tile */
 .modeToggleSection {
   padding: 0 24px;
-  margin-top: 24px; /* Increased from 16px */
-  max-width: 1400px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 24px; /* Added spacing below */
+  margin: 24px auto; /* Increased from 16px */
+  max-width: 1400px; /* Added spacing below */
 }
 
 .modeToggleFullWidth {
@@ -6815,7 +6855,7 @@
 .modeToggleBtnActive {
   background: rgba(255, 255, 255, 0.1);
   color: var(--color-text-primary, #ffffff);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
@@ -6825,7 +6865,7 @@
 
 /* Hide description on standard view for cleaner look, show on hover? No, keep simple */
 .modeToggleBtnDesc {
-  display: none; 
+  display: none;
 }
 
 /* 3. Build Recommendations - Standard Light Tile */
@@ -6874,7 +6914,7 @@
   background: transparent;
   border: none;
   cursor: pointer;
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary, #ffffff);
 }
 
 .dependencyWarningsTitle {
@@ -6975,7 +7015,7 @@
 .warningItemName {
   font-size: 12px;
   font-weight: 600;
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary, #ffffff);
 }
 
 .warningItemMessage {
@@ -7031,6 +7071,7 @@
     opacity: 0;
     transform: translateX(-50%) translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
@@ -7057,7 +7098,7 @@
 .conflictToastTitle {
   font-size: 12px;
   font-weight: 600;
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary, #ffffff);
 }
 
 .conflictToastMessage {
@@ -7083,5 +7124,5 @@
 
 .conflictToastClose:hover {
   background: rgba(255, 255, 255, 0.08);
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary, #ffffff);
 }
