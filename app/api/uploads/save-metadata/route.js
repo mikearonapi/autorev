@@ -1,8 +1,8 @@
 /**
  * Save Upload Metadata API
- * 
+ *
  * Processes and saves metadata for files uploaded directly to Vercel Blob.
- * 
+ *
  * Flow:
  * 1. Client uploads large image directly to Vercel Blob (bypasses 4.5MB limit)
  * 2. Client calls this endpoint with the blob URL
@@ -10,9 +10,9 @@
  * 4. Server compresses with TinyPNG
  * 5. Server uploads compressed version to Vercel Blob
  * 6. Server saves metadata to database
- * 
+ *
  * POST /api/uploads/save-metadata
- * 
+ *
  * @route /api/uploads/save-metadata
  */
 
@@ -24,7 +24,11 @@ import { put, del } from '@vercel/blob';
 import { errors } from '@/lib/apiErrors';
 import { awardPoints } from '@/lib/pointsService';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+import {
+  createAuthenticatedClient,
+  createServerSupabaseClient,
+  getBearerToken,
+} from '@/lib/supabaseServer';
 import { compressImage, isCompressible } from '@/lib/tinify';
 
 /**
@@ -32,15 +36,15 @@ import { compressImage, isCompressible } from '@/lib/tinify';
  */
 async function getAuthenticatedUser(request) {
   const bearerToken = getBearerToken(request);
-  const supabase = bearerToken 
-    ? createAuthenticatedClient(bearerToken) 
+  const supabase = bearerToken
+    ? createAuthenticatedClient(bearerToken)
     : await createServerSupabaseClient();
 
   if (!supabase) return null;
 
-  const { data: { user } } = bearerToken
-    ? await supabase.auth.getUser(bearerToken)
-    : await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = bearerToken ? await supabase.auth.getUser(bearerToken) : await supabase.auth.getUser();
   return user;
 }
 
@@ -73,7 +77,7 @@ async function handlePost(request) {
     caption,
     isPrimary,
     duration,
-    carSlug,  // For cross-feature image sharing
+    carSlug, // For cross-feature image sharing
   } = body;
 
   // Validate required fields
@@ -85,34 +89,42 @@ async function handlePost(request) {
   // The client upload() may return the original pathname with __USER__ placeholder
   // but the actual blob URL contains the correct path with the real user ID
   let validatedPathname = blobPathname;
-  
+  let correctedBlobUrl = blobUrl;
+
   // Try to extract pathname from blob URL
   // URLs look like: https://xxxxx.public.blob.vercel-storage.com/user-uploads/userId/timestamp.jpg
   try {
     const url = new URL(blobUrl);
     let urlPathname = url.pathname.startsWith('/') ? url.pathname.slice(1) : url.pathname;
-    
+
     console.log(`[SaveMetadata] URL pathname: ${urlPathname}, provided pathname: ${blobPathname}`);
-    
+
     // Handle case where Vercel Blob didn't apply the pathname override
     // (the file was uploaded to __USER__ path instead of actual user ID)
     if (urlPathname.includes('__USER__')) {
       console.log(`[SaveMetadata] URL contains __USER__ placeholder, transforming to user ID`);
       urlPathname = urlPathname.replace('__USER__', user.id);
-      
+
+      // FIX: Also correct the blob URL so images can be displayed
+      // Reconstruct the URL with the corrected pathname
+      correctedBlobUrl = `${url.origin}/${urlPathname}`;
+      console.log(`[SaveMetadata] Corrected blob URL: ${correctedBlobUrl}`);
+
       // Note: This means the file is at a different URL than expected
-      // We'll update the URL to point to where we expect it should be
+      // The file was stored at __USER__ path but we're saving the corrected URL
       // This is a workaround for Vercel Blob SDK pathname override not working
-      console.warn(`[SaveMetadata] File may be at wrong path. Original URL: ${blobUrl}`);
+      console.warn(
+        `[SaveMetadata] File stored at __USER__ path. Original: ${blobUrl}, Corrected: ${correctedBlobUrl}`
+      );
     }
-    
+
     // ALWAYS use URL pathname as it's the source of truth for where the file was actually stored
     validatedPathname = urlPathname;
   } catch (urlError) {
     console.warn(`[SaveMetadata] Failed to parse blob URL: ${blobUrl}`, urlError.message);
     // Fall back to provided pathname if URL parsing fails
     validatedPathname = blobPathname;
-    
+
     // Also try to transform __USER__ in provided pathname
     if (validatedPathname && validatedPathname.includes('__USER__')) {
       validatedPathname = validatedPathname.replace('__USER__', user.id);
@@ -122,20 +134,24 @@ async function handlePost(request) {
   // Verify the blob pathname belongs to this user
   const expectedPrefix = `user-uploads/${user.id}/`;
   const videoPrefix = `user-videos/${user.id}/`;
-  
+
   // Log for debugging
   console.log(`[SaveMetadata] Validating pathname: ${validatedPathname}`);
   console.log(`[SaveMetadata] Expected prefixes: ${expectedPrefix} or ${videoPrefix}`);
-  
-  if (!validatedPathname || (!validatedPathname.startsWith(expectedPrefix) && !validatedPathname.startsWith(videoPrefix))) {
+
+  if (
+    !validatedPathname ||
+    (!validatedPathname.startsWith(expectedPrefix) && !validatedPathname.startsWith(videoPrefix))
+  ) {
     console.error(`[SaveMetadata] Invalid pathname: ${validatedPathname}, user: ${user.id}`);
     return NextResponse.json({ error: 'Invalid blob pathname' }, { status: 403 });
   }
 
   const mediaType = getMediaType(contentType);
-  
+
   // Track sizes for logging
-  let finalBlobUrl = blobUrl;
+  // Use correctedBlobUrl which has __USER__ replaced with actual user ID
+  let finalBlobUrl = correctedBlobUrl;
   let finalBlobPathname = validatedPathname;
   let finalFileSize = fileSize;
   let compressionApplied = false;
@@ -144,51 +160,54 @@ async function handlePost(request) {
   // Compress images with TinyPNG (skip videos)
   if (mediaType === 'image' && isCompressible(contentType)) {
     try {
-      console.log(`[SaveMetadata] Fetching image for compression: ${blobUrl}`);
-      
+      console.log(`[SaveMetadata] Fetching image for compression: ${finalBlobUrl}`);
+
       // Fetch the uploaded image from Vercel Blob
-      const imageResponse = await fetch(blobUrl);
+      // Use finalBlobUrl which has the corrected path (with user ID instead of __USER__)
+      const imageResponse = await fetch(finalBlobUrl);
       if (!imageResponse.ok) {
         throw new Error(`Failed to fetch image: ${imageResponse.status}`);
       }
-      
+
       const imageBuffer = Buffer.from(await imageResponse.arrayBuffer());
-      console.log(`[SaveMetadata] Fetched ${(imageBuffer.length / 1024).toFixed(0)}KB, sending to TinyPNG...`);
-      
+      console.log(
+        `[SaveMetadata] Fetched ${(imageBuffer.length / 1024).toFixed(0)}KB, sending to TinyPNG...`
+      );
+
       // Compress with TinyPNG
       const compressed = await compressImage(imageBuffer, {
         contentType,
         filename: fileName,
       });
-      
+
       if (compressed) {
         // Upload compressed version to a new path
         const compressedPathname = validatedPathname.replace(/(\.[^.]+)$/, '-compressed$1');
-        
+
         const compressedBlob = await put(compressedPathname, compressed.buffer, {
           access: 'public',
           contentType,
         });
-        
+
         if (compressedBlob.url) {
-          // Delete the original uncompressed blob
+          // Delete the original uncompressed blob (use corrected URL)
           try {
-            await del(blobUrl);
+            await del(finalBlobUrl);
             console.log(`[SaveMetadata] Deleted original: ${validatedPathname}`);
           } catch (delError) {
             console.warn(`[SaveMetadata] Failed to delete original: ${delError.message}`);
           }
-          
+
           // Use compressed version
           finalBlobUrl = compressedBlob.url;
           finalBlobPathname = compressedBlob.pathname;
           finalFileSize = compressed.compressedSize;
           compressionApplied = true;
           compressionSavings = compressed.savings;
-          
+
           console.log(
             `[SaveMetadata] TinyPNG: ${(fileSize / 1024).toFixed(0)}KB → ${(finalFileSize / 1024).toFixed(0)}KB ` +
-            `(-${(compressionSavings * 100).toFixed(1)}%)`
+              `(-${(compressionSavings * 100).toFixed(1)}%)`
           );
         }
       } else {
@@ -196,7 +215,9 @@ async function handlePost(request) {
       }
     } catch (compressError) {
       // Log but don't fail - keep original if compression fails
-      console.warn(`[SaveMetadata] TinyPNG compression failed, keeping original: ${compressError.message}`);
+      console.warn(
+        `[SaveMetadata] TinyPNG compression failed, keeping original: ${compressError.message}`
+      );
     }
   }
 
@@ -211,7 +232,7 @@ async function handlePost(request) {
     user_vehicle_id: vehicleId || null,
     user_build_id: buildId || null,
     community_post_id: postId || null,
-    car_slug: carSlug || null,  // For cross-feature image sharing (Garage <-> Tuning Shop)
+    car_slug: carSlug || null, // For cross-feature image sharing (Garage <-> Tuning Shop)
     blob_url: finalBlobUrl,
     blob_pathname: finalBlobPathname,
     file_name: fileName || `upload-${Date.now()}`,
@@ -242,25 +263,32 @@ async function handlePost(request) {
 
   console.log(
     `[SaveMetadata] Saved: ${finalBlobPathname} ` +
-    `(${(finalFileSize / 1024).toFixed(0)}KB${compressionApplied ? ', compressed' : ''})`
+      `(${(finalFileSize / 1024).toFixed(0)}KB${compressionApplied ? ', compressed' : ''})`
   );
 
   // Award points for uploading a photo to garage (non-blocking)
   if (vehicleId && mediaType === 'image') {
-    awardPoints(user.id, 'garage_upload_photo', { imageId: imageRecord.id, vehicleId }).catch(() => {});
+    awardPoints(user.id, 'garage_upload_photo', { imageId: imageRecord.id, vehicleId }).catch(
+      () => {}
+    );
   }
 
   return NextResponse.json({
     success: true,
     image: imageRecord,
     mediaType,
-    compression: compressionApplied ? {
-      originalSize: fileSize,
-      compressedSize: finalFileSize,
-      savings: compressionSavings,
-    } : null,
+    compression: compressionApplied
+      ? {
+          originalSize: fileSize,
+          compressedSize: finalFileSize,
+          savings: compressionSavings,
+        }
+      : null,
   });
 }
 
 // Export wrapped handler with error logging
-export const POST = withErrorLogging(handlePost, { route: 'uploads/save-metadata', feature: 'uploads' });
+export const POST = withErrorLogging(handlePost, {
+  route: 'uploads/save-metadata',
+  feature: 'uploads',
+});

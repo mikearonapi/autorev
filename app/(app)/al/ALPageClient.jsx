@@ -1055,17 +1055,45 @@ export default function ALPageClient() {
                   })
                   .map((s, idx) => ({ ...s, id: idx + 1 })); // Re-index for display
 
-                // Add message with sources and timestamp
                 // Extract tool names for backwards compatibility
                 const toolNames = toolsUsed.map((t) => (typeof t === 'string' ? t : t.name));
+
+                // CLIENT-SIDE EMPTY RESPONSE DETECTION
+                // Validate response has meaningful content before displaying
+                let validatedContent = fullContent;
+                const trimmedContent = fullContent?.trim() || '';
+
+                if (!trimmedContent || trimmedContent.length < 20) {
+                  // Response is empty or minimal - use fallback
+                  console.warn(
+                    '[AL] Empty/minimal response detected on client. ' +
+                      `Length: ${trimmedContent.length}, Tools: [${toolNames.join(', ')}]`
+                  );
+                  validatedContent =
+                    "I apologize, but I wasn't able to generate a complete response. " +
+                    'This might be a temporary issue. Could you try rephrasing your question?';
+                } else if (
+                  trimmedContent.startsWith('SOURCES') ||
+                  trimmedContent.startsWith('[1]') ||
+                  trimmedContent.match(/^(\[?\d+\]?\s*)+$/)
+                ) {
+                  // Response is only source citations without content
+                  console.warn('[AL] Response appears to be only citations without content');
+                  validatedContent =
+                    "I found some information but couldn't format a proper response. " +
+                    'Please try asking your question again.';
+                }
+
+                // Add message with validated content and sources
                 setMessages([
                   ...newMessages,
                   {
                     role: 'assistant',
-                    content: fullContent,
+                    content: validatedContent,
                     sources: sources.length > 0 ? sources : undefined,
                     toolsUsed: toolNames.length > 0 ? toolNames : undefined,
                     timestamp: new Date().toISOString(),
+                    hadContentIssue: validatedContent !== fullContent,
                   },
                 ]);
                 setStreamingContent('');
@@ -1095,11 +1123,22 @@ export default function ALPageClient() {
                   setStreamingContent(fullContent);
                 }
                 if (data.done) {
+                  // Apply same content validation as typed events
+                  let validatedContent = fullContent;
+                  const trimmedContent = fullContent?.trim() || '';
+
+                  if (!trimmedContent || trimmedContent.length < 20) {
+                    console.warn('[AL Legacy] Empty/minimal response detected');
+                    validatedContent =
+                      "I apologize, but I wasn't able to generate a complete response. " +
+                      'Please try asking your question again.';
+                  }
+
                   setMessages([
                     ...newMessages,
                     {
                       role: 'assistant',
-                      content: fullContent,
+                      content: validatedContent,
                       timestamp: new Date().toISOString(),
                     },
                   ]);
