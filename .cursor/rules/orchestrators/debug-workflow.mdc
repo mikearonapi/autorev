@@ -1,12 +1,21 @@
 ---
-description: "Debug Workflow - Systematic debugging. Invoke with @debug-workflow."
+description: "Debug Workflow - Systematic debugging with automatic subagent support. Invoke with @debug-workflow."
 globs: []
 alwaysApply: false
 ---
 
 # Debug Workflow
 
-## Step 1: REPRODUCE
+**Automatically invokes `debugger` subagent for systematic investigation.**
+
+## Step 1: INVOKE DEBUGGER SUBAGENT
+
+The `debugger` subagent handles systematic investigation:
+- Captures error details and stack traces
+- Forms and tests hypotheses
+- Finds root causes, not symptoms
+
+## Step 2: REPRODUCE
 ```
 🐛 ISSUE:
 - Reported: [What's happening]
@@ -15,7 +24,7 @@ alwaysApply: false
 - Reproducible: [Yes/No/Intermittent]
 ```
 
-## Step 2: CHECK SOURCE_OF_TRUTH.md
+## Step 3: CHECK SOURCE_OF_TRUTH.md
 Many bugs are caused by pattern violations. Check:
 - Is a Cardinal Rule being violated?
 - Is this a known anti-pattern?
@@ -25,12 +34,15 @@ Many bugs are caused by pattern violations. Check:
 | Symptom | Likely Cause | Fix |
 |---------|--------------|-----|
 | Data not loading | Using `car_slug` not `car_id` | Use `resolveCarId()` |
+| Data not updating | Bypassing Provider | Use Provider hook |
 | Wrong colors | Hardcoded hex | Use `var(--color-*)` |
 | Touch not working | Target < 44px | Add `h-11 w-11` |
 | N+1 performance | Loop queries | Use joins |
 | Webhook duplicate | Missing idempotency | Check processed_events |
+| "undefined" error | Missing null check | Add `?.` optional chaining |
+| Component not rendering | Missing `'use client'` | Add client directive |
 
-## Step 3: ISOLATE
+## Step 4: ISOLATE
 Trace the data flow:
 1. Source (database/API)
 2. Fetch/query
@@ -39,15 +51,18 @@ Trace the data flow:
 
 Find where data goes wrong.
 
-## Step 4: FIX
+## Step 5: FIX
 - Fix root cause, not symptoms
 - Minimal change
 - Follow existing patterns
 
-## Step 5: VERIFY
+## Step 6: VERIFY & REVIEW
 ```
 ✅ FIX VERIFIED:
 - Root cause: [What was wrong]
 - Fix: [What changed]
 - Evidence: [Proof it works]
+- Regression check: [Related areas still work]
 ```
+
+**After fix:** Invoke `code-reviewer` subagent to verify fix doesn't introduce new issues.

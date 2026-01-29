@@ -1,12 +1,36 @@
 ---
-description: "Review Workflow - Pre-ship checklist. Invoke with @review-workflow before merging."
+description: "Review Workflow - Pre-ship checklist with automatic subagent invocation. Invoke with @review-workflow before merging."
 globs: []
 alwaysApply: false
 ---
 
 # Review Workflow
 
-## Pre-Ship Checklist
+## Step 1: Invoke Virtual Design Team
+
+**Automatically run all reviewers:**
+1. `code-reviewer` subagent → Code quality, Cardinal Rules, security
+2. `ui-reviewer` subagent → Design system, accessibility (if UI changed)
+
+## Step 2: Duplication Check (CRITICAL)
+
+Before shipping, verify no duplicate code was created:
+
+```bash
+# Check for similar files created
+git diff --name-status main | grep "^A"
+
+# For each new file, verify it doesn't duplicate existing:
+# - Search SOURCE_OF_TRUTH.md for similar functionality
+# - Search codebase for similar names/purposes
+```
+
+**Red flags:**
+- New `*Calculator.js` when `lib/performanceCalculator/` exists
+- New `*Service.js` when similar service exists in `lib/`
+- New component when similar exists in `components/`
+
+## Step 3: Pre-Ship Checklist
 
 ### Pattern Compliance
 - [ ] `car_id` used for queries (not `car_slug`)
@@ -18,7 +42,8 @@ alwaysApply: false
 ### Code Quality
 - [ ] TypeScript strict (no `any`)
 - [ ] Error handling present
-- [ ] Existing code reused where possible
+- [ ] **No duplicate code created** (checked SOURCE_OF_TRUTH.md)
+- [ ] Existing utilities reused where possible
 
 ### Security (if API/auth)
 - [ ] Auth checked
@@ -39,6 +64,14 @@ alwaysApply: false
 
 ```
 🚀 PRE-SHIP REVIEW
+
+**Subagent Reviews:**
+- code-reviewer: [PASSED/ISSUES]
+- ui-reviewer: [PASSED/ISSUES/N/A]
+
+**Duplication Check:**
+- [ ] No new files duplicate existing functionality
+- [ ] SOURCE_OF_TRUTH.md consulted
 
 **Must Fix:**
 - [Issue] → [Fix]

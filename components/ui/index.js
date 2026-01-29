@@ -12,15 +12,8 @@ export * from './Icons';
 
 export { default as Modal } from './Modal';
 export { default as EmptyState } from './EmptyState';
-export {
-  default as Card,
-  CardHeader,
-  CardBody,
-  CardFooter,
-  CardTitle,
-  CardLink,
-  CARD_VARIANTS,
-} from './Card'; // Skeleton loading components
+
+// Skeleton loading components
 export {
   Skeleton,
   SkeletonText,

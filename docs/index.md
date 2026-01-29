@@ -27,7 +27,7 @@
 | **Work with Stripe payments** | [STRIPE_INTEGRATION.md](STRIPE_INTEGRATION.md) |
 | See current configuration | [ACTIVE_CONFIG.md](ACTIVE_CONFIG.md) |
 | Understand file structure | [FILE_STRUCTURE.md](FILE_STRUCTURE.md) |
-| See data gaps & priorities | [../planning/audits/DATA_GAPS.md](../planning/audits/DATA_GAPS.md) |
+| See data gaps & priorities | [../audit/data/DATA_GAPS.md](../audit/data/DATA_GAPS.md) |
 | Understand data pipelines | [../planning/implementations/DATA_PIPELINE.md](../planning/implementations/DATA_PIPELINE.md) |
 | See all features | [../planning/reference/FEATURES.md](../planning/reference/FEATURES.md) |
 | Non-technical overview | [../planning/reference/OWNER_GUIDE.md](../planning/reference/OWNER_GUIDE.md) |
@@ -116,22 +116,15 @@ Specific feature build plans.
 | `BUILD_PIVOT_PRELAUNCH_CHECKLIST.md` | Build pivot pre-launch checklist |
 | `DESIGN_SYSTEM_BUILD_PIVOT.md` | Design system for build pivot |
 
-### Audits & Gap Analysis (`/planning/audits/`)
+### Audits (`/audit/`)
 
-Point-in-time assessments and gap analyses.
-
-| Document | Purpose |
-|----------|---------|
-| `DATA_GAPS.md` | Comprehensive data coverage gap audit |
-| `DATA_COVERAGE_TRACKER.md` | Data coverage tracking |
-| `EVENTS_GAP_ANALYSIS.md` | Events database gap analysis |
-| `FEATURE_CATALOG.md` | Feature status audit with discrepancies |
-| `KNOWN_ISSUES_BACKLOG.md` | Known issues tracking |
-| `TECH_DEBT.md` | Technical debt assessment |
-| `CSS_AUDIT_REPORT.md` | CSS brand consistency audit (completed) |
-| `CSS_MIGRATION_AUDIT.md` | CSS token migration tracking |
-| `PHYSICS_MODEL_AUDIT.md` | Physics model UI-physics mapping audit |
-| `PRIORITY_PAGES_BRAND_QA.md` | Priority pages brand QA checklist |
+Consolidated audit folder with organized subdirectories. See `/audit/` for:
+- `/audit/data/` - Data quality, database, and gap audits
+- `/audit/codebase/` - Code quality, tech debt, components
+- `/audit/vehicle/` - Vehicle-specific audits
+- `/audit/tracking/` - Issue trackers and backlogs
+- `/audit/reports/` - Audit reports
+- `/audit/prompts/` - Audit prompt templates
 
 ### Reference Material (`/planning/reference/`)
 

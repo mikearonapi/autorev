@@ -228,10 +228,6 @@ Major feature implementations.
 **File:** `components/BuildMediaGallery.jsx` (295 lines)
 **Purpose:** Gallery for build photos/videos
 
-#### `DynamicBuildConfig`
-**File:** `components/DynamicBuildConfig.jsx` (132 lines)
-**Purpose:** Dynamic build configuration
-
 #### `NextUpgradeRecommendation`
 **File:** `components/NextUpgradeRecommendation.jsx` (407 lines)
 **Purpose:** AI-powered next upgrade suggestions

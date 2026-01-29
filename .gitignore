@@ -55,3 +55,12 @@ next-env.d.ts
 
 # GitHub workflows (require PAT with workflow scope)
 .github/
+
+# Research and strategy (local only, not for GitHub)
+/saas-strategy/
+/inspiration/
+/research/
+
+# Generated content and logs
+/logs/
+/generated-videos/

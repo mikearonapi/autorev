@@ -21,12 +21,13 @@ These files have local `Icons` definitions but are NOT imported anywhere in `app
 
 | File | Last Modified | Notes |
 |------|---------------|-------|
-| `components/BuildsWorkshop.jsx` | TBD | No imports found |
+| `components/BuildsWorkshop.jsx` | N/A | File does not exist |
 | `components/BuildEditor.jsx` | TBD | No imports found |
 | `components/UpgradeConfigPanel.jsx` | TBD | No imports found |
-| `components/DynamicBuildConfig.jsx` | TBD | No imports found |
+| ~~`components/DynamicBuildConfig.jsx`~~ | - | **REMOVED** (orphaned) |
 
 **Action:** Verify these are truly unused, then delete or archive.
+**Note:** `DynamicBuildConfig.jsx` was removed during Jan 2026 reorganization as orphaned.
 
 ### 1B: Full Dead Code Scan Needed
 

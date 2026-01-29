@@ -1,11 +1,11 @@
 ---
-description: "MANDATORY development process - read SOURCE_OF_TRUTH.md, search before creating, verify with evidence"
+description: "MANDATORY development process - read SOURCE_OF_TRUTH.md, search before creating, verify with evidence, auto-review"
 alwaysApply: true
 ---
 
 # Mandatory Process
 
-## ALWAYS Do These Three Things
+## PHASE 1: Before Writing Code
 
 ### 1. READ SOURCE_OF_TRUTH.md FIRST
 Before any code work, read `docs/SOURCE_OF_TRUTH.md`. It contains:
@@ -16,16 +16,50 @@ Before any code work, read `docs/SOURCE_OF_TRUTH.md`. It contains:
 
 **Output:** "📖 Checked SOURCE_OF_TRUTH.md: [relevant rules/patterns found]"
 
-### 2. SEARCH BEFORE CREATING
-Never create new code without searching first:
-- Components: `components/`
-- Hooks: `hooks/`, `lib/hooks/`
-- Utilities: `lib/`, `lib/*Service.js`
-- API routes: `app/api/`
+### 2. SEARCH BEFORE CREATING (CRITICAL - Prevents Tech Debt)
 
-**Output:** "🔍 Searched [location]: [found X / nothing found, creating new]"
+**NEVER create a new file without searching first.** Duplicative code is the #1 source of tech debt.
 
-### 3. VERIFY WITH EVIDENCE
+| Creating... | Search These Locations | Look For |
+|-------------|------------------------|----------|
+| Component | `components/`, `components/ui/` | Similar name or purpose |
+| Hook | `hooks/`, `lib/hooks/` | Same functionality |
+| Utility | `lib/`, `lib/*Service.js` | Same calculation or transform |
+| API route | `app/api/` | Same endpoint pattern |
+| Style | `styles/`, existing component CSS | Same visual pattern |
+
+**Search Commands:**
+```bash
+# Search by name pattern
+glob "**/*[keyword]*"
+
+# Search by functionality
+grep "function.*[keyword]" --type js
+grep "export.*[keyword]" --type js
+```
+
+**STOP if you find existing code.** Extend or import it instead of duplicating.
+
+**Output:** "🔍 Searched [locations]: [found X - will reuse / nothing found - creating new]"
+
+---
+
+## PHASE 2: After Writing Code
+
+### 3. AUTO-REVIEW (Virtual Design Team)
+
+**After completing any code change, automatically invoke the appropriate reviewer:**
+
+| Change Type | Auto-Invoke | What It Checks |
+|-------------|-------------|----------------|
+| Any code change | `code-reviewer` subagent | Cardinal Rules, security, patterns |
+| UI/component work | `ui-reviewer` subagent | Design system, accessibility, touch targets |
+| Bug fix | `debugger` subagent | Root cause verified, no regressions |
+| New functionality | `test-writer` subagent | Test coverage needed |
+
+**This is automatic, not optional.** The reviewer subagent runs after substantive changes.
+
+### 4. VERIFY WITH EVIDENCE
 Every task must end with proof it works:
 - State success criteria
 - Run verification (grep, lint, test, file check)
@@ -37,13 +71,13 @@ Every task must end with proof it works:
 
 ## Task Routing
 
-| Task Type | Approach |
-|-----------|----------|
-| **Simple fix** (typo, small change) | Do it directly, verify |
-| **New feature** | `@feature-workflow` |
-| **Bug/debugging** | `@debug-workflow` |
-| **Before shipping** | `@review-workflow` |
-| **Complex/unsure** | `@tech-lead` |
+| Task Type | Approach | Auto-Review |
+|-----------|----------|-------------|
+| **Simple fix** | Do it directly | → `code-reviewer` |
+| **New feature** | `@feature-workflow` | → `code-reviewer` + `ui-reviewer` |
+| **Bug/debugging** | `@debug-workflow` | → `debugger` |
+| **UI work** | Build it | → `ui-reviewer` |
+| **Before shipping** | `@review-workflow` | → Full review |
 
 ---
 
@@ -56,13 +90,15 @@ Every task must end with proof it works:
 5. **Skeleton loaders** - Not spinners for data fetches
 6. **Domain-specific names** - Not `handleClick`, `formatData`
 
-## Key Service Files
+## Key Service Files (Check Before Creating New)
 
-| Need | File |
-|------|------|
-| Car resolution | `lib/carResolver.js` |
-| Car data | `lib/carsClient.js` |
-| User data | `lib/userDataService.js` |
-| Performance calcs | `lib/performanceCalculator/` |
-| Errors | `lib/apiErrors.js` |
-| Auth | `lib/auth.js` |
+| Need | Existing File | DON'T Create |
+|------|---------------|--------------|
+| Car resolution | `lib/carResolver.js` | Another car lookup |
+| Car data | `lib/carsClient.js` | Another car fetch |
+| User data | `lib/userDataService.js` | Another user query |
+| Performance calcs | `lib/performanceCalculator/` | Another HP calculator |
+| Errors | `lib/apiErrors.js` | Another error handler |
+| Auth | `lib/auth.js` | Another auth check |
+| Images | `lib/images.js` | Another image util |
+| Validation | `lib/schemas/` | Another validator |

@@ -6,7 +6,7 @@ Reddit scraping is prioritized by vehicle market importance (Top 100 Sports Seda
 
 ## Priority Tiers
 
-Based on `Research & Articles/Top 100 Sports Sedans by US Modification Market.md`:
+Based on `research/Top 100 Sports Sedans by US Modification Market.md`:
 
 | Tier | Examples | Focus |
 |------|----------|-------|

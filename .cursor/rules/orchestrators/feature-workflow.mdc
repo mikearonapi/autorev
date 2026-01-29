@@ -1,5 +1,5 @@
 ---
-description: "Feature Workflow - For building new features. Invoke with @feature-workflow."
+description: "Feature Workflow - For building new features with automatic quality enforcement. Invoke with @feature-workflow."
 globs: []
 alwaysApply: false
 ---
@@ -11,16 +11,32 @@ alwaysApply: false
 2. Identify affected areas
 3. Check tier access requirements
 
-## Phase 2: RESEARCH
-1. **Read SOURCE_OF_TRUTH.md** — Cardinal rules, anti-patterns
-2. **Search existing code** — Don't duplicate
-3. List what to reuse vs create
+## Phase 2: RESEARCH (Prevent Duplication)
+
+**This phase prevents tech debt. Do not skip.**
+
+1. **Read SOURCE_OF_TRUTH.md** — Find existing solutions first
+2. **Search for existing code:**
+
+| Building... | Search | Command |
+|-------------|--------|---------|
+| Component | `components/` | `glob "components/**/*[keyword]*"` |
+| Hook | `hooks/`, `lib/hooks/` | `grep "use[Keyword]" hooks/` |
+| Utility | `lib/` | `grep "export.*[keyword]" lib/` |
+| Service | `lib/*Service.js` | `ls lib/*Service.js` |
+| Calculator | `lib/performanceCalculator/` | Check existing calcs |
+
+3. **Decision:** Reuse existing OR justify new creation
 
 ```
-📖 SOURCE_OF_TRUTH: [Rules that apply]
-🔍 EXISTING CODE: [What to reuse]
-🆕 NEW CODE NEEDED: [What to create]
+📖 SOURCE_OF_TRUTH: [Relevant sections checked]
+🔍 EXISTING CODE: 
+  - Found: [files that can be reused/extended]
+  - Searched: [locations checked]
+🆕 NEW CODE NEEDED: [Only what doesn't exist - justify each]
 ```
+
+**STOP if existing code can be extended instead of duplicated.**
 
 ## Phase 3: PLAN
 1. Component/file structure
@@ -34,12 +50,23 @@ Invoke specialists as needed:
 - Data work → `@database-agent`
 - API work → `@security-agent`
 
-## Phase 5: VERIFY
+## Phase 5: AUTO-REVIEW (Virtual Design Team)
+
+**Automatically invoke after build completes:**
+
+1. `code-reviewer` subagent → Check Cardinal Rules, patterns, security
+2. `ui-reviewer` subagent → Check design system (if UI work)
+3. `test-writer` subagent → Generate test coverage (if new logic)
+
+## Phase 6: VERIFY
+
 ```
 ✅ VERIFICATION:
 - [ ] Works as specified
 - [ ] Edge cases handled
 - [ ] Loading/error states
 - [ ] SOURCE_OF_TRUTH patterns followed
+- [ ] No duplicate code created
+- [ ] Subagent reviews passed
 - [ ] Evidence: [show output]
 ```
