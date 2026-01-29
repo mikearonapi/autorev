@@ -92,7 +92,9 @@
 /* Content */
 .content {
   flex: 1;
-  padding: 16px 16px 24px;
+
+  /* Top padding matches parts page for consistent spacing below car selector */
+  padding: 12px 16px 24px;
 }
 
 /* Stat Badge */
@@ -299,5 +301,86 @@
   .uploadSection,
   .gallerySection {
     padding: 14px;
+  }
+}
+
+/* ==========================================================================
+   iPad/Desktop Responsive (768px+)
+   ========================================================================== */
+
+@media (min-width: 768px) {
+  .page {
+    /* No bottom tab bar on desktop */
+    padding-bottom: var(--space-6, 24px);
+  }
+
+  .content {
+    padding: 16px 24px 32px;
+  }
+
+  .uploadSection,
+  .gallerySection {
+    padding: 18px;
+  }
+
+  .emptyText {
+    max-width: 360px;
+  }
+
+  .authPrompt {
+    padding: 56px 32px;
+  }
+}
+
+/* ==========================================================================
+   Desktop Responsive (1024px+)
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .page {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .content {
+    padding: 24px 32px 40px;
+  }
+
+  .uploadSection,
+  .gallerySection {
+    padding: 24px;
+    border-radius: 16px;
+  }
+
+  .sectionTitle {
+    font-size: 1rem;
+  }
+
+  .galleryHeader {
+    margin-bottom: 16px;
+  }
+
+  .slideshowBtn {
+    padding: 10px 18px;
+    font-size: 0.875rem;
+  }
+
+  .emptyState {
+    min-height: 50vh;
+  }
+
+  .emptyText {
+    max-width: 420px;
+  }
+
+  .emptyIcon {
+    width: 120px;
+    height: 120px;
+    border-radius: 28px;
+  }
+
+  .authPrompt {
+    padding: 64px 40px;
+    border-radius: 20px;
   }
 }

@@ -266,8 +266,8 @@
    Responsive
    ========================================================================== */
 
-/* Hide on desktop */
-@media (min-width: 1024px) {
+/* Hide on iPad/desktop - desktop header takes over at 768px+ */
+@media (min-width: 768px) {
   .nav {
     display: none;
   }

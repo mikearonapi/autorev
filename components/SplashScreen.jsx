@@ -64,8 +64,8 @@ export default function SplashScreen({
         <Image
           src={LOGO_TRANSPARENT}
           alt="AutoRev"
-          width={255}
-          height={170}
+          width={383}
+          height={255}
           className={styles.logoImage}
           priority
           unoptimized // CDN-hosted, already optimized

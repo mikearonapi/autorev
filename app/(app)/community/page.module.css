@@ -582,3 +582,105 @@
     padding: 14px 16px;
   }
 }
+
+/* ==========================================================================
+   DESKTOP RESPONSIVE (1024px+)
+   Wider layout with more breathing room
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .feedContent {
+    max-width: 800px;
+    padding: 0 32px;
+
+    /* No bottom tab bar on desktop */
+    padding-bottom: var(--space-6, 24px);
+    gap: 16px;
+  }
+
+  .buildCard {
+    padding: 18px 20px;
+    border-radius: 20px;
+  }
+
+  .cardHeader {
+    gap: 14px;
+  }
+
+  .avatar {
+    width: 48px;
+    height: 48px;
+  }
+
+  .username {
+    font-size: 0.8125rem;
+  }
+
+  .buildTitle {
+    font-size: 1.25rem;
+  }
+
+  .carName {
+    font-size: 0.75rem;
+  }
+
+  .statsRow {
+    padding-top: 12px;
+    margin-top: 12px;
+  }
+
+  .statValue {
+    font-size: 2.25rem;
+  }
+
+  .statLabel {
+    font-size: 11px;
+  }
+
+  .imageCard {
+    border-radius: 20px;
+  }
+
+  .actionsRow {
+    gap: 56px;
+    padding: 14px 0;
+  }
+
+  .actionBtn {
+    gap: 8px;
+    padding: 10px 12px;
+    border-radius: 10px;
+  }
+
+  .actionBtn:hover {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .actionBtn span {
+    font-size: 1rem;
+  }
+
+  /* Empty/Loading states - more centered on desktop */
+  .centerState,
+  .emptyState {
+    gap: 28px;
+  }
+}
+
+/* ==========================================================================
+   LARGE DESKTOP (1280px+)
+   ========================================================================== */
+
+@media (min-width: 1280px) {
+  .feedContent {
+    max-width: 900px;
+  }
+
+  .buildCard {
+    padding: 20px 24px;
+  }
+
+  .statValue {
+    font-size: 2.5rem;
+  }
+}

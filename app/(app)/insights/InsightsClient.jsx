@@ -20,7 +20,7 @@
  * Target audience: Enthusiasts who modify their vehicles for performance.
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 
 import Link from 'next/link';
 
@@ -457,7 +457,7 @@ const SmartInsightCard = ({ type, title, body, subtext, action, onFeedback, id }
             className={`${styles.feedbackBtn} ${feedback === 'up' ? styles.activeUp : ''}`}
             onClick={() => {
               setFeedback('up');
-              onFeedback(type, id, 'useful');
+              onFeedback(type, id, 'up');
             }}
           >
             <ThumbsUpIcon size={14} />
@@ -466,7 +466,7 @@ const SmartInsightCard = ({ type, title, body, subtext, action, onFeedback, id }
             className={`${styles.feedbackBtn} ${feedback === 'down' ? styles.activeDown : ''}`}
             onClick={() => {
               setFeedback('down');
-              onFeedback(type, id, 'not_useful');
+              onFeedback(type, id, 'down');
             }}
           >
             <ThumbsDownIcon size={14} />
@@ -1095,11 +1095,13 @@ export default function InsightsClient() {
       </header>
 
       {/* Vehicle Selector - Uses shared component for consistency */}
-      <GarageVehicleSelector
-        selectionMode="id"
-        selectedVehicleId={selectedVehicleId}
-        onSelect={setSelectedVehicleId}
-      />
+      <div className={styles.vehicleSelectorWrapper}>
+        <GarageVehicleSelector
+          selectionMode="id"
+          selectedVehicleId={selectedVehicleId}
+          onSelect={setSelectedVehicleId}
+        />
+      </div>
 
       {/* Hero Section - Build Progress Rings */}
       {sectionFilters.buildProgress && (

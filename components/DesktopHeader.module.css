@@ -1,0 +1,232 @@
+/* ==========================================================================
+   DesktopHeader - Premium iPad/Desktop Navigation Header
+   
+   Design: Clean, minimal with centered branding
+   - Hamburger (left) | Logo (center) | Avatar (right)
+   - Frosted glass backdrop
+   - 64px height
+   - Shows at 768px+, hidden on mobile
+   ========================================================================== */
+
+.header {
+  /* CRITICAL: Hidden on mobile by default */
+  display: none !important;
+  visibility: hidden;
+}
+
+/* Only show on iPad/Desktop (768px and above) */
+@media (min-width: 768px) {
+  .header {
+    /* Show on tablet/desktop */
+    display: block !important;
+    visibility: visible;
+
+    /* Fixed at top */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+
+    /* Dimensions */
+    height: 64px;
+    width: 100%;
+
+    /* Premium frosted glass effect */
+    background: rgba(13, 27, 42, 0.92);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    backdrop-filter: saturate(180%) blur(20px);
+
+    /* Subtle bottom border */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  }
+}
+
+/* ==========================================================================
+   Container - Flexbox layout
+   ========================================================================== */
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--space-4, 16px);
+}
+
+@media (min-width: 1024px) {
+  .container {
+    padding: 0 var(--space-6, 24px);
+  }
+}
+
+/* ==========================================================================
+   Hamburger Button
+   ========================================================================== */
+
+.hamburger {
+  /* Reset */
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  /* Touch target - 44px minimum */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+
+  /* Color */
+  color: rgba(255, 255, 255, 0.7);
+
+  /* Transitions */
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+
+  /* No tap highlight */
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hamburger:hover {
+  color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.hamburger:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #a3e635);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Logo - Dead Center
+   ========================================================================== */
+
+.logoLink {
+  /* Absolute center positioning */
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+
+  /* Touch target */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  border-radius: 8px;
+
+  /* Transitions */
+  transition: opacity 0.2s ease;
+
+  /* No tap highlight */
+  -webkit-tap-highlight-color: transparent;
+}
+
+.logoLink:hover {
+  opacity: 0.85;
+}
+
+.logoLink:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #a3e635);
+  outline-offset: 2px;
+}
+
+.logo {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+}
+
+@media (min-width: 1024px) {
+  .logo {
+    height: 36px;
+  }
+}
+
+/* ==========================================================================
+   User Avatar
+   ========================================================================== */
+
+.avatar {
+  /* Touch target - 44px minimum */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+
+  /* No tap highlight */
+  -webkit-tap-highlight-color: transparent;
+}
+
+.avatar:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #a3e635);
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+
+.avatarImage {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+
+  /* Subtle ring */
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+
+  /* Transitions */
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.avatar:hover .avatarImage {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+.avatarPlaceholder {
+  /* Circle container */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+
+  /* Styling */
+  background: rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.5);
+
+  /* Subtle ring */
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+
+  /* Transitions */
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.avatar:hover .avatarPlaceholder {
+  background: rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.7);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.2);
+}
+
+/* ==========================================================================
+   Reduced Motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .hamburger,
+  .logoLink,
+  .avatarImage,
+  .avatarPlaceholder {
+    transition: none;
+  }
+}

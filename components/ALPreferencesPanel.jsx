@@ -6,10 +6,10 @@
  * Simple settings for AL's data sources.
  * Each toggle enables/disables specific tools in the multi-agent system.
  *
- * Designed to be embedded in ALPageClient.
+ * Design: Matches the Insights page filter panel style for consistency.
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 
 import { Icons } from '@/components/ui/Icons';
 import {
@@ -25,29 +25,25 @@ const DATA_SOURCES = [
   {
     key: 'web_search_enabled',
     label: 'Web Research',
-    description: 'Search the web for current info, news, and niche topics',
-    icon: Icons.globe,
+    description: 'Current info, news, and niche topics',
     tool: 'search_web',
   },
   {
     key: 'forum_insights_enabled',
     label: 'Forum Insights',
-    description: 'Real owner experiences from enthusiast forums',
-    icon: Icons.chat,
+    description: 'Real owner experiences from forums',
     tool: 'search_community_insights',
   },
   {
     key: 'youtube_reviews_enabled',
     label: 'Expert Reviews',
-    description: 'Summaries from expert YouTube reviewers',
-    icon: Icons.video,
+    description: 'Expert YouTube reviewer summaries',
     tool: 'get_expert_reviews',
   },
   {
     key: 'event_search_enabled',
     label: 'Event Search',
-    description: 'Find track days, car meets, and local events',
-    icon: Icons.flag,
+    description: 'Track days, car meets, and events',
     tool: 'search_events',
   },
 ];
@@ -62,6 +58,7 @@ const DEFAULT_PREFERENCES = {
 
 /**
  * ALPreferencesPanel - Simple data source settings for AL
+ * Styled to match the Insights page filter panel.
  *
  * @param {Object} props
  * @param {boolean} props.isOpen - Whether the panel is visible
@@ -75,6 +72,8 @@ export default function ALPreferencesPanel({
   initialPreferences = null,
   onPreferencesChange,
 }) {
+  const panelRef = useRef(null);
+
   // Use React Query for fetching preferences
   const { data: fetchedPreferences, isLoading: queryLoading } = useALPreferencesQuery({
     enabled: isOpen && !initialPreferences,
@@ -83,10 +82,8 @@ export default function ALPreferencesPanel({
   const updatePreferencesMutation = useUpdateALPreferences();
 
   const [preferences, setPreferences] = useState(initialPreferences || DEFAULT_PREFERENCES);
-  const [hasChanges, setHasChanges] = useState(false);
 
   const loading = !initialPreferences && queryLoading;
-  const saving = updatePreferencesMutation.isPending;
 
   // Update local state when fetched preferences change
   useEffect(() => {
@@ -97,131 +94,99 @@ export default function ALPreferencesPanel({
     }
   }, [initialPreferences, fetchedPreferences]);
 
-  // Handle toggle change
-  const handleToggle = useCallback((key) => {
-    setPreferences((prev) => {
-      const newPrefs = { ...prev, [key]: !prev[key] };
-      setHasChanges(true);
-      return newPrefs;
-    });
-  }, []);
+  // Handle toggle change with immediate save (optimistic UI)
+  const handleToggle = useCallback(
+    async (key) => {
+      const newPrefs = { ...preferences, [key]: !preferences[key] };
+      setPreferences(newPrefs);
 
-  // Save preferences - optimistic UI pattern
-  const handleSave = useCallback(async () => {
-    const previousPreferences = { ...preferences };
-
-    // Optimistic: Immediately notify parent and close
-    if (onPreferencesChange) {
-      onPreferencesChange(preferences);
-    }
-    setHasChanges(false);
-
-    if (onClose) {
-      onClose();
-    }
-
-    // Save in background
-    try {
-      await updatePreferencesMutation.mutateAsync(preferences);
-    } catch (err) {
-      console.error('Failed to save AL preferences:', err);
+      // Notify parent immediately
       if (onPreferencesChange) {
-        onPreferencesChange(previousPreferences);
+        onPreferencesChange(newPrefs);
       }
-    }
-  }, [preferences, onPreferencesChange, onClose, updatePreferencesMutation]);
 
-  // Count enabled sources
-  const enabledCount = DATA_SOURCES.filter((s) => preferences[s.key] !== false).length;
+      // Save in background
+      try {
+        await updatePreferencesMutation.mutateAsync(newPrefs);
+      } catch (err) {
+        console.error('Failed to save AL preferences:', err);
+        // Revert on error
+        setPreferences(preferences);
+        if (onPreferencesChange) {
+          onPreferencesChange(preferences);
+        }
+      }
+    },
+    [preferences, onPreferencesChange, updatePreferencesMutation]
+  );
+
+  // Reset all sources to enabled
+  const handleReset = useCallback(async () => {
+    setPreferences(DEFAULT_PREFERENCES);
+
+    if (onPreferencesChange) {
+      onPreferencesChange(DEFAULT_PREFERENCES);
+    }
+
+    try {
+      await updatePreferencesMutation.mutateAsync(DEFAULT_PREFERENCES);
+    } catch (err) {
+      console.error('Failed to reset AL preferences:', err);
+    }
+  }, [onPreferencesChange, updatePreferencesMutation]);
+
+  // Count disabled sources
+  const disabledCount = DATA_SOURCES.filter((s) => preferences[s.key] === false).length;
 
   if (!isOpen) return null;
 
   return (
-    <div className={styles.panel}>
+    <div className={styles.panel} ref={panelRef}>
       <div className={styles.header}>
-        <h3 className={styles.title}>
-          <span className={styles.titleIcon}>
-            <Icons.settings size={16} />
-          </span>
-          AL Settings
-        </h3>
-        <button className={styles.closeButton} onClick={onClose} aria-label="Close settings">
-          <Icons.close size={14} />
+        <h3 className={styles.title}>AL Data Sources</h3>
+        <button className={styles.closeButton} onClick={onClose} aria-label="Close">
+          <Icons.x size={18} />
         </button>
       </div>
 
       {loading ? (
         <div className={styles.loading}>
           <div className={styles.loadingSpinner} />
-          <span>Loading...</span>
         </div>
       ) : (
-        <div className={styles.content}>
-          {/* Data Sources Section */}
-          <div className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <h4 className={styles.sectionTitle}>Data Sources</h4>
-              <span className={styles.enabledCount}>
-                {enabledCount}/{DATA_SOURCES.length} enabled
-              </span>
-            </div>
-            <p className={styles.sectionDescription}>
-              Choose which sources AL can search when answering your questions.
-            </p>
-            <div className={styles.toggleList}>
-              {DATA_SOURCES.map((source) => {
-                const enabled = preferences[source.key] !== false;
+        <>
+          <div className={styles.body}>
+            {DATA_SOURCES.map((source) => {
+              const enabled = preferences[source.key] !== false;
 
-                return (
-                  <div
-                    key={source.key}
-                    className={styles.toggleRow}
-                    onClick={() => handleToggle(source.key)}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => e.key === 'Enter' && handleToggle(source.key)}
-                  >
-                    <span className={styles.toggleIcon}>{source.icon({ size: 18 })}</span>
-                    <div className={styles.toggleText}>
-                      <span className={styles.toggleLabel}>{source.label}</span>
-                      <span className={styles.toggleDescription}>{source.description}</span>
-                    </div>
-                    <button
-                      className={`${styles.toggle} ${enabled ? styles.toggleOn : ''}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleToggle(source.key);
-                      }}
-                      aria-label={`${enabled ? 'Disable' : 'Enable'} ${source.label}`}
-                    >
-                      <span className={styles.toggleKnob} />
-                    </button>
+              return (
+                <label key={source.key} className={styles.option}>
+                  <div className={styles.optionInfo}>
+                    <span className={styles.optionLabel}>{source.label}</span>
+                    <span className={styles.optionDesc}>{source.description}</span>
                   </div>
-                );
-              })}
+                  <button
+                    type="button"
+                    role="switch"
+                    aria-checked={enabled}
+                    className={`${styles.toggle} ${enabled ? styles.toggleOn : ''}`}
+                    onClick={() => handleToggle(source.key)}
+                  >
+                    <span className={styles.toggleThumb} />
+                  </button>
+                </label>
+              );
+            })}
+          </div>
+
+          {disabledCount > 0 && (
+            <div className={styles.footer}>
+              <button className={styles.resetBtn} onClick={handleReset}>
+                Enable All Sources
+              </button>
             </div>
-          </div>
-
-          {/* Info Note */}
-          <div className={styles.infoNote}>
-            <Icons.info size={14} />
-            <span>AL always has access to the AutoRev database, encyclopedia, and your garage data.</span>
-          </div>
-
-          {/* Save Button */}
-          <div className={styles.actions}>
-            <button className={styles.cancelButton} onClick={onClose}>
-              Cancel
-            </button>
-            <button
-              className={`${styles.saveButton} ${!hasChanges ? styles.saveButtonDisabled : ''}`}
-              onClick={handleSave}
-              disabled={!hasChanges || saving}
-            >
-              {saving ? 'Saving...' : 'Save'}
-            </button>
-          </div>
-        </div>
+          )}
+        </>
       )}
     </div>
   );

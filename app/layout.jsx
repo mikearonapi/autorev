@@ -358,7 +358,7 @@ export default function RootLayout({ children }) {
         {/* Meta Pixel (Facebook Pixel) */}
         <MetaPixel />
       </head>
-      <body>
+      <body style={{ backgroundColor: '#0d1b2a' }}>
         {/* 
           CRITICAL: Inline script that runs BEFORE React hydrates
           Shows splash screen immediately if coming from OAuth callback
@@ -388,7 +388,7 @@ export default function RootLayout({ children }) {
                     var splash = document.createElement('div');
                     splash.id = 'oauth-splash';
                     splash.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;width:100%;height:100vh;height:100dvh;background:#0d1b2a;display:flex;align-items:center;justify-content:center;z-index:999999;opacity:1;transition:opacity 0.5s ease-out;overflow:hidden;';
-                    splash.innerHTML = '<img src="/autorev-logo-transparent.png" alt="AutoRev" style="width:clamp(135px,37.5vw,210px);height:auto;animation:logoEnter 0.4s ease-out;" /><style>@keyframes logoEnter{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}</style>';
+                    splash.innerHTML = '<img src="/autorev-logo-transparent.png" alt="AutoRev" style="width:clamp(203px,56.25vw,315px);height:auto;animation:logoEnter 0.4s ease-out;" /><style>@keyframes logoEnter{from{opacity:0;transform:scale(0.95);}to{opacity:1;transform:scale(1);}}</style>';
                     document.body.appendChild(splash);
                     
                     // Global function for AuthProvider to dismiss splash

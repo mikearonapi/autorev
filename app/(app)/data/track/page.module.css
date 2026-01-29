@@ -646,4 +646,94 @@
   .trackTimeLapRow {
     padding: 12px 0;
   }
+
+  .logDataSection {
+    padding: 24px;
+  }
+
+  .logDataIcon {
+    width: 36px;
+    height: 36px;
+  }
+
+  .logDataTitle {
+    font-size: 1.125rem;
+  }
+
+  .logDataSubtitle {
+    font-size: 0.875rem;
+    margin-left: 46px;
+  }
+}
+
+/* ==========================================================================
+   Desktop Responsive (1024px+)
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .pageContent {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  .estimateExplainer {
+    max-width: 800px;
+    padding: 16px 20px;
+    font-size: 0.8125rem;
+  }
+
+  .syntheticDataSection {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .dataCard {
+    margin-bottom: 0;
+  }
+
+  .logDataSection {
+    padding: 28px;
+    border-radius: 16px;
+  }
+
+  .trackTimesList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .trackTimeCard {
+    padding: 24px;
+    border-radius: 16px;
+  }
+
+  .trackTimeLap {
+    font-size: 2.25rem;
+  }
+
+  .noVehicles,
+  .emptyState {
+    padding: 60px 40px;
+    max-width: 600px;
+    margin: 24px auto;
+  }
+
+  .emptyState h2 {
+    font-size: 1.75rem;
+  }
+
+  .emptyState p {
+    max-width: 360px;
+  }
+
+  .trackProgressBanner {
+    padding: 18px 24px;
+    gap: 20px;
+  }
+
+  .trackProgressValue {
+    font-size: 1.5rem;
+  }
 }

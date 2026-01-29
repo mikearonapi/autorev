@@ -11,6 +11,68 @@
   gap: 12px;
 }
 
+/* Mode Selector */
+.modeSelector {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.modeBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 44px;
+}
+
+.modeBtn:hover:not(.modeBtnDisabled) {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: var(--brand-text-primary);
+}
+
+.modeBtn:focus-visible {
+  outline: 2px solid var(--brand-teal);
+  outline-offset: 2px;
+}
+
+.modeBtnActive {
+  background: rgba(var(--brand-teal-rgb), 0.15) !important;
+  border-color: var(--brand-teal) !important;
+  color: var(--brand-teal) !important;
+}
+
+.modeBtnDisabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Mode Instructions */
+.modeInstructions {
+  padding: 10px 14px;
+  background: rgba(var(--brand-teal-rgb), 0.1);
+  border: 1px solid rgba(var(--brand-teal-rgb), 0.2);
+  border-radius: 10px;
+}
+
+.modeInstructions p {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--brand-teal);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .header {
   display: flex;
   align-items: center;
@@ -84,6 +146,20 @@
 .stockItem {
   border-style: dashed;
   border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Selectable state when in hero or delete mode */
+.selectableItem {
+  cursor: pointer;
+}
+
+.selectableItem:hover {
+  transform: scale(1.02);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.selectableItem:active {
+  transform: scale(0.98);
 }
 
 /* Reorder Controls - Up/Down arrows */
@@ -271,124 +347,58 @@
   border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
-/* Action Buttons Container */
-.actions {
+/* Mode Overlay - Shows tap instructions on photos */
+.modeOverlay {
   position: absolute;
-  bottom: 6px;
-  right: 6px;
-  z-index: 10;
+  inset: 0;
+  z-index: 8;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   gap: 6px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  color: var(--brand-teal);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
 }
 
-/* Set Hero Button */
-.setHeroBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  color: rgba(255, 255, 255, 0.8);
-  cursor: pointer;
-  transition: all 0.2s ease;
+.modeOverlay span {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-/* Expanded touch target (44px) */
-.setHeroBtn::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 44px;
-  height: 44px;
+.selectableItem:hover .modeOverlay {
+  opacity: 1;
 }
 
-.setHeroBtn:hover {
-  background: linear-gradient(135deg, var(--brand-teal), var(--brand-teal-dark, #0d9668));
-  color: var(--brand-bg-primary);
-  border-color: var(--brand-teal);
-  transform: scale(1.05);
+/* Delete mode overlay uses red */
+.deleteOverlay {
+  color: var(--brand-error);
 }
 
-.setHeroBtn:focus-visible {
-  outline: 2px solid var(--brand-lime);
-  outline-offset: 2px;
-  border-color: var(--brand-lime);
-}
-
-/* Delete Button */
-.deleteBtn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  background: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  border-radius: 8px;
-  color: rgba(255, 255, 255, 0.8);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-/* Expanded touch target (44px) */
-.deleteBtn::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 44px;
-  height: 44px;
-}
-
-.deleteBtn:hover {
-  background: rgba(var(--brand-error-rgb), 0.95);
-  color: white;
-  border-color: var(--brand-error);
-  transform: scale(1.05);
-}
-
-.deleteBtn:focus-visible {
-  outline: 2px solid var(--brand-lime);
-  outline-offset: 2px;
-  border-color: var(--brand-lime);
-}
-
-/* Mobile: Always show action buttons */
+/* Show overlay on mobile without hover (lighter for always-visible) */
 @media (max-width: 768px) {
-  .actions {
+  .modeOverlay {
+    opacity: 0.85;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .selectableItem:active .modeOverlay {
     opacity: 1;
+    background: rgba(0, 0, 0, 0.7);
   }
+}
 
-  .setHeroBtn,
-  .deleteBtn {
-    width: 36px;
-    height: 36px;
-  }
-
+/* Mobile: Larger reorder buttons for touch */
+@media (max-width: 768px) {
   .reorderBtn {
     width: 32px;
     height: 32px;
-  }
-}
-
-/* Desktop: Show actions on hover */
-@media (min-width: 769px) {
-  .actions {
-    opacity: 0;
-    transition: opacity 0.2s ease;
-  }
-
-  .photoItem:hover .actions {
-    opacity: 1;
   }
 }

@@ -14,6 +14,7 @@
    ========================================================================== */
 
 /* Level 3: Overlay background for focused questionnaire experience */
+
 /* z-index 1100: Above Header (1050) to ensure fullscreen experience */
 .container {
   position: fixed;
@@ -76,9 +77,11 @@
     transform: scale(0);
     opacity: 0;
   }
+
   50% {
     transform: scale(1.1);
   }
+
   100% {
     transform: scale(1);
     opacity: 1;
@@ -176,6 +179,7 @@
   flex-direction: column;
   padding: 8px 20px 24px;
   overflow-y: auto;
+
   /* Don't center - let content start from top and scroll if needed */
 }
 
@@ -183,7 +187,9 @@
   width: 100%;
   max-width: 480px;
   margin: 0 auto;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .questionContainer.transitioning {
@@ -306,6 +312,7 @@
   flex-direction: column;
   gap: 12px;
   padding: 16px 20px;
+
   /* Position button just above PWA navigation bar */
   padding-bottom: max(16px, calc(env(safe-area-inset-bottom) + 16px));
   flex-shrink: 0;
@@ -325,6 +332,7 @@
 .submitBtn {
   width: 100%;
   padding: 14px 18px; /* Mobile-first: extra small screens */
+
   /* Use explicit color - not CSS variable - to ensure bright yellow */
   background: var(--color-accent-lime, #d4ff00);
   border: none;
@@ -393,15 +401,15 @@
   .header {
     padding: 16px 24px;
   }
-  
+
   .main {
     padding: 16px 32px 32px;
   }
-  
+
   .question {
     font-size: 26px;
   }
-  
+
   .footer {
     padding: 20px 32px;
     padding-bottom: max(20px, calc(env(safe-area-inset-bottom) + 20px));
@@ -410,11 +418,11 @@
     margin-top: auto;
     width: 100%;
   }
-  
+
   .option {
     padding: 16px 24px;
   }
-  
+
   .optionLabel {
     font-size: 16px;
   }
@@ -423,11 +431,56 @@
 /* Large screens - center the experience */
 @media (min-width: 1024px) {
   .questionContainer {
-    max-width: 520px;
+    max-width: 600px;
   }
-  
+
   .footer {
-    max-width: 520px;
+    max-width: 600px;
+  }
+
+  .main {
+    padding: 24px 40px 40px;
+  }
+
+  .question {
+    font-size: 30px;
+  }
+
+  .options {
+    gap: 14px;
+    margin-top: 48px;
+  }
+
+  .option {
+    padding: 18px 28px;
+    border-radius: 12px;
+  }
+
+  .optionLabel {
+    font-size: 17px;
+  }
+
+  .submitBtn {
+    padding: 18px 28px;
+    font-size: 16px;
+  }
+
+  .successState {
+    max-width: 480px;
+    padding: 48px 32px;
+  }
+
+  .successTitle {
+    font-size: 26px;
+  }
+
+  .successText {
+    font-size: 16px;
+  }
+
+  .primaryBtn {
+    max-width: 340px;
+    padding: 18px 32px;
   }
 }
 

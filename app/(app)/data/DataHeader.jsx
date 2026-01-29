@@ -122,11 +122,13 @@ function DataHeaderContent() {
 
       {/* Vehicle Selector - Uses shared component for consistency */}
       {vehicles?.length > 0 && (
-        <GarageVehicleSelector
-          selectionMode="id"
-          selectedVehicleId={selectedVehicleId}
-          onSelect={handleSelectVehicle}
-        />
+        <div className={styles.vehicleSelectorWrapper}>
+          <GarageVehicleSelector
+            selectionMode="id"
+            selectedVehicleId={selectedVehicleId}
+            onSelect={handleSelectVehicle}
+          />
+        </div>
       )}
     </header>
   );

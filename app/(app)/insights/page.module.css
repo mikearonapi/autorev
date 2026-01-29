@@ -26,10 +26,28 @@
 
 @media (min-width: 768px) {
   .page {
-    padding: 0 20px;
-    padding-bottom: var(--page-bottom-padding);
-    max-width: 540px;
+    padding: 0 24px;
+
+    /* No bottom tab bar on desktop */
+    padding-bottom: var(--space-6, 24px);
+    max-width: 700px;
     margin: 0 auto;
+  }
+}
+
+/* Desktop - wider layout */
+@media (min-width: 1024px) {
+  .page {
+    max-width: 900px;
+    padding: 0 32px;
+    padding-bottom: var(--space-8, 32px);
+  }
+}
+
+/* Large Desktop */
+@media (min-width: 1280px) {
+  .page {
+    max-width: 1000px;
   }
 }
 
@@ -102,6 +120,19 @@
   padding: 4px 0 12px;
   position: relative;
   z-index: 9000;
+}
+
+/* Wrapper to counteract page padding so selector spans full width like Garage pages */
+.vehicleSelectorWrapper {
+  margin-left: -16px;
+  margin-right: -16px;
+}
+
+@media (min-width: 768px) {
+  .vehicleSelectorWrapper {
+    margin-left: -20px;
+    margin-right: -20px;
+  }
 }
 
 .selectorButton {
@@ -178,7 +209,7 @@
   overflow: hidden;
   z-index: 999999;
   animation: slideDown 0.15s ease;
-  box-shadow: 
+  box-shadow:
     0 12px 40px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(20px) saturate(180%);
@@ -458,6 +489,7 @@
   background: transparent;
   border: 1px solid rgba(255, 255, 255, 0.1);
   color: var(--color-text-tertiary, #64748b);
+
   /* Minimum 44px touch target per WCAG 2.1 */
   min-width: 44px;
   min-height: 44px;
@@ -585,7 +617,9 @@
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  transition: background 0.2s ease, transform 0.1s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.1s ease;
 }
 
 .retryButton:hover {
@@ -678,7 +712,7 @@
   overflow: hidden;
   z-index: 999999;
   animation: slideDown 0.15s ease;
-  box-shadow: 
+  box-shadow:
     0 12px 40px rgba(0, 0, 0, 0.5),
     inset 0 1px 0 0 rgba(255, 255, 255, 0.04);
   backdrop-filter: blur(20px) saturate(180%);
@@ -820,4 +854,86 @@
 .filterResetBtn:hover {
   background: rgba(255, 255, 255, 0.1);
   color: var(--color-text-primary, #ffffff);
+}
+
+/* ===========================================
+   DESKTOP RESPONSIVE LAYOUTS (1024px+)
+   Multi-column grids for better use of space
+   =========================================== */
+
+@media (min-width: 1024px) {
+  .pageHeader {
+    padding: 24px 0 12px;
+  }
+
+  .pageTitle {
+    font-size: var(--font-size-5xl, 2.5rem);
+  }
+
+  /* Vehicle selector - less negative margin on desktop */
+  .vehicleSelectorWrapper {
+    margin-left: -32px;
+    margin-right: -32px;
+  }
+
+  /* Summary section - could be side by side with character */
+  .summarySection {
+    padding: 0 0 24px;
+  }
+
+  /* Feed items in 2-column grid */
+  .feedList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  /* Smart cards - larger on desktop */
+  .smartCard {
+    padding: 16px 18px;
+  }
+
+  .cardTitle {
+    font-size: var(--text-lg, 16px);
+  }
+
+  .cardText {
+    font-size: var(--text-body, 14px);
+  }
+
+  /* Analysis section cards - 2 column when multiple */
+  .analysisSection > div {
+    padding: 18px 20px;
+  }
+
+  /* Driving character - wider padding */
+  .drivingCharacterCard {
+    padding: 18px 20px;
+  }
+
+  /* Filter panel - wider on desktop */
+  .filterPanel {
+    width: 320px;
+  }
+
+  /* Empty state - wider text */
+  .emptyText {
+    max-width: 400px;
+  }
+}
+
+/* ===========================================
+   LARGE DESKTOP (1280px+)
+   =========================================== */
+
+@media (min-width: 1280px) {
+  .vehicleSelectorWrapper {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  /* Could expand to 3 columns for insights feed */
+  .feedList {
+    gap: 20px;
+  }
 }

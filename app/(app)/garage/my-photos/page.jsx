@@ -92,6 +92,10 @@ function MyPhotosContent() {
     reorderImages: reorderCarImages,
   } = useCarImages(selectedCar?.slug, { enabled: !!selectedCar?.slug });
 
+  // Find the current vehicle for the selected car (must be before galleryImages memo)
+  const currentVehicle =
+    selectedCar && vehicles ? vehicles.find((v) => v.matchedCarSlug === selectedCar.slug) : null;
+
   // Sort images by display_order for consistent display
   const sortedImages = React.useMemo(() => {
     if (!carImages || carImages.length === 0) return [];
@@ -178,10 +182,6 @@ function MyPhotosContent() {
       setCurrentBuildId(null);
     }
   }, [buildIdParam, carSlugParam, allCars, builds, buildsLoading, fallbackCar]);
-
-  // Find the current vehicle for the selected car
-  const currentVehicle =
-    selectedCar && vehicles ? vehicles.find((v) => v.matchedCarSlug === selectedCar.slug) : null;
 
   // Set vehicle ID when current vehicle changes
   useEffect(() => {

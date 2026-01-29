@@ -385,8 +385,8 @@
 /* Responsive adjustments */
 @media (min-width: 768px) {
   .popup {
-    max-width: 440px;
-    height: 560px;
+    max-width: 480px;
+    height: 580px;
   }
 
   .content {
@@ -394,8 +394,8 @@
   }
 
   .iconWrapper {
-    width: 60px;
-    height: 60px;
+    width: 64px;
+    height: 64px;
   }
 
   .title {
@@ -404,15 +404,129 @@
 
   .description {
     font-size: var(--font-size-xl);
+    max-width: 360px;
   }
 
   .featureItem {
     font-size: var(--font-size-lg);
   }
 
+  .featureList {
+    max-width: 340px;
+  }
+
   .nextBtn,
   .prevBtn {
     font-size: var(--font-size-lg);
     padding: 12px 28px;
+  }
+}
+
+/* ==========================================================================
+   Desktop Responsive (1024px+)
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .popup {
+    max-width: 520px;
+    height: 620px;
+    border-radius: 24px;
+  }
+
+  .progressBar {
+    height: 4px;
+  }
+
+  .closeBtn {
+    width: 36px;
+    height: 36px;
+    top: var(--space-md);
+    right: var(--space-md);
+  }
+
+  .content {
+    padding: var(--space-3xl, 40px) var(--space-2xl) var(--space-xl);
+  }
+
+  .iconWrapper {
+    width: 72px;
+    height: 72px;
+    border-radius: 18px;
+    margin-bottom: var(--space-lg);
+  }
+
+  .title {
+    font-size: 32px;
+    margin-bottom: var(--space-lg);
+  }
+
+  .description {
+    font-size: 19px;
+    max-width: 400px;
+  }
+
+  .featureListContainer {
+    min-height: 110px;
+  }
+
+  .featureList {
+    max-width: 380px;
+  }
+
+  .featureItem {
+    font-size: 17px;
+    padding: 8px 0;
+    gap: var(--space-md);
+  }
+
+  .featureIcon {
+    width: 22px;
+    height: 22px;
+  }
+
+  .footer {
+    padding: var(--space-lg) var(--space-xl);
+  }
+
+  .dots {
+    gap: 8px;
+  }
+
+  .dot {
+    width: 10px;
+    height: 10px;
+  }
+
+  .dotActive {
+    width: 24px;
+  }
+
+  .navButtons {
+    gap: var(--space-md);
+  }
+
+  .nextBtn {
+    padding: 14px 32px;
+    font-size: 18px;
+    border-radius: 10px;
+  }
+
+  .prevBtn {
+    padding: 14px 20px;
+    font-size: 18px;
+    border-radius: 10px;
+  }
+
+  .checkbox {
+    padding: 10px 16px;
+  }
+
+  .checkmark {
+    width: 22px;
+    height: 22px;
+  }
+
+  .checkboxLabel {
+    font-size: 17px;
   }
 }

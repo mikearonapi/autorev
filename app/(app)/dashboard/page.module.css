@@ -2,8 +2,10 @@
 
 .page {
   min-height: 100vh;
+
   /* Transparent to show body gradient */
   background: transparent;
+
   /* Bottom padding for tab bar - uses standardized token */
   padding-bottom: var(--page-bottom-padding);
 }
@@ -171,7 +173,7 @@
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
-  margin: 0 0 10px 0;
+  margin: 0 0 10px;
 }
 
 .tips {
@@ -212,7 +214,6 @@
   display: flex;
 }
 
-
 /* Loading State */
 .loading {
   display: flex;
@@ -231,7 +232,9 @@
 }
 
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Respect reduced motion preference */
@@ -239,7 +242,7 @@
   .loadingSpinner {
     animation: none;
   }
-  
+
   .skeletonRings,
   .skeletonCard,
   .skeletonCardSmall {
@@ -262,7 +265,7 @@
   font-size: var(--text-body);
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
-  margin: 0 0 6px 0;
+  margin: 0 0 6px;
 }
 
 .emptyText {
@@ -340,6 +343,115 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ==========================================================================
+   iPad/Desktop Responsive (768px+)
+   ========================================================================== */
+
+@media (min-width: 768px) {
+  .page {
+    /* No bottom tab bar on desktop */
+    padding-bottom: var(--space-6, 24px);
+  }
+
+  .container {
+    /* Expand from 480px on tablet */
+    max-width: 600px;
+    padding: 0 24px;
+  }
+
+  /* Tips section - 2 column grid */
+  .tips {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  /* Skeleton cards - 2 column */
+  .skeletonCards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+/* ==========================================================================
+   Desktop Responsive (1024px+)
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .container {
+    /* Wide centered container on desktop */
+    max-width: 900px;
+    padding: 0 32px;
+  }
+
+  .header {
+    padding: 24px 0 12px;
+  }
+
+  .pageTitle {
+    font-size: 2.25rem;
+  }
+
+  /* Rings and engagement side by side */
+  .ringsSection {
+    flex-direction: row;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 48px;
+    padding: 16px 0 32px;
+  }
+
+  /* Questionnaire button - less full width */
+  .questionnaireButton {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Tips section - 3 column grid on desktop */
+  .tips {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  /* Skeleton - wider on desktop */
+  .skeleton {
+    flex-direction: row;
+    justify-content: center;
+    gap: 32px;
+  }
+
+  .skeletonRings {
+    width: 240px;
+    height: 240px;
+    flex-shrink: 0;
+  }
+
+  .skeletonCard {
+    max-width: 400px;
+  }
+}
+
+/* ==========================================================================
+   Large Desktop (1280px+)
+   ========================================================================== */
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1000px;
+  }
+
+  .ringsSection {
+    gap: 64px;
+  }
 }

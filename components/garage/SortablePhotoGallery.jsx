@@ -3,20 +3,30 @@
 /**
  * Photo Gallery with Reordering - PWA-friendly photo management
  *
- * This component allows users to reorder their photos using simple up/down
- * arrow buttons, which work reliably on touch devices without conflicting
- * with scroll behavior.
+ * This component uses a mode-based approach for managing photos:
+ * - Default: Clean photo display without action buttons
+ * - Hero mode: Tap a photo to set it as the hero image
+ * - Reorder mode: Use arrows to reorder photos
+ * - Delete mode: Tap a photo to delete it
  *
  * @module components/garage/SortablePhotoGallery
  */
 
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useState } from 'react';
 
 import Image from 'next/image';
 
 import { Icons } from '@/components/ui/Icons';
 
 import styles from './SortablePhotoGallery.module.css';
+
+// Edit modes for the photo gallery
+const EDIT_MODES = {
+  NONE: null,
+  HERO: 'hero',
+  REORDER: 'reorder',
+  DELETE: 'delete',
+};
 
 /**
  * Format duration in seconds to mm:ss
@@ -29,7 +39,41 @@ function formatDuration(seconds) {
 }
 
 /**
- * Photo Item - Individual photo with reorder controls
+ * Mode Selector - Toggle between edit modes
+ */
+function ModeSelector({ activeMode, onModeChange, hasMultiplePhotos }) {
+  const modes = [
+    { id: EDIT_MODES.HERO, label: 'Select Hero', icon: Icons.star },
+    {
+      id: EDIT_MODES.REORDER,
+      label: 'Reorder',
+      icon: Icons.chevronUp,
+      disabled: !hasMultiplePhotos,
+    },
+    { id: EDIT_MODES.DELETE, label: 'Delete', icon: Icons.x },
+  ];
+
+  return (
+    <div className={styles.modeSelector}>
+      {modes.map(({ id, label, icon: Icon, disabled }) => (
+        <button
+          key={id}
+          type="button"
+          className={`${styles.modeBtn} ${activeMode === id ? styles.modeBtnActive : ''} ${disabled ? styles.modeBtnDisabled : ''}`}
+          onClick={() => onModeChange(activeMode === id ? EDIT_MODES.NONE : id)}
+          disabled={disabled}
+          aria-pressed={activeMode === id}
+        >
+          <Icon size={14} />
+          <span>{label}</span>
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * Photo Item - Individual photo with mode-specific interactions
  */
 function PhotoItem({
   item,
@@ -43,6 +87,7 @@ function PhotoItem({
   onHideStockPhoto,
   isHero,
   readOnly,
+  editMode,
 }) {
   const isStockPhoto = item.isStockPhoto === true;
   const isVideo = item.media_type === 'video';
@@ -55,12 +100,57 @@ function PhotoItem({
   // Don't allow moving down if the next item is a stock photo
   const actualCanMoveDown = canMoveDown && !nextItemIsStock;
 
+  // Handle photo tap based on active mode
+  const handlePhotoTap = useCallback(() => {
+    if (readOnly || !editMode) return;
+
+    if (editMode === EDIT_MODES.HERO && !isVideo && !isStockPhoto && onSetPrimary) {
+      onSetPrimary(item.id);
+    } else if (editMode === EDIT_MODES.DELETE) {
+      if (isStockPhoto && onHideStockPhoto) {
+        onHideStockPhoto();
+      } else if (!isStockPhoto && onDelete) {
+        onDelete(item.id);
+      }
+    }
+  }, [
+    editMode,
+    readOnly,
+    isVideo,
+    isStockPhoto,
+    onSetPrimary,
+    onDelete,
+    onHideStockPhoto,
+    item.id,
+  ]);
+
+  // Determine if this photo is selectable in current mode
+  const isSelectable =
+    editMode === EDIT_MODES.HERO
+      ? !isVideo && !isStockPhoto
+      : editMode === EDIT_MODES.DELETE
+        ? true
+        : false;
+
   return (
     <div
-      className={`${styles.photoItem} ${isHero ? styles.heroItem : ''} ${isVideo ? styles.videoItem : ''} ${isStockPhoto ? styles.stockItem : ''}`}
+      className={`${styles.photoItem} ${isHero ? styles.heroItem : ''} ${isVideo ? styles.videoItem : ''} ${isStockPhoto ? styles.stockItem : ''} ${editMode && isSelectable ? styles.selectableItem : ''}`}
+      onClick={handlePhotoTap}
+      role={editMode && isSelectable ? 'button' : undefined}
+      tabIndex={editMode && isSelectable ? 0 : undefined}
+      onKeyDown={
+        editMode && isSelectable
+          ? (e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handlePhotoTap();
+              }
+            }
+          : undefined
+      }
     >
-      {/* Reorder Controls - Only visible when not in readOnly mode and not a stock photo */}
-      {!readOnly && !isStockPhoto && (
+      {/* Reorder Controls - Only visible in reorder mode */}
+      {editMode === EDIT_MODES.REORDER && !isStockPhoto && (
         <div className={styles.reorderControls}>
           <button
             type="button"
@@ -134,63 +224,31 @@ function PhotoItem({
         {/* Stock Photo Badge */}
         {isStockPhoto && <span className={styles.stockBadge}>Stock</span>}
 
-        {/* Position indicator - not shown for stock photos */}
-        {!readOnly && !isStockPhoto && <span className={styles.positionBadge}>{index + 1}</span>}
-      </div>
+        {/* Position indicator - only in reorder mode */}
+        {editMode === EDIT_MODES.REORDER && !isStockPhoto && (
+          <span className={styles.positionBadge}>{index + 1}</span>
+        )}
 
-      {/* Actions */}
-      {!readOnly && (
-        <div className={styles.actions}>
-          {/* Set as Hero button - not available for stock photos or videos */}
-          {!isHero && !isVideo && !isStockPhoto && onSetPrimary && (
-            <button
-              type="button"
-              className={styles.setHeroBtn}
-              onClick={(e) => {
-                e.stopPropagation();
-                onSetPrimary(item.id);
-              }}
-              title="Set as hero image"
-            >
-              <Icons.star size={14} />
-            </button>
-          )}
-          {/* Delete button - for stock photos, this hides instead of deletes */}
-          {isStockPhoto
-            ? onHideStockPhoto && (
-                <button
-                  type="button"
-                  className={styles.deleteBtn}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onHideStockPhoto();
-                  }}
-                  title="Hide stock photo"
-                >
-                  <Icons.x size={14} />
-                </button>
-              )
-            : onDelete && (
-                <button
-                  type="button"
-                  className={styles.deleteBtn}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDelete(item.id);
-                  }}
-                  title="Delete photo"
-                >
-                  <Icons.x size={14} />
-                </button>
-              )}
-        </div>
-      )}
+        {/* Mode-specific overlay indicators */}
+        {editMode === EDIT_MODES.HERO && !isVideo && !isStockPhoto && !isHero && (
+          <div className={styles.modeOverlay}>
+            <Icons.star size={20} />
+            <span>Tap to set as Hero</span>
+          </div>
+        )}
+        {editMode === EDIT_MODES.DELETE && (
+          <div className={`${styles.modeOverlay} ${styles.deleteOverlay}`}>
+            <Icons.x size={20} />
+            <span>{isStockPhoto ? 'Tap to hide' : 'Tap to delete'}</span>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
 /**
- * Photo Gallery - Main component with tap-based reordering
+ * Photo Gallery - Main component with mode-based editing
  *
  * @param {Object} props
  * @param {Array} props.images - Array of image objects with id, blob_url, is_primary, etc.
@@ -208,11 +266,16 @@ export default function SortablePhotoGallery({
   onHideStockPhoto,
   readOnly = false,
 }) {
+  const [editMode, setEditMode] = useState(EDIT_MODES.NONE);
+
   // Find which image is the hero (is_primary)
   const heroImageId = useMemo(
     () => images.find((img) => img.is_primary && img.media_type !== 'video')?.id,
     [images]
   );
+
+  // Count non-stock photos for display
+  const userPhotoCount = useMemo(() => images.filter((img) => !img.isStockPhoto).length, [images]);
 
   // Move photo up one position
   const handleMoveUp = useCallback(
@@ -244,24 +307,58 @@ export default function SortablePhotoGallery({
     [images, onReorder]
   );
 
+  // Wrap callbacks to exit mode after action (for hero and delete)
+  const handleSetPrimary = useCallback(
+    (imageId) => {
+      if (onSetPrimary) {
+        onSetPrimary(imageId);
+        setEditMode(EDIT_MODES.NONE);
+      }
+    },
+    [onSetPrimary]
+  );
+
+  const handleDelete = useCallback(
+    (imageId) => {
+      if (onDelete) {
+        onDelete(imageId);
+        // Don't exit delete mode - user might want to delete multiple
+      }
+    },
+    [onDelete]
+  );
+
+  const handleHideStockPhoto = useCallback(() => {
+    if (onHideStockPhoto) {
+      onHideStockPhoto();
+      setEditMode(EDIT_MODES.NONE);
+    }
+  }, [onHideStockPhoto]);
+
   if (images.length === 0) {
     return null;
   }
 
-  // Count non-stock photos for display
-  const userPhotoCount = images.filter((img) => !img.isStockPhoto).length;
-
   return (
     <div className={styles.gallery}>
-      {!readOnly && userPhotoCount > 1 && (
-        <div className={styles.header}>
-          <p className={styles.hint}>
-            <Icons.chevronUp size={14} />
-            <Icons.chevronDown size={14} />
-            Tap arrows to reorder photos
-          </p>
+      {/* Mode Selector - Only show when not in readOnly mode */}
+      {!readOnly && (
+        <ModeSelector
+          activeMode={editMode}
+          onModeChange={setEditMode}
+          hasMultiplePhotos={userPhotoCount > 1}
+        />
+      )}
+
+      {/* Mode Instructions */}
+      {editMode && (
+        <div className={styles.modeInstructions}>
+          {editMode === EDIT_MODES.HERO && <p>Tap a photo to set it as your hero image</p>}
+          {editMode === EDIT_MODES.REORDER && <p>Use the arrows to reorder your photos</p>}
+          {editMode === EDIT_MODES.DELETE && <p>Tap a photo to delete it</p>}
         </div>
       )}
+
       <div className={styles.photoGrid}>
         {images.map((item, index) => (
           <PhotoItem
@@ -272,11 +369,12 @@ export default function SortablePhotoGallery({
             nextItemIsStock={images[index + 1]?.isStockPhoto === true}
             onMoveUp={handleMoveUp}
             onMoveDown={handleMoveDown}
-            onSetPrimary={onSetPrimary}
-            onDelete={onDelete}
-            onHideStockPhoto={onHideStockPhoto}
+            onSetPrimary={handleSetPrimary}
+            onDelete={handleDelete}
+            onHideStockPhoto={handleHideStockPhoto}
             isHero={item.id === heroImageId}
             readOnly={readOnly}
+            editMode={editMode}
           />
         ))}
       </div>

@@ -43,14 +43,14 @@
    even if CSS modules fail to load (prevents FOUC on iOS Safari).
    Uses attribute selector to target the link regardless of class hash.
    -------------------------------------------------------------------------- */
-a[href="#main-content"] {
+a[href='#main-content'] {
   position: absolute;
   top: -100%;
   left: 50%;
   transform: translateX(-50%);
   z-index: 10000;
   background: var(--color-accent-lime, #d4ff00);
-  color: var(--color-text-inverted, #000);
+  color: var(--color-text-inverted, #000000);
   padding: 12px 24px;
   font-weight: 600;
   font-size: 14px;
@@ -59,7 +59,7 @@ a[href="#main-content"] {
   transition: top 0.2s ease;
 }
 
-a[href="#main-content"]:focus {
+a[href='#main-content']:focus {
   top: 0;
   outline: 2px solid var(--color-accent-lime, #d4ff00);
   outline-offset: 2px;
@@ -76,61 +76,72 @@ a[href="#main-content"]:focus {
      Version 1.0 - January 2026
      See docs/BRAND_GUIDELINES.md for full documentation
      ======================================================================= */
-  
+
   /* =======================================================================
      CORE BRAND COLORS
      These are the PRIMARY colors that define AutoRev's visual identity
      ======================================================================= */
-  
+
   /* =======================================================================
      BACKGROUND COLORS - 6-Level Hierarchy (Premium Dark Theme)
      See docs/BRAND_GUIDELINES.md for full documentation
      ======================================================================= */
-  
+
   /* Level 1: Immersive - Deepest black for cinematic moments */
-  --brand-bg-immersive: var(--color-bg-immersive, #050a12);  /* Media galleries, video, splash */
-  
+  --brand-bg-immersive: var(--color-bg-immersive, #050a12); /* Media galleries, video, splash */
+
   /* Level 2: Base - Main app foundation */
   --brand-bg-primary: var(--color-bg-base, #0d1b2a);
-  
+
   /* Level 3: Overlay - Focused modal experiences (CHARCOAL) */
-  --brand-bg-overlay: var(--color-bg-overlay-solid, #1a1a1a);  /* Questionnaires, modals, onboarding */
-  
+  --brand-bg-overlay: var(
+    --color-bg-overlay-solid,
+    #1a1a1a
+  ); /* Questionnaires, modals, onboarding */
+
   /* Level 4: Elevated - Cards and panels */
   --brand-bg-secondary: var(--color-bg-elevated, #1b263b);
-  
+
   /* Level 5: Surface - Subtle card fills */
   --brand-bg-surface: var(--color-bg-surface, rgba(255, 255, 255, 0.04));
   --brand-bg-card: rgba(255, 255, 255, 0.04);
   --brand-bg-card-hover: rgba(255, 255, 255, 0.08);
-  
+
   /* Level 6: Input - Form fields */
   --brand-bg-input: var(--color-bg-input, rgba(255, 255, 255, 0.06));
-  
+
   /* Text Colors - Optimized for dark backgrounds with better contrast */
   --brand-text-primary: var(--color-text-primary, #ffffff);
-  --brand-text-secondary: var(--color-text-secondary, #94a3b8);    /* Slate-400: Better readability */
-  --brand-text-tertiary: var(--color-text-tertiary, #64748b);     /* Slate-500: Subtle text */
-  --brand-text-muted: var(--color-text-muted, #475569);        /* Slate-600: Very subtle */
-  
+  --brand-text-secondary: var(--color-text-secondary, #94a3b8); /* Slate-400: Better readability */
+  --brand-text-tertiary: var(--color-text-tertiary, #64748b); /* Slate-500: Subtle text */
+  --brand-text-muted: var(--color-text-muted, #475569); /* Slate-600: Very subtle */
+
   /* Accent Colors - THE CORE 4 (Each has ONE specific purpose)
      See docs/BRAND_GUIDELINES.md for usage rules */
-  --brand-lime: var(--color-accent-lime, #d4ff00);          /* USER ACTIONS: CTAs, buttons, focus states */
+  --brand-lime: var(--color-accent-lime, #d4ff00); /* USER ACTIONS: CTAs, buttons, focus states */
   --brand-lime-dark: var(--color-accent-lime-dark, #bfe600);
-  --brand-teal: var(--color-accent-teal, #10b981);          /* POSITIVE DATA: Gains, improvements, active states */
+  --brand-teal: var(
+    --color-accent-teal,
+    #10b981
+  ); /* POSITIVE DATA: Gains, improvements, active states */
+
   --brand-teal-light: var(--color-accent-teal-light, #34d399);
   --brand-teal-dark: var(--color-accent-teal, #059669);
-  --brand-blue: var(--color-accent-blue, #3b82f6);          /* BASELINE: Stock values, original data */
+  --brand-blue: var(--color-accent-blue, #3b82f6); /* BASELINE: Stock values, original data */
   --brand-blue-light: var(--color-accent-blue-light, #60a5fa);
   --brand-blue-dark: var(--color-accent-blue, #1d4ed8);
-  --brand-amber: var(--color-accent-amber, #f59e0b);         /* WARNINGS ONLY: Caution, alerts (use sparingly) */
+  --brand-amber: var(
+    --color-accent-amber,
+    #f59e0b
+  ); /* WARNINGS ONLY: Caution, alerts (use sparingly) */
+
   --brand-amber-light: var(--color-accent-amber-light, #fbbf24);
-  
+
   /* DEPRECATED: Gold removed from palette - use amber for warnings, muted white for labels */
-  --brand-gold: var(--color-accent-amber, #f59e0b);          /* Maps to amber - DO NOT USE DIRECTLY */
+  --brand-gold: var(--color-accent-amber, #f59e0b); /* Maps to amber - DO NOT USE DIRECTLY */
   --brand-gold-light: var(--color-accent-amber-light, #fbbf24);
   --brand-gold-hover: var(--color-accent-amber-light, #fbbf24);
-  
+
   /* RGB Components - For use with rgba(var(--brand-X-rgb), opacity) */
   --brand-lime-rgb: 212, 255, 0;
   --brand-teal-rgb: 16, 185, 129;
@@ -141,10 +152,10 @@ a[href="#main-content"]:focus {
   --brand-success-rgb: 34, 197, 94;
   --brand-warning-rgb: 245, 158, 11;
   --brand-purple-rgb: 139, 92, 246;
-  
+
   /* DEPRECATED: Use amber-rgb instead */
-  --brand-gold-rgb: 245, 158, 11;  /* Maps to amber */
-  
+  --brand-gold-rgb: 245, 158, 11; /* Maps to amber */
+
   /* Additional brand colors needed for migration */
   --brand-bg-primary-dark: var(--color-bg-base, #0a1628);
   --brand-bg-card-dark: var(--color-bg-elevated, #1a1a2e);
@@ -155,26 +166,26 @@ a[href="#main-content"]:focus {
   --brand-warning: var(--color-accent-amber, #f59e0b);
   --brand-purple-accent: var(--color-info, #8b5cf6);
   --brand-primary-dark: var(--color-accent-blue, #1a4d6e);
-  
+
   /* Chart & Visualization Colors */
   --brand-chart-outline: rgba(255, 255, 255, 0.15);
   --brand-chart-border: rgba(255, 255, 255, 0.08);
   --brand-chart-grid: rgba(255, 255, 255, 0.08);
   --brand-chart-stock: var(--brand-blue);
   --brand-chart-modified: var(--brand-teal);
-  
+
   /* Semantic Colors */
   --brand-success: var(--color-success, #22c55e);
   --brand-success-light: var(--color-success-light, #4ade80);
   --brand-success-dark: var(--color-success, #16a34a);
   --brand-error: var(--color-error, #ef4444);
   --brand-info: var(--color-accent-blue, #3b82f6);
-  
+
   /* =======================================================================
      LEGACY ALIASES (Backwards Compatibility)
      Map old variable names to new brand system
      ======================================================================= */
-  
+
   /* Background Hierarchy - Deep navy for premium feel */
   --bg-primary: var(--brand-bg-primary);
   --background-primary: var(--brand-bg-primary);
@@ -183,59 +194,59 @@ a[href="#main-content"]:focus {
   --bg-card-hover: var(--color-bg-base, #1c1c1c);
   --bg-elevated: var(--color-bg-base, #1f1f1f);
   --bg-input: var(--color-bg-base, #0d0d0d);
-  
+
   /* GRAVL Theme Colors (Aliases) */
   --gravl-navy: var(--color-bg-base, #0a1628);
   --gravl-navy-light: var(--color-bg-base, #0f1f35);
   --gravl-lime: var(--color-accent-lime, #d4ff00);
   --gravl-lime-dark: var(--color-accent-lime-dark, #bfe600);
-  
+
   /* Accent Colors - Using Brand System (LEGACY ALIASES) */
-  --accent-primary: var(--brand-lime);        /* Primary CTAs now use lime */
+  --accent-primary: var(--brand-lime); /* Primary CTAs now use lime */
   --accent-primary-hover: var(--brand-lime-dark);
   --accent-primary-muted: rgba(var(--brand-lime-rgb), 0.15);
-  --accent-secondary: var(--brand-teal);      /* Secondary actions use teal */
+  --accent-secondary: var(--brand-teal); /* Secondary actions use teal */
   --accent-secondary-hover: var(--brand-teal-light);
   --accent-secondary-muted: rgba(var(--brand-teal-rgb), 0.15);
-  
+
   /* Improvement/Gain Color - Teal for positive changes */
   --color-improvement: var(--color-accent-teal, #10b981);
   --color-improvement-light: var(--color-accent-teal-light, #34d399);
   --color-improvement-muted: rgba(16, 185, 129, 0.15);
-  
+
   /* Baseline/Stock Color - Blue for original values */
   --color-baseline: var(--color-accent-blue, #3b82f6);
   --color-baseline-light: var(--color-accent-blue-light, #60a5fa);
   --color-baseline-muted: rgba(var(--brand-blue-rgb), 0.15);
-  
+
   /* Brand Colors - Updated January 2026 */
   --sn-primary: var(--color-accent-blue, #1a4d6e);
   --sn-primary-light: var(--color-accent-blue, #2a6d94);
   --sn-primary-dark: var(--color-accent-blue, #0f3347);
-  --sn-accent: var(--brand-lime);  /* Primary accent is now lime */
+  --sn-accent: var(--brand-lime); /* Primary accent is now lime */
   --sn-accent-light: var(--brand-lime-dark);
   --sn-accent-dark: var(--color-accent-lime-dark, #a8cc00);
-  
+
   /* DEPRECATED: Premium gold badge color - migrate to purple tier colors */
-  --sn-gold: var(--color-info, #7c3aed);             /* Now maps to premium purple */
+  --sn-gold: var(--color-info, #7c3aed); /* Now maps to premium purple */
   --sn-gold-light: var(--color-info, #8b5cf6);
   --sn-gold-dark: var(--color-info, #6d28d9);
-  
+
   /* Text Colors - Using Brand System */
   --text-primary: var(--color-text-primary, #ffffff);
   --text-secondary: var(--color-text-secondary, #94a3b8);
   --text-tertiary: var(--color-text-tertiary, #64748b);
   --text-muted: var(--color-text-muted, #475569);
-  --text-emphasis: var(--color-accent-lime, #d4ff00);     /* For emphasized headlines */
-  --text-improvement: var(--color-accent-teal, #10b981);  /* For improvement/gain values */
-  --text-baseline: var(--color-accent-blue, #3b82f6);     /* For stock/baseline values */
-  
+  --text-emphasis: var(--color-accent-lime, #d4ff00); /* For emphasized headlines */
+  --text-improvement: var(--color-accent-teal, #10b981); /* For improvement/gain values */
+  --text-baseline: var(--color-accent-blue, #3b82f6); /* For stock/baseline values */
+
   /* Border Colors - Subtle definition */
   --border-subtle: var(--color-bg-base, #1a1a1a);
   --border-default: var(--color-bg-base, #252525);
   --border-hover: var(--color-text-muted, #333333);
-  --border-focus: var(--brand-lime);  /* Focus states use lime (action intent) */
-  
+  --border-focus: var(--brand-lime); /* Focus states use lime (action intent) */
+
   /* Neutral Palette (legacy support) */
   --color-white: var(--color-text-primary, #ffffff);
   --color-gray-50: var(--color-bg-muted, #fafafa);
@@ -248,7 +259,7 @@ a[href="#main-content"]:focus {
   --color-gray-700: var(--color-text-muted, #333333);
   --color-gray-800: var(--color-bg-base, #1a1a1a);
   --color-gray-900: var(--color-bg-base, #0a0a0a);
-  
+
   /* Semantic Colors - Brighter for dark theme */
   --color-success: var(--color-success, #22c55e);
   --color-success-light: rgba(var(--brand-success-rgb), 0.15);
@@ -258,7 +269,7 @@ a[href="#main-content"]:focus {
   --color-warning-light: rgba(var(--brand-warning-rgb), 0.15);
   --color-error: var(--color-error, #ef4444);
   --color-error-light: rgba(var(--brand-error-rgb), 0.15);
-  
+
   /* Score Colors (for advisory/performance ratings) */
   --score-excellent: var(--color-success, #15803d);
   --score-excellent-bg: rgba(21, 128, 61, 0.1);
@@ -268,7 +279,7 @@ a[href="#main-content"]:focus {
   --score-average-bg: rgba(180, 83, 9, 0.1);
   --score-poor: var(--color-error, #b91c1c);
   --score-poor-bg: rgba(185, 28, 28, 0.1);
-  
+
   /* Tier Colors */
   --tier-premium: var(--color-info, #7c3aed);
   --tier-premium-bg: rgba(124, 58, 237, 0.08);
@@ -278,7 +289,7 @@ a[href="#main-content"]:focus {
   --tier-mid-bg: rgba(5, 150, 105, 0.08);
   --tier-entry: var(--color-accent-amber, #d97706);
   --tier-entry-bg: rgba(217, 119, 6, 0.08);
-  
+
   /* Recommendation Card Accents */
   --rec-top: var(--color-accent-teal, #059669);
   --rec-sound: var(--color-accent-amber, #d97706);
@@ -286,7 +297,7 @@ a[href="#main-content"]:focus {
   --rec-value: var(--color-info, #7c3aed);
   --rec-reliable: var(--color-accent-teal, #0891b2);
   --rec-aftermarket: var(--color-accent-pink, #db2777);
-  
+
   /* Performance HUB Category Colors */
   --perf-power: var(--color-error, #ef4444);
   --perf-grip: var(--color-accent-blue, #3498db);
@@ -295,20 +306,20 @@ a[href="#main-content"]:focus {
   --perf-comfort: var(--color-accent-teal, #1abc9c);
   --perf-reliability: var(--color-success, #27ae60);
   --perf-sound: var(--color-accent-amber, #f39c12);
-  
+
   /* =======================================================================
      MOBILE-FIRST SPACING SCALE
      Premium Polish (Jan 2026): Slightly more generous for luxury feel
      ======================================================================= */
   --space-xs: 8px;
-  --space-sm: 14px;    /* Increased from 12px */
-  --space-md: 18px;    /* Increased from 16px */
-  --space-lg: 26px;    /* Increased from 24px */
-  --space-xl: 36px;    /* Increased from 32px */
-  --space-2xl: 52px;   /* Increased from 48px */
-  --space-3xl: 72px;   /* Increased from 64px */
-  --space-4xl: 104px;  /* Increased from 96px */
-  
+  --space-sm: 14px; /* Increased from 12px */
+  --space-md: 18px; /* Increased from 16px */
+  --space-lg: 26px; /* Increased from 24px */
+  --space-xl: 36px; /* Increased from 32px */
+  --space-2xl: 52px; /* Increased from 48px */
+  --space-3xl: 72px; /* Increased from 64px */
+  --space-4xl: 104px; /* Increased from 96px */
+
   /* =======================================================================
      FLUID TYPOGRAPHY (Mobile-First with Clamp)
      
@@ -319,12 +330,15 @@ a[href="#main-content"]:focus {
      between min and max across mobile viewport range (320-430px).
      Previous formulas were hitting minimums on ALL mobile viewports!
      ======================================================================= */
+
   /* Font variables - using next/font CSS variables with fallbacks */
   --font-display: var(--font-oswald, 'Oswald'), 'Impact', sans-serif;
-  --font-body: var(--font-inter, 'Inter'), 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-body:
+    var(--font-inter, 'Inter'), 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI',
+    Roboto, sans-serif;
   --font-primary: var(--font-inter, 'Inter'), -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono: 'SF Mono', 'Fira Code', 'JetBrains Mono', ui-monospace, 'Consolas', monospace;
-  
+
   /* Fluid font sizes - NOW ACTUALLY SCALE across mobile viewports
      Results at key viewports (combined with root scaling):
      
@@ -344,31 +358,30 @@ a[href="#main-content"]:focus {
   --font-size-3xl: clamp(1.375rem, 1rem + 2vw, 2.25rem);
   --font-size-4xl: clamp(1.625rem, 1.25rem + 2.5vw, 3rem);
   --font-size-hero: clamp(1.75rem, 1.25rem + 3.5vw, 3.5rem);
-  
   --line-height-tight: 1.1;
   --line-height-snug: 1.25;
   --line-height-normal: 1.45;
   --line-height-relaxed: 1.6;
-  
+
   /* Border Radius */
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
   --radius-xl: 20px;
   --radius-full: 9999px;
-  
+
   /* Shadows */
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.08);
   --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.12);
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 4px 12px rgba(0, 0, 0, 0.04);
-  
+
   /* Transitions */
   --transition-fast: 150ms ease;
   --transition-base: 200ms ease;
   --transition-slow: 300ms ease;
-  
+
   /* =======================================================================
      LAYOUT - Mobile-First Breakpoints
      ======================================================================= */
@@ -379,11 +392,11 @@ a[href="#main-content"]:focus {
   --beta-banner-height: 44px;
   --beta-banner-height-mobile: 40px;
   --selected-car-banner-height: 52px;
-  
+
   /* Combined heights for layout calculations */
   --header-plus-banner-mobile: calc(var(--header-height-mobile) + var(--beta-banner-height-mobile));
   --header-plus-banner: calc(var(--header-height) + var(--beta-banner-height));
-  
+
   /* Dynamic content offset - changes based on banner state
      This is the recommended way to offset content below fixed header/banners.
      Use --content-offset for full offset, or --header-only for header-only */
@@ -391,15 +404,15 @@ a[href="#main-content"]:focus {
   --content-offset: var(--header-plus-banner);
   --header-only-mobile: var(--header-height-mobile);
   --header-only: var(--header-height);
-  
+
   /* Mobile-first content widths */
   --content-width-narrow: 480px;
   --content-width-medium: 720px;
   --content-width-wide: 960px;
-  
+
   /* Touch target minimum (Apple/Google guidelines) */
   --touch-target-min: 44px;
-  
+
   /* Safe area insets for notched devices */
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
@@ -422,7 +435,9 @@ a[href="#main-content"]:focus {
 /* --------------------------------------------------------------------------
    Reset & Base Styles (Mobile-Optimized)
    -------------------------------------------------------------------------- */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -432,7 +447,7 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
-  
+
   /* =======================================================================
      MOBILE TEXT SIZE & ZOOM PREVENTION
      
@@ -444,7 +459,7 @@ html {
   -moz-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%;
   text-size-adjust: 100%;
-  
+
   /* =======================================================================
      CRITICAL: PREVENT HORIZONTAL OVERFLOW
      
@@ -457,16 +472,16 @@ html {
   width: 100%;
   max-width: 100%;
   overflow-x: clip;
-  
+
   /* Allow vertical scroll + pinch zoom, prevent horizontal pan that triggers zoom */
   touch-action: pan-y pinch-zoom;
-  
+
   /* NOTE: overscroll-behavior-y is set on body only (not html) to avoid
      conflicting scroll containers on Android Chrome. Body is the scroll container. */
-  
+
   /* Improve scroll performance - account for fixed header + beta banner */
   scroll-padding-top: var(--header-plus-banner-mobile);
-  
+
   /* =======================================================================
      ROOT FONT-SIZE SCALING
      Everything using rem units automatically scales with viewport width.
@@ -491,9 +506,10 @@ body {
   font-family: var(--font-body);
   font-size: var(--font-size-base);
   line-height: var(--line-height-normal);
+
   /* Build Pivot: Dark theme by default */
   color: var(--text-primary, #ffffff);
-  
+
   /* =======================================================================
      SAFE AREA BACKGROUND SYSTEM (Jan 2026)
      
@@ -506,7 +522,7 @@ body {
      ======================================================================= */
   --safe-area-top-bg: var(--color-bg-base, #0d1b2a);
   --safe-area-bottom-bg: var(--pwa-nav-bg, #0d1b2a);
-  
+
   /* =======================================================================
      PREMIUM GRADIENT BACKGROUND (Jan 2026)
      Subtle gradient: lighter navy at top, deeper navy at bottom
@@ -523,7 +539,7 @@ body {
   background-attachment: fixed; /* Gradient stays fixed while content scrolls */
   min-height: 100vh;
   min-height: 100dvh; /* Dynamic viewport height for mobile browsers */
-  
+
   /* =======================================================================
      PREVENT HORIZONTAL SCROLL & ZOOM TRIGGERS
      
@@ -538,21 +554,23 @@ body {
   max-width: 100%;
   overflow-x: hidden;
   box-sizing: border-box;
-  
+
   /* Improve touch scrolling on iOS */
   -webkit-overflow-scrolling: touch;
-  
+
   /* =======================================================================
      ANDROID-SPECIFIC FIXES
      
      Android Chrome can auto-boost font sizes in certain conditions.
      These rules prevent that behavior while maintaining readability.
      ======================================================================= */
+
   /* Prevent Android font boosting (can cause layout shifts) */
   text-rendering: optimizeLegibility;
+
   /* Ensure consistent touch behavior */
   touch-action: pan-y pinch-zoom;
-  
+
   /* NOTE: overscroll-behavior-y: none was removed from here because it can
      completely disable scrolling on some Android devices/browsers.
      It's now applied only on iOS via @supports below. */
@@ -590,6 +608,7 @@ body {
    ========================================================================== */
 
 /* Top safe area fill (behind Dynamic Island / notch / camera cutout) - DEFAULT (base navy) */
+
 /* Extends above viewport to cover any gaps Safari may show */
 body::before {
   content: '';
@@ -597,6 +616,7 @@ body::before {
   top: -50px;
   left: 0;
   right: 0;
+
   /* Safe area height + 50px extension, with 47px fallback for iPhone notch */
   height: calc(env(safe-area-inset-top, 47px) + 50px);
   background: var(--safe-area-top-bg, var(--color-bg-base, #0d1b2a));
@@ -606,6 +626,7 @@ body::before {
 }
 
 /* Bottom safe area fill (behind home indicator) - DEFAULT (base navy) */
+
 /* Extends below viewport to cover any gaps Safari may show */
 body::after {
   content: '';
@@ -613,6 +634,7 @@ body::after {
   bottom: -50px;
   left: 0;
   right: 0;
+
   /* Safe area height + 50px extension, with 34px fallback for home indicator */
   height: calc(env(safe-area-inset-bottom, 34px) + 50px);
   background: var(--safe-area-bottom-bg, var(--color-bg-base, #0d1b2a));
@@ -622,8 +644,11 @@ body::after {
 }
 
 /* AUTOMATIC: When an overlay modal is present, change everything to charcoal */
+
 /* This ensures ANY area showing through (safe areas, gaps) uses the overlay color */
+
 /* Apply to both html and body to cover all edge cases */
+
 /* Must override the gradient background, so we explicitly set all background properties */
 html:has([data-overlay-modal]),
 body:has([data-overlay-modal]) {
@@ -712,7 +737,7 @@ body.has-immersive-modal::after {
   top: 0;
   left: 0;
   bottom: 0;
-  width: env(safe-area-inset-left, 0px);
+  width: env(safe-area-inset-left, 0);
   background: var(--safe-area-left-bg, var(--color-bg-base, #0d1b2a));
   z-index: 10000;
   pointer-events: none;
@@ -726,7 +751,7 @@ body.has-immersive-modal::after {
   top: 0;
   right: 0;
   bottom: 0;
-  width: env(safe-area-inset-right, 0px);
+  width: env(safe-area-inset-right, 0);
   background: var(--safe-area-right-bg, var(--color-bg-base, #0d1b2a));
   z-index: 10000;
   pointer-events: none;
@@ -762,7 +787,13 @@ body.has-immersive-modal .safe-area-horizontal::after {
 
 /* Prevent Android Chrome's text autosizing/font boosting
    Mobile-first: Apply fix to base, safe for all screens */
-p, li, td, th, label, span, a {
+p,
+li,
+td,
+th,
+label,
+span,
+a {
   max-height: 1000000px;
 }
 
@@ -773,8 +804,8 @@ a,
 input,
 select,
 textarea,
-[role="button"],
-[tabindex]:not([tabindex="-1"]) {
+[role='button'],
+[tabindex]:not([tabindex='-1']) {
   touch-action: manipulation;
 }
 
@@ -810,6 +841,7 @@ textarea,
 html:not([data-has-banner]) {
   --content-offset-mobile: var(--header-height-mobile);
   --content-offset: var(--header-height);
+
   scroll-padding-top: var(--header-height-mobile);
 }
 
@@ -835,6 +867,7 @@ body > * {
 /* Main content area - automatically offset below fixed header/banners */
 main {
   padding-top: var(--content-offset-mobile);
+
   /* Prevent child elements from causing horizontal overflow */
   overflow-x: hidden;
   width: 100%;
@@ -861,7 +894,8 @@ main:has([data-app-layout]) {
   padding-top: 0;
 }
 
-img, video {
+img,
+video {
   max-width: 100%;
   height: auto;
   display: block;
@@ -870,6 +904,7 @@ img, video {
 a {
   color: inherit;
   text-decoration: none;
+
   /* Improve tap highlighting */
   -webkit-tap-highlight-color: rgba(var(--brand-teal-dark-rgb), 0.1);
 }
@@ -879,17 +914,23 @@ button {
   cursor: pointer;
   border: none;
   background: none;
+
   /* Improve tap highlighting */
   -webkit-tap-highlight-color: rgba(var(--brand-teal-dark-rgb), 0.1);
+
   /* Remove default touch callout */
   -webkit-touch-callout: none;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   font-family: inherit;
   font-size: inherit;
+
   /* Prevent iOS zoom on focus (use 16px minimum) */
   font-size: max(16px, var(--font-size-base));
+
   /* Remove default styling on iOS */
   -webkit-appearance: none;
   appearance: none;
@@ -897,18 +938,25 @@ input, select, textarea {
 }
 
 /* Reset border-radius after removing default styling */
-input:not([type="checkbox"]):not([type="radio"]),
+input:not([type='checkbox'], [type='radio']),
 select,
 textarea {
   border-radius: var(--radius-md);
 }
 
-ul, ol {
+ul,
+ol {
   list-style: none;
 }
 
 /* Improve touch targets for interactive elements */
-a, button, input, select, textarea, [role="button"], [tabindex] {
+a,
+button,
+input,
+select,
+textarea,
+[role='button'],
+[tabindex] {
   touch-action: manipulation;
 }
 
@@ -926,9 +974,17 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
   font-family: var(--font-body);
 }
 
-.text-center { text-align: center; }
-.text-left { text-align: left; }
-.text-right { text-align: right; }
+.text-center {
+  text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
 
 /* Compact text for mobile - shorter line length for readability */
 .text-compact {
@@ -964,8 +1020,8 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
   width: 100%;
   max-width: var(--container-max);
   margin: 0 auto;
-  padding-left: var(--space-md);
   padding-right: var(--space-md);
+
   /* Support notched devices */
   padding-left: max(var(--space-md), var(--safe-area-left));
   padding-right: max(var(--space-md), var(--safe-area-right));
@@ -992,6 +1048,28 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
 
 .container-medium {
   max-width: var(--content-width-medium);
+}
+
+/* Desktop container - wider max-width for iPad/desktop layouts */
+.container-desktop {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding-left: var(--space-md);
+  padding-right: var(--space-md);
+}
+
+@media (min-width: 768px) {
+  .container-desktop {
+    padding-left: var(--space-lg);
+    padding-right: var(--space-lg);
+  }
+}
+
+@media (min-width: 1024px) {
+  .container-desktop {
+    padding-left: var(--space-xl);
+    padding-right: var(--space-xl);
+  }
 }
 
 /* Section spacing - compact on mobile */
@@ -1037,9 +1115,17 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
   gap: var(--space-md);
 }
 
-.stack-sm { gap: var(--space-sm); }
-.stack-lg { gap: var(--space-lg); }
-.stack-xl { gap: var(--space-xl); }
+.stack-sm {
+  gap: var(--space-sm);
+}
+
+.stack-lg {
+  gap: var(--space-lg);
+}
+
+.stack-xl {
+  gap: var(--space-xl);
+}
 
 /* Convert stack to row on tablet+ */
 @media (min-width: 768px) {
@@ -1065,20 +1151,34 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
   gap: var(--space-md);
 }
 
-.grid-cols-1 { grid-template-columns: 1fr; }
+.grid-cols-1 {
+  grid-template-columns: 1fr;
+}
 
 @media (min-width: 640px) {
-  .grid-cols-2-sm { grid-template-columns: repeat(2, 1fr); }
+  .grid-cols-2-sm {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (min-width: 768px) {
-  .grid-cols-2-md { grid-template-columns: repeat(2, 1fr); }
-  .grid-cols-3-md { grid-template-columns: repeat(3, 1fr); }
+  .grid-cols-2-md {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-cols-3-md {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (min-width: 1024px) {
-  .grid-cols-3-lg { grid-template-columns: repeat(3, 1fr); }
-  .grid-cols-4-lg { grid-template-columns: repeat(4, 1fr); }
+  .grid-cols-3-lg {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .grid-cols-4-lg {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 /* --------------------------------------------------------------------------
@@ -1111,12 +1211,13 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
 /* --------------------------------------------------------------------------
    Scroll Utilities
    -------------------------------------------------------------------------- */
+
 /* Horizontal scroll with snap for carousels on mobile */
 .scroll-x {
-  overflow-x: auto;
-  overflow-y: hidden;
+  overflow: auto hidden;
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x mandatory;
+
   /* Hide scrollbar on mobile but keep functionality */
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -1138,6 +1239,7 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
 /* --------------------------------------------------------------------------
    Visibility Utilities
    -------------------------------------------------------------------------- */
+
 /* Hide on mobile, show on tablet+ */
 .hide-mobile {
   display: none !important;
@@ -1147,7 +1249,7 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
   .hide-mobile {
     display: block !important;
   }
-  
+
   .hide-mobile-flex {
     display: flex !important;
   }
@@ -1301,8 +1403,13 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
    Loading Skeleton - Build Pivot Dark Theme
    -------------------------------------------------------------------------- */
 @keyframes shimmer {
-  0% { background-position: -200px 0; }
-  100% { background-position: 200px 0; }
+  0% {
+    background-position: -200px 0;
+  }
+
+  100% {
+    background-position: 200px 0;
+  }
 }
 
 .skeleton {
@@ -1348,11 +1455,12 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
 /* --------------------------------------------------------------------------
    Mobile-Specific Interaction States
    -------------------------------------------------------------------------- */
+
 /* Active states for touch devices */
 @media (hover: none) and (pointer: coarse) {
   button:active,
   a:active,
-  [role="button"]:active {
+  [role='button']:active {
     opacity: 0.8;
     transform: scale(0.98);
   }
@@ -1362,7 +1470,7 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
 @media (hover: none) {
   button:hover,
   a:hover,
-  [role="button"]:hover {
+  [role='button']:hover {
     /* Reset hover states on touch devices */
   }
 }
@@ -1381,6 +1489,7 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
 /* --------------------------------------------------------------------------
    Content Density Utilities
    -------------------------------------------------------------------------- */
+
 /* Compact content for mobile - tighter spacing */
 .content-compact > * + * {
   margin-top: var(--space-sm);
@@ -1403,6 +1512,7 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
   border-radius: var(--radius-lg);
   padding: var(--space-md);
   transition: all 0.25s ease;
+
   /* Premium: subtle inner highlight at top edge */
   box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.03);
 }
@@ -1410,7 +1520,7 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
 .card:hover {
   background: var(--bg-card-hover);
   border-color: var(--border-default);
-  box-shadow: 
+  box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
     0 8px 24px rgba(0, 0, 0, 0.2);
 }
@@ -1474,7 +1584,7 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
     transform: translateY(-2px);
     transition: all var(--transition-base);
   }
-  
+
   a:hover {
     transition: color var(--transition-fast);
   }
@@ -1490,8 +1600,13 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
 
 /* Desktop grid enhancements */
 @media (min-width: 1280px) {
-  .grid-cols-4-xl { grid-template-columns: repeat(4, 1fr); }
-  .grid-cols-5-xl { grid-template-columns: repeat(5, 1fr); }
+  .grid-cols-4-xl {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .grid-cols-5-xl {
+    grid-template-columns: repeat(5, 1fr);
+  }
 }
 
 /* Desktop-only visibility */
@@ -1515,6 +1630,7 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
 /* --------------------------------------------------------------------------
    Tablet-Specific Utilities
    -------------------------------------------------------------------------- */
+
 /* Show only on tablet (768-1023px) - mobile-first approach */
 .show-tablet-only {
   display: none;
@@ -1540,13 +1656,13 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
     background: white;
     color: black;
   }
-  
+
   .hide-print {
     display: none !important;
   }
-  
+
   a[href]::after {
-    content: " (" attr(href) ")";
+    content: ' (' attr(href) ')';
   }
 }
 
@@ -1598,10 +1714,9 @@ a, button, input, select, textarea, [role="button"], [tabindex] {
 }
 
 /* Hide Google logo/attribution if present */
-.pac-logo:after {
+.pac-logo::after {
   display: none !important;
 }
-
 
 /* --------------------------------------------------------------------------
    Performance Optimization: Content Visibility
@@ -1623,18 +1738,18 @@ section:not(:first-child) {
 }
 
 /* Feature sections commonly below fold */
-[class*="featureSection"],
-[class*="showcase"],
-[class*="testimonial"],
-[class*="carShowcase"],
-[class*="valueProps"],
-[class*="pillars"] {
+[class*='featureSection'],
+[class*='showcase'],
+[class*='testimonial'],
+[class*='carShowcase'],
+[class*='valueProps'],
+[class*='pillars'] {
   content-visibility: auto;
   contain-intrinsic-size: auto 500px;
 }
 
 /* Car grid items - defer rendering for items not initially visible */
-[class*="carGrid"] > *:nth-child(n+13) {
+[class*='carGrid'] > *:nth-child(n + 13) {
   content-visibility: auto;
   contain-intrinsic-size: auto 350px;
 }
@@ -1646,36 +1761,86 @@ section:not(:first-child) {
    ========================================================================== */
 
 /* Text Colors */
-.text-brand-primary { color: var(--brand-text-primary) !important; }
-.text-brand-secondary { color: var(--brand-text-secondary) !important; }
-.text-brand-lime { color: var(--brand-lime) !important; }
-.text-brand-teal { color: var(--brand-teal) !important; }
-.text-brand-blue { color: var(--brand-blue) !important; }
-.text-brand-amber { color: var(--brand-amber) !important; }
-.text-improvement { color: var(--brand-teal) !important; }
-.text-baseline { color: var(--brand-blue) !important; }
-.text-emphasis { color: var(--brand-lime) !important; }
-.text-warning { color: var(--brand-amber) !important; }
+.text-brand-primary {
+  color: var(--brand-text-primary) !important;
+}
+
+.text-brand-secondary {
+  color: var(--brand-text-secondary) !important;
+}
+
+.text-brand-lime {
+  color: var(--brand-lime) !important;
+}
+
+.text-brand-teal {
+  color: var(--brand-teal) !important;
+}
+
+.text-brand-blue {
+  color: var(--brand-blue) !important;
+}
+
+.text-brand-amber {
+  color: var(--brand-amber) !important;
+}
+
+.text-improvement {
+  color: var(--brand-teal) !important;
+}
+
+.text-baseline {
+  color: var(--brand-blue) !important;
+}
+
+.text-emphasis {
+  color: var(--brand-lime) !important;
+}
+
+.text-warning {
+  color: var(--brand-amber) !important;
+}
 
 /* DEPRECATED: Use .text-brand-amber instead */
-.text-brand-gold { color: var(--brand-amber) !important; }
+.text-brand-gold {
+  color: var(--brand-amber) !important;
+}
 
 /* Background Colors - 6-Level Hierarchy */
-.bg-brand-immersive { background-color: var(--brand-bg-immersive) !important; }  /* Media, galleries, splash */
-.bg-brand-primary { background-color: var(--brand-bg-primary) !important; }      /* Main app pages */
-.bg-brand-overlay { background-color: var(--brand-bg-overlay) !important; }      /* Full-screen modals, onboarding */
-.bg-brand-secondary { background-color: var(--brand-bg-secondary) !important; }  /* Cards, panels */
-.bg-brand-surface { background-color: var(--brand-bg-surface) !important; }      /* Card fills */
-.bg-brand-card { background-color: var(--brand-bg-card) !important; }
-.bg-brand-input { background-color: var(--brand-bg-input) !important; }          /* Form fields */
+.bg-brand-immersive {
+  background-color: var(--brand-bg-immersive) !important;
+} /* Media, galleries, splash */
+.bg-brand-primary {
+  background-color: var(--brand-bg-primary) !important;
+} /* Main app pages */
+.bg-brand-overlay {
+  background-color: var(--brand-bg-overlay) !important;
+} /* Full-screen modals, onboarding */
+.bg-brand-secondary {
+  background-color: var(--brand-bg-secondary) !important;
+} /* Cards, panels */
+.bg-brand-surface {
+  background-color: var(--brand-bg-surface) !important;
+} /* Card fills */
+.bg-brand-card {
+  background-color: var(--brand-bg-card) !important;
+}
+
+.bg-brand-input {
+  background-color: var(--brand-bg-input) !important;
+} /* Form fields */
 
 /* Stat Value Styling - "Metallic Silver" Effect for hero stats */
 .stat-value-hero {
   font-family: var(--font-mono);
-  font-size: 24px;  /* Mobile-optimized: increased from 22px */
+  font-size: 24px; /* Mobile-optimized: increased from 22px */
   font-weight: 800;
   line-height: 1;
-  background: linear-gradient(180deg, var(--color-text-primary, #ffffff) 0%, rgba(255, 255, 255, 0.85) 100%);
+  background: linear-gradient(
+    180deg,
+    var(--color-text-primary, #ffffff) 0%,
+    rgba(255, 255, 255, 0.85) 100%
+  );
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -1683,7 +1848,7 @@ section:not(:first-child) {
 
 @media (min-width: 768px) {
   .stat-value-hero {
-    font-size: 28px;  /* Slightly larger on tablet+ */
+    font-size: 28px; /* Slightly larger on tablet+ */
   }
 }
 
@@ -1758,7 +1923,7 @@ section:not(:first-child) {
 .label-uppercase {
   font-size: 10px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.5);  /* Muted white per brand guidelines */
+  color: rgba(255, 255, 255, 0.5); /* Muted white per brand guidelines */
   text-transform: uppercase;
   letter-spacing: 0.12em;
 }
@@ -1795,7 +1960,7 @@ section:not(:first-child) {
 .surface-elevated {
   background: var(--color-bg-card, rgba(255, 255, 255, 0.05));
   border: 1px solid var(--color-border-subtle, rgba(255, 255, 255, 0.04));
-  box-shadow: 
+  box-shadow:
     inset 0 1px 0 0 rgba(255, 255, 255, 0.04),
     0 4px 24px rgba(0, 0, 0, 0.2);
 }

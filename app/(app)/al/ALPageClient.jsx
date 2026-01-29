@@ -250,8 +250,10 @@ const ALMascot = ({ size = 48 }) => (
   <Image
     src={UI_IMAGES.alMascotFull}
     alt="AL - AutoRev AI"
-    width={size}
-    height={size}
+    width={size * 2}
+    height={size * 2}
+    quality={100}
+    priority={size >= 96}
     className="alMascotImage"
     style={{
       width: size,
@@ -264,52 +266,15 @@ const ALMascot = ({ size = 48 }) => (
   />
 );
 
-// Contextual greeting based on time of day
+// AutoRev-branded greeting for AL
 const getContextualGreeting = (carName) => {
-  const hour = new Date().getHours();
-  let timeGreeting;
-
-  if (hour >= 5 && hour < 12) {
-    timeGreeting = 'this morning';
-  } else if (hour >= 12 && hour < 17) {
-    timeGreeting = 'this afternoon';
-  } else if (hour >= 17 && hour < 21) {
-    timeGreeting = 'this evening';
-  } else {
-    timeGreeting = 'tonight';
+  // If user has a car selected, personalize the greeting
+  if (carName) {
+    return `Hi, I'm AL - let's talk ${carName}.`;
   }
 
-  // If user has a car selected, occasionally reference it
-  if (carName && Math.random() > 0.5) {
-    const carGreetings = [
-      `What's on your mind about the ${carName}?`,
-      `How can I help with your ${carName}?`,
-      `Ready to talk ${carName}?`,
-    ];
-    return carGreetings[Math.floor(Math.random() * carGreetings.length)];
-  }
-
-  return `How can I help you ${timeGreeting}?`;
+  return "Hi, I'm AL - let's talk cars.";
 };
-
-// Quick action suggestions for empty state
-const QUICK_ACTIONS = [
-  {
-    id: 'mod',
-    label: 'What should I mod next?',
-    prompt: 'What modifications should I consider next for my car?',
-  },
-  {
-    id: 'compare',
-    label: 'Compare parts',
-    prompt: 'Help me compare different options for upgrading my car',
-  },
-  {
-    id: 'diagnose',
-    label: 'Diagnose an issue',
-    prompt: 'I have an issue with my car I need help diagnosing',
-  },
-];
 
 // Local aliases for icons with newChat and history mappings
 const LocalIcons = {
@@ -645,7 +610,7 @@ export default function ALPageClient() {
     data: conversations = [],
     isLoading: conversationsLoading,
     refetch: refetchConversations,
-  } = useUserConversations(user?.id, { enabled: isAuthenticated && showHistory });
+  } = useUserConversations(user?.id, { enabled: isAuthenticated && (showHistory || showDrawer) });
 
   // Note: We use direct API calls for loading conversations (see loadConversation)
   // This hook is kept but disabled - could be used for caching in the future
@@ -1760,9 +1725,6 @@ export default function ALPageClient() {
           <LocalIcons.menu size={20} />
         </button>
 
-        {/* Centered AL branding - subtle */}
-        <span className={styles.headerTitle}>AL</span>
-
         <button className={styles.newChatHeaderBtn} onClick={startNewChat} title="New chat">
           <LocalIcons.newChat size={20} />
         </button>
@@ -1787,20 +1749,47 @@ export default function ALPageClient() {
               </button>
             </div>
 
-            {/* New Chat Button */}
-            <button
-              className={styles.drawerNewChat}
-              onClick={() => {
-                startNewChat();
-                setShowDrawer(false);
-              }}
-            >
-              <LocalIcons.newChat size={16} />
-              <span>New Chat</span>
-            </button>
+            {/* Recent Conversations */}
+            <div className={styles.drawerRecentSection}>
+              <div className={styles.drawerSectionLabel}>Recent Conversations</div>
+              {conversationsLoading ? (
+                <div className={styles.drawerRecentLoading}>
+                  <div className={styles.loadingDots}>
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                </div>
+              ) : conversations.length === 0 ? (
+                <div className={styles.drawerNoRecent}>
+                  <LocalIcons.sparkles size={20} />
+                  <span>No conversations yet</span>
+                </div>
+              ) : (
+                <div className={styles.drawerRecentList}>
+                  {conversations.slice(0, 5).map((conv) => (
+                    <button
+                      key={conv.id}
+                      className={`${styles.drawerRecentItem} ${conv.id === currentConversationId ? styles.drawerRecentItemActive : ''}`}
+                      onClick={() => {
+                        loadConversation(conv.id);
+                        setShowDrawer(false);
+                      }}
+                    >
+                      <span className={styles.drawerRecentTitle}>
+                        {conv.title || 'New conversation'}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
-            {/* Drawer Menu Items */}
-            <div className={styles.drawerMenu}>
+            {/* Spacer to push menu items to bottom */}
+            <div className={styles.drawerSpacer} />
+
+            {/* Drawer Menu Items - at bottom */}
+            <div className={styles.drawerMenuBottom}>
               <button
                 className={styles.drawerMenuItem}
                 onClick={() => {
@@ -1946,31 +1935,13 @@ export default function ALPageClient() {
                 </div>
               </div>
             ) : (
-              // Standard empty state - Claude-inspired minimal design
+              // Standard empty state - Clean, minimal design
               // NOTE: We intentionally show generic text, not localStorage-selected car.
               // AL determines car context from user's message and server-side owned vehicles.
-              <>
-                <div className={styles.emptyStateContent}>
-                  <ALMascot size={48} />
-                  <h2 className={styles.emptyTitle}>{getContextualGreeting(selectedCar?.name)}</h2>
-                </div>
-
-                {/* Quick Action Suggestions */}
-                <div className={styles.quickActions}>
-                  {QUICK_ACTIONS.map((action) => (
-                    <button
-                      key={action.id}
-                      className={styles.quickActionBtn}
-                      onClick={() => {
-                        setInput(action.prompt);
-                        inputRef.current?.focus();
-                      }}
-                    >
-                      {action.label}
-                    </button>
-                  ))}
-                </div>
-              </>
+              <div className={styles.emptyStateContent}>
+                <ALMascot size={96} />
+                <h2 className={styles.emptyTitle}>{getContextualGreeting(selectedCar?.name)}</h2>
+              </div>
             )}
           </div>
         ) : (

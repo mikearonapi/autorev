@@ -1,0 +1,331 @@
+/* ==========================================================================
+   DesktopSidebar - Slide-out Navigation Drawer
+   
+   Design: Notion/Linear style
+   - 280px width
+   - Slides from left with 300ms animation
+   - Dark backdrop overlay
+   - Teal accent for active state
+   ========================================================================== */
+
+/* ==========================================================================
+   Backdrop
+   ========================================================================== */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+
+  /* Dark overlay */
+  background: rgba(0, 0, 0, 0.5);
+
+  /* Hidden by default */
+  opacity: 0;
+  visibility: hidden;
+
+  /* Transition */
+  transition:
+    opacity 0.3s ease,
+    visibility 0.3s ease;
+}
+
+.backdropVisible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* ==========================================================================
+   Sidebar
+   ========================================================================== */
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 1200;
+
+  /* Dimensions */
+  width: 280px;
+  max-width: 85vw;
+
+  /* Styling */
+  background: var(--color-bg-base, #0a1420);
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+
+  /* Layout */
+  display: flex;
+  flex-direction: column;
+
+  /* Hidden by default - slides from left */
+  transform: translateX(-100%);
+
+  /* Transition */
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Shadow when open */
+  box-shadow: 4px 0 24px rgba(0, 0, 0, 0.3);
+}
+
+.sidebarOpen {
+  transform: translateX(0);
+}
+
+/* ==========================================================================
+   Header - Logo and Close Button
+   ========================================================================== */
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--space-4, 16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.logoLink {
+  display: flex;
+  align-items: center;
+
+  /* No tap highlight */
+  -webkit-tap-highlight-color: transparent;
+}
+
+.logoLink:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #a3e635);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+.logo {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+}
+
+.closeButton {
+  /* Reset */
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  /* Touch target - 44px minimum */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+
+  /* Color */
+  color: rgba(255, 255, 255, 0.6);
+
+  /* Transitions */
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+
+  /* No tap highlight */
+  -webkit-tap-highlight-color: transparent;
+}
+
+.closeButton:hover {
+  color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.closeButton:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #a3e635);
+  outline-offset: 2px;
+}
+
+/* ==========================================================================
+   Navigation Items
+   ========================================================================== */
+
+.nav {
+  flex: 1;
+  padding: var(--space-3, 12px) var(--space-2, 8px);
+  overflow-y: auto;
+}
+
+.navItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3, 12px);
+
+  /* Touch target - 48px height */
+  min-height: 48px;
+  padding: var(--space-3, 12px) var(--space-4, 16px);
+  margin-bottom: 4px;
+  border-radius: 8px;
+
+  /* Styling */
+  color: rgba(255, 255, 255, 0.7);
+  text-decoration: none;
+
+  /* Left border for active indicator */
+  border-left: 3px solid transparent;
+
+  /* Transitions */
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease;
+
+  /* No tap highlight */
+  -webkit-tap-highlight-color: transparent;
+}
+
+.navItem:hover {
+  color: rgba(255, 255, 255, 0.95);
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+.navItem:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #a3e635);
+  outline-offset: -2px;
+}
+
+.navItemActive {
+  color: var(--color-accent-teal, #10b981);
+  background-color: rgba(16, 185, 129, 0.08);
+  border-left-color: var(--color-accent-teal, #10b981);
+}
+
+.navItemActive:hover {
+  color: var(--color-accent-teal, #10b981);
+  background-color: rgba(16, 185, 129, 0.12);
+}
+
+.navIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.navLabel {
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.navItemActive .navLabel {
+  font-weight: 600;
+}
+
+/* ==========================================================================
+   AL Mascot - Special Treatment
+   ========================================================================== */
+
+.navItemAL {
+  /* Slightly extra padding for AL */
+}
+
+.alWrapper {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  overflow: hidden;
+
+  /* Subtle ring */
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.15);
+
+  /* Transition */
+  transition: box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.alImage {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+
+  /* Slightly dimmed when inactive */
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+.navItem:hover .alImage {
+  opacity: 0.85;
+}
+
+.alWrapperActive {
+  /* Teal ring with glow */
+  box-shadow:
+    0 0 0 2px var(--color-accent-teal, #10b981),
+    0 0 12px rgba(16, 185, 129, 0.4),
+    0 0 20px rgba(16, 185, 129, 0.15);
+}
+
+.alWrapperActive .alImage {
+  opacity: 1;
+}
+
+/* ==========================================================================
+   Divider
+   ========================================================================== */
+
+.divider {
+  height: 1px;
+  margin: var(--space-2, 8px) var(--space-4, 16px);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ==========================================================================
+   Secondary Links
+   ========================================================================== */
+
+.secondary {
+  padding: var(--space-3, 12px) var(--space-2, 8px) var(--space-4, 16px);
+}
+
+.secondaryLink {
+  display: block;
+  padding: var(--space-2, 8px) var(--space-4, 16px);
+  border-radius: 6px;
+
+  /* Styling */
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 14px;
+  text-decoration: none;
+
+  /* Transition */
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+
+  /* No tap highlight */
+  -webkit-tap-highlight-color: transparent;
+}
+
+.secondaryLink:hover {
+  color: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.secondaryLink:focus-visible {
+  outline: 2px solid var(--color-accent-lime, #a3e635);
+  outline-offset: -2px;
+}
+
+/* ==========================================================================
+   Reduced Motion
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .backdrop,
+  .sidebar,
+  .closeButton,
+  .navItem,
+  .alWrapper,
+  .alImage {
+    transition: none;
+  }
+}

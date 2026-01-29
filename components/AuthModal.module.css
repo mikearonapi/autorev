@@ -206,7 +206,7 @@
   height: 48px;
   padding: 0 var(--space-md);
   font-size: max(16px, var(--font-size-sm)); /* Prevents iOS Safari auto-zoom on focus */
-  border: 1px solid var(--color-border-default, #cbd5e1); /* Slate-300: Visible border on white */
+  border: 1px solid #94a3b8; /* Slate-400: Always visible border even when unfocused */
   border-radius: var(--radius-md);
   background: var(--color-white, #ffffff);
   color: var(--color-bg-elevated, #1e293b); /* Slate-800: High contrast input text */
@@ -462,5 +462,85 @@
 
   .socialBtn:active {
     transform: scale(0.95);
+  }
+}
+
+/* ==========================================================================
+   iPad/Desktop Responsive (768px+)
+   ========================================================================== */
+
+@media (min-width: 768px) {
+  .modal {
+    max-width: 440px;
+    padding: var(--space-2xl, 32px) var(--space-xl, 24px);
+    border-radius: 20px;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, 0.25);
+  }
+
+  .title {
+    font-size: 1.5rem;
+    margin-bottom: var(--space-lg);
+  }
+
+  .inputGroup input {
+    height: 52px;
+    font-size: var(--font-size-base, 16px);
+  }
+
+  .primaryBtn {
+    height: 52px;
+    font-size: var(--font-size-base, 16px);
+  }
+
+  .socialBtn {
+    width: 64px;
+    height: 52px;
+  }
+
+  .divider {
+    margin: var(--space-xl) 0 var(--space-lg);
+  }
+}
+
+/* ==========================================================================
+   Desktop Responsive (1024px+)
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .modal {
+    max-width: 480px;
+    padding: 40px 32px;
+  }
+
+  .title {
+    font-size: 1.625rem;
+  }
+
+  .infoBox {
+    padding: var(--space-md) var(--space-lg);
+    font-size: var(--font-size-base, 16px);
+  }
+
+  .form {
+    gap: var(--space-md);
+  }
+
+  .inputGroup input {
+    height: 56px;
+    padding: 0 var(--space-lg);
+  }
+
+  .primaryBtn {
+    height: 56px;
+    margin-top: var(--space-md);
+  }
+
+  .switchMode {
+    margin-top: var(--space-lg);
+  }
+
+  .successIcon {
+    width: 80px;
+    height: 80px;
   }
 }

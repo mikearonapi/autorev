@@ -887,3 +887,126 @@
     min-height: 56px;
   }
 }
+
+/* ==========================================================================
+   iPad/Desktop Responsive (768px+)
+   ========================================================================== */
+
+@media (min-width: 768px) {
+  .pageContent {
+    /* More breathing room on tablet/desktop */
+    padding: 0 24px;
+  }
+
+  .emptyState {
+    min-height: calc(100vh - 200px);
+  }
+
+  /* Build prompt - horizontal layout on tablet */
+  .buildPrompt {
+    flex-direction: row;
+    padding: 20px 24px;
+  }
+
+  .buildPromptBtn {
+    width: auto;
+  }
+}
+
+/* ==========================================================================
+   Desktop Responsive (1024px+)
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .pageContent {
+    /* Centered container with max-width */
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 32px;
+  }
+
+  /* Dyno results in 2-column grid on desktop */
+  .dynoResultsList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  /* Log data section - wider and more prominent */
+  .logDataSection {
+    padding: 32px;
+  }
+
+  .logDataTitleRow {
+    gap: 16px;
+  }
+
+  .logDataIcon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .logDataIcon svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .logDataTitle {
+    font-size: 1.25rem;
+  }
+
+  .logDataSubtitle {
+    margin-left: 58px;
+  }
+
+  /* Larger dyno cards on desktop */
+  .dynoResultCard {
+    padding: 28px;
+  }
+
+  .dynoCardWhp {
+    font-size: 3.5rem;
+  }
+
+  .dynoCardWtq {
+    font-size: 2rem;
+  }
+
+  /* Synthetic data section - 2 column layout */
+  .syntheticDataSection {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .dataCard {
+    margin-bottom: 0;
+  }
+
+  /* Empty state - wider on desktop */
+  .emptyState p {
+    max-width: 400px;
+  }
+
+  .noVehicles p {
+    max-width: 320px;
+  }
+
+  /* Estimate explainer - horizontal on desktop */
+  .estimateExplainer {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* ==========================================================================
+   Large Desktop (1280px+)
+   ========================================================================== */
+
+@media (min-width: 1280px) {
+  /* 3-column layout for synthetic data on large screens */
+  .syntheticDataSection {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

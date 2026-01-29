@@ -15,6 +15,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
   /* Safe area padding for mobile */
   padding: 20px;
   padding-top: max(20px, env(safe-area-inset-top));
@@ -24,8 +25,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 .modal {
@@ -41,11 +47,12 @@
 }
 
 @keyframes slideUp {
-  from { 
+  from {
     opacity: 0;
     transform: translateY(20px);
   }
-  to { 
+
+  to {
     opacity: 1;
     transform: translateY(0);
   }
@@ -110,8 +117,13 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .title {
@@ -463,5 +475,113 @@
 
   .warningList li {
     font-size: var(--text-xs);
+  }
+}
+
+/* ==========================================================================
+   iPad/Desktop Responsive (768px+)
+   ========================================================================== */
+
+@media (min-width: 768px) {
+  .modal {
+    max-width: 480px;
+    border-radius: 24px;
+  }
+
+  .content {
+    padding: 36px 32px 28px;
+  }
+
+  .title,
+  .titleDanger {
+    font-size: var(--text-h2, 24px);
+  }
+
+  .subtitle {
+    font-size: 1rem;
+    margin-bottom: 28px;
+  }
+
+  .reasonOption {
+    padding: 16px 18px;
+    border-radius: 14px;
+  }
+
+  .reasonLabel {
+    font-size: var(--text-body, 16px);
+  }
+
+  .warningBox {
+    padding: 20px;
+    border-radius: 14px;
+  }
+
+  .warningList li {
+    font-size: var(--text-sm, 14px);
+    margin-bottom: 8px;
+  }
+
+  .actions {
+    flex-direction: row;
+    gap: 12px;
+  }
+
+  .cancelBtn,
+  .backBtn,
+  .nextBtn,
+  .deleteBtn {
+    width: auto;
+    flex: 1;
+  }
+}
+
+/* ==========================================================================
+   Desktop Responsive (1024px+)
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .modal {
+    max-width: 520px;
+    box-shadow: 0 32px 100px rgba(0, 0, 0, 0.5);
+  }
+
+  .content {
+    padding: 40px 36px 32px;
+  }
+
+  .title,
+  .titleDanger {
+    font-size: 28px;
+  }
+
+  .subtitle {
+    font-size: 1.0625rem;
+    margin-bottom: 32px;
+  }
+
+  .reasonList {
+    gap: 10px;
+    margin-bottom: 24px;
+  }
+
+  .reasonOption {
+    padding: 18px 20px;
+  }
+
+  .detailsInput {
+    padding: 14px 16px;
+  }
+
+  .confirmInput {
+    padding: 16px 20px;
+    font-size: var(--text-h4, 18px);
+  }
+
+  .cancelBtn,
+  .backBtn,
+  .nextBtn,
+  .deleteBtn {
+    padding: 16px 24px;
+    font-size: 1rem;
   }
 }

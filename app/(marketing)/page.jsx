@@ -15,14 +15,14 @@ import styles from './page.module.css';
 
 /**
  * AutoRev Homepage - GRAVL-Inspired Design
- * 
+ *
  * Structure:
  * 1. Hero - Logo centered, punchy headline, 3-phone display
  * 2. AL Introduction section
  * 3. Feature sections alternating text + single phone
  * 4. Final CTA
  * (Footer is provided by global layout)
- * 
+ *
  * All images served from Vercel Blob CDN for optimal page speed
  */
 
@@ -33,66 +33,73 @@ const FEATURES = [
     id: 'my-garage',
     title: 'YOUR GARAGE',
     titleAccent: 'YOUR COMMAND CENTER',
-    description: 'Add the cars you own and love. Track specs, mileage, and ownership history. Your garage is always ready when you are.',
-    screen: SITE_DESIGN_IMAGES.garageOverview  // Car card with stats
+    description:
+      'Add the cars you own and love. Track specs, mileage, and ownership history. Your garage is always ready when you are.',
+    screen: SITE_DESIGN_IMAGES.garageOverview, // Car card with stats
   },
   // 2. My Garage Upgrades / Parts
   {
     id: 'garage-upgrades',
     title: 'PLAN YOUR BUILD',
     titleAccent: 'PARTS THAT FIT',
-    description: 'Curated upgrade paths for track, street, or daily driving. See exactly what each mod delivers — power gains, real-world feel, and compatibility.',
-    screen: SITE_DESIGN_IMAGES.tuningOverview  // Upgrade categories
+    description:
+      'Curated upgrade paths for track, street, or daily driving. See exactly what each mod delivers — power gains, real-world feel, and compatibility.',
+    screen: SITE_DESIGN_IMAGES.tuningOverview, // Upgrade categories
   },
   // 3. My Garage Performance
   {
     id: 'garage-performance',
     title: 'KNOW YOUR NUMBERS',
     titleAccent: 'PERFORMANCE METRICS',
-    description: 'See calculated 0-60, quarter mile, and experience scores. Understand exactly how your mods translate to real-world performance.',
-    screen: SITE_DESIGN_IMAGES.performanceMetrics  // Performance metrics experience scores
+    description:
+      'See calculated 0-60, quarter mile, and experience scores. Understand exactly how your mods translate to real-world performance.',
+    screen: SITE_DESIGN_IMAGES.performanceMetrics, // Performance metrics experience scores
   },
   // 4. My Data Dyno
   {
     id: 'data-dyno',
     title: 'VIRTUAL DYNO',
     titleAccent: 'SEE YOUR POWER',
-    description: 'Visualize estimated HP and torque curves based on your modifications. Track gains from each upgrade and log real dyno results.',
-    screen: SITE_DESIGN_IMAGES.garageData  // Virtual dyno chart
+    description:
+      'Visualize estimated HP and torque curves based on your modifications. Track gains from each upgrade and log real dyno results.',
+    screen: SITE_DESIGN_IMAGES.garageData, // Virtual dyno chart
   },
   // 5. My Data Track
   {
     id: 'data-track',
     title: 'LAP TIME ESTIMATOR',
     titleAccent: 'TRACK YOUR TIMES',
-    description: 'Predict lap times at popular tracks based on your build. Log real sessions and compare your progress over time.',
-    screen: SITE_DESIGN_IMAGES.lapTimeEstimator  // Lap time estimator
+    description:
+      'Predict lap times at popular tracks based on your build. Log real sessions and compare your progress over time.',
+    screen: SITE_DESIGN_IMAGES.lapTimeEstimator, // Lap time estimator
   },
   // 6. Community
   {
     id: 'community',
     title: 'COMMUNITY BUILDS',
     titleAccent: 'REAL ENTHUSIASTS',
-    description: 'Get inspiration from real builds. Share your progress, find local events, and connect with owners who share your passion.',
-    screen: SITE_DESIGN_IMAGES.communityFeed  // Community builds feed
+    description:
+      'Get inspiration from real builds. Share your progress, find local events, and connect with owners who share your passion.',
+    screen: SITE_DESIGN_IMAGES.communityFeed, // Community builds feed
   },
   // 7. AI AL
   {
     id: 'al',
     title: 'ASK AL ANYTHING',
     titleAccent: 'YOUR AI EXPERT',
-    description: 'No more hours of forum searching. AL knows your car, your mods, and your goals. Get instant answers to any question.',
-    screen: SITE_DESIGN_IMAGES.alChatResponse  // AL chat response
-  }
+    description:
+      'No more hours of forum searching. AL knows your car, your mods, and your goals. Get instant answers to any question.',
+    screen: SITE_DESIGN_IMAGES.alChatResponse, // AL chat response
+  },
 ];
 
 // Sample questions for typing animation - complex questions that showcase AL's depth
 const AL_SAMPLE_QUESTIONS = [
-  "What wheel fitment can I run without rubbing?",
-  "If I upgrade my fuel pump, do I need a tune?",
-  "What are the common failure points on this engine?",
-  "What torque specs and tools do I need for this job?",
-  "Can I run E85 with my current fuel system?",
+  'What wheel fitment can I run without rubbing?',
+  'If I upgrade my fuel pump, do I need a tune?',
+  'What are the common failure points on this engine?',
+  'What torque specs and tools do I need for this job?',
+  'Can I run E85 with my current fuel system?',
   "What's the best mod order for a $5k budget?",
 ];
 
@@ -100,7 +107,7 @@ const AL_SAMPLE_QUESTIONS = [
 const LocalIcons = {
   arrow: () => <Icons.arrowRight size={20} />,
   camera: () => <Icons.camera size={18} />,
-  arrowUp: () => <Icons.arrowUp size={18} />
+  arrowUp: () => <Icons.arrowUp size={18} />,
 };
 
 export default function Home() {
@@ -109,14 +116,10 @@ export default function Home() {
   const [questionIndex, setQuestionIndex] = useState(0);
   const [isTyping, setIsTyping] = useState(true);
   const [showPWAModal, setShowPWAModal] = useState(false);
-  
+
   // PWA Install
-  const { 
-    isInstalled,
-    canPromptNatively, 
-    promptInstall,
-  } = usePWAInstall();
-  
+  const { isInstalled, canPromptNatively, promptInstall } = usePWAInstall();
+
   // Handle download click - always available on homepage
   const handleDownload = async () => {
     if (canPromptNatively) {
@@ -131,13 +134,13 @@ export default function Home() {
       setShowPWAModal(true);
     }
   };
-  
+
   // Typing animation effect
   useEffect(() => {
     const currentQuestion = AL_SAMPLE_QUESTIONS[questionIndex];
     let charIndex = 0;
     let timeout;
-    
+
     if (isTyping) {
       // Type characters one by one
       const typeChar = () => {
@@ -161,10 +164,10 @@ export default function Home() {
         setIsTyping(true);
       }, 500);
     }
-    
+
     return () => clearTimeout(timeout);
   }, [questionIndex, isTyping]);
-  
+
   return (
     <div className={styles.page} data-no-main-offset>
       {/* Hero Section */}
@@ -186,24 +189,18 @@ export default function Home() {
 
         {/* Subtext */}
         <p className={styles.subtext}>
-          Research mods for your car, compare different brands, find deals, 
-          get straight answers — all in one app built for speed.
+          Research mods for your car, compare different brands, find deals, get straight answers —
+          all in one app built for speed.
         </p>
 
         {/* CTA Button - slimmer */}
-        <button 
-          className={styles.ctaButton}
-          onClick={() => authModal.openSignIn()}
-        >
+        <button className={styles.ctaButton} onClick={() => authModal.openSignIn()}>
           LOGIN / GET STARTED FREE
         </button>
 
         {/* Download link - always show unless already installed as PWA */}
         {!isInstalled && (
-          <button 
-            className={styles.downloadLink}
-            onClick={handleDownload}
-          >
+          <button className={styles.downloadLink} onClick={handleDownload}>
             Download
           </button>
         )}
@@ -217,6 +214,7 @@ export default function Home() {
                 src={SITE_DESIGN_IMAGES.heroLeft}
                 alt="Upgrade Recommendations"
                 fill
+                sizes="224px"
                 className={styles.screenImage}
                 priority
               />
@@ -230,6 +228,7 @@ export default function Home() {
                 src={SITE_DESIGN_IMAGES.heroCenter}
                 alt="Your Garage - Track Your Build"
                 fill
+                sizes="224px"
                 className={styles.screenImage}
                 priority
               />
@@ -243,6 +242,7 @@ export default function Home() {
                 src={SITE_DESIGN_IMAGES.heroRight}
                 alt="AL - Your AI Car Expert"
                 fill
+                sizes="224px"
                 className={styles.screenImage}
                 priority
               />
@@ -268,7 +268,7 @@ export default function Home() {
         <p className={styles.alTagline}>
           Tony Stark had Jarvis. <span className={styles.alHighlight}>You have AL.</span>
         </p>
-        
+
         {/* Simulated Input Box */}
         <div className={styles.alInputDemo}>
           <div className={styles.alInputWrapper}>
@@ -279,15 +279,15 @@ export default function Home() {
               {typedText || <span className={styles.alInputPlaceholder}>Ask AL anything...</span>}
               <span className={styles.alCursor} />
             </div>
-            <button 
-              className={`${styles.alSendBtn} ${typedText ? styles.alSendBtnActive : ''}`} 
+            <button
+              className={`${styles.alSendBtn} ${typedText ? styles.alSendBtnActive : ''}`}
               aria-label="Send"
             >
               <LocalIcons.arrowUp />
             </button>
           </div>
         </div>
-        
+
         {/* AL Data Access List */}
         <div className={styles.alDataAccess}>
           <p className={styles.alDataLabel}>AL has instant access to:</p>
@@ -332,8 +332,9 @@ export default function Home() {
                 src={feature.screen}
                 alt={feature.title}
                 fill
+                sizes="224px"
                 className={styles.screenImage}
-                loading={index === 0 ? "eager" : "lazy"}
+                loading={index === 0 ? 'eager' : 'lazy'}
               />
             </IPhoneFrame>
           </div>
@@ -347,28 +348,23 @@ export default function Home() {
           <br />
           <span className={styles.finalAccent}>START BUILDING.</span>
         </h2>
-        <p className={styles.finalSubtext}>
-          100% free to start. No credit card required.
-        </p>
-        <button 
-          className={styles.finalCta}
-          onClick={() => authModal.openSignUp()}
-        >
+        <p className={styles.finalSubtext}>100% free to start. No credit card required.</p>
+        <button className={styles.finalCta} onClick={() => authModal.openSignUp()}>
           GET STARTED FREE <LocalIcons.arrow />
         </button>
       </section>
 
       {/* Auth Modal */}
-      <AuthModal 
-        isOpen={authModal.isOpen} 
+      <AuthModal
+        isOpen={authModal.isOpen}
         onClose={authModal.close}
         defaultMode={authModal.defaultMode}
       />
-      
+
       {/* PWA Install Modal (iOS instructions) */}
       {showPWAModal && (
-        <PWAInstallPrompt 
-          variant="modal" 
+        <PWAInstallPrompt
+          variant="modal"
           forceShow={true}
           onDismissed={() => setShowPWAModal(false)}
         />

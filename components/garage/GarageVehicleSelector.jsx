@@ -17,7 +17,6 @@ import { useRouter, usePathname } from 'next/navigation';
 import { createPortal } from 'react-dom';
 
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
-import { useCarsList } from '@/hooks/useCarData';
 
 import styles from './GarageVehicleSelector.module.css';
 
@@ -87,18 +86,13 @@ const ChevronDownIcon = ({ size = 16 }) => (
 );
 
 /**
- * Format vehicle display name, avoiding duplicate make names.
- * Handles cases where model includes the make (e.g., "Porsche Panamera Turbo 971")
+ * Format vehicle display name as Year Make Model.
  * @param {number} year - Vehicle year
- * @param {string} make - Vehicle make (e.g., "Porsche")
- * @param {string} model - Vehicle model (e.g., "Panamera Turbo 971" or "Porsche Panamera Turbo 971")
- * @returns {string} Formatted name like "2017 Porsche Panamera Turbo 971"
+ * @param {string} make - Vehicle make (e.g., "Audi")
+ * @param {string} model - Vehicle model (e.g., "RS5 B9")
+ * @returns {string} Formatted name like "2019 Audi RS5 B9"
  */
-function formatVehicleName(year, make, model) {
-  // If model already starts with the make, don't duplicate it
-  if (make && model && model.toLowerCase().startsWith(make.toLowerCase())) {
-    return `${year} ${model}`;
-  }
+function formatVehicleDisplayName(year, make, model) {
   return `${year} ${make} ${model}`;
 }
 
@@ -132,12 +126,8 @@ export default function GarageVehicleSelector({
   // Get user's owned vehicles (already sorted by displayOrder from provider)
   const { vehicles } = useOwnedVehicles();
 
-  // Get all cars data for matching
-  const { data: allCars = [] } = useCarsList();
-
-  // Build vehicle options with car data
+  // Build vehicle options with display names
   const vehicleOptions = (vehicles || []).map((vehicle) => {
-    const matchedCar = allCars.find((c) => c.slug === vehicle.matchedCarSlug);
     return {
       id: vehicle.id,
       carSlug: vehicle.matchedCarSlug,
@@ -145,7 +135,7 @@ export default function GarageVehicleSelector({
       make: vehicle.make,
       model: vehicle.model,
       nickname: vehicle.nickname,
-      name: matchedCar?.name || formatVehicleName(vehicle.year, vehicle.make, vehicle.model),
+      displayName: formatVehicleDisplayName(vehicle.year, vehicle.make, vehicle.model),
     };
   });
 
@@ -156,10 +146,10 @@ export default function GarageVehicleSelector({
       : vehicleOptions.find((v) => v.carSlug === selectedCarSlug);
 
   // Get display label for selected vehicle
-  // Prioritizes: nickname > matchedCar.name (from cars table) > constructed name
+  // Prioritizes: nickname > "Year | Make | Model" format
   const getSelectedLabel = () => {
     if (!selectedVehicle) return 'Select Vehicle';
-    return selectedVehicle.nickname || selectedVehicle.name;
+    return selectedVehicle.nickname || selectedVehicle.displayName;
   };
 
   // Check if a vehicle is selected (for styling)
@@ -306,7 +296,7 @@ export default function GarageVehicleSelector({
                   <CarIcon size={16} className={styles.selectorOptionIcon} />
                 )}
                 <span className={styles.selectorOptionText}>
-                  {vehicle.nickname || vehicle.name}
+                  {vehicle.nickname || vehicle.displayName}
                 </span>
               </button>
             ))}

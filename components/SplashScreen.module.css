@@ -75,8 +75,8 @@
 
 /* Logo image styling */
 .logoImage {
-  /* Mobile-first sizing - compact for splash */
-  width: clamp(165px, 45vw, 255px);
+  /* Mobile-first sizing - 1.5x size for splash prominence */
+  width: clamp(248px, 67.5vw, 383px);
   height: auto;
 
   /* Prevent dragging/selection */
@@ -103,6 +103,6 @@
 /* Desktop: larger logo */
 @media screen and (min-width: 481px) {
   .logoImage {
-    width: clamp(210px, 37.5vw, 300px);
+    width: clamp(315px, 56.25vw, 450px);
   }
 }

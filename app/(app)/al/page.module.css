@@ -56,7 +56,20 @@
   gap: 4px;
 }
 
-.menuBtn,
+.menuBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: var(--color-accent-teal, #10b981);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
 .newChatHeaderBtn {
   display: flex;
   align-items: center;
@@ -66,15 +79,19 @@
   background: transparent;
   border: none;
   border-radius: 50%;
-  color: var(--color-text-tertiary, #64748b);
+  color: var(--color-accent-lime, #d4ff00);
   cursor: pointer;
   transition: all 0.15s ease;
 }
 
-.menuBtn:hover,
+.menuBtn:hover {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-accent-teal, #10b981);
+}
+
 .newChatHeaderBtn:hover {
   background: rgba(255, 255, 255, 0.06);
-  color: var(--color-text-primary, #ffffff);
+  color: var(--color-accent-lime-hover, #bde600);
 }
 
 .menuBtn:active,
@@ -306,6 +323,99 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+}
+
+/* Recent Conversations Section */
+.drawerRecentSection {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drawerSectionLabel {
+  font-size: var(--text-xs, 12px);
+  font-weight: 600;
+  color: var(--color-text-tertiary, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0 4px;
+}
+
+.drawerRecentLoading {
+  padding: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+.drawerNoRecent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 16px;
+  color: var(--color-text-tertiary, #64748b);
+  font-size: var(--text-sm, 14px);
+}
+
+.drawerRecentList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.drawerRecentItem {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  background: transparent;
+  border: none;
+  border-radius: 8px;
+  color: var(--color-text-secondary, #94a3b8);
+  font-size: var(--text-sm, 14px);
+  cursor: pointer;
+  transition: all 0.12s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.drawerRecentItem:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-primary, #ffffff);
+}
+
+.drawerRecentItem:active {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.drawerRecentItemActive {
+  background: rgba(16, 185, 129, 0.1);
+  color: var(--color-accent-teal, #10b981);
+}
+
+.drawerRecentItemActive:hover {
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.drawerRecentTitle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Spacer to push menu items to bottom */
+.drawerSpacer {
+  flex: 1;
+  min-height: 16px;
+}
+
+/* Menu items at bottom */
+.drawerMenuBottom {
+  padding: 8px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .drawerMenuItem {

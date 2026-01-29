@@ -132,7 +132,9 @@
   color: var(--brand-text-primary);
   font-size: max(16px, var(--text-body)); /* Prevents iOS zoom */
   outline: none;
-  transition: border-color 0.15s ease, background 0.15s ease;
+  transition:
+    border-color 0.15s ease,
+    background 0.15s ease;
 }
 
 .input:focus,
@@ -156,7 +158,9 @@
   color: var(--brand-text-primary);
   font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
   min-width: 90px;
 }
 
@@ -303,13 +307,13 @@
   gap: 8px;
 }
 
-.alertItem[data-type="urgent"] {
+.alertItem[data-type='urgent'] {
   background: rgba(var(--brand-error-rgb), 0.12);
   border: 1px solid rgba(var(--brand-error-rgb), 0.25);
   color: var(--brand-error-light);
 }
 
-.alertItem[data-type="warn"] {
+.alertItem[data-type='warn'] {
   background: rgba(var(--brand-warning-rgb), 0.12);
   border: 1px solid rgba(var(--brand-warning-rgb), 0.25);
   color: var(--brand-warning);
@@ -329,7 +333,7 @@
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--sn-gold, #c4a564);
-  margin: 0 0 8px 0;
+  margin: 0 0 8px;
   opacity: 0.9;
 }
 
@@ -445,3 +449,119 @@
   }
 }
 
+/* ==========================================================================
+   iPad/Desktop Responsive (768px+)
+   ========================================================================== */
+
+@media (min-width: 768px) {
+  .card {
+    padding: 20px;
+    gap: 18px;
+    border-radius: 16px;
+  }
+
+  .title {
+    font-size: var(--text-h3, 20px);
+  }
+
+  .badge {
+    padding: 7px 12px;
+    font-size: var(--text-xs, 12px);
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .field {
+    padding: 12px 14px;
+    border-radius: 12px;
+  }
+
+  .input,
+  .select {
+    padding: 11px 14px;
+  }
+
+  .healthOverview {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .alertItem {
+    padding: 10px 14px;
+    font-size: var(--text-sm, 14px);
+  }
+
+  .scheduleBox {
+    padding: 12px 14px;
+    border-radius: 10px;
+  }
+
+  .actionsRow {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .primaryButton,
+  .ghostButton {
+    width: auto;
+    min-width: 140px;
+  }
+}
+
+/* ==========================================================================
+   Desktop Responsive (1024px+)
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .card {
+    padding: 24px;
+    gap: 20px;
+  }
+
+  .headerRow {
+    gap: 16px;
+  }
+
+  .title {
+    font-size: 22px;
+  }
+
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .healthOverview {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .alertList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .alertItem {
+    padding: 12px 16px;
+  }
+
+  .scheduleItems {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .actionsRow {
+    gap: 14px;
+  }
+
+  .primaryButton,
+  .ghostButton {
+    padding: 12px 20px;
+    min-width: 160px;
+  }
+}

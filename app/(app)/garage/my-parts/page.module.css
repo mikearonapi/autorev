@@ -5,6 +5,7 @@
 
 .page {
   min-height: 100dvh;
+
   /* Transparent to show body gradient */
   background: transparent;
   color: var(--brand-text-primary);
@@ -160,16 +161,22 @@
 
 /* Highlight animation when navigated to via action=add */
 .content.highlight {
-  box-shadow: 0 0 0 2px var(--brand-lime, #d4ff00), 0 0 20px rgba(212, 255, 0, 0.3);
+  box-shadow:
+    0 0 0 2px var(--brand-lime, #d4ff00),
+    0 0 20px rgba(212, 255, 0, 0.3);
   animation: partsHighlight 2s ease-out;
 }
 
 @keyframes partsHighlight {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: none;
   }
+
   50% {
-    box-shadow: 0 0 0 2px var(--brand-lime, #d4ff00), 0 0 30px rgba(212, 255, 0, 0.4);
+    box-shadow:
+      0 0 0 2px var(--brand-lime, #d4ff00),
+      0 0 30px rgba(212, 255, 0, 0.4);
   }
 }
 
@@ -203,13 +210,13 @@
   font-size: var(--text-h4);
   font-weight: 700;
   color: var(--brand-text-primary);
-  margin: 0 0 8px 0;
+  margin: 0 0 8px;
 }
 
 .emptyDescription {
   font-size: var(--text-sm);
   color: rgba(255, 255, 255, 0.5);
-  margin: 0 0 24px 0;
+  margin: 0 0 24px;
   max-width: 280px;
 }
 
@@ -270,13 +277,13 @@
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--brand-text-primary);
-  margin: 0 0 6px 0;
+  margin: 0 0 6px;
 }
 
 .noBuildDescription {
   font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.5);
-  margin: 0 0 16px 0;
+  margin: 0 0 16px;
   max-width: 280px;
 }
 
@@ -317,11 +324,9 @@
   justify-content: space-between;
   gap: 12px;
   padding: 12px 14px;
-  
   background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.08));
   border: 1px solid rgba(16, 185, 129, 0.3);
   border-radius: 10px;
-  
   text-decoration: none;
   transition: all 0.2s ease;
 }
@@ -342,7 +347,7 @@
 .ctaTitle {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--color-text-primary, #fff);
+  color: var(--color-text-primary, #ffffff);
 }
 
 .ctaAction {
@@ -350,10 +355,8 @@
   align-items: center;
   gap: 6px;
   padding: 6px 10px;
-  
   background: var(--color-accent-teal, #10b981);
   border-radius: 6px;
-  
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--color-text-primary, #ffffff);
@@ -368,41 +371,153 @@
   .vehicleHeader {
     padding: 12px;
   }
-  
+
   .vehicleImage {
     width: 72px;
     height: 50px;
   }
-  
+
   .vehicleName {
     font-size: 0.9rem;
   }
-  
+
   .content {
     padding: 10px 12px;
     gap: 10px;
   }
-  
+
   .noBuildState {
     padding: 24px 14px;
     min-height: 180px;
   }
-  
+
   .costSummary {
     margin: 6px 12px 0;
     padding: 10px 12px;
   }
-  
+
   .costRow {
     flex-direction: row;
     gap: 10px;
   }
-  
+
   .costItem:last-child {
     text-align: right;
   }
-  
+
   .costBreakdown {
     flex-direction: row;
+  }
+}
+
+/* ==========================================================================
+   iPad/Desktop Responsive (768px+)
+   ========================================================================== */
+
+@media (min-width: 768px) {
+  .page {
+    /* No bottom tab bar on desktop */
+    padding-bottom: var(--space-6, 24px);
+  }
+
+  .content {
+    padding: 16px 24px;
+    gap: 16px;
+  }
+
+  .costSummary {
+    margin: 12px 24px 0;
+    padding: 14px 18px;
+  }
+
+  .alRecommendationsContainer {
+    padding: 12px 24px 0;
+  }
+
+  .continueCtaContainer {
+    padding: 16px 24px;
+
+    /* No extra padding for tab bar on desktop */
+    padding-bottom: 16px;
+  }
+
+  .emptyDescription,
+  .noBuildDescription {
+    max-width: 360px;
+  }
+}
+
+/* ==========================================================================
+   Desktop Responsive (1024px+)
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .page {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .content {
+    padding: 20px 32px;
+    gap: 20px;
+  }
+
+  .costSummary {
+    margin: 16px 32px 0;
+    padding: 18px 24px;
+  }
+
+  .costLabel {
+    font-size: 0.7rem;
+  }
+
+  .costValue,
+  .costValueActual {
+    font-size: 1rem;
+  }
+
+  .alRecommendationsContainer {
+    padding: 16px 32px 0;
+  }
+
+  .emptyState {
+    min-height: 45vh;
+  }
+
+  .emptyTitle {
+    font-size: var(--text-h3, 20px);
+  }
+
+  .emptyDescription {
+    max-width: 420px;
+    font-size: var(--text-body, 14px);
+  }
+
+  .noBuildState {
+    padding: 40px 32px;
+    min-height: 220px;
+  }
+
+  .noBuildTitle {
+    font-size: 1.25rem;
+  }
+
+  .noBuildDescription {
+    max-width: 400px;
+    font-size: 0.875rem;
+  }
+
+  .continueCtaContainer {
+    padding: 24px 32px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .continueCta {
+    padding: 16px 20px;
+  }
+
+  .ctaTitle {
+    font-size: 0.9375rem;
   }
 }
