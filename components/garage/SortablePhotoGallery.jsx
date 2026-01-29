@@ -1,36 +1,18 @@
 'use client';
 
 /**
- * Sortable Photo Gallery - Drag-and-drop reordering for vehicle photos
+ * Photo Gallery with Reordering - PWA-friendly photo management
  *
- * This component allows users to reorder their photos to control how they
- * appear on the community build page. Uses @dnd-kit for drag-and-drop.
+ * This component allows users to reorder their photos using simple up/down
+ * arrow buttons, which work reliably on touch devices without conflicting
+ * with scroll behavior.
  *
  * @module components/garage/SortablePhotoGallery
  */
 
-import { useState, useCallback, useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 
 import Image from 'next/image';
-
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  DragOverlay,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  rectSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 
 import { Icons } from '@/components/ui/Icons';
 
@@ -47,37 +29,63 @@ function formatDuration(seconds) {
 }
 
 /**
- * Sortable Photo Item - Individual photo with drag handle
+ * Photo Item - Individual photo with reorder controls
  */
-function SortablePhotoItem({ item, onSetPrimary, onDelete, isHero, isDragging, readOnly }) {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging: isSortableDragging,
-  } = useSortable({ id: item.id });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isSortableDragging ? 0.5 : 1,
-    zIndex: isSortableDragging ? 100 : 'auto',
-  };
-
+function PhotoItem({
+  item,
+  index,
+  totalCount,
+  nextItemIsStock,
+  onMoveUp,
+  onMoveDown,
+  onSetPrimary,
+  onDelete,
+  onHideStockPhoto,
+  isHero,
+  readOnly,
+}) {
+  const isStockPhoto = item.isStockPhoto === true;
   const isVideo = item.media_type === 'video';
+  const isFirst = index === 0;
+  const isLast = index === totalCount - 1;
+
+  // Stock photos can't be moved
+  const canMoveUp = !isStockPhoto && !isFirst && !readOnly;
+  const canMoveDown = !isStockPhoto && !isLast && !readOnly;
+  // Don't allow moving down if the next item is a stock photo
+  const actualCanMoveDown = canMoveDown && !nextItemIsStock;
 
   return (
     <div
-      ref={setNodeRef}
-      style={style}
-      className={`${styles.photoItem} ${isHero ? styles.heroItem : ''} ${isVideo ? styles.videoItem : ''}`}
+      className={`${styles.photoItem} ${isHero ? styles.heroItem : ''} ${isVideo ? styles.videoItem : ''} ${isStockPhoto ? styles.stockItem : ''}`}
     >
-      {/* Drag Handle - Only visible when not in readOnly mode */}
-      {!readOnly && (
-        <div className={styles.dragHandle} {...attributes} {...listeners}>
-          <Icons.grip size={16} />
+      {/* Reorder Controls - Only visible when not in readOnly mode and not a stock photo */}
+      {!readOnly && !isStockPhoto && (
+        <div className={styles.reorderControls}>
+          <button
+            type="button"
+            className={`${styles.reorderBtn} ${!canMoveUp ? styles.disabled : ''}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (canMoveUp) onMoveUp(index);
+            }}
+            disabled={!canMoveUp}
+            aria-label="Move photo up"
+          >
+            <Icons.chevronUp size={14} />
+          </button>
+          <button
+            type="button"
+            className={`${styles.reorderBtn} ${!actualCanMoveDown ? styles.disabled : ''}`}
+            onClick={(e) => {
+              e.stopPropagation();
+              if (actualCanMoveDown) onMoveDown(index);
+            }}
+            disabled={!actualCanMoveDown}
+            aria-label="Move photo down"
+          >
+            <Icons.chevronDown size={14} />
+          </button>
         </div>
       )}
 
@@ -116,25 +124,25 @@ function SortablePhotoItem({ item, onSetPrimary, onDelete, isHero, isDragging, r
         )}
 
         {/* Hero Badge */}
-        {isHero && !isVideo && (
+        {isHero && !isVideo && !isStockPhoto && (
           <span className={styles.heroBadge}>
             <Icons.star size={10} />
             Hero
           </span>
         )}
 
-        {/* Position indicator */}
-        {!readOnly && (
-          <span className={styles.positionBadge}>
-            {item.displayOrder || item.display_order || 1}
-          </span>
-        )}
+        {/* Stock Photo Badge */}
+        {isStockPhoto && <span className={styles.stockBadge}>Stock</span>}
+
+        {/* Position indicator - not shown for stock photos */}
+        {!readOnly && !isStockPhoto && <span className={styles.positionBadge}>{index + 1}</span>}
       </div>
 
       {/* Actions */}
-      {!readOnly && !isDragging && (
+      {!readOnly && (
         <div className={styles.actions}>
-          {!isHero && !isVideo && onSetPrimary && (
+          {/* Set as Hero button - not available for stock photos or videos */}
+          {!isHero && !isVideo && !isStockPhoto && onSetPrimary && (
             <button
               type="button"
               className={styles.setHeroBtn}
@@ -147,19 +155,34 @@ function SortablePhotoItem({ item, onSetPrimary, onDelete, isHero, isDragging, r
               <Icons.star size={14} />
             </button>
           )}
-          {onDelete && (
-            <button
-              type="button"
-              className={styles.deleteBtn}
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(item.id);
-              }}
-              title="Delete photo"
-            >
-              <Icons.x size={14} />
-            </button>
-          )}
+          {/* Delete button - for stock photos, this hides instead of deletes */}
+          {isStockPhoto
+            ? onHideStockPhoto && (
+                <button
+                  type="button"
+                  className={styles.deleteBtn}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onHideStockPhoto();
+                  }}
+                  title="Hide stock photo"
+                >
+                  <Icons.x size={14} />
+                </button>
+              )
+            : onDelete && (
+                <button
+                  type="button"
+                  className={styles.deleteBtn}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDelete(item.id);
+                  }}
+                  title="Delete photo"
+                >
+                  <Icons.x size={14} />
+                </button>
+              )}
         </div>
       )}
     </div>
@@ -167,175 +190,96 @@ function SortablePhotoItem({ item, onSetPrimary, onDelete, isHero, isDragging, r
 }
 
 /**
- * Drag Overlay Item - Shows what's being dragged
- */
-function DragOverlayItem({ item }) {
-  if (!item) return null;
-
-  const isVideo = item.media_type === 'video';
-
-  return (
-    <div className={`${styles.photoItem} ${styles.photoItemOverlay}`}>
-      <div className={styles.dragHandle}>
-        <Icons.grip size={16} />
-      </div>
-      <div className={styles.photoContent}>
-        {isVideo ? (
-          <div className={styles.videoThumbnail}>
-            <div className={styles.videoPlaceholder}>
-              <Icons.play size={24} />
-            </div>
-          </div>
-        ) : (
-          <Image
-            src={item.blob_url || item.thumbnail_url}
-            alt={item.caption || 'Photo'}
-            fill
-            style={{ objectFit: 'cover' }}
-            sizes="180px"
-          />
-        )}
-      </div>
-    </div>
-  );
-}
-
-/**
- * Sortable Photo Gallery - Main component with drag-and-drop reordering
+ * Photo Gallery - Main component with tap-based reordering
  *
  * @param {Object} props
  * @param {Array} props.images - Array of image objects with id, blob_url, is_primary, etc.
- * @param {Function} props.onReorder - Called with new order array after drag (array of ids)
+ * @param {Function} props.onReorder - Called with new order array after reorder (array of ids)
  * @param {Function} props.onSetPrimary - Called when user sets a photo as hero
  * @param {Function} props.onDelete - Called when user deletes a photo
- * @param {boolean} props.readOnly - Disable editing (no drag, no actions)
+ * @param {Function} props.onHideStockPhoto - Called when user hides the stock photo
+ * @param {boolean} props.readOnly - Disable editing (no reorder, no actions)
  */
 export default function SortablePhotoGallery({
   images = [],
   onReorder,
   onSetPrimary,
   onDelete,
+  onHideStockPhoto,
   readOnly = false,
 }) {
-  const [activeId, setActiveId] = useState(null);
-  const [isDragging, setIsDragging] = useState(false);
-
-  // Configure sensors for touch and pointer input
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8, // Require 8px movement before drag starts
-      },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 200, // 200ms hold before drag starts on touch
-        tolerance: 5, // Allow 5px movement during delay
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
-
-  // Get the image IDs for SortableContext
-  const imageIds = useMemo(() => images.map((img) => img.id).filter(Boolean), [images]);
-
   // Find which image is the hero (is_primary)
   const heroImageId = useMemo(
     () => images.find((img) => img.is_primary && img.media_type !== 'video')?.id,
     [images]
   );
 
-  const handleDragStart = useCallback((event) => {
-    setActiveId(event.active.id);
-    setIsDragging(true);
-  }, []);
+  // Move photo up one position
+  const handleMoveUp = useCallback(
+    (index) => {
+      if (index <= 0 || !onReorder) return;
 
-  const handleDragEnd = useCallback(
-    (event) => {
-      const { active, over } = event;
-      setActiveId(null);
-      setIsDragging(false);
-
-      if (over && active.id !== over.id) {
-        const oldIndex = images.findIndex((img) => img.id === active.id);
-        const newIndex = images.findIndex((img) => img.id === over.id);
-
-        if (oldIndex !== -1 && newIndex !== -1 && onReorder) {
-          // Create new array with reordered items
-          const newImages = arrayMove(images, oldIndex, newIndex);
-          // Extract image IDs in new order and call reorder
-          const newImageIds = newImages.map((img) => img.id);
-          onReorder(newImageIds);
-        }
-      }
+      const newImages = [...images];
+      // Swap with the item above
+      [newImages[index - 1], newImages[index]] = [newImages[index], newImages[index - 1]];
+      // Extract IDs and call reorder
+      const newImageIds = newImages.map((img) => img.id);
+      onReorder(newImageIds);
     },
     [images, onReorder]
   );
 
-  const handleDragCancel = useCallback(() => {
-    setActiveId(null);
-    setIsDragging(false);
-  }, []);
+  // Move photo down one position
+  const handleMoveDown = useCallback(
+    (index) => {
+      if (index >= images.length - 1 || !onReorder) return;
 
-  // Find the active item for the drag overlay
-  const activeItem = activeId ? images.find((img) => img.id === activeId) : null;
+      const newImages = [...images];
+      // Swap with the item below
+      [newImages[index], newImages[index + 1]] = [newImages[index + 1], newImages[index]];
+      // Extract IDs and call reorder
+      const newImageIds = newImages.map((img) => img.id);
+      onReorder(newImageIds);
+    },
+    [images, onReorder]
+  );
 
   if (images.length === 0) {
     return null;
   }
 
-  // If readOnly, just render a simple grid without drag
-  if (readOnly) {
-    return (
-      <div className={styles.gallery}>
-        <div className={styles.photoGrid}>
-          {images.map((item) => (
-            <SortablePhotoItem
-              key={item.id}
-              item={item}
-              isHero={item.id === heroImageId}
-              readOnly={true}
-            />
-          ))}
-        </div>
-      </div>
-    );
-  }
+  // Count non-stock photos for display
+  const userPhotoCount = images.filter((img) => !img.isStockPhoto).length;
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragStart={handleDragStart}
-      onDragEnd={handleDragEnd}
-      onDragCancel={handleDragCancel}
-    >
-      <SortableContext items={imageIds} strategy={rectSortingStrategy}>
-        <div className={styles.gallery}>
-          <div className={styles.header}>
-            <p className={styles.hint}>
-              <Icons.grip size={14} />
-              Drag photos to reorder how they appear on your community build
-            </p>
-          </div>
-          <div className={styles.photoGrid}>
-            {images.map((item, index) => (
-              <SortablePhotoItem
-                key={item.id}
-                item={{ ...item, displayOrder: index + 1 }}
-                onSetPrimary={onSetPrimary}
-                onDelete={onDelete}
-                isHero={item.id === heroImageId}
-                isDragging={isDragging}
-                readOnly={false}
-              />
-            ))}
-          </div>
+    <div className={styles.gallery}>
+      {!readOnly && userPhotoCount > 1 && (
+        <div className={styles.header}>
+          <p className={styles.hint}>
+            <Icons.chevronUp size={14} />
+            <Icons.chevronDown size={14} />
+            Tap arrows to reorder photos
+          </p>
         </div>
-      </SortableContext>
-      <DragOverlay>{activeId ? <DragOverlayItem item={activeItem} /> : null}</DragOverlay>
-    </DndContext>
+      )}
+      <div className={styles.photoGrid}>
+        {images.map((item, index) => (
+          <PhotoItem
+            key={item.id}
+            item={item}
+            index={index}
+            totalCount={images.length}
+            nextItemIsStock={images[index + 1]?.isStockPhoto === true}
+            onMoveUp={handleMoveUp}
+            onMoveDown={handleMoveDown}
+            onSetPrimary={onSetPrimary}
+            onDelete={onDelete}
+            onHideStockPhoto={onHideStockPhoto}
+            isHero={item.id === heroImageId}
+            readOnly={readOnly}
+          />
+        ))}
+      </div>
+    </div>
   );
 }

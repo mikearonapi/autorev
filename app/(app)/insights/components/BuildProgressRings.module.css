@@ -198,12 +198,6 @@
   margin: 0 2px;
 }
 
-.metricDivider {
-  font-size: var(--text-xs);
-  color: rgba(255, 255, 255, 0.15);
-  margin: 0 4px;
-}
-
 /* Info Button - 44px touch target for accessibility */
 .infoButton {
   display: flex;

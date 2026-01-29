@@ -1,7 +1,7 @@
 /**
- * Sortable Photo Gallery Styles
+ * Photo Gallery Styles
  * 
- * Styles for the drag-and-drop photo reordering component.
+ * Styles for the photo gallery with tap-based reordering.
  * Premium GRAVL-style design matching the rest of the garage.
  */
 
@@ -21,7 +21,7 @@
 .hint {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   margin: 0;
   font-size: 0.8125rem;
   color: rgba(255, 255, 255, 0.5);
@@ -30,6 +30,11 @@
 .hint svg {
   color: var(--brand-teal);
   opacity: 0.8;
+  flex-shrink: 0;
+}
+
+.hint svg:nth-child(2) {
+  margin-right: 4px;
 }
 
 /* Photo Grid - 2 columns on mobile, 3+ on larger screens */
@@ -75,12 +80,24 @@
     0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-/* Drag Handle */
-.dragHandle {
+/* Stock Photo Item */
+.stockItem {
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Reorder Controls - Up/Down arrows */
+.reorderControls {
   position: absolute;
   top: 6px;
   left: 6px;
   z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.reorderBtn {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -90,23 +107,47 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border-radius: 6px;
-  color: rgba(255, 255, 255, 0.6);
-  cursor: grab;
-  touch-action: none;
-  transition: all 0.2s ease;
+  color: rgba(255, 255, 255, 0.8);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition: all 0.15s ease;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0;
 }
 
-.dragHandle:hover {
+/* Expanded touch target (44px) */
+.reorderBtn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+}
+
+.reorderBtn:not(.disabled):hover {
   background: rgba(0, 0, 0, 0.85);
   color: var(--brand-lime);
   border-color: rgba(var(--brand-lime-rgb), 0.3);
 }
 
-.dragHandle:active {
-  cursor: grabbing;
+.reorderBtn:not(.disabled):active {
+  transform: scale(0.95);
+  background: rgba(var(--brand-lime-rgb), 0.2);
   color: var(--brand-lime);
-  transform: scale(1.05);
+}
+
+.reorderBtn:not(.disabled):focus-visible {
+  outline: 2px solid var(--brand-lime);
+  outline-offset: 2px;
+  border-color: var(--brand-lime);
+}
+
+.reorderBtn.disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* Photo Content */
@@ -179,7 +220,7 @@
   right: 6px;
   z-index: 5;
   padding: 4px 8px;
-  background: linear-gradient(135deg, var(--brand-teal), #0d9668);
+  background: linear-gradient(135deg, var(--brand-teal), var(--brand-teal-dark, #0d9668));
   color: var(--brand-bg-primary);
   font-size: 0.625rem;
   font-weight: 800;
@@ -190,6 +231,25 @@
   align-items: center;
   gap: 3px;
   box-shadow: 0 2px 8px rgba(var(--brand-teal-rgb), 0.4);
+}
+
+/* Stock Photo Badge */
+.stockBadge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 5;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  border-radius: 5px;
+  letter-spacing: 0.05em;
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Position Badge - Shows current order */
@@ -250,10 +310,16 @@
 }
 
 .setHeroBtn:hover {
-  background: linear-gradient(135deg, var(--brand-teal), #0d9668);
+  background: linear-gradient(135deg, var(--brand-teal), var(--brand-teal-dark, #0d9668));
   color: var(--brand-bg-primary);
   border-color: var(--brand-teal);
   transform: scale(1.05);
+}
+
+.setHeroBtn:focus-visible {
+  outline: 2px solid var(--brand-lime);
+  outline-offset: 2px;
+  border-color: var(--brand-lime);
 }
 
 /* Delete Button */
@@ -291,20 +357,9 @@
   transform: scale(1.05);
 }
 
-/* Drag Overlay - the floating copy while dragging */
-.photoItemOverlay {
-  background: var(--card-surface-elevated, rgba(30, 40, 50, 0.98));
-  border: 2px solid var(--brand-lime) !important;
-  box-shadow:
-    0 20px 40px rgba(0, 0, 0, 0.5),
-    0 0 0 2px rgba(var(--brand-lime-rgb), 0.3);
-  transform: scale(1.05) rotate(2deg);
-  cursor: grabbing;
-}
-
-.photoItemOverlay .dragHandle {
-  color: var(--brand-lime);
-  background: rgba(var(--brand-lime-rgb), 0.2);
+.deleteBtn:focus-visible {
+  outline: 2px solid var(--brand-lime);
+  outline-offset: 2px;
   border-color: var(--brand-lime);
 }
 
@@ -318,6 +373,11 @@
   .deleteBtn {
     width: 36px;
     height: 36px;
+  }
+
+  .reorderBtn {
+    width: 32px;
+    height: 32px;
   }
 }
 

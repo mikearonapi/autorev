@@ -20,20 +20,19 @@
  * Target audience: Enthusiasts who modify their vehicles for performance.
  */
 
-import { useState, useEffect, useCallback, useRef, useLayoutEffect, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 
 import Link from 'next/link';
-
-import { createPortal } from 'react-dom';
 
 // Analysis components migrated from Data page
 import BuildProgressAnalysis from '@/components/BuildProgressAnalysis';
 import BuildValueAnalysis from '@/components/BuildValueAnalysis';
+import { GarageVehicleSelector } from '@/components/garage';
 import KnownIssuesAlert from '@/components/KnownIssuesAlert';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import NextUpgradeRecommendation from '@/components/NextUpgradeRecommendation';
 import PlatformInsights from '@/components/PlatformInsights';
 import { useAuth } from '@/components/providers/AuthProvider';
-import LoadingSpinner from '@/components/LoadingSpinner';
 import { useCarBySlug } from '@/hooks/useCarData';
 import { useTuningProfile } from '@/hooks/useTuningProfile';
 import { useUserInsights } from '@/hooks/useUserData';
@@ -116,7 +115,7 @@ const _UserIcon = ({ size = 20 }) => (
     <path d="M4 21v-1a6 6 0 0 1 6-6h4a6 6 0 0 1 6 6v1" />
   </svg>
 );
-const GarageIcon = ({ size = 18 }) => (
+const _GarageIcon = ({ size = 18 }) => (
   <svg
     width={size}
     height={size}
@@ -132,7 +131,7 @@ const GarageIcon = ({ size = 18 }) => (
     <path d="M4 20h16" />
   </svg>
 );
-const CarIcon = ({ size = 18 }) => (
+const _CarIcon = ({ size = 18 }) => (
   <svg
     width={size}
     height={size}
@@ -148,7 +147,7 @@ const CarIcon = ({ size = 18 }) => (
     <circle cx="16.5" cy="16.5" r="2.5" />
   </svg>
 );
-const CheckIcon = ({ size = 16 }) => (
+const _CheckIcon = ({ size = 16 }) => (
   <svg
     width={size}
     height={size}
@@ -177,7 +176,7 @@ const _CheckCircleIcon = ({ size = 32 }) => (
     <polyline points="22 4 12 14.01 9 11.01" />
   </svg>
 );
-const ChevronDownIcon = ({ size = 16 }) => (
+const _ChevronDownIcon = ({ size = 16 }) => (
   <svg
     width={size}
     height={size}
@@ -516,11 +515,6 @@ export default function InsightsClient() {
   const error = insightsError?.message || null;
 
   const [selectedVehicleId, setSelectedVehicleId] = useState(null); // Initialize as null, will set to first vehicle on load
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0, width: 0 });
-  const [mounted, setMounted] = useState(false);
-  const wrapperRef = useRef(null);
-  const buttonRef = useRef(null);
 
   // Filter state - which sections to show/hide
   const [sectionFilters, setSectionFilters] = useState(getDefaultFilters);
@@ -837,11 +831,6 @@ export default function InsightsClient() {
     [vehicles, calculateVehiclePerformance]
   );
 
-  // Set mounted flag once on mount
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
   // Generate feed when vehicle selection changes OR when vehicle data loads
   // Must include vehicles in dependency to recalculate when data arrives
   useEffect(() => {
@@ -856,30 +845,6 @@ export default function InsightsClient() {
     setFeedItems(data.items);
     setBuildStats(data.stats);
   }, [selectedVehicleId, vehicles, generateSmartFeed]);
-
-  // Dropdown Logic
-  useLayoutEffect(() => {
-    if (dropdownOpen && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setDropdownPosition({ top: rect.bottom + 6, left: rect.left, width: rect.width });
-    }
-  }, [dropdownOpen]);
-
-  useEffect(() => {
-    if (!dropdownOpen) return;
-    const handleVehicleSelectorOutsideClick = (e) => {
-      const dropdown = document.getElementById('vehicle-selector-dropdown');
-      if (
-        wrapperRef.current &&
-        !wrapperRef.current.contains(e.target) &&
-        (!dropdown || !dropdown.contains(e.target))
-      ) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener('click', handleVehicleSelectorOutsideClick);
-    return () => document.removeEventListener('click', handleVehicleSelectorOutsideClick);
-  }, [dropdownOpen]);
 
   // ==========================================================================
   // React Query handles data fetching automatically with:
@@ -1035,7 +1000,7 @@ export default function InsightsClient() {
   }, [selectedVehicleDetails]);
 
   // Fetch full car details for driving character fields (engine feel, steering, sound)
-  const { data: fullCarData } = useCarBySlug(selectedVehicleDetails?.carSlug, {
+  const { data: _fullCarData } = useCarBySlug(selectedVehicleDetails?.carSlug, {
     enabled: !!selectedVehicleDetails?.carSlug,
   });
 
@@ -1061,12 +1026,6 @@ export default function InsightsClient() {
     },
     [user?.id, selectedVehicleId]
   );
-
-  const getSelectedLabel = () => {
-    if (selectedVehicleId === 'all') return 'All Vehicles';
-    const v = vehicles.find((v) => v.id === selectedVehicleId);
-    return v ? `${v.year} ${v.make} ${v.model}` : 'All Vehicles';
-  };
 
   // Not authenticated
   if (!authLoading && !user)
@@ -1135,63 +1094,12 @@ export default function InsightsClient() {
         </div>
       </header>
 
-      {/* Vehicle Selector */}
-      <section className={styles.vehicleSelector} ref={wrapperRef}>
-        <button
-          ref={buttonRef}
-          type="button"
-          className={styles.selectorButton}
-          onClick={() => setDropdownOpen(!dropdownOpen)}
-        >
-          <div className={styles.selectorLeft}>
-            <GarageIcon size={18} className={styles.selectorIcon} />
-            <span className={styles.selectorValue}>{getSelectedLabel()}</span>
-          </div>
-          <ChevronDownIcon
-            size={16}
-            className={`${styles.selectorChevron} ${dropdownOpen ? styles.open : ''}`}
-          />
-        </button>
-        {dropdownOpen &&
-          mounted &&
-          createPortal(
-            <div
-              id="vehicle-selector-dropdown"
-              className={styles.selectorDropdownPortal}
-              role="listbox"
-              style={{
-                position: 'fixed',
-                top: dropdownPosition.top,
-                left: dropdownPosition.left,
-                width: dropdownPosition.width,
-              }}
-            >
-              {vehicles.map((v) => (
-                <button
-                  type="button"
-                  role="option"
-                  aria-selected={selectedVehicleId === v.id}
-                  key={v.id}
-                  className={`${styles.selectorOption} ${selectedVehicleId === v.id ? styles.active : ''}`}
-                  onClick={() => {
-                    setSelectedVehicleId(v.id);
-                    setDropdownOpen(false);
-                  }}
-                >
-                  {selectedVehicleId === v.id ? (
-                    <CheckIcon size={16} className={styles.selectorOptionIcon} />
-                  ) : (
-                    <CarIcon size={16} className={styles.selectorOptionIcon} />
-                  )}
-                  <span className={styles.selectorOptionText}>
-                    {v.nickname || `${v.year} ${v.make} ${v.model}`}
-                  </span>
-                </button>
-              ))}
-            </div>,
-            document.body
-          )}
-      </section>
+      {/* Vehicle Selector - Uses shared component for consistency */}
+      <GarageVehicleSelector
+        selectionMode="id"
+        selectedVehicleId={selectedVehicleId}
+        onSelect={setSelectedVehicleId}
+      />
 
       {/* Hero Section - Build Progress Rings */}
       {sectionFilters.buildProgress && (

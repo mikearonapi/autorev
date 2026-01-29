@@ -19,7 +19,7 @@
  * URL: /garage/my-photos?car=<carSlug> or ?build=<buildId>
  */
 
-import React, { useState, useEffect, Suspense, useRef } from 'react';
+import React, { useState, useEffect, Suspense, useRef, useCallback } from 'react';
 
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
@@ -101,6 +101,56 @@ function MyPhotosContent() {
       return orderA - orderB;
     });
   }, [carImages]);
+
+  // Get stock photo URL if available
+  const stockPhotoUrl = selectedCar ? getCarHeroImage(selectedCar) : null;
+
+  // Combine user photos with stock photo (if not hidden)
+  // Stock photo appears at the end of the gallery
+  const galleryImages = React.useMemo(() => {
+    const images = [...sortedImages];
+
+    // Add stock photo to the end if it exists and isn't hidden
+    if (stockPhotoUrl && !currentVehicle?.hideStockImage) {
+      images.push({
+        id: 'stock-photo',
+        blob_url: stockPhotoUrl,
+        is_primary: false,
+        isStockPhoto: true,
+        display_order: 999,
+        media_type: 'image',
+      });
+    }
+
+    return images;
+  }, [sortedImages, stockPhotoUrl, currentVehicle?.hideStockImage]);
+
+  // Handle hiding the stock photo (not actually deleting, just hiding for this user)
+  const handleHideStockPhoto = useCallback(async () => {
+    if (!user?.id || !vehicleId) return;
+
+    const confirmed = window.confirm(
+      'Hide the stock photo? It will no longer appear in your photo gallery.'
+    );
+    if (!confirmed) return;
+
+    try {
+      const response = await fetch(`/api/users/${user.id}/vehicles/${vehicleId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ hide_stock_image: true }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to hide stock photo');
+      }
+
+      // Update local state via provider
+      await updateVehicle(vehicleId, { hideStockImage: true });
+    } catch (err) {
+      console.error('[MyPhotos] Hide stock photo error:', err);
+    }
+  }, [user?.id, vehicleId, updateVehicle]);
 
   // Handle URL params - load build or car (with fallback support)
   useEffect(() => {
@@ -269,82 +319,11 @@ function MyPhotosContent() {
           </div>
         )}
 
-        {/* Stock Photo Management Section */}
-        {selectedCar && getCarHeroImage(selectedCar) && canUpload && (
-          <div className={styles.stockPhotoSection}>
-            <h3 className={styles.sectionTitle}>Stock Photo</h3>
-            <div className={styles.stockPhotoCard}>
-              <div className={styles.stockPhotoPreview}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={getCarHeroImage(selectedCar)}
-                  alt={`${selectedCar.name} - Stock Photo`}
-                  className={styles.stockPhotoImage}
-                />
-              </div>
-              <div className={styles.stockPhotoInfo}>
-                <p className={styles.stockPhotoDescription}>
-                  {currentVehicle?.hideStockImage
-                    ? 'The stock photo is hidden from your garage gallery.'
-                    : sortedImages.length > 0
-                      ? 'The stock photo is shown in your garage gallery alongside your uploaded photos.'
-                      : 'The stock photo is shown as your primary garage image until you upload your own photos.'}
-                </p>
-                {sortedImages.length > 0 && (
-                  <button
-                    type="button"
-                    className={`${styles.stockPhotoToggle} ${currentVehicle?.hideStockImage ? styles.showBtn : styles.hideBtn}`}
-                    onClick={async () => {
-                      const newValue = !currentVehicle?.hideStockImage;
-                      try {
-                        const response = await fetch(
-                          `/api/users/${user?.id}/vehicles/${vehicleId}`,
-                          {
-                            method: 'PATCH',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ hide_stock_image: newValue }),
-                          }
-                        );
-
-                        if (!response.ok) {
-                          throw new Error('Failed to update stock photo visibility');
-                        }
-
-                        // Update local state via provider
-                        await updateVehicle(vehicleId, { hideStockImage: newValue });
-                      } catch (err) {
-                        console.error('[MyPhotos] Toggle stock photo error:', err);
-                      }
-                    }}
-                  >
-                    {currentVehicle?.hideStockImage ? (
-                      <>
-                        <Icons.eye size={16} />
-                        Show Stock Photo
-                      </>
-                    ) : (
-                      <>
-                        <Icons.eyeOff size={16} />
-                        Hide Stock Photo
-                      </>
-                    )}
-                  </button>
-                )}
-                {sortedImages.length === 0 && (
-                  <p className={styles.stockPhotoNote}>
-                    Upload your own photos to enable hiding the stock image.
-                  </p>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
         {/* Gallery Section */}
         <div className={styles.gallerySection}>
           <div className={styles.galleryHeader}>
             <h3 className={styles.sectionTitle}>Your Photos</h3>
-            {sortedImages.length > 0 && (
+            {galleryImages.length > 0 && (
               <button
                 type="button"
                 className={styles.slideshowBtn}
@@ -357,11 +336,13 @@ function MyPhotosContent() {
             )}
           </div>
 
-          {sortedImages.length > 0 ? (
+          {galleryImages.length > 0 ? (
             <SortablePhotoGallery
-              images={sortedImages}
+              images={galleryImages}
               onReorder={async (newOrder) => {
-                await reorderCarImages(newOrder);
+                // Filter out stock photo from reorder (it always stays at end)
+                const userPhotoIds = newOrder.filter((id) => id !== 'stock-photo');
+                await reorderCarImages(userPhotoIds);
               }}
               onSetPrimary={async (imageId) => {
                 await setCarHeroImage(imageId);
@@ -396,6 +377,7 @@ function MyPhotosContent() {
                     }
                   : undefined
               }
+              onHideStockPhoto={canUpload ? handleHideStockPhoto : undefined}
               readOnly={!canUpload}
             />
           ) : (

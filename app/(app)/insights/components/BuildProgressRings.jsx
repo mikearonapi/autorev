@@ -336,7 +336,6 @@ export default function BuildProgressRings({
 
   // Calculate performance metrics
   const hpGain = power.current;
-  const remainingPotential = power.max - power.current;
 
   // Handling baseline (stock level = 50%)
   const HANDLING_BASELINE = 50;
@@ -440,7 +439,7 @@ export default function BuildProgressRings({
           })}
         </div>
 
-        {/* Metrics Row - Stock + Gained = Current | Available */}
+        {/* Metrics Row - Stock + Gained = Current */}
         <div className={styles.metricsRow}>
           <div className={styles.metric}>
             <span className={styles.metricValue}>{stockHp}</span>
@@ -463,20 +462,6 @@ export default function BuildProgressRings({
             </span>
             <span className={styles.metricLabel}>Current</span>
           </div>
-          {remainingPotential > 0 && (
-            <>
-              <span className={styles.metricDivider}>|</span>
-              <div className={styles.metric}>
-                <span
-                  className={styles.metricValue}
-                  style={{ color: 'var(--color-text-tertiary)' }}
-                >
-                  +{remainingPotential}
-                </span>
-                <span className={styles.metricLabel}>Avail</span>
-              </div>
-            </>
-          )}
         </div>
       </div>
 
