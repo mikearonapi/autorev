@@ -740,7 +740,7 @@ describe('TEST 13: Edge Cases and Unusual Inputs', () => {
   it('13.5: Handles unicode content', async () => {
     const unicodeResponse = `## 排气系统推荐
 
-**1) Akrapovič Evolution** - €4,500
+**1) Akrapovič Evolution** - $4,500
 Best titanium exhaust for BMW M3 🏎️`;
 
     const result = await formatResponse({

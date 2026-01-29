@@ -1180,28 +1180,42 @@ export default function ALPageClient() {
               } else if (currentEventType === 'tool_progress') {
                 // Progress update for long-running tools (e.g., research_parts_live)
                 // Update the tool's subSteps to show what's being searched
+                // If a sub-step already exists (e.g., 'running' → 'completed'), update it
                 if (data.tool) {
                   setActiveTools((prev) =>
-                    prev.map((t) =>
-                      t.name === data.tool
-                        ? {
-                            ...t,
-                            subSteps: [
-                              ...(t.subSteps || []),
-                              {
-                                step: data.step,
-                                label: data.stepLabel || data.step,
-                                status: data.status,
-                                sites: data.sites || [],
-                                resultCount: data.resultCount,
-                              },
-                            ],
-                            // Update progress counts
-                            completedCount: data.completedCount,
-                            totalCount: data.totalCount,
-                          }
-                        : t
-                    )
+                    prev.map((t) => {
+                      if (t.name !== data.tool) return t;
+
+                      const existingSubSteps = t.subSteps || [];
+                      const existingIndex = existingSubSteps.findIndex((s) => s.step === data.step);
+
+                      const newSubStep = {
+                        step: data.step,
+                        label: data.stepLabel || data.step,
+                        status: data.status,
+                        sites: data.sites || [],
+                        resultCount: data.resultCount,
+                      };
+
+                      let updatedSubSteps;
+                      if (existingIndex >= 0) {
+                        // Update existing sub-step (e.g., 'running' → 'completed')
+                        updatedSubSteps = existingSubSteps.map((s, idx) =>
+                          idx === existingIndex ? newSubStep : s
+                        );
+                      } else {
+                        // Add new sub-step
+                        updatedSubSteps = [...existingSubSteps, newSubStep];
+                      }
+
+                      return {
+                        ...t,
+                        subSteps: updatedSubSteps,
+                        // Update progress counts
+                        completedCount: data.completedCount,
+                        totalCount: data.totalCount,
+                      };
+                    })
                   );
                 }
               } else if (currentEventType === 'tool_result') {
