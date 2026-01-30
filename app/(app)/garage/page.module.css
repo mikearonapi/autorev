@@ -14,8 +14,10 @@
   min-height: 100vh;
   min-height: 100dvh;
   padding: 0 16px;
+
   /* Bottom padding for tab bar - uses standardized token */
   padding-bottom: var(--page-bottom-padding);
+
   /* Transparent to show body gradient */
   background: transparent;
   color: var(--color-white);
@@ -32,13 +34,25 @@
   }
 }
 
-/* Desktop: No tab bar */
+/* Desktop: Centered container matching header exactly */
 @media (min-width: 1024px) {
   .page {
+    /* Explicitly maintain flex layout for desktop two-column grid */
+    display: flex;
+    flex-direction: column;
     padding-bottom: 0;
+
+    /* CRITICAL: Must be 100% width first, then constrained by max-width */
+    width: 100%;
+
+    /* Slightly narrower than header for visual breathing room */
+    max-width: 1220px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 40px;
+    padding-right: 40px;
   }
 }
-
 
 /* ===========================================
    PAGE HEADER - Title left, Add Vehicle right
@@ -53,10 +67,23 @@
   flex-shrink: 0;
 }
 
-/* Mobile: Tighter header */
+/* Tablet: Tighter header */
 @media (min-width: 768px) {
   .pageHeader {
     padding: 12px 0 4px;
+  }
+}
+
+/* Desktop: Left-aligned header */
+@media (min-width: 1024px) {
+  .pageHeader {
+    padding: 16px 0 8px;
+    gap: 24px;
+    justify-content: flex-start;
+  }
+
+  .headerRight {
+    display: none; /* Profile is in desktop header */
   }
 }
 
@@ -80,6 +107,14 @@
   flex-shrink: 0;
 }
 
+/* Desktop: Larger title */
+@media (min-width: 1024px) {
+  .pageTitle {
+    font-size: 2.5rem;
+    letter-spacing: 0.02em;
+  }
+}
+
 /* Subtitle row with count + view toggle */
 .subtitleRow {
   display: flex;
@@ -95,6 +130,18 @@
   color: var(--color-text-tertiary, #64748b);
   margin: 0;
   line-height: 1.4;
+}
+
+/* Desktop: Left-aligned subtitle */
+@media (min-width: 1024px) {
+  .subtitleRow {
+    padding-bottom: 16px;
+    justify-content: flex-start;
+  }
+
+  .pageSubtitle {
+    font-size: var(--text-body, 14px);
+  }
 }
 
 /* ===========================================
@@ -208,6 +255,13 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
+/* Desktop: Hide profile link since it's in the header */
+@media (min-width: 1024px) {
+  .profileLink {
+    display: none;
+  }
+}
+
 .profileAvatar {
   width: 100%;
   height: 100%;
@@ -315,7 +369,7 @@
   font-size: var(--text-body);
   font-weight: 600;
   color: var(--color-white);
-  margin: 0 0 2px 0;
+  margin: 0 0 2px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -324,7 +378,7 @@
 .vehicleListSubtitle {
   font-size: var(--text-xs);
   color: rgba(255, 255, 255, 0.5);
-  margin: 0 0 6px 0;
+  margin: 0 0 6px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -419,7 +473,7 @@
 .vehicleListItemOverlay {
   background: var(--card-surface-elevated, rgba(30, 40, 50, 0.98));
   border: 2px solid var(--brand-lime);
-  box-shadow: 
+  box-shadow:
     0 20px 40px rgba(0, 0, 0, 0.5),
     0 0 0 1px rgba(255, 255, 255, 0.1);
   transform: scale(1.02);
@@ -437,6 +491,49 @@
   }
 }
 
+/* ==========================================================================
+   Desktop: Enhanced list view layout
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .listViewContainer {
+    max-width: 900px;
+  }
+
+  .vehicleListView {
+    /* Grid layout for desktop - 2 columns */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .vehicleListItem {
+    padding: 16px;
+    border-radius: 14px;
+  }
+
+  .vehicleListThumb {
+    width: 100px;
+    height: 75px;
+    border-radius: 10px;
+  }
+
+  .vehicleListName {
+    font-size: var(--text-lg, 1.125rem);
+  }
+
+  .vehicleListStats {
+    gap: 16px;
+  }
+}
+
+/* Large desktop: 3 column grid */
+@media (min-width: 1280px) {
+  .vehicleListView {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
 /* listViewAddBtn removed - using addVehicleBtn in controls bar */
 
 /* Key Spec Value Modified Indicator - keep white, don't change color */
@@ -451,8 +548,14 @@
 }
 
 @keyframes specPulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 0.8; }
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 0.8;
+  }
 }
 
 /* Ensure all content is above any backgrounds */
@@ -460,7 +563,6 @@
   position: relative;
   z-index: 2;
 }
-
 
 /* ===========================================
    HEADER BAR - Mobile-First Clean Design
@@ -472,11 +574,13 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
+
   /* GRAVL-inspired: solid dark header, no blur needed without bg image */
   background: rgba(13, 27, 42, 0.95);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
   flex-shrink: 0;
   gap: 12px;
+
   /* Safe area for notched devices */
   padding-top: max(12px, env(safe-area-inset-top));
 }
@@ -611,7 +715,7 @@
     padding: 10px 16px;
     font-size: var(--text-body);
   }
-  
+
   .tabPill svg {
     display: block;
     width: 16px;
@@ -627,10 +731,31 @@
     font-size: var(--text-body);
     min-height: 44px;
   }
-  
+
   .tabPill svg {
     width: 18px;
     height: 18px;
+  }
+}
+
+/* Desktop: Larger tab pills */
+@media (min-width: 1024px) {
+  .tabPills {
+    gap: 4px;
+    padding: 5px;
+    border-radius: 16px;
+  }
+
+  .tabPill {
+    padding: 14px 24px;
+    font-size: 0.9375rem;
+    border-radius: 12px;
+    min-height: 48px;
+  }
+
+  .tabPill svg {
+    width: 20px;
+    height: 20px;
   }
 }
 
@@ -696,7 +821,7 @@
     width: 44px;
     height: 44px;
   }
-  
+
   .addBtn svg {
     width: 22px;
     height: 22px;
@@ -740,7 +865,7 @@
     padding: 8px 14px;
     font-size: var(--text-xs);
   }
-  
+
   .addButton span {
     display: inline;
   }
@@ -755,11 +880,339 @@
   position: relative;
   display: flex;
   flex-direction: column;
+
   /* Ensure content fills available space */
   min-height: 0;
   overflow-x: hidden;
+
   /* Add gap between hero and thumbnails */
   gap: 0;
+}
+
+/* Desktop: Better spacing for main content */
+@media (min-width: 1024px) {
+  .mainContent {
+    gap: 16px;
+    padding-top: 8px;
+  }
+}
+
+/* ===========================================
+   DESKTOP TWO-COLUMN LAYOUT
+   Left: Vehicle info, stats, actions | Right: Car image
+   =========================================== */
+
+.desktopGarageLayout {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .desktopGarageLayout {
+    display: grid !important;
+
+    /* Two columns - compact info panel left, image fills remaining space */
+    grid-template-columns: 300px 1fr;
+    gap: 32px;
+
+    /* Stretch tile to match image height */
+    align-items: stretch;
+    width: 100%;
+  }
+}
+
+@media (min-width: 1280px) {
+  .desktopGarageLayout {
+    grid-template-columns: 320px 1fr;
+    gap: 40px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .desktopGarageLayout {
+    grid-template-columns: 340px 1fr;
+    gap: 48px;
+  }
+}
+
+/* Right column: Image area */
+.desktopImageColumn {
+  display: block;
+  width: 100%;
+}
+
+/* Override heroImageWrapper within desktop layout for proper sizing */
+.desktopImageColumn .heroImageWrapper {
+  position: relative;
+  width: 100%;
+
+  /* 3:2 aspect ratio */
+  aspect-ratio: 3 / 2;
+  border-radius: 16px;
+  overflow: hidden;
+
+  /* Subtle background for placeholder state */
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* Ensure heroImageContainer fills the wrapper in desktop layout */
+.desktopImageColumn .heroImageContainer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+@media (min-width: 1280px) {
+  .desktopImageColumn .heroImageWrapper {
+    min-height: 320px;
+    border-radius: 18px;
+  }
+}
+
+/* Left column: Info panel - compact on desktop */
+.desktopInfoPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 16px;
+
+  /* Constrain to grid cell */
+  width: 100%;
+  max-width: 100%;
+}
+
+@media (min-width: 1280px) {
+  .desktopInfoPanel {
+    padding: 24px;
+    gap: 18px;
+    border-radius: 18px;
+  }
+}
+
+/* Vehicle header in info panel */
+.desktopVehicleHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.desktopBrandYear {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.desktopBrandName {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--brand-teal);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.desktopYear {
+  font-size: 0.875rem;
+  color: var(--color-text-tertiary, #64748b);
+}
+
+.desktopVehicleName {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--color-white);
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+}
+
+@media (min-width: 1280px) {
+  .desktopVehicleName {
+    font-size: 2rem;
+  }
+}
+
+/* Desktop stats grid - compact */
+.desktopStatsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.desktopStatItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.desktopStatValue {
+  font-family: var(--font-display, 'Oswald', sans-serif);
+  font-size: 1.5rem;
+  font-weight: 700;
+
+  /* White for all stat numbers to match mobile */
+  color: var(--color-white);
+  line-height: 1;
+}
+
+.desktopStatValueModified {
+  /* Keep white even for modified - gains shown elsewhere */
+  color: var(--color-white);
+}
+
+.desktopStatLabel {
+  font-size: 0.7rem;
+  font-weight: 600;
+
+  /* Teal labels to match mobile design */
+  color: var(--brand-teal);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* Desktop navigation buttons - compact */
+.desktopNavButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.desktopNavBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.desktopNavBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--color-white);
+}
+
+.desktopNavBtn svg {
+  width: 16px;
+  height: 16px;
+  opacity: 0.7;
+}
+
+.desktopNavBtnActive {
+  background: rgba(var(--brand-teal-rgb), 0.15);
+  border-color: var(--brand-teal);
+  color: var(--brand-teal);
+}
+
+.desktopNavBtnActive svg {
+  opacity: 1;
+  color: var(--brand-teal);
+}
+
+.desktopNavBtnActive:hover {
+  background: rgba(var(--brand-teal-rgb), 0.2);
+}
+
+/* Vehicle switcher for desktop - compact */
+.desktopVehicleSwitcher {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.desktopVehicleNav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.desktopNavArrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  color: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.desktopNavArrow:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--color-white);
+}
+
+.desktopNavArrow:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.desktopVehicleCounter {
+  font-size: 0.8rem;
+  color: var(--color-text-tertiary, #64748b);
+}
+
+.desktopAddVehicleBtn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 14px;
+  background: var(--brand-lime);
+  color: var(--brand-bg-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.desktopAddVehicleBtn:hover {
+  background: var(--brand-lime-dark);
+  transform: translateY(-1px);
+}
+
+/* ===========================================
+   MOBILE/DESKTOP LAYOUT VISIBILITY
+   =========================================== */
+
+/* Mobile layout - full width, shown on mobile/tablet */
+.mobileGarageLayout {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Hide mobile layout on desktop */
+@media (min-width: 1024px) {
+  .mobileGarageLayout {
+    display: none !important;
+  }
 }
 
 /* ===========================================
@@ -893,13 +1346,13 @@
     flex-direction: column;
     width: 100%;
   }
-  
+
   .buildHeroAction,
   .buildHeroActionSecondary {
     width: 100%;
     justify-content: center;
   }
-  
+
   .buildHeroName {
     font-size: var(--text-stat-lg);
   }
@@ -938,6 +1391,7 @@
   flex-direction: column;
   align-items: stretch;
   justify-content: flex-start;
+
   /* Ensure it fills the available space */
   min-height: 0;
   overflow-x: hidden;
@@ -947,6 +1401,7 @@
   /* Use relative positioning with aspect ratio for proper layout flow */
   position: relative;
   width: 100%;
+
   /* 4:3 aspect ratio - ensures consistent sizing across devices */
   aspect-ratio: 4 / 3;
   flex-shrink: 0;
@@ -962,6 +1417,7 @@
 }
 
 /* Mobile Quick Action Bar - DEPRECATED: Now uses mobileActionBar for consistency */
+
 /* Keeping selector for backwards compatibility but it's no longer used */
 .mobileQuickActionBar {
   display: none;
@@ -1047,7 +1503,7 @@
     position: absolute;
     inset: 0;
   }
-  
+
   /* CarImage container fills parent */
   .heroImageContainer > div {
     width: 100% !important;
@@ -1056,7 +1512,7 @@
     border-radius: 0 !important;
     background: rgba(15, 25, 35, 1) !important; /* Ensure dark background */
   }
-  
+
   /* Ensure images fill the container completely */
   .heroImageContainer img,
   .heroImage {
@@ -1075,7 +1531,55 @@
   }
 }
 
-/* Desktop: Image fills container, no max-height needed with object-fit: cover */
+/* ==========================================================================
+   iPad/Desktop: Constrain hero image size for better desktop experience
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .heroDisplay {
+    /* On desktop, don't let hero dominate the page */
+    flex: none;
+    max-height: 55vh;
+  }
+
+  .heroImageWrapper {
+    /* Use a wider aspect ratio more suitable for desktop */
+    aspect-ratio: 16 / 9;
+
+    /* Constrain maximum height */
+    max-height: 50vh;
+
+    /* Add subtle border radius */
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .heroImageContainer {
+    border-radius: 16px;
+    overflow: hidden;
+  }
+
+  .heroImage {
+    border-radius: 16px !important;
+  }
+}
+
+/* Large desktop: Slightly larger but still constrained */
+@media (min-width: 1280px) {
+  .heroDisplay {
+    max-height: 60vh;
+  }
+
+  .heroImageWrapper {
+    max-height: 55vh;
+    border-radius: 20px;
+  }
+
+  .heroImageContainer,
+  .heroImage {
+    border-radius: 20px !important;
+  }
+}
 
 .heroPlaceholder {
   position: absolute;
@@ -1086,9 +1590,7 @@
   justify-content: center;
   gap: 16px;
   color: rgba(255, 255, 255, 0.25);
-  background: linear-gradient(180deg, 
-    rgba(20, 35, 50, 0.8) 0%,
-    rgba(13, 27, 42, 0.95) 100%);
+  background: linear-gradient(180deg, rgba(20, 35, 50, 0.8) 0%, rgba(13, 27, 42, 0.95) 100%);
 }
 
 .heroPlaceholderText {
@@ -1107,7 +1609,7 @@
     width: 60px;
     height: 60px;
   }
-  
+
   .heroPlaceholderText {
     font-size: var(--text-body);
   }
@@ -1227,6 +1729,7 @@
 .specPanel {
   position: absolute;
   left: 24px;
+
   /* Account for absolutely positioned nav (~68px + safe area) */
   top: calc(80px + env(safe-area-inset-top, 0));
   width: 320px;
@@ -1253,7 +1756,7 @@
     overflow-x: hidden;
     gap: 0;
   }
-  
+
   /* Image wrapper - Fixed aspect ratio that scales with phone width */
   .heroImageWrapper {
     position: relative;
@@ -1265,95 +1768,12 @@
     border-radius: 12px;
     margin: 0;
   }
-  
-  /* Collapsed state: Hidden on mobile - using vehicleInfoHeader instead */
-  .specPanel_collapsed {
-    display: none !important;
-  }
-  
-  /* Hide toggle button in collapsed state */
-  .specPanel_collapsed .collapseToggle {
-    display: none;
-  }
-  
-  /* Hide drag handle in collapsed state */
-  .specPanel_collapsed .specPanelHeader::before {
-    display: none;
-  }
-  
-  /* Collapsed header: Just the vehicle info, NO padding */
-  .specPanel_collapsed .specPanelHeader {
-    padding: 0 !important;
-    margin: 0;
-    flex-direction: row;
-    align-items: flex-start;
-  }
-  
-  /* Remove any margins from the header info in collapsed state */
-  .specPanel_collapsed .specPanelHeaderInfo {
-    margin: 0;
-    padding: 0;
-  }
-  
-  /* Tighter spacing on brand/name in collapsed */
-  .specPanel_collapsed .brandLogo {
-    margin-bottom: 2px;
-  }
-  
-  .specPanel_collapsed .heroVehicleName {
-    margin-bottom: 2px;
-  }
-  
-  /* ===========================================
-     GRAVL-STYLE SLIDE-UP PANEL
-     Premium bottom sheet with refined depth
-     =========================================== */
-  
-  .specPanel_expanded,
-  .specPanel_details {
-    position: fixed;
-    left: 0;
-    right: 0;
-    /* Constrain top to align with hero image area */
-    top: calc(110px + env(safe-area-inset-top, 0));
-    /* Position above bottom nav bar */
-    bottom: calc(70px + env(safe-area-inset-bottom, 0));
-    width: auto;
-    max-width: none;
-    max-height: none; /* Let top/bottom constraints control height */
-    padding: 0;
-    /* Premium gradient background */
-    background: linear-gradient(
-      to bottom,
-      rgba(20, 30, 45, 0.98) 0%,
-      rgba(13, 27, 42, 0.99) 100%
-    );
-    backdrop-filter: blur(32px);
-    -webkit-backdrop-filter: blur(32px);
-    border: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    /* Premium rounded corners */
-    border-radius: 28px 28px 0 0;
-    z-index: 100;
-    overflow-y: auto;
-    overflow-x: hidden;
-    -webkit-overflow-scrolling: touch;
-    /* Subtle shadow for depth */
-    box-shadow: 
-      0 -4px 24px rgba(0, 0, 0, 0.4),
-      0 -1px 0 rgba(255, 255, 255, 0.05);
-  }
-  
-  .specPanel_expanded {
-    /* Expanded view doesn't need as much space - partial slide up */
-    top: auto;
-    max-height: 55vh;
-  }
 }
 
 @media (min-width: 768px) {
   .specPanel {
     left: 32px;
+
     /* Account for nav on tablet */
     top: calc(84px + env(safe-area-inset-top, 0));
     width: 340px;
@@ -1363,70 +1783,11 @@
 @media (min-width: 1200px) {
   .specPanel {
     left: 40px;
+
     /* Account for nav on desktop */
     top: calc(88px + env(safe-area-inset-top, 0));
     width: 360px;
     padding: 20px;
-  }
-}
-
-/* Collapsed state - hide the panel entirely */
-.specPanel_collapsed {
-  display: none !important;
-}
-
-/* Mobile: Ensure expanded panel has enough space for action buttons */
-@media (min-width: 768px) {
-  .specPanel_expanded {
-    /* Full width on mobile */
-    left: 0;
-    right: 0;
-    width: auto;
-    max-width: none;
-    /* Expanded panel slides up from above bottom nav */
-    bottom: calc(70px + env(safe-area-inset-bottom, 0));
-    /* Allow partial slide up - doesn't need full viewport */
-    max-height: 55vh;
-    padding-bottom: 16px;
-  }
-}
-
-/* Details state - wider panel with scrollable content */
-.specPanel_details {
-  width: calc(100% - 48px);
-  max-width: 1100px;
-  max-height: calc(100% - 60px);
-  /* Content must scroll within panel, not overflow outside */
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-@media (min-width: 1400px) {
-  .specPanel_details {
-    max-width: 1200px;
-    max-height: calc(100% - 50px);
-  }
-}
-
-@media (min-width: 1101px) {
-  .specPanel_details {
-    width: calc(100% - 32px);
-    max-width: none;
-  }
-}
-
-/* Mobile: Full width panels - must come after max-width: 1100px to override */
-@media (min-width: 768px) {
-  .specPanel_details {
-    left: 0 !important;
-    right: 0 !important;
-    width: auto !important;
-    max-width: none !important;
-    /* Ensure panel fits within viewport - aligns with hero image top */
-    top: calc(110px + env(safe-area-inset-top, 0)) !important;
-    /* Above bottom nav only (tab bar removed) */
-    bottom: calc(70px + env(safe-area-inset-bottom, 0)) !important;
-    max-height: none !important;
   }
 }
 
@@ -1478,6 +1839,7 @@
   margin: 0 0 4px;
   line-height: 1.15;
   letter-spacing: -0.02em;
+
   /* Subtle text shadow for depth */
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
@@ -1542,6 +1904,7 @@
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   margin-bottom: 16px;
+
   /* Glass morphism container */
   padding: 16px;
   background: rgba(255, 255, 255, 0.04);
@@ -1589,7 +1952,7 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     background: transparent;
   }
-  
+
   .specItem:last-child {
     border-bottom: none;
   }
@@ -1613,7 +1976,7 @@
   flex-direction: column;
   gap: 2px;
   padding: 8px 10px;
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 10px;
   min-width: 140px;
@@ -1666,7 +2029,10 @@
   color: var(--brand-text-primary);
   cursor: pointer;
   font-weight: 700;
-  transition: transform 120ms ease, background 120ms ease, border-color 120ms ease;
+  transition:
+    transform 120ms ease,
+    background 120ms ease,
+    border-color 120ms ease;
 }
 
 .variantMatchLink:hover {
@@ -1686,7 +2052,11 @@
   gap: 10px;
   padding: 14px 16px;
   margin: 8px 0 14px;
-  background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(var(--brand-purple-rgb), 0.15) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(99, 102, 241, 0.15) 0%,
+    rgba(var(--brand-purple-rgb), 0.15) 100%
+  );
   border: 1px solid rgba(var(--brand-purple-rgb), 0.3);
   border-radius: 12px;
   align-items: center;
@@ -1721,7 +2091,9 @@
   font-size: var(--text-sm);
   font-weight: 700;
   cursor: pointer;
-  transition: transform 150ms ease, box-shadow 150ms ease;
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease;
 }
 
 .enrichmentButton:hover {
@@ -1753,8 +2125,13 @@
 
 /* Spinner animation for loader icon */
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .enrichmentPrompt svg.animate-spin {
@@ -1855,7 +2232,7 @@
     padding: 24px 16px 14px;
     position: relative;
   }
-  
+
   /* Premium Drag handle indicator - GRAVL-style pill */
   .specPanelHeader::before {
     content: '';
@@ -1910,11 +2287,6 @@
   letter-spacing: -0.02em;
   text-align: left;
   line-height: 1.1;
-}
-
-/* In collapsed state, header info aligns left */
-.specPanel_collapsed .specPanelHeaderInfo {
-  text-align: left;
 }
 
 /* Header Actions - buttons grouped near collapse */
@@ -2035,8 +2407,9 @@
   transition: all 0.2s ease;
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+
   /* Premium shadow */
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
@@ -2072,21 +2445,7 @@
   padding-top: 14px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
   max-height: calc(100vh - 300px);
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-/* In expanded state (not details), keep scroll behavior */
-.specPanel_expanded .specPanelBody {
-  /* Keep overflow-y: auto to allow scrolling */
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-
-/* In details state, let parent panel handle scrolling */
-.specPanel_details .specPanelBody {
-  max-height: none;
-  overflow: visible;
+  overflow: hidden auto;
 }
 
 /* Custom scrollbar for panel body */
@@ -2107,24 +2466,13 @@
   background: rgba(255, 255, 255, 0.3);
 }
 
-/* Collapsed State - hides the body */
-.specPanel_collapsed .specPanelBody {
-  display: none;
-}
-
 /* Mobile: Premium panel body layout */
 @media (min-width: 768px) {
   .specPanelBody {
     margin-top: 0;
     padding-top: 12px;
     border-top: none;
-  }
-  
-  .specPanel_details .specPanelBody,
-  .specPanel_expanded .specPanelBody {
-    /* Let panel body content flow naturally, parent handles scroll */
-    max-height: none;
-    overflow: visible;
+
     /* Extra padding for vehicle tab bar and scroll comfort */
     padding-bottom: var(--page-bottom-padding);
   }
@@ -2192,11 +2540,11 @@
   .headerToggleBtn span {
     display: none;
   }
-  
+
   .headerToggleBtn {
     padding: 0.375rem;
   }
-  
+
   .headerToggleMore {
     display: none; /* Hide secondary tabs on very small screens */
   }
@@ -2294,6 +2642,7 @@
 }
 
 /* Accent bar above value - REMOVED per design update */
+
 /* .keySpecItem::before removed */
 
 /* Divider between items */
@@ -2305,10 +2654,12 @@
   transform: translateY(-50%);
   height: 36px;
   width: 1px;
-  background: linear-gradient(180deg,
+  background: linear-gradient(
+    180deg,
     transparent 0%,
     rgba(255, 255, 255, 0.12) 50%,
-    transparent 100%);
+    transparent 100%
+  );
 }
 
 .keySpecValue {
@@ -2357,6 +2708,7 @@
   align-items: center;
   justify-content: center;
   gap: 3px;
+
   /* Equal width buttons for 6 items */
   flex: 1;
   min-width: 0;
@@ -2411,32 +2763,54 @@
 }
 
 /* Each button takes turns - only ONE glows at a time (6 buttons, 9s total cycle) */
-.heroBottomBtn:nth-child(1)::before { animation-delay: 0s; }
-.heroBottomBtn:nth-child(2)::before { animation-delay: 1.5s; }
-.heroBottomBtn:nth-child(3)::before { animation-delay: 3s; }
-.heroBottomBtn:nth-child(4)::before { animation-delay: 4.5s; }
-.heroBottomBtn:nth-child(5)::before { animation-delay: 6s; }
-.heroBottomBtn:nth-child(6)::before { animation-delay: 7.5s; }
+.heroBottomBtn:nth-child(1)::before {
+  animation-delay: 0s;
+}
+
+.heroBottomBtn:nth-child(2)::before {
+  animation-delay: 1.5s;
+}
+
+.heroBottomBtn:nth-child(3)::before {
+  animation-delay: 3s;
+}
+
+.heroBottomBtn:nth-child(4)::before {
+  animation-delay: 4.5s;
+}
+
+.heroBottomBtn:nth-child(5)::before {
+  animation-delay: 6s;
+}
+
+.heroBottomBtn:nth-child(6)::before {
+  animation-delay: 7.5s;
+}
 
 @keyframes glowJump {
   /* Glow appears and rotates only during this button's turn (0-20% of cycle) */
-  0% { 
+  0% {
     opacity: 0;
     transform: translate(-50%, -50%) rotate(0deg);
   }
-  2% { 
+
+  2% {
     opacity: 0.7;
   }
+
   15% {
     opacity: 0.7;
     transform: translate(-50%, -50%) rotate(270deg);
   }
+
   18% {
     opacity: 0;
     transform: translate(-50%, -50%) rotate(360deg);
   }
+
   /* Stay invisible while other buttons glow (20-100% of cycle) */
-  20%, 100% { 
+  20%,
+  100% {
     opacity: 0;
     transform: translate(-50%, -50%) rotate(360deg);
   }
@@ -2494,33 +2868,28 @@
     width: 24px;
     height: 24px;
   }
-  
+
   .heroNavArrowLeft {
     left: 8px;
   }
-  
+
   .heroNavArrowRight {
     right: 8px;
   }
-  
+
   .heroBottomBar {
     gap: 8px;
     padding: 8px 12px 20px;
   }
-  
+
   .heroBottomBtn {
     max-width: 72px;
     padding: 10px 6px;
   }
-  
+
   .heroBottomBtn span {
     font-size: 10px;
   }
-}
-
-/* Hide old vehicleQuickActions - replaced by heroBottomBar */
-.vehicleQuickActions {
-  display: none;
 }
 
 .vehicleQuickBtn {
@@ -2567,11 +2936,11 @@
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
-  
+
   .mobileActionBar::-webkit-scrollbar {
     display: none;
   }
-  
+
   /* Compact button size */
   .mobileActionBtn {
     display: flex;
@@ -2596,38 +2965,38 @@
     touch-action: manipulation;
     flex-shrink: 0;
   }
-  
+
   .mobileActionBtn svg {
     width: 15px;
     height: 15px;
   }
-  
+
   .mobileActionBtn:hover,
   .mobileActionBtn:active {
     background: rgba(0, 0, 0, 0.75);
     color: var(--brand-text-primary);
   }
-  
+
   /* Active tab styling - TEAL for active selections per brand guidelines */
   .mobileActionBtnPrimary {
     border-color: rgba(var(--brand-teal-rgb), 0.4);
     background: rgba(var(--brand-teal-rgb), 0.15);
     color: var(--brand-teal);
   }
-  
+
   .mobileActionBtnActive {
     background: var(--brand-teal);
     border-color: var(--brand-teal);
     color: var(--brand-text-primary);
     font-weight: 700;
   }
-  
+
   .mobileActionBtnActive:hover,
   .mobileActionBtnActive:active {
     background: var(--brand-teal-light);
     color: var(--brand-text-primary);
   }
-  
+
   /* BUILD PIVOT: Secondary action container (Care features) */
   .mobileActionSecondary {
     display: flex;
@@ -2636,33 +3005,116 @@
     padding-left: 8px;
     border-left: 1px solid rgba(255, 255, 255, 0.15);
   }
-  
+
   /* Smaller buttons for secondary actions */
   .mobileActionBtnSmall {
     min-width: 36px;
     padding: 6px;
     opacity: 0.7;
   }
-  
+
   .mobileActionBtnSmall:hover,
   .mobileActionBtnSmall:active {
     opacity: 1;
   }
-  
+
   .mobileActionBtnSmall.mobileActionBtnActive {
     opacity: 1;
     background: rgba(255, 255, 255, 0.15);
     border-color: rgba(255, 255, 255, 0.3);
     color: rgba(255, 255, 255, 0.9);
   }
-  
+
   .mobileActionBtnSmall svg {
     width: 14px;
     height: 14px;
   }
-  
+
   .mobileActionBtn span {
     white-space: nowrap;
+  }
+}
+
+/* ==========================================================================
+   Desktop: Transform mobile action bar into refined horizontal navigation
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .mobileActionBar {
+    /* Position below hero image, not overlaid */
+    position: relative;
+    bottom: auto;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 0;
+    margin: 8px 0 0;
+    background: transparent;
+  }
+
+  .mobileActionBtn {
+    /* Transform from stacked icons to inline text tabs */
+    flex-direction: row;
+    gap: 8px;
+    min-width: auto;
+    padding: 10px 20px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .mobileActionBtn svg {
+    width: 16px;
+    height: 16px;
+    opacity: 0.7;
+  }
+
+  .mobileActionBtn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.15);
+  }
+
+  .mobileActionBtnActive {
+    background: rgba(var(--brand-teal-rgb), 0.15);
+    border-color: var(--brand-teal);
+    color: var(--brand-teal);
+  }
+
+  .mobileActionBtnActive svg {
+    opacity: 1;
+    color: var(--brand-teal);
+  }
+
+  .mobileActionBtnActive:hover {
+    background: rgba(var(--brand-teal-rgb), 0.2);
+  }
+
+  /* Hide secondary actions divider on desktop */
+  .mobileActionSecondary {
+    margin-left: 12px;
+    padding-left: 12px;
+  }
+}
+
+/* Large desktop: Even more refined tabs */
+@media (min-width: 1280px) {
+  .mobileActionBar {
+    gap: 12px;
+    padding: 16px 0;
+  }
+
+  .mobileActionBtn {
+    padding: 12px 24px;
+    font-size: 0.875rem;
+    border-radius: 10px;
+  }
+
+  .mobileActionBtn svg {
+    width: 18px;
+    height: 18px;
   }
 }
 
@@ -2869,8 +3321,13 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .safetySummary {
@@ -3341,25 +3798,25 @@
     margin-bottom: 10px;
     padding-bottom: 8px;
   }
-  
+
   .detailBlockItem {
     font-size: var(--text-sm);
     padding: 8px 0;
   }
-  
+
   .detailBlockItem span:last-child {
     font-size: var(--text-sm);
   }
-  
+
   /* Larger touch targets for interactive elements */
   .prosConsBlock {
     padding: 14px;
   }
-  
+
   .prosConsBlockTitle {
     font-size: var(--text-xs);
   }
-  
+
   .prosConsList li {
     font-size: var(--text-xs);
     padding: 6px 0;
@@ -3422,35 +3879,32 @@
   }
 }
 
-
-
 /* ===========================================
    DETAIL BLOCKS - GRAVL-Inspired Premium Cards
    Clean cards with subtle depth and gold accent
    =========================================== */
 
 .detailBlock {
-  background: linear-gradient(
-    180deg,
-    rgba(30, 40, 55, 0.7) 0%,
-    rgba(20, 30, 45, 0.7) 100%
-  );
+  background: linear-gradient(180deg, rgba(30, 40, 55, 0.7) 0%, rgba(20, 30, 45, 0.7) 100%);
   border-radius: 16px;
   padding: 18px 20px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
   overflow: hidden;
+
   /* Premium shadow for card depth */
-  box-shadow: 
+  box-shadow:
     0 2px 8px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.03);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 /* Subtle hover effect */
 .detailBlock:hover {
   border-color: rgba(255, 255, 255, 0.15);
-  box-shadow: 
+  box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.25),
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
@@ -3475,20 +3929,16 @@
 /* Mobile: Premium full-width detail cards - COMPACT and CONSISTENT */
 @media (min-width: 768px) {
   .detailBlock {
-    background: linear-gradient(
-      180deg,
-      rgba(30, 40, 55, 0.85) 0%,
-      rgba(20, 30, 45, 0.85) 100%
-    );
+    background: linear-gradient(180deg, rgba(30, 40, 55, 0.85) 0%, rgba(20, 30, 45, 0.85) 100%);
     border-radius: 14px;
     padding: 14px 16px;
     margin: 0; /* Margin handled by parent container gap */
     border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 
+    box-shadow:
       0 2px 12px rgba(0, 0, 0, 0.2),
       inset 0 1px 0 rgba(255, 255, 255, 0.04);
   }
-  
+
   /* Subtle accent line on mobile */
   .detailBlock::before {
     height: 2px;
@@ -3513,7 +3963,11 @@
 
 /* Highlight block uses teal accent */
 .detailBlockHighlight {
-  background: linear-gradient(135deg, rgba(var(--brand-teal-rgb), 0.08), rgba(var(--brand-teal-rgb), 0.02));
+  background: linear-gradient(
+    135deg,
+    rgba(var(--brand-teal-rgb), 0.08),
+    rgba(var(--brand-teal-rgb), 0.02)
+  );
   border-radius: 12px;
   padding: 14px 16px;
   border: 1px solid rgba(var(--brand-teal-rgb), 0.2);
@@ -3590,12 +4044,12 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.04);
     font-size: var(--text-sm);
   }
-  
+
   .detailBlockItem:last-child {
     border-bottom: none;
     padding-bottom: 0;
   }
-  
+
   .detailBlockItem:first-child {
     padding-top: 0;
   }
@@ -3667,7 +4121,7 @@
    VISUAL RATING BARS (GRAVL-style)
    =========================================== */
 
-.ratingItem {
+.barRatingItem {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -3675,16 +4129,16 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }
 
-.ratingItem:last-child {
+.barRatingItem:last-child {
   border-bottom: none;
   padding-bottom: 0;
 }
 
-.ratingItem:first-child {
+.barRatingItem:first-child {
   padding-top: 0;
 }
 
-.ratingLabel {
+.barRatingLabel {
   flex: 0 0 auto;
   min-width: 80px;
   color: rgba(255, 255, 255, 0.6);
@@ -3759,7 +4213,11 @@
 
 /* Performance score card uses teal accent (positive metric) */
 .performanceScoreCard {
-  background: linear-gradient(135deg, rgba(var(--brand-teal-rgb), 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--brand-teal-rgb), 0.06) 0%,
+    rgba(255, 255, 255, 0.02) 100%
+  );
   border: 1px solid rgba(var(--brand-teal-rgb), 0.15);
   border-radius: 14px;
   padding: 16px;
@@ -4019,8 +4477,8 @@
   font-style: italic;
 }
 
-/* Pros/Cons Lists */
-.proConList {
+/* Compact Pros/Cons Lists - for smaller card views */
+.compactProConList {
   list-style: none;
   padding: 0;
   margin: 0;
@@ -4029,13 +4487,13 @@
   gap: 3px;
 }
 
-.proItem {
+.compactProItem {
   font-size: var(--text-2xs);
   color: var(--brand-teal, var(--brand-teal));
   line-height: 1.3;
 }
 
-.conItem {
+.compactConItem {
   font-size: var(--text-2xs);
   color: var(--brand-error-light);
   line-height: 1.3;
@@ -4065,7 +4523,6 @@
   left: 0;
   color: rgba(255, 255, 255, 0.4);
 }
-
 
 /* Expanded Action Buttons (in Full Details view) */
 .expandedActionPrimary {
@@ -4141,6 +4598,7 @@
   margin-top: 16px;
   padding-top: 14px;
   border-top: 1px solid rgba(255, 255, 255, 0.08);
+
   /* Prevent overlap with quickActionBar on right side */
   padding-right: 10px;
 }
@@ -4157,19 +4615,19 @@
 }
 
 /* Override tooltip positioning within expanded row to show below buttons */
-.expandedActionsRow [class*="tooltip"] {
+.expandedActionsRow [class*='tooltip'] {
   bottom: auto !important;
   top: calc(100% + 10px) !important;
   transform: translateX(-50%) !important;
 }
 
-.expandedActionsRow [class*="tooltip"]::after {
+.expandedActionsRow [class*='tooltip']::after {
   top: auto !important;
   bottom: 100% !important;
-  border-color: transparent transparent rgba(0, 0, 0, 0.9) transparent !important;
+  border-color: transparent transparent rgba(0, 0, 0, 0.9) !important;
 }
 
-.expandedActionsRow [class*="tooltipWrapper"]:hover [class*="tooltip"] {
+.expandedActionsRow [class*='tooltipWrapper']:hover [class*='tooltip'] {
   transform: translateX(-50%) translateY(2px) !important;
 }
 
@@ -4225,7 +4683,7 @@
   .seeDetailsBtn span {
     display: none;
   }
-  
+
   .seeDetailsBtn {
     padding: 10px 12px;
   }
@@ -4235,6 +4693,7 @@
     gap: 10px;
     margin-top: 12px;
     padding-top: 12px;
+
     /* quickActionBar is now at bottom, full width available */
     width: 100%;
     max-width: 100%;
@@ -4247,11 +4706,12 @@
     gap: 8px;
     margin-top: 10px;
     padding-top: 10px;
+
     /* quickActionBar is now at bottom, full width available */
     width: 100%;
     max-width: 100%;
   }
-  
+
   .seeDetailsBtn {
     padding: 8px 10px;
     font-size: var(--text-xs);
@@ -4477,7 +4937,7 @@
     min-width: 80px;
     gap: 6px;
   }
-  
+
   .quickActionItem span {
     font-size: var(--text-xs);
   }
@@ -4550,6 +5010,7 @@
   justify-content: center;
   gap: 8px;
   padding: 12px 16px;
+
   /* Gravl-inspired: Subtle transparent background */
   background: transparent;
   flex-shrink: 0;
@@ -4577,6 +5038,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+
   /* Gravl-inspired: Subtle glass morphism */
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -4640,9 +5102,11 @@
   width: 80px;
   height: 56px;
   flex-shrink: 0;
+
   /* Premium glass morphism */
   background: rgba(255, 255, 255, 0.06);
   border: 2px solid rgba(255, 255, 255, 0.12);
+
   /* More rounded like Gravl */
   border-radius: 14px;
   overflow: hidden;
@@ -4689,7 +5153,7 @@
 /* Selected thumbnail - lime accent border per brand guidelines */
 .thumbnailSelected {
   border-color: var(--brand-lime);
-  box-shadow: 
+  box-shadow:
     0 0 0 2px rgba(var(--brand-lime-rgb), 0.4),
     0 4px 16px rgba(var(--brand-lime-rgb), 0.25);
 }
@@ -4750,12 +5214,12 @@
     height: 24px;
     font-size: var(--text-xs);
   }
-  
+
   .thumbnailModIcon {
     padding: 3px 8px;
     font-size: var(--text-2xs);
   }
-  
+
   .thumbnailModIcon svg {
     width: 12px;
     height: 12px;
@@ -4795,17 +5259,20 @@
 }
 
 /* Delete Button - On each thumbnail (top-right corner) */
+
 /* CF-001: Touch target compliance - 44px minimum touch area */
 .thumbnailDeleteBtn {
   position: absolute;
   top: -12px;
   right: -12px;
+
   /* 44px touch target with visual circle centered inside */
   width: 44px;
   height: 44px;
   display: flex;
   align-items: center;
   justify-content: center;
+
   /* Transparent background for touch area */
   background: transparent;
   border: none;
@@ -4862,7 +5329,7 @@
   .thumbnailDeleteBtn {
     opacity: 1;
   }
-  
+
   .thumbnailDeleteBtn:active::before {
     transform: scale(0.92);
   }
@@ -4954,11 +5421,11 @@
     width: 40px;
     height: 40px;
   }
-  
+
   .reorderControls {
     padding: 6px 10px;
   }
-  
+
   .reorderPosition {
     font-size: var(--text-body);
     min-width: 24px;
@@ -4995,7 +5462,7 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 15;
   }
-  
+
   .vehicleCounter span:first-child {
     font-size: var(--text-h3);
     font-weight: 700;
@@ -5029,109 +5496,6 @@
 }
 
 /* ===========================================
-   PREMIUM LOADING STATE
-   =========================================== */
-
-/* Loading state uses teal accent */
-.loadingState {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 48px 24px;
-  /* Subtle radial gradient for premium feel */
-  background: radial-gradient(
-    ellipse 60% 40% at 50% 45%,
-    rgba(var(--brand-teal-rgb), 0.04) 0%,
-    transparent 70%
-  );
-}
-
-.loadingLogo {
-  position: relative;
-  width: 100px;
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 32px;
-}
-
-.loadingLogoImage {
-  width: 56px;
-  height: 56px;
-  object-fit: contain;
-  z-index: 2;
-  animation: logoPulse 2s ease-in-out infinite;
-}
-
-@keyframes logoPulse {
-  0%, 100% { 
-    opacity: 0.8;
-    transform: scale(1);
-  }
-  50% { 
-    opacity: 1;
-    transform: scale(1.05);
-  }
-}
-
-/* Loading ring uses teal accent */
-.loadingRing {
-  position: absolute;
-  inset: 0;
-  border: 2px solid transparent;
-  border-top-color: var(--brand-teal);
-  border-radius: 50%;
-  animation: loadingRotate 1.2s linear infinite;
-}
-
-.loadingRing::before {
-  content: '';
-  position: absolute;
-  inset: -8px;
-  border: 1px solid rgba(var(--brand-teal-rgb), 0.15);
-  border-radius: 50%;
-}
-
-.loadingRing::after {
-  content: '';
-  position: absolute;
-  inset: 8px;
-  border: 1px solid rgba(var(--brand-teal-rgb), 0.1);
-  border-radius: 50%;
-}
-
-@keyframes loadingRotate {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.loadingTitle {
-  font-family: var(--font-display);
-  font-size: var(--text-stat-lg);
-  font-weight: 700;
-  color: var(--color-white);
-  margin: 0 0 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-}
-
-.loadingSubtitle {
-  font-size: var(--text-body);
-  color: rgba(255, 255, 255, 0.5);
-  margin: 0;
-  animation: textFade 2s ease-in-out infinite;
-}
-
-@keyframes textFade {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 0.8; }
-}
-
-/* ===========================================
    EMPTY STATE - Premium Design
    =========================================== */
 
@@ -5143,6 +5507,7 @@
   justify-content: center;
   text-align: center;
   padding: 48px 24px;
+
   /* Subtle radial gradient for depth */
   background: radial-gradient(
     ellipse 80% 50% at 50% 40%,
@@ -5155,14 +5520,11 @@
   width: 100px;
   height: 100px;
   border-radius: 28px;
+
   /* Premium glass morphism */
-  background: linear-gradient(
-    145deg,
-    rgba(255, 255, 255, 0.06) 0%,
-    rgba(255, 255, 255, 0.02) 100%
-  );
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0.02) 100%);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.05);
   display: flex;
@@ -5190,8 +5552,13 @@
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .emptyTitle {
@@ -5318,34 +5685,34 @@
   .tabPill span {
     display: none;
   }
-  
+
   .tabPill {
     padding: 8px 10px;
   }
-  
+
   .headerBar {
     padding: 10px 12px;
   }
-  
+
   .titleCompact {
     font-size: var(--text-body);
     letter-spacing: 0.08em;
   }
-  
+
   .specPanel {
     left: 12px;
     right: 12px;
     padding: 12px;
   }
-  
+
   .heroVehicleName {
     font-size: var(--text-h3);
   }
-  
+
   .specGrid {
     gap: 8px 12px;
   }
-  
+
   .thumbnail {
     width: 80px;
     height: 48px;
@@ -5357,26 +5724,26 @@
   .headerBar {
     gap: 12px;
   }
-  
+
   .titleCompact {
     font-size: var(--text-h3);
   }
-  
+
   /* Ensure tabs are always visible and centered on tablet+ */
   .headerCenter {
     justify-content: center;
   }
-  
+
   .tabPill {
     padding: 10px 18px;
     font-size: var(--text-body);
   }
-  
+
   /* Adjust quick action bar for tablet+ */
   .quickActionBar {
     right: 24px;
   }
-  
+
   .quickActionItem {
     padding: 12px 14px;
     min-width: 68px;
@@ -5391,6 +5758,7 @@
 .overlay {
   position: fixed;
   inset: 0;
+
   /* Charcoal overlay - matches safe area color (#1a1a1a) when blurred */
   background: var(--color-bg-overlay, rgba(26, 26, 26, 0.85));
   backdrop-filter: blur(12px) saturate(180%);
@@ -5414,8 +5782,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* CF-003: Safe area support for overlay content */
@@ -5430,6 +5803,7 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
   animation: slideUp 0.3s ease;
+
   /* Safe area support */
   padding-bottom: max(0px, env(safe-area-inset-bottom, 0));
 }
@@ -5456,11 +5830,12 @@
 }
 
 @keyframes slideUp {
-  from { 
+  from {
     opacity: 0;
     transform: translateY(20px);
   }
-  to { 
+
+  to {
     opacity: 1;
     transform: translateY(0);
   }
@@ -5689,6 +6064,7 @@
   flex-direction: column;
   overflow: hidden;
   z-index: 100;
+
   /* Safe area support */
   padding-bottom: max(0px, env(safe-area-inset-bottom, 0));
 }
@@ -5703,7 +6079,7 @@
   font-size: var(--text-stat-lg);
   font-weight: 700;
   color: var(--brand-text-primary);
-  margin: 0 0 4px 0;
+  margin: 0 0 4px;
 }
 
 .carPickerHeader p {
@@ -5900,18 +6276,18 @@
     max-height: 100%;
     border-radius: 0;
   }
-  
+
   .carPickerGrid {
     grid-template-columns: 1fr;
   }
-  
+
   .planningHeader {
     padding: 10px 16px;
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
   }
-  
+
   .planningTitle {
     font-size: var(--text-body);
   }
@@ -5956,6 +6332,7 @@
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -6045,12 +6422,14 @@
 .drivingCharacterOverlay {
   position: fixed;
   inset: 0;
+
   /* Highest z-index - matches OnboardingPopup to ensure it's above everything */
   z-index: 10000;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: var(--space-md, 16px);
+
   /* Dark overlay with strong blur for immersive feel */
   background: var(--color-bg-overlay, rgba(26, 26, 26, 0.92));
   backdrop-filter: blur(12px) saturate(180%);
@@ -6065,6 +6444,7 @@
     opacity: 0;
     backdrop-filter: blur(0);
   }
+
   to {
     opacity: 1;
     backdrop-filter: blur(12px) saturate(180%);
@@ -6095,6 +6475,7 @@
     opacity: 0;
     transform: translateY(40px) scale(0.96);
   }
+
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
@@ -6180,20 +6561,20 @@
   .drivingCharacterModal {
     max-width: 480px;
   }
-  
+
   .drivingCharacterModalHeader {
     padding: 24px 28px;
   }
-  
+
   .drivingCharacterModalBody {
     padding: 28px;
     gap: 28px;
   }
-  
+
   .drivingCharacterModalTitle {
     font-size: var(--font-size-2xl, 24px);
   }
-  
+
   .drivingCharacterModalText {
     font-size: var(--text-lg, 16px);
   }
@@ -6252,7 +6633,7 @@
 .projectCard:hover {
   border-color: var(--brand-lime, var(--brand-lime));
   transform: translateY(-6px);
-  box-shadow: 
+  box-shadow:
     0 16px 48px rgba(0, 0, 0, 0.5),
     0 0 0 1px rgba(16, 185, 129, 0.2),
     0 8px 32px rgba(16, 185, 129, 0.15);
@@ -6331,7 +6712,7 @@
   margin: 0 0 var(--space-2xs, 4px);
   letter-spacing: -0.01em;
   line-height: 1.3;
-  
+
   /* Truncate long titles */
   overflow: hidden;
   text-overflow: ellipsis;
@@ -6408,7 +6789,11 @@
 
 .progressFill {
   height: 100%;
-  background: linear-gradient(90deg, var(--brand-teal, var(--brand-teal)), var(--brand-blue, var(--brand-blue)));
+  background: linear-gradient(
+    90deg,
+    var(--brand-teal, var(--brand-teal)),
+    var(--brand-blue, var(--brand-blue))
+  );
   border-radius: 2px;
   transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -6446,16 +6831,16 @@
   .projectsView {
     padding: var(--space-md, 16px);
   }
-  
+
   .projectsGrid {
     grid-template-columns: 1fr;
     gap: var(--space-md, 16px);
   }
-  
+
   .projectCardImage {
     height: 160px;
   }
-  
+
   .projectCardContent h4 {
     font-size: var(--text-h4);
   }
@@ -6628,7 +7013,7 @@
 }
 
 .photosHeader h3 {
-  margin: 0 0 8px 0;
+  margin: 0 0 8px;
   font-size: var(--text-h3);
   font-weight: 700;
   color: var(--color-white);
@@ -6672,7 +7057,11 @@
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  background: linear-gradient(135deg, rgba(var(--brand-success-rgb), 0.1) 0%, rgba(22, 163, 74, 0.15) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(var(--brand-success-rgb), 0.1) 0%,
+    rgba(22, 163, 74, 0.15) 100%
+  );
   border: 1px solid rgba(var(--brand-success-rgb), 0.2);
   border-radius: 8px;
 }
@@ -6846,29 +7235,29 @@
   .quickActions {
     gap: 4px;
   }
-  
+
   .quickActionBtn {
     padding: 6px 8px;
     font-size: var(--text-xs);
     border-radius: 6px;
   }
-  
+
   .quickActionBtn svg {
     width: 14px;
     height: 14px;
   }
-  
+
   .analyzeAllBtn {
     padding: 6px 8px;
     font-size: var(--text-xs);
   }
-  
+
   .analyzeAllBtn img {
     width: 14px !important;
     height: 14px !important;
     margin-right: 4px !important;
   }
-  
+
   .analyzeAllBtn span {
     display: none;
   }
@@ -6919,6 +7308,7 @@
 }
 
 /* Add Vehicle Button - Primary action */
+
 /* Primary CTA - Start Build */
 .startBuildBtn {
   display: flex;
@@ -6949,17 +7339,17 @@
     padding: 6px 10px;
     font-size: var(--text-xs);
   }
-  
+
   .startBuildBtn svg {
     width: 14px;
     height: 14px;
   }
-  
+
   .addVehicleBtn {
     padding: 6px 8px;
     font-size: var(--text-xs);
   }
-  
+
   .addVehicleBtn svg {
     width: 14px;
     height: 14px;
@@ -6994,10 +7384,7 @@
 
 .quickUpdateOverlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   background: rgba(0, 0, 0, 0.85);
   backdrop-filter: blur(10px);
   z-index: 1000;
@@ -7012,13 +7399,18 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
 }
 
 .quickUpdatePanel {
-  background: linear-gradient(135deg, var(--brand-bg-card-dark) 0%, var(--brand-bg-primary-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--brand-bg-card-dark) 0%,
+    var(--brand-bg-primary-dark) 100%
+  );
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   max-width: 600px;
@@ -7035,6 +7427,7 @@
     transform: translateY(20px);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -7047,7 +7440,7 @@
 }
 
 .quickUpdateHeader h3 {
-  margin: 0 0 4px 0;
+  margin: 0 0 4px;
   font-size: var(--text-h3);
   font-weight: 700;
   color: rgba(255, 255, 255, 0.95);

@@ -590,8 +590,10 @@
 
 @media (min-width: 1024px) {
   .feedContent {
-    max-width: 800px;
-    padding: 0 32px;
+    /* Match garage page: 1220px centered container */
+    width: 100%;
+    max-width: 1220px;
+    padding: 0 40px;
 
     /* No bottom tab bar on desktop */
     padding-bottom: var(--space-6, 24px);
@@ -672,10 +674,6 @@
    ========================================================================== */
 
 @media (min-width: 1280px) {
-  .feedContent {
-    max-width: 900px;
-  }
-
   .buildCard {
     padding: 20px 24px;
   }

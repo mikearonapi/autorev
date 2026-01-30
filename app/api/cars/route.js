@@ -1,6 +1,6 @@
 /**
  * GET /api/cars
- * 
+ *
  * Returns all cars from the database for the browse-cars page.
  * This replaces the static data/cars.js file as the source of truth.
  */
@@ -23,10 +23,13 @@ async function handleGet() {
   try {
     const { data: cars, error } = await supabase
       .from('cars')
-      .select(`
+      .select(
+        `
         id,
         slug,
         name,
+        model,
+        trim,
         years,
         tier,
         category,
@@ -67,7 +70,8 @@ async function handleGet() {
         common_issues,
         defining_strengths,
         honest_weaknesses
-      `)
+      `
+      )
       .order('name', { ascending: true });
 
     if (error) {
@@ -76,10 +80,12 @@ async function handleGet() {
     }
 
     // Transform snake_case to camelCase for frontend compatibility
-    const transformedCars = (cars || []).map(car => ({
+    const transformedCars = (cars || []).map((car) => ({
       id: car.id,
       slug: car.slug,
       name: car.name,
+      model: car.model,
+      trim: car.trim,
       years: car.years,
       tier: car.tier,
       category: car.category,
@@ -127,16 +133,18 @@ async function handleGet() {
     }));
 
     // Return with cache headers for CDN optimization
-    return NextResponse.json({
-      cars: transformedCars,
-      count: transformedCars.length,
-      source: 'supabase'
-    }, {
-      headers: {
-        'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+    return NextResponse.json(
+      {
+        cars: transformedCars,
+        count: transformedCars.length,
+        source: 'supabase',
+      },
+      {
+        headers: {
+          'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=300',
+        },
       }
-    });
-
+    );
   } catch (err) {
     console.error('[/api/cars] Error:', err);
     return errors.internal('Internal server error');

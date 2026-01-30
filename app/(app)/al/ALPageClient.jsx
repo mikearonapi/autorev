@@ -1834,6 +1834,12 @@ export default function ALPageClient() {
             {/* Tier & Usage Info */}
             <div className={styles.drawerFooter}>
               <div className={styles.drawerTierInfo}>
+                <div className={styles.drawerUsageCount}>
+                  <span className={styles.usageNumber}>{dailyUsage.queriesToday}</span>
+                  <span className={styles.usageLabel}>
+                    {dailyUsage.queriesToday === 1 ? 'query today' : 'queries today'}
+                  </span>
+                </div>
                 <div className={styles.drawerTierBadge}>
                   {dailyUsage.isBeta ? (
                     <span className={styles.tierBadgeBeta}>Unlimited (Beta)</span>
@@ -1842,12 +1848,6 @@ export default function ALPageClient() {
                   ) : (
                     <span className={styles.tierBadgeFree}>Free Tier</span>
                   )}
-                </div>
-                <div className={styles.drawerUsageCount}>
-                  <span className={styles.usageNumber}>{dailyUsage.queriesToday}</span>
-                  <span className={styles.usageLabel}>
-                    {dailyUsage.queriesToday === 1 ? 'query today' : 'queries today'}
-                  </span>
                 </div>
               </div>
 
@@ -2169,6 +2169,15 @@ export default function ALPageClient() {
                             )}
                           </div>
                         ))}
+
+                        {/* Show "Generating response" when all tools completed */}
+                        {activeTools.length > 0 &&
+                          activeTools.every((t) => t.status === 'completed') && (
+                            <div className={styles.generatingIndicator}>
+                              <span className={styles.toolSpinner} />
+                              <span className={styles.generatingLabel}>Generating response...</span>
+                            </div>
+                          )}
                       </div>
                     )}
 

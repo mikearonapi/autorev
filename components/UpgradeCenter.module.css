@@ -7126,3 +7126,70 @@
   background: rgba(255, 255, 255, 0.08);
   color: var(--color-text-primary, #ffffff);
 }
+
+/* ==========================================================================
+   Desktop Optimization (1024px+)
+   Improved layout for wider screens without affecting mobile
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .upgradeCenter {
+    padding-bottom: 40px;
+  }
+
+  /* Category list - 2 column grid on desktop */
+  .categoryList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .catBtn {
+    padding: 14px 16px;
+    font-size: var(--text-sm);
+    border-radius: 10px;
+  }
+
+  /* Section headers */
+  .sectionHeader {
+    padding: 0 32px;
+    margin-bottom: 16px;
+  }
+
+  .sectionTitle {
+    font-size: var(--text-lg, 18px);
+  }
+
+  /* Config section - wider */
+  .configSection {
+    padding: 0 32px 24px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Workspace area */
+  .workspace {
+    padding: 24px 32px;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Large desktop (1280px+) */
+@media (min-width: 1280px) {
+  .categoryList {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+
+  .catBtn {
+    padding: 16px 20px;
+  }
+
+  .configSection,
+  .workspace {
+    max-width: 1400px;
+  }
+}

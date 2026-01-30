@@ -467,8 +467,9 @@
 
 .drawerTierInfo {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
 }
 
 .drawerTierBadge {
@@ -802,19 +803,21 @@
 
 /* ===========================================
    Tool Activity Indicators (real-time)
+   Vertical layout for clear progress display
    =========================================== */
 
 .toolActivity {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
   padding-left: 4px;
 }
 
+/* Each tool item is a vertical stack: main row on top, sub-steps below */
 .toolActivityItem {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  gap: 8px;
   font-size: var(--text-sm, 14px);
   color: var(--color-text-tertiary, #64748b);
   animation: fadeInSlide 0.2s ease;
@@ -831,6 +834,7 @@
   border-top-color: var(--color-accent-teal, #10b981);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
+  flex-shrink: 0;
 }
 
 @keyframes spin {
@@ -843,6 +847,7 @@
   width: 14px;
   height: 14px;
   position: relative;
+  flex-shrink: 0;
 }
 
 .toolCheckmark::after {
@@ -852,43 +857,45 @@
   font-weight: 700;
 }
 
-/* Tool main row (for tools with sub-steps) */
+/* Tool main row - horizontal layout for spinner/check + label + count */
 .toolMainRow {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex: 1;
 }
 
 .toolLabel {
   flex: 1;
+  font-weight: 500;
 }
 
 .toolProgressCount {
-  font-size: 11px;
+  font-size: 12px;
   color: var(--color-text-tertiary, #64748b);
-  opacity: 0.8;
   font-variant-numeric: tabular-nums;
+  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
 }
 
-/* Sub-steps for long-running tools (like research_parts_live) */
+/* Sub-steps for long-running tools - vertical list below main row */
 .toolSubSteps {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  margin-top: 6px;
+  gap: 6px;
   margin-left: 24px;
-  padding-left: 10px;
-  border-left: 2px solid rgba(16, 185, 129, 0.2);
+  padding-left: 12px;
+  border-left: 2px solid rgba(16, 185, 129, 0.15);
 }
 
 .toolSubStep {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 12px;
+  gap: 10px;
+  font-size: 13px;
   color: var(--color-text-tertiary, #64748b);
   animation: fadeInSlide 0.15s ease;
+  min-height: 24px;
 }
 
 .toolSubStep.subStepCompleted {
@@ -900,8 +907,8 @@
 }
 
 .subStepSpinner {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border: 1.5px solid rgba(16, 185, 129, 0.2);
   border-top-color: var(--color-accent-teal, #10b981);
   border-radius: 50%;
@@ -910,44 +917,68 @@
 }
 
 .subStepCheck {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   position: relative;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .subStepCheck::after {
   content: '✓';
-  font-size: 10px;
+  font-size: 11px;
   color: var(--color-accent-teal, #10b981);
   font-weight: 600;
 }
 
 .subStepErrorIcon {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   position: relative;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .subStepErrorIcon::after {
   content: '!';
-  font-size: 10px;
+  font-size: 11px;
   color: var(--color-warning, #f59e0b);
   font-weight: 700;
 }
 
 .subStepLabel {
-  flex-shrink: 0;
+  flex: 1;
 }
 
+/* Site names shown inline after label */
 .subStepSites {
   color: var(--color-text-quaternary, #475569);
-  font-size: 11px;
+  font-size: 12px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 200px;
+  max-width: 180px;
+}
+
+/* "Generating response..." indicator after all tools complete */
+.generatingIndicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 8px;
+  margin-top: 4px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  animation: fadeInSlide 0.3s ease;
+}
+
+.generatingLabel {
+  font-size: var(--text-sm, 14px);
+  font-weight: 500;
+  color: var(--color-text-secondary, #94a3b8);
 }
 
 @keyframes fadeInSlide {
@@ -2288,18 +2319,25 @@
 @media (min-width: 1024px) {
   .container {
     padding-bottom: 0;
+
+    /* Match garage page: 1220px centered container */
+    width: 100%;
+    max-width: 1220px;
+    margin: 0 auto;
+    padding-left: 40px;
+    padding-right: 40px;
   }
 
   .header {
-    padding: 12px 20px;
+    padding: 12px 0;
   }
 
   .messagesArea {
-    padding: 32px 24px;
+    padding: 32px 0;
   }
 
   .inputArea {
-    padding: 16px 24px 24px;
+    padding: 16px 0 24px;
   }
 
   .emptyTitle {

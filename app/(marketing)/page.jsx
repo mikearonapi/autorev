@@ -172,38 +172,54 @@ export default function Home() {
     <div className={styles.page} data-no-main-offset>
       {/* Hero Section */}
       <section className={styles.hero}>
-        {/* Centered Logo */}
-        <div className={styles.logo}>
-          <span className={styles.logoAuto}>AUTO</span>
-          <span className={styles.logoRev}>REV</span>
-        </div>
+        {/* Hero Content - Text on left for desktop */}
+        <div className={styles.heroContent}>
+          {/* Logo with icon on desktop */}
+          <div className={styles.logo}>
+            <Image
+              src="/images/autorev-logo-2048-transparent.png"
+              alt="AutoRev Logo"
+              width={100}
+              height={100}
+              className={styles.logoIcon}
+              priority
+            />
+            <span className={styles.logoText}>
+              <span className={styles.logoAuto}>AUTO</span>
+              <span className={styles.logoRev}>REV</span>
+            </span>
+          </div>
 
-        {/* Punchy Headline - 2 colors only: white and lime */}
-        <h1 className={styles.headline}>
-          <span className={styles.headlineAccent}>OPTIMIZE</span>
-          <span className={styles.headlineWhite}> YOUR CAR,</span>
-          <br />
-          <span className={styles.headlineAccent}>MAXIMIZE</span>
-          <span className={styles.headlineWhite}> YOUR GAINS</span>
-        </h1>
+          {/* Punchy Headline - 2 colors only: white and lime */}
+          <h1 className={styles.headline}>
+            <span className={styles.headlineLine}>
+              <span className={styles.headlineAccent}>OPTIMIZE</span>
+              <span className={styles.headlineWhite}> YOUR CAR,</span>
+            </span>
+            <span className={styles.headlineLine}>
+              <span className={styles.headlineAccent}>MAXIMIZE</span>
+              <span className={styles.headlineWhite}> YOUR GAINS</span>
+            </span>
+          </h1>
 
-        {/* Subtext */}
-        <p className={styles.subtext}>
-          Research mods for your car, compare different brands, find deals, get straight answers —
-          all in one app built for speed.
-        </p>
+          {/* Subtext */}
+          <p className={styles.subtext}>
+            Research mods for your car, compare different brands, find deals, get straight answers —
+            all in one app built for speed.
+          </p>
 
-        {/* CTA Button - slimmer */}
-        <button className={styles.ctaButton} onClick={() => authModal.openSignIn()}>
-          LOGIN / GET STARTED FREE
-        </button>
-
-        {/* Download link - always show unless already installed as PWA */}
-        {!isInstalled && (
-          <button className={styles.downloadLink} onClick={handleDownload}>
-            Download
+          {/* CTA Button - slimmer */}
+          <button className={styles.ctaButton} onClick={() => authModal.openSignIn()}>
+            LOGIN / GET STARTED FREE
           </button>
-        )}
+
+          {/* Download link - always show unless already installed as PWA */}
+          {!isInstalled && (
+            <button className={styles.downloadLink} onClick={handleDownload}>
+              Download
+            </button>
+          )}
+        </div>
 
         {/* 3 iPhone Display - smaller phones */}
         <div className={styles.phoneDisplay}>
@@ -257,9 +273,10 @@ export default function Home() {
           <Image
             src={UI_IMAGES.alMascotFull}
             alt="AL - Your AI Assistant"
-            width={80}
-            height={80}
+            width={176}
+            height={176}
             className={styles.alAvatarImage}
+            quality={100}
           />
         </div>
         <p className={styles.alGreeting}>

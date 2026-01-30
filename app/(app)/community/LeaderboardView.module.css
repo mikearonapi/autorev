@@ -504,6 +504,47 @@
 }
 
 /* ==========================================================================
+   Desktop Responsive (1024px+)
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .container {
+    /* Match garage page: 1220px centered container */
+    width: 100%;
+    max-width: 1220px;
+    margin: 0 auto;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+
+  .header {
+    padding-bottom: var(--space-5);
+  }
+
+  .title {
+    font-size: var(--font-size-4xl);
+  }
+
+  /* On wide screens, leaderboard entries can have more space */
+  .entry {
+    padding: 18px 16px;
+  }
+
+  .avatar {
+    width: 48px;
+    height: 48px;
+  }
+
+  .displayName {
+    font-size: 1.0625rem;
+  }
+
+  .points {
+    font-size: 1.0625rem;
+  }
+}
+
+/* ==========================================================================
    LOAD MORE BUTTON
    ========================================================================== */
 

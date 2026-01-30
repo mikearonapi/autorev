@@ -44,6 +44,12 @@
   color: var(--color-error, #ef4444);
 }
 
+/* Dimmed state for non-selected button after submission */
+.feedbackBtn.dimmed {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
 /* Compact variant - smaller buttons */
 .compact .feedbackBtn {
   width: 24px;

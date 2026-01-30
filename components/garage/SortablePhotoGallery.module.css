@@ -14,24 +14,41 @@
 /* Mode Selector */
 .modeSelector {
   display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
+  gap: 6px;
+  width: 100%;
 }
 
 .modeBtn {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 10px 14px;
+  justify-content: center;
+  gap: 4px;
+  flex: 1 1 0;
+  min-width: 0;
+  padding: 8px 10px;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 10px;
+  border-radius: 8px;
   color: rgba(255, 255, 255, 0.7);
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   min-height: 44px;
+  white-space: nowrap;
+}
+
+/* On very narrow screens, allow text to shrink further */
+@media (max-width: 360px) {
+  .modeSelector {
+    gap: 4px;
+  }
+
+  .modeBtn {
+    padding: 8px 6px;
+    font-size: 0.6875rem;
+    gap: 3px;
+  }
 }
 
 .modeBtn:hover:not(.modeBtnDisabled) {

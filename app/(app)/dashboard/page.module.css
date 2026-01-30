@@ -390,9 +390,10 @@
 
 @media (min-width: 1024px) {
   .container {
-    /* Wide centered container on desktop */
-    max-width: 900px;
-    padding: 0 32px;
+    /* Match garage page: 1220px centered container */
+    width: 100%;
+    max-width: 1220px;
+    padding: 0 40px;
   }
 
   .header {
@@ -442,15 +443,8 @@
   }
 }
 
-/* ==========================================================================
-   Large Desktop (1280px+)
-   ========================================================================== */
-
-@media (min-width: 1280px) {
-  .container {
-    max-width: 1000px;
-  }
-
+/* Large desktop - extra ring spacing */
+@media (min-width: 1200px) {
   .ringsSection {
     gap: 64px;
   }

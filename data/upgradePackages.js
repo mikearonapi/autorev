@@ -309,8 +309,9 @@ export const upgradeModules = [
     type: 'module',
     category: 'power',
     tier: 'streetSport',
+    stage: 1,
     description:
-      'Increased airflow with improved induction sound. Brands: K&N, AEM, Injen, Eventuri.',
+      'Increased airflow with improved induction sound. No tune required. Brands: K&N, AEM, Injen, Eventuri.',
     estimatedCost: '$300 - $600',
     estimatedCostLow: 300,
     estimatedCostHigh: 600,
@@ -319,11 +320,10 @@ export const upgradeModules = [
       soundEmotion: 0.5,
     },
     metricChanges: {
-      // Forum-validated: APR shows +19 AWHP on RS5 2.9T, +10-20 WHP typical for twin-turbo
-      // NA cars see +5-8 WHP, but turbo cars benefit more from improved airflow
       hpGain: 15,
     },
     carSlug: null,
+    // Universal - all cars benefit from improved airflow
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
   {
@@ -333,6 +333,7 @@ export const upgradeModules = [
     type: 'module',
     category: 'exhaust',
     tier: 'streetSport',
+    stage: 1,
     description: 'Improved exhaust flow and enhanced sound. Brands: Borla, Akrapovic, AWE.',
     estimatedCost: '$800 - $2,000',
     estimatedCostLow: 800,
@@ -348,13 +349,38 @@ export const upgradeModules = [
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
   {
+    key: 'exhaust-axleback',
+    name: 'Axle-Back Exhaust',
+    slug: 'exhaust-axleback',
+    type: 'module',
+    category: 'exhaust',
+    tier: 'streetSport',
+    stage: 1,
+    description:
+      'Muffler and tip replacement for improved sound with minimal power gain. Easy install. Brands: Borla, Corsa, MagnaFlow.',
+    estimatedCost: '$400 - $1,000',
+    estimatedCostLow: 400,
+    estimatedCostHigh: 1000,
+    deltas: {
+      powerAccel: 0.1,
+      soundEmotion: 1.0,
+    },
+    metricChanges: {
+      hpGain: 5,
+    },
+    carSlug: null,
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
     key: 'headers',
     name: 'Performance Headers',
     slug: 'headers',
     type: 'module',
     category: 'exhaust',
     tier: 'trackPack',
-    description: 'Long-tube or equal-length headers for significant power gains. Requires tune.',
+    stage: 2,
+    description:
+      'Long-tube or equal-length headers for significant power gains. Requires tune for proper air/fuel ratio.',
     estimatedCost: '$1,500 - $3,500',
     estimatedCostLow: 1500,
     estimatedCostHigh: 3500,
@@ -366,78 +392,88 @@ export const upgradeModules = [
       hpGain: 25,
       zeroToSixtyImprovement: 0.1,
     },
-    // Headers require a tune to take full advantage of the gains
-    requires: ['ecu-tune'],
+    // Headers require a tune for the engine to compensate for changed exhaust flow
+    requires: ['stage2-tune'],
     carSlug: null,
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
-  // Stage Tunes for Factory Turbo/SC Cars
-  // Note: Street/Track ECU Tune removed - Stage 1/2/3+ are the standard tuning progression
-  // for turbo/SC cars. NA cars use intake, exhaust, headers, cams for power gains.
+  // ==========================================================================
+  // STAGE TUNES - Universal across all engine types
+  // Stage 1: Optimizes intake + cat-back mods (tune optional for Stage 1 hardware)
+  // Stage 2: Required for headers, downpipe, mild cams, pulley (bolt-ons that need tune)
+  // Stage 3: Required for forced induction, aggressive cams, fuel system upgrades
+  // ==========================================================================
   {
     key: 'stage1-tune',
-    name: 'Stage 1 ECU Tune',
+    name: 'Stage 1 Tune',
     slug: 'stage1-tune',
     type: 'module',
     category: 'power',
     tier: 'streetSport',
+    stage: 1,
     description:
-      'Flash-only ECU tune for factory turbo/SC cars. No hardware required. Increases boost, optimizes timing. 91+ octane required. Brands: APR, Cobb, Unitronic, JB4.',
-    estimatedCost: '$600 - $1,200',
-    estimatedCostLow: 600,
-    estimatedCostHigh: 1200,
+      'ECU flash tune optimizing timing, fuel, and throttle response. Maximizes gains from intake and cat-back exhaust. 91+ octane recommended. Brands: APR, Cobb, Unitronic, VF Engineering.',
+    estimatedCost: '$500 - $1,000',
+    estimatedCostLow: 500,
+    estimatedCostHigh: 1000,
     deltas: {
-      powerAccel: 1.5,
-      trackPace: 0.8,
+      powerAccel: 1.0,
+      trackPace: 0.5,
       soundEmotion: 0.3,
     },
     metricChanges: {
-      hpGain: 70,
-      torqueGain: 90,
-      zeroToSixtyImprovement: 0.4,
+      // Performance calculator will scale based on engine type
+      // Turbo/SC cars see higher gains, NA cars see modest gains
+      hpGain: 25,
+      torqueGain: 30,
+      zeroToSixtyImprovement: 0.2,
     },
+    stronglyRecommended: ['intake', 'exhaust-catback'],
     carSlug: null,
-    applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6', 'SC V8'],
+    // Universal - available for all engine types
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
   {
     key: 'stage2-tune',
-    name: 'Stage 2 ECU Tune',
+    name: 'Stage 2 Tune',
     slug: 'stage2-tune',
     type: 'module',
     category: 'power',
     tier: 'trackPack',
+    stage: 2,
     description:
-      'Aggressive tune requiring supporting mods (downpipe, intake). Significantly more power than Stage 1. Brands: APR, GIAC, Unitronic, IE.',
-    estimatedCost: '$800 - $1,500',
-    estimatedCostLow: 800,
+      'Aggressive tune calibrated for bolt-on hardware that requires ECU compensation. Required for headers, downpipe (turbo), pulley (SC), or mild cams. Brands: APR, GIAC, Unitronic, IE.',
+    estimatedCost: '$700 - $1,500',
+    estimatedCostLow: 700,
     estimatedCostHigh: 1500,
     deltas: {
-      powerAccel: 2.5,
-      trackPace: 1.2,
+      powerAccel: 2.0,
+      trackPace: 1.0,
       reliabilityHeat: -0.3,
       soundEmotion: 0.8,
     },
     metricChanges: {
-      hpGain: 120,
-      torqueGain: 150,
-      zeroToSixtyImprovement: 0.7,
+      // Performance calculator will scale based on engine type
+      hpGain: 50,
+      torqueGain: 60,
+      zeroToSixtyImprovement: 0.4,
     },
-    requires: ['downpipe', 'intake'],
-    stronglyRecommended: ['intercooler'],
+    // Stage 2 requires one of: headers (all), downpipe (turbo), pulley (SC), or mild cams
+    stronglyRecommended: ['headers', 'intake', 'exhaust-catback'],
     carSlug: null,
-    applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6', 'SC V8'],
+    // Universal - available for all engine types
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
   {
     key: 'stage3-tune',
-    name: 'Stage 3+ Tune',
+    name: 'Stage 3 Tune',
     slug: 'stage3-tune',
     type: 'module',
     category: 'power',
     tier: 'ultimatePower',
+    stage: 3,
     description:
-      'Maximum power tune requiring turbo upgrade, fueling upgrades, and supporting mods. Pushing factory limits. Brands: APR, IE, Unitronic custom.',
+      'Maximum power tune for builds exceeding stock fuel system capacity. Required for forced induction kits, turbo upgrades, aggressive cams, or E85. Brands: APR, IE, Unitronic, custom dyno tuners.',
     estimatedCost: '$1,500 - $3,000',
     estimatedCostLow: 1500,
     estimatedCostHigh: 3000,
@@ -448,43 +484,47 @@ export const upgradeModules = [
       soundEmotion: 1.5,
     },
     metricChanges: {
-      hpGain: 200,
-      torqueGain: 250,
-      zeroToSixtyImprovement: 1.2,
+      // Performance calculator will scale based on engine type and mods
+      hpGain: 100,
+      torqueGain: 120,
+      zeroToSixtyImprovement: 0.8,
     },
-    requires: ['turbo-upgrade-existing', 'fuel-system-upgrade', 'intercooler'],
+    requires: ['fuel-system-upgrade'],
     stronglyRecommended: ['clutch-upgrade', 'oil-cooler', 'trans-cooler'],
     carSlug: null,
-    applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6'],
+    // Universal - available for all engine types
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
-  // Piggyback ECU / JB4 style tuners
+  // Piggyback ECU tuners - universal
   {
     key: 'piggyback-tuner',
-    name: 'Piggyback Tuner (JB4)',
+    name: 'Piggyback Tuner',
     slug: 'piggyback-tuner',
     type: 'module',
     category: 'power',
     tier: 'streetSport',
+    stage: 1,
     description:
-      'Plug-and-play boost controller. No ECU flash required, warranty-friendly removal. Brands: JB4, Burger Motorsports, RaceChip.',
-    estimatedCost: '$400 - $700',
-    estimatedCostLow: 400,
+      'Plug-and-play tuning module. No ECU flash required, warranty-friendly removal. Brands: JB4, Burger Motorsports, RaceChip, Pedal Commander.',
+    estimatedCost: '$300 - $700',
+    estimatedCostLow: 300,
     estimatedCostHigh: 700,
     deltas: {
-      powerAccel: 1.2,
-      trackPace: 0.5,
+      powerAccel: 0.8,
+      trackPace: 0.4,
     },
     metricChanges: {
-      hpGain: 50,
-      torqueGain: 70,
-      zeroToSixtyImprovement: 0.3,
+      // Performance calculator will scale based on engine type
+      // Turbo cars see higher gains from boost control
+      hpGain: 20,
+      torqueGain: 25,
+      zeroToSixtyImprovement: 0.15,
     },
     carSlug: null,
-    applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6'],
+    // Universal - available for all engine types
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
-  // Downpipe - Essential for Stage 2
+  // Downpipe - Turbo cars only, Stage 2 mod
   // NOTE: Gains are HIGHLY platform-specific. Forum research shows:
   // - BMW B58, Evo X 4B11: +15-25 HP (restrictive factory downpipes)
   // - Audi 2.9T (RS5/RS4): +0-10 HP (factory DP already efficient, mainly for sound)
@@ -492,42 +532,43 @@ export const upgradeModules = [
   // Using +15 HP as moderate cross-platform average
   {
     key: 'downpipe',
-    name: 'Downpipe (Turbo Cars)',
+    name: 'Downpipe',
     slug: 'downpipe',
     type: 'module',
     category: 'exhaust',
     tier: 'trackPack',
+    stage: 2,
     description:
-      'High-flow or catless downpipe. Reduces exhaust restriction, enables Stage 2 tunes. Brands: AWE, Milltek, Soul Performance.',
+      'High-flow or catless downpipe for turbo cars. Reduces exhaust restriction post-turbo. Requires tune. Brands: AWE, Milltek, Soul Performance.',
     estimatedCost: '$600 - $1,500',
     estimatedCostLow: 600,
     estimatedCostHigh: 1500,
     deltas: {
       powerAccel: 0.6,
-      soundEmotion: 1.2, // Primary benefit is sound for many platforms
+      soundEmotion: 1.2,
       trackPace: 0.2,
     },
     metricChanges: {
-      // Forum-validated: Varies by platform from +5 to +25 HP
-      // Some platforms (RS5 2.9T) see minimal gains due to efficient factory DP
       hpGain: 15,
       torqueGain: 25,
     },
+    requires: ['stage2-tune'],
     carSlug: null,
+    // Turbo cars only - downpipe is the section after the turbocharger
     applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6'],
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
-  // Note: charge-pipe-upgrade and hpfp-upgrade removed - too niche, typically bundled with other mods
-  // E85/Flex Fuel
+  // E85/Flex Fuel - Stage 3 mod (requires fuel system upgrade)
   {
     key: 'flex-fuel-e85',
     name: 'E85/Flex Fuel Kit',
     slug: 'flex-fuel-e85',
     type: 'module',
     category: 'power',
-    tier: 'trackPack',
+    tier: 'ultimatePower',
+    stage: 3,
     description:
-      'Ethanol fuel system upgrade allowing E85 use for significant power gains. Requires HPFP, injectors, tune. Brands: Zeitronix, IE, Custom.',
+      'Ethanol fuel system conversion allowing E85 use for significant power gains. E85 requires ~30% more fuel flow. Includes sensor, tune, and often injector upgrades. Brands: Zeitronix, IE, Flex Fuel Sensor Kit.',
     estimatedCost: '$1,500 - $3,500',
     estimatedCostLow: 1500,
     estimatedCostHigh: 3500,
@@ -537,27 +578,55 @@ export const upgradeModules = [
       reliabilityHeat: -0.3,
     },
     metricChanges: {
-      hpGain: 80,
-      torqueGain: 100,
-      zeroToSixtyImprovement: 0.5,
+      hpGain: 50,
+      torqueGain: 60,
+      zeroToSixtyImprovement: 0.4,
     },
-    requires: ['fuel-system-upgrade'],
-    stronglyRecommended: [],
+    requires: ['fuel-system-upgrade', 'stage3-tune'],
     carSlug: null,
-    applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6'],
+    // Universal - E85 works on any engine with proper fuel system support
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
-  // Note: methanol-injection removed - E85/flex fuel is the more popular modern alternative
-  // DCT Tune/Software
+  // Nitrous Oxide - Stage 3 mod
+  {
+    key: 'nitrous',
+    name: 'Nitrous Oxide Kit',
+    slug: 'nitrous',
+    type: 'module',
+    category: 'power',
+    tier: 'ultimatePower',
+    stage: 3,
+    description:
+      'Nitrous oxide injection for instant power on demand. Available in wet or dry configurations. Brands: NOS, Nitrous Express, ZEX.',
+    estimatedCost: '$800 - $2,500',
+    estimatedCostLow: 800,
+    estimatedCostHigh: 2500,
+    deltas: {
+      powerAccel: 3,
+      trackPace: 1.5,
+      reliabilityHeat: -1.5,
+    },
+    metricChanges: {
+      hpGain: 100, // 75-150+ HP shot typical
+      torqueGain: 100,
+      zeroToSixtyImprovement: 0.6,
+    },
+    requires: ['fuel-system-upgrade', 'stage3-tune'],
+    stronglyRecommended: ['clutch-upgrade'],
+    carSlug: null,
+    // Universal - nitrous works on any engine
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  // DCT/Transmission Tune
   {
     key: 'dct-tune',
-    name: 'DCT/PDK Software Upgrade',
+    name: 'Transmission Software Upgrade',
     slug: 'dct-tune',
     type: 'module',
     category: 'power',
     tier: 'streetSport',
     description:
-      'Transmission software for faster shifts and higher torque limits. Brands: Cobb, APR, Porsche Motorsport.',
+      'Transmission software for faster shifts and higher torque limits. Works with DCT, PDK, automatic, and SMG transmissions. Brands: Cobb, APR, Porsche Motorsport.',
     estimatedCost: '$800 - $2,000',
     estimatedCostLow: 800,
     estimatedCostHigh: 2000,
@@ -569,6 +638,72 @@ export const upgradeModules = [
       zeroToSixtyImprovement: 0.2,
     },
     carSlug: null,
+    // Universal - works with any electronically controlled transmission
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+
+  // ==========================================================================
+  // CAMSHAFT MODULES
+  // ==========================================================================
+  {
+    key: 'camshaft-mild',
+    name: 'Mild Performance Camshafts',
+    slug: 'camshaft-mild',
+    type: 'module',
+    category: 'power',
+    tier: 'trackPack',
+    stage: 2,
+    description:
+      'Street-friendly performance cams with increased lift and duration. Maintains idle quality and drivability. Requires tune. Brands: Comp Cams, Brian Crower, Kelford.',
+    estimatedCost: '$1,200 - $2,500',
+    estimatedCostLow: 1200,
+    estimatedCostHigh: 2500,
+    deltas: {
+      powerAccel: 1.2,
+      trackPace: 0.8,
+      soundEmotion: 0.8,
+      drivability: -0.3,
+    },
+    metricChanges: {
+      hpGain: 30,
+      torqueGain: 20,
+      zeroToSixtyImprovement: 0.2,
+    },
+    requires: ['stage2-tune'],
+    stronglyRecommended: ['headers', 'intake'],
+    carSlug: null,
+    // Universal - all engines can benefit from cam upgrades
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'camshaft-aggressive',
+    name: 'Aggressive Race Camshafts',
+    slug: 'camshaft-aggressive',
+    type: 'module',
+    category: 'power',
+    tier: 'ultimatePower',
+    stage: 3,
+    description:
+      'Race-oriented cams with aggressive profiles. Significant top-end power but compromised idle and low-RPM drivability. May require valve spring upgrades. Brands: Comp Cams, Brian Crower, Kelford.',
+    estimatedCost: '$2,000 - $4,500',
+    estimatedCostLow: 2000,
+    estimatedCostHigh: 4500,
+    deltas: {
+      powerAccel: 2.5,
+      trackPace: 1.5,
+      soundEmotion: 1.5,
+      drivability: -1.5,
+      reliabilityHeat: -0.5,
+    },
+    metricChanges: {
+      hpGain: 60,
+      torqueGain: 40,
+      zeroToSixtyImprovement: 0.35,
+    },
+    requires: ['stage3-tune', 'fuel-system-upgrade'],
+    stronglyRecommended: ['headers', 'intake', 'exhaust-catback'],
+    carSlug: null,
+    // Universal - but most common on NA cars
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
 
@@ -577,13 +712,14 @@ export const upgradeModules = [
   // ============================================================================
   {
     key: 'supercharger-centrifugal',
-    name: 'Centrifugal Supercharger',
+    name: 'Centrifugal Supercharger Kit',
     slug: 'supercharger-centrifugal',
     type: 'module',
     category: 'forcedInduction',
     tier: 'ultimatePower',
+    stage: 3,
     description:
-      'ProCharger or Vortech centrifugal supercharger. Linear power delivery. Brands: ProCharger, Vortech, Paxton.',
+      'ProCharger or Vortech centrifugal supercharger for NA cars. Linear power delivery that builds with RPM. Brands: ProCharger, Vortech, Paxton.',
     estimatedCost: '$6,000 - $9,000',
     estimatedCostLow: 6000,
     estimatedCostHigh: 9000,
@@ -594,31 +730,32 @@ export const upgradeModules = [
       soundEmotion: 2,
     },
     metricChanges: {
-      hpGain: 180, // 150-200+ HP typical
+      hpGain: 180,
+      torqueGain: 150,
       zeroToSixtyImprovement: 0.8,
     },
     includes: [
       'Centrifugal supercharger unit',
       'Intercooler (if kit includes)',
-      'Basic supporting tune',
       'Intake/piping components',
     ],
-    // Soft dependencies - these upgrades are strongly recommended or required
-    requires: ['fuel-system-upgrade'],
+    requires: ['fuel-system-upgrade', 'stage3-tune'],
     stronglyRecommended: ['oil-cooler', 'clutch-upgrade', 'intercooler'],
     carSlug: null,
-    applicableEngines: ['NA V8', 'NA V6'],
+    // NA cars only - adds forced induction
+    applicableEngines: ['NA V8', 'NA V6', 'NA I6', 'NA I4', 'NA Flat-6'],
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
   {
     key: 'supercharger-roots',
-    name: 'Roots/TVS Supercharger',
+    name: 'Roots/TVS Supercharger Kit',
     slug: 'supercharger-roots',
     type: 'module',
     category: 'forcedInduction',
     tier: 'ultimatePower',
+    stage: 3,
     description:
-      'Whipple or Roush TVS supercharger. Instant boost, massive power. Brands: Whipple, Roush, Magnuson, Edelbrock.',
+      'Whipple or Roush TVS positive displacement supercharger for NA cars. Instant boost from idle. Brands: Whipple, Roush, Magnuson, Edelbrock.',
     estimatedCost: '$8,000 - $12,000',
     estimatedCostLow: 8000,
     estimatedCostHigh: 12000,
@@ -629,22 +766,21 @@ export const upgradeModules = [
       soundEmotion: 2.5,
     },
     metricChanges: {
-      hpGain: 280, // 250-350+ HP typical on Coyote/Voodoo
+      hpGain: 280,
+      torqueGain: 250,
       zeroToSixtyImprovement: 1.2,
     },
     includes: [
       'TVS-style positive displacement supercharger',
       'Integrated heat exchanger',
-      'Fuel system upgrade (injectors)',
-      'Custom ECU calibration',
       'Upgraded intake manifold',
     ],
-    // Soft dependencies - these upgrades are strongly recommended or required
-    requires: ['fuel-system-upgrade'],
-    stronglyRecommended: ['oil-cooler', 'clutch-upgrade', 'intercooler', 'driveshaft-upgrade'],
+    requires: ['fuel-system-upgrade', 'stage3-tune'],
+    stronglyRecommended: ['oil-cooler', 'clutch-upgrade', 'driveshaft-upgrade'],
     carSlug: null,
+    // NA V8 cars primarily - most kits are V8 specific
     applicableEngines: ['NA V8'],
-    applicableLayouts: ['Front-Engine'],
+    applicableLayouts: ['Front-Engine', 'Mid-Engine'],
   },
   {
     key: 'turbo-kit-single',
@@ -653,7 +789,9 @@ export const upgradeModules = [
     type: 'module',
     category: 'forcedInduction',
     tier: 'ultimatePower',
-    description: 'Single turbo conversion for max power potential. Requires supporting mods.',
+    stage: 3,
+    description:
+      'Single turbo conversion for NA cars. Maximum power potential with proper supporting mods. Brands: Garrett, Precision, BorgWarner.',
     estimatedCost: '$5,000 - $10,000',
     estimatedCostLow: 5000,
     estimatedCostHigh: 10000,
@@ -664,7 +802,8 @@ export const upgradeModules = [
       soundEmotion: 2,
     },
     metricChanges: {
-      hpGain: 220, // Highly variable 150-400+
+      hpGain: 220,
+      torqueGain: 200,
       zeroToSixtyImprovement: 1.0,
     },
     includes: [
@@ -675,11 +814,11 @@ export const upgradeModules = [
       'Wastegate',
       'BOV/Diverter valve',
     ],
-    // Soft dependencies - these upgrades are strongly recommended or required
-    requires: ['fuel-system-upgrade', 'ecu-tune'],
-    stronglyRecommended: ['oil-cooler', 'clutch-upgrade', 'intercooler'],
+    requires: ['fuel-system-upgrade', 'stage3-tune'],
+    stronglyRecommended: ['oil-cooler', 'clutch-upgrade'],
     carSlug: null,
-    applicableEngines: ['NA V8', 'NA I6', 'NA I4'],
+    // NA cars only - adds turbo to naturally aspirated engine
+    applicableEngines: ['NA V8', 'NA V6', 'NA I6', 'NA I4'],
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
   {
@@ -689,8 +828,9 @@ export const upgradeModules = [
     type: 'module',
     category: 'forcedInduction',
     tier: 'ultimatePower',
+    stage: 3,
     description:
-      'Twin turbo setup for massive power with better spool. Brands: Hellion, Pure Turbos, On3.',
+      'Twin turbo setup for NA V8 cars. Better spool and power distribution than single turbo. Brands: Hellion, On3, FI Interchillers.',
     estimatedCost: '$8,000 - $15,000',
     estimatedCostLow: 8000,
     estimatedCostHigh: 15000,
@@ -701,7 +841,8 @@ export const upgradeModules = [
       soundEmotion: 2.5,
     },
     metricChanges: {
-      hpGain: 350, // 300-500+ HP possible
+      hpGain: 350,
+      torqueGain: 320,
       zeroToSixtyImprovement: 1.5,
     },
     includes: [
@@ -712,21 +853,23 @@ export const upgradeModules = [
       'Wastegates',
       'Complete piping kit',
     ],
-    // Soft dependencies - these upgrades are strongly recommended or required
-    requires: ['fuel-system-upgrade', 'ecu-tune'],
-    stronglyRecommended: ['oil-cooler', 'clutch-upgrade', 'intercooler', 'driveshaft-upgrade'],
+    requires: ['fuel-system-upgrade', 'stage3-tune'],
+    stronglyRecommended: ['oil-cooler', 'clutch-upgrade', 'driveshaft-upgrade'],
     carSlug: null,
+    // NA V8 cars primarily
     applicableEngines: ['NA V8'],
     applicableLayouts: ['Front-Engine', 'Mid-Engine'],
   },
   {
     key: 'turbo-upgrade-existing',
-    name: 'Turbo Upgrade',
+    name: 'Turbo Upgrade (Larger Turbos)',
     slug: 'turbo-upgrade-existing',
     type: 'module',
     category: 'forcedInduction',
     tier: 'ultimatePower',
-    description: 'Upgraded turbos for factory turbo cars. More flow, higher boost potential.',
+    stage: 3,
+    description:
+      'Upgraded turbos for factory turbo cars. Larger compressor/turbine wheels for more flow and higher boost. Requires fuel system upgrade. Brands: Pure Turbos, Vargas, Precision.',
     estimatedCost: '$4,000 - $12,000',
     estimatedCostLow: 4000,
     estimatedCostHigh: 12000,
@@ -737,21 +880,49 @@ export const upgradeModules = [
       soundEmotion: 1,
     },
     metricChanges: {
-      hpGain: 120, // 80-200+ depending on car
+      hpGain: 120,
+      torqueGain: 140,
       zeroToSixtyImprovement: 0.6,
     },
-    includes: [
-      'Upgraded turbocharger(s)',
-      'Supporting intake piping',
-      'Upgraded downpipe(s)',
-      'ECU tune for increased boost',
-    ],
-    // Soft dependencies - these upgrades are strongly recommended or required
-    stronglyRecommended: ['intercooler', 'oil-cooler'],
+    includes: ['Upgraded turbocharger(s)', 'Supporting intake piping', 'Upgraded downpipe(s)'],
+    requires: ['fuel-system-upgrade', 'stage3-tune'],
+    stronglyRecommended: ['intercooler', 'oil-cooler', 'clutch-upgrade'],
     carSlug: null,
+    // Turbo cars only
     applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6'],
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
+  // Boost Controller - Turbo cars, Stage 2
+  {
+    key: 'boost-controller',
+    name: 'Boost Controller / Wastegate Upgrade',
+    slug: 'boost-controller',
+    type: 'module',
+    category: 'forcedInduction',
+    tier: 'trackPack',
+    stage: 2,
+    description:
+      'Electronic or manual boost controller to increase boost within stock turbo limits. Requires tune. Brands: Turbosmart, GFB, Cobb.',
+    estimatedCost: '$300 - $800',
+    estimatedCostLow: 300,
+    estimatedCostHigh: 800,
+    deltas: {
+      powerAccel: 1.0,
+      trackPace: 0.6,
+      reliabilityHeat: -0.3,
+    },
+    metricChanges: {
+      hpGain: 40,
+      torqueGain: 50,
+      zeroToSixtyImprovement: 0.25,
+    },
+    requires: ['stage2-tune'],
+    carSlug: null,
+    // Turbo cars only
+    applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6'],
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  // Pulley Upgrade - SC cars, Stage 2
   {
     key: 'pulley-tune-sc',
     name: 'SC Pulley + Tune',
@@ -759,7 +930,9 @@ export const upgradeModules = [
     type: 'module',
     category: 'forcedInduction',
     tier: 'trackPack',
-    description: 'Smaller supercharger pulley + tune for factory SC cars. Easy bolt-on power.',
+    stage: 2,
+    description:
+      'Smaller supercharger pulley to increase boost on factory SC cars. Requires tune for safe operation. Brands: GripTec, Metco, Whipple.',
     estimatedCost: '$1,500 - $3,000',
     estimatedCostLow: 1500,
     estimatedCostHigh: 3000,
@@ -770,20 +943,23 @@ export const upgradeModules = [
       soundEmotion: 0.5,
     },
     metricChanges: {
-      hpGain: 75, // 60-100 HP typical
+      hpGain: 75,
+      torqueGain: 80,
       zeroToSixtyImprovement: 0.3,
     },
     includes: [
       'Smaller supercharger pulley',
       'Crank pulley (if needed)',
       'Updated ECU calibration',
-      'Heat exchanger recommended',
     ],
+    requires: ['stage2-tune'],
+    stronglyRecommended: ['intercooler'],
     carSlug: null,
-    applicableEngines: ['SC V8'],
-    applicableLayouts: ['Front-Engine'],
+    // SC cars only
+    applicableEngines: ['SC V8', 'SC V6'],
+    applicableLayouts: ['Front-Engine', 'Mid-Engine'],
   },
-  // Note: heat-exchanger-sc merged into intercooler module above
+  // Intercooler / Heat Exchanger - Forced induction cars only
   {
     key: 'intercooler',
     name: 'Intercooler / Heat Exchanger',
@@ -792,7 +968,7 @@ export const upgradeModules = [
     category: 'forcedInduction',
     tier: 'trackPack',
     description:
-      'Upgraded intercooler or heat exchanger for lower intake temps and more consistent power. Essential for track use on boosted cars.',
+      'Upgraded intercooler (turbo) or heat exchanger (SC) for lower intake temps and consistent power. Essential for track use and higher boost levels.',
     estimatedCost: '$600 - $2,000',
     estimatedCostLow: 600,
     estimatedCostHigh: 2000,
@@ -802,10 +978,19 @@ export const upgradeModules = [
       trackPace: 0.3,
     },
     metricChanges: {
-      hpGain: 20, // Reduces heat soak, consistent power
+      hpGain: 20,
     },
     carSlug: null,
-    applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6', 'SC V8'],
+    // Forced induction cars only - NA cars don't compress air
+    applicableEngines: [
+      'Turbo V8',
+      'Turbo V6',
+      'Turbo I6',
+      'Turbo I4',
+      'Turbo Flat-6',
+      'SC V8',
+      'SC V6',
+    ],
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
   {
@@ -814,9 +999,10 @@ export const upgradeModules = [
     slug: 'fuel-system-upgrade',
     type: 'module',
     category: 'power',
-    tier: 'trackPack',
+    tier: 'ultimatePower',
+    stage: 3,
     description:
-      'Upgraded injectors, fuel pump, and fuel lines to support high-power applications.',
+      'Upgraded injectors, fuel pump, and fuel lines to support high-power applications. Required for forced induction, E85, or aggressive tunes.',
     estimatedCost: '$1,200 - $3,000',
     estimatedCostLow: 1200,
     estimatedCostHigh: 3000,
@@ -827,6 +1013,7 @@ export const upgradeModules = [
       hpGain: 0, // Enables higher power, doesn't add directly
     },
     carSlug: null,
+    // Universal - any car making significant power needs fuel support
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
 
@@ -1059,22 +1246,23 @@ export const upgradeModules = [
   // ============================================================================
   {
     key: 'clutch-upgrade',
-    name: 'Performance Clutch',
+    name: 'Performance Clutch / Torque Converter',
     slug: 'clutch-upgrade',
     type: 'module',
     category: 'drivetrain',
     tier: 'trackPack',
     description:
-      'Upgraded clutch for higher torque capacity. Essential for high-power builds. Brands: ACT, Clutch Masters, Exedy, South Bend.',
-    estimatedCost: '$800 - $2,000',
+      'Upgraded clutch (manual/DCT) or torque converter (automatic) for higher torque capacity. Essential for high-power builds. Brands: ACT, Clutch Masters, Exedy, South Bend, Circle D.',
+    estimatedCost: '$800 - $2,500',
     estimatedCostLow: 800,
-    estimatedCostHigh: 2000,
+    estimatedCostHigh: 2500,
     deltas: {
       reliabilityHeat: 0.5,
-      drivability: -0.3, // Heavier pedal
+      drivability: -0.2,
     },
     metricChanges: {},
     carSlug: null,
+    // Universal - applies to all transmission types
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
   {
@@ -1085,7 +1273,7 @@ export const upgradeModules = [
     category: 'drivetrain',
     tier: 'trackPack',
     description:
-      'Carbon fiber or aluminum driveshaft. Reduces rotational mass and handles higher torque. Brands: Driveshaft Shop, QA1.',
+      'Carbon fiber or aluminum driveshaft. Reduces rotational mass and handles higher torque. Essential for high-power RWD/AWD builds. Brands: Driveshaft Shop, QA1.',
     estimatedCost: '$600 - $1,500',
     estimatedCostLow: 600,
     estimatedCostHigh: 1500,
@@ -1096,8 +1284,8 @@ export const upgradeModules = [
       zeroToSixtyImprovement: 0.05,
     },
     carSlug: null,
-    applicableEngines: ['NA V8', 'Turbo V8', 'SC V8'],
-    applicableLayouts: ['Front-Engine'],
+    // Universal for RWD/AWD layouts - not applicable to FWD
+    applicableLayouts: ['Front-Engine', 'Mid-Engine', 'Rear-Engine'],
   },
 
   // ============================================================================

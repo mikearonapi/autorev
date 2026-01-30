@@ -6,11 +6,13 @@
 .page {
   min-height: 100vh;
   min-height: 100dvh;
+
   /* Transparent to show body gradient */
   background: transparent;
   color: var(--color-text-primary, #ffffff);
   overflow-x: hidden;
   position: relative;
+
   /* Uses data-no-main-offset attribute to disable main padding.
      This is cleaner than the previous negative margin hack which
      could cause scroll calculation issues on Android. */
@@ -35,19 +37,101 @@
   }
 }
 
-/* Centered Logo */
+/* Desktop: Side-by-side layout - text left, phones right */
+@media (min-width: 1024px) {
+  .hero {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    text-align: left;
+    padding: 60px 64px 40px;
+    min-height: 85vh;
+    gap: 40px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .hero {
+    padding: 80px 80px 60px;
+    gap: 60px;
+    max-width: 1440px;
+    margin: 0 auto;
+  }
+}
+
+/* Hero Content Wrapper - for desktop side-by-side layout */
+.heroContent {
+  display: contents; /* On mobile, children flow normally in parent flex */
+}
+
+@media (min-width: 1024px) {
+  .heroContent {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    flex: 1;
+    max-width: 600px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .heroContent {
+    max-width: 650px;
+  }
+}
+
+/* Logo Container */
 .logo {
-  font-family: var(--font-display, 'Oswald', system-ui);
-  font-size: 2.5rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   margin-bottom: 48px;
 }
 
 @media (min-width: 768px) {
   .logo {
-    font-size: 3.5rem;
     margin-bottom: 64px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .logo {
+    margin-bottom: 32px;
+    gap: 16px;
+  }
+}
+
+/* Logo Icon - hidden on mobile, shown on desktop */
+.logoIcon {
+  display: none;
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+
+  /* Slight adjustment to align with text baseline */
+  align-self: center;
+  margin-top: 4px;
+}
+
+@media (min-width: 1024px) {
+  .logoIcon {
+    display: block;
+    width: 100px;
+    height: 100px;
+  }
+}
+
+/* Logo Text */
+.logoText {
+  font-family: var(--font-display, 'Oswald', system-ui);
+  font-size: 2.5rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+}
+
+@media (min-width: 768px) {
+  .logoText {
+    font-size: 3.5rem;
   }
 }
 
@@ -68,11 +152,32 @@
   letter-spacing: 0.02em;
   margin: 0 0 20px;
   text-transform: uppercase;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Each line of the headline - prevents wrapping */
+.headlineLine {
+  display: block;
+  white-space: nowrap;
 }
 
 @media (min-width: 768px) {
   .headline {
     margin-bottom: 28px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .headline {
+    font-size: clamp(2.5rem, 4vw, 4rem);
+    margin-bottom: 24px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .headline {
+    font-size: 4.5rem;
   }
 }
 
@@ -97,6 +202,22 @@
 @media (min-width: 768px) {
   .subtext {
     margin-bottom: 32px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .subtext {
+    font-size: 1.125rem;
+    max-width: 500px;
+    padding: 0;
+    margin-bottom: 36px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .subtext {
+    font-size: 1.25rem;
+    max-width: 540px;
   }
 }
 
@@ -126,6 +247,21 @@
   .ctaButton {
     width: auto;
     margin-bottom: 48px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .ctaButton {
+    padding: 16px 40px;
+    font-size: 1.0625rem;
+    margin-bottom: 20px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .ctaButton {
+    padding: 18px 48px;
+    font-size: 1.125rem;
   }
 }
 
@@ -168,6 +304,13 @@
   }
 }
 
+@media (min-width: 1024px) {
+  .downloadLink {
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}
+
 /* ==========================================================================
    3 PHONE DISPLAY - Smaller phones with visible side phones
    ========================================================================== */
@@ -185,6 +328,23 @@
     height: 440px;
     max-width: 560px;
     margin-top: 64px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .phoneDisplay {
+    flex-shrink: 0;
+    width: 500px;
+    max-width: none;
+    height: 520px;
+    margin: 0;
+  }
+}
+
+@media (min-width: 1280px) {
+  .phoneDisplay {
+    width: 580px;
+    height: 600px;
   }
 }
 
@@ -220,6 +380,22 @@
   }
 }
 
+@media (min-width: 1024px) {
+  .phoneLeft {
+    left: 0;
+    top: 50px;
+    transform: rotate(-12deg) scale(0.88);
+  }
+}
+
+@media (min-width: 1280px) {
+  .phoneLeft {
+    left: 10px;
+    top: 60px;
+    transform: rotate(-12deg) scale(0.9);
+  }
+}
+
 /* Right phone - behind, more visible */
 .phoneRight {
   right: -10px;
@@ -234,6 +410,22 @@
     right: 20px;
     top: 35px;
     transform: rotate(14deg) scale(0.85);
+  }
+}
+
+@media (min-width: 1024px) {
+  .phoneRight {
+    right: 0;
+    top: 50px;
+    transform: rotate(12deg) scale(0.88);
+  }
+}
+
+@media (min-width: 1280px) {
+  .phoneRight {
+    right: 10px;
+    top: 60px;
+    transform: rotate(12deg) scale(0.9);
   }
 }
 
@@ -264,15 +456,36 @@
   }
 }
 
+@media (min-width: 1024px) {
+  .alIntro {
+    padding: 80px 64px 120px;
+    margin-top: 0;
+    margin-bottom: 200px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .alIntro {
+    padding: 100px 80px 140px;
+    max-width: 1440px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 .alAvatar {
   position: relative;
   width: 88px;
   height: 88px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--color-accent-teal, #10b981) 0%, var(--color-accent-teal, #059669) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--color-accent-teal, #10b981) 0%,
+    var(--color-accent-teal, #059669) 100%
+  );
   padding: 4px;
   margin-bottom: 20px;
-  box-shadow: 
+  box-shadow:
     0 0 0 2px rgba(16, 185, 129, 0.3),
     0 8px 32px rgba(16, 185, 129, 0.25),
     0 0 60px rgba(16, 185, 129, 0.15);
@@ -392,8 +605,14 @@
 }
 
 @keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
 }
 
 .alSendBtn {
@@ -485,7 +704,7 @@
 
 @media (min-width: 768px) {
   .featureCard {
-    padding: 48px 48px;
+    padding: 48px;
     margin: 0 48px;
     border-radius: 32px;
     max-width: 700px;
@@ -536,9 +755,44 @@
   }
 }
 
+/* Desktop: Side-by-side layout for features */
+@media (min-width: 1024px) {
+  .featureSection,
+  .communitySection {
+    flex-direction: row;
+    justify-content: center;
+    padding: 100px 64px;
+    gap: 60px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Alternate layout: even sections have phone on left */
+  .featureSection:nth-child(even) {
+    flex-direction: row-reverse;
+  }
+}
+
+@media (min-width: 1280px) {
+  .featureSection,
+  .communitySection {
+    padding: 120px 80px;
+    gap: 80px;
+    max-width: 1400px;
+  }
+}
+
 .featureText {
   text-align: center;
   max-width: 560px;
+}
+
+@media (min-width: 1024px) {
+  .featureText {
+    text-align: left;
+    max-width: 480px;
+    flex: 1;
+  }
 }
 
 .featureTitle {
@@ -568,6 +822,28 @@
 @media (min-width: 768px) {
   .featureDescription {
     font-size: 1.0625rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .featureTitle {
+    font-size: 2.25rem;
+    margin-bottom: 20px;
+  }
+
+  .featureDescription {
+    font-size: 1.125rem;
+    line-height: 1.75;
+  }
+}
+
+@media (min-width: 1280px) {
+  .featureTitle {
+    font-size: 2.5rem;
+  }
+
+  .featureDescription {
+    font-size: 1.1875rem;
   }
 }
 
@@ -603,6 +879,20 @@
   }
 }
 
+@media (min-width: 1024px) {
+  .finalSection {
+    padding: 120px 64px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 1280px) {
+  .finalSection {
+    padding: 140px 80px;
+  }
+}
+
 .finalHeadline {
   font-family: var(--font-display, 'Oswald', system-ui);
   font-size: clamp(2rem, 8vw, 3rem);
@@ -612,6 +902,19 @@
   margin: 0 0 20px;
   line-height: 1.1;
   letter-spacing: 0.02em;
+}
+
+@media (min-width: 1024px) {
+  .finalHeadline {
+    font-size: 3.5rem;
+    margin-bottom: 24px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .finalHeadline {
+    font-size: 4rem;
+  }
 }
 
 .finalAccent {
@@ -628,6 +931,16 @@
   .finalSubtext {
     font-size: 1.125rem;
     margin-bottom: 40px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .finalSubtext {
+    font-size: 1.25rem;
+    margin-bottom: 48px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
   }
 }
 

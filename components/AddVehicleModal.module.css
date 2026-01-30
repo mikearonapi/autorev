@@ -1,4 +1,5 @@
 /* AddVehicleModal.module.css */
+
 /* Full-screen modal rendered via React Portal to document.body */
 
 /* ==========================================================
@@ -7,15 +8,14 @@
    ========================================================== */
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   width: 100%;
   height: 100vh;
   height: 100dvh;
+
   /* High z-index - rendered at body level via portal */
   z-index: 9999;
+
   /* Solid charcoal background - matches safe area color (#1a1a1a) */
   background: var(--brand-bg-overlay, #1a1a1a);
   box-sizing: border-box;
@@ -30,6 +30,7 @@
     align-items: center;
     justify-content: center;
     padding: 1.5rem;
+
     /* Charcoal overlay with blur - matches safe area color */
     background: var(--color-bg-overlay, rgba(26, 26, 26, 0.85));
     backdrop-filter: blur(12px) saturate(180%);
@@ -38,8 +39,13 @@
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 /* ==========================================================
@@ -47,22 +53,22 @@
    ========================================================== */
 .modal {
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  inset: 0;
   width: 100%;
   max-width: none;
   max-height: none;
   overflow: hidden;
+
   /* Solid charcoal background - matches safe area color (#1a1a1a) */
   background: var(--brand-bg-overlay, #1a1a1a);
   border: none;
   border-radius: 0;
   display: flex;
   flex-direction: column;
+
   /* Safe area padding for iOS home indicator */
   padding-bottom: env(safe-area-inset-bottom, 0);
+
   /* Must be above overlay */
   z-index: 10000;
   animation: slideUp 0.3s ease;
@@ -72,10 +78,7 @@
 @media (min-width: 768px) {
   .modal {
     position: relative;
-    top: auto;
-    left: auto;
-    right: auto;
-    bottom: auto;
+    inset: auto;
     width: 100%;
     max-width: 560px;
     max-height: 85vh;
@@ -92,6 +95,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -106,9 +110,10 @@
   align-items: center;
   justify-content: space-between;
   padding: 1.25rem 1.5rem;
+
   /* Safe area for notch/Dynamic Island */
   padding-top: calc(1.25rem + env(safe-area-inset-top, 0px));
-  border-bottom: 1px solid var(--color-border, #333);
+  border-bottom: 1px solid var(--color-border, #333333);
   flex-shrink: 0;
 }
 
@@ -130,7 +135,7 @@
 .closeButton {
   background: transparent;
   border: none;
-  color: var(--color-text-secondary, #888);
+  color: var(--color-text-secondary, #888888);
   cursor: pointer;
   min-width: 44px;
   min-height: 44px;
@@ -180,7 +185,7 @@
   left: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--color-text-muted, #666);
+  color: var(--color-text-muted, #666666);
   pointer-events: none;
 }
 
@@ -188,9 +193,9 @@
 .searchInput {
   width: 100%;
   min-height: 48px;
-  padding: 0.875rem 2.75rem 0.875rem 2.75rem;
+  padding: 0.875rem 2.75rem;
   background: var(--color-surface-elevated, #1a1a1a);
-  border: 1px solid var(--color-border, #333);
+  border: 1px solid var(--color-border, #333333);
   border-radius: 0.5rem;
   color: var(--color-text-primary, var(--brand-text-primary));
   font-size: max(16px, 1rem); /* Prevents iOS zoom */
@@ -200,7 +205,7 @@
 }
 
 .searchInput::placeholder {
-  color: var(--color-text-muted, #666);
+  color: var(--color-text-muted, #666666);
 }
 
 .searchInput:focus {
@@ -216,7 +221,7 @@
   transform: translateY(-50%);
   background: transparent;
   border: none;
-  color: var(--color-text-muted, #666);
+  color: var(--color-text-muted, #666666);
   cursor: pointer;
   padding: 0.25rem;
   border-radius: 0.25rem;
@@ -233,7 +238,7 @@
 
 .searchHint {
   font-size: 0.75rem;
-  color: var(--color-text-muted, #666);
+  color: var(--color-text-muted, #666666);
   margin-bottom: 0.75rem;
   padding-left: 0.25rem;
 }
@@ -249,6 +254,7 @@
   overflow-y: auto;
   padding-right: 0.25rem;
   min-height: 0; /* Allow flex shrinking for scroll */
+
   /* Extra bottom padding on mobile for home indicator clearance */
   padding-bottom: calc(0.5rem + env(safe-area-inset-bottom, 0px));
 }
@@ -272,12 +278,12 @@
 }
 
 .carList::-webkit-scrollbar-thumb {
-  background: var(--color-border, #333);
+  background: var(--color-border, #333333);
   border-radius: 3px;
 }
 
 .carList::-webkit-scrollbar-thumb:hover {
-  background: var(--color-text-muted, #666);
+  background: var(--color-text-muted, #666666);
 }
 
 .carOption {
@@ -286,7 +292,7 @@
   gap: 0.75rem;
   padding: 0.625rem 0.75rem;
   background: var(--color-surface-elevated, #1a1a1a);
-  border: 1px solid var(--color-border, #333);
+  border: 1px solid var(--color-border, #333333);
   border-radius: 0.5rem;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -407,12 +413,12 @@
   justify-content: center;
   text-align: center;
   padding: 2.5rem 1.5rem;
-  color: var(--color-text-muted, #666);
+  color: var(--color-text-muted, #666666);
   gap: 0.75rem;
 }
 
 .noResultsText {
-  color: var(--color-text-secondary, #888);
+  color: var(--color-text-secondary, #888888);
   font-size: 0.9375rem;
 }
 
@@ -424,9 +430,10 @@
   align-items: center;
   justify-content: space-between;
   padding: 1rem 1.5rem;
+
   /* Safe area padding for home indicator */
   padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
-  border-top: 1px solid var(--color-border, #333);
+  border-top: 1px solid var(--color-border, #333333);
   background: rgba(var(--brand-success-rgb), 0.05);
   flex-shrink: 0;
 }
@@ -469,7 +476,7 @@
    NO RESULTS
    ============================================ */
 .noResultsHint {
-  color: var(--color-text-muted, #666);
+  color: var(--color-text-muted, #666666);
   font-size: 0.8125rem;
   margin-top: 0.25rem;
 }
@@ -478,8 +485,13 @@
    SPINNING ANIMATION (for loader icon)
    ============================================ */
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .spinning {
@@ -518,4 +530,231 @@
 
 .errorDismiss:hover {
   opacity: 1;
+}
+
+/* ==========================================================
+   MODE TOGGLE - Switch between selector and search modes
+   ========================================================== */
+.modeToggle {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  background: var(--color-surface, #141414);
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.modeButton {
+  flex: 1;
+  padding: 0.625rem 1rem;
+  background: transparent;
+  border: none;
+  border-radius: 0.375rem;
+  color: var(--color-text-secondary, #888888);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 44px;
+}
+
+.modeButton:hover:not(.modeButtonActive) {
+  color: var(--color-text-primary, var(--brand-text-primary));
+}
+
+.modeButtonActive {
+  background: var(--color-surface-elevated, #1a1a1a);
+  color: var(--color-text-primary, var(--brand-text-primary));
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* ==========================================================
+   SELECTOR MODE - Cascading dropdowns
+   ========================================================== */
+.selectorContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.selectGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.selectLabel {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-secondary, #888888);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* CF-006: Prevent iOS zoom on select focus - minimum 16px font */
+.select {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.75rem 2.5rem 0.75rem 1rem;
+  background: var(--color-surface-elevated, #1a1a1a);
+  border: 1px solid var(--color-border, #333333);
+  border-radius: 0.5rem;
+  color: var(--color-text-primary, var(--brand-text-primary));
+  font-size: max(16px, 1rem); /* Prevents iOS zoom */
+  cursor: pointer;
+  transition: all 0.2s ease;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  /* Custom dropdown arrow */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 1rem center;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--brand-teal);
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background-color: var(--color-surface, #141414);
+}
+
+.select option {
+  background: var(--color-surface-elevated, #1a1a1a);
+  color: var(--color-text-primary, var(--brand-text-primary));
+  padding: 0.5rem;
+}
+
+/* ==========================================================
+   MATCHED CAR PREVIEW
+   ========================================================== */
+.matchedCar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 0.75rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.matchedCarInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.matchedCarName {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--color-text-primary, var(--brand-text-primary));
+}
+
+.matchedCarMeta {
+  font-size: 0.8125rem;
+  color: var(--color-text-secondary, #888888);
+}
+
+/* LIME CTA for Add to Garage button */
+.addMatchedButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 48px;
+  padding: 0.75rem 1.5rem;
+  background: var(--color-accent-lime, #d4ff00);
+  border: none;
+  border-radius: 0.5rem;
+  color: var(--color-bg-base, #0a1628);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.addMatchedButton:hover:not(:disabled) {
+  background: var(--color-accent-lime-dark, #bfe600);
+  box-shadow: 0 4px 12px rgba(212, 255, 0, 0.3);
+}
+
+.addMatchedButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* ==========================================================
+   NOT FOUND STATE - Request to add
+   ========================================================== */
+.notFound {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 1rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+.notFoundText {
+  color: var(--color-text-secondary, #888888);
+  font-size: 0.9375rem;
+}
+
+/* Amber button for request - indicates action needed */
+.requestButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  max-width: 280px;
+  min-height: 48px;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 183, 77, 0.15);
+  border: 1px solid rgba(255, 183, 77, 0.4);
+  border-radius: 0.5rem;
+  color: var(--brand-amber, #ffb74d);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.requestButton:hover {
+  background: var(--brand-amber, #ffb74d);
+  border-color: var(--brand-amber, #ffb74d);
+  color: var(--color-bg-base, #0a1628);
+}
+
+/* ==========================================================
+   REQUEST SUBMITTED STATE
+   ========================================================== */
+.requestSubmitted {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  margin-top: 0.5rem;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  border-radius: 0.5rem;
+  color: var(--brand-teal);
+  font-size: 0.875rem;
+  animation: fadeIn 0.2s ease;
+}
+
+.requestSubmitted p {
+  margin: 0;
 }

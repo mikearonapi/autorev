@@ -26,7 +26,7 @@ import Link from 'next/link';
 
 // Analysis components migrated from Data page
 import BuildProgressAnalysis from '@/components/BuildProgressAnalysis';
-import BuildValueAnalysis from '@/components/BuildValueAnalysis';
+import FeedbackDimensionsModal from '@/components/FeedbackDimensionsModal';
 import { GarageVehicleSelector } from '@/components/garage';
 import KnownIssuesAlert from '@/components/KnownIssuesAlert';
 import LoadingSpinner from '@/components/LoadingSpinner';
@@ -55,7 +55,6 @@ const INSIGHT_SECTIONS = {
   buildProgress: { label: 'Build Progress', description: 'Power, handling, reliability rings' },
   // drivingCharacter removed - now accessible via info button on garage car image
   stageAnalysis: { label: 'Stage Analysis', description: 'Stage 1/2/3 progression' },
-  valueAnalysis: { label: 'Value Analysis', description: 'Cost efficiency & ROI' },
   nextUpgrade: { label: 'Next Upgrade', description: 'Recommended mods' },
   knownIssues: { label: 'Known Issues', description: 'Platform reliability alerts' },
   platformInsights: { label: 'Platform Insights', description: 'Strengths & weaknesses' },
@@ -258,12 +257,12 @@ const SparklesIcon = ({ size = 18 }) => (
     <path d="M19 10l.5 1.5L21 12l-1.5.5-.5 1.5-.5-1.5L17 12l1.5-.5.5-1.5z" />
   </svg>
 );
-const ThumbsUpIcon = ({ size = 18 }) => (
+const ThumbsUpIcon = ({ size = 18, filled = false }) => (
   <svg
     width={size}
     height={size}
     viewBox="0 0 24 24"
-    fill="none"
+    fill={filled ? 'currentColor' : 'none'}
     stroke="currentColor"
     strokeWidth="2"
     strokeLinecap="round"
@@ -272,12 +271,12 @@ const ThumbsUpIcon = ({ size = 18 }) => (
     <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3" />
   </svg>
 );
-const ThumbsDownIcon = ({ size = 18 }) => (
+const ThumbsDownIcon = ({ size = 18, filled = false }) => (
   <svg
     width={size}
     height={size}
     viewBox="0 0 24 24"
-    fill="none"
+    fill={filled ? 'currentColor' : 'none'}
     stroke="currentColor"
     strokeWidth="2"
     strokeLinecap="round"
@@ -409,6 +408,58 @@ const FilterPanel = ({ isOpen, onClose, filters, onToggle, onReset }) => {
 // Types: PERFORMANCE (upgrades/power), RELIABILITY (platform issues), COMMUNITY (builds/social), OPPORTUNITY (deals/events)
 const SmartInsightCard = ({ type, title, body, subtext, action, onFeedback, id }) => {
   const [feedback, setFeedback] = useState(null);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmitFeedback = async (rating, feedbackText = null) => {
+    if (isSubmitting) return;
+
+    setIsSubmitting(true);
+    setFeedback(rating);
+
+    try {
+      await onFeedback(type, id, rating, title, feedbackText);
+      setSubmitted(true);
+    } catch (err) {
+      console.error('[SmartInsightCard] Feedback error:', err);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleThumbsUp = () => {
+    if (isSubmitting || submitted) return;
+    handleSubmitFeedback('up');
+  };
+
+  const handleThumbsDown = () => {
+    if (isSubmitting || submitted) return;
+    // Show the feedback modal for detailed negative feedback
+    setFeedback('down');
+    setShowFeedbackModal(true);
+  };
+
+  const handleModalSubmit = async ({ tags, feedbackText }) => {
+    // Combine tags and text into a single feedback string
+    const combinedFeedback = [
+      tags.length > 0 ? `Tags: ${tags.join(', ')}` : '',
+      feedbackText ? `Comment: ${feedbackText}` : '',
+    ]
+      .filter(Boolean)
+      .join(' | ');
+
+    await handleSubmitFeedback('down', combinedFeedback || null);
+    setShowFeedbackModal(false);
+  };
+
+  const handleModalClose = () => {
+    // If modal is closed without submitting, reset the feedback state
+    if (!submitted) {
+      setFeedback(null);
+    }
+    setShowFeedbackModal(false);
+  };
 
   const getIcon = () => {
     switch (type) {
@@ -441,51 +492,82 @@ const SmartInsightCard = ({ type, title, body, subtext, action, onFeedback, id }
   };
 
   return (
-    <div className={styles.smartCard}>
-      <div className={styles.cardHeader}>
-        <div
-          className={styles.cardIconWrapper}
-          style={{ color: getAccentColor(), background: `${getAccentColor()}15` }}
-        >
-          {getIcon()}
-        </div>
-        <span className={styles.cardType} style={{ color: getAccentColor() }}>
-          {type}
-        </span>
-        <div className={styles.cardActions}>
-          <button
-            className={`${styles.feedbackBtn} ${feedback === 'up' ? styles.activeUp : ''}`}
-            onClick={() => {
-              setFeedback('up');
-              onFeedback(type, id, 'up');
-            }}
+    <>
+      <div className={styles.smartCard}>
+        <div className={styles.cardHeader}>
+          <div
+            className={styles.cardIconWrapper}
+            style={{ color: getAccentColor(), background: `${getAccentColor()}15` }}
           >
-            <ThumbsUpIcon size={14} />
-          </button>
-          <button
-            className={`${styles.feedbackBtn} ${feedback === 'down' ? styles.activeDown : ''}`}
-            onClick={() => {
-              setFeedback('down');
-              onFeedback(type, id, 'down');
-            }}
-          >
-            <ThumbsDownIcon size={14} />
-          </button>
+            {getIcon()}
+          </div>
+          <span className={styles.cardType} style={{ color: getAccentColor() }}>
+            {type}
+          </span>
+          <div className={styles.cardActions}>
+            {submitted ? (
+              <>
+                <button
+                  className={`${styles.feedbackBtn} ${feedback === 'up' ? styles.activeUp : styles.dimmed}`}
+                  disabled
+                  aria-label="Helpful - submitted"
+                >
+                  <ThumbsUpIcon size={14} filled={feedback === 'up'} />
+                </button>
+                <button
+                  className={`${styles.feedbackBtn} ${feedback === 'down' ? styles.activeDown : styles.dimmed}`}
+                  disabled
+                  aria-label="Not helpful - submitted"
+                >
+                  <ThumbsDownIcon size={14} filled={feedback === 'down'} />
+                </button>
+              </>
+            ) : (
+              <>
+                <button
+                  className={`${styles.feedbackBtn} ${feedback === 'up' ? styles.activeUp : ''}`}
+                  onClick={handleThumbsUp}
+                  disabled={isSubmitting}
+                  aria-label="This was helpful"
+                >
+                  <ThumbsUpIcon size={14} filled={feedback === 'up'} />
+                </button>
+                <button
+                  className={`${styles.feedbackBtn} ${feedback === 'down' ? styles.activeDown : ''}`}
+                  onClick={handleThumbsDown}
+                  disabled={isSubmitting}
+                  aria-label="Not helpful"
+                >
+                  <ThumbsDownIcon size={14} filled={feedback === 'down'} />
+                </button>
+              </>
+            )}
+          </div>
         </div>
+
+        <div className={styles.cardBody}>
+          <h3 className={styles.cardTitle}>{title}</h3>
+          <p className={styles.cardText}>{body}</p>
+          {subtext && <div className={styles.cardSubtext}>{subtext}</div>}
+        </div>
+
+        {action && (
+          <Link href={action.href} className={styles.cardActionLink}>
+            {action.label} <ChevronRightIcon />
+          </Link>
+        )}
       </div>
 
-      <div className={styles.cardBody}>
-        <h3 className={styles.cardTitle}>{title}</h3>
-        <p className={styles.cardText}>{body}</p>
-        {subtext && <div className={styles.cardSubtext}>{subtext}</div>}
-      </div>
-
-      {action && (
-        <Link href={action.href} className={styles.cardActionLink}>
-          {action.label} <ChevronRightIcon />
-        </Link>
-      )}
-    </div>
+      {/* Feedback modal for detailed negative feedback */}
+      <FeedbackDimensionsModal
+        isOpen={showFeedbackModal}
+        onClose={handleModalClose}
+        onSubmit={handleModalSubmit}
+        feedbackType="negative"
+        subtitle="What went wrong? Your feedback helps us improve."
+        showDimensionRatings={false}
+      />
+    </>
   );
 };
 
@@ -979,6 +1061,8 @@ export default function InsightsClient() {
       notIdealFor: vehicle.matched_car?.not_ideal_for,
       // Include matched_car for consistency validation
       matchedCar: vehicle.matched_car || null,
+      // Include layout for stage progression generation
+      carLayout: vehicle.matched_car?.layout || 'Front-Engine',
     };
   }, [selectedVehicleId, vehicles]);
 
@@ -1005,26 +1089,54 @@ export default function InsightsClient() {
   });
 
   const handleFeedback = useCallback(
-    async (insightType, insightKey, rating) => {
-      if (!user?.id) return;
+    async (insightType, insightKey, rating, insightTitle = null, feedbackText = null) => {
+      console.log('[InsightsClient] handleFeedback called:', {
+        insightType,
+        insightKey,
+        rating,
+        insightTitle,
+        feedbackText,
+        userId: user?.id,
+      });
+
+      if (!user?.id) {
+        console.warn('[InsightsClient] No user ID, skipping feedback');
+        return;
+      }
+
+      // Get the matched_car_id from the selected vehicle (car_id FK references cars table, not user_vehicles)
+      let carId = null;
+      if (selectedVehicleId && selectedVehicleId !== 'all') {
+        const vehicle = vehicles.find((v) => v.id === selectedVehicleId);
+        carId = vehicle?.matched_car_id || null;
+      }
 
       try {
-        await fetch('/api/insights/feedback', {
+        const response = await fetch('/api/insights/feedback', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             userId: user.id,
             insightType,
             insightKey,
-            carId: selectedVehicleId !== 'all' ? selectedVehicleId : null,
+            carId,
             rating,
+            insightTitle,
+            feedbackText,
           }),
         });
+
+        const data = await response.json();
+        console.log('[InsightsClient] Feedback response:', response.status, data);
+
+        if (!response.ok) {
+          console.error('[InsightsClient] Feedback API error:', data);
+        }
       } catch (err) {
-        console.error('Feedback error:', err);
+        console.error('[InsightsClient] Feedback error:', err);
       }
     },
-    [user?.id, selectedVehicleId]
+    [user?.id, selectedVehicleId, vehicles]
   );
 
   // Not authenticated
@@ -1122,34 +1234,24 @@ export default function InsightsClient() {
           ============================================ */}
 
       {/* Build Progress Analysis - Stage 1/2/3 progression */}
+      {/* Build Progress Analysis - Stage 1/2/3 progression
+          Now generates canonical stages from upgradeModules when car data available,
+          aligned with docs/UPGRADE-CATEGORY-LOGIC.md definitions */}
       {sectionFilters.stageAnalysis &&
         selectedVehicleId &&
         selectedVehicleId !== 'all' &&
-        tuningProfile?.stage_progressions && (
+        selectedVehicleDetails?.matchedCar && (
           <section className={styles.analysisSection}>
             <BuildProgressAnalysis
-              stageProgressions={tuningProfile.stage_progressions}
+              stageProgressions={tuningProfile?.stage_progressions}
               installedUpgrades={installedUpgrades}
               stockHp={vehiclePerformanceData.stockHp}
               currentHp={vehiclePerformanceData.estimatedHp}
               carName={selectedVehicleDetails?.carName}
               carSlug={selectedVehicleDetails?.carSlug}
-              onFeedback={handleFeedback}
-            />
-          </section>
-        )}
-
-      {/* Build Value Analysis - Cost efficiency and ROI */}
-      {sectionFilters.valueAnalysis &&
-        selectedVehicleId &&
-        selectedVehicleId !== 'all' &&
-        installedUpgrades.length > 0 && (
-          <section className={styles.analysisSection}>
-            <BuildValueAnalysis
-              installedUpgrades={installedUpgrades}
-              stockHp={vehiclePerformanceData.stockHp}
-              currentHp={vehiclePerformanceData.estimatedHp}
-              carName={selectedVehicleDetails?.carName}
+              car={selectedVehicleDetails?.matchedCar}
+              carLayout={selectedVehicleDetails?.carLayout}
+              tuningProfile={tuningProfile}
               onFeedback={handleFeedback}
             />
           </section>

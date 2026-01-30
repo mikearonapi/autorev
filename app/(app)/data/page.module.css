@@ -919,10 +919,11 @@
 
 @media (min-width: 1024px) {
   .pageContent {
-    /* Centered container with max-width */
-    max-width: 1200px;
+    /* Match garage page: 1220px centered container */
+    width: 100%;
+    max-width: 1220px;
     margin: 0 auto;
-    padding: 0 32px;
+    padding: 0 40px;
   }
 
   /* Dyno results in 2-column grid on desktop */

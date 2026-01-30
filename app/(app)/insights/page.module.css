@@ -35,19 +35,14 @@
   }
 }
 
-/* Desktop - wider layout */
+/* Desktop - wider layout matching garage page */
 @media (min-width: 1024px) {
   .page {
-    max-width: 900px;
-    padding: 0 32px;
+    /* Match garage page: 1220px centered container */
+    width: 100%;
+    max-width: 1220px;
+    padding: 0 40px;
     padding-bottom: var(--space-8, 32px);
-  }
-}
-
-/* Large Desktop */
-@media (min-width: 1280px) {
-  .page {
-    max-width: 1000px;
   }
 }
 
@@ -444,7 +439,7 @@
   border-radius: 14px;
   padding: 12px 14px;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
   transition: all 0.2s ease;
 
   /* Premium inner highlight */
@@ -461,6 +456,7 @@
   align-items: center;
   gap: 10px;
   margin-bottom: 8px;
+  position: relative;
 }
 
 .cardIconWrapper {
@@ -483,6 +479,7 @@
 .cardActions {
   display: flex;
   gap: 8px;
+  position: relative;
 }
 
 .feedbackBtn {
@@ -524,6 +521,12 @@
   background: rgba(239, 68, 68, 0.15);
   border-color: rgba(239, 68, 68, 0.3);
   color: var(--color-error, #ef4444);
+}
+
+/* Dimmed state for non-selected button after submission */
+.feedbackBtn.dimmed {
+  opacity: 0.3;
+  pointer-events: none;
 }
 
 .cardBody {

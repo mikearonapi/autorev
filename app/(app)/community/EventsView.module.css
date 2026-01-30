@@ -12,8 +12,7 @@
   flex-direction: column;
   padding: var(--space-sm, 12px);
   padding-bottom: var(--page-bottom-padding, 100px);
-  overflow-y: auto;
-  overflow-x: hidden;
+  overflow: hidden auto;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -121,7 +120,7 @@
   transition: transform 0.2s ease;
 }
 
-.titleDropdownBtn[aria-expanded="true"] svg {
+.titleDropdownBtn[aria-expanded='true'] svg {
   transform: rotate(180deg);
 }
 
@@ -144,6 +143,7 @@
     opacity: 0;
     transform: translateY(-8px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -293,8 +293,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  overflow-x: auto;
-  overflow-y: visible;
+  overflow: auto visible;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -797,3 +796,51 @@
 }
 
 /* Mobile-first responsive styles are now in base selectors with min-width enhancements */
+
+/* ==========================================================================
+   Desktop Responsive (1024px+)
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .container {
+    /* Match garage page: 1220px centered container */
+    width: 100%;
+    max-width: 1220px;
+    margin: 0 auto;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+
+  .headerSection {
+    margin-bottom: var(--space-md, 16px);
+  }
+
+  .title {
+    font-size: var(--font-size-4xl);
+  }
+
+  /* Events list can show more events per row on wide screens */
+  .eventsList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-sm, 12px);
+  }
+
+  .eventCard {
+    gap: var(--space-md, 16px);
+    padding: var(--space-md, 16px);
+  }
+
+  .dateBadge {
+    width: 56px;
+    padding: 10px 8px;
+  }
+
+  .dateDay {
+    font-size: var(--font-size-xl, 20px);
+  }
+
+  .eventName {
+    font-size: 17px;
+  }
+}

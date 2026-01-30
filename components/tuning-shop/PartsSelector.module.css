@@ -784,7 +784,7 @@
   color: var(--color-accent-teal, #10b981);
 }
 
-/* Desktop Responsive */
+/* Tablet Responsive */
 @media (min-width: 641px) {
   .alRecommendationsBtn {
     padding: 14px 16px;
@@ -801,5 +801,94 @@
 
   .itemBottomRow {
     gap: 10px;
+  }
+}
+
+/* ==========================================================================
+   Desktop Responsive (1024px+)
+   Optimized layout for larger screens
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .container {
+    gap: 20px;
+  }
+
+  /* Header section */
+  .header {
+    padding: 0 4px;
+  }
+
+  .title {
+    font-size: 1rem;
+  }
+
+  .totalCost {
+    font-size: 0.9375rem;
+  }
+
+  /* Category cards - more spacious */
+  .category {
+    padding: 20px;
+    border-radius: 16px;
+  }
+
+  .categoryHeader {
+    margin-bottom: 16px;
+  }
+
+  .categoryName {
+    font-size: 1rem;
+  }
+
+  /* Part items - better spacing */
+  .item {
+    padding: 14px 16px;
+    border-radius: 12px;
+  }
+
+  .itemName {
+    font-size: 0.9375rem;
+  }
+
+  .itemBrand {
+    font-size: 0.8125rem;
+  }
+
+  /* Action buttons */
+  .buyBtn,
+  .viewBtn {
+    padding: 8px 16px;
+    font-size: 0.8125rem;
+  }
+
+  /* AL Recommendations button */
+  .alRecommendationsBtn {
+    padding: 16px 20px;
+    gap: 14px;
+    border-radius: 16px;
+  }
+
+  .alRecommendationsTitle {
+    font-size: 1rem;
+  }
+
+  .alRecommendationsSubtitle {
+    font-size: 0.8125rem;
+  }
+}
+
+/* Large desktop (1280px+) */
+@media (min-width: 1280px) {
+  .container {
+    gap: 24px;
+  }
+
+  .category {
+    padding: 24px;
+  }
+
+  .item {
+    padding: 16px 20px;
   }
 }

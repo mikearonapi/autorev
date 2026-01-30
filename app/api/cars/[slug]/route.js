@@ -1,6 +1,6 @@
 /**
  * GET /api/cars/[slug]
- * 
+ *
  * Returns a single car by its slug from the database.
  * Used as a fallback when the full cars list isn't available.
  */
@@ -16,7 +16,7 @@ export const revalidate = 300;
 
 async function handleGet(request, { params }) {
   const { slug } = await params;
-  
+
   if (!slug) {
     return errors.badRequest('Car slug is required');
   }
@@ -28,10 +28,13 @@ async function handleGet(request, { params }) {
   try {
     const { data: car, error } = await supabase
       .from('cars')
-      .select(`
+      .select(
+        `
         id,
         slug,
         name,
+        model,
+        trim,
         years,
         tier,
         category,
@@ -81,7 +84,8 @@ async function handleGet(request, { params }) {
         community_strength,
         diy_friendliness,
         parts_availability
-      `)
+      `
+      )
       .eq('slug', slug)
       .single();
 
@@ -98,6 +102,8 @@ async function handleGet(request, { params }) {
       id: car.id,
       slug: car.slug,
       name: car.name,
+      model: car.model,
+      trim: car.trim,
       years: car.years,
       tier: car.tier,
       category: car.category,

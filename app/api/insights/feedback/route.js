@@ -1,6 +1,6 @@
 /**
  * Insight Feedback API Route
- * 
+ *
  * POST /api/insights/feedback
  * Save thumbs up/down feedback for an insight
  * Awards 2 points for each feedback submission
@@ -16,27 +16,51 @@ import { withErrorLogging } from '@/lib/serverErrorLogger';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-const supabase = supabaseUrl && supabaseServiceKey
-  ? createClient(supabaseUrl, supabaseServiceKey)
-  : null;
+const supabase =
+  supabaseUrl && supabaseServiceKey ? createClient(supabaseUrl, supabaseServiceKey) : null;
 
 // Points awarded for providing feedback
 const FEEDBACK_POINTS = 2;
 
 async function handlePost(request) {
+  console.log('[Feedback API] Received request');
+
   if (!supabase) {
-    return NextResponse.json(
-      { error: 'Database not configured' },
-      { status: 500 }
-    );
+    console.error('[Feedback API] Database not configured');
+    return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
   }
 
   try {
     const body = await request.json();
-    const { userId, insightType, insightKey, carId, rating, feedbackText, insightContent, insightTitle } = body;
+    const {
+      userId,
+      insightType,
+      insightKey,
+      carId,
+      rating,
+      feedbackText,
+      insightContent,
+      insightTitle,
+    } = body;
+
+    console.log('[Feedback API] Request body:', {
+      userId,
+      insightType,
+      insightKey,
+      carId,
+      rating,
+      feedbackText,
+      insightTitle,
+    });
 
     // Validate required fields
     if (!userId || !insightType || !insightKey || !rating) {
+      console.error('[Feedback API] Missing required fields:', {
+        userId: !!userId,
+        insightType: !!insightType,
+        insightKey: !!insightKey,
+        rating: !!rating,
+      });
       return NextResponse.json(
         { error: 'Missing required fields: userId, insightType, insightKey, rating' },
         { status: 400 }
@@ -44,10 +68,7 @@ async function handlePost(request) {
     }
 
     if (!['up', 'down'].includes(rating)) {
-      return NextResponse.json(
-        { error: 'Rating must be "up" or "down"' },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: 'Rating must be "up" or "down"' }, { status: 400 });
     }
 
     // Upsert feedback (update if exists, insert if not)
@@ -75,10 +96,7 @@ async function handlePost(request) {
 
     if (error) {
       console.error('[Feedback API] Database error:', error);
-      return NextResponse.json(
-        { error: 'Failed to save feedback' },
-        { status: 500 }
-      );
+      return NextResponse.json({ error: 'Failed to save feedback' }, { status: 500 });
     }
 
     // Award points for providing feedback
@@ -100,14 +118,13 @@ async function handlePost(request) {
         pointsAwarded: FEEDBACK_POINTS,
       },
     });
-
   } catch (error) {
     console.error('[Feedback API] Error:', error);
-    return NextResponse.json(
-      { error: 'Failed to process feedback' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to process feedback' }, { status: 500 });
   }
 }
 
-export const POST = withErrorLogging(handlePost, { route: 'insights/feedback', feature: 'feedback' });
+export const POST = withErrorLogging(handlePost, {
+  route: 'insights/feedback',
+  feature: 'feedback',
+});

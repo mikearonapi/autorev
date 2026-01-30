@@ -32,6 +32,7 @@
     opacity: 0;
     transform: translateY(10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -68,6 +69,7 @@
     opacity: 0;
     transform: translateX(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -150,36 +152,36 @@
   .container {
     padding: var(--space-md);
   }
-  
+
   .title {
     font-size: var(--font-size-lg);
   }
-  
+
   .subtitle {
     margin-bottom: var(--space-lg);
   }
-  
+
   .optionGrid {
     gap: var(--space-xs);
   }
-  
+
   .optionCard {
     padding: var(--space-sm) var(--space-md);
     gap: var(--space-sm);
   }
-  
+
   .emoji {
     font-size: var(--text-h1);
   }
-  
+
   .optionTitle {
     font-size: var(--font-size-sm);
   }
-  
+
   .optionDesc {
     font-size: var(--text-xs);
   }
-  
+
   .checkbox {
     width: 22px;
     height: 22px;
@@ -191,8 +193,74 @@
   .optionCard {
     padding: var(--space-sm);
   }
-  
+
   .emoji {
     font-size: var(--text-h2);
+  }
+}
+
+/* Tablet */
+@media (min-width: 768px) {
+  .container {
+    padding: var(--space-lg);
+  }
+
+  .optionGrid {
+    max-width: 420px;
+  }
+
+  .optionCard {
+    padding: var(--space-md) var(--space-lg);
+  }
+}
+
+/* Desktop - Balanced proportions */
+@media (min-width: 1024px) {
+  .container {
+    padding: 16px 24px;
+  }
+
+  .title {
+    font-size: 1.25rem;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    font-size: 0.8125rem;
+    margin-bottom: 16px;
+  }
+
+  .optionGrid {
+    max-width: 400px;
+    gap: 8px;
+  }
+
+  .optionCard {
+    padding: 12px 14px;
+    gap: 12px;
+    border-radius: 12px;
+  }
+
+  .emoji {
+    font-size: 1.25rem;
+  }
+
+  .optionTitle {
+    font-size: 0.875rem;
+  }
+
+  .optionDesc {
+    font-size: 0.75rem;
+  }
+
+  .checkbox {
+    width: 20px;
+    height: 20px;
+    border-radius: 5px;
+  }
+
+  .hint {
+    margin-top: 12px;
+    font-size: 0.75rem;
   }
 }

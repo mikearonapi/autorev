@@ -1298,9 +1298,13 @@
 
 @media (min-width: 1024px) {
   .page {
-    max-width: 800px;
+    /* Match garage page: 1220px centered container */
+    width: 100%;
+    max-width: 1220px;
     margin: 0 auto;
-    padding: 0 32px var(--space-8, 32px);
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-bottom: var(--space-8, 32px);
   }
 
   .header {

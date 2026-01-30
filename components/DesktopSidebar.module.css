@@ -15,7 +15,9 @@
 .backdrop {
   position: fixed;
   inset: 0;
-  z-index: 1100;
+
+  /* Must be above GarageVehicleSelector (z-index: 9000) but below fullscreen modals (z-index: 9999+) */
+  z-index: 9100;
 
   /* Dark overlay */
   background: rgba(0, 0, 0, 0.5);
@@ -44,7 +46,9 @@
   top: 0;
   left: 0;
   bottom: 0;
-  z-index: 1200;
+
+  /* Must be above backdrop (z-index: 9100) */
+  z-index: 9200;
 
   /* Dimensions */
   width: 280px;

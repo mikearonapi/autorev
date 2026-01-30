@@ -41,6 +41,7 @@ import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
 import { useGarageScore } from '@/hooks/useGarageScore';
 import { getCarHeroImage } from '@/lib/images';
+import { invalidatePrefetchCache } from '@/lib/prefetch';
 
 import styles from './page.module.css';
 
@@ -62,7 +63,7 @@ function MyPhotosContent() {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const authModal = useAuthModal();
   const { builds, isLoading: buildsLoading } = useSavedBuilds();
-  const { vehicles, updateVehicle } = useOwnedVehicles();
+  const { vehicles, refresh: refreshVehicles } = useOwnedVehicles();
 
   // Garage score recalculation hook (uses vehicleId state set in useEffect below)
   const { recalculateScore } = useGarageScore(vehicleId);
@@ -139,6 +140,7 @@ function MyPhotosContent() {
     if (!confirmed) return;
 
     try {
+      // Use API route which has proper server-side authentication
       const response = await fetch(`/api/users/${user.id}/vehicles/${vehicleId}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -146,15 +148,20 @@ function MyPhotosContent() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to hide stock photo');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to hide stock photo');
       }
 
-      // Update local state via provider
-      await updateVehicle(vehicleId, { hideStockImage: true });
+      // Invalidate prefetch cache so refresh fetches fresh data from server
+      invalidatePrefetchCache('vehicles');
+
+      // Refresh vehicles from server to update local state
+      await refreshVehicles();
     } catch (err) {
       console.error('[MyPhotos] Hide stock photo error:', err);
+      window.alert('Failed to hide stock photo. Please try again.');
     }
-  }, [user?.id, vehicleId, updateVehicle]);
+  }, [user?.id, vehicleId, refreshVehicles]);
 
   // Handle URL params - load build or car (with fallback support)
   useEffect(() => {

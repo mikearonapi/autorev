@@ -5,6 +5,7 @@
 
 .page {
   min-height: 100dvh;
+
   /* Transparent to show body gradient */
   background: transparent;
   padding: 0 16px var(--page-bottom-padding);
@@ -127,14 +128,27 @@
   animation: skeletonPulse 1.5s ease-in-out infinite;
 }
 
-.skeletonSection:nth-child(1) { animation-delay: 0.4s; height: 160px; }
-.skeletonSection:nth-child(2) { animation-delay: 0.5s; height: 120px; }
-.skeletonSection:nth-child(3) { animation-delay: 0.6s; height: 100px; }
+.skeletonSection:nth-child(1) {
+  animation-delay: 0.4s;
+  height: 160px;
+}
+
+.skeletonSection:nth-child(2) {
+  animation-delay: 0.5s;
+  height: 120px;
+}
+
+.skeletonSection:nth-child(3) {
+  animation-delay: 0.6s;
+  height: 100px;
+}
 
 @keyframes skeletonPulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.4;
   }
+
   50% {
     opacity: 0.7;
   }
@@ -218,8 +232,14 @@
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 0.5;
+  }
+
+  50% {
+    opacity: 1;
+  }
 }
 
 .avatarInput {
@@ -438,7 +458,11 @@
 
 .fuelFill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-accent-teal, #10b981), var(--color-accent-teal-light, #34d399));
+  background: linear-gradient(
+    90deg,
+    var(--color-accent-teal, #10b981),
+    var(--color-accent-teal-light, #34d399)
+  );
   border-radius: 6px;
   transition: width 0.4s ease;
 }
@@ -861,7 +885,7 @@
   background: var(--color-text-primary, #ffffff);
   border-radius: 50%;
   transition: transform 0.25s ease;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 .toggle input:checked + span {
@@ -895,7 +919,7 @@
 
 .trialTag {
   background: linear-gradient(135deg, var(--color-pro, #7c3aed), #9333ea);
-  color: #fff;
+  color: #ffffff;
   font-size: var(--text-xs);
   font-weight: 700;
   padding: 4px 10px;
@@ -1457,7 +1481,7 @@
   .zipInput {
     width: 64px;
   }
-  
+
   .locationSaveBtn {
     padding: 0 12px;
     min-width: 48px;
@@ -1469,24 +1493,24 @@
   .planCard {
     padding: 12px 8px;
   }
-  
+
   .planName {
     font-size: var(--text-xs);
   }
-  
+
   .planPrice {
     font-size: var(--text-sm);
   }
-  
+
   .planFeatures li {
     font-size: var(--text-2xs);
   }
-  
+
   .yourPlanRibbon {
     font-size: 7px;
     right: -26px;
   }
-  
+
   .currentPlanName {
     font-size: var(--text-stat-hero);
   }
@@ -1533,41 +1557,40 @@
   }
 
   .planCard {
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-flow: row wrap;
     align-items: center;
     padding: 12px 14px;
     gap: 8px;
   }
-  
+
   .planCardCurrent {
     order: -1; /* Current plan goes first */
   }
-  
+
   .yourPlanRibbon {
     display: none;
   }
-  
+
   .planName {
     font-size: var(--text-body);
     flex: 0 0 auto;
   }
-  
+
   .planPrice {
     font-size: var(--text-sm);
     margin-bottom: 0;
     margin-left: auto;
   }
-  
+
   .planFeatures {
     width: 100%;
     margin: 8px 0;
   }
-  
+
   .planFeatures li {
     font-size: var(--text-xs);
   }
-  
+
   .planBtn,
   .currentPlanTag {
     width: 100%;
@@ -1577,11 +1600,11 @@
   .currentPlanHero {
     padding: 14px 12px;
   }
-  
+
   .currentPlanName {
     font-size: var(--text-h2);
   }
-  
+
   .betaBanner {
     flex-direction: column;
     gap: 6px;
@@ -1604,5 +1627,139 @@
 
   .clearBtn {
     width: 100%;
+  }
+}
+
+/* ==========================================================================
+   iPad/Desktop Responsive (768px+)
+   ========================================================================== */
+
+@media (min-width: 768px) {
+  .page {
+    /* No bottom tab bar on desktop */
+    padding: 0 24px var(--space-6, 24px);
+  }
+
+  .header {
+    gap: 18px;
+    padding: 24px 0 20px;
+  }
+
+  .avatar {
+    width: 72px;
+    height: 72px;
+  }
+
+  .headerInfo h1 {
+    font-size: 1.5rem;
+  }
+
+  .fuelCard {
+    padding: 20px;
+  }
+
+  .referralCard {
+    padding: 18px 20px;
+  }
+
+  .referralLink {
+    padding: 12px 16px;
+  }
+
+  .section {
+    padding: 20px;
+  }
+
+  .locationInputs {
+    flex-wrap: nowrap;
+  }
+
+  .topupRow {
+    flex-direction: row;
+  }
+
+  .topupBtn {
+    flex-direction: column;
+    padding: 10px 8px;
+  }
+
+  .dataRow {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .clearBtn {
+    width: auto;
+  }
+}
+
+/* ==========================================================================
+   Desktop Responsive (1024px+)
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .page {
+    /* Match garage page: 1220px centered container */
+    width: 100%;
+    max-width: 1220px;
+    margin: 0 auto;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-bottom: var(--space-8, 32px);
+  }
+
+  .header {
+    gap: 24px;
+    padding: 28px 0 24px;
+  }
+
+  .avatar {
+    width: 80px;
+    height: 80px;
+  }
+
+  .headerInfo h1 {
+    font-size: 1.75rem;
+  }
+
+  .badges {
+    gap: 10px;
+  }
+
+  .fuelCard {
+    padding: 24px;
+    border-radius: 18px;
+  }
+
+  .referralCard {
+    padding: 20px 24px;
+  }
+
+  .sections {
+    gap: 20px;
+  }
+
+  .section {
+    padding: 24px;
+    border-radius: 16px;
+  }
+
+  .sectionTitle {
+    font-size: var(--text-sm);
+    margin-bottom: 14px;
+  }
+
+  .field {
+    margin-bottom: 16px;
+  }
+
+  .toggleRow {
+    padding: 12px 0;
+  }
+
+  /* Two-column layout for top section */
+  .fuelCard,
+  .referralCard {
+    margin-bottom: 16px;
   }
 }

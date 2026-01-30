@@ -40,6 +40,7 @@ import { Icons } from '@/components/ui/Icons';
 import UpgradeCenter from '@/components/UpgradeCenter';
 import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
+import { submitCarRequest } from '@/lib/carRequestService';
 
 import styles from './page.module.css';
 
@@ -71,7 +72,7 @@ function MyBuildContent() {
   });
 
   // Hooks
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { isAuthenticated, isLoading: authLoading, userId } = useAuth();
   const authModal = useAuthModal();
   const { builds, isLoading: buildsLoading, autoSaveBuild, autoSaveStatus } = useSavedBuilds();
   const {
@@ -233,6 +234,19 @@ function MyBuildContent() {
       setShowBuildWizard(false);
     },
     [selectFitment]
+  );
+
+  // Handle car request for vehicles not in our database
+  const handleRequestCar = useCallback(
+    async (requestData) => {
+      const { data, error } = await submitCarRequest(requestData, userId);
+      if (error) {
+        console.error('Failed to submit car request:', error);
+        throw error;
+      }
+      return data;
+    },
+    [userId]
   );
 
   // Track whether the initial build load is complete
@@ -468,6 +482,7 @@ function MyBuildContent() {
             setShowAddVehicle(false);
             setShowBuildWizard(true);
           }}
+          onRequestCar={handleRequestCar}
           existingVehicles={vehicles}
         />
 
@@ -572,6 +587,7 @@ function MyBuildContent() {
           setShowAddVehicle(false);
           setShowBuildWizard(true);
         }}
+        onRequestCar={handleRequestCar}
         existingVehicles={vehicles}
       />
 

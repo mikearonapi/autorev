@@ -356,25 +356,29 @@
 
 @media (min-width: 1024px) {
   .page {
-    /* Centered container on desktop */
-    max-width: 1200px;
+    /* Match main garage page: 1220px centered container */
+    width: 100%;
+    max-width: 1220px;
     margin: 0 auto;
+    padding-left: 40px;
+    padding-right: 40px;
   }
 
   .objectiveBannerContainer,
   .alSearchWrapper {
-    padding-left: var(--space-8, 32px);
-    padding-right: var(--space-8, 32px);
+    /* Remove extra padding - page handles it */
+    padding-left: 0;
+    padding-right: 0;
   }
 
   .continueCtaContainer {
-    padding: var(--space-6, 24px) var(--space-8, 32px);
+    padding: var(--space-6, 24px) 0;
     max-width: 800px;
     margin: 0 auto;
   }
 
   .loadingSkeleton {
-    padding: var(--space-6, 24px) var(--space-8, 32px);
+    padding: var(--space-6, 24px) 0;
   }
 
   /* Build recs grid - 4 columns on desktop */

@@ -100,6 +100,10 @@ export default function FeedbackDimensionsModal({
   feedbackType = 'negative', // 'positive' or 'negative'
   messageContent: _messageContent = '',
   disabled = false,
+  // Context-aware customization
+  title = null, // Custom title (defaults based on feedbackType)
+  subtitle = null, // Custom subtitle (defaults based on feedbackType)
+  showDimensionRatings = true, // Whether to show the detailed ratings section
 }) {
   const [selectedTags, setSelectedTags] = useState([]);
   const [feedbackText, setFeedbackText] = useState('');
@@ -199,13 +203,14 @@ export default function FeedbackDimensionsModal({
           </div>
 
           <h2 className={styles.title}>
-            {isPositive ? 'Thanks for the feedback!' : 'Help us improve'}
+            {title || (isPositive ? 'Thanks for the feedback!' : 'Help us improve')}
           </h2>
 
           <p className={styles.subtitle}>
-            {isPositive
-              ? 'What did you like about this response? (optional)'
-              : 'What went wrong? This helps us make AL smarter.'}
+            {subtitle ||
+              (isPositive
+                ? 'What did you like about this response? (optional)'
+                : 'What went wrong? This helps us improve.')}
           </p>
 
           {/* Quick Tags */}
@@ -248,8 +253,8 @@ export default function FeedbackDimensionsModal({
             <span className={styles.charCount}>{feedbackText.length}/500</span>
           </div>
 
-          {/* Dimension Ratings (expandable, negative feedback only) */}
-          {!isPositive && (
+          {/* Dimension Ratings (expandable, negative feedback only, optional) */}
+          {!isPositive && showDimensionRatings && (
             <div className={styles.dimensionsSection}>
               <button
                 type="button"

@@ -1,13 +1,18 @@
 /**
  * Platform-Based Tuning Templates
- * 
+ *
  * These templates provide accurate tuning data at the ENGINE PLATFORM level,
  * not at the individual car level. This prevents data contamination between
  * different cars and ensures accuracy.
- * 
+ *
  * Each template is keyed by the platform key from lib/enginePlatforms.js
- * 
+ *
  * Data structure matches car_tuning_profiles table schema for easy insertion.
+ *
+ * Stage Definitions (from docs/UPGRADE-CATEGORY-LOGIC.md):
+ * - Stage 1: Bolt-on modifications (intake, cat-back exhaust). Tune optional.
+ * - Stage 2: Modifications requiring ECU tune (headers, downpipe, mild cams, boost increase).
+ * - Stage 3: Major power modifications (forced induction kits, turbo upgrades, E85, nitrous).
  */
 
 export const TUNING_TEMPLATES = {
@@ -17,67 +22,65 @@ export const TUNING_TEMPLATES = {
   '29_TFSI': {
     engine_family: '2.9L TFSI Twin-Turbo V6',
     tuning_focus: 'performance',
-    
+
     // Stock power baseline (wheel horsepower/torque)
     // RS5 B9: 444 crank HP → ~377 WHP (15% drivetrain loss)
     stock_whp: 377,
     stock_wtq: 400,
-    
+
+    // Stage progressions aligned with docs/UPGRADE-CATEGORY-LOGIC.md
     stage_progressions: [
       {
         key: 'stage1',
         stage: 'Stage 1',
-        components: ['ECU tune'],
+        components: ['Cold Air Intake', 'Cat-Back Exhaust', 'Stage 1 Tune'],
         hpGainLow: 50,
         hpGainHigh: 80,
         torqueGainLow: 60,
         torqueGainHigh: 100,
-        costLow: 700,
-        costHigh: 1200,
+        costLow: 2000,
+        costHigh: 4000,
         requirements: ['Premium fuel (93 octane)'],
-        notes: 'The 2.9 TFSI responds excellently to ECU tuning alone. Safe for daily driving.',
+        notes:
+          'Bolt-on modifications that improve power. Tune is optional but recommended for best gains.',
+        tuneRequired: false,
       },
       {
         key: 'stage2',
         stage: 'Stage 2',
-        components: ['ECU tune', 'Downpipes', 'Intake', 'Charge pipes'],
+        components: ['Stage 2 Tune', 'Downpipe', 'Intercooler'],
         hpGainLow: 100,
         hpGainHigh: 150,
         torqueGainLow: 120,
         torqueGainHigh: 170,
         costLow: 4000,
-        costHigh: 7000,
+        costHigh: 8000,
         requirements: ['High-flow or catless downpipes', 'Stage 2 specific tune'],
-        notes: 'Popular configuration for enthusiasts. Significant power gains while maintaining reliability.',
-      },
-      {
-        key: 'stage2plus',
-        stage: 'Stage 2+',
-        components: ['Stage 2 + FMIC', 'Full exhaust', 'E85 partial'],
-        hpGainLow: 140,
-        hpGainHigh: 180,
-        torqueGainLow: 160,
-        torqueGainHigh: 210,
-        costLow: 8000,
-        costHigh: 12000,
-        requirements: ['Upgraded intercooler', 'E85 compatible fuel system'],
-        notes: 'Pushing stock turbos near their limits. E85 blend adds significant power.',
+        notes:
+          'Modifications that require ECU recalibration. Significant power gains while maintaining reliability.',
+        tuneRequired: true,
       },
       {
         key: 'stage3',
-        stage: 'Stage 3 (Hybrid Turbos)',
-        components: ['Hybrid turbo upgrade', 'Full bolt-ons', 'Fuel system'],
+        stage: 'Stage 3',
+        components: ['Stage 3 Tune', 'Turbo Upgrade', 'Fuel System Upgrade', 'E85/Flex Fuel Kit'],
         hpGainLow: 200,
         hpGainHigh: 280,
         torqueGainLow: 220,
         torqueGainHigh: 300,
         costLow: 15000,
         costHigh: 25000,
-        requirements: ['Upgraded turbos', 'Fuel system upgrades', 'Transmission upgrades recommended'],
-        notes: 'Big turbo territory. Requires supporting modifications and professional tuning.',
+        requirements: [
+          'Upgraded turbos',
+          'Fuel system upgrades',
+          'Transmission upgrades recommended',
+        ],
+        notes:
+          'Major power modifications exceeding stock fuel system capacity. Requires professional tuning.',
+        tuneRequired: true,
       },
     ],
-    
+
     tuning_platforms: [
       {
         name: 'APR',
@@ -115,7 +118,7 @@ export const TUNING_TEMPLATES = {
         notes: 'Quality parts and tunes for Audi performance.',
       },
     ],
-    
+
     power_limits: {
       stockTurbo: {
         whp: 520,
@@ -134,7 +137,7 @@ export const TUNING_TEMPLATES = {
         notes: 'Stock HPFP limits around 550 WHP. Upgrade needed for more.',
       },
     },
-    
+
     brand_recommendations: {
       downpipes: ['AWE Tuning', 'Milltek', 'IE', 'CTS Turbo'],
       intakes: ['IE', 'APR', 'Eventuri', 'CTS Turbo'],
@@ -143,7 +146,7 @@ export const TUNING_TEMPLATES = {
       suspension: ['KW', 'Bilstein', 'H&R', 'Ohlins'],
       brakes: ['Stoptech', 'AP Racing', 'Brembo'],
     },
-    
+
     platform_insights: {
       strengths: [
         'Excellent twin-turbo V6 with strong power potential',
@@ -165,7 +168,7 @@ export const TUNING_TEMPLATES = {
         'Carbon cleaning recommended every 40-50k miles',
       ],
     },
-    
+
     upgrades_by_objective: {
       power: [
         {
@@ -334,7 +337,7 @@ export const TUNING_TEMPLATES = {
         },
       ],
     },
-    
+
     data_quality_tier: 'researched',
     data_sources: {
       has_manual_research: true,
@@ -343,7 +346,7 @@ export const TUNING_TEMPLATES = {
       source_notes: 'Based on community forums, tuner documentation, and owner experiences.',
     },
   },
-  
+
   // ============================================================================
   // AUDI 2.5L TFSI 5-Cylinder (RS3, TT RS) - For comparison
   // ============================================================================
@@ -352,69 +355,97 @@ export const TUNING_TEMPLATES = {
     tuning_focus: 'performance',
     stock_whp: 340,
     stock_wtq: 360,
-    
+
+    // Stage progressions aligned with docs/UPGRADE-CATEGORY-LOGIC.md
     stage_progressions: [
       {
         key: 'stage1',
         stage: 'Stage 1',
-        components: ['ECU tune only'],
+        components: ['Cold Air Intake', 'Cat-Back Exhaust', 'Stage 1 Tune'],
         hpGainLow: 60,
         hpGainHigh: 90,
         torqueGainLow: 80,
         torqueGainHigh: 120,
-        costLow: 500,
-        costHigh: 800,
+        costLow: 1500,
+        costHigh: 3000,
         requirements: ['Premium fuel (93+)'],
-        notes: 'The 2.5 TFSI responds incredibly well to tuning.',
+        notes: 'Bolt-on modifications. The 2.5 TFSI responds incredibly well to tuning.',
+        tuneRequired: false,
       },
       {
         key: 'stage2',
         stage: 'Stage 2',
-        components: ['Tune', 'Downpipe', 'Intake', 'FMIC'],
+        components: ['Stage 2 Tune', 'Downpipe', 'Intercooler'],
         hpGainLow: 100,
         hpGainHigh: 150,
         torqueGainLow: 130,
         torqueGainHigh: 180,
         costLow: 3000,
         costHigh: 5000,
-        requirements: ['Catless or high-flow downpipe'],
-        notes: 'Popular power level for daily driving.',
+        requirements: ['Catless or high-flow downpipe', 'Stage 2 tune'],
+        notes: 'Modifications requiring ECU recalibration. Popular power level for daily driving.',
+        tuneRequired: true,
       },
       {
         key: 'stage3',
         stage: 'Stage 3',
-        components: ['Turbo upgrade', 'Fuel system', 'Built engine optional'],
+        components: ['Stage 3 Tune', 'Turbo Upgrade', 'Fuel System Upgrade', 'E85/Flex Fuel Kit'],
         hpGainLow: 180,
         hpGainHigh: 280,
         torqueGainLow: 200,
         torqueGainHigh: 320,
         costLow: 8000,
         costHigh: 15000,
-        requirements: ['Big turbo kit', 'Supporting mods'],
-        notes: '600+ WHP achievable with big turbo.',
+        requirements: ['Big turbo kit', 'Supporting mods', 'Fuel system upgrade'],
+        notes: 'Major power modifications. 600+ WHP achievable with big turbo.',
+        tuneRequired: true,
       },
     ],
-    
+
     tuning_platforms: [
-      { name: 'APR', url: 'https://goapr.com', priceLow: 600, priceHigh: 900, notes: 'Industry standard for Audi' },
-      { name: 'Unitronic', url: 'https://getunitronic.com', priceLow: 500, priceHigh: 700, notes: 'Great tunes, popular choice' },
-      { name: 'Integrated Engineering', url: 'https://performancebyie.com', priceLow: 450, priceHigh: 650, notes: 'Excellent value' },
-      { name: 'EQT', url: 'https://eqtuning.com', priceLow: 175, priceHigh: 300, notes: 'Best value, flat rate' },
+      {
+        name: 'APR',
+        url: 'https://goapr.com',
+        priceLow: 600,
+        priceHigh: 900,
+        notes: 'Industry standard for Audi',
+      },
+      {
+        name: 'Unitronic',
+        url: 'https://getunitronic.com',
+        priceLow: 500,
+        priceHigh: 700,
+        notes: 'Great tunes, popular choice',
+      },
+      {
+        name: 'Integrated Engineering',
+        url: 'https://performancebyie.com',
+        priceLow: 450,
+        priceHigh: 650,
+        notes: 'Excellent value',
+      },
+      {
+        name: 'EQT',
+        url: 'https://eqtuning.com',
+        priceLow: 175,
+        priceHigh: 300,
+        notes: 'Best value, flat rate',
+      },
     ],
-    
+
     power_limits: {
       stockTurbo: { whp: 450, notes: 'Stock turbo maxes around 450 WHP' },
       stockInternals: { whp: 600, notes: '2.5 TFSI internals are strong' },
       stockTransmission: { tq: 500, notes: 'DSG handles ~500 lb-ft with tune' },
     },
-    
+
     brand_recommendations: {
       downpipes: ['AWE', 'IE', 'Unitronic', 'Wagner'],
       intakes: ['IE', 'APR', 'Eventuri', 'CTS'],
       intercoolers: ['Wagner', 'APR', 'CTS', 'IE'],
       exhausts: ['AWE', 'Milltek', 'Remus', 'Akrapovic'],
     },
-    
+
     platform_insights: {
       strengths: [
         'Legendary 5-cylinder sound and character',
@@ -433,25 +464,55 @@ export const TUNING_TEMPLATES = {
         'EQT offers excellent value for tunes',
       ],
     },
-    
+
     upgrades_by_objective: {
       power: [
-        { name: 'ECU Tune', tier: 'entry', gains: { hp: { low: 60, high: 90 } }, cost: { low: 500, high: 800 } },
-        { name: 'Downpipe', tier: 'mid', gains: { hp: { low: 20, high: 40 } }, cost: { low: 800, high: 1500 } },
-        { name: 'Intake', tier: 'entry', gains: { hp: { low: 10, high: 20 } }, cost: { low: 400, high: 700 } },
-        { name: 'Intercooler', tier: 'mid', gains: { hp: { low: 15, high: 30 } }, cost: { low: 1000, high: 2000 } },
+        {
+          name: 'ECU Tune',
+          tier: 'entry',
+          gains: { hp: { low: 60, high: 90 } },
+          cost: { low: 500, high: 800 },
+        },
+        {
+          name: 'Downpipe',
+          tier: 'mid',
+          gains: { hp: { low: 20, high: 40 } },
+          cost: { low: 800, high: 1500 },
+        },
+        {
+          name: 'Intake',
+          tier: 'entry',
+          gains: { hp: { low: 10, high: 20 } },
+          cost: { low: 400, high: 700 },
+        },
+        {
+          name: 'Intercooler',
+          tier: 'mid',
+          gains: { hp: { low: 15, high: 30 } },
+          cost: { low: 1000, high: 2000 },
+        },
       ],
       handling: [],
       braking: [],
       cooling: [
-        { name: 'Upgraded Intercooler', tier: 'mid', gains: { hp: { low: 15, high: 30 } }, cost: { low: 1000, high: 2000 } },
+        {
+          name: 'Upgraded Intercooler',
+          tier: 'mid',
+          gains: { hp: { low: 15, high: 30 } },
+          cost: { low: 1000, high: 2000 },
+        },
       ],
       sound: [
-        { name: 'Full Exhaust', tier: 'mid', gains: { hp: { low: 10, high: 20 } }, cost: { low: 2000, high: 4000 } },
+        {
+          name: 'Full Exhaust',
+          tier: 'mid',
+          gains: { hp: { low: 10, high: 20 } },
+          cost: { low: 2000, high: 4000 },
+        },
       ],
       aero: [],
     },
-    
+
     data_quality_tier: 'researched',
     data_sources: {
       has_manual_research: true,
@@ -486,9 +547,11 @@ export function hasTemplate(platformKey) {
   return platformKey in TUNING_TEMPLATES;
 }
 
-export default {
+const tuningTemplates = {
   TUNING_TEMPLATES,
   getTuningTemplate,
   getAvailableTemplates,
   hasTemplate,
 };
+
+export default tuningTemplates;

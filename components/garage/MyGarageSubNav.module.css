@@ -10,8 +10,10 @@
   padding-top: calc(12px + env(safe-area-inset-top, 0));
   position: relative;
   background: transparent;
+
   /* Must be higher than GarageVehicleSelector (z-index: 9000) so dropdown appears on top */
   z-index: 10000;
+
   /* Prevent horizontal overflow */
   max-width: 100%;
   box-sizing: border-box;
@@ -21,7 +23,6 @@
 .backButton {
   position: absolute;
   left: 16px;
-  top: 50%;
   transform: translateY(-50%);
   width: 40px;
   height: 40px;
@@ -34,6 +35,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   border-radius: 10px;
+
   /* Adjust for safe area */
   top: calc(50% + env(safe-area-inset-top, 0) / 2);
 }
@@ -51,8 +53,8 @@
 .leftAction {
   position: absolute;
   left: 60px;
-  top: 50%;
   transform: translateY(-50%);
+
   /* Adjust for safe area */
   top: calc(50% + env(safe-area-inset-top, 0) / 2);
 }
@@ -61,8 +63,8 @@
 .rightAction {
   position: absolute;
   right: 16px;
-  top: 50%;
   transform: translateY(-50%);
+
   /* Adjust for safe area */
   top: calc(50% + env(safe-area-inset-top, 0) / 2);
 }
@@ -87,6 +89,7 @@
   cursor: pointer;
   transition: all 0.2s ease;
   letter-spacing: 0.02em;
+
   /* For glow animation */
   position: relative;
   overflow: hidden;
@@ -128,6 +131,7 @@
   from {
     transform: translate(-50%, -50%) rotate(0deg);
   }
+
   to {
     transform: translate(-50%, -50%) rotate(360deg);
   }
@@ -175,12 +179,13 @@
   left: 50%;
   transform: translateX(-50%);
   min-width: 240px;
+
   /* Solid background to ensure content doesn't show through */
   background: rgb(20, 30, 45);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 14px;
   padding: 6px;
-  box-shadow: 
+  box-shadow:
     0 8px 32px rgba(0, 0, 0, 0.5),
     0 0 0 1px rgba(255, 255, 255, 0.05) inset;
   backdrop-filter: blur(20px);
@@ -194,6 +199,7 @@
     opacity: 0;
     transform: translateX(-50%) translateY(-8px);
   }
+
   to {
     opacity: 1;
     transform: translateX(-50%) translateY(0);
@@ -280,37 +286,116 @@
     padding: 10px 12px;
     padding-top: calc(10px + env(safe-area-inset-top, 0));
   }
-  
+
   .backButton {
     left: 12px;
     width: 36px;
     height: 36px;
   }
-  
+
   .leftAction {
     left: 52px;
   }
-  
+
   .rightAction {
     right: 12px;
   }
-  
+
   .dropdownTrigger {
     padding: 8px 16px;
     font-size: 14px;
   }
-  
+
   .dropdownMenu {
     min-width: 220px;
     left: 50%;
   }
-  
+
   .dropdownOption {
     padding: 10px 12px;
   }
-  
+
   .optionIcon {
     width: 32px;
     height: 32px;
+  }
+}
+
+/* ==========================================================================
+   Desktop Responsive (1024px+)
+   Refined navigation for larger screens
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+  .header {
+    padding: 16px 24px;
+    padding-top: 16px; /* No safe area needed on desktop */
+  }
+
+  .backButton {
+    left: 24px;
+    width: 44px;
+    height: 44px;
+    top: 50%;
+  }
+
+  .rightAction {
+    right: 24px;
+    top: 50%;
+  }
+
+  .dropdownTrigger {
+    padding: 12px 24px;
+    font-size: 15px;
+    border-radius: 10px;
+  }
+
+  .dropdownMenu {
+    min-width: 280px;
+    padding: 8px;
+    border-radius: 16px;
+  }
+
+  .dropdownOption {
+    padding: 14px 16px;
+    border-radius: 12px;
+  }
+
+  .optionIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
+
+  .optionLabel {
+    font-size: 15px;
+  }
+
+  .optionDescription {
+    font-size: 13px;
+  }
+}
+
+/* Large desktop (1280px+) */
+@media (min-width: 1280px) {
+  .header {
+    padding: 20px 32px;
+  }
+
+  .backButton {
+    left: 32px;
+  }
+
+  .rightAction {
+    right: 32px;
+  }
+
+  .dropdownTrigger {
+    padding: 14px 28px;
+    font-size: 16px;
+  }
+
+  .dropdownMenu {
+    min-width: 320px;
   }
 }

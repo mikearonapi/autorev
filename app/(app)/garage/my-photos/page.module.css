@@ -105,16 +105,17 @@
   gap: 2px;
 }
 
-/* Stat values use white for emphasis */
+/* Stat values use white for emphasis - matches main garage */
 .statValue {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--brand-text-primary);
+  color: var(--color-white);
 }
 
+/* Stat labels use teal - matches main garage */
 .statLabel {
   font-size: 0.7rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--brand-teal);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -338,12 +339,16 @@
 
 @media (min-width: 1024px) {
   .page {
-    max-width: 1200px;
+    /* Match main garage page: 1220px centered container */
+    width: 100%;
+    max-width: 1220px;
     margin: 0 auto;
+    padding-left: 40px;
+    padding-right: 40px;
   }
 
   .content {
-    padding: 24px 32px 40px;
+    padding: 24px 0 40px;
   }
 
   .uploadSection,

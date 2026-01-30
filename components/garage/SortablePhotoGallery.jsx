@@ -12,7 +12,7 @@
  * @module components/garage/SortablePhotoGallery
  */
 
-import { useMemo, useCallback, useState } from 'react';
+import { useMemo, useCallback, useState, useEffect, useRef } from 'react';
 
 import Image from 'next/image';
 
@@ -268,43 +268,89 @@ export default function SortablePhotoGallery({
 }) {
   const [editMode, setEditMode] = useState(EDIT_MODES.NONE);
 
+  // Local optimistic state for reordering
+  // This allows immediate UI feedback without waiting for parent prop updates
+  const [localImages, setLocalImages] = useState(images);
+
+  // Track whether user has made local reorder changes
+  const hasLocalChangesRef = useRef(false);
+
+  // Sync local state with prop ONLY when the image SET changes (add/delete)
+  // We preserve local order to maintain user's reorder changes
+  useEffect(() => {
+    // Get sorted IDs to compare (order-independent comparison)
+    const propIds = images
+      .map((img) => img.id)
+      .sort()
+      .join(',');
+    const localIds = localImages
+      .map((img) => img.id)
+      .sort()
+      .join(',');
+
+    // Only sync if the image set has changed (add/delete)
+    // This handles initial load and when images are added/deleted
+    // We do NOT sync just because the order is different - that would overwrite user's changes
+    if (propIds !== localIds) {
+      setLocalImages(images);
+      hasLocalChangesRef.current = false;
+    }
+  }, [images, localImages]);
+
   // Find which image is the hero (is_primary)
   const heroImageId = useMemo(
-    () => images.find((img) => img.is_primary && img.media_type !== 'video')?.id,
-    [images]
+    () => localImages.find((img) => img.is_primary && img.media_type !== 'video')?.id,
+    [localImages]
   );
 
   // Count non-stock photos for display
-  const userPhotoCount = useMemo(() => images.filter((img) => !img.isStockPhoto).length, [images]);
+  const userPhotoCount = useMemo(
+    () => localImages.filter((img) => !img.isStockPhoto).length,
+    [localImages]
+  );
 
   // Move photo up one position
   const handleMoveUp = useCallback(
     (index) => {
       if (index <= 0 || !onReorder) return;
 
-      const newImages = [...images];
+      const newImages = [...localImages];
       // Swap with the item above
       [newImages[index - 1], newImages[index]] = [newImages[index], newImages[index - 1]];
-      // Extract IDs and call reorder
+
+      // Mark that user has made local changes
+      hasLocalChangesRef.current = true;
+
+      // Update local state immediately for instant feedback
+      setLocalImages(newImages);
+
+      // Extract IDs and call reorder (this triggers the API call)
       const newImageIds = newImages.map((img) => img.id);
       onReorder(newImageIds);
     },
-    [images, onReorder]
+    [localImages, onReorder]
   );
 
   // Move photo down one position
   const handleMoveDown = useCallback(
     (index) => {
-      if (index >= images.length - 1 || !onReorder) return;
+      if (index >= localImages.length - 1 || !onReorder) return;
 
-      const newImages = [...images];
+      const newImages = [...localImages];
       // Swap with the item below
       [newImages[index], newImages[index + 1]] = [newImages[index + 1], newImages[index]];
-      // Extract IDs and call reorder
+
+      // Mark that user has made local changes
+      hasLocalChangesRef.current = true;
+
+      // Update local state immediately for instant feedback
+      setLocalImages(newImages);
+
+      // Extract IDs and call reorder (this triggers the API call)
       const newImageIds = newImages.map((img) => img.id);
       onReorder(newImageIds);
     },
-    [images, onReorder]
+    [localImages, onReorder]
   );
 
   // Wrap callbacks to exit mode after action (for hero and delete)
@@ -335,7 +381,7 @@ export default function SortablePhotoGallery({
     }
   }, [onHideStockPhoto]);
 
-  if (images.length === 0) {
+  if (localImages.length === 0) {
     return null;
   }
 
@@ -360,13 +406,13 @@ export default function SortablePhotoGallery({
       )}
 
       <div className={styles.photoGrid}>
-        {images.map((item, index) => (
+        {localImages.map((item, index) => (
           <PhotoItem
             key={item.id}
             item={item}
             index={index}
-            totalCount={images.length}
-            nextItemIsStock={images[index + 1]?.isStockPhoto === true}
+            totalCount={localImages.length}
+            nextItemIsStock={localImages[index + 1]?.isStockPhoto === true}
             onMoveUp={handleMoveUp}
             onMoveDown={handleMoveDown}
             onSetPrimary={handleSetPrimary}

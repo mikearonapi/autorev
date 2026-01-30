@@ -19,6 +19,7 @@
 .brandLogo {
   width: clamp(140px, 35vw, 200px);
   height: auto;
+
   /* Prevent dragging/selection */
   user-select: none;
   -webkit-user-select: none;
@@ -40,12 +41,12 @@
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
   }
 }
-
 
 /* Celebration Section */
 .celebration {
@@ -62,6 +63,7 @@
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -70,7 +72,7 @@
 
 /* Main Headline - Big, bold, celebratory */
 .headline {
-  font-family: 'Oswald', var(--font-display), system-ui, sans-serif;
+  font-family: Oswald, var(--font-display), system-ui, sans-serif;
   font-size: clamp(2.5rem, 12vw, 4rem);
   font-weight: 700;
   line-height: 1;
@@ -85,7 +87,7 @@
 
 /* Subheadline */
 .subheadline {
-  font-family: 'Oswald', var(--font-display), system-ui, sans-serif;
+  font-family: Oswald, var(--font-display), system-ui, sans-serif;
   font-size: clamp(1.25rem, 5vw, 1.75rem);
   font-weight: 500;
   color: var(--color-text-primary, #ffffff);
@@ -93,18 +95,46 @@
   letter-spacing: 0.02em;
 }
 
-/* Desktop */
+/* Tablet */
 @media (min-width: 768px) {
   .container {
     padding: 48px 48px 0;
   }
-  
+
   .brandContainer {
     margin-bottom: 64px;
   }
-  
+
   .brandLogo {
-    width: 240px;
+    width: 200px;
+  }
+}
+
+/* Desktop - Balanced proportions */
+@media (min-width: 1024px) {
+  .container {
+    padding: 24px 40px 0;
+  }
+
+  .brandContainer {
+    margin-bottom: 32px;
+  }
+
+  .brandLogo {
+    width: 140px;
+  }
+
+  .celebration {
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .headline {
+    font-size: 2.5rem;
+  }
+
+  .subheadline {
+    font-size: 1.125rem;
   }
 }
 
@@ -113,11 +143,11 @@
   .container {
     padding: 24px 20px 0;
   }
-  
+
   .brandContainer {
     margin-bottom: 40px;
   }
-  
+
   .brandLogo {
     width: 140px;
   }

@@ -202,16 +202,20 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 12px;
   font-size: max(16px, var(--text-body)); /* Prevents iOS zoom */
+  line-height: 1.5;
   color: var(--color-text-primary, #ffffff);
+  caret-color: var(--color-accent-teal, #10b981);
   resize: none;
   font-family: inherit;
   transition: border-color 0.2s ease;
   box-sizing: border-box;
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 .textInput:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.25);
+  border-color: var(--color-accent-teal, #10b981);
 }
 
 .textInput::placeholder {

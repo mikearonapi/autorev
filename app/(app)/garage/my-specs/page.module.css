@@ -159,18 +159,19 @@
   gap: 4px;
 }
 
-/* HP stat value uses teal (positive metric) with tabular-nums for alignment */
+/* Stat values use white - matches main garage design */
 .statValue {
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--brand-teal);
+  color: var(--color-white);
   font-feature-settings: 'tnum';
   font-variant-numeric: tabular-nums;
 }
 
+/* Stat labels use teal - matches main garage design */
 .statLabel {
   font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--brand-teal);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
@@ -1125,11 +1126,20 @@
    ========================================================================== */
 
 @media (min-width: 1024px) {
-  .content {
-    /* Centered container with max-width */
-    max-width: 1200px;
+  .page {
+    /* Match main garage page: 1220px centered container */
+    width: 100%;
+    max-width: 1220px;
     margin: 0 auto;
-    padding: 24px 32px 40px;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+
+  .content {
+    /* Content fills page width - page handles centering */
+    max-width: 100%;
+    margin: 0;
+    padding: 24px 0 40px;
   }
 
   /* 3-column grid on desktop */
@@ -1206,9 +1216,9 @@
 
   /* Continue CTA - horizontal layout */
   .continueCtaContainer {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 24px 32px;
+    max-width: 100%;
+    margin: 0;
+    padding: 24px 0;
   }
 }
 

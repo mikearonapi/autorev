@@ -80,9 +80,8 @@
   }
 
   .appLayout > *:first-child {
-    /* Desktop child pages can use block display */
-    display: block;
-    flex: none;
+    /* Let pages control their own display type on desktop */
+    flex: 1 1 auto;
   }
 
   /* Hide bottom extension (no tab bar on iPad/desktop) */

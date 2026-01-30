@@ -215,17 +215,20 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to reorder images');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Failed to reorder images');
       }
 
       return response.json();
     },
     // Optimistic update
     onMutate: async (newOrder) => {
+      // Cancel any in-flight queries to prevent race conditions
       await queryClient.cancelQueries({ queryKey });
       const previousImages = queryClient.getQueryData(queryKey);
 
       // Reorder images locally based on newOrder array
+      // Update both snake_case and camelCase versions for consistency
       queryClient.setQueryData(queryKey, (old) => {
         if (!old) return old;
         const imageMap = new Map(old.map((img) => [img.id, img]));
@@ -233,7 +236,11 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
           .map((id, index) => {
             const img = imageMap.get(id);
             if (img) {
-              return { ...img, display_order: index + 1 };
+              return {
+                ...img,
+                display_order: index + 1,
+                displayOrder: index + 1, // Keep both in sync
+              };
             }
             return null;
           })
@@ -244,11 +251,15 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
     },
     onError: (err, newOrder, context) => {
       console.error('[useCarImages] Reorder error:', err);
-      queryClient.setQueryData(queryKey, context?.previousImages);
+      // Restore previous state on error
+      if (context?.previousImages) {
+        queryClient.setQueryData(queryKey, context.previousImages);
+      }
     },
-    onSettled: () => {
-      queryClient.invalidateQueries({ queryKey });
-    },
+    // Don't invalidate on success - the optimistic update already has the correct state
+    // Only invalidate on error, which is handled in onError above
+    // Removing onSettled's invalidateQueries prevents the race condition where
+    // the refetch returns stale data before the database write is fully visible
   });
 
   /**

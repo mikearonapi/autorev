@@ -321,14 +321,30 @@
    ========================================================================== */
 
 @media (min-width: 1024px) {
+  .page {
+    /* Match main garage page: 1220px centered container */
+    width: 100%;
+    max-width: 1220px;
+    margin: 0 auto;
+    padding-left: 40px;
+    padding-right: 40px;
+  }
+
   .content {
-    max-width: 900px;
-    padding: var(--space-6, 24px) var(--space-8, 32px);
+    max-width: 100%;
+    padding: var(--space-6, 24px) 0;
   }
 
   .diyContent,
   .serviceContent {
     gap: var(--space-8, 32px);
+  }
+
+  /* Parts list can be 2 columns on desktop */
+  .partsList {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-4, 16px);
   }
 
   .tabBar {
@@ -343,6 +359,10 @@
 
   .sectionTitle {
     font-size: var(--text-xl, 20px);
+
+    /* Full width for section title above grid */
+    grid-column: 1 / -1;
+    margin-bottom: 0;
   }
 
   .noBuildState {
@@ -360,7 +380,7 @@
   }
 
   .continueCtaContainer {
-    max-width: 900px;
-    padding: var(--space-6, 24px) var(--space-8, 32px);
+    max-width: 100%;
+    padding: var(--space-6, 24px) 0;
   }
 }

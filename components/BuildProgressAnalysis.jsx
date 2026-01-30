@@ -6,9 +6,16 @@
  * EXTREMELY VALUABLE: Users can see exactly what they've done,
  * what's left in their current stage, and what the next stage requires.
  * Includes cost estimates and HP gains for the path ahead.
+ *
+ * Stage definitions align with docs/UPGRADE-CATEGORY-LOGIC.md:
+ * - Stage 1: Bolt-ons (intake, cat-back). Tune optional.
+ * - Stage 2: Mods requiring tune (headers, downpipe, mild cams).
+ * - Stage 3: Major power (forced induction, E85, nitrous). Upgraded fuel required.
  */
 
 import React, { useMemo } from 'react';
+
+import { generateStageProgressions } from '@/lib/stageProgressionGenerator';
 
 import styles from './BuildProgressAnalysis.module.css';
 import InfoTooltip from './ui/InfoTooltip';
@@ -166,14 +173,28 @@ const modMatchesComponent = (modKey, component) => {
 };
 
 export default function BuildProgressAnalysis({
-  stageProgressions,
+  stageProgressions: propStageProgressions,
   installedUpgrades,
   stockHp,
   currentHp: _currentHp,
   carName = null,
   carSlug = null,
+  car = null,
+  carLayout = null,
+  tuningProfile = null,
   onFeedback,
 }) {
+  // Generate canonical stage progressions when car data is available
+  // This ensures alignment with docs/UPGRADE-CATEGORY-LOGIC.md Stage 1/2/3 definitions
+  const stageProgressions = useMemo(() => {
+    // If we have car and layout, generate canonical stages
+    if (car && carLayout) {
+      return generateStageProgressions(car, carLayout, { tuningProfile });
+    }
+    // Fall back to provided stage progressions (from tuning profile)
+    return propStageProgressions || [];
+  }, [car, carLayout, tuningProfile, propStageProgressions]);
+
   // Analyze build progress across all stages
   const analysis = useMemo(() => {
     if (!stageProgressions || stageProgressions.length === 0) {
@@ -197,17 +218,25 @@ export default function BuildProgressAnalysis({
     // Analyze each stage
     const stages = stageProgressions.map((stage, idx) => {
       const components = stage.components || [];
-      const completedComponents = components.filter((comp) => {
+      // Use componentKeys for matching if available (from canonical generator)
+      const componentKeys = stage.componentKeys || [];
+
+      const completedComponents = components.filter((comp, compIdx) => {
+        // If we have componentKeys, use the corresponding key for matching
+        const keyToMatch = componentKeys[compIdx] || comp;
         const matched = installedKeys.some((mod) => {
-          const matches = modMatchesComponent(mod, comp);
+          const matches = modMatchesComponent(mod, keyToMatch) || modMatchesComponent(mod, comp);
           if (matches) matchedMods.add(mod);
           return matches;
         });
         return matched;
       });
-      const remainingComponents = components.filter(
-        (comp) => !installedKeys.some((mod) => modMatchesComponent(mod, comp))
-      );
+      const remainingComponents = components.filter((comp, compIdx) => {
+        const keyToMatch = componentKeys[compIdx] || comp;
+        return !installedKeys.some(
+          (mod) => modMatchesComponent(mod, keyToMatch) || modMatchesComponent(mod, comp)
+        );
+      });
 
       const progress =
         components.length > 0
@@ -222,10 +251,11 @@ export default function BuildProgressAnalysis({
         remainingComponents,
         progress,
         isComplete: progress === 100,
-        costLow: stage.cost_low || 0,
-        costHigh: stage.cost_high || 0,
-        hpGainLow: stage.hp_gain_low || 0,
-        hpGainHigh: stage.hp_gain_high || 0,
+        // Handle both camelCase (from generator/templates) and snake_case (from DB)
+        costLow: stage.costLow || stage.cost_low || 0,
+        costHigh: stage.costHigh || stage.cost_high || 0,
+        hpGainLow: stage.hpGainLow || stage.hp_gain_low || 0,
+        hpGainHigh: stage.hpGainHigh || stage.hp_gain_high || 0,
       };
     });
 

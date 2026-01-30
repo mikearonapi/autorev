@@ -46,6 +46,7 @@ import VehicleBuildPanel from '@/components/VehicleBuildPanel';
 import WheelTireSpecsCard from '@/components/WheelTireSpecsCard';
 import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
+import { submitCarRequest } from '@/lib/carRequestService';
 import {
   fetchAllMaintenanceData,
   fetchUserServiceLogs,
@@ -809,8 +810,8 @@ function RatingBar({ value, maxValue = 10, label }) {
   const colorClass = getColorClass(percentage);
 
   return (
-    <div className={styles.ratingItem}>
-      <span className={styles.ratingLabel}>{label}</span>
+    <div className={styles.barRatingItem}>
+      <span className={styles.barRatingLabel}>{label}</span>
       <div className={styles.ratingBarTrack}>
         <div
           className={`${styles.ratingBarFill} ${styles[colorClass]}`}
@@ -881,6 +882,269 @@ function BrandLogo({ brand }) {
       <span className={styles.brandName} style={{ color: brandColor }}>
         {brand?.toUpperCase()}
       </span>
+    </div>
+  );
+}
+
+// Desktop Garage Layout Component
+// Two-column layout for desktop: Image left, info panel right
+function DesktopGarageLayout({
+  item,
+  selectedIndex,
+  totalItems,
+  onNavigate,
+  onAddVehicle,
+  viewMode: _viewMode,
+  onViewModeChange: _onViewModeChange,
+}) {
+  const car = item?.matchedCar || item?.car;
+  const isOwnedVehicle = item?.vehicle?.id != null;
+  const carSlugForImages = car?.slug || item?.vehicle?.matchedCarSlug || null;
+
+  // Get user's uploaded images for this car (same hook as mobile HeroVehicleDisplay)
+  const {
+    images: carImages,
+    heroImage: userHeroImage,
+    heroImageUrl: hookHeroImageUrl,
+  } = useCarImages(carSlugForImages, { enabled: !!carSlugForImages });
+
+  // Calculate modification gains for owned vehicles
+  const modificationGains = useMemo(() => {
+    if (!isOwnedVehicle || !car) return { hpGain: 0, torqueGain: 0, zeroToSixtyImprovement: 0 };
+    return calculateAllModificationGains(item.vehicle?.installedModifications || [], car);
+  }, [isOwnedVehicle, car, item?.vehicle?.installedModifications]);
+
+  // Get the correct image to display (match mobile HeroVehicleDisplay logic)
+  const hasCustomHero = !!userHeroImage;
+  const userHeroImageUrl = hookHeroImageUrl || item?.vehicle?.heroImageUrl;
+  // Check for stock images using correct property names from car data
+  const hasStockImage = !!(car?.imageGarageUrl || car?.imageHeroUrl);
+  const fallbackHeroUrl =
+    !hasCustomHero && !hasStockImage && carImages?.length > 0
+      ? carImages[0].url
+      : item?.vehicle?.photos?.[0]?.url;
+
+  // Vehicle info
+  const brand = item?.vehicle?.make || car?.brand || car?.make || 'VEHICLE';
+  const year = item?.vehicle?.year || car?.years?.split('-')[0] || car?.year;
+  const model = item?.vehicle?.model || car?.model || car?.name || 'Vehicle';
+
+  // Navigation
+  const canGoPrev = selectedIndex > 0;
+  const canGoNext = selectedIndex < totalItems - 1;
+
+  const handlePrev = () => {
+    if (canGoPrev && onNavigate) {
+      onNavigate(selectedIndex - 1);
+    }
+  };
+
+  const handleNext = () => {
+    if (canGoNext && onNavigate) {
+      onNavigate(selectedIndex + 1);
+    }
+  };
+
+  // Stats with modification gains
+  const hp = car?.hp
+    ? isOwnedVehicle && modificationGains.hpGain > 0
+      ? car.hp + modificationGains.hpGain
+      : car.hp
+    : null;
+  const torque = car?.torque
+    ? isOwnedVehicle && modificationGains.torqueGain > 0
+      ? car.torque + modificationGains.torqueGain
+      : car.torque
+    : null;
+  const zeroToSixty = car?.zeroToSixty
+    ? isOwnedVehicle && modificationGains.zeroToSixtyImprovement > 0
+      ? (car.zeroToSixty - modificationGains.zeroToSixtyImprovement).toFixed(1)
+      : car.zeroToSixty
+    : null;
+  const topSpeed = car?.topSpeed || null;
+
+  return (
+    <div className={styles.desktopGarageLayout}>
+      {/* Left column: Info panel */}
+      <div className={styles.desktopInfoPanel}>
+        {/* Vehicle header */}
+        <div className={styles.desktopVehicleHeader}>
+          <div className={styles.desktopBrandYear}>
+            <span className={styles.desktopBrandName}>{brand}</span>
+            <span className={styles.desktopYear}>{year}</span>
+          </div>
+          <h2 className={styles.desktopVehicleName}>{model}</h2>
+        </div>
+
+        {/* Stats grid */}
+        <div className={styles.desktopStatsGrid}>
+          <div className={styles.desktopStatItem}>
+            <span
+              className={`${styles.desktopStatValue} ${isOwnedVehicle && modificationGains.hpGain > 0 ? styles.desktopStatValueModified : ''}`}
+            >
+              {hp || '—'}
+            </span>
+            <span className={styles.desktopStatLabel}>Horsepower</span>
+          </div>
+          <div className={styles.desktopStatItem}>
+            <span
+              className={`${styles.desktopStatValue} ${isOwnedVehicle && modificationGains.torqueGain > 0 ? styles.desktopStatValueModified : ''}`}
+            >
+              {torque || '—'}
+            </span>
+            <span className={styles.desktopStatLabel}>LB-FT Torque</span>
+          </div>
+          <div className={styles.desktopStatItem}>
+            <span
+              className={`${styles.desktopStatValue} ${isOwnedVehicle && modificationGains.zeroToSixtyImprovement > 0 ? styles.desktopStatValueModified : ''}`}
+            >
+              {zeroToSixty ? `${zeroToSixty}s` : '—'}
+            </span>
+            <span className={styles.desktopStatLabel}>0-60 MPH</span>
+          </div>
+          <div className={styles.desktopStatItem}>
+            <span className={styles.desktopStatValue}>{topSpeed || '—'}</span>
+            <span className={styles.desktopStatLabel}>Top Speed</span>
+          </div>
+        </div>
+
+        {/* Navigation buttons */}
+        <div className={styles.desktopNavButtons}>
+          <Link
+            href={
+              item.vehicle?.activeBuildId
+                ? `/garage/my-specs?build=${item.vehicle.activeBuildId}`
+                : `/garage/my-specs?car=${car?.slug}`
+            }
+            className={styles.desktopNavBtn}
+          >
+            <Icons.gauge size={18} />
+            <span>Specs</span>
+          </Link>
+          {isOwnedVehicle && car?.slug && (
+            <>
+              <Link
+                href={
+                  item.vehicle?.activeBuildId
+                    ? `/garage/my-build?build=${item.vehicle.activeBuildId}`
+                    : `/garage/my-build?car=${car.slug}`
+                }
+                className={styles.desktopNavBtn}
+              >
+                <Icons.wrench size={18} />
+                <span>Build</span>
+              </Link>
+              <Link
+                href={
+                  item.vehicle?.activeBuildId
+                    ? `/garage/my-parts?build=${item.vehicle.activeBuildId}`
+                    : `/garage/my-parts?car=${car.slug}`
+                }
+                className={styles.desktopNavBtn}
+              >
+                <Icons.package size={18} />
+                <span>Parts</span>
+              </Link>
+              <Link
+                href={
+                  item.vehicle?.activeBuildId
+                    ? `/garage/my-install?build=${item.vehicle.activeBuildId}`
+                    : `/garage/my-install?car=${car.slug}`
+                }
+                className={styles.desktopNavBtn}
+              >
+                <Icons.tool size={18} />
+                <span>Install</span>
+              </Link>
+              <Link
+                href={
+                  item.vehicle?.activeBuildId
+                    ? `/garage/my-photos?build=${item.vehicle.activeBuildId}`
+                    : `/garage/my-photos?car=${car.slug}`
+                }
+                className={styles.desktopNavBtn}
+              >
+                <Icons.camera size={18} />
+                <span>Photos</span>
+              </Link>
+            </>
+          )}
+        </div>
+
+        {/* Vehicle switcher */}
+        {totalItems > 1 && (
+          <div className={styles.desktopVehicleSwitcher}>
+            <div className={styles.desktopVehicleNav}>
+              <button
+                className={styles.desktopNavArrow}
+                onClick={handlePrev}
+                disabled={!canGoPrev}
+                aria-label="Previous vehicle"
+              >
+                <Icons.chevronLeft size={16} />
+              </button>
+              <span className={styles.desktopVehicleCounter}>
+                {selectedIndex + 1} of {totalItems}
+              </span>
+              <button
+                className={styles.desktopNavArrow}
+                onClick={handleNext}
+                disabled={!canGoNext}
+                aria-label="Next vehicle"
+              >
+                <Icons.chevronRight size={16} />
+              </button>
+            </div>
+            <button className={styles.desktopAddVehicleBtn} onClick={onAddVehicle}>
+              <Icons.plus size={16} />
+              Add Vehicle
+            </button>
+          </div>
+        )}
+
+        {/* Single vehicle - just show add button */}
+        {totalItems <= 1 && (
+          <div className={styles.desktopVehicleSwitcher}>
+            <div />
+            <button className={styles.desktopAddVehicleBtn} onClick={onAddVehicle}>
+              <Icons.plus size={16} />
+              Add Vehicle
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Right column: Image */}
+      <div className={styles.desktopImageColumn}>
+        <div className={styles.heroImageWrapper}>
+          <div className={styles.heroImageContainer}>
+            {hasCustomHero && userHeroImageUrl ? (
+              <Image
+                src={userHeroImageUrl}
+                alt={model || 'Vehicle'}
+                fill
+                className={styles.heroImage}
+                priority
+              />
+            ) : fallbackHeroUrl ? (
+              <Image
+                src={fallbackHeroUrl}
+                alt={model || 'Vehicle'}
+                fill
+                className={styles.heroImage}
+                priority
+              />
+            ) : hasStockImage ? (
+              <CarImage car={car} variant="garage" className={styles.heroImage} lazy={false} />
+            ) : (
+              <div className={styles.heroPlaceholder}>
+                <Icons.car size={80} />
+                <span className={styles.heroPlaceholderText}>{model || 'Vehicle'}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -4236,6 +4500,18 @@ function GarageContent() {
     showPointsEarned(10, 'Vehicle added');
   };
 
+  // Handle car request for vehicles not in our database
+  const handleRequestCar = async (requestData) => {
+    const { data, error } = await submitCarRequest(requestData, userId);
+
+    if (error) {
+      console.error('Failed to submit car request:', error);
+      throw error;
+    }
+
+    return data;
+  };
+
   // Toggle quick update mode
   const handleToggleQuickUpdate = () => {
     if (!quickUpdateMode) {
@@ -4573,22 +4849,35 @@ function GarageContent() {
             ) : (
               /* Presentation View - Swipeable hero cards */
               <>
-                <HeroVehicleDisplay
+                {/* Desktop Two-Column Layout - hidden on mobile via CSS */}
+                <DesktopGarageLayout
                   item={currentItem}
-                  type="mycars"
-                  onAction={handleBuildAction}
-                  onUpdateVehicle={updateVehicle}
-                  onClearModifications={clearModifications}
-                  onUpdateCustomSpecs={updateCustomSpecs}
-                  onClearCustomSpecs={clearCustomSpecs}
-                  userId={user?.id}
                   selectedIndex={selectedIndex}
                   totalItems={currentItems.length}
                   onNavigate={setSelectedIndex}
+                  onAddVehicle={() => setIsAddVehicleOpen(true)}
                   viewMode={viewMode}
                   onViewModeChange={handleViewModeChange}
-                  onAddVehicle={() => setIsAddVehicleOpen(true)}
                 />
+                {/* Mobile/Tablet Layout - hidden on desktop via CSS */}
+                <div className={styles.mobileGarageLayout}>
+                  <HeroVehicleDisplay
+                    item={currentItem}
+                    type="mycars"
+                    onAction={handleBuildAction}
+                    onUpdateVehicle={updateVehicle}
+                    onClearModifications={clearModifications}
+                    onUpdateCustomSpecs={updateCustomSpecs}
+                    onClearCustomSpecs={clearCustomSpecs}
+                    userId={user?.id}
+                    selectedIndex={selectedIndex}
+                    totalItems={currentItems.length}
+                    onNavigate={setSelectedIndex}
+                    viewMode={viewMode}
+                    onViewModeChange={handleViewModeChange}
+                    onAddVehicle={() => setIsAddVehicleOpen(true)}
+                  />
+                </div>
               </>
             )
           ) : sessionExpired || authError ? (
@@ -4634,6 +4923,7 @@ function GarageContent() {
         isOpen={isAddVehicleOpen}
         onClose={() => setIsAddVehicleOpen(false)}
         onAdd={handleAddVehicle}
+        onRequestCar={handleRequestCar}
         existingVehicles={vehicles}
       />
 
