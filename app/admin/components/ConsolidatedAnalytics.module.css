@@ -271,3 +271,910 @@
   border: 1px solid rgba(239, 68, 68, 0.2);
   border-radius: 14px;
 }
+
+/* ================================================================
+   HEADER TITLE & LIVE INDICATOR
+   ================================================================ */
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.headerTitle h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--brand-text-primary, #ffffff);
+  margin: 0;
+}
+
+.excludeNote {
+  font-size: 12px;
+  color: var(--brand-text-tertiary, #64748b);
+}
+
+.liveIndicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--brand-text-secondary, #94a3b8);
+}
+
+.liveDot {
+  width: 8px;
+  height: 8px;
+  background: #22c55e;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ================================================================
+   KPI ROW & CARDS
+   ================================================================ */
+.kpiRow {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .kpiRow {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.kpiCard {
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.kpiIcon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.kpiblue .kpiIcon {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.kpipurple .kpiIcon {
+  background: rgba(139, 92, 246, 0.15);
+  color: #8b5cf6;
+}
+
+.kpigreen .kpiIcon {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+}
+
+.kpiamber .kpiIcon {
+  background: rgba(245, 158, 11, 0.15);
+  color: #f59e0b;
+}
+
+.kpiContent {
+  flex: 1;
+  min-width: 0;
+}
+
+.kpiLabel {
+  font-size: 12px;
+  color: var(--brand-text-secondary, #94a3b8);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.kpiValueRow {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.kpiValue {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--brand-text-primary, #ffffff);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+.kpiChange {
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.kpiChange.positive {
+  color: #22c55e;
+}
+
+.kpiChange.negative {
+  color: #ef4444;
+}
+
+/* ================================================================
+   MAIN GRID LAYOUT
+   ================================================================ */
+.mainGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 1024px) {
+  .mainGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.leftColumn,
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* ================================================================
+   CARDS
+   ================================================================ */
+.card {
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.cardHeader h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--brand-text-primary, #ffffff);
+  margin: 0;
+}
+
+/* ================================================================
+   QUICK METRICS (Traffic Trend header stats)
+   ================================================================ */
+.quickMetrics {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--brand-text-secondary, #94a3b8);
+}
+
+.quickMetrics span {
+  white-space: nowrap;
+}
+
+.quickMetrics strong {
+  color: var(--brand-text-primary, #ffffff);
+  font-weight: 600;
+}
+
+/* ================================================================
+   MINI TITLE
+   ================================================================ */
+.miniTitle {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--brand-text-secondary, #94a3b8);
+  margin: 0 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ================================================================
+   AREA CHART
+   ================================================================ */
+.areaChart {
+  position: relative;
+  width: 100%;
+}
+
+.chartSvg {
+  width: 100%;
+  height: 100%;
+}
+
+.chartEmpty {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--brand-text-tertiary, #64748b);
+  font-size: 13px;
+}
+
+.chartYAxis {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--brand-text-tertiary, #64748b);
+  padding-right: 8px;
+}
+
+.chartXAxis {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--brand-text-tertiary, #64748b);
+  margin-top: 8px;
+}
+
+/* ================================================================
+   ENGAGEMENT SECTION
+   ================================================================ */
+.engagementSection {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.engagementBar {
+  display: flex;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.engagementSegment {
+  height: 100%;
+  transition: width 0.3s ease;
+}
+
+.engagementLegend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--brand-text-secondary, #94a3b8);
+}
+
+.engagementLegend span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ================================================================
+   STATS ROW
+   ================================================================ */
+.statsRow {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+@media (min-width: 480px) {
+  .statsRow {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.statBox {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+}
+
+.statLabel {
+  font-size: 11px;
+  color: var(--brand-text-tertiary, #64748b);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.statValue {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--brand-text-primary, #ffffff);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+/* ================================================================
+   ACTIVE USERS ROW
+   ================================================================ */
+.activeUsersRow {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+/* ================================================================
+   TAB ROW & BUTTONS
+   ================================================================ */
+.tabRow {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.tabBtn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border: none;
+  background: transparent;
+  color: var(--brand-text-tertiary, #64748b);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+  min-height: 36px;
+}
+
+.tabBtn:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--brand-text-secondary, #94a3b8);
+}
+
+.tabBtn.active {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.tabContent {
+  min-height: 180px;
+}
+
+.tabDesc {
+  font-size: 12px;
+  color: var(--brand-text-tertiary, #64748b);
+  margin: 0 0 12px;
+}
+
+/* ================================================================
+   FUNNEL BARS
+   ================================================================ */
+.funnelBars {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.funnelRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.funnelBarOuter {
+  flex: 1;
+  height: 28px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.funnelBarInner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  border-radius: 6px;
+  min-width: fit-content;
+}
+
+.funnelLabel {
+  font-size: 11px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.funnelValue {
+  font-size: 11px;
+  font-weight: 600;
+  color: #ffffff;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+.funnelRate {
+  font-size: 11px;
+  color: var(--brand-text-tertiary, #64748b);
+  width: 36px;
+  text-align: right;
+}
+
+/* ================================================================
+   ATTRIBUTION SECTION
+   ================================================================ */
+.attrSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.attrTabs {
+  display: flex;
+  gap: 4px;
+}
+
+.attrTabs button {
+  padding: 6px 12px;
+  border: none;
+  background: transparent;
+  color: var(--brand-text-tertiary, #64748b);
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.15s ease;
+}
+
+.attrTabs button:hover:not(.active) {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.attrTabs button.active {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+}
+
+.attrList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.attrRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.attrLabel {
+  width: 80px;
+  font-size: 12px;
+  color: var(--brand-text-secondary, #94a3b8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.attrBar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.attrBar div {
+  height: 100%;
+  background: #3b82f6;
+  border-radius: 3px;
+}
+
+.attrValue {
+  width: 36px;
+  font-size: 12px;
+  color: var(--brand-text-primary, #ffffff);
+  text-align: right;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+.noData {
+  font-size: 12px;
+  color: var(--brand-text-tertiary, #64748b);
+}
+
+/* ================================================================
+   COHORT GRID
+   ================================================================ */
+.cohortGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.cohortHeader,
+.cohortRow {
+  display: grid;
+  grid-template-columns: 60px repeat(5, 1fr);
+  gap: 4px;
+}
+
+.cohortHeader span {
+  text-align: center;
+  color: var(--brand-text-tertiary, #64748b);
+  padding: 6px 4px;
+}
+
+.cohortLabel {
+  color: var(--brand-text-secondary, #94a3b8);
+  padding: 6px 4px;
+}
+
+.cohortCell {
+  text-align: center;
+  padding: 6px 4px;
+  border-radius: 4px;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+/* ================================================================
+   GOALS LIST
+   ================================================================ */
+.goalsList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.goalRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.goalRow:last-child {
+  border-bottom: none;
+}
+
+.goalName {
+  flex: 1;
+  font-size: 12px;
+  color: var(--brand-text-secondary, #94a3b8);
+}
+
+.goalCount {
+  font-size: 12px;
+  color: var(--brand-text-primary, #ffffff);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  width: 40px;
+  text-align: right;
+}
+
+.goalRate {
+  font-size: 12px;
+  color: #22c55e;
+  width: 50px;
+  text-align: right;
+}
+
+/* ================================================================
+   LIFECYCLE GRID
+   ================================================================ */
+.lifecycleGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+@media (min-width: 480px) {
+  .lifecycleGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.lifecycleCard {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  border-top: 3px solid;
+}
+
+.lcLabel {
+  font-size: 11px;
+  color: var(--brand-text-tertiary, #64748b);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.lcValue {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--brand-text-primary, #ffffff);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+  display: block;
+}
+
+.lcPct {
+  font-size: 11px;
+  color: var(--brand-text-tertiary, #64748b);
+}
+
+/* ================================================================
+   SEARCH LIST
+   ================================================================ */
+.searchList {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.searchRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.searchRow:last-child {
+  border-bottom: none;
+}
+
+.searchQuery {
+  font-size: 12px;
+  color: var(--brand-text-secondary, #94a3b8);
+}
+
+.searchCount {
+  font-size: 12px;
+  color: var(--brand-text-tertiary, #64748b);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+/* ================================================================
+   DETAIL SECTION
+   ================================================================ */
+.detailSection {
+  background: var(--brand-bg-secondary, #1b263b);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.detailContent {
+  min-height: 120px;
+}
+
+/* ================================================================
+   COMPACT TABLE
+   ================================================================ */
+.compactTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.compactTable th,
+.compactTable td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.compactTable th {
+  font-weight: 600;
+  color: var(--brand-text-tertiary, #64748b);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 10px;
+}
+
+.compactTable td {
+  color: var(--brand-text-primary, #ffffff);
+}
+
+.compactTable tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.pathCell {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--brand-text-secondary, #94a3b8) !important;
+}
+
+/* ================================================================
+   REFERRERS
+   ================================================================ */
+.referrers {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.refRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.refSource {
+  width: 80px;
+  font-size: 12px;
+  color: var(--brand-text-secondary, #94a3b8);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.refBar {
+  flex: 1;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.refBar div {
+  height: 100%;
+  background: #8b5cf6;
+  border-radius: 3px;
+}
+
+.refCount {
+  width: 36px;
+  font-size: 12px;
+  color: var(--brand-text-primary, #ffffff);
+  text-align: right;
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+/* ================================================================
+   COUNTRIES
+   ================================================================ */
+.countries {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.countryRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.flag {
+  font-size: 16px;
+}
+
+.countryName {
+  flex: 1;
+  font-size: 12px;
+  color: var(--brand-text-secondary, #94a3b8);
+}
+
+.countryPct {
+  font-size: 12px;
+  color: var(--brand-text-primary, #ffffff);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+/* ================================================================
+   TECH GRID
+   ================================================================ */
+.techGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.techRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 6px 0;
+  color: var(--brand-text-secondary, #94a3b8);
+}
+
+.techRow span:last-child {
+  color: var(--brand-text-primary, #ffffff);
+  font-family: var(--font-mono, 'JetBrains Mono', monospace);
+}
+
+/* ================================================================
+   LOADING & ERROR STATES
+   ================================================================ */
+.loadingState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 60px 24px;
+  color: var(--brand-text-tertiary, #64748b);
+  font-size: 14px;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 40px 24px;
+  text-align: center;
+  color: var(--brand-error, #ef4444);
+  font-size: 14px;
+}
+
+.errorState button {
+  padding: 10px 20px;
+  border: none;
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.errorState button:hover {
+  background: rgba(59, 130, 246, 0.25);
+}
+
+/* ================================================================
+   EMPTY STATES
+   ================================================================ */
+.emptySmall {
+  font-size: 12px;
+  color: var(--brand-text-tertiary, #64748b);
+  text-align: center;
+  padding: 20px;
+}

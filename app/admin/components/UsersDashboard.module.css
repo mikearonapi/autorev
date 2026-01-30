@@ -1,6 +1,6 @@
 /**
  * Users Dashboard Styles
- * Mobile-First Design following Brand Guidelines v2.0
+ * Mobile-First COMPACT Design following Brand Guidelines v2.0
  */
 
 /* ================================================================
@@ -9,21 +9,44 @@
 .container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-}
-
-/* ================================================================
-   SUMMARY GRID
-   ================================================================ */
-.summaryGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
   gap: 12px;
 }
 
 @media (min-width: 640px) {
+  .container {
+    gap: 16px;
+  }
+}
+
+/* ================================================================
+   SUMMARY GRID - Compact horizontal scroll on mobile
+   ================================================================ */
+.summaryGrid {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+  margin: 0 -16px;
+  padding-left: 16px;
+  padding-right: 16px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Hide scrollbar but keep functionality */
+.summaryGrid::-webkit-scrollbar {
+  display: none;
+}
+
+@media (min-width: 640px) {
   .summaryGrid {
+    display: grid;
     grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    overflow-x: visible;
+    margin: 0;
+    padding: 0;
   }
 }
 
@@ -34,17 +57,27 @@
 }
 
 /* ================================================================
-   SUMMARY CARD
+   SUMMARY CARD - Compact on mobile
    ================================================================ */
 .summaryCard {
   display: flex;
   align-items: center;
-  gap: 14px;
-  padding: 16px;
+  gap: 8px;
+  padding: 10px 12px;
   background: var(--brand-bg-secondary, #1b263b);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
+  border-radius: 10px;
   transition: all 0.2s ease;
+  flex-shrink: 0;
+  min-width: fit-content;
+}
+
+@media (min-width: 640px) {
+  .summaryCard {
+    padding: 14px;
+    gap: 12px;
+    border-radius: 12px;
+  }
 }
 
 .summaryCard:hover {
@@ -56,60 +89,80 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 32px;
+  height: 32px;
   background: rgba(59, 130, 246, 0.15);
   border: 1px solid rgba(59, 130, 246, 0.25);
-  border-radius: 12px;
+  border-radius: 8px;
   flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .summaryIcon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+  }
 }
 
 .summaryContent {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 0;
 }
 
 .summaryValue {
-  font-size: 1.75rem;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--brand-text-primary, #ffffff);
-  line-height: 1.2;
+  line-height: 1.1;
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
+@media (min-width: 640px) {
+  .summaryValue {
+    font-size: 1.5rem;
+  }
+}
+
 .summaryLabel {
-  font-size: 11px;
+  font-size: 9px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   color: var(--brand-text-tertiary, #64748b);
 }
 
+@media (min-width: 640px) {
+  .summaryLabel {
+    font-size: 10px;
+    letter-spacing: 0.05em;
+  }
+}
+
 /* ================================================================
-   FILTERS
+   FILTERS - Compact on mobile
    ================================================================ */
 .filters {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  flex-direction: row;
+  gap: 8px;
 }
 
 @media (min-width: 640px) {
   .filters {
-    flex-direction: row;
-    flex-wrap: wrap;
+    gap: 12px;
   }
 }
 
 .searchBox {
   position: relative;
   flex: 1;
-  min-width: 200px;
+  min-width: 0;
 }
 
 .searchIcon {
   position: absolute;
-  left: 14px;
+  left: 12px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--brand-text-tertiary, #64748b);
@@ -118,14 +171,22 @@
 
 .searchInput {
   width: 100%;
-  min-height: 48px;
-  padding: 12px 14px 12px 44px;
-  font-size: 14px;
+  min-height: 40px;
+  padding: 8px 12px 8px 36px;
+  font-size: 13px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--brand-bg-secondary, #1b263b);
   color: var(--brand-text-primary, #ffffff);
   transition: all 0.2s ease;
+}
+
+@media (min-width: 640px) {
+  .searchInput {
+    min-height: 44px;
+    padding: 10px 14px 10px 40px;
+    font-size: 14px;
+  }
 }
 
 .searchInput::placeholder {
@@ -135,19 +196,28 @@
 .searchInput:focus {
   outline: none;
   border-color: var(--brand-blue, #3b82f6);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
 }
 
 .filterSelect {
-  min-height: 48px;
-  padding: 12px 16px;
-  font-size: 14px;
+  min-height: 40px;
+  padding: 8px 12px;
+  font-size: 13px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
+  border-radius: 10px;
   background: var(--brand-bg-secondary, #1b263b);
   color: var(--brand-text-primary, #ffffff);
   cursor: pointer;
   transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+@media (min-width: 640px) {
+  .filterSelect {
+    min-height: 44px;
+    padding: 10px 16px;
+    font-size: 14px;
+  }
 }
 
 .filterSelect:hover {
@@ -165,21 +235,34 @@
 }
 
 /* ================================================================
-   TABLE
+   TABLE - Compact on mobile
    ================================================================ */
 .tableWrapper {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
   background: var(--brand-bg-secondary, #1b263b);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 14px;
+  border-radius: 10px;
+}
+
+@media (min-width: 640px) {
+  .tableWrapper {
+    border-radius: 12px;
+  }
 }
 
 .table {
   width: 100%;
-  min-width: 800px;
+  min-width: 600px;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: 13px;
+}
+
+@media (min-width: 640px) {
+  .table {
+    min-width: 800px;
+    font-size: 14px;
+  }
 }
 
 .table thead {
@@ -187,15 +270,23 @@
 }
 
 .table th {
-  padding: 14px 16px;
+  padding: 10px 12px;
   text-align: left;
   font-weight: 600;
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   color: var(--brand-text-secondary, #94a3b8);
   white-space: nowrap;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (min-width: 640px) {
+  .table th {
+    padding: 12px 14px;
+    font-size: 11px;
+    letter-spacing: 0.05em;
+  }
 }
 
 .table th.sortable {
@@ -210,15 +301,21 @@
 
 .table th svg {
   display: inline-block;
-  margin-left: 6px;
+  margin-left: 4px;
   vertical-align: middle;
 }
 
 .table td {
-  padding: 14px 16px;
+  padding: 10px 12px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   vertical-align: middle;
   color: var(--brand-text-primary, #ffffff);
+}
+
+@media (min-width: 640px) {
+  .table td {
+    padding: 12px 14px;
+  }
 }
 
 /* ================================================================
@@ -238,25 +335,39 @@
 }
 
 /* ================================================================
-   USER CELL
+   USER CELL - Compact on mobile
    ================================================================ */
 .userCell {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
+}
+
+@media (min-width: 640px) {
+  .userCell {
+    gap: 12px;
+  }
 }
 
 .avatar {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   background: linear-gradient(135deg, var(--brand-blue, #3b82f6), var(--brand-teal, #10b981));
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.25);
+}
+
+@media (min-width: 640px) {
+  .avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+  }
 }
 
 .avatar img {
@@ -266,57 +377,93 @@
 }
 
 .avatar span {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   color: var(--brand-text-primary, #ffffff);
+}
+
+@media (min-width: 640px) {
+  .avatar span {
+    font-size: 13px;
+  }
 }
 
 .userInfo {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  gap: 2px;
+  gap: 1px;
 }
 
 .userName {
   font-weight: 500;
+  font-size: 13px;
   color: var(--brand-text-primary, #ffffff);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+@media (min-width: 640px) {
+  .userName {
+    font-size: 14px;
+  }
+}
+
 .userEmail {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--brand-text-tertiary, #64748b);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 180px;
+  max-width: 140px;
+}
+
+@media (min-width: 640px) {
+  .userEmail {
+    font-size: 12px;
+    max-width: 180px;
+  }
 }
 
 /* ================================================================
-   BADGES
+   BADGES - Compact
    ================================================================ */
 .tierBadge {
   display: inline-block;
-  padding: 6px 12px;
-  font-size: 11px;
+  padding: 4px 8px;
+  font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  border-radius: 8px;
+  letter-spacing: 0.03em;
+  border-radius: 6px;
   border: 1px solid;
+}
+
+@media (min-width: 640px) {
+  .tierBadge {
+    padding: 5px 10px;
+    font-size: 11px;
+    border-radius: 7px;
+  }
 }
 
 .sourceBadge {
   display: inline-block;
-  padding: 4px 10px;
-  font-size: 11px;
+  padding: 3px 8px;
+  font-size: 10px;
   font-weight: 500;
   border: 1px solid currentColor;
-  border-radius: 6px;
+  border-radius: 5px;
   background: transparent;
+}
+
+@media (min-width: 640px) {
+  .sourceBadge {
+    padding: 4px 10px;
+    font-size: 11px;
+    border-radius: 6px;
+  }
 }
 
 /* ================================================================
@@ -324,7 +471,13 @@
    ================================================================ */
 .dateCell {
   color: var(--brand-text-secondary, #94a3b8);
-  font-size: 13px;
+  font-size: 12px;
+}
+
+@media (min-width: 640px) {
+  .dateCell {
+    font-size: 13px;
+  }
 }
 
 /* ================================================================
@@ -333,29 +486,52 @@
 .activeNow {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 4px 10px;
-  font-size: 12px;
+  gap: 6px;
+  padding: 3px 8px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--brand-success, #22c55e);
   background: rgba(34, 197, 94, 0.12);
   border: 1px solid rgba(34, 197, 94, 0.3);
-  border-radius: 8px;
+  border-radius: 6px;
+}
+
+@media (min-width: 640px) {
+  .activeNow {
+    padding: 4px 10px;
+    font-size: 11px;
+    border-radius: 7px;
+  }
 }
 
 .activeNow::before {
   content: '';
   display: inline-block;
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   background: var(--brand-success, #22c55e);
   border-radius: 50%;
   animation: pulse 2s ease-in-out infinite;
 }
 
+@media (min-width: 640px) {
+  .activeNow::before {
+    width: 7px;
+    height: 7px;
+  }
+}
+
 @keyframes pulse {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.6; transform: scale(0.9); }
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.6;
+    transform: scale(0.9);
+  }
 }
 
 /* ================================================================
@@ -363,55 +539,76 @@
    ================================================================ */
 .activityIndicator {
   display: flex;
-  gap: 4px;
+  gap: 3px;
 }
 
 .activityDot {
-  width: 12px;
-  height: 12px;
-  border-radius: 4px;
+  width: 10px;
+  height: 10px;
+  border-radius: 3px;
+}
+
+@media (min-width: 640px) {
+  .activityDot {
+    width: 12px;
+    height: 12px;
+    border-radius: 4px;
+  }
 }
 
 /* ================================================================
-   ENGAGEMENT COLUMNS
+   ENGAGEMENT COLUMNS - Compact
    ================================================================ */
 .engagementCol {
   text-align: center !important;
-  min-width: 50px;
-  padding: 12px 8px !important;
+  min-width: 36px;
+  padding: 8px 4px !important;
+}
+
+@media (min-width: 640px) {
+  .engagementCol {
+    min-width: 44px;
+    padding: 10px 6px !important;
+  }
 }
 
 .engagementValue {
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--brand-text-primary, #ffffff);
   text-align: center;
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
+@media (min-width: 640px) {
+  .engagementValue {
+    font-size: 13px;
+  }
+}
+
 .engagementCell {
   display: flex;
-  gap: 10px;
-  font-size: 13px;
+  gap: 8px;
+  font-size: 12px;
 }
 
 .engagementItem {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  min-width: 50px;
+  gap: 2px;
+  min-width: 36px;
 }
 
 .engagementLabel {
-  font-size: 9px;
+  font-size: 8px;
   color: var(--brand-text-tertiary, #64748b);
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
 }
 
 /* ================================================================
-   EXPANDED ROW
+   EXPANDED ROW - Compact on mobile
    ================================================================ */
 .expandedRow td {
   padding: 0 !important;
@@ -422,8 +619,15 @@
 .expandedContent {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 16px;
-  padding: 20px;
+  gap: 10px;
+  padding: 12px;
+}
+
+@media (min-width: 640px) {
+  .expandedContent {
+    gap: 14px;
+    padding: 16px;
+  }
 }
 
 @media (min-width: 768px) {
@@ -435,30 +639,47 @@
 .expandedSection {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 12px;
-  padding: 16px;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+@media (min-width: 640px) {
+  .expandedSection {
+    border-radius: 12px;
+    padding: 14px;
+  }
 }
 
 .expandedSection h4 {
-  font-size: 12px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
   color: var(--brand-text-secondary, #94a3b8);
-  margin: 0 0 12px 0;
-  padding-bottom: 8px;
+  margin: 0 0 8px;
+  padding-bottom: 6px;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@media (min-width: 640px) {
+  .expandedSection h4 {
+    font-size: 11px;
+    margin: 0 0 10px;
+    padding-bottom: 8px;
+  }
 }
 
 .expandedGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  font-size: 13px;
+  gap: 6px;
+  font-size: 11px;
 }
 
 @media (min-width: 640px) {
   .expandedGrid {
     grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    font-size: 12px;
   }
 }
 
@@ -474,39 +695,68 @@
   grid-column: 1 / -1;
   background: rgba(0, 0, 0, 0.2);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: 10px;
-  padding: 12px 14px;
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+
+@media (min-width: 640px) {
+  .userIdRow {
+    border-radius: 10px;
+    padding: 10px 12px;
+  }
 }
 
 .userIdRow code {
-  font-size: 12px;
+  font-size: 10px;
   color: var(--brand-text-tertiary, #64748b);
   word-break: break-all;
   font-family: var(--font-mono, 'JetBrains Mono', monospace);
 }
 
+@media (min-width: 640px) {
+  .userIdRow code {
+    font-size: 11px;
+  }
+}
+
 /* ================================================================
-   PAGINATION
+   PAGINATION - Compact
    ================================================================ */
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
-  padding-top: 12px;
+  gap: 10px;
+  padding-top: 8px;
+}
+
+@media (min-width: 640px) {
+  .pagination {
+    gap: 14px;
+    padding-top: 12px;
+  }
 }
 
 .pageButton {
-  min-height: 44px;
-  padding: 10px 18px;
-  font-size: 13px;
+  min-height: 36px;
+  padding: 8px 14px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--brand-text-primary, #ffffff);
   background: var(--brand-bg-secondary, #1b263b);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+@media (min-width: 640px) {
+  .pageButton {
+    min-height: 40px;
+    padding: 8px 16px;
+    font-size: 13px;
+    border-radius: 10px;
+  }
 }
 
 .pageButton:hover:not(:disabled) {
@@ -521,12 +771,18 @@
 }
 
 .pageInfo {
-  font-size: 13px;
+  font-size: 11px;
   color: var(--brand-text-secondary, #94a3b8);
 }
 
+@media (min-width: 640px) {
+  .pageInfo {
+    font-size: 13px;
+  }
+}
+
 /* ================================================================
-   STATES
+   STATES - Compact on mobile
    ================================================================ */
 .loadingState,
 .errorState,
@@ -535,36 +791,64 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 60px 24px;
+  padding: 40px 20px;
   text-align: center;
   color: var(--brand-text-tertiary, #64748b);
-  gap: 16px;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .loadingState,
+  .errorState,
+  .emptyState {
+    padding: 60px 24px;
+    gap: 16px;
+  }
 }
 
 .loadingSpinner {
-  width: 36px;
-  height: 36px;
-  border: 3px solid rgba(255, 255, 255, 0.1);
+  width: 28px;
+  height: 28px;
+  border: 2px solid rgba(255, 255, 255, 0.1);
   border-top-color: var(--brand-blue, #3b82f6);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
 
+@media (min-width: 640px) {
+  .loadingSpinner {
+    width: 36px;
+    height: 36px;
+    border-width: 3px;
+  }
+}
+
 @keyframes spin {
-  to { transform: rotate(360deg); }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .retryButton {
-  min-height: 44px;
-  padding: 10px 20px;
-  font-size: 14px;
+  min-height: 40px;
+  padding: 8px 16px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--brand-text-primary, #ffffff);
   background: var(--brand-blue, #3b82f6);
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+@media (min-width: 640px) {
+  .retryButton {
+    min-height: 44px;
+    padding: 10px 20px;
+    font-size: 14px;
+    border-radius: 10px;
+  }
 }
 
 .retryButton:hover {
@@ -573,25 +857,22 @@
 }
 
 /* ================================================================
-   MOBILE OPTIMIZATIONS
+   MOBILE OPTIMIZATIONS - Hide less important columns
    ================================================================ */
 @media (max-width: 640px) {
+  /* Hide Last Active and Activity columns on mobile */
   .table th:nth-child(5),
   .table td:nth-child(5),
   .table th:nth-child(6),
   .table td:nth-child(6) {
     display: none;
   }
-  
-  .userEmail {
-    max-width: 120px;
-  }
-  
+
   .engagementCell {
-    gap: 6px;
+    gap: 4px;
   }
-  
+
   .engagementItem {
-    min-width: 30px;
+    min-width: 28px;
   }
 }

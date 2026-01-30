@@ -346,4 +346,60 @@ node scripts/monitor-al-quality.mjs --days 7
 
 # Check corrections are seeded
 SELECT * FROM al_corrections WHERE is_active = true;
+
+# View recent request traces
+SELECT correlation_id, intent, agent_type, had_error, total_latency_ms
+FROM al_request_traces ORDER BY created_at DESC LIMIT 10;
 ```
+
+---
+
+## Logging & Tracing Infrastructure (Added 2026-01-30)
+
+### New Database Table: `al_request_traces`
+
+Comprehensive request-level tracing for every AL conversation:
+
+| Column Category      | Fields                                                                |
+| -------------------- | --------------------------------------------------------------------- |
+| **Request Info**     | correlation_id, query_text, car_context_slug, has_attachments         |
+| **Intent & Routing** | intent, intent_confidence, agent_type, routing_reason                 |
+| **Car Extraction**   | extracted_car_year/make/model, car_in_database                        |
+| **Tool Execution**   | tools_called, tools_succeeded, tools_failed, tool_timings, cache_hits |
+| **Response Metrics** | response_length, response_valid, used_fallback                        |
+| **Performance**      | total_latency_ms, intent_classification_ms, agent_execution_ms        |
+| **Error Tracking**   | had_error, error_type, error_message                                  |
+| **Token Usage**      | input_tokens, output_tokens, cost_cents                               |
+
+### New Service: `lib/alTracingService.js`
+
+- `ALTracer` class for request-level tracing
+- Automatic logging with correlation ID prefix
+- Database persistence for all traces
+- Helper functions: `getRecentTraces()`, `getTraceMetrics()`
+
+### Enhanced Monitoring Script
+
+```bash
+# Full metrics dashboard
+node scripts/monitor-al-quality.mjs --days 7
+
+# View recent traces
+node scripts/monitor-al-quality.mjs --traces
+
+# View only error traces
+node scripts/monitor-al-quality.mjs --errors
+```
+
+### Existing Infrastructure (Verified)
+
+| System                   | Purpose                        | Status    |
+| ------------------------ | ------------------------------ | --------- |
+| **Helicone**             | LLM observability              | ✅ Active |
+| **al_usage_logs**        | Token/cost tracking            | ✅ Active |
+| **al_messages**          | Message storage                | ✅ Active |
+| **al_conversations**     | Conversation metadata          | ✅ Active |
+| **al_response_feedback** | User feedback (thumbs up/down) | ✅ Active |
+| **application_errors**   | Error logging                  | ✅ Active |
+| **Discord webhooks**     | Real-time alerts               | ✅ Active |
+| **Console logs**         | Correlation ID prefixed        | ✅ Active |

@@ -3,15 +3,20 @@
 /**
  * AL Quality Monitoring Script
  *
- * Monitors AL conversations for quality issues:
- * 1. Empty tool_calls when tools should have been used
- * 2. High percentage of fallback responses
- * 3. Negative feedback patterns
+ * Comprehensive monitoring for AL conversations including:
+ * 1. Request tracing metrics (latency, errors, tool usage)
+ * 2. Empty tool_calls when tools should have been used
+ * 3. High percentage of fallback responses
+ * 4. Negative feedback patterns
+ * 5. Agent performance breakdown
+ * 6. Cost tracking
  *
  * Usage:
  *   node scripts/monitor-al-quality.mjs
  *   node scripts/monitor-al-quality.mjs --days 7
  *   node scripts/monitor-al-quality.mjs --alert-threshold 20
+ *   node scripts/monitor-al-quality.mjs --traces  # Show recent traces
+ *   node scripts/monitor-al-quality.mjs --errors  # Show only errors
  */
 
 import { createClient } from '@supabase/supabase-js';
@@ -22,6 +27,8 @@ const ALERT_THRESHOLD = parseInt(
   process.argv.find((arg) => arg.startsWith('--alert-threshold='))?.split('=')[1] || '15',
   10
 );
+const SHOW_TRACES = process.argv.includes('--traces');
+const SHOW_ERRORS = process.argv.includes('--errors');
 
 // Initialize Supabase
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -35,7 +42,93 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // =============================================================================
-// QUERIES
+// TRACE QUERIES
+// =============================================================================
+
+async function getRequestTraceMetrics() {
+  const cutoff = new Date(Date.now() - DAYS_TO_ANALYZE * 24 * 60 * 60 * 1000).toISOString();
+
+  const { data, error } = await supabase
+    .from('al_request_traces')
+    .select('*')
+    .gte('created_at', cutoff);
+
+  if (error || !data || data.length === 0) {
+    return null;
+  }
+
+  const total = data.length;
+  const errors = data.filter((t) => t.had_error).length;
+  const fallbacks = data.filter((t) => t.used_fallback).length;
+  const avgLatency = data.reduce((sum, t) => sum + (t.total_latency_ms || 0), 0) / total;
+  const totalCost = data.reduce((sum, t) => sum + (parseFloat(t.cost_cents) || 0), 0);
+
+  // Agent breakdown
+  const byAgent = {};
+  for (const trace of data) {
+    const agent = trace.agent_type || 'unknown';
+    byAgent[agent] = byAgent[agent] || { count: 0, errors: 0, avgLatency: 0, latencies: [] };
+    byAgent[agent].count++;
+    if (trace.had_error) byAgent[agent].errors++;
+    byAgent[agent].latencies.push(trace.total_latency_ms || 0);
+  }
+
+  // Calculate avg latency per agent
+  for (const agent of Object.keys(byAgent)) {
+    const latencies = byAgent[agent].latencies;
+    byAgent[agent].avgLatency = (latencies.reduce((a, b) => a + b, 0) / latencies.length).toFixed(0);
+    delete byAgent[agent].latencies;
+  }
+
+  // Intent breakdown
+  const byIntent = {};
+  for (const trace of data) {
+    const intent = trace.intent || 'unknown';
+    byIntent[intent] = (byIntent[intent] || 0) + 1;
+  }
+
+  // Tool usage
+  const toolCounts = {};
+  for (const trace of data) {
+    for (const tool of trace.tools_called || []) {
+      toolCounts[tool] = (toolCounts[tool] || 0) + 1;
+    }
+  }
+
+  return {
+    total,
+    errors,
+    errorRate: ((errors / total) * 100).toFixed(1),
+    fallbacks,
+    fallbackRate: ((fallbacks / total) * 100).toFixed(1),
+    avgLatencyMs: avgLatency.toFixed(0),
+    totalCostCents: totalCost.toFixed(2),
+    byAgent,
+    byIntent,
+    topTools: Object.entries(toolCounts)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 10),
+  };
+}
+
+async function getRecentTraces(limit = 10, errorsOnly = false) {
+  let query = supabase
+    .from('al_request_traces')
+    .select('correlation_id, intent, agent_type, tools_called, had_error, used_fallback, total_latency_ms, error_message, created_at')
+    .order('created_at', { ascending: false })
+    .limit(limit);
+
+  if (errorsOnly) {
+    query = query.eq('had_error', true);
+  }
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return data || [];
+}
+
+// =============================================================================
+// LEGACY QUERIES (from al_messages)
 // =============================================================================
 
 async function getEmptyToolCallsRate() {
@@ -173,8 +266,72 @@ async function main() {
   console.log(`\n🔍 AL Quality Monitor - Last ${DAYS_TO_ANALYZE} days\n`);
   console.log('='.repeat(60));
 
+  // 0. Request Trace Metrics (from al_request_traces)
+  console.log('\n🔬 Request Trace Metrics');
+  console.log('-'.repeat(40));
+
+  try {
+    const traceMetrics = await getRequestTraceMetrics();
+    if (traceMetrics) {
+      console.log(`Total traced requests: ${traceMetrics.total}`);
+      console.log(`Errors: ${traceMetrics.errors} (${traceMetrics.errorRate}%)`);
+      console.log(`Fallbacks: ${traceMetrics.fallbacks} (${traceMetrics.fallbackRate}%)`);
+      console.log(`Avg latency: ${traceMetrics.avgLatencyMs}ms`);
+      console.log(`Total cost: ${traceMetrics.totalCostCents}¢`);
+
+      if (Object.keys(traceMetrics.byAgent).length > 0) {
+        console.log('\n  By Agent:');
+        for (const [agent, stats] of Object.entries(traceMetrics.byAgent)) {
+          console.log(`    ${agent}: ${stats.count} requests, ${stats.avgLatency}ms avg, ${stats.errors} errors`);
+        }
+      }
+
+      if (Object.keys(traceMetrics.byIntent).length > 0) {
+        console.log('\n  By Intent:');
+        for (const [intent, count] of Object.entries(traceMetrics.byIntent).sort((a, b) => b[1] - a[1])) {
+          console.log(`    ${intent}: ${count}`);
+        }
+      }
+
+      if (traceMetrics.topTools.length > 0) {
+        console.log('\n  Top Tools:');
+        for (const [tool, count] of traceMetrics.topTools) {
+          console.log(`    ${tool}: ${count}`);
+        }
+      }
+    } else {
+      console.log('No trace data available yet. Traces will appear after the next AL conversations.');
+    }
+  } catch (err) {
+    console.log(`Error getting trace metrics: ${err.message}`);
+  }
+
+  // Show recent traces if requested
+  if (SHOW_TRACES || SHOW_ERRORS) {
+    console.log(`\n📋 Recent ${SHOW_ERRORS ? 'Error ' : ''}Traces`);
+    console.log('-'.repeat(40));
+
+    try {
+      const traces = await getRecentTraces(10, SHOW_ERRORS);
+      if (traces.length === 0) {
+        console.log('No traces found');
+      } else {
+        for (const trace of traces) {
+          const status = trace.had_error ? '❌' : trace.used_fallback ? '⚠️' : '✅';
+          const tools = trace.tools_called?.length || 0;
+          console.log(`  ${status} ${trace.correlation_id?.substring(0, 8)}... | ${trace.intent || 'unknown'} | ${trace.agent_type || 'unknown'} | ${tools} tools | ${trace.total_latency_ms}ms`);
+          if (trace.had_error && trace.error_message) {
+            console.log(`     Error: ${trace.error_message.substring(0, 80)}...`);
+          }
+        }
+      }
+    } catch (err) {
+      console.log(`Error getting traces: ${err.message}`);
+    }
+  }
+
   // 1. Empty tool calls rate
-  console.log('\n📊 Tool Usage Analysis');
+  console.log('\n📊 Tool Usage Analysis (from al_messages)');
   console.log('-'.repeat(40));
 
   try {

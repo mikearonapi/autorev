@@ -2,7 +2,7 @@
 
 /**
  * StripeDashboard Component
- * 
+ *
  * Comprehensive Stripe revenue dashboard for the admin panel.
  * Displays:
  * - Revenue KPIs (MRR, ARR, Total)
@@ -118,10 +118,7 @@ function TierBadge({ tier }) {
   const style = tierStyles[tier] || tierStyles.unknown;
 
   return (
-    <span 
-      className={styles.tierBadge} 
-      style={{ background: style.bg, color: style.color }}
-    >
+    <span className={styles.tierBadge} style={{ background: style.bg, color: style.color }}>
       {tier === 'collector' ? 'Enthusiast' : tier === 'tuner' ? 'Tuner' : tier}
     </span>
   );
@@ -145,21 +142,32 @@ function PaymentTypeBadge({ type }) {
   );
 }
 
-export function StripeDashboard({ token: _token, range = 'month', loading: parentLoading = false }) {
+export function StripeDashboard({
+  token: _token,
+  range = 'month',
+  loading: parentLoading = false,
+}) {
   // Use React Query hook for Stripe data
-  const { 
-    data, 
-    isLoading: loading, 
+  const {
+    data,
+    isLoading: loading,
     error: queryError,
     refetch: fetchStripeData,
   } = useAdminStripe(range);
-  
+
+  // Extract error info from query error
+  const errorData = queryError?.data || {};
   const error = queryError?.message || null;
+  const errorDetails = errorData.details || null;
+  const errorType = errorData.type || null;
 
   const isLoading = loading || parentLoading;
-  
+
   // Check if error is a configuration issue
-  const isConfigError = error?.includes('503') || error?.includes('not configured');
+  const isConfigError =
+    error?.includes('503') ||
+    error?.includes('not configured') ||
+    errorType === 'StripeAuthenticationError';
 
   if (error) {
     // Show a helpful configuration setup message
@@ -168,24 +176,33 @@ export function StripeDashboard({ token: _token, range = 'month', loading: paren
         <div className={styles.configNeeded}>
           <div className={styles.configIcon}>
             <svg viewBox="0 0 60 25" className={styles.stripeLogoLarge}>
-              <path fill="#635BFF" d="M59.64 14.28h-8.06c.19 1.93 1.6 2.55 3.2 2.55 1.64 0 2.96-.37 4.05-.95v3.32a10.34 10.34 0 0 1-4.56.95c-4.01 0-6.83-2.5-6.83-7.28 0-4.19 2.39-7.32 6.3-7.32 3.87 0 5.93 3.13 5.93 7.28 0 .4-.02 1.06-.03 1.45zm-6-4.84c-1.07 0-2 .8-2.2 2.52h4.33c-.11-1.65-.88-2.52-2.13-2.52zM39.88 17.9c-1.52 0-2.57-.38-3.48-1.01l-.05 4.34-4.14.88V5.87h3.67l.21 1.09c.93-.88 2.18-1.35 3.48-1.35 3.39 0 5.58 2.92 5.58 6.11 0 3.81-2.4 6.18-5.27 6.18zm-.72-8.46c-.92 0-1.61.32-2.12.85l.06 4.45c.49.5 1.16.81 2.06.81 1.55 0 2.58-1.32 2.58-3.08 0-1.74-1.03-3.03-2.58-3.03zM29.59 5.87v12.17h-4.15V5.87zm0-5.07v3.06h-4.15V.8zM24.13 5.87l-3.4 12.17H16.4l-1.54-6.01c-.07-.28-.11-.53-.15-.74l-.15.74-1.54 6.01H8.68L5.28 5.87h4.25l1.39 6.3.19.98.2-.98 1.7-6.3h3.57l1.7 6.3.2.98.19-.98 1.39-6.3zM0 10.96c0-3.02 2.42-4.9 6.62-4.9 1.58 0 3.09.27 4.46.81V9.8a8.7 8.7 0 0 0-3.48-.75c-1.54 0-2.4.42-2.4 1.13 0 2.23 6.53.76 6.53 5.56 0 2.92-2.31 4.9-6.62 4.9-1.97 0-4.02-.46-5.11-1.15v-3.03c1.27.74 3.12 1.27 4.59 1.27 1.58 0 2.42-.4 2.42-1.15C6.51 14.24 0 16.04 0 10.96z"/>
+              <path
+                fill="#635BFF"
+                d="M59.64 14.28h-8.06c.19 1.93 1.6 2.55 3.2 2.55 1.64 0 2.96-.37 4.05-.95v3.32a10.34 10.34 0 0 1-4.56.95c-4.01 0-6.83-2.5-6.83-7.28 0-4.19 2.39-7.32 6.3-7.32 3.87 0 5.93 3.13 5.93 7.28 0 .4-.02 1.06-.03 1.45zm-6-4.84c-1.07 0-2 .8-2.2 2.52h4.33c-.11-1.65-.88-2.52-2.13-2.52zM39.88 17.9c-1.52 0-2.57-.38-3.48-1.01l-.05 4.34-4.14.88V5.87h3.67l.21 1.09c.93-.88 2.18-1.35 3.48-1.35 3.39 0 5.58 2.92 5.58 6.11 0 3.81-2.4 6.18-5.27 6.18zm-.72-8.46c-.92 0-1.61.32-2.12.85l.06 4.45c.49.5 1.16.81 2.06.81 1.55 0 2.58-1.32 2.58-3.08 0-1.74-1.03-3.03-2.58-3.03zM29.59 5.87v12.17h-4.15V5.87zm0-5.07v3.06h-4.15V.8zM24.13 5.87l-3.4 12.17H16.4l-1.54-6.01c-.07-.28-.11-.53-.15-.74l-.15.74-1.54 6.01H8.68L5.28 5.87h4.25l1.39 6.3.19.98.2-.98 1.7-6.3h3.57l1.7 6.3.2.98.19-.98 1.39-6.3zM0 10.96c0-3.02 2.42-4.9 6.62-4.9 1.58 0 3.09.27 4.46.81V9.8a8.7 8.7 0 0 0-3.48-.75c-1.54 0-2.4.42-2.4 1.13 0 2.23 6.53.76 6.53 5.56 0 2.92-2.31 4.9-6.62 4.9-1.97 0-4.02-.46-5.11-1.15v-3.03c1.27.74 3.12 1.27 4.59 1.27 1.58 0 2.42-.4 2.42-1.15C6.51 14.24 0 16.04 0 10.96z"
+              />
             </svg>
           </div>
           <h3 className={styles.configTitle}>Stripe Integration Required</h3>
           <p className={styles.configDesc}>
             To view revenue data, you need to connect your Stripe account.
           </p>
-          
+
           <div className={styles.configSteps}>
             <h4>Setup Steps:</h4>
             <ol>
               <li>
                 Go to your{' '}
-                <a href="https://dashboard.stripe.com/apikeys" target="_blank" rel="noopener noreferrer">
+                <a
+                  href="https://dashboard.stripe.com/apikeys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   Stripe Dashboard → Developers → API keys
                 </a>
               </li>
-              <li>Copy your <strong>Secret key</strong> (starts with <code>sk_</code>)</li>
+              <li>
+                Copy your <strong>Secret key</strong> (starts with <code>sk_</code>)
+              </li>
               <li>
                 Add to your <code>.env.local</code> file:
                 <pre className={styles.configCode}>STRIPE_SECRET_KEY=sk_live_xxxxx</pre>
@@ -193,11 +210,11 @@ export function StripeDashboard({ token: _token, range = 'month', loading: paren
               <li>Restart your development server</li>
             </ol>
           </div>
-          
+
           <div className={styles.configActions}>
-            <a 
-              href="https://dashboard.stripe.com" 
-              target="_blank" 
+            <a
+              href="https://dashboard.stripe.com"
+              target="_blank"
               rel="noopener noreferrer"
               className={styles.stripeButton}
             >
@@ -210,12 +227,13 @@ export function StripeDashboard({ token: _token, range = 'month', loading: paren
         </div>
       );
     }
-    
+
     // General error state
     return (
       <div className={styles.errorState}>
         <p>Failed to load Stripe data: {error}</p>
-        <button onClick={fetchStripeData} className={styles.retryButton}>
+        {errorDetails && <p className={styles.errorDetails}>{errorDetails}</p>}
+        <button onClick={() => fetchStripeData()} className={styles.retryButton}>
           <RefreshIcon /> Retry
         </button>
       </div>
@@ -229,7 +247,10 @@ export function StripeDashboard({ token: _token, range = 'month', loading: paren
         <div className={styles.headerTitle}>
           <div className={styles.stripeLogoWrapper}>
             <svg viewBox="0 0 60 25" className={styles.stripeLogo}>
-              <path fill="#635BFF" d="M59.64 14.28h-8.06c.19 1.93 1.6 2.55 3.2 2.55 1.64 0 2.96-.37 4.05-.95v3.32a10.34 10.34 0 0 1-4.56.95c-4.01 0-6.83-2.5-6.83-7.28 0-4.19 2.39-7.32 6.3-7.32 3.87 0 5.93 3.13 5.93 7.28 0 .4-.02 1.06-.03 1.45zm-6-4.84c-1.07 0-2 .8-2.2 2.52h4.33c-.11-1.65-.88-2.52-2.13-2.52zM39.88 17.9c-1.52 0-2.57-.38-3.48-1.01l-.05 4.34-4.14.88V5.87h3.67l.21 1.09c.93-.88 2.18-1.35 3.48-1.35 3.39 0 5.58 2.92 5.58 6.11 0 3.81-2.4 6.18-5.27 6.18zm-.72-8.46c-.92 0-1.61.32-2.12.85l.06 4.45c.49.5 1.16.81 2.06.81 1.55 0 2.58-1.32 2.58-3.08 0-1.74-1.03-3.03-2.58-3.03zM29.59 5.87v12.17h-4.15V5.87zm0-5.07v3.06h-4.15V.8zM24.13 5.87l-3.4 12.17H16.4l-1.54-6.01c-.07-.28-.11-.53-.15-.74l-.15.74-1.54 6.01H8.68L5.28 5.87h4.25l1.39 6.3.19.98.2-.98 1.7-6.3h3.57l1.7 6.3.2.98.19-.98 1.39-6.3zM0 10.96c0-3.02 2.42-4.9 6.62-4.9 1.58 0 3.09.27 4.46.81V9.8a8.7 8.7 0 0 0-3.48-.75c-1.54 0-2.4.42-2.4 1.13 0 2.23 6.53.76 6.53 5.56 0 2.92-2.31 4.9-6.62 4.9-1.97 0-4.02-.46-5.11-1.15v-3.03c1.27.74 3.12 1.27 4.59 1.27 1.58 0 2.42-.4 2.42-1.15C6.51 14.24 0 16.04 0 10.96z"/>
+              <path
+                fill="#635BFF"
+                d="M59.64 14.28h-8.06c.19 1.93 1.6 2.55 3.2 2.55 1.64 0 2.96-.37 4.05-.95v3.32a10.34 10.34 0 0 1-4.56.95c-4.01 0-6.83-2.5-6.83-7.28 0-4.19 2.39-7.32 6.3-7.32 3.87 0 5.93 3.13 5.93 7.28 0 .4-.02 1.06-.03 1.45zm-6-4.84c-1.07 0-2 .8-2.2 2.52h4.33c-.11-1.65-.88-2.52-2.13-2.52zM39.88 17.9c-1.52 0-2.57-.38-3.48-1.01l-.05 4.34-4.14.88V5.87h3.67l.21 1.09c.93-.88 2.18-1.35 3.48-1.35 3.39 0 5.58 2.92 5.58 6.11 0 3.81-2.4 6.18-5.27 6.18zm-.72-8.46c-.92 0-1.61.32-2.12.85l.06 4.45c.49.5 1.16.81 2.06.81 1.55 0 2.58-1.32 2.58-3.08 0-1.74-1.03-3.03-2.58-3.03zM29.59 5.87v12.17h-4.15V5.87zm0-5.07v3.06h-4.15V.8zM24.13 5.87l-3.4 12.17H16.4l-1.54-6.01c-.07-.28-.11-.53-.15-.74l-.15.74-1.54 6.01H8.68L5.28 5.87h4.25l1.39 6.3.19.98.2-.98 1.7-6.3h3.57l1.7 6.3.2.98.19-.98 1.39-6.3zM0 10.96c0-3.02 2.42-4.9 6.62-4.9 1.58 0 3.09.27 4.46.81V9.8a8.7 8.7 0 0 0-3.48-.75c-1.54 0-2.4.42-2.4 1.13 0 2.23 6.53.76 6.53 5.56 0 2.92-2.31 4.9-6.62 4.9-1.97 0-4.02-.46-5.11-1.15v-3.03c1.27.74 3.12 1.27 4.59 1.27 1.58 0 2.42-.4 2.42-1.15C6.51 14.24 0 16.04 0 10.96z"
+              />
             </svg>
           </div>
           <div>
@@ -237,19 +258,19 @@ export function StripeDashboard({ token: _token, range = 'month', loading: paren
             <p>Real-time payment and subscription data</p>
           </div>
         </div>
-        
+
         <div className={styles.headerActions}>
-          <button 
-            onClick={fetchStripeData} 
+          <button
+            onClick={fetchStripeData}
             className={styles.refreshButton}
             disabled={isLoading}
             title="Refresh data"
           >
             <RefreshIcon className={isLoading ? styles.spinning : ''} />
           </button>
-          <a 
-            href="https://dashboard.stripe.com" 
-            target="_blank" 
+          <a
+            href="https://dashboard.stripe.com"
+            target="_blank"
             rel="noopener noreferrer"
             className={styles.stripeLink}
           >
@@ -271,7 +292,7 @@ export function StripeDashboard({ token: _token, range = 'month', loading: paren
             loading={isLoading}
             compact
           />
-          
+
           <KPICard
             label="ARR"
             value={formatCurrency(data?.revenue?.arr || 0)}
@@ -281,7 +302,7 @@ export function StripeDashboard({ token: _token, range = 'month', loading: paren
             loading={isLoading}
             compact
           />
-          
+
           <KPICard
             label="Period Revenue"
             value={formatCurrency(data?.revenue?.periodTotal || 0)}
@@ -291,7 +312,7 @@ export function StripeDashboard({ token: _token, range = 'month', loading: paren
             loading={isLoading}
             compact
           />
-          
+
           <KPICard
             label="Available Balance"
             value={formatCurrency(data?.balance?.available || 0)}
@@ -317,7 +338,7 @@ export function StripeDashboard({ token: _token, range = 'month', loading: paren
             loading={isLoading}
             compact
           />
-          
+
           <KPICard
             label="ARPU"
             value={formatCurrency(data?.metrics?.arpu || 0)}
@@ -327,17 +348,19 @@ export function StripeDashboard({ token: _token, range = 'month', loading: paren
             loading={isLoading}
             compact
           />
-          
+
           <KPICard
             label="Churn Rate"
             value={`${data?.subscriptions?.churnRate || data?.metrics?.churnRate || 0}%`}
             interpretation="Monthly subscription cancellation rate"
-            sparklineColor={parseFloat(data?.subscriptions?.churnRate || 0) > 5 ? '#ef4444' : '#22c55e'}
+            sparklineColor={
+              parseFloat(data?.subscriptions?.churnRate || 0) > 5 ? '#ef4444' : '#22c55e'
+            }
             icon={<UsersIcon />}
             loading={isLoading}
             compact
           />
-          
+
           <KPICard
             label="Trial Conversion"
             value={`${data?.metrics?.trialConversionRate || 0}%`}
@@ -385,19 +408,21 @@ export function StripeDashboard({ token: _token, range = 'month', loading: paren
               <span className={styles.statLabel}>By Tier</span>
             </div>
             <div className={styles.tiersList}>
-              {data?.subscriptions?.byTier && Object.entries(data.subscriptions.byTier).map(([tier, info]) => (
-                info.count > 0 && (
-                  <div key={tier} className={styles.tierRow}>
-                    <div className={styles.tierInfo}>
-                      <TierBadge tier={tier} />
-                      <span className={styles.tierCount}>{info.count} subscribers</span>
-                    </div>
-                    <span className={styles.tierMRR}>{formatCurrency(info.mrr)}/mo</span>
-                  </div>
-                )
-              ))}
-              {(!data?.subscriptions?.byTier || 
-                Object.values(data.subscriptions.byTier).every(t => t.count === 0)) && (
+              {data?.subscriptions?.byTier &&
+                Object.entries(data.subscriptions.byTier).map(
+                  ([tier, info]) =>
+                    info.count > 0 && (
+                      <div key={tier} className={styles.tierRow}>
+                        <div className={styles.tierInfo}>
+                          <TierBadge tier={tier} />
+                          <span className={styles.tierCount}>{info.count} subscribers</span>
+                        </div>
+                        <span className={styles.tierMRR}>{formatCurrency(info.mrr)}/mo</span>
+                      </div>
+                    )
+                )}
+              {(!data?.subscriptions?.byTier ||
+                Object.values(data.subscriptions.byTier).every((t) => t.count === 0)) && (
                 <p className={styles.emptyState}>No active subscriptions yet</p>
               )}
             </div>
@@ -501,16 +526,19 @@ export function StripeDashboard({ token: _token, range = 'month', loading: paren
                         {formatCurrency(payment.amount, payment.currency)}
                       </td>
                       <td>
-                        <PaymentTypeBadge 
-                          type={payment.metadata?.type || (payment.description?.includes('Subscription') ? 'subscription' : 'other')} 
+                        <PaymentTypeBadge
+                          type={
+                            payment.metadata?.type ||
+                            (payment.description?.includes('Subscription')
+                              ? 'subscription'
+                              : 'other')
+                          }
                         />
                       </td>
                       <td className={styles.customerCell}>
                         {payment.receipt_email || payment.customer?.substring(0, 14) || '-'}
                       </td>
-                      <td className={styles.timeCell}>
-                        {formatRelativeTime(payment.created)}
-                      </td>
+                      <td className={styles.timeCell}>{formatRelativeTime(payment.created)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -551,9 +579,7 @@ export function StripeDashboard({ token: _token, range = 'month', loading: paren
           </div>
           <div className={styles.chargeStat + ' ' + styles.netRevenue}>
             <span className={styles.chargeLabel}>Net Revenue</span>
-            <span className={styles.chargeValue}>
-              {formatCurrency(data?.netRevenue?.net || 0)}
-            </span>
+            <span className={styles.chargeValue}>{formatCurrency(data?.netRevenue?.net || 0)}</span>
           </div>
         </div>
       </section>
@@ -561,9 +587,13 @@ export function StripeDashboard({ token: _token, range = 'month', loading: paren
       {/* Disputes (Chargebacks) */}
       {(data?.disputes?.open > 0 || data?.disputes?.lost > 0 || data?.disputes?.won > 0) && (
         <section className={styles.section}>
-          <h4 className={styles.sectionTitle + ' ' + styles.warningTitle}>Disputes & Chargebacks</h4>
+          <h4 className={styles.sectionTitle + ' ' + styles.warningTitle}>
+            Disputes & Chargebacks
+          </h4>
           <div className={styles.disputesGrid}>
-            <div className={styles.disputeStat + (data?.disputes?.open > 0 ? ' ' + styles.urgent : '')}>
+            <div
+              className={styles.disputeStat + (data?.disputes?.open > 0 ? ' ' + styles.urgent : '')}
+            >
               <span className={styles.disputeValue}>{data?.disputes?.open || 0}</span>
               <span className={styles.disputeLabel}>Needs Response</span>
             </div>
@@ -571,13 +601,17 @@ export function StripeDashboard({ token: _token, range = 'month', loading: paren
               <span className={styles.disputeValue}>{data?.disputes?.won || 0}</span>
               <span className={styles.disputeLabel}>Won</span>
             </div>
-            <div className={styles.disputeStat + (data?.disputes?.lost > 0 ? ' ' + styles.lost : '')}>
+            <div
+              className={styles.disputeStat + (data?.disputes?.lost > 0 ? ' ' + styles.lost : '')}
+            >
               <span className={styles.disputeValue}>{data?.disputes?.lost || 0}</span>
               <span className={styles.disputeLabel}>Lost</span>
             </div>
             <div className={styles.disputeStat}>
               <span className={styles.disputeLabel}>Total Disputed</span>
-              <span className={styles.disputeValue}>{formatCurrency(data?.disputes?.totalAmount || 0)}</span>
+              <span className={styles.disputeValue}>
+                {formatCurrency(data?.disputes?.totalAmount || 0)}
+              </span>
             </div>
           </div>
         </section>
@@ -591,14 +625,22 @@ export function StripeDashboard({ token: _token, range = 'month', loading: paren
             <div className={styles.invoiceStat}>
               <span className={styles.invoiceValue}>{data.invoices.paid}</span>
               <span className={styles.invoiceLabel}>Paid</span>
-              <span className={styles.invoiceAmount}>{formatCurrency(data.invoices.paidAmount)}</span>
+              <span className={styles.invoiceAmount}>
+                {formatCurrency(data.invoices.paidAmount)}
+              </span>
             </div>
             <div className={styles.invoiceStat}>
               <span className={styles.invoiceValue}>{data.invoices.open}</span>
               <span className={styles.invoiceLabel}>Open</span>
-              <span className={styles.invoiceAmount}>{formatCurrency(data.invoices.openAmount)}</span>
+              <span className={styles.invoiceAmount}>
+                {formatCurrency(data.invoices.openAmount)}
+              </span>
             </div>
-            <div className={styles.invoiceStat + (data.invoices.overdue > 0 ? ` ${styles.overdue}` : '')}>
+            <div
+              className={
+                styles.invoiceStat + (data.invoices.overdue > 0 ? ` ${styles.overdue}` : '')
+              }
+            >
               <span className={styles.invoiceValue}>{data.invoices.overdue}</span>
               <span className={styles.invoiceLabel}>Overdue</span>
             </div>
@@ -617,10 +659,9 @@ export function StripeDashboard({ token: _token, range = 'month', loading: paren
                   <span className={styles.productName}>{product.name}</span>
                   {product.prices?.length > 0 && (
                     <span className={styles.productPrice}>
-                      {product.prices[0].interval 
+                      {product.prices[0].interval
                         ? `${formatCurrency(product.prices[0].amount)}/${product.prices[0].interval}`
-                        : formatCurrency(product.prices[0].amount)
-                      }
+                        : formatCurrency(product.prices[0].amount)}
                     </span>
                   )}
                 </div>
@@ -645,4 +686,3 @@ export function StripeDashboard({ token: _token, range = 'month', loading: paren
 }
 
 export default StripeDashboard;
-

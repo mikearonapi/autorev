@@ -431,23 +431,28 @@
 }
 
 /* ================================================================
-   TAB HEADER
+   TAB HEADER - Compact on mobile
    ================================================================ */
 .tabHeader {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
 }
 
 .tabHeaderTop {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 }
 
 @media (min-width: 640px) {
+  .tabHeader {
+    margin-bottom: 12px;
+  }
+
   .tabHeaderTop {
     flex-direction: row;
     justify-content: space-between;
     align-items: flex-start;
+    gap: 10px;
   }
 }
 
@@ -457,16 +462,22 @@
 }
 
 .tabHeader .sectionTitle {
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   padding-bottom: 0;
   border-bottom: none;
 }
 
 .tabDescription {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--text-secondary);
   margin: 0;
-  line-height: 1.5;
+  line-height: 1.4;
+}
+
+@media (min-width: 640px) {
+  .tabDescription {
+    font-size: 12px;
+  }
 }
 
 @media (min-width: 768px) {
@@ -476,6 +487,7 @@
 
   .tabDescription {
     font-size: 13px;
+    line-height: 1.5;
   }
 }
 

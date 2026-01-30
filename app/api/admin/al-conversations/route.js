@@ -80,15 +80,12 @@ async function handleGet(request) {
       .select('id, display_name, subscription_tier')
       .in('id', userIds);
 
-    // Fetch auth users for emails (admin operation)
-    const { data: authUsers } = await supabase.auth.admin.listUsers();
-
-    // Build lookup maps
+    // Build profile lookup map
     const profileMap = new Map();
     profiles?.forEach((p) => profileMap.set(p.id, p));
 
+    // Skip slow email lookups for now - use user ID as fallback
     const emailMap = new Map();
-    authUsers?.users?.forEach((u) => emailMap.set(u.id, u.email));
 
     // Get conversation IDs for message fetch
     const conversationIds = conversations?.map((c) => c.id) || [];
@@ -122,11 +119,15 @@ async function handleGet(request) {
         const email = emailMap.get(conv.user_id);
         const convMessages = messagesByConversation.get(conv.id) || [];
 
+        // Show display name, email, or shortened user ID
+        const userIdentifier =
+          profile?.display_name || email || `User ${conv.user_id?.slice(0, 8)}...`;
+
         return {
           id: conv.id,
           title: conv.title,
           userId: conv.user_id,
-          userEmail: email || 'Unknown',
+          userEmail: userIdentifier,
           userDisplayName: profile?.display_name || null,
           userTier: profile?.subscription_tier || 'free',
           messageCount: conv.message_count,

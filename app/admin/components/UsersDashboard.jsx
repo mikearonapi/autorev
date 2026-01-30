@@ -2,7 +2,7 @@
 
 /**
  * Users Dashboard Component
- * 
+ *
  * Searchable, filterable table of all users with:
  * - User info (name, email, tier)
  * - Attribution (source, campaign)
@@ -14,12 +14,7 @@ import { useState, useEffect, useCallback } from 'react';
 
 import Image from 'next/image';
 
-import {
-  UsersIcon,
-  SearchIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-} from './Icons';
+import { UsersIcon, SearchIcon, ChevronDownIcon, ChevronUpIcon } from './Icons';
 import styles from './UsersDashboard.module.css';
 
 // Tier badge colors - Dark theme compatible
@@ -35,14 +30,14 @@ function formatRelativeTime(dateStr) {
   if (!dateStr) return 'Never';
   const date = new Date(dateStr);
   const now = new Date();
-  
+
   // Compare UTC date strings to get accurate day difference
   const dateUTC = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
   const nowUTC = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()));
-  
+
   const diffMs = nowUTC - dateUTC;
   const days = Math.round(diffMs / (1000 * 60 * 60 * 24));
-  
+
   if (days === 0) return 'Today';
   if (days === 1) return 'Yesterday';
   if (days < 7) return `${days}d ago`;
@@ -61,12 +56,12 @@ function formatDate(dateStr) {
   });
 }
 
-// Summary card
+// Summary card - compact on mobile
 function SummaryCard({ label, value, icon: Icon, color = '#3b82f6' }) {
   return (
     <div className={styles.summaryCard}>
       <div className={styles.summaryIcon} style={{ color }}>
-        <Icon size={18} />
+        <Icon size={14} />
       </div>
       <div className={styles.summaryContent}>
         <span className={styles.summaryValue}>{value}</span>
@@ -80,12 +75,12 @@ function SummaryCard({ label, value, icon: Icon, color = '#3b82f6' }) {
 function TierBadge({ tier }) {
   const colors = TIER_COLORS[tier] || TIER_COLORS.free;
   return (
-    <span 
-      className={styles.tierBadge} 
-      style={{ 
-        backgroundColor: colors.bg, 
+    <span
+      className={styles.tierBadge}
+      style={{
+        backgroundColor: colors.bg,
         color: colors.text,
-        borderColor: colors.border 
+        borderColor: colors.border,
       }}
     >
       {tier}
@@ -106,7 +101,7 @@ function SourceBadge({ source }) {
     referral: '#22c55e',
   };
   const color = sourceColors[source] || '#94a3b8';
-  
+
   return (
     <span className={styles.sourceBadge} style={{ borderColor: color, color }}>
       {source}
@@ -130,9 +125,9 @@ function ActivityIndicator({ level }) {
   const labels = ['Inactive', 'Low activity', 'Medium activity', 'High activity'];
   return (
     <div className={styles.activityIndicator} title={labels[level]}>
-      {[0, 1, 2].map(i => (
-        <span 
-          key={i} 
+      {[0, 1, 2].map((i) => (
+        <span
+          key={i}
           className={styles.activityDot}
           style={{ backgroundColor: i < level ? colors[level] : colors[0] }}
         />
@@ -146,7 +141,7 @@ export function UsersDashboard({ token, range: _range = '7d', currentUserId = nu
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Filters and pagination
   const [search, setSearch] = useState('');
   const [tierFilter, setTierFilter] = useState('');
@@ -154,15 +149,15 @@ export function UsersDashboard({ token, range: _range = '7d', currentUserId = nu
   const [sort, setSort] = useState('created_at');
   const [order, setOrder] = useState('desc');
   const [expandedUser, setExpandedUser] = useState(null);
-  
+
   const limit = 25;
 
   const fetchData = useCallback(async () => {
     if (!token) return;
-    
+
     setLoading(true);
     setError(null);
-    
+
     try {
       const params = new URLSearchParams({
         page: page.toString(),
@@ -170,16 +165,16 @@ export function UsersDashboard({ token, range: _range = '7d', currentUserId = nu
         sort,
         order,
       });
-      
+
       if (search) params.set('search', search);
       if (tierFilter) params.set('tier', tierFilter);
-      
+
       const res = await fetch(`/api/admin/users?${params}`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
       });
-      
+
       if (!res.ok) throw new Error('Failed to fetch users');
-      
+
       const result = await res.json();
       setData(result);
     } catch (err) {
@@ -236,7 +231,9 @@ export function UsersDashboard({ token, range: _range = '7d', currentUserId = nu
       <div className={styles.container}>
         <div className={styles.errorState}>
           <p>Error: {error}</p>
-          <button onClick={fetchData} className={styles.retryButton}>Retry</button>
+          <button onClick={fetchData} className={styles.retryButton}>
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -248,33 +245,33 @@ export function UsersDashboard({ token, range: _range = '7d', currentUserId = nu
     <div className={styles.container}>
       {/* Summary Cards */}
       <div className={styles.summaryGrid}>
-        <SummaryCard 
-          label="Total Users" 
-          value={summary.totalUsers?.toLocaleString() || '0'} 
+        <SummaryCard
+          label="Total Users"
+          value={summary.totalUsers?.toLocaleString() || '0'}
           icon={UsersIcon}
           color="#3b82f6"
         />
-        <SummaryCard 
-          label="Active (7d)" 
-          value={summary.activeUsers7d?.toLocaleString() || '0'} 
+        <SummaryCard
+          label="Active (7d)"
+          value={summary.activeUsers7d?.toLocaleString() || '0'}
           icon={UsersIcon}
           color="#22c55e"
         />
-        <SummaryCard 
-          label="Free" 
-          value={summary.tierBreakdown?.free || 0} 
+        <SummaryCard
+          label="Free"
+          value={summary.tierBreakdown?.free || 0}
           icon={UsersIcon}
           color="#6b7280"
         />
-        <SummaryCard 
-          label="Collector" 
-          value={summary.tierBreakdown?.collector || 0} 
+        <SummaryCard
+          label="Collector"
+          value={summary.tierBreakdown?.collector || 0}
           icon={UsersIcon}
           color="#1d4ed8"
         />
-        <SummaryCard 
-          label="Tuner" 
-          value={summary.tierBreakdown?.tuner || 0} 
+        <SummaryCard
+          label="Tuner"
+          value={summary.tierBreakdown?.tuner || 0}
           icon={UsersIcon}
           color="#a21caf"
         />
@@ -292,10 +289,13 @@ export function UsersDashboard({ token, range: _range = '7d', currentUserId = nu
             className={styles.searchInput}
           />
         </div>
-        
+
         <select
           value={tierFilter}
-          onChange={(e) => { setTierFilter(e.target.value); setPage(1); }}
+          onChange={(e) => {
+            setTierFilter(e.target.value);
+            setPage(1);
+          }}
           className={styles.filterSelect}
         >
           <option value="">All Tiers</option>
@@ -313,63 +313,108 @@ export function UsersDashboard({ token, range: _range = '7d', currentUserId = nu
             <tr>
               <th onClick={() => handleSort('display_name')} className={styles.sortable}>
                 User
-                {sort === 'display_name' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+                {sort === 'display_name' &&
+                  (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
               </th>
               <th onClick={() => handleSort('subscription_tier')} className={styles.sortable}>
                 Tier
-                {sort === 'subscription_tier' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+                {sort === 'subscription_tier' &&
+                  (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
               </th>
               <th>Source</th>
               <th onClick={() => handleSort('created_at')} className={styles.sortable}>
                 Joined
-                {sort === 'created_at' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+                {sort === 'created_at' &&
+                  (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
               </th>
               <th onClick={() => handleSort('last_sign_in')} className={styles.sortable}>
                 Last Active
-                {sort === 'last_sign_in' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+                {sort === 'last_sign_in' &&
+                  (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
               </th>
               <th onClick={() => handleSort('recent_activity')} className={styles.sortable}>
                 Activity
-                {sort === 'recent_activity' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+                {sort === 'recent_activity' &&
+                  (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
               </th>
-              <th onClick={() => handleSort('garage')} className={`${styles.sortable} ${styles.engagementCol}`} title="Cars in user's garage">
+              <th
+                onClick={() => handleSort('garage')}
+                className={`${styles.sortable} ${styles.engagementCol}`}
+                title="Cars in user's garage"
+              >
                 🚗
-                {sort === 'garage' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+                {sort === 'garage' &&
+                  (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
               </th>
-              <th onClick={() => handleSort('favorites')} className={`${styles.sortable} ${styles.engagementCol}`} title="Favorited cars">
+              <th
+                onClick={() => handleSort('favorites')}
+                className={`${styles.sortable} ${styles.engagementCol}`}
+                title="Favorited cars"
+              >
                 ❤️
-                {sort === 'favorites' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+                {sort === 'favorites' &&
+                  (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
               </th>
-              <th onClick={() => handleSort('builds')} className={`${styles.sortable} ${styles.engagementCol}`} title="Saved tuning builds">
+              <th
+                onClick={() => handleSort('builds')}
+                className={`${styles.sortable} ${styles.engagementCol}`}
+                title="Saved tuning builds"
+              >
                 🔧
-                {sort === 'builds' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+                {sort === 'builds' &&
+                  (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
               </th>
-              <th onClick={() => handleSort('events')} className={`${styles.sortable} ${styles.engagementCol}`} title="Saved events">
+              <th
+                onClick={() => handleSort('events')}
+                className={`${styles.sortable} ${styles.engagementCol}`}
+                title="Saved events"
+              >
                 📅
-                {sort === 'events' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+                {sort === 'events' &&
+                  (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
               </th>
-              <th onClick={() => handleSort('al_chats')} className={`${styles.sortable} ${styles.engagementCol}`} title="AL conversations">
+              <th
+                onClick={() => handleSort('al_chats')}
+                className={`${styles.sortable} ${styles.engagementCol}`}
+                title="AL conversations"
+              >
                 💬
-                {sort === 'al_chats' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+                {sort === 'al_chats' &&
+                  (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
               </th>
-              <th onClick={() => handleSort('compares')} className={`${styles.sortable} ${styles.engagementCol}`} title="Compare lists">
+              <th
+                onClick={() => handleSort('compares')}
+                className={`${styles.sortable} ${styles.engagementCol}`}
+                title="Compare lists"
+              >
                 🔀
-                {sort === 'compares' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+                {sort === 'compares' &&
+                  (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
               </th>
-              <th onClick={() => handleSort('service')} className={`${styles.sortable} ${styles.engagementCol}`} title="Service logs">
+              <th
+                onClick={() => handleSort('service')}
+                className={`${styles.sortable} ${styles.engagementCol}`}
+                title="Service logs"
+              >
                 🛠️
-                {sort === 'service' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+                {sort === 'service' &&
+                  (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
               </th>
-              <th onClick={() => handleSort('feedback')} className={`${styles.sortable} ${styles.engagementCol}`} title="Feedback submitted">
+              <th
+                onClick={() => handleSort('feedback')}
+                className={`${styles.sortable} ${styles.engagementCol}`}
+                title="Feedback submitted"
+              >
                 📝
-                {sort === 'feedback' && (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
+                {sort === 'feedback' &&
+                  (order === 'asc' ? <ChevronUpIcon size={12} /> : <ChevronDownIcon size={12} />)}
               </th>
             </tr>
           </thead>
           <tbody>
-            {users.map(user => (
+            {users.map((user) => (
               <>
-                <tr 
+                <tr
                   key={user.id}
                   className={`${styles.userRow} ${expandedUser === user.id ? styles.expanded : ''}`}
                   onClick={() => setExpandedUser(expandedUser === user.id ? null : user.id)}
@@ -378,7 +423,13 @@ export function UsersDashboard({ token, range: _range = '7d', currentUserId = nu
                     <div className={styles.userCell}>
                       <div className={styles.avatar}>
                         {user.avatar ? (
-                          <Image src={user.avatar} alt="" width={32} height={32} style={{ objectFit: 'cover', borderRadius: '50%' }} />
+                          <Image
+                            src={user.avatar}
+                            alt=""
+                            width={36}
+                            height={36}
+                            style={{ objectFit: 'cover', borderRadius: '50%' }}
+                          />
                         ) : (
                           <span>{(user.displayName?.[0] || '?').toUpperCase()}</span>
                         )}
@@ -389,8 +440,12 @@ export function UsersDashboard({ token, range: _range = '7d', currentUserId = nu
                       </div>
                     </div>
                   </td>
-                  <td><TierBadge tier={user.tier} /></td>
-                  <td><SourceBadge source={user.source} /></td>
+                  <td>
+                    <TierBadge tier={user.tier} />
+                  </td>
+                  <td>
+                    <SourceBadge source={user.source} />
+                  </td>
                   <td className={styles.dateCell}>{formatRelativeTime(user.createdAt)}</td>
                   <td className={styles.dateCell}>
                     {user.id === currentUserId ? (
@@ -399,17 +454,35 @@ export function UsersDashboard({ token, range: _range = '7d', currentUserId = nu
                       formatRelativeTime(user.lastSignIn)
                     )}
                   </td>
-                  <td><ActivityIndicator level={getActivityLevel(user)} /></td>
-                  <td className={styles.engagementCol}><EngagementValue value={user.garageVehicles} label="Garage vehicles" /></td>
-                  <td className={styles.engagementCol}><EngagementValue value={user.favorites} label="Favorited cars" /></td>
-                  <td className={styles.engagementCol}><EngagementValue value={user.savedBuilds} label="Saved builds" /></td>
-                  <td className={styles.engagementCol}><EngagementValue value={user.savedEvents} label="Saved events" /></td>
-                  <td className={styles.engagementCol}><EngagementValue value={user.alConversations} label="AL conversations" /></td>
-                  <td className={styles.engagementCol}><EngagementValue value={user.compareLists} label="Compare lists" /></td>
-                  <td className={styles.engagementCol}><EngagementValue value={user.serviceLogs} label="Service logs" /></td>
-                  <td className={styles.engagementCol}><EngagementValue value={user.feedbackCount} label="Feedback submitted" /></td>
+                  <td>
+                    <ActivityIndicator level={getActivityLevel(user)} />
+                  </td>
+                  <td className={styles.engagementCol}>
+                    <EngagementValue value={user.garageVehicles} label="Garage vehicles" />
+                  </td>
+                  <td className={styles.engagementCol}>
+                    <EngagementValue value={user.favorites} label="Favorited cars" />
+                  </td>
+                  <td className={styles.engagementCol}>
+                    <EngagementValue value={user.savedBuilds} label="Saved builds" />
+                  </td>
+                  <td className={styles.engagementCol}>
+                    <EngagementValue value={user.savedEvents} label="Saved events" />
+                  </td>
+                  <td className={styles.engagementCol}>
+                    <EngagementValue value={user.alConversations} label="AL conversations" />
+                  </td>
+                  <td className={styles.engagementCol}>
+                    <EngagementValue value={user.compareLists} label="Compare lists" />
+                  </td>
+                  <td className={styles.engagementCol}>
+                    <EngagementValue value={user.serviceLogs} label="Service logs" />
+                  </td>
+                  <td className={styles.engagementCol}>
+                    <EngagementValue value={user.feedbackCount} label="Feedback submitted" />
+                  </td>
                 </tr>
-                
+
                 {/* Expanded Row */}
                 {expandedUser === user.id && (
                   <tr className={styles.expandedRow}>
@@ -418,43 +491,88 @@ export function UsersDashboard({ token, range: _range = '7d', currentUserId = nu
                         <div className={styles.expandedSection}>
                           <h4>Attribution</h4>
                           <div className={styles.expandedGrid}>
-                            <div><span>Source:</span> {user.source}</div>
-                            <div><span>Medium:</span> {user.medium || '-'}</div>
-                            <div><span>Campaign:</span> {user.campaign || '-'}</div>
-                            <div><span>Device:</span> {user.signupDevice || '-'}</div>
-                            <div><span>Country:</span> {user.signupCountry || '-'}</div>
-                            {user.referredByCode && <div><span>Referral:</span> {user.referredByCode}</div>}
+                            <div>
+                              <span>Source:</span> {user.source}
+                            </div>
+                            <div>
+                              <span>Medium:</span> {user.medium || '-'}
+                            </div>
+                            <div>
+                              <span>Campaign:</span> {user.campaign || '-'}
+                            </div>
+                            <div>
+                              <span>Device:</span> {user.signupDevice || '-'}
+                            </div>
+                            <div>
+                              <span>Country:</span> {user.signupCountry || '-'}
+                            </div>
+                            {user.referredByCode && (
+                              <div>
+                                <span>Referral:</span> {user.referredByCode}
+                              </div>
+                            )}
                           </div>
                         </div>
-                        
+
                         <div className={styles.expandedSection}>
                           <h4>Platform Usage</h4>
                           <div className={styles.expandedGrid}>
-                            <div><span>🚗 Garage:</span> {user.garageVehicles} {user.garageVehicles === 1 ? 'vehicle' : 'vehicles'}</div>
-                            <div><span>❤️ Favorites:</span> {user.favorites} {user.favorites === 1 ? 'car' : 'cars'}</div>
-                            <div><span>🔧 Builds:</span> {user.savedBuilds} {user.savedBuilds === 1 ? 'project' : 'projects'}</div>
-                            <div><span>📅 Events:</span> {user.savedEvents} saved</div>
-                            <div><span>🔀 Compares:</span> {user.compareLists} {user.compareLists === 1 ? 'list' : 'lists'}</div>
-                            <div><span>🔧 Service:</span> {user.serviceLogs} {user.serviceLogs === 1 ? 'log' : 'logs'}</div>
-                            <div><span>💬 Feedback:</span> {user.feedbackCount} submitted</div>
-                            <div><span>📈 Activity:</span> {user.recentActivityCount} actions (30d)</div>
+                            <div>
+                              <span>🚗 Garage:</span> {user.garageVehicles}{' '}
+                              {user.garageVehicles === 1 ? 'vehicle' : 'vehicles'}
+                            </div>
+                            <div>
+                              <span>❤️ Favorites:</span> {user.favorites}{' '}
+                              {user.favorites === 1 ? 'car' : 'cars'}
+                            </div>
+                            <div>
+                              <span>🔧 Builds:</span> {user.savedBuilds}{' '}
+                              {user.savedBuilds === 1 ? 'project' : 'projects'}
+                            </div>
+                            <div>
+                              <span>📅 Events:</span> {user.savedEvents} saved
+                            </div>
+                            <div>
+                              <span>🔀 Compares:</span> {user.compareLists}{' '}
+                              {user.compareLists === 1 ? 'list' : 'lists'}
+                            </div>
+                            <div>
+                              <span>🔧 Service:</span> {user.serviceLogs}{' '}
+                              {user.serviceLogs === 1 ? 'log' : 'logs'}
+                            </div>
+                            <div>
+                              <span>💬 Feedback:</span> {user.feedbackCount} submitted
+                            </div>
+                            <div>
+                              <span>📈 Activity:</span> {user.recentActivityCount} actions (30d)
+                            </div>
                           </div>
                         </div>
-                        
+
                         <div className={styles.expandedSection}>
                           <h4>AL Usage</h4>
                           <div className={styles.expandedGrid}>
-                            <div><span>Credits:</span> {user.isUnlimited ? '∞' : user.alCredits}</div>
-                            <div><span>Messages:</span> {user.alMessagesThisMonth || 0}</div>
-                            <div><span>Conversations:</span> {user.alConversations}</div>
-                            <div><span>Last Used:</span> {formatDate(user.alLastUsed)}</div>
+                            <div>
+                              <span>Credits:</span> {user.isUnlimited ? '∞' : user.alCredits}
+                            </div>
+                            <div>
+                              <span>Messages:</span> {user.alMessagesThisMonth || 0}
+                            </div>
+                            <div>
+                              <span>Conversations:</span> {user.alConversations}
+                            </div>
+                            <div>
+                              <span>Last Used:</span> {formatDate(user.alLastUsed)}
+                            </div>
                           </div>
                         </div>
-                        
+
                         <div className={styles.expandedSection}>
                           <h4>Dates</h4>
                           <div className={styles.expandedGrid}>
-                            <div><span>Joined:</span> {formatDate(user.createdAt)}</div>
+                            <div>
+                              <span>Joined:</span> {formatDate(user.createdAt)}
+                            </div>
                             <div>
                               <span>Last Sign In:</span>{' '}
                               {user.id === currentUserId ? (
@@ -465,7 +583,7 @@ export function UsersDashboard({ token, range: _range = '7d', currentUserId = nu
                             </div>
                           </div>
                         </div>
-                        
+
                         <div className={styles.userIdRow}>
                           <code>{user.id}</code>
                         </div>
@@ -482,20 +600,20 @@ export function UsersDashboard({ token, range: _range = '7d', currentUserId = nu
       {/* Pagination */}
       {pagination.totalPages > 1 && (
         <div className={styles.pagination}>
-          <button 
-            onClick={() => setPage(p => Math.max(1, p - 1))}
+          <button
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
             className={styles.pageButton}
           >
             Previous
           </button>
-          
+
           <span className={styles.pageInfo}>
             Page {page} of {pagination.totalPages} ({pagination.total} users)
           </span>
-          
-          <button 
-            onClick={() => setPage(p => Math.min(pagination.totalPages, p + 1))}
+
+          <button
+            onClick={() => setPage((p) => Math.min(pagination.totalPages, p + 1))}
             disabled={page === pagination.totalPages}
             className={styles.pageButton}
           >
@@ -503,7 +621,7 @@ export function UsersDashboard({ token, range: _range = '7d', currentUserId = nu
           </button>
         </div>
       )}
-      
+
       {/* Empty state */}
       {users.length === 0 && !loading && (
         <div className={styles.emptyState}>
@@ -515,4 +633,3 @@ export function UsersDashboard({ token, range: _range = '7d', currentUserId = nu
 }
 
 export default UsersDashboard;
-

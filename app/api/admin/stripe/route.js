@@ -1,13 +1,13 @@
 /**
  * Stripe Admin API
- * 
+ *
  * Fetches real-time Stripe metrics for the admin dashboard:
  * - Revenue (MRR, ARR, total)
  * - Subscriptions (active, churned, by tier)
  * - Payments (recent, by type)
  * - Customers (total, new, active)
  * - Balance (available, pending)
- * 
+ *
  * @route GET /api/admin/stripe
  */
 
@@ -18,14 +18,10 @@ import Stripe from 'stripe';
 
 import { requireAdmin } from '@/lib/adminAccess';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
-import { 
-  getTierFromPriceId,
-} from '@/lib/stripe';
+import { getTierFromPriceId } from '@/lib/stripe';
 
 // Stripe client - only initialize if key exists
-const stripe = process.env.STRIPE_SECRET_KEY 
-  ? new Stripe(process.env.STRIPE_SECRET_KEY) 
-  : null;
+const stripe = process.env.STRIPE_SECRET_KEY ? new Stripe(process.env.STRIPE_SECRET_KEY) : null;
 
 const _supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const _supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -40,16 +36,16 @@ function getDateRange(range) {
 
   switch (range) {
     case 'day':
-      startTime = endTime - (24 * 60 * 60);
+      startTime = endTime - 24 * 60 * 60;
       break;
     case 'week':
-      startTime = endTime - (7 * 24 * 60 * 60);
+      startTime = endTime - 7 * 24 * 60 * 60;
       break;
     case 'month':
-      startTime = endTime - (30 * 24 * 60 * 60);
+      startTime = endTime - 30 * 24 * 60 * 60;
       break;
     case 'year':
-      startTime = endTime - (365 * 24 * 60 * 60);
+      startTime = endTime - 365 * 24 * 60 * 60;
       break;
     case 'all':
     default:
@@ -65,14 +61,14 @@ function getDateRange(range) {
  */
 function calculateMRR(subscriptions) {
   return subscriptions
-    .filter(sub => sub.status === 'active' || sub.status === 'trialing')
+    .filter((sub) => sub.status === 'active' || sub.status === 'trialing')
     .reduce((total, sub) => {
       const item = sub.items?.data?.[0];
       if (!item) return total;
-      
+
       const amount = item.price?.unit_amount || 0;
       const interval = item.price?.recurring?.interval;
-      
+
       // Normalize to monthly
       if (interval === 'year') {
         return total + Math.round(amount / 12);
@@ -93,11 +89,11 @@ function groupSubscriptionsByTier(subscriptions) {
 
   for (const sub of subscriptions) {
     if (sub.status !== 'active' && sub.status !== 'trialing') continue;
-    
+
     const priceId = sub.items?.data?.[0]?.price?.id;
     const tier = getTierFromPriceId(priceId) || 'unknown';
     const amount = sub.items?.data?.[0]?.price?.unit_amount || 0;
-    
+
     if (tiers[tier]) {
       tiers[tier].count++;
       tiers[tier].mrr += amount;
@@ -124,10 +120,10 @@ function categorizePayments(paymentIntents, _charges) {
   // Process payment intents
   for (const pi of paymentIntents) {
     if (pi.status !== 'succeeded') continue;
-    
+
     const metadata = pi.metadata || {};
     const amount = pi.amount || 0;
-    
+
     if (metadata.type === 'subscription' || pi.invoice) {
       categories.subscriptions.count++;
       categories.subscriptions.amount += amount;
@@ -157,14 +153,17 @@ async function handleGet(request) {
 
   // Note: supabaseUrl and supabaseServiceKey are available but Supabase client
   // is not needed for this route - all data comes from Stripe directly
-  
+
   // Check if Stripe is configured
   if (!stripe) {
-    return NextResponse.json({ 
-      error: 'Stripe not configured',
-      message: 'STRIPE_SECRET_KEY is not set. Please configure Stripe to view revenue data.',
-      isConfigError: true
-    }, { status: 503 });
+    return NextResponse.json(
+      {
+        error: 'Stripe not configured',
+        message: 'STRIPE_SECRET_KEY is not set. Please configure Stripe to view revenue data.',
+        isConfigError: true,
+      },
+      { status: 503 }
+    );
   }
 
   const _supabase = createClient(_supabaseUrl, _supabaseServiceKey);
@@ -231,39 +230,34 @@ async function handleGet(request) {
     // Calculate metrics
     const allSubscriptions = subscriptions.data || [];
     const activeSubscriptions = allSubscriptions.filter(
-      s => s.status === 'active' || s.status === 'trialing'
+      (s) => s.status === 'active' || s.status === 'trialing'
     );
-    const canceledSubscriptions = allSubscriptions.filter(
-      s => s.status === 'canceled'
-    );
-    
+    const canceledSubscriptions = allSubscriptions.filter((s) => s.status === 'canceled');
+
     // Revenue calculations
     const mrr = calculateMRR(allSubscriptions);
     const arr = mrr * 12;
     const subscriptionsByTier = groupSubscriptionsByTier(allSubscriptions);
-    
+
     // Payment categorization
-    const paymentCategories = categorizePayments(
-      paymentIntents.data || [],
-      charges.data || []
-    );
+    const paymentCategories = categorizePayments(paymentIntents.data || [], charges.data || []);
 
     // Calculate total revenue in period
     const totalRevenueInPeriod = (paymentIntents.data || [])
-      .filter(pi => pi.status === 'succeeded')
+      .filter((pi) => pi.status === 'succeeded')
       .reduce((sum, pi) => sum + (pi.amount || 0), 0);
 
     // Customer metrics
     const allCustomers = customers.data || [];
     const newCustomersInPeriod = allCustomers.filter(
-      c => c.created >= startTime && c.created <= endTime
+      (c) => c.created >= startTime && c.created <= endTime
     );
 
     // Recent payments for display
     const recentPayments = (paymentIntents.data || [])
-      .filter(pi => pi.status === 'succeeded')
+      .filter((pi) => pi.status === 'succeeded')
       .slice(0, 10)
-      .map(pi => ({
+      .map((pi) => ({
         id: pi.id,
         amount: pi.amount,
         currency: pi.currency,
@@ -276,10 +270,10 @@ async function handleGet(request) {
 
     // Invoice metrics
     const allInvoices = invoices.data || [];
-    const paidInvoices = allInvoices.filter(i => i.status === 'paid');
-    const openInvoices = allInvoices.filter(i => i.status === 'open');
+    const paidInvoices = allInvoices.filter((i) => i.status === 'paid');
+    const openInvoices = allInvoices.filter((i) => i.status === 'open');
     const overdueInvoices = allInvoices.filter(
-      i => i.status === 'open' && i.due_date && i.due_date < endTime
+      (i) => i.status === 'open' && i.due_date && i.due_date < endTime
     );
 
     // Build response
@@ -313,14 +307,15 @@ async function handleGet(request) {
       // Subscription metrics
       subscriptions: {
         active: activeSubscriptions.length,
-        trialing: allSubscriptions.filter(s => s.status === 'trialing').length,
+        trialing: allSubscriptions.filter((s) => s.status === 'trialing').length,
         canceled: canceledSubscriptions.length,
-        pastDue: allSubscriptions.filter(s => s.status === 'past_due').length,
+        pastDue: allSubscriptions.filter((s) => s.status === 'past_due').length,
         total: allSubscriptions.length,
         byTier: subscriptionsByTier,
-        churnRate: allSubscriptions.length > 0
-          ? ((canceledSubscriptions.length / allSubscriptions.length) * 100).toFixed(1)
-          : 0,
+        churnRate:
+          allSubscriptions.length > 0
+            ? ((canceledSubscriptions.length / allSubscriptions.length) * 100).toFixed(1)
+            : 0,
       },
 
       // Customer metrics
@@ -328,17 +323,19 @@ async function handleGet(request) {
         total: allCustomers.length,
         newInPeriod: newCustomersInPeriod.length,
         withSubscription: activeSubscriptions.length,
-        conversionRate: allCustomers.length > 0
-          ? ((activeSubscriptions.length / allCustomers.length) * 100).toFixed(1)
-          : 0,
+        conversionRate:
+          allCustomers.length > 0
+            ? ((activeSubscriptions.length / allCustomers.length) * 100).toFixed(1)
+            : 0,
       },
 
       // Payment metrics
       payments: {
-        count: paymentCategories.subscriptions.count +
-               paymentCategories.creditPacks.count +
-               paymentCategories.donations.count +
-               paymentCategories.other.count,
+        count:
+          paymentCategories.subscriptions.count +
+          paymentCategories.creditPacks.count +
+          paymentCategories.donations.count +
+          paymentCategories.other.count,
         byType: {
           subscriptions: paymentCategories.subscriptions,
           creditPacks: {
@@ -362,14 +359,14 @@ async function handleGet(request) {
       },
 
       // Products with prices
-      products: (products.data || []).map(p => {
-        const productPrices = (prices.data || []).filter(pr => pr.product === p.id);
+      products: (products.data || []).map((p) => {
+        const productPrices = (prices.data || []).filter((pr) => pr.product === p.id);
         return {
           id: p.id,
           name: p.name,
           description: p.description,
           active: p.active,
-          prices: productPrices.map(pr => ({
+          prices: productPrices.map((pr) => ({
             id: pr.id,
             amount: pr.unit_amount,
             currency: pr.currency,
@@ -383,7 +380,7 @@ async function handleGet(request) {
       refunds: {
         count: (refunds.data || []).length,
         totalAmount: (refunds.data || []).reduce((sum, r) => sum + (r.amount || 0), 0),
-        recent: (refunds.data || []).slice(0, 5).map(r => ({
+        recent: (refunds.data || []).slice(0, 5).map((r) => ({
           id: r.id,
           amount: r.amount,
           currency: r.currency,
@@ -395,11 +392,13 @@ async function handleGet(request) {
 
       // Disputes (chargebacks)
       disputes: {
-        open: (disputes.data || []).filter(d => d.status === 'needs_response' || d.status === 'under_review').length,
-        won: (disputes.data || []).filter(d => d.status === 'won').length,
-        lost: (disputes.data || []).filter(d => d.status === 'lost').length,
+        open: (disputes.data || []).filter(
+          (d) => d.status === 'needs_response' || d.status === 'under_review'
+        ).length,
+        won: (disputes.data || []).filter((d) => d.status === 'won').length,
+        lost: (disputes.data || []).filter((d) => d.status === 'lost').length,
         totalAmount: (disputes.data || []).reduce((sum, d) => sum + (d.amount || 0), 0),
-        recent: (disputes.data || []).slice(0, 5).map(d => ({
+        recent: (disputes.data || []).slice(0, 5).map((d) => ({
           id: d.id,
           amount: d.amount,
           currency: d.currency,
@@ -411,12 +410,18 @@ async function handleGet(request) {
 
       // Charges breakdown (successful, failed, refunded)
       charges: {
-        successful: (charges.data || []).filter(c => c.status === 'succeeded' && !c.refunded).length,
-        failed: (charges.data || []).filter(c => c.status === 'failed').length,
-        refunded: (charges.data || []).filter(c => c.refunded).length,
-        partiallyRefunded: (charges.data || []).filter(c => c.amount_refunded > 0 && !c.refunded).length,
-        successAmount: (charges.data || []).filter(c => c.status === 'succeeded').reduce((sum, c) => sum + (c.amount - (c.amount_refunded || 0)), 0),
-        failedAmount: (charges.data || []).filter(c => c.status === 'failed').reduce((sum, c) => sum + (c.amount || 0), 0),
+        successful: (charges.data || []).filter((c) => c.status === 'succeeded' && !c.refunded)
+          .length,
+        failed: (charges.data || []).filter((c) => c.status === 'failed').length,
+        refunded: (charges.data || []).filter((c) => c.refunded).length,
+        partiallyRefunded: (charges.data || []).filter((c) => c.amount_refunded > 0 && !c.refunded)
+          .length,
+        successAmount: (charges.data || [])
+          .filter((c) => c.status === 'succeeded')
+          .reduce((sum, c) => sum + (c.amount - (c.amount_refunded || 0)), 0),
+        failedAmount: (charges.data || [])
+          .filter((c) => c.status === 'failed')
+          .reduce((sum, c) => sum + (c.amount || 0), 0),
         refundedAmount: (charges.data || []).reduce((sum, c) => sum + (c.amount_refunded || 0), 0),
       },
 
@@ -424,7 +429,8 @@ async function handleGet(request) {
       netRevenue: {
         gross: totalRevenueInPeriod,
         refunds: (refunds.data || []).reduce((sum, r) => sum + (r.amount || 0), 0),
-        net: totalRevenueInPeriod - (refunds.data || []).reduce((sum, r) => sum + (r.amount || 0), 0),
+        net:
+          totalRevenueInPeriod - (refunds.data || []).reduce((sum, r) => sum + (r.amount || 0), 0),
       },
 
       // Stripe dashboard link
@@ -434,12 +440,48 @@ async function handleGet(request) {
     };
 
     return NextResponse.json(response);
-
   } catch (err) {
     console.error('[Stripe Admin API] Error:', err);
+
+    // Provide specific error messages based on error type
+    let errorMessage = 'Failed to fetch Stripe data';
+    let errorDetails = null;
+    let statusCode = 500;
+
+    if (err.type === 'StripeAuthenticationError') {
+      errorMessage = 'Invalid Stripe API key';
+      errorDetails =
+        'The STRIPE_SECRET_KEY appears to be invalid or expired. Please check your API key in the Stripe Dashboard.';
+      statusCode = 401;
+    } else if (err.type === 'StripePermissionError') {
+      errorMessage = 'Stripe API permission denied';
+      errorDetails =
+        'The API key does not have permission to access this resource. Check API key permissions in Stripe Dashboard.';
+      statusCode = 403;
+    } else if (err.type === 'StripeRateLimitError') {
+      errorMessage = 'Stripe rate limit exceeded';
+      errorDetails = 'Too many requests. Please wait a moment and try again.';
+      statusCode = 429;
+    } else if (err.type === 'StripeConnectionError') {
+      errorMessage = 'Cannot connect to Stripe';
+      errorDetails = 'Unable to reach Stripe servers. Check your internet connection.';
+      statusCode = 503;
+    } else if (err.code === 'ENOTFOUND' || err.code === 'ECONNREFUSED') {
+      errorMessage = 'Network error';
+      errorDetails = 'Cannot connect to Stripe. Check your internet connection.';
+      statusCode = 503;
+    } else if (err.message) {
+      // Include the actual error message for debugging
+      errorDetails = err.message;
+    }
+
     return NextResponse.json(
-      { error: 'Failed to fetch Stripe data' },
-      { status: 500 }
+      {
+        error: errorMessage,
+        details: errorDetails,
+        type: err.type || 'UnknownError',
+      },
+      { status: statusCode }
     );
   }
 }

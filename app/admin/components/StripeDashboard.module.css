@@ -105,8 +105,13 @@
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .stripeLink {
@@ -746,6 +751,13 @@
   font-size: 14px;
 }
 
+.errorDetails {
+  color: var(--brand-text-secondary, #94a3b8) !important;
+  font-size: 13px !important;
+  max-width: 400px;
+  line-height: 1.5;
+}
+
 .retryButton {
   display: flex;
   align-items: center;
@@ -791,14 +803,14 @@
 }
 
 .configTitle {
-  margin: 0 0 10px 0;
+  margin: 0 0 10px;
   font-size: 22px;
   font-weight: 700;
   color: var(--brand-text-primary, #ffffff);
 }
 
 .configDesc {
-  margin: 0 0 28px 0;
+  margin: 0 0 28px;
   font-size: 15px;
   color: var(--brand-text-secondary, #94a3b8);
 }
@@ -815,7 +827,7 @@
 }
 
 .configSteps h4 {
-  margin: 0 0 16px 0;
+  margin: 0 0 16px;
   font-size: 13px;
   font-weight: 600;
   text-transform: uppercase;

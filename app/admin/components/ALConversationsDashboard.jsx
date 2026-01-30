@@ -272,8 +272,12 @@ export function ALConversationsDashboard({ token }) {
 
   const fetchConversations = useCallback(
     async (searchTerm = '', newOffset = 0) => {
-      if (!token) return;
+      if (!token) {
+        console.log('[AL Conversations] No token yet');
+        return;
+      }
 
+      console.log('[AL Conversations] Starting fetch...');
       setLoading(true);
       setError(null);
 
@@ -284,21 +288,39 @@ export function ALConversationsDashboard({ token }) {
         });
         if (searchTerm) params.set('search', searchTerm);
 
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
         const response = await fetch(`/api/admin/al-conversations?${params}`, {
           headers: { Authorization: `Bearer ${token}` },
+          signal: controller.signal,
         });
 
+        clearTimeout(timeoutId);
+
+        console.log('[AL Conversations] Response status:', response.status);
+
         if (!response.ok) {
+          const errorText = await response.text();
+          console.error('[AL Conversations] Error response:', errorText);
           throw new Error(`Failed to fetch: ${response.status}`);
         }
 
         const data = await response.json();
+        console.log('[AL Conversations] Got data:', {
+          total: data.total,
+          count: data.conversations?.length,
+        });
         setConversations(data.conversations || []);
         setTotal(data.total || 0);
         setOffset(newOffset);
       } catch (err) {
         console.error('[AL Conversations] Error:', err);
-        setError(err.message);
+        if (err.name === 'AbortError') {
+          setError('Request timed out. Please try again.');
+        } else {
+          setError(err.message);
+        }
       } finally {
         setLoading(false);
       }
@@ -306,9 +328,13 @@ export function ALConversationsDashboard({ token }) {
     [token]
   );
 
+  // Fetch when token becomes available
   useEffect(() => {
-    fetchConversations();
-  }, [fetchConversations]);
+    console.log('[AL Conversations] useEffect triggered, token:', !!token);
+    if (token) {
+      fetchConversations();
+    }
+  }, [token, fetchConversations]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -389,15 +415,15 @@ export function ALConversationsDashboard({ token }) {
       )}
 
       {/* Loading State */}
-      {loading && conversations.length === 0 && (
+      {(loading || !token) && conversations.length === 0 && !error && (
         <div className={styles.loading}>
           <div className={styles.loadingSpinner} />
-          <span>Loading conversations...</span>
+          <span>{!token ? 'Waiting for auth...' : 'Loading conversations...'}</span>
         </div>
       )}
 
       {/* Empty State */}
-      {!loading && !error && conversations.length === 0 && (
+      {!loading && !error && token && conversations.length === 0 && (
         <div className={styles.empty}>
           {Icons.message}
           <span>No conversations found</span>
