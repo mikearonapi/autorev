@@ -17,6 +17,7 @@ const APP_ROUTES = [
   '/al',
   '/profile',
   '/settings', // Account settings page
+  '/admin', // Admin dashboard - full-page experience
   // Sub-routes and legacy
   '/build',
   '/performance',

@@ -7,10 +7,10 @@
  */
 
 /* ================================================================
-   NAV CONTAINER - Mobile First
+   NAV CONTAINER - Mobile First (Compact)
    ================================================================ */
 .nav {
-  padding: 0 16px;
+  padding: 0 8px;
   background: var(--brand-bg-secondary, #1b263b);
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   overflow-x: auto;
@@ -24,7 +24,7 @@
 
 @media (min-width: 768px) {
   .nav {
-    padding: 0 24px;
+    padding: 0 16px;
   }
 }
 
@@ -40,22 +40,22 @@
 }
 
 /* ================================================================
-   TAB BUTTON - Mobile First (Icons + Short Labels)
+   TAB BUTTON - Mobile First (Compact Icons + Labels)
    ================================================================ */
 .tab {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  min-width: 60px;
-  min-height: 56px;
-  padding: 10px 12px;
+  gap: 2px;
+  min-width: 48px;
+  min-height: 44px;
+  padding: 6px 8px;
   background: transparent;
   border: none;
-  border-bottom: 3px solid transparent;
+  border-bottom: 2px solid transparent;
   color: var(--brand-text-tertiary, #64748b);
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -67,11 +67,12 @@
 @media (min-width: 768px) {
   .tab {
     flex-direction: row;
-    gap: 8px;
+    gap: 6px;
     min-width: auto;
-    min-height: 52px;
-    padding: 14px 20px;
-    font-size: 13px;
+    min-height: 44px;
+    padding: 10px 14px;
+    font-size: 12px;
+    border-bottom-width: 3px;
   }
 }
 
@@ -95,9 +96,16 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 3px;
+  height: 2px;
   background: linear-gradient(90deg, var(--brand-blue, #3b82f6), var(--brand-teal, #10b981));
-  border-radius: 3px 3px 0 0;
+  border-radius: 2px 2px 0 0;
+}
+
+@media (min-width: 768px) {
+  .tab.active::after {
+    height: 3px;
+    border-radius: 3px 3px 0 0;
+  }
 }
 
 .tab:disabled {
@@ -109,8 +117,8 @@
    TAB ICON
    ================================================================ */
 .tab svg {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
   opacity: 0.6;
   flex-shrink: 0;
 }
@@ -124,11 +132,11 @@
   opacity: 0.9;
 }
 
-/* Desktop: Slightly smaller icons */
+/* Desktop: Slightly larger icons */
 @media (min-width: 768px) {
   .tab svg {
-    width: 18px;
-    height: 18px;
+    width: 17px;
+    height: 17px;
   }
 }
 
@@ -145,6 +153,33 @@
 @media (min-width: 768px) {
   .tab span {
     max-width: none;
+  }
+}
+
+/* ================================================================
+   AL AVATAR - Profile picture for AL tab
+   ================================================================ */
+.alAvatar {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  opacity: 0.7;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.tab.active .alAvatar {
+  opacity: 1;
+}
+
+.tab:hover:not(:disabled) .alAvatar {
+  opacity: 0.9;
+}
+
+@media (min-width: 768px) {
+  .alAvatar {
+    width: 17px;
+    height: 17px;
   }
 }
 
