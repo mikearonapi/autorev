@@ -8,10 +8,10 @@ import { getServiceClient } from '@/lib/supabaseServer';
 
 /**
  * Feedback API - Handles TWO separate concerns:
- * 
+ *
  * 1. USER FEEDBACK (category != 'auto-error') → user_feedback table
  *    - Human-submitted bugs, feature requests, praise, questions
- *    
+ *
  * 2. AUTO ERRORS (category == 'auto-error') → application_errors table ONLY
  *    - Automatic client-side and server-side errors
  *    - NOT stored in user_feedback (clean separation)
@@ -23,13 +23,13 @@ async function handlePost(request) {
 
   try {
     const body = await request.json();
-    
+
     // Validate input with Zod schema
     const validation = validateWithSchema(feedbackSchema, body);
     if (!validation.success) {
       return validationErrorResponse(validation.errors);
     }
-    
+
     const {
       feedback_type,
       category,
@@ -99,60 +99,71 @@ async function handlePost(request) {
 
         if (error) {
           console.error('[Feedback API] Failed to log auto-error:', error);
-          return Response.json(
-            { success: false, error: 'Failed to log error' },
-            { status: 500 }
-          );
+          return Response.json({ success: false, error: 'Failed to log error' }, { status: 500 });
         }
 
         return Response.json({
           success: true,
-          data: { id: data, logged_to: 'application_errors' }
+          data: { id: data, logged_to: 'application_errors' },
         });
       } catch (err) {
         console.error('[Feedback API] Auto-error logging failed:', err);
-        return Response.json(
-          { success: false, error: 'Failed to log error' },
-          { status: 500 }
-        );
+        return Response.json({ success: false, error: 'Failed to log error' }, { status: 500 });
       }
     }
 
     // =========================================================================
     // USER FEEDBACK → user_feedback table
     // =========================================================================
-    const validTypes = ['like', 'dislike', 'feature', 'bug', 'question', 'car_request', 'other', 'al-feedback'];
+    const validTypes = [
+      'like',
+      'dislike',
+      'feature',
+      'bug',
+      'question',
+      'car_request',
+      'other',
+      'al-feedback',
+    ];
     const validCategories = ['bug', 'feature', 'data', 'general', 'praise'];
     const validSeverities = ['blocking', 'major', 'minor'];
 
-    const feedbackTypeToInsert = feedback_type && validTypes.includes(feedback_type)
-      ? feedback_type
-      : 'other';
+    const feedbackTypeToInsert =
+      feedback_type && validTypes.includes(feedback_type) ? feedback_type : 'other';
 
     if (!validTypes.includes(feedbackTypeToInsert)) {
       return Response.json(
-        { success: false, error: `Invalid feedback_type. Must be one of: ${validTypes.join(', ')}` },
+        {
+          success: false,
+          error: `Invalid feedback_type. Must be one of: ${validTypes.join(', ')}`,
+        },
         { status: 400 }
       );
     }
 
     if (categoryToInsert && !validCategories.includes(categoryToInsert)) {
       return Response.json(
-        { success: false, error: `Invalid category. Must be one of: ${validCategories.join(', ')}` },
+        {
+          success: false,
+          error: `Invalid category. Must be one of: ${validCategories.join(', ')}`,
+        },
         { status: 400 }
       );
     }
 
     if (severity && !validSeverities.includes(severity)) {
       return Response.json(
-        { success: false, error: `Invalid severity. Must be one of: ${validSeverities.join(', ')}` },
+        {
+          success: false,
+          error: `Invalid severity. Must be one of: ${validSeverities.join(', ')}`,
+        },
         { status: 400 }
       );
     }
 
     // Resolve car_id from slug if provided (car_slug column no longer exists on user_feedback)
     const carId = car_slug ? await resolveCarId(car_slug) : null;
-    
+
     const feedbackData = {
       feedback_type: feedbackTypeToInsert,
       category: categoryToInsert || null,
@@ -192,13 +203,13 @@ async function handlePost(request) {
 
     // Send Discord notification for human feedback
     const categoryMap = {
-      'like': 'Praise',
-      'dislike': 'Dislike', 
-      'feature': 'Feature Request',
-      'bug': 'Bug Report',
-      'question': 'Question',
-      'other': 'Other',
-      'car_request': 'Car Request',
+      like: 'Praise',
+      dislike: 'Dislike',
+      feature: 'Feature Request',
+      bug: 'Bug Report',
+      question: 'Question',
+      other: 'Other',
+      car_request: 'Car Request',
     };
 
     notifyFeedback({
@@ -209,15 +220,15 @@ async function handlePost(request) {
       page_url: feedbackData.page_url,
       user_tier: feedbackData.user_tier,
       screenshot_url: feedbackData.screenshot_url,
-    }).catch(err => console.error('[Feedback API] Discord notification failed:', err));
+    }).catch((err) => console.error('[Feedback API] Discord notification failed:', err));
 
     return Response.json({
       success: true,
       data: {
         id: data.id,
         created_at: data.created_at,
-        logged_to: 'user_feedback'
-      }
+        logged_to: 'user_feedback',
+      },
     });
   } catch (err) {
     console.error('[Feedback API] Unexpected error:', err);
@@ -232,6 +243,7 @@ async function handleGet(request) {
   try {
     const { searchParams } = new URL(request.url);
     const category = searchParams.get('category');
+    const feedbackType = searchParams.get('feedback_type');
     const severity = searchParams.get('severity');
     const status = searchParams.get('status');
     const unresolved = searchParams.get('unresolved') === 'true';
@@ -242,14 +254,17 @@ async function handleGet(request) {
       return Response.json({ error: 'Database not configured' }, { status: 503 });
     }
 
-    const FEEDBACK_COLS = 'id, user_id, category, severity, title, description, page_url, browser_info, screenshot_url, status, resolved_at, resolution_notes, al_conversation_id, al_message_id, created_at';
-    
+    // Include feedback_type, message, tags, feature_context for admin UI
+    const FEEDBACK_COLS =
+      'id, user_id, feedback_type, category, severity, title, message, description, page_url, browser_info, tags, feature_context, screenshot_url, status, resolved_at, resolution_notes, al_conversation_id, al_message_id, created_at';
+
     let query = supabase
       .from('user_feedback')
       .select(FEEDBACK_COLS)
       .order('created_at', { ascending: false })
       .limit(limit);
 
+    if (feedbackType && feedbackType !== 'all') query = query.eq('feedback_type', feedbackType);
     if (category && category !== 'all') query = query.eq('category', category);
     if (severity && severity !== 'all') query = query.eq('severity', severity);
     if (status && status !== 'all') query = query.eq('status', status);

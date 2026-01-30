@@ -758,3 +758,181 @@
 .requestSubmitted p {
   margin: 0;
 }
+
+/* ==========================================================
+   CAN'T FIND LINK - Bottom of selector mode
+   ========================================================== */
+.cantFindLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 1rem;
+  margin-top: 1rem;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted, #666666);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.cantFindLink:hover {
+  color: var(--color-accent-lime, #d4ff00);
+}
+
+/* ==========================================================
+   REQUEST FROM SEARCH BUTTON - In search empty state
+   ========================================================== */
+.requestFromSearchButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding: 0.75rem 1.5rem;
+  min-height: 44px;
+  background: rgba(255, 183, 77, 0.15);
+  border: 1px solid rgba(255, 183, 77, 0.4);
+  border-radius: 0.5rem;
+  color: var(--brand-amber, #ffb74d);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.requestFromSearchButton:hover {
+  background: var(--brand-amber, #ffb74d);
+  border-color: var(--brand-amber, #ffb74d);
+  color: var(--color-bg-base, #0a1628);
+}
+
+/* ==========================================================
+   REQUEST MODE - Freeform vehicle request
+   ========================================================== */
+.requestContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 0.5rem;
+}
+
+.requestIntro {
+  color: var(--color-text-secondary, #888888);
+  font-size: 0.875rem;
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.inputLabel {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-text-muted, #666666);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.inputLabel .required {
+  color: var(--color-error, #ef4444);
+}
+
+.inputLabel .optional {
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: normal;
+  color: var(--color-text-muted, #666666);
+}
+
+.textInput {
+  width: 100%;
+  height: 48px;
+  padding: 0 1rem;
+  background: var(--color-bg-elevated, #1a2332);
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.08));
+  border-radius: 0.5rem;
+  color: var(--color-text-primary, var(--brand-text-primary));
+  font-size: 1rem;
+  font-family: inherit;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.textInput::placeholder {
+  color: var(--color-text-muted, #666666);
+}
+
+.textInput:focus {
+  outline: none;
+  border-color: var(--color-accent-lime, #d4ff00);
+  box-shadow: 0 0 0 2px rgba(212, 255, 0, 0.15);
+}
+
+/* Remove spinner from number input */
+.textInput[type='number']::-webkit-inner-spin-button,
+.textInput[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.textInput[type='number'] {
+  -moz-appearance: textfield;
+}
+
+/* Submit Request Button - LIME CTA */
+.submitRequestButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--color-accent-lime, #d4ff00);
+  border: none;
+  border-radius: 0.5rem;
+  color: var(--color-bg-base, #0a1628);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.submitRequestButton:hover:not(:disabled) {
+  background: var(--color-accent-lime-dark, #bfe600);
+  box-shadow: 0 4px 12px rgba(212, 255, 0, 0.3);
+}
+
+.submitRequestButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Back to Selector Link */
+.backToSelectorLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  background: transparent;
+  border: none;
+  color: var(--color-text-muted, #666666);
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.backToSelectorLink:hover {
+  color: var(--color-text-secondary, #888888);
+}

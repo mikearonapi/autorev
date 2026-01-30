@@ -2,13 +2,13 @@
 
 /**
  * Internal Feedback Admin Page
- * 
+ *
  * Enhanced for beta feedback review with:
  * - Category and severity filters
  * - User tier breakdown
  * - Bulk actions (mark resolved, export)
  * - Browser/context info display
- * 
+ *
  * Uses the GET /api/feedback endpoint to fetch data.
  */
 
@@ -81,14 +81,15 @@ export default function FeedbackAdminPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedIds, setExpandedIds] = useState(new Set());
-  
+
   // Filters
+  const [typeFilter, setTypeFilter] = useState('all');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [severityFilter, setSeverityFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [tierFilter, setTierFilter] = useState('all');
   const [unresolvedOnly, setUnresolvedOnly] = useState(false);
-  
+
   // Selection for bulk actions
   const [selectedIds, setSelectedIds] = useState(new Set());
   const [isUpdating, setIsUpdating] = useState(false);
@@ -102,15 +103,16 @@ export default function FeedbackAdminPage() {
     try {
       setIsLoading(true);
       setError(null);
-      
+
       // Build query params
       const params = new URLSearchParams();
+      if (typeFilter !== 'all') params.set('feedback_type', typeFilter);
       if (categoryFilter !== 'all') params.set('category', categoryFilter);
       if (severityFilter !== 'all') params.set('severity', severityFilter);
       if (statusFilter !== 'all') params.set('status', statusFilter);
       if (unresolvedOnly) params.set('unresolved', 'true');
       params.set('limit', '100');
-      
+
       const response = await fetch(`/api/feedback?${params}`);
       if (!response.ok) {
         throw new Error('Failed to fetch feedback');
@@ -148,7 +150,7 @@ export default function FeedbackAdminPage() {
 
   // Toggle selection
   const toggleSelection = (id) => {
-    setSelectedIds(prev => {
+    setSelectedIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
@@ -164,24 +166,24 @@ export default function FeedbackAdminPage() {
     if (selectedIds.size === filteredFeedback.length) {
       setSelectedIds(new Set());
     } else {
-      setSelectedIds(new Set(filteredFeedback.map(f => f.id)));
+      setSelectedIds(new Set(filteredFeedback.map((f) => f.id)));
     }
   };
 
   // Bulk resolve
   const bulkResolve = async () => {
     if (selectedIds.size === 0) return;
-    
+
     setIsUpdating(true);
     try {
-      const promises = Array.from(selectedIds).map(id =>
+      const promises = Array.from(selectedIds).map((id) =>
         fetch('/api/feedback', {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ feedbackId: id, resolved: true }),
         })
       );
-      
+
       await Promise.all(promises);
       setSelectedIds(new Set());
       await fetchFeedback();
@@ -196,12 +198,25 @@ export default function FeedbackAdminPage() {
   // Export to CSV
   const exportToCsv = () => {
     const headers = [
-      'ID', 'Category', 'Severity', 'Message', 'Email', 'User Tier',
-      'Page URL', 'Car', 'Feature', 'Status', 'Priority', 'Rating',
-      'Browser', 'Screenshot URL', 'Created At', 'Resolved At'
+      'ID',
+      'Category',
+      'Severity',
+      'Message',
+      'Email',
+      'User Tier',
+      'Page URL',
+      'Car',
+      'Feature',
+      'Status',
+      'Priority',
+      'Rating',
+      'Browser',
+      'Screenshot URL',
+      'Created At',
+      'Resolved At',
     ];
-    
-    const rows = filteredFeedback.map(item => [
+
+    const rows = filteredFeedback.map((item) => [
       item.id,
       item.category || '',
       item.severity || '',
@@ -219,8 +234,8 @@ export default function FeedbackAdminPage() {
       item.created_at || '',
       item.resolved_at || '',
     ]);
-    
-    const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+
+    const csv = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
     const blob = new Blob([csv], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -274,9 +289,7 @@ export default function FeedbackAdminPage() {
     <div className={styles.container}>
       <header className={styles.header}>
         <h1>📬 Beta Feedback Dashboard</h1>
-        <p className={styles.subtitle}>
-          Review and manage user feedback submissions
-        </p>
+        <p className={styles.subtitle}>Review and manage user feedback submissions</p>
       </header>
 
       {/* Category Stats */}
@@ -286,14 +299,12 @@ export default function FeedbackAdminPage() {
           {Object.entries(categoryStats).map(([cat, stats]) => {
             const config = categoryConfig[cat] || { label: cat, color: '#6b7280' };
             return (
-              <div 
-                key={cat} 
+              <div
+                key={cat}
                 className={styles.summaryCard}
                 style={{ borderLeftColor: config.color }}
               >
-                <div className={styles.summaryIcon}>
-                  {config.label.split(' ')[0]}
-                </div>
+                <div className={styles.summaryIcon}>{config.label.split(' ')[0]}</div>
                 <div className={styles.summaryContent}>
                   <div className={styles.summaryType}>
                     {config.label.split(' ').slice(1).join(' ') || cat}
@@ -321,9 +332,29 @@ export default function FeedbackAdminPage() {
       <div className={styles.filters}>
         <div className={styles.filterRow}>
           <div className={styles.filterGroup}>
+            <label>Type:</label>
+            <select
+              value={typeFilter}
+              onChange={(e) => {
+                setTypeFilter(e.target.value);
+                fetchFeedback();
+              }}
+            >
+              <option value="all">All Types</option>
+              <option value="car_request">🚗 Car Requests</option>
+              <option value="bug">🐛 Bug</option>
+              <option value="feature">💡 Feature</option>
+              <option value="question">❓ Question</option>
+              <option value="like">👍 Like</option>
+              <option value="dislike">👎 Dislike</option>
+              <option value="other">📝 Other</option>
+            </select>
+          </div>
+
+          <div className={styles.filterGroup}>
             <label>Category:</label>
-            <select 
-              value={categoryFilter} 
+            <select
+              value={categoryFilter}
               onChange={(e) => {
                 setCategoryFilter(e.target.value);
                 fetchFeedback();
@@ -338,11 +369,11 @@ export default function FeedbackAdminPage() {
               <option value="auto-error">⚙️ Auto-Error</option>
             </select>
           </div>
-          
+
           <div className={styles.filterGroup}>
             <label>Severity:</label>
-            <select 
-              value={severityFilter} 
+            <select
+              value={severityFilter}
               onChange={(e) => {
                 setSeverityFilter(e.target.value);
                 fetchFeedback();
@@ -354,11 +385,11 @@ export default function FeedbackAdminPage() {
               <option value="minor">ℹ️ Minor</option>
             </select>
           </div>
-          
+
           <div className={styles.filterGroup}>
             <label>Status:</label>
-            <select 
-              value={statusFilter} 
+            <select
+              value={statusFilter}
               onChange={(e) => {
                 setStatusFilter(e.target.value);
                 fetchFeedback();
@@ -373,13 +404,10 @@ export default function FeedbackAdminPage() {
               <option value="duplicate">Duplicate</option>
             </select>
           </div>
-          
+
           <div className={styles.filterGroup}>
             <label>Tier:</label>
-            <select 
-              value={tierFilter} 
-              onChange={(e) => setTierFilter(e.target.value)}
-            >
+            <select value={tierFilter} onChange={(e) => setTierFilter(e.target.value)}>
               <option value="all">All Tiers</option>
               <option value="free">Free</option>
               <option value="collector">Collector</option>
@@ -387,7 +415,7 @@ export default function FeedbackAdminPage() {
               <option value="admin">Admin</option>
             </select>
           </div>
-          
+
           <div className={styles.filterGroup}>
             <label className={styles.checkboxLabel}>
               <input
@@ -402,7 +430,7 @@ export default function FeedbackAdminPage() {
             </label>
           </div>
         </div>
-        
+
         <div className={styles.filterActions}>
           <button onClick={fetchFeedback} className={styles.refreshButton}>
             🔄 Refresh
@@ -417,17 +445,10 @@ export default function FeedbackAdminPage() {
       {selectedIds.size > 0 && (
         <div className={styles.bulkActions}>
           <span>{selectedIds.size} selected</span>
-          <button 
-            onClick={bulkResolve} 
-            className={styles.bulkResolveButton}
-            disabled={isUpdating}
-          >
+          <button onClick={bulkResolve} className={styles.bulkResolveButton} disabled={isUpdating}>
             {isUpdating ? 'Resolving...' : '✓ Mark Resolved'}
           </button>
-          <button 
-            onClick={() => setSelectedIds(new Set())} 
-            className={styles.clearSelectionButton}
-          >
+          <button onClick={() => setSelectedIds(new Set())} className={styles.clearSelectionButton}>
             Clear
           </button>
         </div>
@@ -441,7 +462,9 @@ export default function FeedbackAdminPage() {
             <label className={styles.checkboxLabel}>
               <input
                 type="checkbox"
-                checked={selectedIds.size === filteredFeedback.length && filteredFeedback.length > 0}
+                checked={
+                  selectedIds.size === filteredFeedback.length && filteredFeedback.length > 0
+                }
                 onChange={toggleSelectAll}
               />
               Select All
@@ -450,15 +473,17 @@ export default function FeedbackAdminPage() {
         )}
 
         {filteredFeedback.length === 0 ? (
-          <EmptyState.NoResults onClear={() => {
-            setTypeFilter('all');
-            setCategoryFilter('all');
-            setStatusFilter('all');
-          }} />
+          <EmptyState.NoResults
+            onClear={() => {
+              setTypeFilter('all');
+              setCategoryFilter('all');
+              setStatusFilter('all');
+            }}
+          />
         ) : (
           filteredFeedback.map((item) => (
-            <div 
-              key={item.id} 
+            <div
+              key={item.id}
               className={`${styles.feedbackCard} ${selectedIds.has(item.id) ? styles.feedbackCardSelected : ''}`}
             >
               <div className={styles.feedbackSelectColumn}>
@@ -468,33 +493,33 @@ export default function FeedbackAdminPage() {
                   onChange={() => toggleSelection(item.id)}
                 />
               </div>
-              
+
               <div className={styles.feedbackContent}>
                 <div className={styles.feedbackHeader}>
                   {/* Category/Type */}
-                  <span 
+                  <span
                     className={styles.feedbackCategory}
-                    style={{ 
+                    style={{
                       backgroundColor: categoryConfig[item.category]?.color || '#6b7280',
-                      color: '#fff'
+                      color: '#fff',
                     }}
                   >
                     {getDisplayLabel(item)}
                   </span>
-                  
+
                   {/* Severity (for bugs) */}
                   {item.severity && (
-                    <span 
+                    <span
                       className={styles.feedbackSeverity}
-                      style={{ 
+                      style={{
                         borderColor: severityConfig[item.severity]?.color || '#6b7280',
-                        color: severityConfig[item.severity]?.color || '#6b7280'
+                        color: severityConfig[item.severity]?.color || '#6b7280',
                       }}
                     >
                       {severityConfig[item.severity]?.label || item.severity}
                     </span>
                   )}
-                  
+
                   {/* Status */}
                   <span
                     className={styles.feedbackStatus}
@@ -502,7 +527,7 @@ export default function FeedbackAdminPage() {
                   >
                     {item.status}
                   </span>
-                  
+
                   {/* Priority */}
                   <span
                     className={styles.feedbackPriority}
@@ -510,7 +535,7 @@ export default function FeedbackAdminPage() {
                   >
                     {item.priority}
                   </span>
-                  
+
                   {/* Rating */}
                   {item.rating && (
                     <span className={styles.feedbackRating}>
@@ -519,7 +544,7 @@ export default function FeedbackAdminPage() {
                       ))}
                     </span>
                   )}
-                  
+
                   {/* User Tier */}
                   {item.user_tier && (
                     <span className={styles.feedbackTier}>
@@ -527,9 +552,22 @@ export default function FeedbackAdminPage() {
                     </span>
                   )}
                 </div>
-                
+
                 <p className={styles.feedbackMessage}>{item.message}</p>
-                
+
+                {/* Car Request Details */}
+                {item.browser_info?.car_request && (
+                  <div className={styles.carRequestDetails}>
+                    <span className={styles.carRequestLabel}>Vehicle Details:</span>
+                    <span className={styles.carRequestValue}>
+                      {item.browser_info.car_request.year} {item.browser_info.car_request.make}{' '}
+                      {item.browser_info.car_request.model}
+                      {item.browser_info.car_request.trim &&
+                        ` (${item.browser_info.car_request.trim})`}
+                    </span>
+                  </div>
+                )}
+
                 {/* Context Row */}
                 <div className={styles.feedbackContext}>
                   {item.car_slug && (
@@ -548,7 +586,7 @@ export default function FeedbackAdminPage() {
                     </span>
                   )}
                 </div>
-                
+
                 <div className={styles.feedbackMeta}>
                   {item.email && (
                     <a href={`mailto:${item.email}`} className={styles.feedbackEmail}>
@@ -556,9 +594,9 @@ export default function FeedbackAdminPage() {
                     </a>
                   )}
                   {item.page_url && (
-                    <a 
-                      href={item.page_url} 
-                      target="_blank" 
+                    <a
+                      href={item.page_url}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className={styles.feedbackPageUrl}
                     >
@@ -566,9 +604,9 @@ export default function FeedbackAdminPage() {
                     </a>
                   )}
                   {item.screenshot_url && (
-                    <a 
-                      href={item.screenshot_url} 
-                      target="_blank" 
+                    <a
+                      href={item.screenshot_url}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className={styles.feedbackScreenshot}
                     >
@@ -584,19 +622,19 @@ export default function FeedbackAdminPage() {
                     </span>
                   )}
                 </div>
-                
+
                 {/* Screenshot Preview */}
                 {item.screenshot_url && (
                   <div className={styles.screenshotPreview}>
-                    <a 
-                      href={item.screenshot_url} 
-                      target="_blank" 
+                    <a
+                      href={item.screenshot_url}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className={styles.screenshotLink}
                     >
-                      <Image 
-                        src={item.screenshot_url} 
-                        alt="Feedback screenshot" 
+                      <Image
+                        src={item.screenshot_url}
+                        alt="Feedback screenshot"
                         width={200}
                         height={150}
                         className={styles.screenshotThumbnail}
@@ -611,8 +649,10 @@ export default function FeedbackAdminPage() {
                   <div className={styles.errorDetailsCard}>
                     <div className={styles.errorDetailsHeader}>
                       <span className={styles.contextItem}>
-                        🔁 Occurrences: {(() => {
-                          const hash = item.error_metadata?.errorHash || item.error_metadata?.error_hash;
+                        🔁 Occurrences:{' '}
+                        {(() => {
+                          const hash =
+                            item.error_metadata?.errorHash || item.error_metadata?.error_hash;
                           return hash ? occurrenceByHash[hash] || 1 : 1;
                         })()}
                       </span>
@@ -631,7 +671,7 @@ export default function FeedbackAdminPage() {
                       className={styles.errorDetailsBody}
                       open={expandedIds.has(item.id)}
                       onToggle={(e) => {
-                        setExpandedIds(prev => {
+                        setExpandedIds((prev) => {
                           const next = new Set(prev);
                           if (e.target.open) {
                             next.add(item.id);
@@ -662,8 +702,3 @@ export default function FeedbackAdminPage() {
     </div>
   );
 }
-
-
-
-
-

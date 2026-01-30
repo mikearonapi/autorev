@@ -337,7 +337,7 @@
 
 .dot.dotActive {
   width: 14px;
-  background: var(--color-text-primary);
+  background: var(--color-accent-teal, #10b981);
   border-radius: 2.5px;
 }
 

@@ -100,7 +100,9 @@ const TrashIcon = ({ size = 16 }) => (
 // Sortable Vehicle Item - Individual vehicle row with drag handle
 function SortableVehicleItem({ item, onSelectVehicle, onDeleteVehicle, isDragging }) {
   const { vehicle, car, enrichedCar } = item;
-  const { heroImageUrl } = useCarImages(car?.slug, { enabled: !!car?.slug });
+  const carSlugForImages =
+    car?.slug || vehicle?.matchedCarSlug || (vehicle?.id ? `user-vehicle-${vehicle.id}` : null);
+  const { heroImageUrl } = useCarImages(carSlugForImages, { enabled: !!carSlugForImages });
 
   const {
     attributes,
@@ -119,12 +121,49 @@ function SortableVehicleItem({ item, onSelectVehicle, onDeleteVehicle, isDraggin
   };
 
   // Get display name
-  const displayData = enrichedCar || car;
-  const displayName = displayData
-    ? `${displayData.year} ${displayData.make} ${displayData.model}`
-    : vehicle?.nickname || 'Unknown Vehicle';
+  const displayName = useMemo(() => {
+    const nickname = vehicle?.nickname?.trim();
+    if (nickname) return nickname;
+    const parts = [vehicle?.year, vehicle?.make, vehicle?.model].filter(Boolean);
+    if (parts.length > 0) return parts.join(' ');
+    if (car?.name) return car.name;
+    return 'Vehicle';
+  }, [vehicle?.nickname, vehicle?.year, vehicle?.make, vehicle?.model, car?.name]);
+
+  // Build a stable car object for CarImage so it can render:
+  // - user-selected hero (from useCarImages) as the primary thumbnail
+  // - enrichment image (daily_driver_enrichments.image_url) as fallback
+  // - stock garage/hero images from car data as final fallback
+  const carForImage = useMemo(() => {
+    if (!carSlugForImages) return null;
+
+    const baseCar = car || {};
+    const enrichmentUrl = vehicle?.enrichment?.imageUrl || null;
+
+    return {
+      ...baseCar,
+      slug: carSlugForImages,
+      // CarImage placeholder uses car.name; prefer something human-readable
+      name: baseCar.name || displayName,
+      years: baseCar.years || (vehicle?.year ? String(vehicle.year) : baseCar.years),
+      brand: baseCar.brand || vehicle?.make || baseCar.brand,
+      // For garage variant, CarImage prefers imageGarageUrl first
+      imageGarageUrl: heroImageUrl || baseCar.imageGarageUrl || enrichmentUrl || null,
+      // Allow garage variant to fall back to hero when garage image is missing/fails
+      imageHeroUrl: heroImageUrl || baseCar.imageHeroUrl || null,
+    };
+  }, [
+    carSlugForImages,
+    car,
+    vehicle?.enrichment?.imageUrl,
+    vehicle?.year,
+    vehicle?.make,
+    displayName,
+    heroImageUrl,
+  ]);
 
   // Get HP display
+  const displayData = enrichedCar || car;
   const stockHp = displayData?.hp || displayData?.horsepower;
 
   return (
@@ -138,11 +177,11 @@ function SortableVehicleItem({ item, onSelectVehicle, onDeleteVehicle, isDraggin
       <div className={styles.vehicleListContent} onClick={() => onSelectVehicle?.(item)}>
         <div className={styles.vehicleListImage}>
           <CarImage
-            src={heroImageUrl || displayData?.imageUrl}
-            alt={displayName}
-            fill
-            sizes="60px"
-            className={styles.vehicleListImg}
+            car={carForImage}
+            variant="garage"
+            className={styles.vehicleListCarImage}
+            showName={false}
+            lazy={true}
           />
         </div>
         <div className={styles.vehicleListInfo}>
@@ -172,11 +211,15 @@ function SortableVehicleItem({ item, onSelectVehicle, onDeleteVehicle, isDraggin
 function DragOverlayItem({ item }) {
   if (!item) return null;
 
-  const { car, enrichedCar, vehicle } = item;
-  const displayData = enrichedCar || car;
-  const displayName = displayData
-    ? `${displayData.year} ${displayData.make} ${displayData.model}`
-    : vehicle?.nickname || 'Unknown Vehicle';
+  const { car, vehicle } = item;
+  const displayName = (() => {
+    const nickname = vehicle?.nickname?.trim();
+    if (nickname) return nickname;
+    const parts = [vehicle?.year, vehicle?.make, vehicle?.model].filter(Boolean);
+    if (parts.length > 0) return parts.join(' ');
+    if (car?.name) return car.name;
+    return 'Vehicle';
+  })();
 
   return (
     <div className={`${styles.vehicleListItem} ${styles.vehicleListItemOverlay}`}>
@@ -199,7 +242,12 @@ function DragOverlayItem({ item }) {
  * @param {Function} props.onDeleteVehicle - Called when delete button is clicked
  * @param {Function} props.onReorder - Called with new vehicle ID order after drag
  */
-export default function SortableVehicleList({ items, onSelectVehicle, onDeleteVehicle, onReorder }) {
+export default function SortableVehicleList({
+  items,
+  onSelectVehicle,
+  onDeleteVehicle,
+  onReorder,
+}) {
   const [activeId, setActiveId] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
 

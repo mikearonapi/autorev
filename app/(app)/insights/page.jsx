@@ -1,12 +1,11 @@
 /**
  * Insights Page - Daily Briefing for Modification Enthusiasts
- * 
+ *
  * Personalized, mod-focused insights showing:
  * - Performance recommendations (next mod, bottlenecks)
  * - Platform-specific reliability concerns (relevant to modding)
- * - Community standing (how your build compares)
  * - Build progress toward goals
- * 
+ *
  * NOT for: Generic maintenance reminders, oil changes, registrations.
  * Target audience: Car modification enthusiasts who want to build their cars.
  */
@@ -20,7 +19,8 @@ import styles from './page.module.css';
 
 export const metadata = {
   title: 'Insights | AutoRev',
-  description: 'Your daily briefing for vehicle modifications - performance recommendations, platform insights, and build progress.',
+  description:
+    'Your daily briefing for vehicle modifications - performance recommendations, platform insights, and build progress.',
   robots: {
     index: false,
     follow: false,

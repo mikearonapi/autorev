@@ -8,7 +8,6 @@
  * WHAT WE SHOW:
  * - PERFORMANCE: Next recommended mod, bottleneck analysis, Stage recommendations
  * - RELIABILITY: Platform-specific issues relevant to modding (e.g., "B58 needs cooling at Stage 2")
- * - COMMUNITY: Build comparisons, standing among similar vehicles
  * - OPPORTUNITY: Deals, events, new content (future)
  *
  * WHAT WE DO NOT SHOW:
@@ -58,7 +57,7 @@ const INSIGHT_SECTIONS = {
   nextUpgrade: { label: 'Next Upgrade', description: 'Recommended mods' },
   knownIssues: { label: 'Known Issues', description: 'Platform reliability alerts' },
   platformInsights: { label: 'Platform Insights', description: 'Strengths & weaknesses' },
-  additionalInsights: { label: 'Additional Insights', description: 'Community & build tips' },
+  additionalInsights: { label: 'Additional Insights', description: 'Build tips' },
 };
 
 const STORAGE_KEY = 'autorev-insights-filters';
@@ -771,7 +770,6 @@ export default function InsightsClient() {
   // - PlatformInsights shows: Strengths, weaknesses, community tips
   //
   // The SmartFeed should ONLY include:
-  // - COMMUNITY insights (social comparisons - unique value)
   // - PERFORMANCE insights about build BALANCE (not just HP numbers)
   // - Any truly unique insights not covered by dedicated sections
   // ==========================================================================
@@ -894,18 +892,6 @@ export default function InsightsClient() {
             subtext: `Reliability: ${reliability.percent}%`,
           });
         }
-
-        // --- COMMUNITY: Always valuable - unique social context ---
-        items.push({
-          id: 'comm-1',
-          type: 'COMMUNITY',
-          title: modCount > 2 ? 'Active Builder' : 'Growing Build',
-          body:
-            modCount > 2
-              ? `Your ${currentVehicle.model} build is progressing well. See how other owners are building theirs.`
-              : `${modCount > 0 ? 'Good start!' : 'Stock build.'} See what mods are popular for the ${currentVehicle.model}.`,
-          action: { label: 'Compare Builds', href: '/community' },
-        });
       }
 
       return { items, stats };

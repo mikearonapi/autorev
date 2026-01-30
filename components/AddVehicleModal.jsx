@@ -6,13 +6,14 @@
  * Full-screen modal for adding a performance vehicle to user's garage.
  * Rendered via React Portal to document.body for proper stacking context.
  *
- * Two modes:
+ * Three modes:
  * 1. Selector mode (default): Year → Make → Model → Trim cascading dropdowns
  * 2. Search mode: Text search for power users who know their car
+ * 3. Request mode: Freeform inputs for vehicles not in our database
  *
  * Features:
  * - Industry-standard Year/Make/Model/Trim selection
- * - "Request to add" flow for cars not in our database
+ * - "Request to add" flow for cars not in our database (accessible from all modes)
  * - LIME CTA buttons per brand guidelines
  */
 
@@ -66,7 +67,7 @@ export default function AddVehicleModal({
   onRequestCar,
   existingVehicles = [],
 }) {
-  // Mode: 'selector' or 'search'
+  // Mode: 'selector', 'search', or 'request'
   const [mode, setMode] = useState('selector');
 
   // Selector state
@@ -74,6 +75,13 @@ export default function AddVehicleModal({
   const [selectedMake, setSelectedMake] = useState('');
   const [selectedModel, setSelectedModel] = useState('');
   const [selectedTrim, setSelectedTrim] = useState('');
+
+  // Request mode state (freeform inputs)
+  const [requestYear, setRequestYear] = useState('');
+  const [requestMake, setRequestMake] = useState('');
+  const [requestModel, setRequestModel] = useState('');
+  const [requestTrim, setRequestTrim] = useState('');
+  const [isSubmittingRequest, setIsSubmittingRequest] = useState(false);
 
   // Search state
   const [searchQuery, setSearchQuery] = useState('');
@@ -205,6 +213,20 @@ export default function AddVehicleModal({
     setRequestSubmitted(false);
   }, []);
 
+  // Switch to request mode with optional prefill from current state
+  const switchToRequestMode = useCallback(
+    (prefill = {}) => {
+      // Prefill from selector state if available, or from passed prefill
+      setRequestYear(prefill.year || selectedYear || '');
+      setRequestMake(prefill.make || selectedMake || '');
+      setRequestModel(prefill.model || selectedModel || '');
+      setRequestTrim(prefill.trim || selectedTrim || '');
+      setRequestSubmitted(false);
+      setMode('request');
+    },
+    [selectedYear, selectedMake, selectedModel, selectedTrim]
+  );
+
   // ============================================================================
   // SEARCH MODE: Filter and sort cars
   // ============================================================================
@@ -297,24 +319,44 @@ export default function AddVehicleModal({
   };
 
   // Handle request to add a car not in database
-  const handleRequestCar = async () => {
-    if (!selectedYear || !selectedMake || !selectedModel) return;
+  // Works from both selector mode (uses selected*) and request mode (uses request*)
+  const handleRequestCar = async (fromRequestMode = false) => {
+    const year = fromRequestMode ? requestYear : selectedYear;
+    const make = fromRequestMode ? requestMake : selectedMake;
+    const model = fromRequestMode ? requestModel : selectedModel;
+    const trim = fromRequestMode ? requestTrim : selectedTrim;
+
+    if (!year || !make || !model) {
+      setAddError('Please fill in Year, Make, and Model.');
+      return;
+    }
+
+    // Basic year validation
+    const yearNum = parseInt(year, 10);
+    if (isNaN(yearNum) || yearNum < 1900 || yearNum > new Date().getFullYear() + 2) {
+      setAddError('Please enter a valid year.');
+      return;
+    }
 
     setAddError(null);
+    setIsSubmittingRequest(true);
 
     try {
       if (onRequestCar) {
         await onRequestCar({
-          year: parseInt(selectedYear),
-          make: selectedMake,
-          model: selectedModel,
-          trim: selectedTrim || null,
+          year: yearNum,
+          make: make.trim(),
+          model: model.trim(),
+          trim: trim?.trim() || null,
+          source: 'garage',
         });
       }
       setRequestSubmitted(true);
     } catch (err) {
       console.error('Error submitting car request:', err);
       setAddError(err.message || 'Failed to submit request. Please try again.');
+    } finally {
+      setIsSubmittingRequest(false);
     }
   };
 
@@ -325,9 +367,14 @@ export default function AddVehicleModal({
     setSelectedMake('');
     setSelectedModel('');
     setSelectedTrim('');
+    setRequestYear('');
+    setRequestMake('');
+    setRequestModel('');
+    setRequestTrim('');
     setRecentlyAdded(new Set());
     setAddError(null);
     setRequestSubmitted(false);
+    setIsSubmittingRequest(false);
     setMode('selector');
     onClose();
   };
@@ -520,6 +567,18 @@ export default function AddVehicleModal({
                   <p>Request submitted! We&apos;ll review and add this vehicle soon.</p>
                 </div>
               )}
+
+              {/* Can't find your vehicle link */}
+              {!requestSubmitted && (
+                <button
+                  className={styles.cantFindLink}
+                  onClick={() => switchToRequestMode()}
+                  type="button"
+                >
+                  <Icons.plus size={14} />
+                  Can&apos;t find your vehicle? Request it
+                </button>
+              )}
             </div>
           )}
 
@@ -608,12 +667,154 @@ export default function AddVehicleModal({
                       No vehicles found for &quot;{searchQuery}&quot;
                     </p>
                     <p className={styles.noResultsHint}>
-                      Try a different search term or check spelling
+                      Try a different search or request this vehicle
                     </p>
+                    <button
+                      className={styles.requestFromSearchButton}
+                      onClick={() => {
+                        // Try to parse search query into make/model
+                        const parts = searchQuery.trim().split(/\s+/);
+                        const prefill = {};
+                        // Check if first part looks like a year
+                        if (parts[0] && /^\d{4}$/.test(parts[0])) {
+                          prefill.year = parts[0];
+                          prefill.make = parts[1] || '';
+                          prefill.model = parts.slice(2).join(' ') || '';
+                        } else {
+                          prefill.make = parts[0] || '';
+                          prefill.model = parts.slice(1).join(' ') || '';
+                        }
+                        switchToRequestMode(prefill);
+                      }}
+                      type="button"
+                    >
+                      <Icons.plus size={16} />
+                      Request this vehicle
+                    </button>
                   </div>
                 )}
               </div>
             </>
+          )}
+
+          {/* REQUEST MODE */}
+          {mode === 'request' && (
+            <div className={styles.requestContent}>
+              <p className={styles.requestIntro}>
+                Tell us about the vehicle you&apos;d like added to AutoRev.
+              </p>
+
+              {/* Year Input */}
+              <div className={styles.inputGroup}>
+                <label className={styles.inputLabel} htmlFor="request-year">
+                  Year <span className={styles.required}>*</span>
+                </label>
+                <input
+                  id="request-year"
+                  type="number"
+                  inputMode="numeric"
+                  className={styles.textInput}
+                  value={requestYear}
+                  onChange={(e) => {
+                    setRequestYear(e.target.value);
+                    setRequestSubmitted(false);
+                  }}
+                  placeholder="e.g., 2023"
+                  min="1900"
+                  max={new Date().getFullYear() + 2}
+                />
+              </div>
+
+              {/* Make Input */}
+              <div className={styles.inputGroup}>
+                <label className={styles.inputLabel} htmlFor="request-make">
+                  Make <span className={styles.required}>*</span>
+                </label>
+                <input
+                  id="request-make"
+                  type="text"
+                  className={styles.textInput}
+                  value={requestMake}
+                  onChange={(e) => {
+                    setRequestMake(e.target.value);
+                    setRequestSubmitted(false);
+                  }}
+                  placeholder="e.g., Hyundai"
+                />
+              </div>
+
+              {/* Model Input */}
+              <div className={styles.inputGroup}>
+                <label className={styles.inputLabel} htmlFor="request-model">
+                  Model <span className={styles.required}>*</span>
+                </label>
+                <input
+                  id="request-model"
+                  type="text"
+                  className={styles.textInput}
+                  value={requestModel}
+                  onChange={(e) => {
+                    setRequestModel(e.target.value);
+                    setRequestSubmitted(false);
+                  }}
+                  placeholder="e.g., Genesis Coupe"
+                />
+              </div>
+
+              {/* Trim Input (optional) */}
+              <div className={styles.inputGroup}>
+                <label className={styles.inputLabel} htmlFor="request-trim">
+                  Trim <span className={styles.optional}>(optional)</span>
+                </label>
+                <input
+                  id="request-trim"
+                  type="text"
+                  className={styles.textInput}
+                  value={requestTrim}
+                  onChange={(e) => {
+                    setRequestTrim(e.target.value);
+                    setRequestSubmitted(false);
+                  }}
+                  placeholder="e.g., 3.8 Track"
+                />
+              </div>
+
+              {/* Submit Button */}
+              {!requestSubmitted ? (
+                <button
+                  className={styles.submitRequestButton}
+                  onClick={() => handleRequestCar(true)}
+                  disabled={isSubmittingRequest || !requestYear || !requestMake || !requestModel}
+                  type="button"
+                >
+                  {isSubmittingRequest ? (
+                    <>
+                      <Icons.loader size={16} />
+                      Submitting...
+                    </>
+                  ) : (
+                    <>
+                      <Icons.send size={16} />
+                      Submit Request
+                    </>
+                  )}
+                </button>
+              ) : (
+                <div className={styles.requestSubmitted}>
+                  <Icons.check size={20} />
+                  <p>Request submitted! We&apos;ll review and add this vehicle soon.</p>
+                </div>
+              )}
+
+              {/* Back link */}
+              <button
+                className={styles.backToSelectorLink}
+                onClick={() => setMode('selector')}
+                type="button"
+              >
+                ← Back to vehicle selector
+              </button>
+            </div>
           )}
         </div>
 
