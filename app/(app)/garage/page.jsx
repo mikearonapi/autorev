@@ -61,6 +61,22 @@ import { decodeVIN } from '@/lib/vinDecoder';
 import styles from './page.module.css';
 // GarageScoreCard moved to Dashboard tab - January 2026
 
+// Video file extensions - URLs containing these are videos, not images
+// Used to prevent native video controls from appearing when rendering images
+const VIDEO_EXTENSIONS = ['.mp4', '.mov', '.webm', '.avi', '.mkv', '.m4v', '.quicktime'];
+
+/**
+ * Check if a URL points to a video file based on extension
+ * This catches cases where media_type might be missing/incorrect in the database
+ * @param {string} url - The URL to check
+ * @returns {boolean} - True if the URL appears to be a video
+ */
+function isVideoUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  const lowerUrl = url.toLowerCase();
+  return VIDEO_EXTENSIONS.some((ext) => lowerUrl.includes(ext));
+}
+
 // Icon wrapper to prevent browser extension DOM conflicts
 // Wrapping SVGs in a span prevents "removeChild" errors when extensions modify the DOM
 const IconWrapper = ({ children, style }) => (
@@ -916,13 +932,29 @@ function DesktopGarageLayout({
 
   // Get the correct image to display (match mobile HeroVehicleDisplay logic)
   const hasCustomHero = !!userHeroImage;
-  const userHeroImageUrl = hookHeroImageUrl || item?.vehicle?.heroImageUrl;
+  // Only use hookHeroImageUrl if it's not a video URL (safety check)
+  const userHeroImageUrl =
+    hookHeroImageUrl && !isVideoUrl(hookHeroImageUrl)
+      ? hookHeroImageUrl
+      : item?.vehicle?.heroImageUrl && !isVideoUrl(item?.vehicle?.heroImageUrl)
+        ? item?.vehicle?.heroImageUrl
+        : null;
   // Check for stock images using correct property names from car data
   const hasStockImage = !!(car?.imageGarageUrl || car?.imageHeroUrl);
+  // Filter out videos when selecting fallback - check both media_type AND URL extension
+  const firstImageFromCarImages = carImages?.find((img) => {
+    if (img.media_type === 'video') return false;
+    const url = img.blob_url || img.blobUrl || img.url;
+    if (isVideoUrl(url)) return false;
+    return true;
+  });
+  // Also verify fallback URL from photos is not a video
+  const photosUrl = item?.vehicle?.photos?.[0]?.url;
+  const safePhotosUrl = photosUrl && !isVideoUrl(photosUrl) ? photosUrl : null;
   const fallbackHeroUrl =
-    !hasCustomHero && !hasStockImage && carImages?.length > 0
-      ? carImages[0].url
-      : item?.vehicle?.photos?.[0]?.url;
+    !hasCustomHero && !hasStockImage && firstImageFromCarImages
+      ? firstImageFromCarImages.url
+      : safePhotosUrl;
 
   // Vehicle info
   const brand = item?.vehicle?.make || car?.brand || car?.make || 'VEHICLE';
@@ -1727,14 +1759,22 @@ function HeroVehicleDisplay({
     fullCarData?.soundSignature;
 
   // Determine if user has a custom hero image
-  const hasCustomHero = !!userHeroImage;
+  // Also verify the hero URL is not a video URL (safety check - hook should filter this too)
+  const hasCustomHero = !!userHeroImage && userHeroImageUrl && !isVideoUrl(userHeroImageUrl);
 
   // Fallback hero: use first uploaded image if no designated hero and no stock image
   // Only consider stock image available if car has explicit image URLs in database
   // Don't assume all matched cars have images - many may not have images uploaded yet
+  // Filter out videos - check both media_type AND URL extension for safety
   const hasStockImage = !!(car?.imageGarageUrl || car?.imageHeroUrl);
+  const firstImageMedia = carImages?.find((img) => {
+    if (img.media_type === 'video') return false;
+    const url = img.blob_url || img.blobUrl || img.url;
+    if (isVideoUrl(url)) return false;
+    return true;
+  });
   const fallbackHeroUrl =
-    !hasCustomHero && !hasStockImage && carImages?.length > 0 ? carImages[0].url : null;
+    !hasCustomHero && !hasStockImage && firstImageMedia ? firstImageMedia.url : null;
 
   const isOwnedVehicle = type === 'mycars';
   const isBuild = type === 'projects';

@@ -21,6 +21,21 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { getPrefetchedHeroImage } from '@/lib/prefetch';
 
+// Video file extensions - URLs ending with these are videos, not images
+const VIDEO_EXTENSIONS = ['.mp4', '.mov', '.webm', '.avi', '.mkv', '.m4v', '.quicktime'];
+
+/**
+ * Check if a URL points to a video file based on extension
+ * This catches cases where media_type might be missing/incorrect in the database
+ * @param {string} url - The URL to check
+ * @returns {boolean} - True if the URL appears to be a video
+ */
+function isVideoUrl(url) {
+  if (!url || typeof url !== 'string') return false;
+  const lowerUrl = url.toLowerCase();
+  return VIDEO_EXTENSIONS.some((ext) => lowerUrl.includes(ext));
+}
+
 // Cache time for car images (2 minutes)
 const CAR_IMAGES_STALE_TIME = 2 * 60 * 1000;
 
@@ -158,8 +173,17 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
   );
 
   // Get the current hero image from API data (is_primary = true, and is an image not a video)
+  // Also check URL extension as a fallback for cases where media_type might be incorrect
   const heroImageFromApi = useMemo(
-    () => images.find((img) => img.is_primary && img.media_type !== 'video') || null,
+    () =>
+      images.find((img) => {
+        if (!img.is_primary) return false;
+        if (img.media_type === 'video') return false;
+        // Additional safety check: verify URL doesn't look like a video
+        const url = img.blob_url || img.blobUrl || img.url;
+        if (isVideoUrl(url)) return false;
+        return true;
+      }) || null,
     [images]
   );
 
@@ -314,17 +338,45 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
 
   // Compute the best available hero image URL
   // Priority: API data > prefetched data
+  // IMPORTANT: Filter out video URLs to prevent native video controls from appearing
   const heroImageUrl = useMemo(() => {
     // If we have API data, use it (most up-to-date)
-    if (heroImage?.blob_url || heroImage?.blobUrl) {
-      return heroImage.blob_url || heroImage.blobUrl;
+    // API data is already filtered by media_type !== 'video'
+    const apiUrl = heroImage?.blob_url || heroImage?.blobUrl;
+    if (apiUrl && !isVideoUrl(apiUrl)) {
+      return apiUrl;
     }
     // While loading, use prefetched hero image URL (already in browser cache)
-    if (prefetchedHero?.url) {
+    // Also check for video URL since prefetch might not filter by media_type
+    if (prefetchedHero?.url && !isVideoUrl(prefetchedHero.url)) {
       return prefetchedHero.url;
     }
     return null;
   }, [heroImage, prefetchedHero]);
+
+  // #region agent log
+  if (typeof window !== 'undefined' && carSlug && images.length > 0) {
+    fetch('http://127.0.0.1:7244/ingest/e28cdfb9-afc8-4c0d-9b4b-3cf0adbc93a8', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        location: 'useCarImages.js:return',
+        message: 'Hook data',
+        data: {
+          carSlug,
+          imageCount: images.length,
+          heroImageUrl: heroImageUrl?.slice(0, 100),
+          heroMediaType: heroImage?.media_type,
+          firstImageMediaType: images[0]?.media_type,
+          firstImageUrl: images[0]?.blob_url?.slice(0, 80),
+        },
+        timestamp: Date.now(),
+        sessionId: 'debug-session',
+        hypothesisId: 'C',
+      }),
+    }).catch(() => {});
+  }
+  // #endregion
 
   return {
     images,

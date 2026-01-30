@@ -1394,7 +1394,10 @@
 
   /* Ensure it fills the available space */
   min-height: 0;
-  overflow-x: hidden;
+  overflow: hidden;
+
+  /* DEBUG: Add background to see if it covers the mystery bar */
+  background: var(--brand-bg-primary, #0d1b2a);
 }
 
 .heroImageWrapper {
@@ -1408,12 +1411,22 @@
   overflow: hidden;
 }
 
+/* Hide any webkit scrollbars on heroImageWrapper */
+.heroImageWrapper::-webkit-scrollbar {
+  display: none;
+  width: 0;
+  height: 0;
+}
+
 /* Container for the car image itself */
 .heroImageContainer {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
+
+  /* Solid dark background to prevent any gaps/artifacts showing */
+  background: var(--brand-bg-primary-dark, #0a0a0f);
 }
 
 /* Mobile Quick Action Bar - DEPRECATED: Now uses mobileActionBar for consistency */
@@ -1427,8 +1440,19 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: center;
+
+  /* iOS Safari has rendering issues with non-center object-position on mobile */
+
+  /* Use center on mobile, shifted positioning only on tablet/desktop */
+  object-position: center center;
   border-radius: 0;
+}
+
+@media (min-width: 768px) {
+  .heroImage {
+    /* Only shift on tablet/desktop to hide studio ceiling */
+    object-position: center 70%;
+  }
 }
 
 /* Override CarImage hover effects in garage hero display */
@@ -1445,9 +1469,13 @@
   display: flex;
   align-items: center;
   gap: 2px;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+
+  /* DEBUG: Disabled backdrop-filter - iOS Safari bug can cause artifacts */
+  background: rgba(0, 0, 0, 0.85);
+
+  /* backdrop-filter: blur(8px); */
+
+  /* -webkit-backdrop-filter: blur(8px); */
   padding: 6px 10px;
   border-radius: 6px;
   font-size: 0.8125rem;
@@ -1475,9 +1503,13 @@
   justify-content: center;
   width: 36px;
   height: 36px;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+
+  /* DEBUG: Disabled backdrop-filter - iOS Safari bug can cause artifacts */
+  background: rgba(0, 0, 0, 0.85);
+
+  /* backdrop-filter: blur(8px); */
+
+  /* -webkit-backdrop-filter: blur(8px); */
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 50%;
   color: rgba(255, 255, 255, 0.8);
@@ -1519,7 +1551,9 @@
     width: 100% !important;
     height: 100% !important;
     object-fit: cover !important;
-    object-position: center !important;
+
+    /* Position to show car (bottom portion) and hide studio ceiling */
+    object-position: center 70% !important;
   }
 }
 
@@ -1740,6 +1774,18 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   z-index: 10;
   transition: all 0.3s ease;
+
+  /* Hide on mobile - this panel is for desktop overlay only */
+
+  /* Mobile uses the separate vehicleInfoHeader instead */
+  display: none;
+}
+
+/* Only show specPanel on larger screens where it makes sense */
+@media (min-width: 1024px) {
+  .specPanel {
+    display: block;
+  }
 }
 
 @media (min-width: 768px) {

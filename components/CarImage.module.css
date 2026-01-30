@@ -168,9 +168,18 @@
   object-position: center center;
 }
 
-/* Garage variant - studio images are typically centered */
+/* Garage variant - use center positioning on mobile, shifted on desktop */
+
+/* iOS Safari has rendering issues with non-center object-position */
 .garage .image {
   object-position: center center;
+}
+
+@media (min-width: 768px) {
+  .garage .image {
+    /* Only shift on tablet/desktop to hide studio ceiling */
+    object-position: center 70%;
+  }
 }
 
 /* Garage placeholder - dark studio theme */

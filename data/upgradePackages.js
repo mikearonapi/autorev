@@ -327,6 +327,30 @@ export const upgradeModules = [
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
   {
+    key: 'high-flow-filter',
+    name: 'High Flow Air Filter',
+    slug: 'high-flow-filter',
+    type: 'module',
+    category: 'power',
+    tier: 'streetSport',
+    stage: 1,
+    description:
+      'Drop-in high-flow replacement filter for factory airbox. Simple upgrade with mild gains. Brands: K&N, aFe, BMC.',
+    estimatedCost: '$50 - $100',
+    estimatedCostLow: 50,
+    estimatedCostHigh: 100,
+    deltas: {
+      powerAccel: 0.2,
+      soundEmotion: 0.2,
+    },
+    metricChanges: {
+      hpGain: 5,
+    },
+    carSlug: null,
+    // Universal - all cars benefit from improved airflow
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
     key: 'exhaust-catback',
     name: 'Cat-Back Exhaust',
     slug: 'exhaust-catback',
@@ -489,8 +513,8 @@ export const upgradeModules = [
       torqueGain: 120,
       zeroToSixtyImprovement: 0.8,
     },
-    requires: ['fuel-system-upgrade'],
-    stronglyRecommended: ['clutch-upgrade', 'oil-cooler', 'trans-cooler'],
+    // Note: requires removed per Cory's feedback - Stage 3 should be selectable independently
+    stronglyRecommended: ['fuel-system-upgrade', 'clutch-upgrade', 'oil-cooler', 'trans-cooler'],
     carSlug: null,
     // Universal - available for all engine types
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
@@ -554,8 +578,34 @@ export const upgradeModules = [
     },
     requires: ['stage2-tune'],
     carSlug: null,
-    // Turbo cars only - downpipe is the section after the turbocharger
-    applicableEngines: ['Turbo V8', 'Turbo V6', 'Turbo I6', 'Turbo I4', 'Turbo Flat-6'],
+    // Note: applicableEngines removed per Cory's feedback - downpipe available for all cars
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'cat-delete',
+    name: 'Cat Delete / Test Pipes',
+    slug: 'cat-delete',
+    type: 'module',
+    category: 'exhaust',
+    tier: 'trackPack',
+    stage: 2,
+    description:
+      'Catalytic converter delete pipes for off-road/track use. Significant flow improvement but not street legal. Requires tune.',
+    estimatedCost: '$200 - $600',
+    estimatedCostLow: 200,
+    estimatedCostHigh: 600,
+    deltas: {
+      powerAccel: 0.5,
+      soundEmotion: 1.0,
+      trackPace: 0.2,
+    },
+    metricChanges: {
+      hpGain: 15,
+      torqueGain: 15,
+    },
+    requires: ['stage2-tune'],
+    carSlug: null,
+    // Universal - all cars have catalytic converters
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
   // E85/Flex Fuel - Stage 3 mod (requires fuel system upgrade)
@@ -1118,13 +1168,97 @@ export const upgradeModules = [
     type: 'module',
     category: 'chassis',
     tier: 'trackPack',
-    description: 'Strut tower bars, subframe braces. Reduces flex, improves response.',
-    estimatedCost: '$500 - $1,500',
-    estimatedCostLow: 500,
-    estimatedCostHigh: 1500,
+    description: 'Subframe braces and chassis stiffening. Reduces flex, improves response.',
+    estimatedCost: '$300 - $800',
+    estimatedCostLow: 300,
+    estimatedCostHigh: 800,
+    deltas: {
+      gripCornering: 0.2,
+      trackPace: 0.15,
+    },
+    carSlug: null,
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'strut-tower-bars',
+    name: 'Strut Tower Bars',
+    slug: 'strut-tower-bars',
+    type: 'module',
+    category: 'chassis',
+    tier: 'streetSport',
+    description:
+      'Front and/or rear strut tower braces to reduce chassis flex. Improves steering response and handling precision. Brands: Cusco, Ultra Racing, ASR.',
+    estimatedCost: '$150 - $400',
+    estimatedCostLow: 150,
+    estimatedCostHigh: 400,
+    deltas: {
+      gripCornering: 0.2,
+      trackPace: 0.1,
+    },
+    carSlug: null,
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'control-arms',
+    name: 'Adjustable Control Arms',
+    slug: 'control-arms',
+    type: 'module',
+    category: 'chassis',
+    tier: 'trackPack',
+    description:
+      'Adjustable front/rear control arms for precise alignment settings. Allows proper camber and toe adjustment on lowered cars. Brands: SPC, Megan Racing, Whiteline.',
+    estimatedCost: '$400 - $1,200',
+    estimatedCostLow: 400,
+    estimatedCostHigh: 1200,
+    deltas: {
+      gripCornering: 0.4,
+      trackPace: 0.3,
+    },
+    metricChanges: {
+      lateralGImprovement: 0.02,
+    },
+    carSlug: null,
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'bushings',
+    name: 'Performance Bushings',
+    slug: 'bushings',
+    type: 'module',
+    category: 'chassis',
+    tier: 'trackPack',
+    description:
+      'Polyurethane or spherical bushings for reduced deflection and sharper response. Increased NVH. Brands: Whiteline, Energy Suspension, Powerflex.',
+    estimatedCost: '$300 - $800',
+    estimatedCostLow: 300,
+    estimatedCostHigh: 800,
     deltas: {
       gripCornering: 0.3,
       trackPace: 0.2,
+      drivability: -0.3,
+    },
+    metricChanges: {
+      lateralGImprovement: 0.01,
+    },
+    carSlug: null,
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'roll-center-correction',
+    name: 'Roll Center Correction',
+    slug: 'roll-center-correction',
+    type: 'module',
+    category: 'chassis',
+    tier: 'trackPack',
+    description:
+      'Roll center correction kit for lowered cars. Restores proper suspension geometry and handling balance. Essential for aggressive lowering. Brands: Ground Control, SPL Parts.',
+    estimatedCost: '$200 - $500',
+    estimatedCostLow: 200,
+    estimatedCostHigh: 500,
+    deltas: {
+      gripCornering: 0.3,
+      trackPace: 0.2,
+      drivability: 0.2,
     },
     carSlug: null,
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
@@ -1236,6 +1370,96 @@ export const upgradeModules = [
     },
     metricChanges: {
       brakingImprovement: 2,
+    },
+    carSlug: null,
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'two-piece-rotors',
+    name: '2-Piece Floating Rotors',
+    slug: 'two-piece-rotors',
+    type: 'module',
+    category: 'brakes',
+    tier: 'trackPack',
+    description:
+      'Lightweight 2-piece rotors with aluminum hat. Reduces unsprung weight, better heat management. Brands: Girodisc, DBA, AP Racing.',
+    estimatedCost: '$1,200 - $2,500',
+    estimatedCostLow: 1200,
+    estimatedCostHigh: 2500,
+    deltas: {
+      braking: 0.6,
+      reliabilityHeat: 0.4,
+      trackPace: 0.2,
+    },
+    metricChanges: {
+      brakingImprovement: 4,
+    },
+    carSlug: null,
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'brake-cooling',
+    name: 'Brake Cooling Ducts',
+    slug: 'brake-cooling',
+    type: 'module',
+    category: 'brakes',
+    tier: 'trackPack',
+    description:
+      'Brake cooling ducts and backing plates to direct airflow to rotors. Essential for sustained track use. Brands: Verus Engineering, 034 Motorsport.',
+    estimatedCost: '$200 - $600',
+    estimatedCostLow: 200,
+    estimatedCostHigh: 600,
+    deltas: {
+      braking: 0.3,
+      reliabilityHeat: 0.5,
+      trackPace: 0.1,
+    },
+    metricChanges: {
+      brakingImprovement: 2,
+    },
+    carSlug: null,
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'master-cylinder',
+    name: 'Master Cylinder Upgrade',
+    slug: 'master-cylinder',
+    type: 'module',
+    category: 'brakes',
+    tier: 'trackPack',
+    description:
+      'Larger or adjustable master cylinder for improved pedal feel and pressure. May require brake booster delete. Brands: Wilwood, Tilton.',
+    estimatedCost: '$400 - $1,000',
+    estimatedCostLow: 400,
+    estimatedCostHigh: 1000,
+    deltas: {
+      braking: 0.4,
+      trackPace: 0.1,
+    },
+    metricChanges: {
+      brakingImprovement: 3,
+    },
+    carSlug: null,
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'motorsport-abs',
+    name: 'Motorsport ABS',
+    slug: 'motorsport-abs',
+    type: 'module',
+    category: 'brakes',
+    tier: 'ultimatePower',
+    description:
+      'Racing ABS system with adjustable intervention for track use. Optimized for performance driving. Brands: Bosch Motorsport, MoTeC.',
+    estimatedCost: '$3,000 - $8,000',
+    estimatedCostLow: 3000,
+    estimatedCostHigh: 8000,
+    deltas: {
+      braking: 1.0,
+      trackPace: 0.5,
+    },
+    metricChanges: {
+      brakingImprovement: 8,
     },
     carSlug: null,
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
@@ -1371,6 +1595,105 @@ export const upgradeModules = [
     carSlug: null,
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
   },
+  {
+    key: 'wider-wheels-tires',
+    name: 'Wider Wheels & Tires',
+    slug: 'wider-wheels-tires',
+    type: 'module',
+    category: 'wheels',
+    tier: 'trackPack',
+    description:
+      'Wider wheel and tire setup for increased contact patch. May require fender modifications. Improves grip significantly.',
+    estimatedCost: '$1,500 - $4,000',
+    estimatedCostLow: 1500,
+    estimatedCostHigh: 4000,
+    deltas: {
+      gripCornering: 0.8,
+      braking: 0.4,
+      trackPace: 0.5,
+      powerAccel: -0.1, // Slightly more rolling resistance
+    },
+    metricChanges: {
+      lateralGImprovement: 0.05,
+      brakingImprovement: 3,
+    },
+    carSlug: null,
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'tires-200tw',
+    name: 'Summer 200 Treadwear Tires',
+    slug: 'tires-200tw',
+    type: 'module',
+    category: 'wheels',
+    tier: 'trackPack',
+    description:
+      'High-performance 200TW summer tires. Excellent grip for spirited street and HPDE use. Brands: Michelin PS4S, Continental ESC, Bridgestone RE-71RS.',
+    estimatedCost: '$800 - $1,600',
+    estimatedCostLow: 800,
+    estimatedCostHigh: 1600,
+    deltas: {
+      gripCornering: 1.0,
+      braking: 0.5,
+      trackPace: 0.6,
+      drivability: -0.2, // Limited wet/cold weather performance
+    },
+    metricChanges: {
+      lateralGImprovement: 0.08,
+      brakingImprovement: 5,
+    },
+    carSlug: null,
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'tires-r-compound',
+    name: 'R-Compound Tires',
+    slug: 'tires-r-compound',
+    type: 'module',
+    category: 'wheels',
+    tier: 'ultimatePower',
+    description:
+      'DOT-legal race tires (100TW or less). Maximum dry grip but limited tread life. Track/competition use. Brands: Hoosier R7, Toyo RR, Nitto NT01.',
+    estimatedCost: '$1,200 - $2,400',
+    estimatedCostLow: 1200,
+    estimatedCostHigh: 2400,
+    deltas: {
+      gripCornering: 2.0,
+      braking: 1.0,
+      trackPace: 1.2,
+      drivability: -1.0, // Dangerous in wet/cold, short life
+    },
+    metricChanges: {
+      lateralGImprovement: 0.15,
+      brakingImprovement: 10,
+    },
+    carSlug: null,
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'tires-bias-ply',
+    name: 'Bias-Ply Racing Tires',
+    slug: 'tires-bias-ply',
+    type: 'module',
+    category: 'wheels',
+    tier: 'ultimatePower',
+    description:
+      'Drag racing bias-ply slicks for maximum straight-line traction. Not for road use. Brands: Mickey Thompson, Hoosier, M&H.',
+    estimatedCost: '$400 - $1,000',
+    estimatedCostLow: 400,
+    estimatedCostHigh: 1000,
+    deltas: {
+      powerAccel: 1.5, // Maximum launch traction
+      gripCornering: -0.5, // Poor lateral grip
+      trackPace: -0.5, // Not for road course
+      drivability: -2.0, // Only for drag strip
+    },
+    metricChanges: {
+      zeroToSixtyImprovement: 0.5,
+    },
+    carSlug: null,
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
 
   // ============================================================================
   // AERO MODULES
@@ -1408,6 +1731,46 @@ export const upgradeModules = [
       gripCornering: 0.5,
       trackPace: 0.5,
       powerAccel: -0.2, // Drag penalty
+    },
+    carSlug: null,
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'rear-diffuser',
+    name: 'Rear Diffuser',
+    slug: 'rear-diffuser',
+    type: 'module',
+    category: 'aero',
+    tier: 'trackPack',
+    description:
+      'Rear diffuser to accelerate underbody airflow and reduce rear lift. Most effective with flat undertray. Brands: Verus Engineering, Seibon, OEM+.',
+    estimatedCost: '$600 - $1,500',
+    estimatedCostLow: 600,
+    estimatedCostHigh: 1500,
+    deltas: {
+      gripCornering: 0.3,
+      trackPace: 0.3,
+      powerAccel: -0.1, // Minor drag increase
+    },
+    carSlug: null,
+    applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],
+  },
+  {
+    key: 'undertray',
+    name: 'Flat Undertray',
+    slug: 'undertray',
+    type: 'module',
+    category: 'aero',
+    tier: 'trackPack',
+    description:
+      'Flat underbody panel to smooth airflow beneath the car. Reduces drag and improves diffuser efficiency. Brands: Verus Engineering, ACS Composite.',
+    estimatedCost: '$400 - $1,000',
+    estimatedCostLow: 400,
+    estimatedCostHigh: 1000,
+    deltas: {
+      gripCornering: 0.2,
+      trackPace: 0.2,
+      reliabilityHeat: 0.2, // Better underbody airflow can help cooling
     },
     carSlug: null,
     applicableLayouts: ['Mid-Engine', 'Front-Engine', 'Rear-Engine'],

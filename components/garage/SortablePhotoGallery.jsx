@@ -204,13 +204,38 @@ function PhotoItem({
             )}
           </div>
         ) : (
-          <Image
-            src={item.blob_url || item.thumbnail_url}
-            alt={item.caption || 'Photo'}
-            fill
-            style={{ objectFit: 'cover' }}
-            sizes="(max-width: 640px) 50vw, 180px"
-          />
+          <>
+            {/* #region agent log */}
+            {(() => {
+              if (typeof window !== 'undefined')
+                fetch('http://127.0.0.1:7244/ingest/e28cdfb9-afc8-4c0d-9b4b-3cf0adbc93a8', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    location: 'SortablePhotoGallery.jsx:PhotoItem',
+                    message: 'Rendering photo',
+                    data: {
+                      itemId: item.id,
+                      mediaType: item.media_type,
+                      blobUrl: item.blob_url?.slice(0, 80),
+                      isHero,
+                    },
+                    timestamp: Date.now(),
+                    sessionId: 'debug-session',
+                    hypothesisId: 'D',
+                  }),
+                }).catch(() => {});
+              return null;
+            })()}
+            {/* #endregion */}
+            <Image
+              src={item.blob_url || item.thumbnail_url}
+              alt={item.caption || 'Photo'}
+              fill
+              style={{ objectFit: 'cover' }}
+              sizes="(max-width: 640px) 50vw, 180px"
+            />
+          </>
         )}
 
         {/* Hero Badge */}

@@ -441,7 +441,8 @@ function CategoryPopup({
   );
 
   // Check which upgrades would be replaced for each unselected upgrade
-  // Fixed: use conflictsWith instead of conflictingUpgrades
+  // IMPORTANT: Only hard conflicts (isHardConflict: true) trigger replacement
+  // 'overlap' type conflicts are informational only - they should NOT deselect anything
   const getReplacementInfo = useCallback(
     (upgradeKey) => {
       if (selectedModules.includes(upgradeKey)) return null;
@@ -449,6 +450,15 @@ function CategoryPopup({
       try {
         const conflict = checkUpgradeConflict(upgradeKey, selectedModules);
         if (!conflict) return null;
+
+        // CRITICAL FIX: Only return replacement info for hard conflicts
+        // 'overlap' conflicts (hardware mods with stage tunes) are INFO ONLY
+        // They should NOT trigger deselection of the tune
+        if (!conflict.isHardConflict) {
+          // Return the conflict for display purposes but with empty conflictingUpgrades
+          // so the UI shows the info but doesn't trigger replacement
+          return null; // Or return { ...conflict, conflictingUpgrades: [], names: [] } for info display
+        }
 
         // Use conflictsWith (the correct property name from checkUpgradeConflict)
         const conflictingKeys = conflict.conflictsWith || [];
