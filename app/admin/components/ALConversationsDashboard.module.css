@@ -446,6 +446,7 @@
 
 /* Message Styles - Compact */
 .message {
+  position: relative;
   padding: 8px 10px;
   border-radius: 6px;
   background: var(--bg-surface, rgba(255, 255, 255, 0.04));
@@ -490,14 +491,41 @@
   color: var(--accent-teal, #10b981);
 }
 
-/* Duplicate badge */
-.duplicateBadge {
+/* Turn number indicator */
+.turnNumber {
   font-size: 9px;
-  font-weight: 600;
-  color: var(--color-warning, #f59e0b);
-  background: rgba(245, 158, 11, 0.15);
-  padding: 1px 4px;
-  border-radius: 3px;
+  color: var(--text-tertiary, #64748b);
+  font-family: var(--font-mono, monospace);
+}
+
+/* Conversation Flow - shows Q→A→Q→A pattern */
+.conversationFlow {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.flowItem {
+  position: relative;
+}
+
+/* Connector line between messages */
+.flowConnector {
+  display: flex;
+  justify-content: flex-start;
+  padding-left: 8px;
+  height: 12px;
+}
+
+.connectorLine {
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(
+    to bottom,
+    var(--border-default, rgba(255, 255, 255, 0.12)),
+    var(--border-subtle, rgba(255, 255, 255, 0.06))
+  );
+  border-radius: 1px;
 }
 
 .messageTime {

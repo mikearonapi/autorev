@@ -160,54 +160,55 @@ function formatDate(dateString) {
 }
 
 /**
- * Deduplicate consecutive messages with same role and similar content
- * Groups duplicates together with a count
+ * Remove duplicate consecutive messages and return clean conversation flow
+ * Duplicates are messages with the same role AND content within a short time window
+ *
+ * @param {Array} messages - Raw messages from database
+ * @returns {Object} { messages: cleaned messages, duplicatesRemoved: count }
  */
-function deduplicateMessages(messages) {
-  if (!messages || messages.length === 0) return [];
+function removeDuplicateMessages(messages) {
+  if (!messages || messages.length === 0) return { messages: [], duplicatesRemoved: 0 };
 
   const result = [];
-  let currentGroup = null;
+  const normalize = (str) => str?.trim().toLowerCase().replace(/\s+/g, ' ') || '';
+  let duplicatesRemoved = 0;
+  let prevMsg = null;
 
   for (const msg of messages) {
-    // Normalize content for comparison (trim, lowercase, remove extra whitespace)
-    const normalizedContent = msg.content?.trim().toLowerCase().replace(/\s+/g, ' ') || '';
+    const normalizedContent = normalize(msg.content);
 
-    if (
-      currentGroup &&
-      currentGroup.role === msg.role &&
-      currentGroup.normalizedContent === normalizedContent
-    ) {
-      // Same role and content - increment duplicate count
-      currentGroup.duplicateCount++;
-      currentGroup.allIds.push(msg.id);
+    // Check if this is a duplicate of the previous message (same role + content)
+    const isDuplicate =
+      prevMsg && prevMsg.role === msg.role && prevMsg.normalizedContent === normalizedContent;
+
+    if (isDuplicate) {
+      // Skip this duplicate message
+      duplicatesRemoved++;
     } else {
-      // New unique message - save current group and start new one
-      if (currentGroup) {
-        result.push(currentGroup);
-      }
-      currentGroup = {
+      // Keep this message
+      result.push({
         ...msg,
         normalizedContent,
-        duplicateCount: 1,
-        allIds: [msg.id],
-      };
+      });
+      prevMsg = { ...msg, normalizedContent };
     }
   }
 
-  // Don't forget the last group
-  if (currentGroup) {
-    result.push(currentGroup);
-  }
+  return { messages: result, duplicatesRemoved };
+}
 
-  return result;
+// Legacy wrapper - now just removes duplicates (kept for potential future use)
+function _deduplicateMessages(messages) {
+  return removeDuplicateMessages(messages).messages;
 }
 
 function ConversationCard({ conversation, isExpanded, onToggle }) {
-  // Deduplicate messages for cleaner display
-  const deduplicatedMessages = deduplicateMessages(conversation.messages);
-  const userCount = deduplicatedMessages.filter((m) => m.role === 'user').length;
-  const alCount = deduplicatedMessages.filter((m) => m.role === 'assistant').length;
+  // Remove duplicates and get clean conversation flow
+  const { messages: cleanMessages } = removeDuplicateMessages(conversation.messages);
+
+  // Count Q/A turns
+  const userCount = cleanMessages.filter((m) => m.role === 'user').length;
+  const alCount = cleanMessages.filter((m) => m.role === 'assistant').length;
 
   return (
     <div className={`${styles.conversationCard} ${isExpanded ? styles.expanded : ''}`}>
@@ -238,21 +239,35 @@ function ConversationCard({ conversation, isExpanded, onToggle }) {
 
       {isExpanded && (
         <div className={styles.messagesContainer}>
-          {deduplicatedMessages.length === 0 ? (
+          {cleanMessages.length === 0 ? (
             <div className={styles.noMessages}>No messages</div>
           ) : (
-            deduplicatedMessages.map((message, idx) => (
-              <div key={message.id || idx} className={`${styles.message} ${styles[message.role]}`}>
-                <div className={styles.messageHeader}>
-                  <span className={styles.roleLabel}>{message.role === 'user' ? 'Q' : 'A'}</span>
-                  {message.duplicateCount > 1 && (
-                    <span className={styles.duplicateBadge}>{message.duplicateCount}x</span>
-                  )}
-                  <span className={styles.messageTime}>{formatDate(message.createdAt)}</span>
-                </div>
-                <div className={styles.messageContent}>{message.content}</div>
-              </div>
-            ))
+            <div className={styles.conversationFlow}>
+              {cleanMessages.map((message, idx) => {
+                const isQuestion = message.role === 'user';
+                const showConnector = idx > 0;
+
+                return (
+                  <div key={message.id || idx} className={styles.flowItem}>
+                    {/* Connector line for conversation flow */}
+                    {showConnector && (
+                      <div className={styles.flowConnector}>
+                        <div className={styles.connectorLine} />
+                      </div>
+                    )}
+
+                    <div className={`${styles.message} ${styles[message.role]}`}>
+                      <div className={styles.messageHeader}>
+                        <span className={styles.roleLabel}>{isQuestion ? 'Q' : 'A'}</span>
+                        <span className={styles.turnNumber}>#{idx + 1}</span>
+                        <span className={styles.messageTime}>{formatDate(message.createdAt)}</span>
+                      </div>
+                      <div className={styles.messageContent}>{message.content}</div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           )}
         </div>
       )}

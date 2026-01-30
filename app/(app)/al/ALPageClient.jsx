@@ -673,17 +673,28 @@ export default function ALPageClient() {
     }
   }, []);
 
+  // Track if we're currently sending a pending prompt to prevent double-sends
+  const pendingPromptSendingRef = useRef(false);
+
   // Auto-send pending prompt if autoSend flag is true
   // Uses a small delay to ensure sendMessageRef is populated
+  // CRITICAL: Uses ref to prevent race condition with manual "Send" button click
   useEffect(() => {
     if (pendingPrompt?.autoSend && sendMessageRef.current) {
       const timer = setTimeout(() => {
-        if (pendingPrompt && sendMessageRef.current) {
+        // Check the ref to prevent double-send race condition
+        // Also check pendingPrompt still exists (user might have dismissed it)
+        if (!pendingPromptSendingRef.current && pendingPrompt && sendMessageRef.current) {
+          pendingPromptSendingRef.current = true;
           const promptText = pendingPrompt.prompt;
           const displayText = pendingPrompt.displayMessage;
           setPendingPrompt(null);
           // Pass both the full prompt and the user-friendly display message
           sendMessageRef.current(promptText, displayText);
+          // Reset the ref after a short delay to allow future sends
+          setTimeout(() => {
+            pendingPromptSendingRef.current = false;
+          }, 500);
         }
       }, 100);
       return () => clearTimeout(timer);
@@ -805,6 +816,7 @@ export default function ALPageClient() {
       abortControllerRef.current.abort();
       abortControllerRef.current = null;
       setIsLoading(false);
+      isSendingRef.current = false; // Reset send lock
       setStreamingContent('');
       setCurrentPhase(null);
       setActiveTools([]);
@@ -953,12 +965,22 @@ export default function ALPageClient() {
   const sendMessageRef = useRef(null);
 
   const handleSendPendingPrompt = useCallback(() => {
+    // Check ref to prevent double-send race condition with auto-send
+    if (pendingPromptSendingRef.current) {
+      console.warn('[AL] Pending prompt already being sent, ignoring duplicate click');
+      return;
+    }
     if (pendingPrompt && sendMessageRef.current) {
+      pendingPromptSendingRef.current = true;
       const promptText = pendingPrompt.prompt;
       const displayText = pendingPrompt.displayMessage;
       setPendingPrompt(null);
       // Pass both the full prompt and the user-friendly display message
       sendMessageRef.current(promptText, displayText);
+      // Reset the ref after a short delay to allow future sends
+      setTimeout(() => {
+        pendingPromptSendingRef.current = false;
+      }, 500);
     }
   }, [pendingPrompt]);
 
@@ -979,13 +1001,25 @@ export default function ALPageClient() {
     setAttachments((prev) => prev.filter((a) => a.id !== attachmentId));
   }, []);
 
+  // Ref to track in-flight request (more reliable than state for race conditions)
+  const isSendingRef = useRef(false);
+
   // Send message
   // @param {string} messageText - The actual prompt text to send to AL (may include technical instructions)
   // @param {string} displayMessage - Optional user-friendly message to show in chat history (defaults to messageText)
   const sendMessage = async (messageText = input, displayMessage = null) => {
     if (!messageText.trim() || isLoading) return;
 
+    // CRITICAL: Check ref immediately to prevent race condition double-sends
+    // This catches cases where isLoading state hasn't updated yet
+    if (isSendingRef.current) {
+      console.warn('[AL] Request already in flight, ignoring duplicate send');
+      return;
+    }
+    isSendingRef.current = true;
+
     if (!isAuthenticated) {
+      isSendingRef.current = false;
       authModal.openSignIn();
       return;
     }
@@ -1353,6 +1387,7 @@ export default function ALPageClient() {
       }
     } finally {
       setIsLoading(false);
+      isSendingRef.current = false; // Reset send lock
       setActiveTools([]); // Clear tool activity indicators
       setCurrentPhase(null); // Clear phase indicator
     }
