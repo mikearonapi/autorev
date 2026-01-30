@@ -258,14 +258,14 @@
 .conversationsList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
 }
 
 /* Conversation Card */
 .conversationCard {
   background: var(--bg-elevated, #1b263b);
   border: 1px solid var(--border-default, rgba(255, 255, 255, 0.12));
-  border-radius: 12px;
+  border-radius: 8px;
   overflow: hidden;
   transition: border-color 0.2s ease;
 }
@@ -281,9 +281,11 @@
 .cardHeader {
   width: 100%;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 8px;
-  padding: 16px;
+  padding: 10px 12px;
   background: none;
   border: none;
   cursor: pointer;
@@ -291,50 +293,60 @@
   color: var(--text-primary, #ffffff);
 }
 
-@media (min-width: 640px) {
-  .cardHeader {
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 16px;
-  }
-}
-
 .cardHeaderLeft {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 3px;
   flex: 1;
   min-width: 0;
 }
 
-.userInfo {
+.userRow {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .userEmail {
-  font-size: 14px;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 180px;
+}
+
+@media (min-width: 768px) {
+  .userEmail {
+    font-size: 13px;
+    max-width: none;
+  }
+
   font-weight: 500;
   color: var(--text-primary, #ffffff);
 }
 
 .userName {
-  font-size: 13px;
+  font-size: 11px;
   color: var(--text-secondary, #94a3b8);
 }
 
 .tierBadge {
-  padding: 2px 8px;
-  font-size: 11px;
+  padding: 1px 5px;
+  font-size: 9px;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-radius: 4px;
+  letter-spacing: 0.3px;
+  border-radius: 3px;
   background: var(--bg-surface, rgba(255, 255, 255, 0.04));
   color: var(--text-secondary, #94a3b8);
+
+  @media (min-width: 768px) {
+    .tierBadge {
+      font-size: 10px;
+      padding: 2px 6px;
+    }
+  }
 }
 
 .tierBadge.tuner {
@@ -347,65 +359,71 @@
   color: #8b5cf6;
 }
 
-.conversationMeta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-}
-
-.conversationMeta .title {
-  font-size: 15px;
+.titleRow {
+  font-size: 12px;
   font-weight: 400;
   color: var(--text-secondary, #94a3b8);
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 400px;
+  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 }
 
-.carContext {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  color: var(--accent-teal, #10b981);
+@media (min-width: 768px) {
+  .titleRow {
+    font-size: 13px;
+  }
 }
 
 .cardHeaderRight {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
   flex-shrink: 0;
-}
-
-.stats {
-  display: flex;
-  align-items: center;
-  gap: 16px;
 }
 
 .messageCount {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 13px;
+  gap: 4px;
+  font-family: var(--font-mono, monospace);
+}
+
+@media (min-width: 768px) {
+  .messageCount {
+    font-size: 11px;
+  }
+
+  font-size: 10px;
   color: var(--text-secondary, #94a3b8);
 }
 
 .messageCount svg {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
 }
 
 .timestamp {
-  font-size: 12px;
+  font-size: 10px;
   color: var(--text-tertiary, #64748b);
   white-space: nowrap;
+
+  @media (min-width: 768px) {
+    .timestamp {
+      font-size: 11px;
+    }
+  }
 }
 
 .expandIcon {
   color: var(--text-tertiary, #64748b);
+
+  .expandIcon svg {
+    width: 14px;
+    height: 14px;
+  }
 }
 
 /* Messages Container */
@@ -526,21 +544,29 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
-  padding: 16px 0;
+  gap: 10px;
+  padding: 10px 0;
 }
 
 .pageButton {
-  min-height: 40px;
-  padding: 8px 16px;
+  min-height: 32px;
+  padding: 6px 12px;
   background: var(--bg-elevated, #1b263b);
   border: 1px solid var(--border-default, rgba(255, 255, 255, 0.12));
-  border-radius: 8px;
+  border-radius: 6px;
   color: var(--text-primary, #ffffff);
-  font-size: 14px;
+  font-size: 11px;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+@media (min-width: 768px) {
+  .pageButton {
+    min-height: 36px;
+    padding: 8px 14px;
+    font-size: 12px;
+  }
 }
 
 .pageButton:hover:not(:disabled) {
@@ -554,7 +580,13 @@
 }
 
 .pageInfo {
-  font-size: 14px;
+  font-size: 10px;
   color: var(--text-secondary, #94a3b8);
   font-family: var(--font-mono, monospace);
+}
+
+@media (min-width: 768px) {
+  .pageInfo {
+    font-size: 11px;
+  }
 }
