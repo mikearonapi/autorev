@@ -4085,6 +4085,34 @@ function GarageContent() {
     }
   });
 
+  /**
+   * PWA SAFE AREA FIX: Force re-render after mount
+   *
+   * In PWAs, env(safe-area-inset-top) may not be available on first render.
+   * This causes the header to render with incorrect padding initially.
+   *
+   * This pattern matches DataHeader.jsx which works correctly:
+   * 1. useSearchParams() triggers Suspense (already present above)
+   * 2. After mount, sync state to URL via router.replace()
+   * 3. This triggers re-render with correct env() values
+   *
+   * @see app/(app)/data/DataHeader.jsx for the working pattern
+   */
+  const [safeAreaMounted, setSafeAreaMounted] = useState(false);
+  useEffect(() => {
+    // Sync selected index to URL if not already there (matches DataHeader pattern)
+    // This router.replace() triggers style recalculation with correct env() values
+    const currentTab = searchParams.get('tab');
+    if (!currentTab && selectedIndex !== undefined) {
+      const tabs = ['vehicles', 'builds', 'shop'];
+      const tabName = tabs[selectedIndex] || 'vehicles';
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.set('tab', tabName);
+      router.replace(newUrl.pathname + newUrl.search, { scroll: false });
+    }
+    setSafeAreaMounted(true);
+  }, [searchParams, selectedIndex, router]);
+
   const [isAddVehicleOpen, setIsAddVehicleOpen] = useState(false);
   const [_addingFavoriteCar, setAddingFavoriteCar] = useState(null);
   const [selectedBuild, setSelectedBuild] = useState(null);
@@ -4714,7 +4742,7 @@ function GarageContent() {
   return (
     <div className={styles.page}>
       {/* Page Header - Title on left, Profile on right */}
-      <header className={styles.pageHeader}>
+      <header className={styles.pageHeader} data-safe-area-mounted={safeAreaMounted || undefined}>
         <div className={styles.headerLeft}>
           <h1 className={styles.pageTitle}>{firstName}&apos;s Garage</h1>
         </div>

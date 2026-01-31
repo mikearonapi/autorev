@@ -413,11 +413,22 @@ a[href='#main-content']:focus {
   /* Touch target minimum (Apple/Google guidelines) */
   --touch-target-min: 44px;
 
-  /* Safe area insets for notched devices */
+  /* Safe area insets for notched devices
+     IMPORTANT: These use 0px fallback which works for normal browsing.
+     For PWAs, the SafeAreaInit component sets data-safe-area-ready after mount
+     to ensure env() values are calculated and styles are recalculated. */
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --safe-area-left: env(safe-area-inset-left, 0px);
   --safe-area-right: env(safe-area-inset-right, 0px);
+
+  /* PWA Safe Area Fallbacks
+     These are used BEFORE safe areas are calculated (initial PWA render).
+     After SafeAreaInit runs and sets data-safe-area-ready, actual env() values are used.
+     47px = iPhone notch/Dynamic Island typical height
+     34px = iPhone home indicator typical height */
+  --safe-area-top-fallback: 47px;
+  --safe-area-bottom-fallback: 34px;
 }
 
 /* Tablet breakpoint: increase spacing - GRAVL-inspired generous scale */
@@ -774,6 +785,35 @@ body.has-immersive-modal .safe-area-horizontal::after {
 }
 
 /* ==========================================================================
+   PWA SAFE AREA INITIALIZATION FIX
+   
+   Problem: In PWAs (especially iOS standalone mode), env(safe-area-inset-*)
+   may return 0 on initial render before the browser calculates actual values.
+   This causes content to render "shifted up" without proper top padding.
+   
+   Solution: The SafeAreaInit component sets data-safe-area-ready on <html>
+   after mount (using requestAnimationFrame to ensure safe areas are calculated).
+   
+   CSS Strategy:
+   - In PWA standalone mode BEFORE safe-area-ready: Use fallback padding
+   - After safe-area-ready: env() values are calculated, CSS works normally
+   - In browser mode: No special handling needed (env() works immediately)
+   
+   The [data-safe-area-ready] check ensures we only apply fallbacks during
+   the brief window between PWA launch and safe area calculation.
+   ========================================================================== */
+
+/* PWA standalone mode detection - iOS and Android */
+@media (display-mode: standalone) {
+  /* Before safe areas are ready, ensure content has some top padding
+     This prevents the "shifted up" appearance on initial PWA launch */
+  :root:not([data-safe-area-ready]) {
+    /* Override safe-area-top with fallback during initial render */
+    --safe-area-top: var(--safe-area-top-fallback, 47px);
+  }
+}
+
+/* ==========================================================================
    ANDROID-SPECIFIC OPTIMIZATIONS
    
    Android Chrome has unique behaviors that can cause issues:
@@ -1020,7 +1060,6 @@ textarea,
   width: 100%;
   max-width: var(--container-max);
   margin: 0 auto;
-  padding-right: var(--space-md);
 
   /* Support notched devices */
   padding-left: max(var(--space-md), var(--safe-area-left));

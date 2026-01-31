@@ -42,6 +42,7 @@ import { QueryProvider } from '@/components/providers/QueryProvider';
 import { SavedBuildsProvider } from '@/components/providers/SavedBuildsProvider';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import SafeAreaFallback from '@/components/SafeAreaFallback';
+import SafeAreaInit from '@/components/SafeAreaInit';
 import ScrollToTop from '@/components/ScrollToTop';
 import ServiceWorkerRegistration from '@/components/ServiceWorkerRegistration';
 import SkipLink from '@/components/SkipLink';
@@ -427,6 +428,14 @@ export default function RootLayout({ children }) {
           2. Updates the theme-color meta tag for Android status bar color
         */}
         <SafeAreaFallback />
+
+        {/* 
+          PWA Safe Area Initialization
+          Forces style recalculation after mount to ensure env(safe-area-inset-*)
+          values are available. Without this, PWAs may render with 0 safe area
+          padding on initial launch until the first navigation.
+        */}
+        <SafeAreaInit />
 
         {/* Horizontal safe area fills for landscape mode (left/right camera cutouts) */}
         <div className="safe-area-horizontal" aria-hidden="true" />

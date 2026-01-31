@@ -21,6 +21,7 @@ import Image from 'next/image';
 
 import { HeroCTA, FinalCTA, TypingAnimation } from '@/components/homepage';
 import IPhoneFrame from '@/components/IPhoneFrame';
+import SafeAreaHeader from '@/components/SafeAreaHeader';
 import { SITE_DESIGN_IMAGES, UI_IMAGES } from '@/lib/images';
 
 import styles from './page.module.css';
@@ -105,8 +106,9 @@ const AL_SAMPLE_QUESTIONS = [
 export default function Home() {
   return (
     <div className={styles.page} data-no-main-offset>
-      {/* Hero Section */}
-      <section className={styles.hero}>
+      {/* Hero Section - Wrapped in SafeAreaHeader for PWA safe area fix
+          This matches the pattern used in DataHeader which works correctly */}
+      <SafeAreaHeader className={styles.hero}>
         {/* Hero Content - Text on left for desktop */}
         <div className={styles.heroContent}>
           {/* Logo with icon on desktop */}
@@ -191,7 +193,7 @@ export default function Home() {
             </IPhoneFrame>
           </div>
         </div>
-      </section>
+      </SafeAreaHeader>
 
       {/* AL Introduction Section */}
       <section className={styles.alIntro}>
