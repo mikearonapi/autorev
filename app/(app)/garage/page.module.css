@@ -2745,7 +2745,9 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 8px 8px 16px;
+
+  /* Page already has --page-bottom-padding for tab bar clearance */
+  padding: 8px;
   background: transparent;
   flex-shrink: 0;
 }
@@ -2927,7 +2929,7 @@
 
   .heroBottomBar {
     gap: 8px;
-    padding: 8px 12px 20px;
+    padding: 8px 12px;
   }
 
   .heroBottomBtn {
