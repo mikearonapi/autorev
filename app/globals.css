@@ -460,6 +460,17 @@ html {
   scroll-behavior: smooth;
 
   /* =======================================================================
+     CRITICAL: HTML BACKGROUND FOR PWA SAFE AREAS
+     
+     On iOS PWAs with black-translucent status bar, the viewport extends
+     behind the notch/Dynamic Island and home indicator. If html has no
+     background, the system default shows through as dark bars.
+     
+     This must match body's base color to ensure seamless safe area fills.
+     ======================================================================= */
+  background-color: var(--color-bg-base, #0d1b2a);
+
+  /* =======================================================================
      MOBILE TEXT SIZE & ZOOM PREVENTION
      
      These rules prevent unwanted zoom behaviors on mobile devices:
@@ -805,11 +816,12 @@ body.has-immersive-modal .safe-area-horizontal::after {
 
 /* PWA standalone mode detection - iOS and Android */
 @media (display-mode: standalone) {
-  /* Before safe areas are ready, ensure content has some top padding
-     This prevents the "shifted up" appearance on initial PWA launch */
+  /* Before safe areas are ready, ensure content has proper padding
+     This prevents the "shifted up" and "cut off bottom nav" on initial PWA launch */
   :root:not([data-safe-area-ready]) {
-    /* Override safe-area-top with fallback during initial render */
+    /* Override safe area vars with fallbacks during initial render */
     --safe-area-top: var(--safe-area-top-fallback, 47px);
+    --safe-area-bottom: var(--safe-area-bottom-fallback, 34px);
   }
 }
 

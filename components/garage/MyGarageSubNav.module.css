@@ -7,7 +7,10 @@
   align-items: center;
   justify-content: center;
   padding: 12px 16px;
-  padding-top: calc(12px + env(safe-area-inset-top, 0));
+
+  /* IMPORTANT: Use var(--safe-area-top) instead of env() directly
+     so PWA fallback values work before safe areas are calculated */
+  padding-top: calc(12px + var(--safe-area-top, env(safe-area-inset-top, 0px)));
   position: relative;
   background: transparent;
 
@@ -36,8 +39,8 @@
   transition: all 0.2s ease;
   border-radius: 10px;
 
-  /* Adjust for safe area */
-  top: calc(50% + env(safe-area-inset-top, 0) / 2);
+  /* Adjust for safe area - use CSS var for PWA fallback support */
+  top: calc(50% + var(--safe-area-top, env(safe-area-inset-top, 0px)) / 2);
 }
 
 .backButton:hover {
@@ -55,8 +58,8 @@
   left: 60px;
   transform: translateY(-50%);
 
-  /* Adjust for safe area */
-  top: calc(50% + env(safe-area-inset-top, 0) / 2);
+  /* Adjust for safe area - use CSS var for PWA fallback support */
+  top: calc(50% + var(--safe-area-top, env(safe-area-inset-top, 0px)) / 2);
 }
 
 /* Right Action - Right positioned */
@@ -65,8 +68,8 @@
   right: 16px;
   transform: translateY(-50%);
 
-  /* Adjust for safe area */
-  top: calc(50% + env(safe-area-inset-top, 0) / 2);
+  /* Adjust for safe area - use CSS var for PWA fallback support */
+  top: calc(50% + var(--safe-area-top, env(safe-area-inset-top, 0px)) / 2);
 }
 
 /* Dropdown Container */
@@ -284,7 +287,7 @@
 @media (min-width: 481px) {
   .header {
     padding: 10px 12px;
-    padding-top: calc(10px + env(safe-area-inset-top, 0));
+    padding-top: calc(10px + var(--safe-area-top, env(safe-area-inset-top, 0px)));
   }
 
   .backButton {

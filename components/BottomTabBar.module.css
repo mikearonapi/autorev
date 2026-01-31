@@ -41,8 +41,10 @@
 
   /* Safe area at bottom - content sits above this */
 
-  /* Add extra 8px base padding + safe area for breathing room */
-  padding-bottom: calc(8px + env(safe-area-inset-bottom, 0));
+  /* Add extra 8px base padding + safe area for breathing room
+     IMPORTANT: Use var(--safe-area-bottom) instead of env() directly
+     so PWA fallback values work before safe areas are calculated */
+  padding-bottom: calc(8px + var(--safe-area-bottom, env(safe-area-inset-bottom, 0px)));
 
   /* ANDROID FIX: Promote to GPU layer for smoother scrolling */
   will-change: transform;
@@ -355,7 +357,7 @@
 @media (max-height: 500px) and (orientation: landscape) {
   .nav {
     /* Less padding in landscape but still some breathing room */
-    padding-bottom: calc(4px + env(safe-area-inset-bottom, 0));
+    padding-bottom: calc(4px + var(--safe-area-bottom, env(safe-area-inset-bottom, 0px)));
   }
 
   .container {
