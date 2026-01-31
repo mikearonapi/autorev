@@ -760,7 +760,7 @@
 }
 
 /* ==========================================================
-   CAN'T FIND LINK - Bottom of selector mode
+   CAN'T FIND BUTTON - Prominent CTA at bottom of selector mode
    ========================================================== */
 .cantFindLink {
   display: flex;
@@ -768,18 +768,24 @@
   justify-content: center;
   gap: 0.5rem;
   width: 100%;
-  padding: 1rem;
-  margin-top: 1rem;
-  background: transparent;
-  border: none;
-  color: var(--color-text-muted, #666666);
-  font-size: 0.875rem;
+  min-height: 48px;
+  padding: 0.875rem 1.5rem;
+  margin-top: 1.5rem;
+  background: rgba(212, 255, 0, 0.1);
+  border: 1px solid rgba(212, 255, 0, 0.4);
+  border-radius: 0.5rem;
+  color: var(--color-accent-lime, #d4ff00);
+  font-size: 0.9375rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .cantFindLink:hover {
-  color: var(--color-accent-lime, #d4ff00);
+  background: var(--color-accent-lime, #d4ff00);
+  border-color: var(--color-accent-lime, #d4ff00);
+  color: var(--color-bg-base, #0a1628);
+  box-shadow: 0 4px 12px rgba(212, 255, 0, 0.25);
 }
 
 /* ==========================================================
