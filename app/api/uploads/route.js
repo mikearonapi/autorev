@@ -21,6 +21,7 @@ import { NextResponse } from 'next/server';
 
 import { createClient } from '@supabase/supabase-js';
 import { put, del } from '@vercel/blob';
+import sharp from 'sharp';
 
 import { errors } from '@/lib/apiErrors';
 import { awardPoints } from '@/lib/pointsService';
@@ -31,6 +32,26 @@ import {
   getBearerToken,
 } from '@/lib/supabaseServer';
 import { compressFile, isCompressible } from '@/lib/tinify';
+
+/**
+ * Convert an image buffer to WebP format
+ * WebP provides ~30% smaller file sizes than PNG/JPG with similar quality
+ * @param {Buffer|Blob} input - Image data to convert
+ * @returns {Promise<{buffer: Buffer, size: number}>}
+ */
+async function convertToWebP(input) {
+  // Convert Blob to Buffer if needed
+  const buffer = input instanceof Blob ? Buffer.from(await input.arrayBuffer()) : input;
+
+  const webpBuffer = await sharp(buffer)
+    .webp({ quality: 85 }) // Good balance of quality and size
+    .toBuffer();
+
+  return {
+    buffer: webpBuffer,
+    size: webpBuffer.length,
+  };
+}
 
 // File size limits
 // NOTE: Vercel serverless has 4.5MB body limit, so files must be resized on client
@@ -119,41 +140,69 @@ async function handlePost(request) {
 
   // Generate unique filename
   const timestamp = Date.now();
-  let ext = file.type.split('/')[1];
-  // Handle special cases
-  if (ext === 'jpeg') ext = 'jpg';
-  if (ext === 'quicktime') ext = 'mov';
-
   const folder = mediaType === 'video' ? 'user-videos' : 'user-uploads';
+
+  // For images, always use .webp extension (we convert all images to webp)
+  // For videos, use original extension
+  let ext;
+  let finalContentType;
+  if (mediaType === 'image') {
+    ext = 'webp';
+    finalContentType = 'image/webp';
+  } else {
+    ext = file.type.split('/')[1];
+    if (ext === 'quicktime') ext = 'mov';
+    finalContentType = file.type;
+  }
+
   const filename = `${folder}/${user.id}/${timestamp}.${ext}`;
 
-  // Compress image with TinyPNG before uploading (skip for videos)
+  // Compress image with TinyPNG, then convert to WebP (skip for videos)
   let fileToUpload = file;
   const originalFileSize = file.size;
   let _compressionApplied = false;
   let compressionSavings = 0;
 
-  if (mediaType === 'image' && isCompressible(file.type)) {
+  if (mediaType === 'image') {
     try {
-      const compressed = await compressFile(file);
-      if (compressed) {
-        fileToUpload = compressed.blob;
-        _compressionApplied = true;
-        compressionSavings = compressed.savings;
-        console.log(
-          `[Uploads API] Compressed: ${(originalFileSize / 1024).toFixed(0)}KB → ${(compressed.compressedSize / 1024).toFixed(0)}KB (-${(compressionSavings * 100).toFixed(1)}%)`
-        );
+      // Step 1: Compress with TinyPNG (if compressible)
+      let imageData = file;
+      if (isCompressible(file.type)) {
+        const compressed = await compressFile(file);
+        if (compressed) {
+          imageData = compressed.blob;
+          _compressionApplied = true;
+          compressionSavings = compressed.savings;
+          console.log(
+            `[Uploads API] TinyPNG: ${(originalFileSize / 1024).toFixed(0)}KB → ${(compressed.compressedSize / 1024).toFixed(0)}KB (-${(compressionSavings * 100).toFixed(1)}%)`
+          );
+        }
       }
-    } catch (compressError) {
-      // Log but don't fail - upload original if compression fails
-      console.warn('[Uploads API] Compression failed, uploading original:', compressError.message);
+
+      // Step 2: Convert to WebP format (always, for consistent format)
+      const webpResult = await convertToWebP(imageData);
+      fileToUpload = webpResult.buffer;
+      const webpSavings = imageData.size ? 1 - webpResult.size / imageData.size : 0;
+      console.log(
+        `[Uploads API] WebP: ${((imageData.size || originalFileSize) / 1024).toFixed(0)}KB → ${(webpResult.size / 1024).toFixed(0)}KB (-${(webpSavings * 100).toFixed(1)}%)`
+      );
+    } catch (processError) {
+      // Log but don't fail - upload original if processing fails
+      console.warn(
+        '[Uploads API] Image processing failed, uploading original:',
+        processError.message
+      );
+      // Fall back to original extension if webp conversion failed
+      ext = file.type.split('/')[1];
+      if (ext === 'jpeg') ext = 'jpg';
+      finalContentType = file.type;
     }
   }
 
-  // Upload to Vercel Blob (compressed or original)
+  // Upload to Vercel Blob
   const blob = await put(filename, fileToUpload, {
     access: 'public',
-    contentType: file.type,
+    contentType: finalContentType,
   });
 
   if (!blob.url) {
@@ -176,9 +225,9 @@ async function handlePost(request) {
     blob_url: blob.url,
     blob_pathname: blob.pathname,
     file_name: file.name || `upload-${timestamp}`,
-    file_size: fileToUpload.size, // Store compressed size
+    file_size: fileToUpload.size || fileToUpload.length, // Store final size (buffer or blob)
     original_file_size: originalFileSize, // Store original size for analytics
-    content_type: file.type,
+    content_type: finalContentType, // Use final content type (webp for images)
     caption: caption || null,
     is_primary: isPrimary,
     upload_source: 'web',

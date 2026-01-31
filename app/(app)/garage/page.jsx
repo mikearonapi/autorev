@@ -939,6 +939,7 @@ function DesktopGarageLayout({
       : item?.vehicle?.heroImageUrl && !isVideoUrl(item?.vehicle?.heroImageUrl)
         ? item?.vehicle?.heroImageUrl
         : null;
+
   // Check for stock images using correct property names from car data
   const hasStockImage = !!(car?.imageGarageUrl || car?.imageHeroUrl);
   // Filter out videos when selecting fallback - check both media_type AND URL extension
@@ -1157,6 +1158,7 @@ function DesktopGarageLayout({
                 fill
                 className={styles.heroImage}
                 priority
+                unoptimized // Bypass local image proxy - fixes dev server issues with Vercel Blob
               />
             ) : fallbackHeroUrl ? (
               <Image
@@ -1165,6 +1167,7 @@ function DesktopGarageLayout({
                 fill
                 className={styles.heroImage}
                 priority
+                unoptimized // Bypass local image proxy - fixes dev server issues with Vercel Blob
               />
             ) : hasStockImage ? (
               <CarImage car={car} variant="garage" className={styles.heroImage} lazy={false} />
@@ -2004,6 +2007,7 @@ function HeroVehicleDisplay({
               fill
               className={styles.heroImage}
               priority
+              unoptimized // Bypass local image proxy - fixes dev server issues with Vercel Blob
             />
           ) : fallbackHeroUrl ? (
             // First uploaded image as fallback for vehicles without stock images
@@ -2013,6 +2017,7 @@ function HeroVehicleDisplay({
               fill
               className={styles.heroImage}
               priority
+              unoptimized // Bypass local image proxy - fixes dev server issues with Vercel Blob
             />
           ) : hasStockImage ? (
             // Stock car image from database (only render if car has actual image URLs)
@@ -3439,6 +3444,7 @@ function BuildHeroDisplay({
               fill
               className={styles.heroImage}
               priority
+              unoptimized // Bypass local image proxy - fixes dev server issues with Vercel Blob
             />
           ) : (
             <CarImage car={build?.car} variant="garage" priority />

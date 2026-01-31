@@ -36,6 +36,23 @@ const nextConfig = {
   webpack: (config, { isServer }) => {
     if (!isServer) {
       // =============================================================================
+      // STUB OUT CORE-JS POLYFILLS
+      // posthog-js includes core-js, but our browserslist targets modern browsers
+      // that natively support all these features. Stubbing saves ~21 KiB.
+      // =============================================================================
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        // Stub core-js polyfills - modern browsers don't need them
+        'core-js/modules/es.array.at': false,
+        'core-js/modules/es.array.flat': false,
+        'core-js/modules/es.array.flat-map': false,
+        'core-js/modules/es.object.from-entries': false,
+        'core-js/modules/es.object.has-own': false,
+        'core-js/modules/es.string.trim-end': false,
+        'core-js/modules/es.string.trim-start': false,
+        'core-js/modules/es.math.trunc': false,
+      };
+      // =============================================================================
       // PERFORMANCE BUDGETS
       // Warn when assets exceed size limits (helps catch bundle bloat)
       // =============================================================================

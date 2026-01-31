@@ -20,6 +20,7 @@ import { NextResponse } from 'next/server';
 
 import { createClient } from '@supabase/supabase-js';
 import { put, del } from '@vercel/blob';
+import sharp from 'sharp';
 
 import { errors } from '@/lib/apiErrors';
 import { awardPoints } from '@/lib/pointsService';
@@ -30,6 +31,23 @@ import {
   getBearerToken,
 } from '@/lib/supabaseServer';
 import { compressImage, isCompressible } from '@/lib/tinify';
+
+/**
+ * Convert an image buffer to WebP format
+ * WebP provides ~30% smaller file sizes than PNG/JPG with similar quality
+ * @param {Buffer} buffer - Image buffer to convert
+ * @returns {Promise<{buffer: Buffer, size: number}>}
+ */
+async function convertToWebP(buffer) {
+  const webpBuffer = await sharp(buffer)
+    .webp({ quality: 85 }) // Good balance of quality and size
+    .toBuffer();
+
+  return {
+    buffer: webpBuffer,
+    size: webpBuffer.length,
+  };
+}
 
 /**
  * Get authenticated user from request (supports both cookie and Bearer token)
@@ -154,13 +172,14 @@ async function handlePost(request) {
   let finalBlobUrl = correctedBlobUrl;
   let finalBlobPathname = validatedPathname;
   let finalFileSize = fileSize;
+  let finalContentType = contentType;
   let compressionApplied = false;
   let compressionSavings = 0;
 
-  // Compress images with TinyPNG (skip videos)
-  if (mediaType === 'image' && isCompressible(contentType)) {
+  // Compress images with TinyPNG and convert to WebP (skip videos)
+  if (mediaType === 'image') {
     try {
-      console.log(`[SaveMetadata] Fetching image for compression: ${finalBlobUrl}`);
+      console.log(`[SaveMetadata] Fetching image for processing: ${finalBlobUrl}`);
 
       // Fetch the uploaded image from Vercel Blob
       // Use finalBlobUrl which has the corrected path (with user ID instead of __USER__)
@@ -169,54 +188,67 @@ async function handlePost(request) {
         throw new Error(`Failed to fetch image: ${imageResponse.status}`);
       }
 
-      const imageBuffer = Buffer.from(await imageResponse.arrayBuffer());
-      console.log(
-        `[SaveMetadata] Fetched ${(imageBuffer.length / 1024).toFixed(0)}KB, sending to TinyPNG...`
-      );
+      let imageBuffer = Buffer.from(await imageResponse.arrayBuffer());
+      console.log(`[SaveMetadata] Fetched ${(imageBuffer.length / 1024).toFixed(0)}KB`);
 
-      // Compress with TinyPNG
-      const compressed = await compressImage(imageBuffer, {
-        contentType,
-        filename: fileName,
-      });
-
-      if (compressed) {
-        // Upload compressed version to a new path
-        const compressedPathname = validatedPathname.replace(/(\.[^.]+)$/, '-compressed$1');
-
-        const compressedBlob = await put(compressedPathname, compressed.buffer, {
-          access: 'public',
+      // Step 1: Compress with TinyPNG (if compressible)
+      if (isCompressible(contentType)) {
+        const compressed = await compressImage(imageBuffer, {
           contentType,
+          filename: fileName,
         });
 
-        if (compressedBlob.url) {
-          // Delete the original uncompressed blob (use corrected URL)
-          try {
-            await del(finalBlobUrl);
-            console.log(`[SaveMetadata] Deleted original: ${validatedPathname}`);
-          } catch (delError) {
-            console.warn(`[SaveMetadata] Failed to delete original: ${delError.message}`);
-          }
-
-          // Use compressed version
-          finalBlobUrl = compressedBlob.url;
-          finalBlobPathname = compressedBlob.pathname;
-          finalFileSize = compressed.compressedSize;
+        if (compressed) {
+          imageBuffer = compressed.buffer;
           compressionApplied = true;
           compressionSavings = compressed.savings;
-
           console.log(
-            `[SaveMetadata] TinyPNG: ${(fileSize / 1024).toFixed(0)}KB → ${(finalFileSize / 1024).toFixed(0)}KB ` +
+            `[SaveMetadata] TinyPNG: ${(fileSize / 1024).toFixed(0)}KB → ${(compressed.compressedSize / 1024).toFixed(0)}KB ` +
               `(-${(compressionSavings * 100).toFixed(1)}%)`
           );
         }
-      } else {
-        console.log(`[SaveMetadata] TinyPNG skipped (minimal savings or not compressible)`);
       }
-    } catch (compressError) {
-      // Log but don't fail - keep original if compression fails
+
+      // Step 2: Convert to WebP format (always, for consistent format)
+      const webpResult = await convertToWebP(imageBuffer);
+      const webpSavings = imageBuffer.length ? 1 - webpResult.size / imageBuffer.length : 0;
+      console.log(
+        `[SaveMetadata] WebP: ${(imageBuffer.length / 1024).toFixed(0)}KB → ${(webpResult.size / 1024).toFixed(0)}KB (-${(webpSavings * 100).toFixed(1)}%)`
+      );
+
+      // Upload WebP version to a new path (change extension to .webp)
+      const webpPathname = validatedPathname
+        .replace(/(\.[^.]+)$/, '.webp') // Change extension to .webp
+        .replace(/-compressed\.webp$/, '.webp'); // Remove any -compressed suffix
+
+      const webpBlob = await put(webpPathname, webpResult.buffer, {
+        access: 'public',
+        contentType: 'image/webp',
+      });
+
+      if (webpBlob.url) {
+        // Delete the original blob (use corrected URL)
+        try {
+          await del(finalBlobUrl);
+          console.log(`[SaveMetadata] Deleted original: ${validatedPathname}`);
+        } catch (delError) {
+          console.warn(`[SaveMetadata] Failed to delete original: ${delError.message}`);
+        }
+
+        // Use WebP version
+        finalBlobUrl = webpBlob.url;
+        finalBlobPathname = webpBlob.pathname;
+        finalFileSize = webpResult.size;
+        finalContentType = 'image/webp';
+
+        console.log(
+          `[SaveMetadata] Final: ${finalBlobPathname} (${(finalFileSize / 1024).toFixed(0)}KB)`
+        );
+      }
+    } catch (processError) {
+      // Log but don't fail - keep original if processing fails
       console.warn(
-        `[SaveMetadata] TinyPNG compression failed, keeping original: ${compressError.message}`
+        `[SaveMetadata] Image processing failed, keeping original: ${processError.message}`
       );
     }
   }
@@ -238,7 +270,7 @@ async function handlePost(request) {
     file_name: fileName || `upload-${Date.now()}`,
     file_size: finalFileSize,
     original_file_size: fileSize, // Store original size for analytics
-    content_type: contentType,
+    content_type: finalContentType, // Use final content type (webp for images)
     caption: caption || null,
     is_primary: isPrimary || false,
     upload_source: 'web',
