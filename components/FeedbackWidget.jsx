@@ -261,34 +261,34 @@ function getFeatureContextFromUrl(url) {
  */
 const contextualHints = {
   'browse-cars': {
-    title: 'Car Browser Feedback',
-    hint: "Can't find a car you're looking for? Let us know!",
+    title: 'Help Us Improve',
+    hint: "Can't find a car? Let us know which one to add!",
   },
   garage: {
-    title: 'Garage Feedback',
-    hint: 'How can we improve your garage experience?',
+    title: 'Help Us Improve',
+    hint: 'How can we make your garage better?',
   },
   'tuning-shop': {
-    title: 'Tuning Shop Feedback',
-    hint: 'Missing an upgrade option or have suggestions?',
+    title: 'Help Us Improve',
+    hint: 'Missing an upgrade or have suggestions?',
   },
   'car-request': {
     title: 'Request a Car',
-    hint: "Tell us which car you'd like to see in our database.",
+    hint: 'Which car should we add next?',
   },
   'bug-report': {
-    title: 'Report a Bug',
-    hint: "Describe what went wrong and we'll fix it ASAP.",
+    title: 'Report an Issue',
+    hint: "Tell us what went wrong — we'll fix it fast.",
   },
   default: {
-    title: 'Share Your Feedback',
+    title: 'Help Us Improve',
     hint: null,
   },
 };
 
-// Beta welcome message
+// Short welcome message
 const BETA_MESSAGE =
-  'While in beta, we really appreciate all feedback so we can create the best possible experience for you and our enthusiast car community. Please take the time to share as much with us so we can create the best possible experience.';
+  'Your feedback shapes AutoRev. Bug reports, feature ideas, or just saying hi — we read everything.';
 
 // ============================================================================
 // MAIN COMPONENT

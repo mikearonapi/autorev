@@ -953,7 +953,7 @@ function DesktopGarageLayout({
   const safePhotosUrl = photosUrl && !isVideoUrl(photosUrl) ? photosUrl : null;
   const fallbackHeroUrl =
     !hasCustomHero && !hasStockImage && firstImageFromCarImages
-      ? firstImageFromCarImages.url
+      ? firstImageFromCarImages.blob_url || firstImageFromCarImages.blobUrl
       : safePhotosUrl;
 
   // Vehicle info
@@ -1774,7 +1774,9 @@ function HeroVehicleDisplay({
     return true;
   });
   const fallbackHeroUrl =
-    !hasCustomHero && !hasStockImage && firstImageMedia ? firstImageMedia.url : null;
+    !hasCustomHero && !hasStockImage && firstImageMedia
+      ? firstImageMedia.blob_url || firstImageMedia.blobUrl
+      : null;
 
   const isOwnedVehicle = type === 'mycars';
   const isBuild = type === 'projects';

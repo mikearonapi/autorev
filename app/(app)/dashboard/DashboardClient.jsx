@@ -19,6 +19,7 @@ import Link from 'next/link';
 
 import { useQueryClient } from '@tanstack/react-query';
 
+import { useFeedback } from '@/components/FeedbackContext';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { FullscreenQuestionnaire } from '@/components/questionnaire';
 import { DashboardSkeleton } from '@/components/ui/Skeleton';
@@ -26,7 +27,7 @@ import { useProfileSummary } from '@/hooks/useQuestionnaire';
 import { useDashboardData } from '@/hooks/useUserData';
 import { userKeys } from '@/lib/queryKeys';
 
-import { GearIcon } from './components/DashboardIcons';
+import { GearIcon, MessageSquareIcon } from './components/DashboardIcons';
 import ImprovementActions from './components/ImprovementActions';
 import LifetimeAchievements from './components/LifetimeAchievements';
 import UserGreeting from './components/UserGreeting';
@@ -39,6 +40,7 @@ export default function DashboardClient() {
   const queryClient = useQueryClient();
   const [showQuestionnaire, setShowQuestionnaire] = useState(false);
   const [loadingTimedOut, setLoadingTimedOut] = useState(false);
+  const { openFeedback } = useFeedback();
 
   // Use React Query for cached dashboard data
   const {
@@ -214,6 +216,18 @@ export default function DashboardClient() {
             longest: streak?.longestStreak || 0,
           }}
         />
+      </section>
+
+      {/* Feedback CTA - Help improve AutoRev */}
+      <section className={styles.feedbackSection}>
+        <button
+          className={styles.feedbackButton}
+          onClick={() => openFeedback()}
+          aria-label="Share feedback to help improve AutoRev"
+        >
+          <MessageSquareIcon size={20} />
+          <span className={styles.feedbackButtonText}>Improve AutoRev, Share Feedback</span>
+        </button>
       </section>
 
       {/* Lifetime Achievements - Core feature metrics */}

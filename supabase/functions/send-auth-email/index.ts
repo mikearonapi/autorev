@@ -1,26 +1,26 @@
 /**
  * Supabase Auth Email Hook
- * 
+ *
  * Intercepts all auth-related emails (confirmation, recovery, magic link)
  * and sends them via Resend with beautiful branded templates.
- * 
+ *
  * Required secrets (set via Supabase Dashboard > Edge Functions > Secrets):
  * - RESEND_API_KEY: Your Resend API key
  */
 
-import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 
-const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
+const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
 
 // IMPORTANT: Always use the app URL, not Supabase's URL
-const SITE_URL = "https://autorev.app";
+const SITE_URL = 'https://autorev.app';
 
 // Logo URL - using a publicly hosted version for email reliability
-const LOGO_URL = "https://autorev.app/images/autorev-email-logo.png";
+const LOGO_URL = 'https://autorev.app/images/autorev-logo-transparent.png';
 
 const EMAIL_CONFIG = {
-  from: "AutoRev <hello@autorev.app>",
-  replyTo: "support@autorev.app",
+  from: 'AutoRev <hello@autorev.app>',
+  replyTo: 'support@autorev.app',
 };
 
 interface AuthEmailPayload {
@@ -37,7 +37,7 @@ interface AuthEmailPayload {
     token: string;
     token_hash: string;
     redirect_to: string;
-    email_action_type: "signup" | "recovery" | "magiclink" | "email_change" | "invite";
+    email_action_type: 'signup' | 'recovery' | 'magiclink' | 'email_change' | 'invite';
     site_url: string;
     token_new?: string;
     token_hash_new?: string;
@@ -50,25 +50,26 @@ interface AuthEmailPayload {
 function buildActionUrl(payload: AuthEmailPayload): string {
   const { email_data } = payload;
   const { token_hash, redirect_to, email_action_type } = email_data;
-  
+
   const typeMap: Record<string, string> = {
-    signup: "signup",
-    recovery: "recovery",
-    magiclink: "magiclink",
-    email_change: "email_change",
-    invite: "invite",
+    signup: 'signup',
+    recovery: 'recovery',
+    magiclink: 'magiclink',
+    email_change: 'email_change',
+    invite: 'invite',
   };
-  
+
   const type = typeMap[email_action_type] || email_action_type;
-  
+
   // ALWAYS use SITE_URL (our app), not the payload's site_url (Supabase)
-  const confirmUrl = new URL("/auth/confirm", SITE_URL);
-  confirmUrl.searchParams.set("token_hash", token_hash);
-  confirmUrl.searchParams.set("type", type);
+  const confirmUrl = new URL('/auth/confirm', SITE_URL);
+  confirmUrl.searchParams.set('token_hash', token_hash);
+  confirmUrl.searchParams.set('type', type);
   if (redirect_to) {
-    confirmUrl.searchParams.set("next", redirect_to);
+    confirmUrl.searchParams.set('next', redirect_to);
   }
-  
+
+  // eslint-disable-next-line no-console
   console.log(`[Auth Email] Built confirmation URL: ${confirmUrl.toString()}`);
   return confirmUrl.toString();
 }
@@ -76,11 +77,13 @@ function buildActionUrl(payload: AuthEmailPayload): string {
 /**
  * Get user's display name from metadata
  */
-function getUserName(user: AuthEmailPayload["user"]): string {
-  const name = user.user_metadata?.display_name || 
-               user.user_metadata?.full_name || 
-               user.user_metadata?.name || 
-               "there";
+function getUserName(user: AuthEmailPayload['user']): string {
+  const name =
+    user.user_metadata?.display_name ||
+    user.user_metadata?.full_name ||
+    user.user_metadata?.name ||
+    'there';
+  // eslint-disable-next-line no-console
   console.log(`[Auth Email] User name resolved to: ${name}`);
   return name;
 }
@@ -90,8 +93,8 @@ function getUserName(user: AuthEmailPayload["user"]): string {
  */
 function generateConfirmationHtml(userName: string, confirmUrl: string): string {
   const year = new Date().getFullYear();
-  const firstName = userName.split(" ")[0];
-  
+  const firstName = userName.split(' ')[0];
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -127,7 +130,7 @@ function generateConfirmationHtml(userName: string, confirmUrl: string): string 
           
           <tr>
             <td align="center" style="padding: 40px 0 32px 0; border-bottom: 1px solid #f3f4f6;">
-              <img src="${LOGO_URL}" alt="AutoRev" width="60" height="60" style="display: block; margin-bottom: 16px;">
+              <div style="width: 60px; height: 60px; background-color: #0d1b2a; border-radius: 50%; margin: 0 auto 16px auto; overflow: hidden;"><img src="${LOGO_URL}" alt="AutoRev" width="60" height="60" style="display: block;"></div>
               <p style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: 2px; color: #1f2937; text-transform: uppercase;">Confirm Your Email</p>
             </td>
           </tr>
@@ -144,14 +147,14 @@ function generateConfirmationHtml(userName: string, confirmUrl: string): string 
               </p>
               
               <p style="margin: 0 0 32px 0; font-size: 16px; line-height: 26px; color: #4b5563; text-align: left;">
-                Click the button below to verify and start exploring sports car specs, reliability data, and a community that celebrates the passion—not the price tag.
+                Click the button below to verify and start exploring detailed specs, reliability data, and a community that celebrates the passion—not the price tag.
               </p>
               
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
                   <td align="center">
-                    <a href="${confirmUrl}" target="_blank" style="display: inline-block; background-color: #111827; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; padding: 16px 48px; border-radius: 8px; border: 1px solid #111827;">
-                      Confirm My Email →
+                    <a href="${confirmUrl}" target="_blank" style="display: inline-block; background-color: #d4ff00; color: #0a1628; font-size: 14px; font-weight: 700; text-decoration: none; padding: 12px 28px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.02em; white-space: nowrap;">
+                      Confirm My Email
                     </a>
                   </td>
                 </tr>
@@ -206,8 +209,8 @@ function generateConfirmationHtml(userName: string, confirmUrl: string): string 
  */
 function generateRecoveryHtml(userName: string, recoveryUrl: string): string {
   const year = new Date().getFullYear();
-  const firstName = userName.split(" ")[0];
-  
+  const firstName = userName.split(' ')[0];
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -243,7 +246,7 @@ function generateRecoveryHtml(userName: string, recoveryUrl: string): string {
           
           <tr>
             <td align="center" style="padding: 40px 0 32px 0; border-bottom: 1px solid #f3f4f6;">
-              <img src="${LOGO_URL}" alt="AutoRev" width="60" height="60" style="display: block; margin-bottom: 16px;">
+              <div style="width: 60px; height: 60px; background-color: #0d1b2a; border-radius: 50%; margin: 0 auto 16px auto; overflow: hidden;"><img src="${LOGO_URL}" alt="AutoRev" width="60" height="60" style="display: block;"></div>
               <p style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: 2px; color: #1f2937; text-transform: uppercase;">Password Reset</p>
             </td>
           </tr>
@@ -252,7 +255,7 @@ function generateRecoveryHtml(userName: string, recoveryUrl: string): string {
             <td class="content" style="padding: 32px 40px 40px 40px;">
               
               <p style="margin: 0 0 16px 0; font-size: 24px; font-weight: 700; color: #1f2937; text-align: left;">
-                Hey ${firstName},
+                Hey ${firstName} 👋
               </p>
               
               <p style="margin: 0 0 16px 0; font-size: 16px; line-height: 26px; color: #4b5563; text-align: left;">
@@ -266,8 +269,8 @@ function generateRecoveryHtml(userName: string, recoveryUrl: string): string {
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
                   <td align="center">
-                    <a href="${recoveryUrl}" target="_blank" style="display: inline-block; background-color: #111827; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; padding: 16px 48px; border-radius: 8px; border: 1px solid #111827;">
-                      Reset Password →
+                    <a href="${recoveryUrl}" target="_blank" style="display: inline-block; background-color: #d4ff00; color: #0a1628; font-size: 14px; font-weight: 700; text-decoration: none; padding: 12px 28px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.02em; white-space: nowrap;">
+                      Reset Password
                     </a>
                   </td>
                 </tr>
@@ -322,8 +325,8 @@ function generateRecoveryHtml(userName: string, recoveryUrl: string): string {
  */
 function generateMagicLinkHtml(userName: string, magicLinkUrl: string): string {
   const year = new Date().getFullYear();
-  const firstName = userName.split(" ")[0];
-  
+  const firstName = userName.split(' ')[0];
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -359,7 +362,7 @@ function generateMagicLinkHtml(userName: string, magicLinkUrl: string): string {
           
           <tr>
             <td align="center" style="padding: 40px 0 32px 0; border-bottom: 1px solid #f3f4f6;">
-              <img src="${LOGO_URL}" alt="AutoRev" width="60" height="60" style="display: block; margin-bottom: 16px;">
+              <div style="width: 60px; height: 60px; background-color: #0d1b2a; border-radius: 50%; margin: 0 auto 16px auto; overflow: hidden;"><img src="${LOGO_URL}" alt="AutoRev" width="60" height="60" style="display: block;"></div>
               <p style="margin: 0; font-size: 16px; font-weight: 700; letter-spacing: 2px; color: #1f2937; text-transform: uppercase;">Your Login Link</p>
             </td>
           </tr>
@@ -378,8 +381,8 @@ function generateMagicLinkHtml(userName: string, magicLinkUrl: string): string {
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
                   <td align="center">
-                    <a href="${magicLinkUrl}" target="_blank" style="display: inline-block; background-color: #111827; color: #ffffff; font-size: 16px; font-weight: 600; text-decoration: none; padding: 16px 48px; border-radius: 8px; border: 1px solid #111827;">
-                      Log In to AutoRev →
+                    <a href="${magicLinkUrl}" target="_blank" style="display: inline-block; background-color: #d4ff00; color: #0a1628; font-size: 14px; font-weight: 700; text-decoration: none; padding: 12px 28px; border-radius: 100px; text-transform: uppercase; letter-spacing: 0.02em; white-space: nowrap;">
+                      Log In to AutoRev
                     </a>
                   </td>
                 </tr>
@@ -433,17 +436,17 @@ function generateMagicLinkHtml(userName: string, magicLinkUrl: string): string {
  * Generate plain text version of email
  */
 function generatePlainText(type: string, userName: string, actionUrl: string): string {
-  const firstName = userName.split(" ")[0];
+  const firstName = userName.split(' ')[0];
   const year = new Date().getFullYear();
-  
+
   const templates: Record<string, string> = {
     signup: `AUTOREV — Confirm Your Email\n================================\n\nHey ${firstName}!\n\nThanks for signing up for AutoRev! Just one quick step—confirm your email address to unlock your account.\n\n→ CONFIRM YOUR EMAIL: ${actionUrl}\n\n---\n\nThis link expires in 24 hours. If you didn't create an account, you can safely ignore this email.\n\n© ${year} AutoRev`,
-    
-    recovery: `AUTOREV — Reset Your Password\n================================\n\nHey ${firstName},\n\nWe received a request to reset your AutoRev password. Click the link below to create a new password.\n\n→ RESET PASSWORD: ${actionUrl}\n\nIf you didn't request this, you can safely ignore this email—your password will remain unchanged.\n\n---\n\nThis link expires in 24 hours. Never share this link with anyone.\n\n© ${year} AutoRev`,
-    
+
+    recovery: `AUTOREV — Reset Your Password\n================================\n\nHey ${firstName} 👋\n\nWe received a request to reset your AutoRev password. Click the link below to create a new password.\n\n→ RESET PASSWORD: ${actionUrl}\n\nIf you didn't request this, you can safely ignore this email—your password will remain unchanged.\n\n---\n\nThis link expires in 24 hours. Never share this link with anyone.\n\n© ${year} AutoRev`,
+
     magiclink: `AUTOREV — Your Login Link\n================================\n\nHey ${firstName}!\n\nHere's your magic login link. Click below to sign in instantly—no password needed.\n\n→ LOG IN: ${actionUrl}\n\n---\n\nThis link expires in 1 hour and can only be used once. If you didn't request this, you can safely ignore it.\n\n© ${year} AutoRev`,
   };
-  
+
   return templates[type] || templates.signup;
 }
 
@@ -457,15 +460,15 @@ async function sendEmail(
   text: string
 ): Promise<{ success: boolean; error?: string }> {
   if (!RESEND_API_KEY) {
-    console.error("[Auth Email] RESEND_API_KEY not configured");
-    return { success: false, error: "Email service not configured" };
+    console.error('[Auth Email] RESEND_API_KEY not configured');
+    return { success: false, error: 'Email service not configured' };
   }
-  
+
   try {
-    const response = await fetch("https://api.resend.com/emails", {
-      method: "POST",
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
@@ -477,20 +480,20 @@ async function sendEmail(
         reply_to: EMAIL_CONFIG.replyTo,
       }),
     });
-    
+
     const data = await response.json();
-    
+
     if (!response.ok) {
-      console.error("[Auth Email] Resend API error:", data);
-      return { success: false, error: data.message || "Failed to send email" };
+      console.error('[Auth Email] Resend API error:', data);
+      return { success: false, error: data.message || 'Failed to send email' };
     }
-    
+
+    // eslint-disable-next-line no-console
     console.log(`[Auth Email] Sent to ${to.slice(0, 3)}***, ID: ${data.id}`);
     return { success: true };
-    
   } catch (error) {
-    console.error("[Auth Email] Exception:", error);
-    return { success: false, error: error instanceof Error ? error.message : "Unknown error" };
+    console.error('[Auth Email] Exception:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Unknown error' };
   }
 }
 
@@ -498,83 +501,88 @@ async function sendEmail(
  * Main handler for the Auth Email Hook
  */
 Deno.serve(async (req: Request) => {
-  if (req.method !== "POST") {
-    return new Response(JSON.stringify({ error: "Method not allowed" }), {
+  if (req.method !== 'POST') {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
       status: 405,
-      headers: { "Content-Type": "application/json" },
+      headers: { 'Content-Type': 'application/json' },
     });
   }
-  
+
   try {
     const payload: AuthEmailPayload = await req.json();
     const { user, email_data } = payload;
-    
+
+    // eslint-disable-next-line no-console
     console.log(`[Auth Email] Processing ${email_data.email_action_type} for ${user.email}`);
+    // eslint-disable-next-line no-console
     console.log(`[Auth Email] Payload site_url: ${email_data.site_url}`);
+    // eslint-disable-next-line no-console
     console.log(`[Auth Email] Using SITE_URL: ${SITE_URL}`);
-    
+
     const userName = getUserName(user);
     const actionUrl = buildActionUrl(payload);
-    
+
     let subject: string;
     let html: string;
     let textType: string;
-    
+
     switch (email_data.email_action_type) {
-      case "signup":
-      case "invite":
-        subject = "Confirm Your Email — AutoRev";
+      case 'signup':
+      case 'invite':
+        subject = 'Confirm Your Email — AutoRev';
         html = generateConfirmationHtml(userName, actionUrl);
-        textType = "signup";
+        textType = 'signup';
         break;
-        
-      case "recovery":
-        subject = "Reset Your Password — AutoRev";
+
+      case 'recovery':
+        subject = 'Reset Your Password — AutoRev';
         html = generateRecoveryHtml(userName, actionUrl);
-        textType = "recovery";
+        textType = 'recovery';
         break;
-        
-      case "magiclink":
-        subject = "Your Login Link — AutoRev";
+
+      case 'magiclink':
+        subject = 'Your Login Link — AutoRev';
         html = generateMagicLinkHtml(userName, actionUrl);
-        textType = "magiclink";
+        textType = 'magiclink';
         break;
-        
-      case "email_change":
-        subject = "Confirm Your New Email — AutoRev";
+
+      case 'email_change':
+        subject = 'Confirm Your New Email — AutoRev';
         html = generateConfirmationHtml(userName, actionUrl);
-        textType = "signup";
+        textType = 'signup';
         break;
-        
+
       default:
         console.warn(`[Auth Email] Unknown email type: ${email_data.email_action_type}`);
-        subject = "AutoRev Account Action";
+        subject = 'AutoRev Account Action';
         html = generateConfirmationHtml(userName, actionUrl);
-        textType = "signup";
+        textType = 'signup';
     }
-    
+
     const text = generatePlainText(textType, userName, actionUrl);
-    
+
     const result = await sendEmail(user.email, subject, html, text);
-    
+
     if (!result.success) {
-      console.error(`[Auth Email] Failed to send ${email_data.email_action_type} email:`, result.error);
-      return new Response(
-        JSON.stringify({ error: result.error }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
+      console.error(
+        `[Auth Email] Failed to send ${email_data.email_action_type} email:`,
+        result.error
       );
+      return new Response(JSON.stringify({ error: result.error }), {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      });
     }
-    
-    return new Response(
-      JSON.stringify({ success: true }),
-      { status: 200, headers: { "Content-Type": "application/json" } }
-    );
-    
+
+    return new Response(JSON.stringify({ success: true }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' },
+    });
   } catch (error) {
-    console.error("[Auth Email] Handler error:", error);
+    console.error('[Auth Email] Handler error:', error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }
 });

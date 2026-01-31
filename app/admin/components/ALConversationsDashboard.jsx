@@ -160,6 +160,40 @@ function formatDate(dateString) {
 }
 
 /**
+ * Clean user messages by stripping system instructions injected by Parts feature
+ * These instructions are meant for the AI, not for admin display
+ */
+function cleanUserMessage(content) {
+  if (!content) return content;
+
+  // Pattern 1: Strip "USE THE [tool] TOOL..." instructions and everything after
+  let cleaned = content.replace(/\s*USE THE \w+(?:_\w+)* TOOL[\s\S]*/gi, '');
+
+  // Pattern 2: Strip "Then format the results..." instructions
+  cleaned = cleaned.replace(/\s*Then format the results[\s\S]*/gi, '');
+
+  // Pattern 3: Strip parameter blocks like "- car_slug: ..."
+  cleaned = cleaned.replace(/\n-\s*(?:car_slug|upgrade_type|limit):\s*"[^"]*"/gi, '');
+
+  // Pattern 4: Strip markdown instruction blocks (## format instructions)
+  cleaned = cleaned.replace(/\n##\s*(?:Top|For each|Quick Buying)[\s\S]*/gi, '');
+
+  // Pattern 5: Strip IMPORTANT sections with numbered instructions
+  cleaned = cleaned.replace(/\s*IMPORTANT:\s*\n(?:\d+\..*\n?)*/gi, '');
+
+  // Clean up trailing whitespace
+  cleaned = cleaned.trim();
+
+  // If we stripped everything, return a fallback
+  if (!cleaned) {
+    const firstSentence = content.match(/^[^.!?\n]+[.!?]?/);
+    return firstSentence ? firstSentence[0].trim() : content.slice(0, 100);
+  }
+
+  return cleaned;
+}
+
+/**
  * Remove duplicate consecutive messages and return clean conversation flow
  * Duplicates are messages with the same role AND content within a short time window
  *
@@ -262,7 +296,9 @@ function ConversationCard({ conversation, isExpanded, onToggle }) {
                         <span className={styles.turnNumber}>#{idx + 1}</span>
                         <span className={styles.messageTime}>{formatDate(message.createdAt)}</span>
                       </div>
-                      <div className={styles.messageContent}>{message.content}</div>
+                      <div className={styles.messageContent}>
+                        {isQuestion ? cleanUserMessage(message.content) : message.content}
+                      </div>
                     </div>
                   </div>
                 );

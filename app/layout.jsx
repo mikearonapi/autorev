@@ -64,7 +64,11 @@ const MobileBottomCta = dynamic(() => import('@/components/MobileBottomCta'), { 
 // Cookie Consent Banner - GDPR compliance
 const CookieConsent = dynamic(() => import('@/components/CookieConsent'), { ssr: false });
 
-// NOTE: FeedbackHost and FeedbackCorner removed - not currently in use
+// Feedback Host - renders feedback widget when triggered from anywhere in the app
+const FeedbackHost = dynamic(
+  () => import('@/components/FeedbackContext').then((mod) => mod.FeedbackHost),
+  { ssr: false }
+);
 
 const siteUrl = 'https://autorev.app';
 
@@ -468,6 +472,9 @@ export default function RootLayout({ children }) {
 
                                           {/* Mobile sticky CTA bar - shows on scroll */}
                                           <MobileBottomCta />
+
+                                          {/* Global feedback widget - triggered via useFeedback hook */}
+                                          <FeedbackHost />
                                         </BannerProvider>
                                       </OwnedVehiclesProvider>
                                     </SavedBuildsProvider>

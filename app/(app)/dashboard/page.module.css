@@ -155,6 +155,44 @@
   margin-bottom: 16px;
 }
 
+/* Feedback Section */
+.feedbackSection {
+  margin-bottom: 16px;
+}
+
+.feedbackButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  height: 48px;
+  padding: 0 20px;
+  background: var(--color-bg-card, rgba(255, 255, 255, 0.04));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  color: var(--color-text-secondary, #94a3b8);
+  font-size: var(--text-sm, 14px);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.feedbackButton:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+  color: var(--color-text-primary, #ffffff);
+}
+
+.feedbackButton:active {
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(0.99);
+}
+
+.feedbackButtonText {
+  white-space: nowrap;
+}
+
 /* Actions Section - Improvement nudges */
 .actionsSection {
   margin-bottom: 24px;
