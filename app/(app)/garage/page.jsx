@@ -4542,7 +4542,7 @@ function GarageContent() {
 
   // Handle car request for vehicles not in our database
   const handleRequestCar = async (requestData) => {
-    const { data, error } = await submitCarRequest(requestData, userId);
+    const { data, error } = await submitCarRequest(requestData, user?.id);
 
     if (error) {
       console.error('Failed to submit car request:', error);
