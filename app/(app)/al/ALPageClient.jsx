@@ -84,15 +84,44 @@ const cleanUserMessage = (content) => {
 const FormattedMessage = ({ content }) => {
   if (!content) return null;
 
+  // Preprocess text to fix common formatting issues
+  const preprocessText = (text) => {
+    let processed = text;
+
+    // Strip internal data blocks (parts_to_save, etc.) that shouldn't be shown to users
+    processed = processed.replace(/<parts_to_save>[\s\S]*?<\/parts_to_save>/gi, '');
+    processed = processed.replace(/<internal_data>[\s\S]*?<\/internal_data>/gi, '');
+
+    // Add newlines before markdown headings if missing (fixes mid-line ## and ###)
+    // Match ## or ### that are NOT at the start of a line
+    processed = processed.replace(/([^\n])(\s*)(#{2,3}\s+)/g, '$1\n\n$3');
+
+    // Strip common preamble patterns that may have leaked through
+    // "Now let me get..." sentences that appear mid-text
+    processed = processed.replace(
+      /(?:^|\.\s*)Now let me (?:get|search|find|check|look|pull|compare|research)[^.!?\n]*[.!?\n]\s*/gi,
+      '. '
+    );
+
+    // Clean up orphaned periods/spaces at the start
+    processed = processed.replace(/^[.\s]+/, '');
+
+    // Normalize multiple newlines
+    processed = processed.replace(/\n{3,}/g, '\n\n');
+
+    return processed.trim();
+  };
+
   // Process the content into formatted elements
   const formatContent = (text) => {
-    // Strip internal data blocks (parts_to_save, etc.) that shouldn't be shown to users
-    const cleanedText = text.replace(/<parts_to_save>[\s\S]*?<\/parts_to_save>/gi, '').trim();
+    const cleanedText = preprocessText(text);
 
     const lines = cleanedText.split('\n');
     const elements = [];
     let listItems = [];
     let inList = false;
+    let tableRows = [];
+    let inTable = false;
 
     const processInlineFormatting = (line) => {
       // Handle bold **text**, links [text](url), and plain URLs
@@ -186,24 +215,103 @@ const FormattedMessage = ({ content }) => {
       return parts.length > 0 ? parts : line;
     };
 
+    // Helper to flush any pending list
+    const flushList = (index) => {
+      if (inList && listItems.length > 0) {
+        elements.push(
+          <ul key={`list-${index}`} className="alMessageList">
+            {listItems}
+          </ul>
+        );
+        listItems = [];
+        inList = false;
+      }
+    };
+
+    // Helper to flush any pending table
+    const flushTable = (index) => {
+      if (inTable && tableRows.length > 0) {
+        // Parse table rows - first row is header, second is separator (skip), rest are data
+        const headerRow = tableRows[0];
+        const dataRows = tableRows.slice(2); // Skip header and separator
+
+        // Extract cells from a row
+        const parseCells = (row) => {
+          return row
+            .split('|')
+            .map((cell) => cell.trim())
+            .filter((cell) => cell && !cell.match(/^-+$/)); // Filter empty and separator cells
+        };
+
+        const headerCells = parseCells(headerRow);
+        const dataRowCells = dataRows.map(parseCells);
+
+        elements.push(
+          <div key={`table-${index}`} className="alMessageTableWrapper">
+            <table className="alMessageTable">
+              <thead>
+                <tr>
+                  {headerCells.map((cell, i) => (
+                    <th key={i}>{processInlineFormatting(cell)}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {dataRowCells.map((cells, rowIdx) => (
+                  <tr key={rowIdx}>
+                    {cells.map((cell, cellIdx) => (
+                      <td key={cellIdx}>{processInlineFormatting(cell)}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        );
+        tableRows = [];
+        inTable = false;
+      }
+    };
+
     lines.forEach((line, index) => {
       const trimmedLine = line.trim();
 
-      // Handle headers
+      // Handle table rows (lines starting with |)
+      if (trimmedLine.startsWith('|') && trimmedLine.endsWith('|')) {
+        flushList(index);
+        inTable = true;
+        tableRows.push(trimmedLine);
+        return;
+      } else if (inTable) {
+        // End of table
+        flushTable(index);
+      }
+
+      // Handle ## headers
       if (trimmedLine.startsWith('## ')) {
-        if (inList && listItems.length > 0) {
-          elements.push(
-            <ul key={`list-${index}`} className="alMessageList">
-              {listItems}
-            </ul>
-          );
-          listItems = [];
-          inList = false;
-        }
+        flushList(index);
         elements.push(
           <h3 key={index} className="alMessageHeading">
             {processInlineFormatting(trimmedLine.slice(3))}
           </h3>
+        );
+      }
+      // Handle ### subheaders
+      else if (trimmedLine.startsWith('### ')) {
+        flushList(index);
+        elements.push(
+          <h4 key={index} className="alMessageSubheading">
+            {processInlineFormatting(trimmedLine.slice(4))}
+          </h4>
+        );
+      }
+      // Handle numbered lists (1) or 1. patterns)
+      else if (/^\d+[.)]\s/.test(trimmedLine)) {
+        flushList(index);
+        elements.push(
+          <p key={index} className="alMessageParagraph alMessageNumberedItem">
+            {processInlineFormatting(trimmedLine)}
+          </p>
         );
       }
       // Handle list items
@@ -211,17 +319,14 @@ const FormattedMessage = ({ content }) => {
         inList = true;
         listItems.push(<li key={index}>{processInlineFormatting(trimmedLine.slice(2))}</li>);
       }
+      // Handle horizontal rules
+      else if (trimmedLine === '---' || trimmedLine === '***') {
+        flushList(index);
+        elements.push(<hr key={index} className="alMessageDivider" />);
+      }
       // Handle regular paragraphs
       else if (trimmedLine) {
-        if (inList && listItems.length > 0) {
-          elements.push(
-            <ul key={`list-${index}`} className="alMessageList">
-              {listItems}
-            </ul>
-          );
-          listItems = [];
-          inList = false;
-        }
+        flushList(index);
         elements.push(
           <p key={index} className="alMessageParagraph">
             {processInlineFormatting(trimmedLine)}
@@ -230,14 +335,9 @@ const FormattedMessage = ({ content }) => {
       }
     });
 
-    // Don't forget remaining list items
-    if (listItems.length > 0) {
-      elements.push(
-        <ul key="list-final" className="alMessageList">
-          {listItems}
-        </ul>
-      );
-    }
+    // Don't forget remaining list items or table rows
+    flushList('final');
+    flushTable('final');
 
     return elements;
   };

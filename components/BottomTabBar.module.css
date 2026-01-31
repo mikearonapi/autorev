@@ -47,6 +47,16 @@
   /* ANDROID FIX: Promote to GPU layer for smoother scrolling */
   will-change: transform;
   transform: translateZ(0);
+
+  /* PWA SAFE AREA FIX: Start hidden, fade in after mount
+     This prevents the "jump" when safe area values become available */
+  opacity: 0;
+  transition: opacity 0.15s ease-out;
+}
+
+/* Show nav after React has mounted and safe area is calculated */
+.nav[data-mounted] {
+  opacity: 1;
 }
 
 /* Clean separator line */

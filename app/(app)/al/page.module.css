@@ -1067,6 +1067,61 @@
   font-weight: 500;
 }
 
+/* Subheadings (### headers) */
+.messageContent :global(.alMessageSubheading) {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  margin: 12px 0 4px;
+}
+
+/* Horizontal rule dividers */
+.messageContent :global(.alMessageDivider) {
+  border: none;
+  border-top: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
+  margin: 16px 0;
+}
+
+/* Tables */
+.messageContent :global(.alMessageTableWrapper) {
+  overflow-x: auto;
+  margin: 12px 0;
+  border-radius: 8px;
+  border: 1px solid var(--color-border, rgba(255, 255, 255, 0.1));
+}
+
+.messageContent :global(.alMessageTable) {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.messageContent :global(.alMessageTable th),
+.messageContent :global(.alMessageTable td) {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--color-border, rgba(255, 255, 255, 0.08));
+}
+
+.messageContent :global(.alMessageTable th) {
+  background: var(--color-bg-elevated, rgba(255, 255, 255, 0.05));
+  font-weight: 600;
+  color: var(--color-text-primary, #ffffff);
+  white-space: nowrap;
+}
+
+.messageContent :global(.alMessageTable td) {
+  color: var(--color-text-secondary, #94a3b8);
+}
+
+.messageContent :global(.alMessageTable tr:last-child td) {
+  border-bottom: none;
+}
+
+.messageContent :global(.alMessageTable tr:hover td) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
 /* ===========================================
    Error Message
    =========================================== */

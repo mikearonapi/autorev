@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import Image from 'next/image';
 import Link from 'next/link';
@@ -173,6 +173,23 @@ export default function BottomTabBar() {
   const prefetchedRef = useRef(new Set());
 
   /**
+   * PWA SAFE AREA FIX: Force re-render after mount
+   *
+   * In PWAs, env(safe-area-inset-bottom) may not be available on first render.
+   * This causes the nav to render with incorrect padding initially.
+   * Setting mounted state triggers a re-render after hydration, ensuring
+   * the browser has calculated safe area values and CSS is applied correctly.
+   */
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    // Small delay ensures safe area values are calculated
+    const timer = requestAnimationFrame(() => {
+      setMounted(true);
+    });
+    return () => cancelAnimationFrame(timer);
+  }, []);
+
+  /**
    * Handle prefetch on hover (desktop) or touch start (mobile)
    * This loads data before navigation so pages render instantly
    */
@@ -223,7 +240,12 @@ export default function BottomTabBar() {
   };
 
   return (
-    <nav ref={navRef} className={styles.nav} aria-label="Main navigation">
+    <nav
+      ref={navRef}
+      className={styles.nav}
+      aria-label="Main navigation"
+      data-mounted={mounted || undefined}
+    >
       <div className={styles.container}>
         {tabs.map((tab) => {
           const active = isActive(tab);
