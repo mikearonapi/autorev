@@ -117,7 +117,7 @@ export default function Home() {
               width={100}
               height={100}
               className={styles.logoIcon}
-              priority
+              loading="eager"
             />
             <span className={styles.logoText}>
               <span className={styles.logoAuto}>AUTO</span>
@@ -158,7 +158,7 @@ export default function Home() {
                 fill
                 sizes="224px"
                 className={styles.screenImage}
-                priority
+                loading="eager"
               />
             </IPhoneFrame>
           </div>
@@ -186,7 +186,7 @@ export default function Home() {
                 fill
                 sizes="224px"
                 className={styles.screenImage}
-                priority
+                loading="eager"
               />
             </IPhoneFrame>
           </div>

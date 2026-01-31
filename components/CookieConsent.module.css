@@ -175,13 +175,13 @@
 
 .privacyLink {
   font-size: 0.75rem;
-  color: var(--color-text-tertiary, #64748b);
+  color: var(--color-text-secondary, #94a3b8);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .privacyLink:hover {
-  color: var(--color-text-secondary, #94a3b8);
+  color: var(--color-text-primary, #ffffff);
 }
 
 .privacyLink:focus-visible {
@@ -196,22 +196,22 @@
     border-radius: 12px 12px 0 0;
     margin-bottom: -16px;
   }
-  
+
   .actions {
     flex-direction: column;
     align-items: stretch;
   }
-  
+
   .manageButton {
     order: 2;
     text-align: center;
   }
-  
+
   .mainActions {
     flex-direction: column;
     width: 100%;
   }
-  
+
   .rejectButton,
   .acceptButton {
     width: 100%;

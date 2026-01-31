@@ -1,17 +1,17 @@
 /**
  * Dynamic Sitemap Generation for SEO
- * 
+ *
  * Generates sitemap.xml at /sitemap.xml including:
  * - Homepage
  * - Legal pages (terms, privacy, contact)
- * - Public community builds gallery
- * - Public community events listing
- * - Individual build detail pages (dynamic)
  * - Individual event detail pages (dynamic)
- * 
+ *
  * NOTE: App pages (/garage, /data, /community, /al, /profile) are auth-protected
  * and should NOT be in the sitemap as Google cannot crawl them.
- * 
+ *
+ * NOTE: /community/builds and /community/builds/:slug are redirected to /community
+ * (see next.config.js) so they are NOT included in the sitemap.
+ *
  * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap
  */
 
@@ -56,36 +56,6 @@ async function fetchEvents() {
   }
 }
 
-/**
- * Fetch all public community builds for sitemap inclusion.
- * These are user-shared builds that help with SEO.
- * @returns {Promise<Array>}
- */
-async function fetchPublicBuilds() {
-  try {
-    const supabase = getSupabaseClient();
-    if (!supabase) return [];
-
-    const { data, error } = await supabase
-      .from('community_posts')
-      .select('slug, updated_at, published_at')
-      .eq('is_published', true)
-      .eq('post_type', 'build')
-      .order('published_at', { ascending: false })
-      .limit(1000);
-
-    if (error) {
-      console.warn('[Sitemap] Error fetching public builds:', error.message);
-      return [];
-    }
-
-    return data || [];
-  } catch (err) {
-    console.warn('[Sitemap] Error fetching public builds:', err.message);
-    return [];
-  }
-}
-
 export default async function sitemap() {
   const now = new Date();
 
@@ -100,15 +70,7 @@ export default async function sitemap() {
       changeFrequency: 'weekly',
       priority: 1.0,
     },
-    
-    // Public community pages
-    {
-      url: `${SITE_URL}/community/builds`,
-      lastModified: now,
-      changeFrequency: 'daily',
-      priority: 0.85,
-    },
-    
+
     // Legal/Utility pages
     {
       url: `${SITE_URL}/contact`,
@@ -142,27 +104,12 @@ export default async function sitemap() {
   }));
 
   // ==========================================================================
-  // PUBLIC COMMUNITY BUILDS (user-shared builds for SEO)
-  // ==========================================================================
-  const publicBuilds = await fetchPublicBuilds();
-  const buildPages = publicBuilds.map((build) => ({
-    url: `${SITE_URL}/community/builds/${build.slug}`,
-    lastModified: build.updated_at ? new Date(build.updated_at) : (build.published_at ? new Date(build.published_at) : now),
-    changeFrequency: 'weekly',
-    priority: 0.7,
-  }));
-
-  // ==========================================================================
   // COMBINE ALL PAGES
   // ==========================================================================
-  const allPages = [
-    ...staticPages,
-    ...eventPages,
-    ...buildPages,
-  ];
+  const allPages = [...staticPages, ...eventPages];
 
   // eslint-disable-next-line no-console
-  console.log(`[Sitemap] Generated: ${staticPages.length} static, ${eventPages.length} events, ${buildPages.length} public builds`);
+  console.log(`[Sitemap] Generated: ${staticPages.length} static, ${eventPages.length} events`);
   // eslint-disable-next-line no-console
   console.log(`[Sitemap] Total URLs: ${allPages.length}`);
 

@@ -1080,11 +1080,25 @@ export function AuthProvider({ children }) {
         } = result;
 
         if (initError) {
-          console.error(
-            '[AuthProvider] Session init error:',
-            initError,
-            `(category: ${errorCategory})`
-          );
+          // Use console.warn for expected auth states (expired/revoked sessions)
+          // Use console.error only for truly unexpected errors
+          const isExpectedError =
+            errorCategory === ErrorCategory.SESSION_EXPIRED ||
+            errorCategory === ErrorCategory.SESSION_REVOKED;
+
+          if (isExpectedError) {
+            console.warn(
+              '[AuthProvider] Session state:',
+              initError.message,
+              `(category: ${errorCategory})`
+            );
+          } else {
+            console.error(
+              '[AuthProvider] Session init error:',
+              initError,
+              `(category: ${errorCategory})`
+            );
+          }
 
           // Provide user-friendly error messages based on error category
           let userMessage = initError.message;
