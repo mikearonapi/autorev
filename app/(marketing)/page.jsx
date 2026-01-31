@@ -1,30 +1,29 @@
-'use client';
-
-import { useState, useEffect } from 'react';
-
-import Image from 'next/image';
-
-import AuthModal, { useAuthModal } from '@/components/AuthModal';
-import IPhoneFrame from '@/components/IPhoneFrame';
-import PWAInstallPrompt from '@/components/PWAInstallPrompt';
-import { Icons } from '@/components/ui/Icons';
-import usePWAInstall from '@/hooks/usePWAInstall';
-import { SITE_DESIGN_IMAGES, UI_IMAGES } from '@/lib/images';
-
-import styles from './page.module.css';
-
 /**
- * AutoRev Homepage - GRAVL-Inspired Design
+ * AutoRev Homepage - Server Component
+ *
+ * Optimized for performance with Server Component architecture.
+ * Interactive elements are isolated in client components:
+ * - HeroCTA: Auth modal and PWA install
+ * - TypingAnimation: AL question typing effect
+ * - FinalCTA: Bottom section auth modal
  *
  * Structure:
  * 1. Hero - Logo centered, punchy headline, 3-phone display
- * 2. AL Introduction section
+ * 2. AL Introduction section with typing animation
  * 3. Feature sections alternating text + single phone
  * 4. Final CTA
  * (Footer is provided by global layout)
  *
  * All images served from Vercel Blob CDN for optimal page speed
  */
+
+import Image from 'next/image';
+
+import { HeroCTA, FinalCTA, TypingAnimation } from '@/components/homepage';
+import IPhoneFrame from '@/components/IPhoneFrame';
+import { SITE_DESIGN_IMAGES, UI_IMAGES } from '@/lib/images';
+
+import styles from './page.module.css';
 
 // Feature sections data - 7 sections in order
 const FEATURES = [
@@ -103,71 +102,7 @@ const AL_SAMPLE_QUESTIONS = [
   "What's the best mod order for a $5k budget?",
 ];
 
-// Local aliases for icons used in this file
-const LocalIcons = {
-  arrow: () => <Icons.arrowRight size={20} />,
-  camera: () => <Icons.camera size={18} />,
-  arrowUp: () => <Icons.arrowUp size={18} />,
-};
-
 export default function Home() {
-  const authModal = useAuthModal();
-  const [typedText, setTypedText] = useState('');
-  const [questionIndex, setQuestionIndex] = useState(0);
-  const [isTyping, setIsTyping] = useState(true);
-  const [showPWAModal, setShowPWAModal] = useState(false);
-
-  // PWA Install
-  const { isInstalled, canPromptNatively, promptInstall } = usePWAInstall();
-
-  // Handle download click - always available on homepage
-  const handleDownload = async () => {
-    if (canPromptNatively) {
-      // Chrome/Edge - trigger native install prompt
-      const result = await promptInstall();
-      // If prompt was dismissed or unavailable, show instructions as fallback
-      if (result.outcome !== 'accepted') {
-        setShowPWAModal(true);
-      }
-    } else {
-      // iOS/Safari/or prompt already used - show instructions modal
-      setShowPWAModal(true);
-    }
-  };
-
-  // Typing animation effect
-  useEffect(() => {
-    const currentQuestion = AL_SAMPLE_QUESTIONS[questionIndex];
-    let charIndex = 0;
-    let timeout;
-
-    if (isTyping) {
-      // Type characters one by one
-      const typeChar = () => {
-        if (charIndex <= currentQuestion.length) {
-          setTypedText(currentQuestion.slice(0, charIndex));
-          charIndex++;
-          timeout = setTimeout(typeChar, 50 + Math.random() * 30); // Natural typing speed
-        } else {
-          // Pause at end of question, then clear and move to next
-          timeout = setTimeout(() => {
-            setIsTyping(false);
-          }, 2000);
-        }
-      };
-      typeChar();
-    } else {
-      // Clear text and move to next question
-      timeout = setTimeout(() => {
-        setTypedText('');
-        setQuestionIndex((prev) => (prev + 1) % AL_SAMPLE_QUESTIONS.length);
-        setIsTyping(true);
-      }, 500);
-    }
-
-    return () => clearTimeout(timeout);
-  }, [questionIndex, isTyping]);
-
   return (
     <div className={styles.page} data-no-main-offset>
       {/* Hero Section */}
@@ -208,17 +143,8 @@ export default function Home() {
             all in one app built for speed.
           </p>
 
-          {/* CTA Button - slimmer */}
-          <button className={styles.ctaButton} onClick={() => authModal.openSignIn()}>
-            LOGIN / GET STARTED FREE
-          </button>
-
-          {/* Download link - always show unless already installed as PWA */}
-          {!isInstalled && (
-            <button className={styles.downloadLink} onClick={handleDownload}>
-              Download
-            </button>
-          )}
+          {/* CTA Buttons - Client Component for interactivity */}
+          <HeroCTA />
         </div>
 
         {/* 3 iPhone Display - smaller phones */}
@@ -271,12 +197,12 @@ export default function Home() {
       <section className={styles.alIntro}>
         <div className={styles.alAvatar}>
           <Image
-            src={UI_IMAGES.alMascotFull}
+            src={UI_IMAGES.alMascot}
             alt="AL - Your AI Assistant"
-            width={176}
-            height={176}
+            width={88}
+            height={88}
+            sizes="(max-width: 768px) 88px, 100px"
             className={styles.alAvatarImage}
-            quality={100}
           />
         </div>
         <p className={styles.alGreeting}>
@@ -286,24 +212,8 @@ export default function Home() {
           Tony Stark had Jarvis. <span className={styles.alHighlight}>You have AL.</span>
         </p>
 
-        {/* Simulated Input Box */}
-        <div className={styles.alInputDemo}>
-          <div className={styles.alInputWrapper}>
-            <button className={styles.alAttachmentBtn} aria-label="Add attachment">
-              <LocalIcons.camera />
-            </button>
-            <div className={styles.alInputText}>
-              {typedText || <span className={styles.alInputPlaceholder}>Ask AL anything...</span>}
-              <span className={styles.alCursor} />
-            </div>
-            <button
-              className={`${styles.alSendBtn} ${typedText ? styles.alSendBtnActive : ''}`}
-              aria-label="Send"
-            >
-              <LocalIcons.arrowUp />
-            </button>
-          </div>
-        </div>
+        {/* Typing Animation - Client Component */}
+        <TypingAnimation questions={AL_SAMPLE_QUESTIONS} />
 
         {/* AL Data Access List */}
         <div className={styles.alDataAccess}>
@@ -366,26 +276,8 @@ export default function Home() {
           <span className={styles.finalAccent}>START BUILDING.</span>
         </h2>
         <p className={styles.finalSubtext}>100% free to start. No credit card required.</p>
-        <button className={styles.finalCta} onClick={() => authModal.openSignUp()}>
-          GET STARTED FREE <LocalIcons.arrow />
-        </button>
+        <FinalCTA />
       </section>
-
-      {/* Auth Modal */}
-      <AuthModal
-        isOpen={authModal.isOpen}
-        onClose={authModal.close}
-        defaultMode={authModal.defaultMode}
-      />
-
-      {/* PWA Install Modal (iOS instructions) */}
-      {showPWAModal && (
-        <PWAInstallPrompt
-          variant="modal"
-          forceShow={true}
-          onDismissed={() => setShowPWAModal(false)}
-        />
-      )}
     </div>
   );
 }

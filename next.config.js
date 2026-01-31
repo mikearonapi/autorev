@@ -16,17 +16,20 @@ const nextConfig = {
       'openai',
       '@anthropic-ai/sdk',
     ],
-    // CSS optimization disabled - requires 'critters' package
-    // TODO: Run `npm install critters` to re-enable
-    // optimizeCss: true,
+    // CSS optimization - inlines critical CSS and defers non-critical
+    // Requires 'critters' package (installed)
+    optimizeCss: true,
   },
-  
+
   // Compiler optimizations
   compiler: {
     // Remove console.log in production
-    removeConsole: process.env.NODE_ENV === 'production' ? {
-      exclude: ['error', 'warn'],
-    } : false,
+    removeConsole:
+      process.env.NODE_ENV === 'production'
+        ? {
+            exclude: ['error', 'warn'],
+          }
+        : false,
   },
 
   // Webpack configuration for better chunking
@@ -37,11 +40,11 @@ const nextConfig = {
       // Warn when assets exceed size limits (helps catch bundle bloat)
       // =============================================================================
       config.performance = {
-        maxAssetSize: 250000,      // 250KB per asset
+        maxAssetSize: 250000, // 250KB per asset
         maxEntrypointSize: 300000, // 300KB per entrypoint (slightly higher for app shell)
-        hints: 'warning',          // 'warning' | 'error' | false
+        hints: 'warning', // 'warning' | 'error' | false
       };
-      
+
       // =============================================================================
       // CHUNK SPLITTING
       // Split large vendor chunks for better caching
@@ -198,7 +201,10 @@ const nextConfig = {
           // Restrict browser features
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=()' },
           // Force HTTPS (Vercel handles this, but explicit is good)
-          { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload',
+          },
         ],
       },
     ];

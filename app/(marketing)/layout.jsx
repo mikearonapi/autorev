@@ -1,6 +1,6 @@
 /**
  * Marketing Layout
- * 
+ *
  * Wrapper for public marketing pages with SEO metadata for the homepage.
  * Routes: /, /community/builds, /community/events/[slug], /terms, /privacy, /contact
  */
@@ -8,10 +8,11 @@
 import SchemaOrg from '@/components/SchemaOrg';
 import { SITE_URL } from '@/lib/seoUtils';
 
-// Homepage metadata (since page.jsx is a client component)
+// Homepage metadata - page.jsx is now a Server Component for better LCP
 export const metadata = {
   title: 'AutoRev | Build Planning for Performance Enthusiasts',
-  description: 'Plan your perfect car build with verified parts, real dyno data, and expert recommendations. Research mods, track your project, join the community. AI-powered advice from AL, your car expert.',
+  description:
+    'Plan your perfect car build with verified parts, real dyno data, and expert recommendations. Research mods, track your project, join the community. AI-powered advice from AL, your car expert.',
   keywords: [
     // Core value proposition
     'car build planner',
@@ -47,7 +48,8 @@ export const metadata = {
     url: SITE_URL,
     siteName: 'AutoRev',
     title: 'AutoRev | Build Planning for Performance Enthusiasts',
-    description: 'Plan your perfect car build with verified parts, real dyno data, and AI-powered advice. Research, build, and connect with the community.',
+    description:
+      'Plan your perfect car build with verified parts, real dyno data, and AI-powered advice. Research, build, and connect with the community.',
     images: [
       {
         url: `${SITE_URL}/opengraph-image`,
@@ -63,7 +65,8 @@ export const metadata = {
     site: '@autorev',
     creator: '@autorev',
     title: 'AutoRev | Build Planning for Performance Enthusiasts',
-    description: 'Plan your perfect car build with verified parts, real dyno data, and AI-powered advice from AL.',
+    description:
+      'Plan your perfect car build with verified parts, real dyno data, and AI-powered advice from AL.',
     images: [
       {
         url: `${SITE_URL}/twitter-image`,
@@ -94,7 +97,8 @@ const homepageSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebPage',
   name: 'AutoRev - Build Planning for Performance Enthusiasts',
-  description: 'Plan your perfect car build with verified parts, real dyno data, and expert recommendations. AI-powered advice from AL.',
+  description:
+    'Plan your perfect car build with verified parts, real dyno data, and expert recommendations. AI-powered advice from AL.',
   url: SITE_URL,
   isPartOf: {
     '@type': 'WebSite',
