@@ -66,8 +66,10 @@ async function handleGet(request, { params }) {
       .order('severity', { ascending: true })
       .order('sort_order', { ascending: true });
 
+    // NOTE: Column names must match actual DB schema exactly
+    // Verified against information_schema.columns for vehicle_service_intervals
     const INTERVAL_COLS =
-      'id, car_id, service_type, interval_miles, interval_months, description, estimated_cost_low, estimated_cost_high, severity, notes, created_at';
+      'id, car_id, service_name, service_description, interval_miles, interval_months, items_included, dealer_cost_low, dealer_cost_high, independent_cost_low, independent_cost_high, diy_cost_low, diy_cost_high, labor_hours_estimate, is_critical, skip_consequences, created_at';
 
     // Fetch service intervals (uses car_id - car_slug column no longer exists)
     const { data: intervals } = await supabase

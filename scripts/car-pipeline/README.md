@@ -4,179 +4,125 @@ Scripts for automating car addition and enrichment in the AutoRev database.
 
 ## Overview
 
-These scripts support the 8-phase car addition pipeline documented in `docs/CAR_PIPELINE.md`. The system offers both **fully automated AI-driven** and **manual** workflows.
+The car pipeline populates ALL required data for a car to work across the AutoRev app:
 
-## 🤖 AI-Driven Scripts (Fully Automated)
+| Table                       | Purpose                     | Used By                |
+| --------------------------- | --------------------------- | ---------------------- |
+| `cars`                      | Core specs, scores, content | All pages              |
+| `car_issues`                | Known problems              | `/garage/my-specs`, AL |
+| `vehicle_maintenance_specs` | Fluids, tires, capacities   | `/garage/my-specs`     |
+| `vehicle_service_intervals` | Service schedules           | `/garage/my-specs`     |
+| `car_tuning_profiles`       | Upgrade recommendations     | `/garage/my-build`     |
+| `car_variants`              | Year/trim combinations      | VIN decode             |
 
-### `ai-research-car.js` ⭐ **RECOMMENDED**
-Fully automated car addition using AI. Just provide the car name!
+---
+
+## 🤖 Add a New Car
+
+### `ai-research-car-verified.js`
+
+Accuracy-first pipeline with web research verification. Uses Exa search to verify specs from authoritative sources (Car & Driver, Edmunds, OEM sites).
 
 ```bash
-# Add any car with just the name - AI does everything
-node scripts/car-pipeline/ai-research-car.js "Porsche 911 GT3 (992)"
-node scripts/car-pipeline/ai-research-car.js "BMW M3 Competition (G80)" --verbose
-node scripts/car-pipeline/ai-research-car.js "McLaren 570S" --dry-run
+# Add a car with verified data
+node scripts/car-pipeline/ai-research-car-verified.js "2024 BMW M3 Competition"
+
+# Dry run to preview what would be added
+node scripts/car-pipeline/ai-research-car-verified.js "2024 BMW M3 Competition" --dry-run
+
+# Verbose output to see sources
+node scripts/car-pipeline/ai-research-car-verified.js "2024 BMW M3 Competition" --verbose
+
+# Skip images for testing
+node scripts/car-pipeline/ai-research-car-verified.js "2024 BMW M3 Competition" --skip-images
 ```
 
-**What AI does automatically:**
-- 🔬 **Phase 1-2**: Research specifications, pricing, and core data
-- ✅ **Phase 3**: EPA fuel economy, NHTSA safety ratings, recalls
-- 🔍 **Phase 4**: Known issues, maintenance specs, service intervals  
-- 📊 **Phase 5**: Expert scoring (1-10) and editorial content
-- 🖼️ **Phase 6**: Hero image generation
-- 📺 **Phase 7**: YouTube video processing (scheduled)
-- ✅ **Phase 8**: Data validation and QA
+**What it does:**
 
-**Time**: 3-5 minutes per car
+1. 🌐 **Web Search** - Searches 10-15 authoritative sources (Car & Driver, Edmunds, OEM)
+2. 🔍 **Spec Verification** - Cross-checks HP, torque, 0-60 from multiple sources
+3. 📊 **Confidence Tracking** - Marks each spec as `verified`, `cross_referenced`, or `estimated`
+4. 📝 **Source Citations** - Records where data came from
+5. 🔧 **Related Data** - Populates issues, maintenance, service intervals, tuning profile, variants
+6. 🖼️ **Image Generation** - Creates hero image
+
+**Output:**
+
+```
+HP:    503 (verified)      ← Confirmed from BMW.com, Edmunds
+0-60:  2.8s (cross_referenced)  ← Multiple sources agree
+Price: $81,195 (verified)  ← From official MSRP
+```
+
+**Time**: ~60-90 seconds per car
+
+---
+
+## 📦 Batch Addition
 
 ### `ai-batch-add-cars.js`
-Add multiple cars using AI automation.
+
+Add multiple cars from a file.
 
 ```bash
 # Create a file with car names (one per line)
-echo "Porsche 911 GT3 (992)
-BMW M3 Competition (G80)
-McLaren 570S" > new-cars.txt
+echo "2024 Porsche 911 GT3
+2024 BMW M3 Competition
+2024 Toyota GR Supra" > new-cars.txt
 
-# Add all cars with AI
+# Add all cars
 node scripts/car-pipeline/ai-batch-add-cars.js new-cars.txt
-node scripts/car-pipeline/ai-batch-add-cars.js new-cars.txt --concurrency=2 --delay=5000
 ```
 
-**Concurrency**: Processes multiple cars in parallel (default: 2)
-**Time**: ~4 minutes per car
+---
 
-## 👤 Manual Scripts (Legacy)
+## 🔧 Utility Scripts
 
 ### `enrich-car.js`
-Manual enrichment for Phase 3 only (EPA, NHTSA, recalls).
+
+Enrich an existing car with external API data (EPA, NHTSA, recalls).
 
 ```bash
 node scripts/car-pipeline/enrich-car.js porsche-911-gt3 --verbose
 ```
 
-### `batch-enrich.js`
-Manual batch enrichment for Phase 3.
-
-```bash
-node scripts/car-pipeline/batch-enrich.js car-slugs.txt
-```
-
 ### `validate-car.js`
-Validation checks for data completeness.
+
+Check data completeness for a car.
 
 ```bash
-node scripts/car-pipeline/validate-car.js porsche-911-gt3 --fix-hints
+node scripts/car-pipeline/validate-car.js porsche-911-gt3
 ```
+
+### `backfill-missing-issues.js`
+
+Add missing car_issues for existing cars.
+
+```bash
+node scripts/car-pipeline/backfill-missing-issues.js
+```
+
+---
 
 ## Environment Variables
 
-Required for AI scripts:
+**Required:**
+
 - `NEXT_PUBLIC_SUPABASE_URL`
 - `SUPABASE_SERVICE_ROLE_KEY`
-- `ANTHROPIC_API_KEY` (for AI research)
+- `ANTHROPIC_API_KEY`
 
-Required for full YouTube integration:
-- `SUPADATA_API_KEY` (for reliable YouTube transcript fetching)
-- `GOOGLE_AI_API_KEY` (for YouTube Data API and image generation)
+**For Web Verification (Recommended):**
 
-Optional:
-- `BLOB_READ_WRITE_TOKEN` (for image upload)
-- `EXA_API_KEY` (fallback when YouTube API quota exceeded)
+- `EXA_API_KEY`
 
-## 🚀 Recommended Workflow
+**For Image Generation:**
 
-### Single Car Addition
-```bash
-# Just tell AI the car name - it does everything!
-node scripts/car-pipeline/ai-research-car.js "Lamborghini Huracán EVO"
+- `GOOGLE_AI_API_KEY`
+- `BLOB_READ_WRITE_TOKEN`
 
-# Done! Car is fully researched and added to database
-```
+---
 
-### Multiple Car Addition
-```bash
-# Create list file
-echo "Ferrari 296 GTB
-Aston Martin Vantage (2024)
-Maserati MC20" > cars-to-add.txt
+## Data Requirements
 
-# Let AI add them all
-node scripts/car-pipeline/ai-batch-add-cars.js cars-to-add.txt
-
-# Done! All cars fully researched and added
-```
-
-## ✨ AI Capabilities
-
-The AI research system:
-
-- ✅ **Researches real specs** from automotive databases
-- ✅ **Finds known issues** from forums and recalls
-- ✅ **Calculates maintenance costs** and service intervals  
-- ✅ **Assigns expert scores** based on performance, reliability, value
-- ✅ **Writes editorial content** (strengths, weaknesses, competitors)
-- ✅ **Generates hero images** (placeholder system, expandable)
-- ✅ **Updates pipeline tracking** in real-time
-- ✅ **Full database integration** - no manual steps needed
-
-## Pipeline Dashboard Integration
-
-- 🌐 **Web interface**: `/internal/car-pipeline`
-- 🤖 **"AI Add Car" button**: Triggers `ai-research-car.js`
-- 📊 **Real-time progress**: Watch AI research in action
-- ✅ **Pipeline tracking**: Visual progress through all 8 phases
-
-## Error Handling
-
-All scripts include:
-- ✅ Comprehensive error handling and retries
-- ✅ Progress logging and status updates
-- ✅ Dry-run modes for testing
-- ✅ Pipeline run integration
-- ✅ Timeout protection (10min per car)
-
-## Sample Files
-
-- `templates/car-pipeline/sample-cars-list.txt` - Example car list format
-- Use proper car names with generation info: "BMW M3 (G80)", not just "M3"
-
-## ⚠️ Post-Addition Verification
-
-After AI adds a car, **always verify these items**:
-
-### 1. YouTube Videos
-Check that linked videos are actually about your specific car model:
-
-```bash
-# Re-run validation to check video links
-node scripts/car-pipeline/validate-car.js your-car-slug
-```
-
-**Common issues:**
-- Videos about similar but different models (e.g., "Vanquish" vs "DB9")
-- Compilation videos that mention but don't review the car
-
-### 2. HP/Torque for Multi-Year Cars
-Cars with 10+ year production runs often had power updates. The AI uses research-based values but verify for accuracy.
-
-### 3. Editorial Content Format
-Ensure `defining_strengths` and `honest_weaknesses` are formatted as:
-```json
-[{"title": "Strength Title", "description": "Detailed explanation..."}]
-```
-
-See `docs/CAR_PIPELINE.md` for full verification checklist.
-
-## 🔄 YouTube Quota & Fallback
-
-The YouTube Data API has a **10,000 units/day quota**. When exceeded:
-
-1. **Exa Fallback**: Discovery automatically tries Exa search
-2. **Manual Addition**: Add videos via SQL (see `docs/CAR_PIPELINE.md`)
-3. **Retry Tomorrow**: Quota resets at midnight Pacific time
-
-## Exit Codes
-
-- `0` - Success, all operations completed
-- `1` - Error occurred or validation issues found
+See `audit/car-data-requirements-2026-01-31.md` for full details on what data each car needs.
