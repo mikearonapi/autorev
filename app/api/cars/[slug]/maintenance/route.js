@@ -7,6 +7,9 @@
  * Updated 2026-01-15: Uses car_id for efficient queries, car_issues as source of truth
  */
 
+// Disable caching to ensure fresh data
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
 
 import { errors } from '@/lib/apiErrors';
