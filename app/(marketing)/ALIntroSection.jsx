@@ -29,11 +29,12 @@ export default function ALIntroSection() {
       <section className={styles.alIntro}>
         <div className={styles.alAvatar}>
           <Image
-            src={UI_IMAGES.alMascot}
+            src={UI_IMAGES.alMascotFull}
             alt="AL - Your AI Assistant"
             width={88}
             height={88}
             sizes="(max-width: 768px) 88px, 100px"
+            quality={90}
             className={styles.alAvatarImage}
           />
         </div>
