@@ -22,6 +22,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 
 import BetaBanner from '@/components/BetaBanner';
 import ConsoleErrorInterceptor from '@/components/ConsoleErrorInterceptor';
+import CriticalCSS from '@/components/CriticalCSS';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import FetchInterceptor from '@/components/FetchInterceptor';
 import Footer from '@/components/Footer';
@@ -275,6 +276,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" className={fontVariables} data-has-banner="false" suppressHydrationWarning>
       <head>
+        {/* =============================================================================
+            CRITICAL CSS - Inlined to eliminate render-blocking stylesheets
+            Must be FIRST in head for maximum effectiveness
+            See styles/critical.css for source
+            ============================================================================= */}
+        <CriticalCSS />
+
         {/* =============================================================================
             CRITICAL: Preconnects MUST be first in <head> for maximum effectiveness
             These establish TCP/TLS connections before the browser discovers resources

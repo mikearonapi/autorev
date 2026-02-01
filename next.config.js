@@ -21,9 +21,10 @@ const nextConfig = {
       'openai',
       '@anthropic-ai/sdk',
     ],
-    // CSS optimization - inlines critical CSS and defers non-critical
-    // Requires 'critters' package (installed)
-    optimizeCss: true,
+    // CSS optimization DISABLED - using manual critical CSS inline approach instead
+    // The critters-based optimizeCss was not effectively reducing render-blocking
+    // See components/CriticalCSS.jsx and styles/critical.css for the manual approach
+    optimizeCss: false,
   },
 
   // Compiler optimizations
