@@ -143,7 +143,11 @@ function TrackPageContent() {
   const { user, isAuthenticated, isLoading: authLoading, isDataFetchReady } = useAuth();
   const { showPointsEarned } = usePointsNotification();
   const { vehicles, isLoading: vehiclesLoading } = useOwnedVehicles();
-  const { builds, getBuildsByCarSlug, isLoading: buildsLoading } = useSavedBuilds();
+  const {
+    builds,
+    getBuildsByCarId: _getBuildsByCarId,
+    isLoading: buildsLoading,
+  } = useSavedBuilds();
   const { data: carsData } = useCarsList();
   const allCars = useMemo(() => carsData || [], [carsData]);
   const authModal = useAuthModal();
@@ -319,7 +323,8 @@ function TrackPageContent() {
       sourceType: 'stock',
       matchedCarNotFound,
     };
-  }, [selectedVehicle, getBuildsByCarSlug, builds]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- getBuildsByCarId is stable
+  }, [selectedVehicle, builds]);
 
   // Get HP values
   const stockHp = vehicleBuildData?.stockHp ?? selectedVehicle?.matchedCar?.hp ?? 300;
@@ -349,10 +354,10 @@ function TrackPageContent() {
   const estimatedHp = stockHp + hpGain;
 
   // React Query hooks for track times
-  const carSlugForTracks = selectedVehicle?.matchedCarSlug;
+  const carIdForTracks = selectedVehicle?.matchedCarId;
   const { data: trackTimes = [], isLoading: trackTimesLoading } = useUserTrackTimes(
     user?.id,
-    carSlugForTracks,
+    carIdForTracks,
     {
       enabled: isAuthenticated && !!user?.id,
       limit: 10,
@@ -464,7 +469,7 @@ function TrackPageContent() {
       try {
         const payload = {
           ...trackData,
-          carSlug: selectedVehicle.matchedCarSlug,
+          carId: selectedVehicle.matchedCarId,
           userVehicleId: selectedVehicle.id,
           estimatedHp: estimatedHp,
           modsSummary: vehicleBuildData?.selectedUpgrades || {},
@@ -603,7 +608,7 @@ function TrackPageContent() {
                   aeroSetup={vehicleBuildData?.specs?.aero}
                   weightMod={vehicleBuildData?.specs?.weight?.reduction || 0}
                   user={user}
-                  carSlug={selectedVehicle.matchedCarSlug}
+                  carId={selectedVehicle.matchedCarId}
                   carName={`${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`}
                   modsSummary={vehicleBuildData?.specs}
                   hideLogging={true}

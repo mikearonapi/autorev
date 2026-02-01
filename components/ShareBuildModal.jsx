@@ -2,7 +2,7 @@
 
 /**
  * Share Build Modal
- * 
+ *
  * Modal for sharing a build to the community.
  * Images are now managed in the UpgradeCenter - this modal just handles
  * title, description, and publishing to community.
@@ -14,7 +14,12 @@ import Image from 'next/image';
 
 import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import Modal from '@/components/ui/Modal';
-import { getFacebookShareUrl, getTwitterShareUrl, getInstagramShareInfo, getNativeShareData } from '@/lib/communityService';
+import {
+  getFacebookShareUrl,
+  getTwitterShareUrl,
+  getInstagramShareInfo,
+  getNativeShareData,
+} from '@/lib/communityService';
 import { platform } from '@/lib/platform';
 
 import styles from './ShareBuildModal.module.css';
@@ -22,9 +27,10 @@ import styles from './ShareBuildModal.module.css';
 export default function ShareBuildModal({
   isOpen,
   onClose,
-  build,      // Build data from tuning shop
-  vehicle,    // Vehicle data from garage
-  carSlug,
+  build, // Build data from tuning shop
+  vehicle, // Vehicle data from garage
+  carId: _carId,
+  car, // Car object (for slug access)
   carName,
   userId: _userId,
   existingImages = [], // Images already uploaded in UpgradeCenter
@@ -38,7 +44,7 @@ export default function ShareBuildModal({
   const [error, setError] = useState(null);
   const [shareUrl, setShareUrl] = useState('');
   const [copySuccess, setCopySuccess] = useState(false);
-  
+
   // Points notification
   const { showPointsEarned } = usePointsNotification();
 
@@ -78,7 +84,7 @@ export default function ShareBuildModal({
 
     try {
       let response;
-      
+
       if (isEditing && linkedCommunityPost?.id) {
         // Update existing post
         response = await fetch('/api/community/posts', {
@@ -101,10 +107,10 @@ export default function ShareBuildModal({
             description: description.trim(),
             vehicleId: vehicle?.id,
             buildId: build?.id,
-            carSlug,
+            carSlug: car?.slug,
             carName,
             // Use existing images from the build (uploaded in UpgradeCenter)
-            imageIds: existingImages.map(img => img.id),
+            imageIds: existingImages.map((img) => img.id),
           }),
         });
       }
@@ -115,24 +121,23 @@ export default function ShareBuildModal({
       }
 
       const data = await response.json();
-      
+
       // For updates, construct the share URL from existing slug
-      const url = isEditing 
+      const url = isEditing
         ? `${window.location.origin}/community/builds/${linkedCommunityPost.slug}`
         : data.shareUrl;
       setShareUrl(url);
       setStep('success');
-      
+
       // Show points earned for new shares (not edits)
       if (!isEditing) {
         showPointsEarned(100, 'Build shared');
       }
-      
+
       // Notify parent of successful share/update
       if (onShareChange) {
         onShareChange(true, { title: title.trim(), description: description.trim() });
       }
-
     } catch (err) {
       console.error('[ShareBuildModal] Error:', err);
       setError(err.message || 'Failed to share. Please try again.');
@@ -156,7 +161,7 @@ export default function ShareBuildModal({
       text: `Check out my ${title} on AutoRev!`,
       url: shareUrl,
     });
-    
+
     const result = await platform.share(shareData);
     if (result.method === 'clipboard') {
       setCopySuccess(true);
@@ -179,7 +184,7 @@ export default function ShareBuildModal({
   };
 
   // Get hero image from existing images
-  const heroImage = existingImages.find(img => img.is_primary) || existingImages[0];
+  const heroImage = existingImages.find((img) => img.is_primary) || existingImages[0];
 
   // Determine modal title based on state
   const getModalTitle = () => {
@@ -197,200 +202,252 @@ export default function ShareBuildModal({
       size="md"
       className={styles.modal}
     >
-
-        {/* Content */}
-        <div className={styles.content}>
-          {step === 'details' && (
-            <>
-              {/* Build Preview with Hero Image */}
-              <div className={styles.buildPreviewLarge}>
-                {heroImage ? (
-                  <div className={styles.heroImagePreview}>
-                    <Image
-                      src={heroImage.blob_url || heroImage.thumbnail_url}
-                      alt={title}
-                      width={400}
-                      height={200}
-                      className={styles.heroImage}
-                    />
-                    {existingImages.length > 1 && (
-                      <span className={styles.imageCount}>+{existingImages.length - 1} more</span>
-                    )}
-                  </div>
-                ) : (
-                  <div className={styles.noImageNotice}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                      <circle cx="8.5" cy="8.5" r="1.5"/>
-                      <polyline points="21 15 16 10 5 21"/>
-                    </svg>
-                    <p>No photos yet</p>
-                    <span className={styles.noImageHint}>
-                      Add photos in the Upgrade Center to show off your build
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Title *</label>
-                <input
-                  type="text"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="My Porsche GT4 Track Build"
-                  className={styles.input}
-                  maxLength={100}
-                  autoComplete="off"
-                  autoFocus
-                />
-              </div>
-
-              <div className={styles.formGroup}>
-                <label className={styles.label}>Description</label>
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Tell the community about your build - mods, goals, track results..."
-                  className={styles.textarea}
-                  rows={4}
-                />
-                <span className={styles.charCount}>{description.length} characters</span>
-              </div>
-
-              {error && <div className={styles.error}>{error}</div>}
-
-              <div className={styles.actions}>
-                <button className={styles.secondaryBtn} onClick={onClose}>
-                  Cancel
-                </button>
-                <button 
-                  className={styles.primaryBtn}
-                  onClick={handleShareSubmit}
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting 
-                    ? (isEditing ? 'Updating...' : 'Sharing...') 
-                    : (isEditing ? 'Update Post' : 'Share to Community')
-                  }
-                </button>
-              </div>
-            </>
-          )}
-
-          {step === 'success' && (
-            <>
-              <div className={styles.successContent}>
-                <div className={styles.successIcon}>
-                  <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="20 6 9 17 4 12"/>
+      {/* Content */}
+      <div className={styles.content}>
+        {step === 'details' && (
+          <>
+            {/* Build Preview with Hero Image */}
+            <div className={styles.buildPreviewLarge}>
+              {heroImage ? (
+                <div className={styles.heroImagePreview}>
+                  <Image
+                    src={heroImage.blob_url || heroImage.thumbnail_url}
+                    alt={title}
+                    width={400}
+                    height={200}
+                    className={styles.heroImage}
+                  />
+                  {existingImages.length > 1 && (
+                    <span className={styles.imageCount}>+{existingImages.length - 1} more</span>
+                  )}
+                </div>
+              ) : (
+                <div className={styles.noImageNotice}>
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                    <circle cx="8.5" cy="8.5" r="1.5" />
+                    <polyline points="21 15 16 10 5 21" />
                   </svg>
+                  <p>No photos yet</p>
+                  <span className={styles.noImageHint}>
+                    Add photos in the Upgrade Center to show off your build
+                  </span>
                 </div>
-                <h3 className={styles.successTitle}>{isEditing ? 'Post Updated!' : 'Build Shared!'}</h3>
-                <p className={styles.successText}>
-                  {isEditing 
-                    ? 'Your changes are now live on the Community page'
-                    : 'Your build is now live on the Community page'
-                  }
-                </p>
-                
-                <div className={styles.shareUrlSection}>
-                  <label className={styles.shareUrlLabel}>Share Link</label>
-                  <div className={styles.shareUrl}>
-                    <input 
-                      type="text" 
-                      value={shareUrl} 
-                      readOnly 
-                      className={styles.urlInput}
-                    />
-                    <button className={styles.copyBtn} onClick={copyShareLink}>
-                      {copySuccess ? (
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <polyline points="20 6 9 17 4 12"/>
-                        </svg>
-                      ) : (
-                        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2">
-                          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-                          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-                        </svg>
-                      )}
-                      <span>{copySuccess ? 'Copied!' : 'Copy'}</span>
-                    </button>
-                  </div>
-                </div>
+              )}
+            </div>
 
-                <div className={styles.socialSection}>
-                  <span className={styles.socialLabel}>Share on social</span>
-                  <div className={styles.socialShare}>
-                    <a 
-                      href={getFacebookShareUrl(shareUrl)} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className={styles.socialBtn}
-                      title="Share on Facebook"
-                    >
-                      <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-                        <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
-                      </svg>
-                    </a>
-                    <button 
-                      onClick={handleInstagramShare}
-                      className={styles.socialBtn}
-                      title="Share on Instagram"
-                    >
-                      <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-                        <rect x="2" y="2" width="20" height="20" rx="5" ry="5" fill="none" stroke="currentColor" strokeWidth="2"/>
-                        <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" strokeWidth="2"/>
-                        <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor"/>
-                      </svg>
-                    </button>
-                    <a 
-                      href={getTwitterShareUrl(shareUrl, `Check out my ${title} on AutoRev!`)} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className={styles.socialBtn}
-                      title="Share on Twitter/X"
-                    >
-                      <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
-                        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-                      </svg>
-                    </a>
-                    {/* Native Share for mobile */}
-                    {platform.canShare && (
-                      <button 
-                        onClick={handleNativeShare}
-                        className={styles.socialBtn}
-                        title="More sharing options"
-                      >
-                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2">
-                          <circle cx="18" cy="5" r="3"/>
-                          <circle cx="6" cy="12" r="3"/>
-                          <circle cx="18" cy="19" r="3"/>
-                          <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-                          <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-                        </svg>
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Title *</label>
+              <input
+                type="text"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="My Porsche GT4 Track Build"
+                className={styles.input}
+                maxLength={100}
+                autoComplete="off"
+                autoFocus
+              />
+            </div>
 
-              <div className={styles.successActions}>
-                <a 
-                  href={shareUrl} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className={styles.viewPostBtn}
+            <div className={styles.formGroup}>
+              <label className={styles.label}>Description</label>
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Tell the community about your build - mods, goals, track results..."
+                className={styles.textarea}
+                rows={4}
+              />
+              <span className={styles.charCount}>{description.length} characters</span>
+            </div>
+
+            {error && <div className={styles.error}>{error}</div>}
+
+            <div className={styles.actions}>
+              <button className={styles.secondaryBtn} onClick={onClose}>
+                Cancel
+              </button>
+              <button
+                className={styles.primaryBtn}
+                onClick={handleShareSubmit}
+                disabled={isSubmitting}
+              >
+                {isSubmitting
+                  ? isEditing
+                    ? 'Updating...'
+                    : 'Sharing...'
+                  : isEditing
+                    ? 'Update Post'
+                    : 'Share to Community'}
+              </button>
+            </div>
+          </>
+        )}
+
+        {step === 'success' && (
+          <>
+            <div className={styles.successContent}>
+              <div className={styles.successIcon}>
+                <svg
+                  viewBox="0 0 24 24"
+                  width="32"
+                  height="32"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 >
-                  View Post
-                </a>
-                <button className={styles.doneBtn} onClick={onClose}>
-                  Done
-                </button>
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
               </div>
-            </>
-          )}
-        </div>
+              <h3 className={styles.successTitle}>
+                {isEditing ? 'Post Updated!' : 'Build Shared!'}
+              </h3>
+              <p className={styles.successText}>
+                {isEditing
+                  ? 'Your changes are now live on the Community page'
+                  : 'Your build is now live on the Community page'}
+              </p>
+
+              <div className={styles.shareUrlSection}>
+                <label className={styles.shareUrlLabel}>Share Link</label>
+                <div className={styles.shareUrl}>
+                  <input type="text" value={shareUrl} readOnly className={styles.urlInput} />
+                  <button className={styles.copyBtn} onClick={copyShareLink}>
+                    {copySuccess ? (
+                      <svg
+                        viewBox="0 0 24 24"
+                        width="18"
+                        height="18"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                      >
+                        <polyline points="20 6 9 17 4 12" />
+                      </svg>
+                    ) : (
+                      <svg
+                        viewBox="0 0 24 24"
+                        width="18"
+                        height="18"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                      </svg>
+                    )}
+                    <span>{copySuccess ? 'Copied!' : 'Copy'}</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className={styles.socialSection}>
+                <span className={styles.socialLabel}>Share on social</span>
+                <div className={styles.socialShare}>
+                  <a
+                    href={getFacebookShareUrl(shareUrl)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.socialBtn}
+                    title="Share on Facebook"
+                  >
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                      <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
+                    </svg>
+                  </a>
+                  <button
+                    onClick={handleInstagramShare}
+                    className={styles.socialBtn}
+                    title="Share on Instagram"
+                  >
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                      <rect
+                        x="2"
+                        y="2"
+                        width="20"
+                        height="20"
+                        rx="5"
+                        ry="5"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      />
+                      <circle
+                        cx="12"
+                        cy="12"
+                        r="4"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      />
+                      <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" />
+                    </svg>
+                  </button>
+                  <a
+                    href={getTwitterShareUrl(shareUrl, `Check out my ${title} on AutoRev!`)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.socialBtn}
+                    title="Share on Twitter/X"
+                  >
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor">
+                      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                    </svg>
+                  </a>
+                  {/* Native Share for mobile */}
+                  {platform.canShare && (
+                    <button
+                      onClick={handleNativeShare}
+                      className={styles.socialBtn}
+                      title="More sharing options"
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        width="22"
+                        height="22"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <circle cx="18" cy="5" r="3" />
+                        <circle cx="6" cy="12" r="3" />
+                        <circle cx="18" cy="19" r="3" />
+                        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49" />
+                        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className={styles.successActions}>
+              <a
+                href={shareUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={styles.viewPostBtn}
+              >
+                View Post
+              </a>
+              <button className={styles.doneBtn} onClick={onClose}>
+                Done
+              </button>
+            </div>
+          </>
+        )}
+      </div>
     </Modal>
   );
 }

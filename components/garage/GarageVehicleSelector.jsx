@@ -100,7 +100,8 @@ function formatVehicleDisplayName(year, make, model) {
  * GarageVehicleSelector Component
  *
  * @param {Object} props
- * @param {string} [props.selectedCarSlug] - For slug-based selection (garage pages)
+ * @param {string} [props.selectedCarId] - Car ID for selection (garage pages) - PRIMARY identifier
+ * @param {string} [props.selectedCarSlug] - Car slug for URL generation (fallback if carId not available)
  * @param {string} [props.selectedVehicleId] - For ID-based selection (Data/Insights pages)
  * @param {string} [props.buildId] - Optional build ID
  * @param {'slug'|'id'} [props.selectionMode='slug'] - Selection mode: 'slug' uses car slug, 'id' uses vehicle ID
@@ -108,6 +109,7 @@ function formatVehicleDisplayName(year, make, model) {
  * @param {Function} [props.onSelect] - Optional callback when vehicle selected (bypasses URL navigation)
  */
 export default function GarageVehicleSelector({
+  selectedCarId,
   selectedCarSlug,
   selectedVehicleId,
   buildId: _buildId,
@@ -127,10 +129,12 @@ export default function GarageVehicleSelector({
   const { vehicles } = useOwnedVehicles();
 
   // Build vehicle options with display names
+  // Use matchedCarId as primary identifier, but also include slug for URL generation
   const vehicleOptions = (vehicles || []).map((vehicle) => {
     return {
       id: vehicle.id,
-      carSlug: vehicle.matchedCarSlug,
+      carId: vehicle.matchedCarId, // PRIMARY identifier
+      carSlug: vehicle.matchedCarSlug, // For URL generation (may be null if vehicle not matched to car)
       year: vehicle.year,
       make: vehicle.make,
       model: vehicle.model,
@@ -140,10 +144,15 @@ export default function GarageVehicleSelector({
   });
 
   // Find currently selected vehicle based on selection mode
+  // Prioritize carId matching, fallback to carSlug for backward compatibility
   const selectedVehicle =
     selectionMode === 'id'
       ? vehicleOptions.find((v) => v.id === selectedVehicleId)
-      : vehicleOptions.find((v) => v.carSlug === selectedCarSlug);
+      : vehicleOptions.find(
+          (v) =>
+            (selectedCarId && v.carId === selectedCarId) ||
+            (selectedCarSlug && v.carSlug === selectedCarSlug)
+        );
 
   // Get display label for selected vehicle
   // Prioritizes: nickname > "Year | Make | Model" format

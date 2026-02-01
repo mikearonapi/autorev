@@ -100,8 +100,9 @@ const TrashIcon = ({ size = 16 }) => (
 // Sortable Vehicle Item - Individual vehicle row with drag handle
 function SortableVehicleItem({ item, onSelectVehicle, onDeleteVehicle, isDragging }) {
   const { vehicle, car, enrichedCar } = item;
-  const carSlugForImages =
-    car?.slug || vehicle?.matchedCarSlug || (vehicle?.id ? `user-vehicle-${vehicle.id}` : null);
+  // Get slug from car object for image hooks (useCarImages requires slug)
+  // Fallback to vehicle ID-based slug if no car object available
+  const carSlugForImages = car?.slug || (vehicle?.id ? `user-vehicle-${vehicle.id}` : null);
   const { heroImageUrl } = useCarImages(carSlugForImages, { enabled: !!carSlugForImages });
 
   const {
@@ -145,12 +146,12 @@ function SortableVehicleItem({ item, onSelectVehicle, onDeleteVehicle, isDraggin
       slug: carSlugForImages,
       // CarImage placeholder uses car.name; prefer something human-readable
       name: baseCar.name || displayName,
-      years: baseCar.years || (vehicle?.year ? String(vehicle.year) : baseCar.years),
-      brand: baseCar.brand || vehicle?.make || baseCar.brand,
+      year: baseCar.year || vehicle?.year || null,
+      make: baseCar.make || vehicle?.make || null,
       // For garage variant, CarImage prefers imageGarageUrl first
       imageGarageUrl: heroImageUrl || baseCar.imageGarageUrl || enrichmentUrl || null,
       // Allow garage variant to fall back to hero when garage image is missing/fails
-      imageHeroUrl: heroImageUrl || baseCar.imageHeroUrl || null,
+      imageUrl: heroImageUrl || baseCar.imageUrl || null,
     };
   }, [
     carSlugForImages,

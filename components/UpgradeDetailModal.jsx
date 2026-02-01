@@ -59,7 +59,8 @@ export default function UpgradeDetailModal({
   onAddToBuild = null,
   showAddToBuild = false,
   carName = null,
-  carSlug = null,
+  carId: _carId = null,
+  car = null,
 }) {
   // Set safe area color to match overlay background
   useSafeAreaColor(SAFE_AREA_COLORS.OVERLAY, { enabled: !!upgrade });
@@ -108,7 +109,7 @@ export default function UpgradeDetailModal({
             {upgrade.difficulty && (
               <span className={styles.metaItem}>
                 <Icons.wrench size={16} />
-                <InfoTooltip topicKey="installDifficulty" carName={carName} carSlug={carSlug}>
+                <InfoTooltip topicKey="installDifficulty" carName={carName} carSlug={car?.slug}>
                   <span>{upgrade.difficulty}</span>
                 </InfoTooltip>
               </span>

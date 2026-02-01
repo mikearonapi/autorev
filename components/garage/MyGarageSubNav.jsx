@@ -81,7 +81,27 @@ function getIcon(iconName) {
   }
 }
 
-export default function MyGarageSubNav({ carSlug, buildId, onBack, leftAction, rightAction }) {
+/**
+ * MyGarageSubNav Component
+ *
+ * @param {Object} props
+ * @param {string} [props.carId] - Car ID (PRIMARY identifier)
+ * @param {string} [props.carSlug] - Car slug for URL generation (fallback if carId provided but slug needed)
+ * @param {Object} [props.car] - Car object (if provided, slug will be extracted from car.slug)
+ * @param {string} [props.buildId] - Optional build ID
+ * @param {Function} [props.onBack] - Back button handler
+ * @param {ReactNode} [props.leftAction] - Optional left action element
+ * @param {ReactNode} [props.rightAction] - Optional right action element
+ */
+export default function MyGarageSubNav({
+  carId: _carId,
+  carSlug,
+  car,
+  buildId,
+  onBack,
+  leftAction,
+  rightAction,
+}) {
   const pathname = usePathname();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -89,11 +109,15 @@ export default function MyGarageSubNav({ carSlug, buildId, onBack, leftAction, r
   // Determine current page from pathname
   const currentOption = NAV_OPTIONS.find((opt) => pathname?.startsWith(opt.href)) || NAV_OPTIONS[0];
 
+  // Get slug for URL generation: prefer car.slug, then carSlug prop
+  // URLs use slugs, not IDs
+  const slugForUrl = car?.slug || carSlug;
+
   // Build URL with query params
   const buildUrl = (baseHref) => {
     const params = new URLSearchParams();
     if (buildId) params.set('build', buildId);
-    else if (carSlug) params.set('car', carSlug);
+    else if (slugForUrl) params.set('car', slugForUrl);
     const queryString = params.toString();
     return queryString ? `${baseHref}?${queryString}` : baseHref;
   };

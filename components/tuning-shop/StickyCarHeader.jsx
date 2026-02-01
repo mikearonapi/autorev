@@ -160,7 +160,7 @@ export default function StickyCarHeader({
             </div>
             <div className={styles.carDetails}>
               <span className={styles.carName}>{car.name}</span>
-              <span className={styles.carYear}>{car.year || car.years}</span>
+              <span className={styles.carYear}>{car.year}</span>
             </div>
             <ChevronIcon direction={isExpanded ? 'up' : 'down'} />
           </button>
@@ -213,11 +213,11 @@ export default function StickyCarHeader({
               </div>
               <div className={styles.expandedStatRow}>
                 <span className={styles.expandedStatLabel}>Engine</span>
-                <span className={styles.expandedStatValue}>{car.engine || 'N/A'}</span>
+                <span className={styles.expandedStatValue}>{car.engineType || 'N/A'}</span>
               </div>
               <div className={styles.expandedStatRow}>
                 <span className={styles.expandedStatLabel}>Drivetrain</span>
-                <span className={styles.expandedStatValue}>{car.drivetrain || 'N/A'}</span>
+                <span className={styles.expandedStatValue}>{car.driveType || 'N/A'}</span>
               </div>
             </div>
             {totalHpGain > 0 && (

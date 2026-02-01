@@ -8,10 +8,10 @@ export const dynamic = 'force-dynamic';
 
 /**
  * GET /api/events
- * 
+ *
  * Returns a paginated list of upcoming car events with filtering.
  * Public endpoint - no auth required.
- * 
+ *
  * Query params:
  *   - query: Text search for event name (case-insensitive, partial match)
  *   - location: Flexible location input - accepts ZIP code (e.g., "20175") or "City, State" (e.g., "Leesburg, VA")
@@ -27,14 +27,15 @@ export const dynamic = 'force-dynamic';
  *   - is_track_event: Filter to track events only (boolean)
  *   - is_free: Filter to free events only (boolean)
  *   - brand: Filter by car brand affinity
- *   - car_slug: Filter by specific car affinity
+ *   - car_id: Filter by specific car affinity (preferred)
+ *   - car_slug: Filter by specific car affinity (deprecated, kept for backward compatibility)
  *   - start_after: ISO date string, events after this date
  *   - start_before: ISO date string, events before this date
  *   - limit: Max results (default 20, max 100)
  *   - offset: Pagination offset (default 0)
  *   - sort: Sort order - 'date', 'featured', 'distance', or 'popularity' (default 'date')
  *   - group_recurring: Group recurring events into single entries (boolean, default false)
- * 
+ *
  * Response:
  *   {
  *     events: [{...}],
@@ -45,13 +46,13 @@ export const dynamic = 'force-dynamic';
  *     ungrouped_total?: number, // Only when group_recurring=true
  *     searchCenter?: { latitude, longitude, radius, location } // Only when radius search used
  *   }
- * 
+ *
  * Note: When radius search is used, events include distance_miles field
  * Note: When group_recurring=true, recurring events include is_recurring, upcoming_occurrences, series info
  */
 async function handleGet(request) {
   const { searchParams } = new URL(request.url);
-  
+
   // Build params from query string
   const params = {
     query: searchParams.get('query'),
@@ -68,7 +69,8 @@ async function handleGet(request) {
     is_track_event: searchParams.get('is_track_event'),
     is_free: searchParams.get('is_free'),
     brand: searchParams.get('brand'),
-    car_slug: searchParams.get('car_slug'),
+    car_id: searchParams.get('car_id'),
+    car_slug: searchParams.get('car_slug'), // Deprecated: kept for backward compatibility
     start_after: searchParams.get('start_after'),
     start_before: searchParams.get('start_before'),
     limit: searchParams.get('limit'),
@@ -76,14 +78,14 @@ async function handleGet(request) {
     sort: searchParams.get('sort'),
     group_recurring: searchParams.get('group_recurring'),
   };
-  
+
   // Remove null/undefined values
-  Object.keys(params).forEach(key => {
+  Object.keys(params).forEach((key) => {
     if (params[key] === null || params[key] === undefined) {
       delete params[key];
     }
   });
-  
+
   // Parse boolean values
   if (params.is_track_event !== undefined) {
     params.is_track_event = params.is_track_event === 'true';
@@ -94,11 +96,10 @@ async function handleGet(request) {
   if (params.group_recurring !== undefined) {
     params.group_recurring = params.group_recurring === 'true';
   }
-  
+
   const result = await searchEvents(params);
-  
+
   return NextResponse.json(result);
 }
 
 export const GET = withErrorLogging(handleGet, { route: 'events', feature: 'events' });
-

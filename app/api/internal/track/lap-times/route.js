@@ -8,9 +8,8 @@ import { withErrorLogging } from '@/lib/serverErrorLogger';
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-const supabase = (supabaseUrl && supabaseServiceKey)
-  ? createClient(supabaseUrl, supabaseServiceKey)
-  : null;
+const supabase =
+  supabaseUrl && supabaseServiceKey ? createClient(supabaseUrl, supabaseServiceKey) : null;
 
 function slugify(s) {
   return String(s || '')
@@ -52,34 +51,56 @@ function parseLapTimeToMs(input) {
 }
 
 /**
- * GET /api/internal/track/lap-times?carSlug=&limit=
+ * GET /api/internal/track/lap-times?carId=&limit=
  * Admin-only listing for QA.
+ *
+ * @param {string} carId - Car UUID (preferred) or slug (backward compat)
+ * @param {number} limit - Max results (default: 80, max: 300)
  */
 async function handleGet(request) {
   try {
     const auth = requireAdmin(request);
     if (!auth.ok) {
-      return NextResponse.json({ error: auth.error }, { status: auth.error === 'Unauthorized' ? 401 : 500 });
+      return NextResponse.json(
+        { error: auth.error },
+        { status: auth.error === 'Unauthorized' ? 401 : 500 }
+      );
     }
     if (!supabase) return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
 
     const { searchParams } = new URL(request.url);
-    const carSlug = searchParams.get('carSlug') || null;
+    // Prefer carId, fall back to carSlug for backward compatibility
+    const carIdParam = searchParams.get('carId') || searchParams.get('carSlug') || null;
     const limit = Math.max(1, Math.min(Number(searchParams.get('limit') || 80), 300));
 
     // NOTE: car_slug column was removed from car_track_lap_times (2026-01-11)
     // Now using car_id with join to cars table for slug
     let q = supabase
       .from('car_track_lap_times')
-      .select('id,car_id,cars(slug),lap_time_ms,lap_time_text,session_date,is_stock,tires,conditions,modifications,notes,source_url,confidence,verified,track_venues(slug,name),track_layouts(layout_key,name)')
+      .select(
+        'id,car_id,cars(slug),lap_time_ms,lap_time_text,session_date,is_stock,tires,conditions,modifications,notes,source_url,confidence,verified,track_venues(slug,name),track_layouts(layout_key,name)'
+      )
       .order('lap_time_ms', { ascending: true })
       .limit(limit);
 
-    // Filter by car_id if carSlug provided
-    if (carSlug) {
-      const { data: carRow } = await supabase.from('cars').select('id').eq('slug', carSlug).single();
-      if (carRow?.id) {
-        q = q.eq('car_id', carRow.id);
+    // Filter by car_id if carIdParam provided
+    if (carIdParam) {
+      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+        carIdParam
+      );
+
+      if (isUuid) {
+        q = q.eq('car_id', carIdParam);
+      } else {
+        // Resolve slug to UUID
+        const { data: carRow } = await supabase
+          .from('cars')
+          .select('id')
+          .eq('slug', carIdParam)
+          .maybeSingle();
+        if (carRow?.id) {
+          q = q.eq('car_id', carRow.id);
+        }
       }
     }
     const { data, error } = await q;
@@ -95,7 +116,8 @@ async function handleGet(request) {
 /**
  * POST /api/internal/track/lap-times
  * Body:
- * - carSlug (required)
+ * - carId (required) - Car UUID (preferred) or carSlug for backward compat
+ * - carSlug (deprecated) - Use carId instead
  * - trackName (required) OR trackSlug
  * - layoutKey (optional)
  * - layoutName (optional)
@@ -113,13 +135,17 @@ async function handlePost(request) {
   try {
     const auth = requireAdmin(request);
     if (!auth.ok) {
-      return NextResponse.json({ error: auth.error }, { status: auth.error === 'Unauthorized' ? 401 : 500 });
+      return NextResponse.json(
+        { error: auth.error },
+        { status: auth.error === 'Unauthorized' ? 401 : 500 }
+      );
     }
     if (!supabase) return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
 
     const body = await request.json();
     const {
-      carSlug,
+      carId: carIdParam,
+      carSlug, // Deprecated: kept for backward compatibility
       trackName,
       trackSlug,
       layoutKey,
@@ -135,7 +161,9 @@ async function handlePost(request) {
       confidence,
     } = body || {};
 
-    if (!carSlug) return NextResponse.json({ error: 'carSlug is required' }, { status: 400 });
+    // Prefer carId, fall back to carSlug for backward compatibility
+    const carIdentifier = carIdParam || carSlug;
+    if (!carIdentifier) return NextResponse.json({ error: 'carId is required' }, { status: 400 });
 
     const resolvedTrackSlug = trackSlug ? slugify(trackSlug) : slugify(trackName);
     const resolvedTrackName = trackName || trackSlug;
@@ -144,14 +172,32 @@ async function handlePost(request) {
     }
 
     const lap_time_ms = parseLapTimeToMs(lapTime);
-    if (!lap_time_ms) return NextResponse.json({ error: 'lapTime is required (e.g. "1:58.321")' }, { status: 400 });
+    if (!lap_time_ms)
+      return NextResponse.json({ error: 'lapTime is required (e.g. "1:58.321")' }, { status: 400 });
 
-    const { data: carRow, error: carErr } = await supabase
-      .from('cars')
-      .select('id,slug')
-      .eq('slug', carSlug)
-      .single();
-    if (carErr) throw carErr;
+    // Resolve car identifier to UUID
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+      carIdentifier
+    );
+    let carRow;
+
+    if (isUuid) {
+      const { data, error: carErr } = await supabase
+        .from('cars')
+        .select('id,slug')
+        .eq('id', carIdentifier)
+        .single();
+      if (carErr) throw carErr;
+      carRow = data;
+    } else {
+      const { data, error: carErr } = await supabase
+        .from('cars')
+        .select('id,slug')
+        .eq('slug', carIdentifier)
+        .single();
+      if (carErr) throw carErr;
+      carRow = data;
+    }
 
     // Upsert track venue
     const { data: trackRow, error: trackErr } = await supabase
@@ -167,7 +213,10 @@ async function handlePost(request) {
       const lk = slugify(layoutKey);
       const { data: layoutRow, error: layoutErr } = await supabase
         .from('track_layouts')
-        .upsert({ track_id: trackRow.id, layout_key: lk, name: layoutName || lk }, { onConflict: 'track_id,layout_key' })
+        .upsert(
+          { track_id: trackRow.id, layout_key: lk, name: layoutName || lk },
+          { onConflict: 'track_id,layout_key' }
+        )
         .select('id')
         .single();
       if (layoutErr) throw layoutErr;
@@ -203,7 +252,9 @@ async function handlePost(request) {
         confidence: c,
         verified: false,
       })
-      .select('id,car_id,lap_time_ms,lap_time_text,session_date,is_stock,tires,source_url,confidence,verified,created_at')
+      .select(
+        'id,car_id,lap_time_ms,lap_time_text,session_date,is_stock,tires,source_url,confidence,verified,created_at'
+      )
       .single();
 
     if (insErr) throw insErr;
@@ -215,20 +266,11 @@ async function handlePost(request) {
   }
 }
 
-export const GET = withErrorLogging(handleGet, { route: 'internal/track/lap-times', feature: 'internal' });
-export const POST = withErrorLogging(handlePost, { route: 'internal/track/lap-times', feature: 'internal' });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export const GET = withErrorLogging(handleGet, {
+  route: 'internal/track/lap-times',
+  feature: 'internal',
+});
+export const POST = withErrorLogging(handlePost, {
+  route: 'internal/track/lap-times',
+  feature: 'internal',
+});

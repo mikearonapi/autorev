@@ -2,7 +2,7 @@
  * GET /api/cars
  *
  * Returns all cars from the database for the browse-cars page.
- * This replaces the static data/cars.js file as the source of truth.
+ * Updated for Teoalida schema (Jan 2026).
  */
 
 import { NextResponse } from 'next/server';
@@ -12,7 +12,6 @@ import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 // Cache for 30 seconds, revalidate in background
-// Shorter cache to pick up new cars faster
 export const revalidate = 30;
 
 async function handleGet() {
@@ -21,6 +20,7 @@ async function handleGet() {
   }
 
   try {
+    // Teoalida schema columns
     const { data: cars, error } = await supabase
       .from('cars')
       .select(
@@ -28,50 +28,35 @@ async function handleGet() {
         id,
         slug,
         name,
+        year,
+        make,
         model,
         trim,
-        years,
         tier,
         category,
-        brand,
-        country,
-        engine,
+        body_type,
+        country_of_origin,
+        engine_type,
+        engine_size,
+        cylinders,
         hp,
+        hp_rpm,
         torque,
-        trans,
-        drivetrain,
-        price_range,
-        price_avg,
+        torque_rpm,
+        transmission,
+        drive_type,
         curb_weight,
-        zero_to_sixty,
-        top_speed,
-        quarter_mile,
-        braking_60_0,
-        lateral_g,
-        layout,
-        msrp_new_low,
-        msrp_new_high,
-        score_sound,
-        score_interior,
-        score_track,
-        score_reliability,
-        score_value,
-        score_driver_fun,
-        score_aftermarket,
-        notes,
-        highlight,
-        tagline,
-        hero_blurb,
-        image_hero_url,
-        manual_available,
-        seats,
-        vehicle_type,
-        daily_usability_tag,
-        common_issues,
-        defining_strengths,
-        honest_weaknesses
+        msrp,
+        fuel_type,
+        mpg_city,
+        mpg_highway,
+        mpg_combined,
+        image_url,
+        is_selectable,
+        generation_id
       `
       )
+      .eq('is_selectable', true)
       .order('name', { ascending: true });
 
     if (error) {
@@ -80,64 +65,64 @@ async function handleGet() {
     }
 
     // Transform snake_case to camelCase for frontend compatibility
+    // Include legacy field aliases for backward compatibility
     const transformedCars = (cars || []).map((car) => ({
+      // Core identifiers
       id: car.id,
       slug: car.slug,
       name: car.name,
+
+      // YMMT (Teoalida)
+      year: car.year,
+      make: car.make,
       model: car.model,
       trim: car.trim,
-      years: car.years,
+
+      // Classification
       tier: car.tier,
       category: car.category,
-      brand: car.brand,
-      country: car.country,
-      engine: car.engine,
+      bodyType: car.body_type,
+      isSelectable: car.is_selectable,
+      generationId: car.generation_id,
+
+      // Engine
       hp: car.hp,
+      hpRpm: car.hp_rpm,
       torque: car.torque,
-      trans: car.trans,
-      drivetrain: car.drivetrain,
-      priceRange: car.price_range,
-      priceAvg: car.price_avg,
+      torqueRpm: car.torque_rpm,
+      engineType: car.engine_type,
+      engineSize: car.engine_size ? parseFloat(car.engine_size) : null,
+      cylinders: car.cylinders,
+      fuelType: car.fuel_type,
+
+      // Drivetrain
+      transmission: car.transmission,
+      driveType: car.drive_type,
+
+      // Physical
       curbWeight: car.curb_weight,
-      // Performance metrics - CRITICAL for Performance HUB and Data page
-      zeroToSixty: car.zero_to_sixty ? parseFloat(car.zero_to_sixty) : null,
-      topSpeed: car.top_speed,
-      quarterMile: car.quarter_mile ? parseFloat(car.quarter_mile) : null,
-      braking60To0: car.braking_60_0,
-      lateralG: car.lateral_g ? parseFloat(car.lateral_g) : null,
-      layout: car.layout,
-      msrpNewLow: car.msrp_new_low,
-      msrpNewHigh: car.msrp_new_high,
-      // Scores
-      sound: parseFloat(car.score_sound) || 0,
-      interior: parseFloat(car.score_interior) || 0,
-      track: parseFloat(car.score_track) || 0,
-      reliability: parseFloat(car.score_reliability) || 0,
-      value: parseFloat(car.score_value) || 0,
-      driverFun: parseFloat(car.score_driver_fun) || 0,
-      aftermarket: parseFloat(car.score_aftermarket) || 0,
-      // Content
-      notes: car.notes,
-      highlight: car.highlight,
-      tagline: car.tagline,
-      heroBlurb: car.hero_blurb,
-      imageHeroUrl: car.image_hero_url,
-      // Ownership
-      manualAvailable: car.manual_available,
-      seats: car.seats,
-      vehicleType: car.vehicle_type,
-      dailyUsabilityTag: car.daily_usability_tag,
-      commonIssues: car.common_issues || [],
-      definingStrengths: car.defining_strengths || [],
-      honestWeaknesses: car.honest_weaknesses || [],
+
+      // Pricing
+      msrp: car.msrp,
+
+      // Fuel economy
+      mpgCity: car.mpg_city,
+      mpgHighway: car.mpg_highway,
+      mpgCombined: car.mpg_combined,
+
+      // Origin
+      countryOfOrigin: car.country_of_origin,
+
+      // Media
+      imageUrl: car.image_url,
     }));
 
-    // Return with cache headers for CDN optimization
     return NextResponse.json(
       {
         cars: transformedCars,
         count: transformedCars.length,
         source: 'supabase',
+        schema: 'teoalida',
       },
       {
         headers: {

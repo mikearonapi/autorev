@@ -1372,12 +1372,26 @@ function HeroVehicleDisplay({
       if (type !== 'mycars') return;
       if (panelState !== 'expanded' && panelState !== 'details') return;
 
-      const carSlug = item?.matchedCar?.slug || item?.vehicle?.matchedCarSlug;
-      if (!carSlug) return;
+      const car = item?.matchedCar;
+      const carSlug = car?.slug || item?.vehicle?.matchedCarSlug;
+      if (!carSlug && !car?.id) return;
 
       try {
         const { fetchCarFitments } = await import('@/lib/fitmentService');
-        const { data, error } = await fetchCarFitments(carSlug);
+        const { resolveCarId } = await import('@/lib/carResolver');
+
+        // Use car.id if available, otherwise resolve from slug
+        let carId = car?.id;
+        if (!carId && carSlug) {
+          carId = await resolveCarId(carSlug);
+        }
+
+        if (!carId) {
+          console.error('[HeroVehicleDisplay] Could not resolve car ID for fitments');
+          return;
+        }
+
+        const { data, error } = await fetchCarFitments(carId);
 
         if (error) {
           console.error('[HeroVehicleDisplay] Error loading fitment options:', error);
@@ -1411,7 +1425,8 @@ function HeroVehicleDisplay({
     };
 
     loadFitmentOptions();
-  }, [type, panelState, item?.matchedCar?.slug, item?.vehicle?.matchedCarSlug]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- only re-run when car ID changes
+  }, [type, panelState, item?.matchedCar?.id, item?.vehicle?.matchedCarSlug]);
 
   // Fetch safety data when vehicle info is available
   useEffect(() => {
@@ -3302,6 +3317,7 @@ function HeroVehicleDisplay({
               <div className={styles.modsView}>
                 <VehicleBuildPanel
                   vehicleId={item.vehicle?.id}
+                  carId={item.vehicle?.matchedCarId}
                   carSlug={item.vehicle?.matchedCarSlug}
                   stockHp={item.car?.hp || 0}
                   stockTorque={item.car?.torque || 0}

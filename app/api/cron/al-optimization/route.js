@@ -1,13 +1,13 @@
 /**
  * AL Optimization Cron Job
- * 
+ *
  * Weekly job to ensure AL has the best possible knowledge base:
  * 1. Generate missing embeddings for cars, insights, etc.
  * 2. Re-index YouTube transcripts that haven't been chunked
  * 3. Refresh internal documentation
  * 4. Generate ai_searchable_text for cars missing it
  * 5. Sync community insights embeddings
- * 
+ *
  * Schedule: Weekly (Sundays at 3am UTC)
  * Duration: ~10-30 minutes depending on backlog
  */
@@ -17,7 +17,12 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 import { notifyCronEnrichment, notifyCronFailure } from '@/lib/discord';
-import { generateEmbedding, toPgVectorLiteral, chunkText, isEmbeddingConfigured } from '@/lib/embeddingUtils';
+import {
+  generateEmbedding,
+  toPgVectorLiteral,
+  chunkText,
+  isEmbeddingConfigured,
+} from '@/lib/embeddingUtils';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -32,11 +37,11 @@ export const dynamic = 'force-dynamic';
  */
 async function handleGet(request) {
   const startTime = Date.now();
-  
+
   // Auth check
   const authHeader = request.headers.get('authorization');
   const cronHeader = request.headers.get('x-vercel-cron');
-  
+
   if (!cronHeader && authHeader !== `Bearer ${CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
@@ -55,7 +60,7 @@ async function handleGet(request) {
     insightEmbeddings: { processed: 0, success: 0, failed: 0 },
     aiSearchableText: { processed: 0, success: 0, failed: 0 },
     youtubeChunking: { processed: 0, chunks: 0 },
-    errors: []
+    errors: [],
   };
 
   try {
@@ -65,7 +70,7 @@ async function handleGet(request) {
     // STEP 1: Generate missing car embeddings
     // ============================================
     console.log('\n[AL-Optimization] Step 1: Car embeddings...');
-    
+
     const { data: carsNeedingEmbedding } = await supabase
       .from('cars')
       .select('id, slug, name, ai_searchable_text')
@@ -78,18 +83,18 @@ async function handleGet(request) {
       try {
         const text = car.ai_searchable_text || `${car.name}`;
         const embeddingResult = await generateEmbedding(text.slice(0, 8000));
-        
+
         if (embeddingResult.embedding) {
           const pgVec = toPgVectorLiteral(embeddingResult.embedding);
           await supabase
             .from('cars')
-            .update({ 
+            .update({
               embedding: pgVec,
               embedding_model: embeddingResult.model,
-              embedding_updated_at: new Date().toISOString()
+              embedding_updated_at: new Date().toISOString(),
             })
             .eq('id', car.id);
-          
+
           results.carEmbeddings.success++;
           console.log(`   ✓ Embedded: ${car.slug}`);
         } else {
@@ -100,16 +105,16 @@ async function handleGet(request) {
         results.carEmbeddings.failed++;
         results.errors.push({ phase: 'car_embedding', slug: car.slug, error: err.message });
       }
-      
+
       // Small delay to avoid rate limits
-      await new Promise(r => setTimeout(r, 100));
+      await new Promise((r) => setTimeout(r, 100));
     }
 
     // ============================================
     // STEP 2: Generate missing insight embeddings
     // ============================================
     console.log('\n[AL-Optimization] Step 2: Insight embeddings...');
-    
+
     const { data: insightsNeedingEmbedding } = await supabase
       .from('community_insights')
       .select('id, title, summary, details, embedding_text')
@@ -120,24 +125,25 @@ async function handleGet(request) {
       results.insightEmbeddings.processed++;
       try {
         // Generate embedding text if not present
-        const embeddingText = insight.embedding_text || 
+        const embeddingText =
+          insight.embedding_text ||
           `${insight.title || ''} ${insight.summary || ''} ${insight.details || ''}`.trim();
-        
+
         if (embeddingText.length < 50) continue;
-        
+
         const embeddingResult = await generateEmbedding(embeddingText.slice(0, 8000));
-        
+
         if (embeddingResult.embedding) {
           const pgVec = toPgVectorLiteral(embeddingResult.embedding);
           await supabase
             .from('community_insights')
-            .update({ 
+            .update({
               embedding: pgVec,
               embedding_text: embeddingText,
-              embedding_model: embeddingResult.model
+              embedding_model: embeddingResult.model,
             })
             .eq('id', insight.id);
-          
+
           results.insightEmbeddings.success++;
         } else {
           results.insightEmbeddings.failed++;
@@ -146,25 +152,27 @@ async function handleGet(request) {
         results.insightEmbeddings.failed++;
         results.errors.push({ phase: 'insight_embedding', id: insight.id, error: err.message });
       }
-      
-      await new Promise(r => setTimeout(r, 50));
+
+      await new Promise((r) => setTimeout(r, 50));
     }
 
     // ============================================
     // STEP 3: Generate ai_searchable_text for cars missing it
     // ============================================
     console.log('\n[AL-Optimization] Step 3: AI searchable text...');
-    
+
     const { data: carsMissingText } = await supabase
       .from('cars')
-      .select(`
-        id, slug, name, brand, years, category, tier,
-        engine, hp, torque, trans, drivetrain,
+      .select(
+        `
+        id, slug, name, make, year, category, tier,
+        engine_type, hp, torque, transmission, drive_type,
         notes, highlight, tagline, hero_blurb,
         defining_strengths, honest_weaknesses,
         score_sound, score_interior, score_track, 
         score_reliability, score_value, score_driver_fun, score_aftermarket
-      `)
+      `
+      )
       .or('ai_searchable_text.is.null,ai_searchable_text.eq.')
       .limit(30);
 
@@ -174,10 +182,10 @@ async function handleGet(request) {
         // Build comprehensive searchable text
         const parts = [
           car.name,
-          car.brand,
-          car.years,
+          car.make,
+          car.year,
           car.category,
-          car.engine,
+          car.engine_type,
           car.notes,
           car.highlight,
           car.tagline,
@@ -186,15 +194,15 @@ async function handleGet(request) {
 
         // Add strengths and weaknesses
         if (car.defining_strengths) {
-          const strengths = Array.isArray(car.defining_strengths) 
-            ? car.defining_strengths.map(s => typeof s === 'object' ? s.title : s).join(', ')
+          const strengths = Array.isArray(car.defining_strengths)
+            ? car.defining_strengths.map((s) => (typeof s === 'object' ? s.title : s)).join(', ')
             : '';
           if (strengths) parts.push(`Strengths: ${strengths}`);
         }
-        
+
         if (car.honest_weaknesses) {
           const weaknesses = Array.isArray(car.honest_weaknesses)
-            ? car.honest_weaknesses.map(w => typeof w === 'object' ? w.title : w).join(', ')
+            ? car.honest_weaknesses.map((w) => (typeof w === 'object' ? w.title : w)).join(', ')
             : '';
           if (weaknesses) parts.push(`Weaknesses: ${weaknesses}`);
         }
@@ -202,16 +210,16 @@ async function handleGet(request) {
         // Add performance summary
         if (car.hp) parts.push(`${car.hp} horsepower`);
         if (car.torque) parts.push(`${car.torque} lb-ft torque`);
-        if (car.drivetrain) parts.push(`${car.drivetrain} drivetrain`);
+        if (car.drive_type) parts.push(`${car.drive_type} drivetrain`);
 
         const aiSearchableText = parts.join(' ').trim();
-        
+
         if (aiSearchableText.length > 100) {
           await supabase
             .from('cars')
             .update({ ai_searchable_text: aiSearchableText })
             .eq('id', car.id);
-          
+
           results.aiSearchableText.success++;
           console.log(`   ✓ Generated AI text: ${car.slug}`);
         }
@@ -225,7 +233,7 @@ async function handleGet(request) {
     // STEP 4: Index new YouTube transcripts
     // ============================================
     console.log('\n[AL-Optimization] Step 4: YouTube transcript chunking...');
-    
+
     // Find videos with transcripts that haven't been chunked yet
     const { data: unchunkedVideos } = await supabase
       .from('youtube_videos')
@@ -242,20 +250,20 @@ async function handleGet(request) {
         .select('id', { count: 'exact', head: true })
         .eq('topic', 'youtube_transcript')
         .ilike('metadata->>video_id', video.video_id);
-      
+
       if (count === 0 && video.transcript_text && video.transcript_text.length > 500) {
         results.youtubeChunking.processed++;
-        
+
         try {
           // Chunk the transcript
           const chunks = chunkText(video.transcript_text, { maxChars: 1200, overlapChars: 150 });
-          
+
           for (let i = 0; i < chunks.length; i++) {
             const embeddingResult = await generateEmbedding(chunks[i]);
             if (!embeddingResult.embedding) continue;
-            
+
             const pgVec = toPgVectorLiteral(embeddingResult.embedding);
-            
+
             await supabase.from('document_chunks').insert({
               topic: 'youtube_transcript',
               chunk_index: i,
@@ -266,19 +274,25 @@ async function handleGet(request) {
               metadata: {
                 video_id: video.video_id,
                 title: video.title,
-                source_type: 'youtube_video'
-              }
+                source_type: 'youtube_video',
+              },
             });
-            
+
             results.youtubeChunking.chunks++;
           }
-          
-          console.log(`   ✓ Chunked video: ${video.title?.slice(0, 40)}... (${chunks.length} chunks)`);
+
+          console.log(
+            `   ✓ Chunked video: ${video.title?.slice(0, 40)}... (${chunks.length} chunks)`
+          );
         } catch (err) {
-          results.errors.push({ phase: 'youtube_chunking', video_id: video.video_id, error: err.message });
+          results.errors.push({
+            phase: 'youtube_chunking',
+            video_id: video.video_id,
+            error: err.message,
+          });
         }
-        
-        await new Promise(r => setTimeout(r, 200));
+
+        await new Promise((r) => setTimeout(r, 200));
       }
     }
 
@@ -286,55 +300,73 @@ async function handleGet(request) {
     // Log summary
     // ============================================
     const duration = Date.now() - startTime;
-    
+
     console.log('\n[AL-Optimization] Complete!');
-    console.log(`   Car embeddings: ${results.carEmbeddings.success}/${results.carEmbeddings.processed}`);
-    console.log(`   Insight embeddings: ${results.insightEmbeddings.success}/${results.insightEmbeddings.processed}`);
-    console.log(`   AI searchable text: ${results.aiSearchableText.success}/${results.aiSearchableText.processed}`);
-    console.log(`   YouTube chunks: ${results.youtubeChunking.chunks} from ${results.youtubeChunking.processed} videos`);
+    console.log(
+      `   Car embeddings: ${results.carEmbeddings.success}/${results.carEmbeddings.processed}`
+    );
+    console.log(
+      `   Insight embeddings: ${results.insightEmbeddings.success}/${results.insightEmbeddings.processed}`
+    );
+    console.log(
+      `   AI searchable text: ${results.aiSearchableText.success}/${results.aiSearchableText.processed}`
+    );
+    console.log(
+      `   YouTube chunks: ${results.youtubeChunking.chunks} from ${results.youtubeChunking.processed} videos`
+    );
     console.log(`   Duration: ${(duration / 1000).toFixed(1)}s`);
 
     // Send Discord notification
     notifyCronEnrichment('AL Knowledge Base Optimization', {
       duration,
       table: 'multiple',
-      recordsProcessed: 
-        results.carEmbeddings.processed + 
-        results.insightEmbeddings.processed + 
+      recordsProcessed:
+        results.carEmbeddings.processed +
+        results.insightEmbeddings.processed +
         results.aiSearchableText.processed +
         results.youtubeChunking.processed,
       recordsAdded: results.youtubeChunking.chunks,
       errors: results.errors.length,
       details: [
-        { label: '🚗 Car Embeddings', value: `${results.carEmbeddings.success}/${results.carEmbeddings.processed}` },
-        { label: '💡 Insight Embeddings', value: `${results.insightEmbeddings.success}/${results.insightEmbeddings.processed}` },
-        { label: '📝 AI Search Text', value: `${results.aiSearchableText.success}/${results.aiSearchableText.processed}` },
+        {
+          label: '🚗 Car Embeddings',
+          value: `${results.carEmbeddings.success}/${results.carEmbeddings.processed}`,
+        },
+        {
+          label: '💡 Insight Embeddings',
+          value: `${results.insightEmbeddings.success}/${results.insightEmbeddings.processed}`,
+        },
+        {
+          label: '📝 AI Search Text',
+          value: `${results.aiSearchableText.success}/${results.aiSearchableText.processed}`,
+        },
         { label: '🎬 YouTube Chunks', value: results.youtubeChunking.chunks },
-      ]
+      ],
     });
 
     return NextResponse.json({
       success: true,
       duration,
       results,
-      message: 'AL optimization complete'
+      message: 'AL optimization complete',
     });
-
   } catch (error) {
     console.error('[AL-Optimization] Fatal error:', error);
-    
+
     notifyCronFailure('al-optimization', error, {
       partialResults: results,
-      duration: Date.now() - startTime
+      duration: Date.now() - startTime,
     });
 
-    return NextResponse.json({
-      success: false,
-      error: 'AL optimization cron job failed',
-      partialResults: results
-    }, { status: 500 });
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'AL optimization cron job failed',
+        partialResults: results,
+      },
+      { status: 500 }
+    );
   }
 }
 
 export const GET = withErrorLogging(handleGet, { route: 'cron/al-optimization', feature: 'cron' });
-

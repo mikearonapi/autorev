@@ -2,7 +2,7 @@
 
 /**
  * InstallChecklistItem Component
- * 
+ *
  * Individual part row in the installation guide showing:
  * - Part name and brand (if specified)
  * - Difficulty badge (from upgradeTools.js)
@@ -16,7 +16,6 @@ import React, { useState, useMemo, useEffect, useCallback } from 'react';
 
 import { DIYVideoList } from '@/components/garage/DIYVideoEmbed';
 import { Icons } from '@/components/ui/Icons';
-import InfoTooltip from '@/components/ui/InfoTooltip';
 import { getToolsForUpgrade, difficultyLevels, tools, toolCategories } from '@/data/upgradeTools';
 
 import styles from './InstallChecklistItem.module.css';
@@ -33,7 +32,7 @@ const DIFFICULTY_COLORS = {
 
 /**
  * InstallChecklistItem - Single part in the installation guide
- * 
+ *
  * @param {Object} part - Part data with id, upgradeKey, name, etc.
  * @param {string} carName - Vehicle name for context
  * @param {string} carSlug - Vehicle slug for API calls
@@ -47,7 +46,7 @@ const DIFFICULTY_COLORS = {
 export default function InstallChecklistItem({
   part,
   carName,
-  carSlug,
+  carSlug: _carSlug,
   isExpanded,
   onToggleExpand,
   showVideos,
@@ -65,25 +64,26 @@ export default function InstallChecklistItem({
   const toolReqs = useMemo(() => {
     return getToolsForUpgrade(part.upgradeKey);
   }, [part.upgradeKey]);
-  
+
   // Get difficulty info
   const difficultyInfo = useMemo(() => {
     if (!toolReqs?.difficulty) return null;
     return difficultyLevels[toolReqs.difficulty] || null;
   }, [toolReqs]);
-  
+
   const difficultyColor = DIFFICULTY_COLORS[toolReqs?.difficulty] || '#64748b';
 
   // Fetch videos when showVideos is toggled on (only fetch once per part)
   const fetchVideos = useCallback(async () => {
     if (videosFetched || videosLoading) return;
-    
+
     // Determine the category from the upgrade key
-    const category = part.upgradeKey?.split('-')[0] || part.name?.toLowerCase().split(' ')[0] || 'upgrade';
-    
+    const category =
+      part.upgradeKey?.split('-')[0] || part.name?.toLowerCase().split(' ')[0] || 'upgrade';
+
     setVideosLoading(true);
     setVideosError(null);
-    
+
     try {
       const response = await fetch('/api/diy-videos/search', {
         method: 'POST',
@@ -94,11 +94,11 @@ export default function InstallChecklistItem({
           limit: 5,
         }),
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch videos: ${response.status}`);
       }
-      
+
       const data = await response.json();
       setVideos(data.videos || []);
       setVideosFetched(true);
@@ -116,14 +116,15 @@ export default function InstallChecklistItem({
       fetchVideos();
     }
   }, [showVideos, videosFetched, videosLoading, fetchVideos]);
-  
+
   // Determine if part requires tune (check by name pattern)
-  const requiresTune = part.upgradeKey?.includes('tune') || 
+  const requiresTune =
+    part.upgradeKey?.includes('tune') ||
     part.upgradeKey?.includes('turbo') ||
     part.upgradeKey?.includes('supercharger') ||
     part.upgradeKey?.includes('headers') ||
     part.upgradeKey?.includes('downpipe');
-  
+
   return (
     <div className={styles.item}>
       {/* Main Row - Compact single-line layout */}
@@ -132,34 +133,32 @@ export default function InstallChecklistItem({
         <div className={styles.partInfo}>
           <span className={styles.partName}>
             {part.name}
-            {part.brandName && (
-              <span className={styles.partBrand}> · {part.brandName}</span>
-            )}
+            {part.brandName && <span className={styles.partBrand}> · {part.brandName}</span>}
           </span>
         </div>
-        
+
         {/* Inline Badge - Only difficulty */}
         <div className={styles.inlineBadges}>
           {toolReqs?.difficulty && (
-            <span 
-              className={styles.difficultyBadge}
-              style={{ '--badge-color': difficultyColor }}
-            >
+            <span className={styles.difficultyBadge} style={{ '--badge-color': difficultyColor }}>
               {difficultyInfo?.label || toolReqs.difficulty}
             </span>
           )}
         </div>
-        
+
         {/* Expand Chevron */}
-        <button 
+        <button
           className={`${styles.expandBtn} ${isExpanded ? styles.expanded : ''}`}
-          onClick={(e) => { e.stopPropagation(); onToggleExpand(); }}
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleExpand();
+          }}
           aria-label={isExpanded ? 'Collapse' : 'Expand'}
         >
           <Icons.chevronDown size={16} />
         </button>
       </div>
-      
+
       {/* Expanded Content */}
       {isExpanded && (
         <div className={styles.expandedContent}>
@@ -180,27 +179,23 @@ export default function InstallChecklistItem({
               </span>
             )}
             {/* DIY Friendly */}
-            {toolReqs?.diyFriendly && (
-              <span className={styles.diyBadge}>DIY OK</span>
-            )}
+            {toolReqs?.diyFriendly && <span className={styles.diyBadge}>DIY OK</span>}
           </div>
-          
+
           {/* Notes */}
-          {toolReqs?.notes && (
-            <p className={styles.notes}>{toolReqs.notes}</p>
-          )}
-          
+          {toolReqs?.notes && <p className={styles.notes}>{toolReqs.notes}</p>}
+
           {/* Action Buttons */}
           <div className={styles.actionButtons}>
-            <button 
+            <button
               className={`${styles.actionBtn} ${showVideos ? styles.actionBtnActive : ''}`}
               onClick={onToggleVideos}
             >
               <Icons.video size={16} />
               {showVideos ? 'Hide Videos' : 'Install Videos'}
             </button>
-            
-            <button 
+
+            <button
               className={`${styles.actionBtn} ${showTools ? styles.actionBtnActive : ''}`}
               onClick={onToggleTools}
             >
@@ -208,7 +203,7 @@ export default function InstallChecklistItem({
               {showTools ? 'Hide Tools' : 'Required Tools'}
             </button>
           </div>
-          
+
           {/* Tools Section (inline for this specific part) */}
           {showTools && (
             <div className={styles.toolsInline}>
@@ -222,7 +217,7 @@ export default function InstallChecklistItem({
                         Essential Tools
                       </span>
                       <div className={styles.toolsGrid}>
-                        {toolReqs.essential.map(toolKey => {
+                        {toolReqs.essential.map((toolKey) => {
                           const tool = tools[toolKey];
                           if (!tool) return null;
                           const categoryInfo = toolCategories[tool.category] || {};
@@ -230,7 +225,7 @@ export default function InstallChecklistItem({
                             <div key={toolKey} className={styles.toolCard}>
                               <div className={styles.toolName}>{tool.name}</div>
                               <div className={styles.toolDescription}>{tool.description}</div>
-                              <span 
+                              <span
                                 className={styles.toolCategory}
                                 style={{ color: categoryInfo.color }}
                               >
@@ -249,15 +244,18 @@ export default function InstallChecklistItem({
                         Recommended Tools
                       </span>
                       <div className={styles.toolsGrid}>
-                        {toolReqs.recommended.map(toolKey => {
+                        {toolReqs.recommended.map((toolKey) => {
                           const tool = tools[toolKey];
                           if (!tool) return null;
                           const categoryInfo = toolCategories[tool.category] || {};
                           return (
-                            <div key={toolKey} className={`${styles.toolCard} ${styles.toolCardRecommended}`}>
+                            <div
+                              key={toolKey}
+                              className={`${styles.toolCard} ${styles.toolCardRecommended}`}
+                            >
                               <div className={styles.toolName}>{tool.name}</div>
                               <div className={styles.toolDescription}>{tool.description}</div>
-                              <span 
+                              <span
                                 className={styles.toolCategory}
                                 style={{ color: categoryInfo.color }}
                               >
@@ -276,15 +274,15 @@ export default function InstallChecklistItem({
                   <div className={styles.noToolsText}>
                     <span className={styles.noToolsTitle}>Tool list not available</span>
                     <p className={styles.noToolsSubtext}>
-                      We don&apos;t have specific tool requirements for this upgrade yet. 
-                      Check your part&apos;s instructions or watch install videos for guidance.
+                      We don&apos;t have specific tool requirements for this upgrade yet. Check your
+                      part&apos;s instructions or watch install videos for guidance.
                     </p>
                   </div>
                 </div>
               )}
             </div>
           )}
-          
+
           {/* Videos Section - fetches and displays DIY tutorial videos */}
           {showVideos && (
             <div className={styles.videosInline}>

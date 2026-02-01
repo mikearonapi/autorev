@@ -166,7 +166,7 @@ export default function ImageUploader({
   maxFiles = 10,
   vehicleId,
   buildId,
-  carSlug, // For cross-feature image sharing (Garage <-> Tuning Shop)
+  carId, // For cross-feature image sharing (Garage <-> Tuning Shop)
   existingImages = [],
   disabled = false,
   showPreviews = true, // Set to false when using a separate gallery component
@@ -239,7 +239,7 @@ export default function ImageUploader({
     formData.append('file', processedFile);
     if (vehicleId) formData.append('vehicleId', vehicleId);
     if (buildId) formData.append('buildId', buildId);
-    if (carSlug) formData.append('carSlug', carSlug);
+    if (carId) formData.append('carId', carId);
     formData.append('isPrimary', shouldBePrimary.toString());
 
     console.log(
@@ -355,7 +355,7 @@ export default function ImageUploader({
         contentType: file.type,
         vehicleId: vehicleId || null,
         buildId: buildId || null,
-        carSlug: carSlug || null,
+        carId: carId || null,
         isPrimary: false, // Videos are never primary
         duration: duration,
       }),

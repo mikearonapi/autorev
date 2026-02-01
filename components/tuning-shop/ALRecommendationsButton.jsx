@@ -63,7 +63,8 @@ function ALAvatar({ size = 24, onClick }) {
 
 export default function ALRecommendationsButton({
   carName,
-  carSlug,
+  carId,
+  car, // Full car object (has both id and slug)
   carBrand = null,
   upgrades = [],
   selectedParts = [],
@@ -74,6 +75,10 @@ export default function ALRecommendationsButton({
   const [showQuickActions, setShowQuickActions] = useState(false);
   const inputRef = useRef(null);
   const { openChatWithPrompt } = useAIChat();
+
+  // Get carSlug from props or car object (carId reserved for future use)
+  const _effectiveCarId = carId || car?.id;
+  const effectiveCarSlug = car?.slug;
 
   // Construct full display name with brand if available (e.g., "Ford Mustang SVT Cobra")
   const fullCarName =
@@ -111,7 +116,7 @@ export default function ALRecommendationsButton({
         fullPrompt,
         {
           category: `Parts for ${fullCarName}`,
-          carSlug,
+          carSlug: effectiveCarSlug, // Use slug for navigation/chat context
         },
         query.trim(),
         { autoSend: true }
@@ -120,7 +125,7 @@ export default function ALRecommendationsButton({
       // Clear input after sending
       setQuery('');
     },
-    [query, fullCarName, carSlug, upgrades, selectedParts, totalHpGain, openChatWithPrompt]
+    [query, fullCarName, effectiveCarSlug, upgrades, selectedParts, totalHpGain, openChatWithPrompt]
   );
 
   const handleKeyDown = useCallback(
@@ -174,12 +179,12 @@ export default function ALRecommendationsButton({
         }
         actions={
           upgrades.length > 0
-            ? generatePartsPageActions(upgrades, carName, carSlug, { carBrand })
+            ? generatePartsPageActions(upgrades, carName, effectiveCarSlug, { carBrand })
             : defaultPartsPageActions
         }
         context={{
           carName: fullCarName,
-          carSlug,
+          carSlug: effectiveCarSlug, // Use slug for navigation/chat context
           upgrades,
           category: `Parts for ${fullCarName}`,
         }}

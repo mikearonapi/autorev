@@ -1,15 +1,15 @@
 /**
  * Car Images API
- * 
+ *
  * Unified API for managing car images across Garage and Tuning Shop.
- * Images are linked by car_slug so they appear in both features.
- * 
- * GET /api/users/[userId]/car-images?carSlug=xxx
+ * Images are linked by car_id so they appear in both features.
+ *
+ * GET /api/users/[userId]/car-images?carId=xxx
  *   - Get all images for a specific car belonging to the user
- * 
+ *
  * PUT /api/users/[userId]/car-images
  *   - Set hero image or clear hero (revert to stock)
- * 
+ *
  * @route /api/users/[userId]/car-images
  */
 
@@ -18,35 +18,41 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 import { errors } from '@/lib/apiErrors';
+import { getSlugFromCarId } from '@/lib/carResolver';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
-import { createAuthenticatedClient, createServerSupabaseClient, getBearerToken } from '@/lib/supabaseServer';
+import {
+  createAuthenticatedClient,
+  createServerSupabaseClient,
+  getBearerToken,
+} from '@/lib/supabaseServer';
 
 /**
  * Get authenticated user from request (supports both cookie and Bearer token)
  */
 async function getAuthenticatedUser(request) {
   const bearerToken = getBearerToken(request);
-  const supabase = bearerToken 
-    ? createAuthenticatedClient(bearerToken) 
+  const supabase = bearerToken
+    ? createAuthenticatedClient(bearerToken)
     : await createServerSupabaseClient();
 
   if (!supabase) return null;
 
-  const { data: { user } } = bearerToken
-    ? await supabase.auth.getUser(bearerToken)
-    : await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = bearerToken ? await supabase.auth.getUser(bearerToken) : await supabase.auth.getUser();
   return user;
 }
 
 /**
- * GET /api/users/[userId]/car-images?carSlug=xxx
+ * GET /api/users/[userId]/car-images?carId=xxx
  * Fetch all images for a specific car belonging to the user
+ * Supports carId (UUID) or carSlug (for backward compatibility)
  */
 async function handleGet(request, context) {
   const params = await context.params;
   const { userId } = params;
   const { searchParams } = new URL(request.url);
-  const carSlug = searchParams.get('carSlug');
+  const carId = searchParams.get('carId') || searchParams.get('carSlug'); // Support both for backward compat
 
   // Verify authentication
   const user = await getAuthenticatedUser(request);
@@ -59,14 +65,20 @@ async function handleGet(request, context) {
     return errors.forbidden();
   }
 
-  if (!carSlug) {
-    return errors.missingField('carSlug');
+  if (!carId) {
+    return errors.missingField('carId');
   }
 
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY
   );
+
+  // Resolve carId to carSlug for RPC function (RPC still uses car_slug)
+  const carSlug = await getSlugFromCarId(carId, { client: supabase });
+  if (!carSlug) {
+    return NextResponse.json({ error: 'Car not found' }, { status: 404 });
+  }
 
   // Use the RPC function to get images
   const { data, error } = await supabase.rpc('get_user_images_by_car_slug', {
@@ -80,7 +92,7 @@ async function handleGet(request, context) {
   }
 
   // Transform snake_case to camelCase for frontend
-  const images = (data || []).map(img => ({
+  const images = (data || []).map((img) => ({
     id: img.id,
     userId: img.user_id,
     userVehicleId: img.user_vehicle_id,
@@ -111,21 +123,21 @@ async function handleGet(request, context) {
     createdAt: img.created_at,
   }));
 
-  return NextResponse.json({ images, carSlug });
+  return NextResponse.json({ images, carId, carSlug }); // Return both for backward compat
 }
 
 /**
  * PUT /api/users/[userId]/car-images
  * Set or clear hero image for a car
- * 
+ *
  * Body:
- *   - carSlug: string (required)
+ *   - carId: string (required) - car UUID
  *   - imageId: string | null (set this image as hero, or null to clear/revert to stock)
  */
 async function handlePut(request, context) {
   const params = await context.params;
   const { userId } = params;
-  
+
   // Verify authentication
   const user = await getAuthenticatedUser(request);
   if (!user) {
@@ -138,10 +150,11 @@ async function handlePut(request, context) {
   }
 
   const body = await request.json();
-  const { carSlug, imageId } = body;
+  const { carId, carSlug, imageId } = body; // Support both carId and carSlug for backward compat
+  const resolvedCarId = carId || carSlug; // Use carId if provided, fallback to carSlug
 
-  if (!carSlug) {
-    return errors.missingField('carSlug');
+  if (!resolvedCarId) {
+    return errors.missingField('carId');
   }
 
   const supabase = createClient(
@@ -149,11 +162,17 @@ async function handlePut(request, context) {
     process.env.SUPABASE_SERVICE_ROLE_KEY
   );
 
+  // Resolve carId to carSlug for RPC function (RPC still uses car_slug)
+  const resolvedCarSlug = await getSlugFromCarId(resolvedCarId, { client: supabase });
+  if (!resolvedCarSlug) {
+    return NextResponse.json({ error: 'Car not found' }, { status: 404 });
+  }
+
   if (imageId) {
     // Set specific image as hero
     const { data, error } = await supabase.rpc('set_car_hero_image', {
       p_user_id: userId,
-      p_car_slug: carSlug,
+      p_car_slug: resolvedCarSlug,
       p_image_id: imageId,
     });
 
@@ -166,12 +185,12 @@ async function handlePut(request, context) {
       return NextResponse.json({ error: 'Image not found or not eligible' }, { status: 404 });
     }
 
-    return NextResponse.json({ success: true, heroImageId: imageId });
+    return NextResponse.json({ success: true, heroImageId: imageId, carId: resolvedCarId });
   } else {
     // Clear hero (revert to stock)
     const { data, error } = await supabase.rpc('clear_car_hero_image', {
       p_user_id: userId,
-      p_car_slug: carSlug,
+      p_car_slug: resolvedCarSlug,
     });
 
     if (error) {
@@ -179,10 +198,21 @@ async function handlePut(request, context) {
       return NextResponse.json({ error: 'Failed to clear hero image' }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, heroImageId: null, cleared: data });
+    return NextResponse.json({
+      success: true,
+      heroImageId: null,
+      cleared: data,
+      carId: resolvedCarId,
+    });
   }
 }
 
 // Export wrapped handlers with error logging
-export const GET = withErrorLogging(handleGet, { route: 'users/[userId]/car-images', feature: 'garage' });
-export const PUT = withErrorLogging(handlePut, { route: 'users/[userId]/car-images', feature: 'garage' });
+export const GET = withErrorLogging(handleGet, {
+  route: 'users/[userId]/car-images',
+  feature: 'garage',
+});
+export const PUT = withErrorLogging(handlePut, {
+  route: 'users/[userId]/car-images',
+  feature: 'garage',
+});

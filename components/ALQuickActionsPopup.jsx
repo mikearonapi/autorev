@@ -40,7 +40,7 @@ function getUpgradeName(upgrade) {
  * @param {string} props.title - Popup title (e.g., "Ask AL About Parts")
  * @param {string} props.subtitle - Optional subtitle text
  * @param {Array} props.actions - Array of action objects with { label, prompt, icon? }
- * @param {Object} props.context - Context to pass to AL (carName, carSlug, etc.)
+ * @param {Object} props.context - Context to pass to AL (carName, carId, etc.)
  */
 export default function ALQuickActionsPopup({
   isOpen,
@@ -112,7 +112,7 @@ export default function ALQuickActionsPopup({
         fullPrompt,
         {
           category: context.category || 'AL Quick Action',
-          carSlug: context.carSlug,
+          carId: context.carId,
         },
         action.label,
         { autoSend: true }
@@ -203,15 +203,16 @@ export default function ALQuickActionsPopup({
  * Generate dynamic quick actions based on user's selected upgrades
  * @param {Array} upgrades - Array of upgrade objects with name, key, category
  * @param {string} carName - Name of the car (model name without brand)
- * @param {string} carSlug - Car slug for database operations
+ * @param {string} _carId - Car ID for database operations (unused, kept for API compatibility)
  * @param {Object} [options] - Additional options
  * @param {string} [options.carBrand] - Brand name (e.g., "Ford") to construct full display name
+ * @param {string} [options.carSlug] - Car slug for URL routing (if needed)
  * @returns {Array} Array of action objects - one for each upgrade plus compatibility check
  */
 export function generatePartsPageActions(
   upgrades = [],
   carName = 'my car',
-  carSlug = null,
+  _carId = null,
   options = {}
 ) {
   const actions = [];

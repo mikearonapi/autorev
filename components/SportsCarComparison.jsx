@@ -8,9 +8,9 @@ import { Icons } from '@/components/ui/Icons';
 import { useCarsList } from '@/hooks/useCarData';
 import { trackCarSelectorComplete } from '@/lib/ga4';
 import { useAppConfig, getDescriptorForValueSync } from '@/lib/hooks/useAppConfig.js';
-import { 
-  calculateWeightedScore, 
-  calculateMaxScore, 
+import {
+  calculateWeightedScore,
+  calculateMaxScore,
   getRecommendations,
   getTopPriorities,
   getDynamicRecommendationTypes,
@@ -23,34 +23,12 @@ import CarImage from './CarImage';
 import ScoringInfo from './ScoringInfo';
 import styles from './SportsCarComparison.module.css';
 
-
-
 /**
- * Extract the low price from a price range string
- * Handles both abbreviated ("$55-70K") and full formats ("$1,300,000 - $1,700,000")
- * Falls back to priceAvg if parsing fails
+ * Get the price value for filtering/sorting
+ * Uses msrp field (integer) from Teoalida schema
  */
 function getPriceLow(car) {
-  if (car.priceRange) {
-    // Match the first price value (digits with optional commas): "$1,300,000" or "$55"
-    const match = car.priceRange.match(/\$([\d,]+)/);
-    if (match) {
-      // Remove commas and parse as integer
-      const rawNumber = parseInt(match[1].replace(/,/g, ''), 10);
-      
-      // Check if string uses 'K' abbreviation (e.g., "$55-70K")
-      const hasKSuffix = /K\b/i.test(car.priceRange);
-      
-      // For abbreviated amounts with K suffix and small numbers, multiply by 1000
-      // For full dollar amounts (e.g., "$1,300,000"), use as-is
-      if (hasKSuffix && rawNumber < 10000) {
-        return rawNumber * 1000;
-      }
-      
-      return rawNumber;
-    }
-  }
-  return car.priceAvg;
+  return car.msrp || 0;
 }
 
 // Car data, categories, and tier config are imported from src/data/cars.js
@@ -62,7 +40,7 @@ const _recommendationTypesWithIcons = [
   { key: 'track', label: 'Best for Track', icon: Icons.track, colorVar: '--rec-track' },
   { key: 'value', label: 'Best Value', icon: Icons.value, colorVar: '--rec-value' },
   { key: 'reliable', label: 'Most Reliable', icon: Icons.shield, colorVar: '--rec-reliable' },
-  { key: 'modder', label: 'Best Aftermarket', icon: Icons.tool, colorVar: '--rec-aftermarket' }
+  { key: 'modder', label: 'Best Aftermarket', icon: Icons.tool, colorVar: '--rec-aftermarket' },
 ];
 
 // Helper to build tier config with styles (called inside component with hook data)
@@ -70,14 +48,15 @@ const buildTierConfigWithStyles = (tierConfig) => ({
   premium: { ...tierConfig.premium, className: styles.tierPremium },
   'upper-mid': { ...tierConfig['upper-mid'], className: styles.tierUpper },
   mid: { ...tierConfig.mid, className: styles.tierMid },
-  budget: { ...tierConfig.budget, className: styles.tierEntry }
+  budget: { ...tierConfig.budget, className: styles.tierEntry },
 });
 
 // Helper to build categories with icons (called inside component with hook data)
-const buildCategoriesWithIcons = (categories) => categories.map(cat => ({
-  ...cat,
-  icon: Icons[cat.key] || Icons.alertCircle
-}));
+const buildCategoriesWithIcons = (categories) =>
+  categories.map((cat) => ({
+    ...cat,
+    icon: Icons[cat.key] || Icons.alertCircle,
+  }));
 
 // Get score badge class
 const getScoreBadgeClass = (score) => {
@@ -97,22 +76,11 @@ const getTotalScoreClass = (score, maxScore) => {
 
 export default function SportsCarComparison() {
   // Get configuration from database via AppConfigProvider
-  const { 
-    tierConfig, 
-    categories, 
-    priorityDescriptors,
-    isLoading: _configLoading 
-  } = useAppConfig();
+  const { tierConfig, categories, priorityDescriptors, isLoading: _configLoading } = useAppConfig();
 
   // Build derived config values from database configs
-  const tierConfigWithStyles = useMemo(
-    () => buildTierConfigWithStyles(tierConfig),
-    [tierConfig]
-  );
-  const categoriesWithIcons = useMemo(
-    () => buildCategoriesWithIcons(categories),
-    [categories]
-  );
+  const tierConfigWithStyles = useMemo(() => buildTierConfigWithStyles(tierConfig), [tierConfig]);
+  const categoriesWithIcons = useMemo(() => buildCategoriesWithIcons(categories), [categories]);
 
   // Fetch car data using React Query (same as browse-cars page)
   const { data: carsResponse, isLoading, error: loadError } = useCarsList();
@@ -128,7 +96,7 @@ export default function SportsCarComparison() {
   // selectedCategory removed - now using mustHaveFilters.engineLayoutFilter
   const [expandedId, setExpandedId] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
-  
+
   // Must-have filters (hard constraints)
   const [mustHaveFilters, setMustHaveFilters] = useState({
     transmissionFilter: 'all', // 'all', 'manual', 'automatic'
@@ -141,11 +109,11 @@ export default function SportsCarComparison() {
     tierFilter: 'all', // 'all', 'premium', 'upper-mid', 'mid', 'budget'
     categoryFilter: 'all', // 'all', 'jdm', 'muscle', 'german', 'exotic', 'track', 'rally', 'hothatch'
   });
-  
+
   // Get unique vehicle types from car data (body styles: Sports Car, Sports Sedan, etc.)
   const vehicleTypes = useMemo(() => {
     const types = new Set();
-    carData.forEach(car => {
+    carData.forEach((car) => {
       if (car.vehicleType) types.add(car.vehicleType);
     });
     return Array.from(types).sort();
@@ -154,22 +122,46 @@ export default function SportsCarComparison() {
   // Car category definitions for filtering
   const CAR_CATEGORIES = [
     { key: 'all', label: 'All Cars', icon: Icons.car },
-    { key: 'jdm', label: 'JDM Legends', icon: Icons.racing, brands: ['Toyota', 'Nissan', 'Honda', 'Mazda', 'Mitsubishi', 'Subaru', 'Lexus', 'Acura'] },
-    { key: 'muscle', label: 'American Muscle', icon: Icons.zap, brands: ['Chevrolet', 'Ford', 'Dodge'] },
-    { key: 'german', label: 'German Performance', icon: Icons.shield, brands: ['BMW', 'Mercedes-Benz', 'Mercedes-AMG', 'Audi', 'Porsche', 'Volkswagen'] },
-    { key: 'exotic', label: 'Exotic & Rare', icon: Icons.trophy, brands: ['Lamborghini', 'Ferrari', 'McLaren', 'Aston Martin', 'Lotus'] },
+    {
+      key: 'jdm',
+      label: 'JDM Legends',
+      icon: Icons.racing,
+      brands: ['Toyota', 'Nissan', 'Honda', 'Mazda', 'Mitsubishi', 'Subaru', 'Lexus', 'Acura'],
+    },
+    {
+      key: 'muscle',
+      label: 'American Muscle',
+      icon: Icons.zap,
+      brands: ['Chevrolet', 'Ford', 'Dodge'],
+    },
+    {
+      key: 'german',
+      label: 'German Performance',
+      icon: Icons.shield,
+      brands: ['BMW', 'Mercedes-Benz', 'Mercedes-AMG', 'Audi', 'Porsche', 'Volkswagen'],
+    },
+    {
+      key: 'exotic',
+      label: 'Exotic & Rare',
+      icon: Icons.trophy,
+      brands: ['Lamborghini', 'Ferrari', 'McLaren', 'Aston Martin', 'Lotus'],
+    },
     { key: 'track', label: 'Track Weapons', icon: Icons.track, filter: (car) => car.track >= 8 },
-    { key: 'rally', label: 'Rally & AWD', icon: Icons.drivetrain, filter: (car) => car.drivetrain === 'AWD' },
+    {
+      key: 'rally',
+      label: 'Rally & AWD',
+      icon: Icons.drivetrain,
+      filter: (car) => car.driveType === 'AWD',
+    },
   ];
-  
+
   // Refs
   const tableRef = useRef(null);
   const rowRefs = useRef({});
 
-
   // Check for mobile viewport
   useEffect(() => {
-  if (typeof window === 'undefined') return;
+    if (typeof window === 'undefined') return;
     const checkMobile = () => setIsMobile(window.innerWidth < 900);
     checkMobile();
     window.addEventListener('resize', checkMobile);
@@ -193,49 +185,45 @@ export default function SportsCarComparison() {
   }, [priceMin, priceMax, mustHaveFilters, weights]);
 
   // Calculate weighted total score using scoring library
-  const calculateTotal = useCallback((car) => 
-    calculateWeightedScore(car, weights),
-    [weights]
-  );
+  const calculateTotal = useCallback((car) => calculateWeightedScore(car, weights), [weights]);
 
   // Maximum possible score based on current weights
-  const maxScore = useMemo(() => 
-    calculateMaxScore(weights),
-    [weights]
-  );
+  const maxScore = useMemo(() => calculateMaxScore(weights), [weights]);
 
   // Helper to determine car origin category
   const getCarOrigin = useCallback((car) => {
-    if (car.country === 'USA') return 'american';
-    if (car.country === 'Japan') return 'japanese';
-    if (['Germany', 'Italy', 'UK'].includes(car.country)) return 'european';
+    if (car.countryOfOrigin === 'USA') return 'american';
+    if (car.countryOfOrigin === 'Japan') return 'japanese';
+    if (['Germany', 'Italy', 'UK'].includes(car.countryOfOrigin)) return 'european';
     return 'other';
   }, []);
 
   // Helper to determine if car matches enthusiast style
   const matchesStyle = useCallback((car, style) => {
     if (style === 'all') return true;
-    
+
     switch (style) {
       case 'purist':
         // Purist: NA engines, high sound/driverFun, manual available
-        const isNA = car.engine && !car.engine.toLowerCase().includes('turbo') && 
-                     !car.engine.toLowerCase().includes('sc') && 
-                     !car.engine.toLowerCase().includes('supercharg');
+        const isNA =
+          car.engineType &&
+          !car.engineType.toLowerCase().includes('turbo') &&
+          !car.engineType.toLowerCase().includes('sc') &&
+          !car.engineType.toLowerCase().includes('supercharg');
         return isNA && car.sound >= 8 && car.driverFun >= 8 && car.manualAvailable;
-      
+
       case 'tuner':
         // Tuner: High aftermarket support, good platform for mods
         return car.aftermarket >= 8;
-      
+
       case 'drift':
         // Drift: RWD, good power-to-weight, responsive
-        return car.drivetrain === 'RWD' && car.hp >= 300 && car.driverFun >= 7;
-      
+        return car.driveType === 'RWD' && car.hp >= 300 && car.driverFun >= 7;
+
       case 'stance':
         // Stance: Popular in car culture, good aftermarket, Japanese or German preferred
-        return car.aftermarket >= 7 && ['Japan', 'Germany'].includes(car.country);
-      
+        return car.aftermarket >= 7 && ['Japan', 'Germany'].includes(car.countryOfOrigin);
+
       default:
         return true;
     }
@@ -244,81 +232,126 @@ export default function SportsCarComparison() {
   // Filtered and sorted cars (with must-have filters)
   // Price filter uses the LOW end of the price range so cars are shown if they START under budget
   const filteredCars = useMemo(() => {
-    return carData
-      .filter(car => getPriceLow(car) >= priceMin && getPriceLow(car) <= priceMax)
-      .filter(car => car.name.toLowerCase().includes(searchTerm.toLowerCase()))
-      // Engine layout filter is now in mustHaveFilters.engineLayoutFilter
-      // Must-have: Transmission filter (parse trans field like "6MT", "8AT", "6MT/7PDK")
-      .filter(car => {
-        if (mustHaveFilters.transmissionFilter === 'all') return true;
-        const trans = (car.trans || '').toUpperCase();
-        const hasManual = trans.includes('MT');
-        // Check for all automatic types: AT, DCT, PDK, DSG, SMG, Auto, Tronic, Gear, Direct
-        const hasAuto = trans.includes('AT') || trans.includes('DCT') || trans.includes('PDK') || 
-                        trans.includes('DSG') || trans.includes('SMG') || trans.includes('AUTO') || 
-                        trans.includes('TRONIC') || trans.includes('GEAR') || trans.includes('DIRECT');
-        if (mustHaveFilters.transmissionFilter === 'manual') return hasManual;
-        if (mustHaveFilters.transmissionFilter === 'automatic') return hasAuto;
-        return true;
-      })
-      // Must-have: Drivetrain filter
-      .filter(car => mustHaveFilters.drivetrainFilter === 'all' || car.drivetrain === mustHaveFilters.drivetrainFilter)
-      // Must-have: Seats filter (graceful handling if seats data is missing)
-      .filter(car => mustHaveFilters.seatsFilter === 'all' || !car.seats ||
-        (mustHaveFilters.seatsFilter === '2' && car.seats <= 2) ||
-        (mustHaveFilters.seatsFilter === '4' && car.seats >= 4))
-      // Must-have: Engine layout filter
-      .filter(car => mustHaveFilters.engineLayoutFilter === 'all' || car.category === mustHaveFilters.engineLayoutFilter)
-      // Vehicle type filter (body style: Sports Car, Sports Sedan, Wagon, etc.)
-      .filter(car => mustHaveFilters.vehicleTypeFilter === 'all' || car.vehicleType === mustHaveFilters.vehicleTypeFilter)
-      // Origin filter (American Muscle vs Import)
-      .filter(car => mustHaveFilters.originFilter === 'all' || getCarOrigin(car) === mustHaveFilters.originFilter)
-      // Enthusiast style filter (Purist, Tuner, Drift, Stance)
-      .filter(car => matchesStyle(car, mustHaveFilters.styleFilter))
-      // Tier filter (Premium, Upper-Mid, Mid, Budget)
-      .filter(car => mustHaveFilters.tierFilter === 'all' || car.tier === mustHaveFilters.tierFilter)
-      // Category filter (JDM, Muscle, German, etc.)
-      .filter(car => {
-        if (mustHaveFilters.categoryFilter === 'all') return true;
-        const category = CAR_CATEGORIES.find(c => c.key === mustHaveFilters.categoryFilter);
-        if (!category) return true;
-        if (category.brands) {
-          return category.brands.some(brand => 
-            (car.brand || '').toLowerCase().includes(brand.toLowerCase()) ||
-            (car.name || '').toLowerCase().includes(brand.toLowerCase())
-          );
-        }
-        if (category.filter) {
-          return category.filter(car);
-        }
-        return true;
-      })
-      .map(car => ({ ...car, total: calculateTotal(car) }))
-      .sort((a, b) => {
-        if (sortBy === 'price') return a.priceAvg - b.priceAvg;
-        if (sortBy === 'name') return a.name.localeCompare(b.name);
-        return b[sortBy] - a[sortBy];
-      });
+    return (
+      carData
+        .filter((car) => getPriceLow(car) >= priceMin && getPriceLow(car) <= priceMax)
+        .filter((car) => car.name.toLowerCase().includes(searchTerm.toLowerCase()))
+        // Engine layout filter is now in mustHaveFilters.engineLayoutFilter
+        // Must-have: Transmission filter (parse transmission field like "6MT", "8AT", "6MT/7PDK")
+        .filter((car) => {
+          if (mustHaveFilters.transmissionFilter === 'all') return true;
+          const trans = (car.transmission || '').toUpperCase();
+          const hasManual = trans.includes('MT');
+          // Check for all automatic types: AT, DCT, PDK, DSG, SMG, Auto, Tronic, Gear, Direct
+          const hasAuto =
+            trans.includes('AT') ||
+            trans.includes('DCT') ||
+            trans.includes('PDK') ||
+            trans.includes('DSG') ||
+            trans.includes('SMG') ||
+            trans.includes('AUTO') ||
+            trans.includes('TRONIC') ||
+            trans.includes('GEAR') ||
+            trans.includes('DIRECT');
+          if (mustHaveFilters.transmissionFilter === 'manual') return hasManual;
+          if (mustHaveFilters.transmissionFilter === 'automatic') return hasAuto;
+          return true;
+        })
+        // Must-have: Drivetrain filter
+        .filter(
+          (car) =>
+            mustHaveFilters.drivetrainFilter === 'all' ||
+            car.driveType === mustHaveFilters.drivetrainFilter
+        )
+        // Must-have: Seats filter (graceful handling if seats data is missing)
+        .filter(
+          (car) =>
+            mustHaveFilters.seatsFilter === 'all' ||
+            !car.seats ||
+            (mustHaveFilters.seatsFilter === '2' && car.seats <= 2) ||
+            (mustHaveFilters.seatsFilter === '4' && car.seats >= 4)
+        )
+        // Must-have: Engine layout filter
+        .filter(
+          (car) =>
+            mustHaveFilters.engineLayoutFilter === 'all' ||
+            car.category === mustHaveFilters.engineLayoutFilter
+        )
+        // Vehicle type filter (body style: Sports Car, Sports Sedan, Wagon, etc.)
+        .filter(
+          (car) =>
+            mustHaveFilters.vehicleTypeFilter === 'all' ||
+            car.vehicleType === mustHaveFilters.vehicleTypeFilter
+        )
+        // Origin filter (American Muscle vs Import)
+        .filter(
+          (car) =>
+            mustHaveFilters.originFilter === 'all' ||
+            getCarOrigin(car) === mustHaveFilters.originFilter
+        )
+        // Enthusiast style filter (Purist, Tuner, Drift, Stance)
+        .filter((car) => matchesStyle(car, mustHaveFilters.styleFilter))
+        // Tier filter (Premium, Upper-Mid, Mid, Budget)
+        .filter(
+          (car) => mustHaveFilters.tierFilter === 'all' || car.tier === mustHaveFilters.tierFilter
+        )
+        // Category filter (JDM, Muscle, German, etc.)
+        .filter((car) => {
+          if (mustHaveFilters.categoryFilter === 'all') return true;
+          const category = CAR_CATEGORIES.find((c) => c.key === mustHaveFilters.categoryFilter);
+          if (!category) return true;
+          if (category.brands) {
+            return category.brands.some(
+              (brand) =>
+                (car.make || '').toLowerCase().includes(brand.toLowerCase()) ||
+                (car.name || '').toLowerCase().includes(brand.toLowerCase())
+            );
+          }
+          if (category.filter) {
+            return category.filter(car);
+          }
+          return true;
+        })
+        .map((car) => ({ ...car, total: calculateTotal(car) }))
+        .sort((a, b) => {
+          if (sortBy === 'price') return a.priceAvg - b.priceAvg;
+          if (sortBy === 'name') return a.name.localeCompare(b.name);
+          return b[sortBy] - a[sortBy];
+        })
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [carData, weights, sortBy, priceMin, priceMax, searchTerm, mustHaveFilters, calculateTotal, getCarOrigin, matchesStyle]);
+  }, [
+    carData,
+    weights,
+    sortBy,
+    priceMin,
+    priceMax,
+    searchTerm,
+    mustHaveFilters,
+    calculateTotal,
+    getCarOrigin,
+    matchesStyle,
+  ]);
 
   // Get user's top priorities for ranking display
-  const _topPriorities = useMemo(() => 
-    getTopPriorities(weights, 3).map(p => ({
-      ...p,
-      ...categoriesWithIcons.find(c => c.key === p.key)
-    })),
+  const _topPriorities = useMemo(
+    () =>
+      getTopPriorities(weights, 3).map((p) => ({
+        ...p,
+        ...categoriesWithIcons.find((c) => c.key === p.key),
+      })),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [weights]
   );
 
   // Dynamic recommendation types based on user's priorities
-  const dynamicRecommendationTypes = useMemo(() => 
-    getDynamicRecommendationTypes(weights).map(rec => ({
-      ...rec,
-      icon: rec.isPrimary ? Icons.trophy : (Icons[rec.icon] || Icons.alertCircle),
-      colorVar: rec.isPrimary ? '--rec-top' : `--rec-${rec.key}`,
-    })),
+  const dynamicRecommendationTypes = useMemo(
+    () =>
+      getDynamicRecommendationTypes(weights).map((rec) => ({
+        ...rec,
+        icon: rec.isPrimary ? Icons.trophy : Icons[rec.icon] || Icons.alertCircle,
+        colorVar: rec.isPrimary ? '--rec-top' : `--rec-${rec.key}`,
+      })),
     [weights]
   );
 
@@ -332,13 +365,13 @@ export default function SportsCarComparison() {
   useEffect(() => {
     // Only track once per component mount
     if (ga4TrackedRef.current) return;
-    
+
     // Check if we have at least one valid recommendation
-    const recommendedCars = Object.values(recommendations).filter(car => car && car.slug);
+    const recommendedCars = Object.values(recommendations).filter((car) => car && car.slug);
     if (recommendedCars.length === 0) return;
-    
+
     // Fire the GA4 event
-    const selectedCarSlugs = recommendedCars.map(car => car.slug);
+    const selectedCarSlugs = recommendedCars.map((car) => car.slug);
     const filtersApplied = {
       weights,
       mustHaveFilters,
@@ -346,17 +379,22 @@ export default function SportsCarComparison() {
       priceMax,
       searchTerm: searchTerm || undefined,
     };
-    
+
     trackCarSelectorComplete(selectedCarSlugs, filtersApplied);
     ga4TrackedRef.current = true;
-    console.log('[SportsCarComparison] GA4 car_selector_complete tracked:', selectedCarSlugs.length, 'cars');
+    console.log(
+      '[SportsCarComparison] GA4 car_selector_complete tracked:',
+      selectedCarSlugs.length,
+      'cars'
+    );
   }, [recommendations, weights, mustHaveFilters, priceMin, priceMax, searchTerm]);
 
   // Active priorities for summary display (legacy, kept for potential future use)
-  const _activePriorities = useMemo(() => 
-    categoriesWithIcons
-      .filter(cat => weights[cat.key] > 1)
-      .map(cat => ({ ...cat, weight: weights[cat.key] })),
+  const _activePriorities = useMemo(
+    () =>
+      categoriesWithIcons
+        .filter((cat) => weights[cat.key] > 1)
+        .map((cat) => ({ ...cat, weight: weights[cat.key] })),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [weights]
   );
@@ -364,7 +402,8 @@ export default function SportsCarComparison() {
   // Check if filters are constraining results significantly
   const filterWarning = useMemo(() => {
     if (filteredCars.length === 0) return 'No matches found';
-    if (filteredCars.length < 3 && carData.length > 10) return `Only ${filteredCars.length} match${filteredCars.length === 1 ? 'es' : ''} your criteria`;
+    if (filteredCars.length < 3 && carData.length > 10)
+      return `Only ${filteredCars.length} match${filteredCars.length === 1 ? 'es' : ''} your criteria`;
     return null;
   }, [filteredCars.length, carData.length]);
 
@@ -372,7 +411,7 @@ export default function SportsCarComparison() {
   const handleRecCardClick = useCallback((car) => {
     if (!car) return;
     setExpandedId(car.id);
-    
+
     // Scroll to the row after a brief delay to allow expansion
     setTimeout(() => {
       const rowElement = rowRefs.current[car.id];
@@ -384,7 +423,7 @@ export default function SportsCarComparison() {
 
   // Handle weight change
   const handleWeightChange = useCallback((key, value) => {
-    setWeights(prev => ({ ...prev, [key]: parseFloat(value) }));
+    setWeights((prev) => ({ ...prev, [key]: parseFloat(value) }));
   }, []);
 
   // Handle price filter change
@@ -398,7 +437,8 @@ export default function SportsCarComparison() {
 
   // Get priority badge text and class
   const getPriorityBadge = (weight) => {
-    if (weight === 0) return { text: 'Off', className: `${styles.priorityBadge} ${styles.priorityBadgeOff}` };
+    if (weight === 0)
+      return { text: 'Off', className: `${styles.priorityBadge} ${styles.priorityBadgeOff}` };
     if (weight === 1) return { text: 'Normal', className: styles.priorityBadge };
     return { text: `${weight}×`, className: `${styles.priorityBadge} ${styles.priorityBadgeHigh}` };
   };
@@ -440,11 +480,13 @@ export default function SportsCarComparison() {
             {/* Budget Question */}
             <div className={styles.requirementCard}>
               <div className={styles.requirementQuestion}>
-                <span className={styles.requirementIconSvg}><Icons.wallet size={14} /></span>
+                <span className={styles.requirementIconSvg}>
+                  <Icons.wallet size={14} />
+                </span>
                 <span className={styles.requirementLabel}>Budget</span>
               </div>
-              <select 
-                value={`${priceMin}-${priceMax}`} 
+              <select
+                value={`${priceMin}-${priceMax}`}
                 onChange={handlePriceChange}
                 className={styles.requirementSelect}
                 aria-label="Budget range"
@@ -464,25 +506,33 @@ export default function SportsCarComparison() {
             {/* Transmission Question */}
             <div className={styles.requirementCard}>
               <div className={styles.requirementQuestion}>
-                <span className={styles.requirementIconSvg}><Icons.gearshift size={14} /></span>
+                <span className={styles.requirementIconSvg}>
+                  <Icons.gearshift size={14} />
+                </span>
                 <span className={styles.requirementLabel}>Transmission</span>
               </div>
               <div className={styles.requirementToggle}>
                 <button
                   className={`${styles.toggleBtn} ${mustHaveFilters.transmissionFilter === 'all' ? styles.toggleActive : ''}`}
-                  onClick={() => setMustHaveFilters(prev => ({ ...prev, transmissionFilter: 'all' }))}
+                  onClick={() =>
+                    setMustHaveFilters((prev) => ({ ...prev, transmissionFilter: 'all' }))
+                  }
                 >
                   Any
                 </button>
                 <button
                   className={`${styles.toggleBtn} ${mustHaveFilters.transmissionFilter === 'manual' ? styles.toggleActive : ''}`}
-                  onClick={() => setMustHaveFilters(prev => ({ ...prev, transmissionFilter: 'manual' }))}
+                  onClick={() =>
+                    setMustHaveFilters((prev) => ({ ...prev, transmissionFilter: 'manual' }))
+                  }
                 >
                   Manual
                 </button>
                 <button
                   className={`${styles.toggleBtn} ${mustHaveFilters.transmissionFilter === 'automatic' ? styles.toggleActive : ''}`}
-                  onClick={() => setMustHaveFilters(prev => ({ ...prev, transmissionFilter: 'automatic' }))}
+                  onClick={() =>
+                    setMustHaveFilters((prev) => ({ ...prev, transmissionFilter: 'automatic' }))
+                  }
                 >
                   Auto
                 </button>
@@ -492,25 +542,33 @@ export default function SportsCarComparison() {
             {/* Drivetrain Question */}
             <div className={styles.requirementCard}>
               <div className={styles.requirementQuestion}>
-                <span className={styles.requirementIconSvg}><Icons.drivetrain size={14} /></span>
+                <span className={styles.requirementIconSvg}>
+                  <Icons.drivetrain size={14} />
+                </span>
                 <span className={styles.requirementLabel}>Drivetrain</span>
               </div>
               <div className={styles.requirementToggle}>
                 <button
                   className={`${styles.toggleBtn} ${mustHaveFilters.drivetrainFilter === 'all' ? styles.toggleActive : ''}`}
-                  onClick={() => setMustHaveFilters(prev => ({ ...prev, drivetrainFilter: 'all' }))}
+                  onClick={() =>
+                    setMustHaveFilters((prev) => ({ ...prev, drivetrainFilter: 'all' }))
+                  }
                 >
                   Any
                 </button>
                 <button
                   className={`${styles.toggleBtn} ${mustHaveFilters.drivetrainFilter === 'RWD' ? styles.toggleActive : ''}`}
-                  onClick={() => setMustHaveFilters(prev => ({ ...prev, drivetrainFilter: 'RWD' }))}
+                  onClick={() =>
+                    setMustHaveFilters((prev) => ({ ...prev, drivetrainFilter: 'RWD' }))
+                  }
                 >
                   RWD
                 </button>
                 <button
                   className={`${styles.toggleBtn} ${mustHaveFilters.drivetrainFilter === 'AWD' ? styles.toggleActive : ''}`}
-                  onClick={() => setMustHaveFilters(prev => ({ ...prev, drivetrainFilter: 'AWD' }))}
+                  onClick={() =>
+                    setMustHaveFilters((prev) => ({ ...prev, drivetrainFilter: 'AWD' }))
+                  }
                 >
                   AWD
                 </button>
@@ -520,25 +578,27 @@ export default function SportsCarComparison() {
             {/* Seating Question */}
             <div className={styles.requirementCard}>
               <div className={styles.requirementQuestion}>
-                <span className={styles.requirementIconSvg}><Icons.seat size={14} /></span>
+                <span className={styles.requirementIconSvg}>
+                  <Icons.seat size={14} />
+                </span>
                 <span className={styles.requirementLabel}>Seats</span>
               </div>
               <div className={styles.requirementToggle}>
                 <button
                   className={`${styles.toggleBtn} ${mustHaveFilters.seatsFilter === 'all' ? styles.toggleActive : ''}`}
-                  onClick={() => setMustHaveFilters(prev => ({ ...prev, seatsFilter: 'all' }))}
+                  onClick={() => setMustHaveFilters((prev) => ({ ...prev, seatsFilter: 'all' }))}
                 >
                   Any
                 </button>
                 <button
                   className={`${styles.toggleBtn} ${mustHaveFilters.seatsFilter === '2' ? styles.toggleActive : ''}`}
-                  onClick={() => setMustHaveFilters(prev => ({ ...prev, seatsFilter: '2' }))}
+                  onClick={() => setMustHaveFilters((prev) => ({ ...prev, seatsFilter: '2' }))}
                 >
                   2
                 </button>
                 <button
                   className={`${styles.toggleBtn} ${mustHaveFilters.seatsFilter === '4' ? styles.toggleActive : ''}`}
-                  onClick={() => setMustHaveFilters(prev => ({ ...prev, seatsFilter: '4' }))}
+                  onClick={() => setMustHaveFilters((prev) => ({ ...prev, seatsFilter: '4' }))}
                 >
                   4+
                 </button>
@@ -548,12 +608,16 @@ export default function SportsCarComparison() {
             {/* Engine Layout Question */}
             <div className={styles.requirementCard}>
               <div className={styles.requirementQuestion}>
-                <span className={styles.requirementIconSvg}><Icons.engine size={14} /></span>
+                <span className={styles.requirementIconSvg}>
+                  <Icons.engine size={14} />
+                </span>
                 <span className={styles.requirementLabel}>Engine</span>
               </div>
               <select
                 value={mustHaveFilters.engineLayoutFilter}
-                onChange={e => setMustHaveFilters(prev => ({ ...prev, engineLayoutFilter: e.target.value }))}
+                onChange={(e) =>
+                  setMustHaveFilters((prev) => ({ ...prev, engineLayoutFilter: e.target.value }))
+                }
                 className={styles.requirementSelect}
                 aria-label="Engine layout"
               >
@@ -567,18 +631,24 @@ export default function SportsCarComparison() {
             {/* Vehicle Type Question */}
             <div className={styles.requirementCard}>
               <div className={styles.requirementQuestion}>
-                <span className={styles.requirementIconSvg}><Icons.car size={14} /></span>
+                <span className={styles.requirementIconSvg}>
+                  <Icons.car size={14} />
+                </span>
                 <span className={styles.requirementLabel}>Vehicle Type</span>
               </div>
               <select
                 value={mustHaveFilters.vehicleTypeFilter}
-                onChange={e => setMustHaveFilters(prev => ({ ...prev, vehicleTypeFilter: e.target.value }))}
+                onChange={(e) =>
+                  setMustHaveFilters((prev) => ({ ...prev, vehicleTypeFilter: e.target.value }))
+                }
                 className={styles.requirementSelect}
                 aria-label="Vehicle type"
               >
                 <option value="all">All Types</option>
-                {vehicleTypes.map(type => (
-                  <option key={type} value={type}>{type}</option>
+                {vehicleTypes.map((type) => (
+                  <option key={type} value={type}>
+                    {type}
+                  </option>
                 ))}
               </select>
             </div>
@@ -586,12 +656,16 @@ export default function SportsCarComparison() {
             {/* Car Culture Question */}
             <div className={styles.requirementCard}>
               <div className={styles.requirementQuestion}>
-                <span className={styles.requirementIconSvg}><Icons.globe size={14} /></span>
+                <span className={styles.requirementIconSvg}>
+                  <Icons.globe size={14} />
+                </span>
                 <span className={styles.requirementLabel}>Origin</span>
               </div>
               <select
                 value={mustHaveFilters.originFilter}
-                onChange={e => setMustHaveFilters(prev => ({ ...prev, originFilter: e.target.value }))}
+                onChange={(e) =>
+                  setMustHaveFilters((prev) => ({ ...prev, originFilter: e.target.value }))
+                }
                 className={styles.requirementSelect}
                 aria-label="Car culture preference"
               >
@@ -605,12 +679,16 @@ export default function SportsCarComparison() {
             {/* Enthusiast Style Question */}
             <div className={styles.requirementCard}>
               <div className={styles.requirementQuestion}>
-                <span className={styles.requirementIconSvg}><Icons.racing size={14} /></span>
+                <span className={styles.requirementIconSvg}>
+                  <Icons.racing size={14} />
+                </span>
                 <span className={styles.requirementLabel}>Style</span>
               </div>
               <select
                 value={mustHaveFilters.styleFilter}
-                onChange={e => setMustHaveFilters(prev => ({ ...prev, styleFilter: e.target.value }))}
+                onChange={(e) =>
+                  setMustHaveFilters((prev) => ({ ...prev, styleFilter: e.target.value }))
+                }
                 className={styles.requirementSelect}
                 aria-label="Driving style preference"
               >
@@ -621,7 +699,6 @@ export default function SportsCarComparison() {
                 <option value="stance">Stance</option>
               </select>
             </div>
-
           </div>
 
           {filterWarning && (
@@ -637,20 +714,26 @@ export default function SportsCarComparison() {
           <div className={styles.sectionHeader}>
             <div className={styles.stepBadge}>2</div>
             <h2 className={styles.sectionTitle}>What Matters Most to You?</h2>
-            <span className={styles.sectionMeta}>Adjust importance of each category to personalize rankings</span>
+            <span className={styles.sectionMeta}>
+              Adjust importance of each category to personalize rankings
+            </span>
           </div>
 
           <div className={styles.prioritiesGrid}>
-            {categoriesWithIcons.map(cat => {
+            {categoriesWithIcons.map((cat) => {
               const IconComponent = cat.icon;
               const isHighPriority = weights[cat.key] > 1;
               const isLowPriority = weights[cat.key] < 1;
               const badge = getPriorityBadge(weights[cat.key]);
-              const descriptor = getDescriptorForValueSync(priorityDescriptors, cat.key, weights[cat.key]);
-              
+              const descriptor = getDescriptorForValueSync(
+                priorityDescriptors,
+                cat.key,
+                weights[cat.key]
+              );
+
               return (
-                <div 
-                  key={cat.key} 
+                <div
+                  key={cat.key}
                   className={`${styles.priorityCard} ${isHighPriority ? styles.priorityCardHigh : ''} ${isLowPriority ? styles.priorityCardLow : ''}`}
                 >
                   <div className={styles.priorityCardHeader}>
@@ -666,21 +749,18 @@ export default function SportsCarComparison() {
                     max="3"
                     step="0.5"
                     value={weights[cat.key]}
-                    onChange={e => handleWeightChange(cat.key, e.target.value)}
+                    onChange={(e) => handleWeightChange(cat.key, e.target.value)}
                     className={styles.prioritySlider}
                     aria-label={`${cat.label} priority weight`}
                     style={{
-                      background: `linear-gradient(to right, #1a4d6e 0%, #1a4d6e ${(weights[cat.key] / 3) * 100}%, #e5e5e5 ${(weights[cat.key] / 3) * 100}%, #e5e5e5 100%)`
+                      background: `linear-gradient(to right, #1a4d6e 0%, #1a4d6e ${(weights[cat.key] / 3) * 100}%, #e5e5e5 ${(weights[cat.key] / 3) * 100}%, #e5e5e5 100%)`,
                     }}
                   />
-                  {descriptor && (
-                    <p className={styles.priorityDescriptor}>{descriptor}</p>
-                  )}
+                  {descriptor && <p className={styles.priorityDescriptor}>{descriptor}</p>}
                 </div>
               );
             })}
           </div>
-
         </section>
 
         {/* Step 3: Recommendations */}
@@ -691,17 +771,17 @@ export default function SportsCarComparison() {
           </div>
 
           <div className={styles.recommendationsGrid}>
-            {dynamicRecommendationTypes.map(rec => {
+            {dynamicRecommendationTypes.map((rec) => {
               const car = recommendations[rec.key];
               const IconComponent = rec.icon;
-              
+
               return (
-                <div 
+                <div
                   key={rec.key}
                   className={`${styles.recCard} ${rec.isPrimary ? styles.recCardPrimary : ''}`}
                   style={{ '--rec-color': `var(${rec.colorVar})` }}
                   onClick={() => handleRecCardClick(car)}
-                  onKeyDown={e => e.key === 'Enter' && handleRecCardClick(car)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleRecCardClick(car)}
                   tabIndex={car ? 0 : -1}
                   role="button"
                   aria-label={car ? `View ${car.name} - ${rec.label}` : `${rec.label} - No match`}
@@ -709,7 +789,7 @@ export default function SportsCarComparison() {
                   <div className={styles.recCardHeader}>
                     <div className={styles.recCardIcon}>
                       <IconComponent size={18} />
-                  </div>
+                    </div>
                     <span className={styles.recCardLabel}>{rec.label}</span>
                   </div>
                   {car ? (
@@ -723,10 +803,10 @@ export default function SportsCarComparison() {
                         Score: <strong>{car.total.toFixed(1)}</strong>/{maxScore}
                       </div>
                       {car.slug && (
-                        <Link 
+                        <Link
                           href={`/browse-cars/${car.slug}`}
                           className={styles.recCardLink}
-                          onClick={e => e.stopPropagation()}
+                          onClick={(e) => e.stopPropagation()}
                         >
                           View Profile <Icons.externalLink size={12} />
                         </Link>
@@ -739,7 +819,6 @@ export default function SportsCarComparison() {
               );
             })}
           </div>
-          
         </section>
 
         {/* About Our Scoring & Sources */}
@@ -757,14 +836,16 @@ export default function SportsCarComparison() {
           <div className={styles.exploreFilters}>
             {/* Category Pills */}
             <div className={styles.exploreCategoryRow}>
-              {CAR_CATEGORIES.map(cat => {
+              {CAR_CATEGORIES.map((cat) => {
                 const IconComponent = cat.icon;
                 const isActive = mustHaveFilters.categoryFilter === cat.key;
                 return (
                   <button
                     key={cat.key}
                     className={`${styles.exploreCategoryBtn} ${isActive ? styles.exploreCategoryActive : ''}`}
-                    onClick={() => setMustHaveFilters(prev => ({ ...prev, categoryFilter: cat.key }))}
+                    onClick={() =>
+                      setMustHaveFilters((prev) => ({ ...prev, categoryFilter: cat.key }))
+                    }
                   >
                     <IconComponent size={14} />
                     <span>{cat.label}</span>
@@ -777,31 +858,31 @@ export default function SportsCarComparison() {
             <div className={styles.exploreTierRow}>
               <button
                 className={`${styles.exploreTierBtn} ${mustHaveFilters.tierFilter === 'all' ? styles.exploreTierActive : ''}`}
-                onClick={() => setMustHaveFilters(prev => ({ ...prev, tierFilter: 'all' }))}
+                onClick={() => setMustHaveFilters((prev) => ({ ...prev, tierFilter: 'all' }))}
               >
                 All Tiers
               </button>
               <button
                 className={`${styles.exploreTierBtn} ${styles.exploreTierPremium} ${mustHaveFilters.tierFilter === 'premium' ? styles.exploreTierActive : ''}`}
-                onClick={() => setMustHaveFilters(prev => ({ ...prev, tierFilter: 'premium' }))}
+                onClick={() => setMustHaveFilters((prev) => ({ ...prev, tierFilter: 'premium' }))}
               >
                 Premium
               </button>
               <button
                 className={`${styles.exploreTierBtn} ${styles.exploreTierUpper} ${mustHaveFilters.tierFilter === 'upper-mid' ? styles.exploreTierActive : ''}`}
-                onClick={() => setMustHaveFilters(prev => ({ ...prev, tierFilter: 'upper-mid' }))}
+                onClick={() => setMustHaveFilters((prev) => ({ ...prev, tierFilter: 'upper-mid' }))}
               >
                 Upper-Mid
               </button>
               <button
                 className={`${styles.exploreTierBtn} ${styles.exploreTierMid} ${mustHaveFilters.tierFilter === 'mid' ? styles.exploreTierActive : ''}`}
-                onClick={() => setMustHaveFilters(prev => ({ ...prev, tierFilter: 'mid' }))}
+                onClick={() => setMustHaveFilters((prev) => ({ ...prev, tierFilter: 'mid' }))}
               >
                 Mid
               </button>
               <button
                 className={`${styles.exploreTierBtn} ${styles.exploreTierBudget} ${mustHaveFilters.tierFilter === 'budget' ? styles.exploreTierActive : ''}`}
-                onClick={() => setMustHaveFilters(prev => ({ ...prev, tierFilter: 'budget' }))}
+                onClick={() => setMustHaveFilters((prev) => ({ ...prev, tierFilter: 'budget' }))}
               >
                 Budget
               </button>
@@ -819,13 +900,13 @@ export default function SportsCarComparison() {
                   type="text"
                   placeholder="Search vehicles..."
                   value={searchTerm}
-                  onChange={e => setSearchTerm(e.target.value)}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   aria-label="Search vehicles"
                 />
               </div>
 
-              <select 
-                value={`${priceMin}-${priceMax}`} 
+              <select
+                value={`${priceMin}-${priceMax}`}
                 onChange={handlePriceChange}
                 className={styles.filterSelect}
                 aria-label="Filter by budget"
@@ -841,9 +922,9 @@ export default function SportsCarComparison() {
                 <option value="0-40000">Under $40K</option>
               </select>
 
-              <select 
-                value={sortBy} 
-                onChange={e => setSortBy(e.target.value)}
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
                 className={styles.filterSelect}
                 aria-label="Sort vehicles by"
               >
@@ -868,95 +949,102 @@ export default function SportsCarComparison() {
               <div className={styles.tableScrollContainer}>
                 {/* Table Header - Desktop only */}
                 <div className={styles.tableHeader}>
-              <span>Rank</span>
-              <span>Vehicle</span>
-                  {categoriesWithIcons.map(cat => {
+                  <span>Rank</span>
+                  <span>Vehicle</span>
+                  {categoriesWithIcons.map((cat) => {
                     const IconComponent = cat.icon;
-                return (
-                      <div 
-                        key={cat.key} 
-                        className={styles.tableHeaderIcon} 
+                    return (
+                      <div
+                        key={cat.key}
+                        className={styles.tableHeaderIcon}
                         data-tooltip={cat.label}
                         aria-label={cat.label}
                       >
                         <IconComponent size={16} />
-                  </div>
-                );
-              })}
-              <span style={{ textAlign: 'center' }}>Score</span>
-              <span style={{ textAlign: 'right' }}>Price</span>
-            </div>
+                      </div>
+                    );
+                  })}
+                  <span style={{ textAlign: 'center' }}>Score</span>
+                  <span style={{ textAlign: 'right' }}>Price</span>
+                </div>
 
-            {/* Table Rows */}
+                {/* Table Rows */}
                 {filteredCars.map((car, index) => {
-              const isExpanded = expandedId === car.id;
+                  const isExpanded = expandedId === car.id;
                   const tier = tierConfigWithStyles[car.tier];
                   const isTop = index === 0;
                   const isPodium = index < 3;
-              
-              return (
-                    <div 
-                      key={car.id}
-                      ref={el => rowRefs.current[car.id] = el}
-                    >
+
+                  return (
+                    <div key={car.id} ref={(el) => (rowRefs.current[car.id] = el)}>
                       {/* Desktop Row */}
                       {!isMobile ? (
                         <div
                           className={`${styles.tableRow} ${isTop ? styles.tableRowTop : ''}`}
-                    onClick={() => setExpandedId(isExpanded ? null : car.id)}
-                          onKeyDown={e => e.key === 'Enter' && setExpandedId(isExpanded ? null : car.id)}
+                          onClick={() => setExpandedId(isExpanded ? null : car.id)}
+                          onKeyDown={(e) =>
+                            e.key === 'Enter' && setExpandedId(isExpanded ? null : car.id)
+                          }
                           tabIndex={0}
                           role="button"
                           aria-expanded={isExpanded}
                           aria-label={`${car.name}, rank ${index + 1}, score ${car.total.toFixed(1)}`}
                         >
-                          <span className={`${styles.tableRank} ${isTop ? styles.tableRankTop : isPodium ? styles.tableRankPodium : ''}`}>
+                          <span
+                            className={`${styles.tableRank} ${isTop ? styles.tableRankTop : isPodium ? styles.tableRankPodium : ''}`}
+                          >
                             {index + 1}
-                    </span>
-                    
+                          </span>
+
                           <div className={styles.tableVehicle}>
                             <div className={styles.tableVehicleName}>
                               <span className={styles.tableVehicleTitle}>{car.name}</span>
                               <span className={`${styles.tierChip} ${tier.className}`}>
                                 {tier.label}
-                        </span>
-                      </div>
+                              </span>
+                            </div>
                             <div className={styles.tableVehicleMeta}>
-                        {car.years} · {car.category}
-                      </div>
-                    </div>
+                              {car.year} · {car.category}
+                            </div>
+                          </div>
 
-                    {categories.map(cat => (
+                          {categories.map((cat) => (
                             <div key={cat.key} className={styles.scoreCell}>
-                              <div className={`${styles.scoreBadge} ${getScoreBadgeClass(car[cat.key])}`}>
-                          {car[cat.key]}
-                        </div>
-                      </div>
-                    ))}
+                              <div
+                                className={`${styles.scoreBadge} ${getScoreBadgeClass(car[cat.key])}`}
+                              >
+                                {car[cat.key]}
+                              </div>
+                            </div>
+                          ))}
 
                           <div className={styles.tableTotal}>
-                            <span className={`${styles.tableTotalScore} ${getTotalScoreClass(car.total, maxScore)}`}>
-                        {car.total.toFixed(1)}
-                      </span>
-                    </div>
-
-                          <div className={styles.tablePrice}>
-                      {car.priceRange}
+                            <span
+                              className={`${styles.tableTotalScore} ${getTotalScoreClass(car.total, maxScore)}`}
+                            >
+                              {car.total.toFixed(1)}
+                            </span>
                           </div>
+
+                          <div className={styles.tablePrice}>{car.priceRange}</div>
                         </div>
                       ) : (
                         /* Mobile Card */
                         <div
                           className={`${styles.tableRow} ${isTop ? styles.tableRowTop : ''}`}
                           onClick={() => setExpandedId(isExpanded ? null : car.id)}
-                          onKeyDown={e => e.key === 'Enter' && setExpandedId(isExpanded ? null : car.id)}
+                          onKeyDown={(e) =>
+                            e.key === 'Enter' && setExpandedId(isExpanded ? null : car.id)
+                          }
                           tabIndex={0}
                           role="button"
                           aria-expanded={isExpanded}
                         >
                           <div className={styles.mobileCard}>
                             <div className={styles.mobileCardHeader}>
-                              <div className={`${styles.mobileCardRank} ${isTop ? styles.mobileCardRankTop : ''}`}>
+                              <div
+                                className={`${styles.mobileCardRank} ${isTop ? styles.mobileCardRankTop : ''}`}
+                              >
                                 {index + 1}
                               </div>
                               <div className={styles.mobileCardInfo}>
@@ -967,7 +1055,7 @@ export default function SportsCarComparison() {
                                   </span>
                                 </div>
                                 <div className={styles.tableVehicleMeta}>
-                                  {car.years} · {car.category}
+                                  {car.year} · {car.category}
                                 </div>
                               </div>
                               <div className={styles.mobileCardPrice}>
@@ -978,16 +1066,21 @@ export default function SportsCarComparison() {
                               </div>
                             </div>
                             <div className={styles.mobileCardScores}>
-                              {categoriesWithIcons.map(cat => {
+                              {categoriesWithIcons.map((cat) => {
                                 const IconComponent = cat.icon;
                                 return (
-                                  <div 
-                                    key={cat.key} 
+                                  <div
+                                    key={cat.key}
                                     className={styles.mobileScorePill}
                                     title={cat.label}
                                   >
                                     <IconComponent size={14} />
-                                    <span className={getScoreBadgeClass(car[cat.key]).replace(styles.scoreBadge, '')}>
+                                    <span
+                                      className={getScoreBadgeClass(car[cat.key]).replace(
+                                        styles.scoreBadge,
+                                        ''
+                                      )}
+                                    >
                                       {car[cat.key]}
                                     </span>
                                   </div>
@@ -1005,9 +1098,15 @@ export default function SportsCarComparison() {
                             <div className={styles.expandedSection}>
                               <h4>Specifications</h4>
                               <div className={styles.expandedSpecs}>
-                                <div><span>Engine:</span> {car.engine}</div>
-                                <div><span>Power:</span> {car.hp} hp</div>
-                                <div><span>Transmission:</span> {car.trans}</div>
+                                <div>
+                                  <span>Engine:</span> {car.engineType}
+                                </div>
+                                <div>
+                                  <span>Power:</span> {car.hp} hp
+                                </div>
+                                <div>
+                                  <span>Transmission:</span> {car.transmission}
+                                </div>
                               </div>
                             </div>
                             <div className={styles.expandedSection}>
@@ -1021,19 +1120,19 @@ export default function SportsCarComparison() {
                           </div>
                           {car.slug && (
                             <div className={styles.expandedActions}>
-                              <CarActionMenu 
-                                car={car} 
-                                variant="compact" 
-                                showLabels={false} 
+                              <CarActionMenu
+                                car={car}
+                                variant="compact"
+                                showLabels={false}
                                 theme="light"
                               />
                             </div>
                           )}
                         </div>
                       )}
-                </div>
-              );
-            })}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>

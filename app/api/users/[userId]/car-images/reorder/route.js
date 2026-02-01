@@ -5,7 +5,7 @@
  * The order determines how photos appear on the community build page.
  *
  * PUT /api/users/[userId]/car-images/reorder
- *   Body: { carSlug: string, imageIds: string[] }
+ *   Body: { carId: string, imageIds: string[] }
  *   - imageIds should be in the desired display order
  *
  * @route /api/users/[userId]/car-images/reorder
@@ -60,10 +60,10 @@ async function handlePut(request, context) {
   }
 
   const body = await request.json();
-  const { carSlug, imageIds } = body;
+  const { carId, carSlug, imageIds } = body; // Support both carId and carSlug for backward compat
 
-  if (!carSlug) {
-    return errors.missingField('carSlug');
+  if (!carId && !carSlug) {
+    return errors.missingField('carId');
   }
 
   if (!imageIds || !Array.isArray(imageIds) || imageIds.length === 0) {
@@ -78,7 +78,7 @@ async function handlePut(request, context) {
   // Verify user owns all the images and they belong to the specified car
   const { data: images, error: fetchError } = await supabase
     .from('user_uploaded_images')
-    .select('id, user_id, car_slug')
+    .select('id, user_id, car_id, car_slug')
     .in('id', imageIds)
     .eq('user_id', userId);
 
@@ -87,8 +87,23 @@ async function handlePut(request, context) {
     return NextResponse.json({ error: 'Failed to verify images' }, { status: 500 });
   }
 
-  // Check ownership and car_slug match
-  const validImageIds = new Set(images?.map((img) => img.id) || []);
+  // Check ownership and car match
+  // If carId (UUID) is provided, match by car_id; if carSlug is provided, match by car_slug
+  const validImageIds = new Set();
+  for (const img of images || []) {
+    if (carId) {
+      // Match by car_id (UUID)
+      if (img.car_id === carId) {
+        validImageIds.add(img.id);
+      }
+    } else if (carSlug) {
+      // Match by car_slug (for backward compat)
+      if (img.car_slug === carSlug) {
+        validImageIds.add(img.id);
+      }
+    }
+  }
+
   const invalidIds = imageIds.filter((id) => !validImageIds.has(id));
 
   if (invalidIds.length > 0) {
@@ -116,13 +131,14 @@ async function handlePut(request, context) {
   }
 
   console.log(
-    `[CarImages/Reorder] Updated order for ${imageIds.length} images, carSlug=${carSlug}`
+    `[CarImages/Reorder] Updated order for ${imageIds.length} images, carId=${carId || carSlug}`
   );
 
   return NextResponse.json({
     success: true,
     message: `Reordered ${imageIds.length} images`,
     order: imageIds,
+    carId: carId || carSlug,
   });
 }
 

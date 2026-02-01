@@ -60,8 +60,8 @@ async function handleGet(request, { params }) {
     );
   }
 
-  // Fetch the vehicle with full details
-  const { data: vehicle, error } = await supabase
+  // Fetch the vehicle with full details (JOIN to cars for slug)
+  const { data: vehicleData, error } = await supabase
     .from('user_vehicles')
     .select(
       `
@@ -71,7 +71,6 @@ async function handleGet(request, { params }) {
         make,
         model,
         trim,
-        matched_car_slug,
         matched_car_id,
         matched_car_variant_id,
         nickname,
@@ -105,12 +104,21 @@ async function handleGet(request, { params }) {
         health_last_analyzed_at,
         hide_stock_image,
         created_at,
-        updated_at
+        updated_at,
+        cars:matched_car_id (slug, name)
       `
     )
     .eq('user_id', userId)
     .eq('id', vehicleId)
     .single();
+
+  // Flatten joined data for backward compatibility
+  const vehicle = vehicleData
+    ? {
+        ...vehicleData,
+        matched_car_slug: vehicleData.cars?.slug || null,
+      }
+    : null;
 
   if (error) {
     if (error.code === 'PGRST116') {

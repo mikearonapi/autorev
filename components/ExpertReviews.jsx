@@ -18,32 +18,32 @@ const CATEGORY_LABELS = {
   reliability: 'Reliability',
   value: 'Value',
   driverFun: 'Driver Fun',
-  aftermarket: 'Aftermarket'
+  aftermarket: 'Aftermarket',
 };
 
 /**
  * ExpertReviews Component
- * 
+ *
  * Displays AI-processed expert reviews from YouTube for a specific car.
  * Shows embedded videos, summaries, key quotes, and consensus indicators.
  * Uses React Query for data caching and deduplication.
- * 
+ *
  * @param {Object} props
- * @param {string} props.carSlug - The car's slug for fetching reviews
- * @param {Object} props.car - The car object (for consensus data if available)
+ * @param {string} props.carId - The car's ID
+ * @param {Object} props.car - The car object (for slug and consensus data)
  */
-export default function ExpertReviews({ carSlug, car }) {
+export default function ExpertReviews({ carId: _carId, car }) {
   const [expandedVideo, setExpandedVideo] = useState(null);
   const [showAllVideos, setShowAllVideos] = useState(false);
 
   // Use React Query for expert reviews with caching
-  const { 
-    data: reviewsData, 
-    isLoading, 
-    error, 
-    refetch 
-  } = useCarExpertReviews(carSlug, { limit: 10 });
-  
+  const {
+    data: reviewsData,
+    isLoading,
+    error,
+    refetch,
+  } = useCarExpertReviews(car?.slug, { limit: 10 });
+
   const videos = reviewsData?.videos || [];
 
   // Extract consensus data from car if available
@@ -54,7 +54,7 @@ export default function ExpertReviews({ carSlug, car }) {
   // Calculate sentiment indicators comparing external sentiment to internal scores
   const sentimentIndicators = useMemo(() => {
     if (!consensus?.categoryMeans || !car) return [];
-    
+
     const indicators = [];
     const categoryMap = {
       sound: 'sound',
@@ -63,35 +63,35 @@ export default function ExpertReviews({ carSlug, car }) {
       reliability: 'reliability',
       value: 'value',
       driver_fun: 'driverFun',
-      aftermarket: 'aftermarket'
+      aftermarket: 'aftermarket',
     };
-    
+
     for (const [extKey, intKey] of Object.entries(categoryMap)) {
       const externalSentiment = consensus.categoryMeans?.[extKey];
       const internalScore = car[intKey];
-      
+
       if (externalSentiment !== undefined && internalScore !== undefined) {
         // Normalize internal score (1-10) to sentiment scale (-1 to 1)
         const normalizedInternal = (internalScore - 5) / 5;
         const diff = externalSentiment - normalizedInternal;
-        
+
         // Only show significant differences
         if (Math.abs(diff) > 0.15) {
           indicators.push({
             category: CATEGORY_LABELS[intKey] || intKey,
             direction: diff > 0 ? 'up' : 'down',
-            magnitude: Math.abs(diff) > 0.4 ? 'strong' : 'mild'
+            magnitude: Math.abs(diff) > 0.4 ? 'strong' : 'mild',
           });
         }
       }
     }
-    
+
     return indicators;
   }, [consensus, car]);
 
   // Get upgrade suggestions based on weakness tags
   const upgradeSuggestions = useMemo(() => {
-    const weaknessTags = consensus?.weaknesses?.map(w => w.tag || w) || [];
+    const weaknessTags = consensus?.weaknesses?.map((w) => w.tag || w) || [];
     return getUpgradeSuggestions(weaknessTags).slice(0, 4);
   }, [consensus]);
 
@@ -125,10 +125,7 @@ export default function ExpertReviews({ carSlug, car }) {
         <div className={styles.errorState}>
           <AlertIcon size={20} />
           <span>Unable to load expert reviews</span>
-          <button 
-            className={styles.retryButton}
-            onClick={() => refetch()}
-          >
+          <button className={styles.retryButton} onClick={() => refetch()}>
             Try Again
           </button>
         </div>
@@ -167,8 +164,8 @@ export default function ExpertReviews({ carSlug, car }) {
         {sentimentIndicators.length > 0 && (
           <div className={styles.sentimentIndicators}>
             {sentimentIndicators.slice(0, 3).map((ind, i) => (
-              <span 
-                key={i} 
+              <span
+                key={i}
                 className={`${styles.sentimentChip} ${styles[ind.direction]} ${styles[ind.magnitude]}`}
                 title={`Experts ${ind.direction === 'up' ? 'more positive' : 'more critical'} about ${ind.category}`}
               >
@@ -234,11 +231,7 @@ export default function ExpertReviews({ carSlug, car }) {
           </span>
           <div className={styles.upgradeTags}>
             {upgradeSuggestions.map((upgrade, i) => (
-              <Link 
-                key={i}
-                href={`/tuning-shop?car=${car.slug}`}
-                className={styles.upgradeTag}
-              >
+              <Link key={i} href={`/tuning-shop?car=${car.slug}`} className={styles.upgradeTag}>
                 {formatTag(upgrade)}
               </Link>
             ))}
@@ -254,7 +247,7 @@ export default function ExpertReviews({ carSlug, car }) {
               const isExpanded = expandedVideo === video.video_id;
               const videoData = video.youtube_videos || video;
               const proText = videoData.pros_mentioned?.[0];
-              
+
               return (
                 <div key={video.video_id} className={styles.videoCard}>
                   {/* Video Player / Thumbnail */}
@@ -269,13 +262,16 @@ export default function ExpertReviews({ carSlug, car }) {
                         className={styles.videoIframe}
                       />
                     ) : (
-                      <button 
+                      <button
                         className={styles.thumbnailButton}
                         onClick={() => setExpandedVideo(video.video_id)}
                         aria-label={`Play ${videoData.title}`}
                       >
-                        <Image 
-                          src={videoData.thumbnail_url || `https://img.youtube.com/vi/${video.video_id}/mqdefault.jpg`}
+                        <Image
+                          src={
+                            videoData.thumbnail_url ||
+                            `https://img.youtube.com/vi/${video.video_id}/mqdefault.jpg`
+                          }
                           alt={videoData.title}
                           fill
                           className={styles.thumbnail}
@@ -301,7 +297,7 @@ export default function ExpertReviews({ carSlug, car }) {
                       <span className={styles.channelBadge}>{videoData.channel_name}</span>
                     </div>
                     <h3 className={styles.videoTitle}>{videoData.title}</h3>
-                    
+
                     {/* Insight Badge */}
                     {proText && !isExpanded && (
                       <div className={styles.insightBadge}>
@@ -309,17 +305,17 @@ export default function ExpertReviews({ carSlug, car }) {
                         <span>{typeof proText === 'string' ? proText : proText.text}</span>
                       </div>
                     )}
-                    
+
                     {/* Actions */}
                     <div className={styles.videoActions}>
-                      <button 
+                      <button
                         className={styles.playButton}
                         onClick={() => setExpandedVideo(video.video_id)}
                       >
                         <PlayIcon size={14} />
                         {isExpanded ? 'Playing...' : 'Watch Review'}
                       </button>
-                      <a 
+                      <a
                         href={`https://www.youtube.com/watch?v=${video.video_id}`}
                         target="_blank"
                         rel="noopener noreferrer"
@@ -338,7 +334,7 @@ export default function ExpertReviews({ carSlug, car }) {
           {/* View More Toggle */}
           {videos.length > 2 && (
             <div className={styles.viewMore}>
-              <button 
+              <button
                 className={styles.viewMoreButton}
                 onClick={() => setShowAllVideos(!showAllVideos)}
               >
@@ -359,8 +355,7 @@ export default function ExpertReviews({ carSlug, car }) {
 
       {/* Disclaimer */}
       <p className={styles.disclaimer}>
-        Expert opinions sourced from trusted automotive reviewers. 
-        Not affiliated with AutoRev.
+        Expert opinions sourced from trusted automotive reviewers. Not affiliated with AutoRev.
       </p>
     </div>
   );
@@ -377,7 +372,14 @@ function PlayIcon({ size = 24 }) {
 
 function CheckIcon({ size = 16 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <polyline points="20 6 9 17 4 12" />
     </svg>
   );
@@ -385,7 +387,14 @@ function CheckIcon({ size = 16 }) {
 
 function AlertIcon({ size = 16 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <circle cx="12" cy="12" r="10" />
       <line x1="12" y1="8" x2="12" y2="12" />
       <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -396,14 +405,21 @@ function AlertIcon({ size = 16 }) {
 function QuoteIcon({ size = 20 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" opacity="0.3">
-      <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 0 1-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 0 1-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z"/>
+      <path d="M4.583 17.321C3.553 16.227 3 15 3 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 0 1-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179zm10 0C13.553 16.227 13 15 13 13.011c0-3.5 2.457-6.637 6.03-8.188l.893 1.378c-3.335 1.804-3.987 4.145-4.247 5.621.537-.278 1.24-.375 1.929-.311 1.804.167 3.226 1.648 3.226 3.489a3.5 3.5 0 0 1-3.5 3.5c-1.073 0-2.099-.49-2.748-1.179z" />
     </svg>
   );
 }
 
 function ExternalLinkIcon({ size = 16 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
       <polyline points="15 3 21 3 21 9" />
       <line x1="10" y1="14" x2="21" y2="3" />
@@ -414,14 +430,21 @@ function ExternalLinkIcon({ size = 16 }) {
 function VerifiedIcon({ size = 20 }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor">
-      <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+      <path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
     </svg>
   );
 }
 
 function ArrowUpIcon({ size = 14 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+    >
       <path d="M18 15l-6-6-6 6" />
     </svg>
   );
@@ -429,7 +452,14 @@ function ArrowUpIcon({ size = 14 }) {
 
 function ArrowDownIcon({ size = 14 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+    >
       <path d="M6 9l6 6 6-6" />
     </svg>
   );
@@ -437,12 +467,12 @@ function ArrowDownIcon({ size = 14 }) {
 
 function ChevronIcon({ size = 16, direction = 'down' }) {
   return (
-    <svg 
-      width={size} 
-      height={size} 
-      viewBox="0 0 24 24" 
-      fill="none" 
-      stroke="currentColor" 
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
       strokeWidth="2"
       style={{ transform: direction === 'up' ? 'rotate(180deg)' : 'none' }}
     >
@@ -453,14 +483,15 @@ function ChevronIcon({ size = 16, direction = 'down' }) {
 
 function WrenchIcon({ size = 14 }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
+      <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
     </svg>
   );
 }
-
-
-
-
-
-

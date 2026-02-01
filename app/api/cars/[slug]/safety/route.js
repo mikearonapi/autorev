@@ -1,12 +1,12 @@
 /**
  * Safety Data API Route
- * 
+ *
  * GET /api/cars/[slug]/safety
- * 
+ *
  * Fetches comprehensive safety data from:
  * - NHTSA (FREE API): Recalls, complaints, investigations, TSBs, crash test ratings
  * - IIHS (scraped): Crash test ratings, Top Safety Pick status
- * 
+ *
  * @module app/api/cars/[slug]/safety
  */
 
@@ -22,22 +22,19 @@ import { withErrorLogging } from '@/lib/serverErrorLogger';
  */
 function parseCarIdentifiers(car) {
   if (!car) return { year: null, make: null, model: null };
-  
-  const yearMatch = car.years?.match(/(\d{4})(?:-(\d{4}))?/);
-  let year = null;
-  if (yearMatch) {
-    const startYear = parseInt(yearMatch[1]);
-    const endYear = yearMatch[2] ? parseInt(yearMatch[2]) : startYear;
-    year = Math.floor((startYear + endYear) / 2);
-  }
-  
+
+  // car.year is now an integer in the new schema
+  const year = car.year || null;
+
   const nameParts = car.name?.split(' ') || [];
-  const make = car.brand || nameParts[0];
-  const model = nameParts.slice(1).join(' ')
+  const make = car.make || nameParts[0];
+  const model = nameParts
+    .slice(1)
+    .join(' ')
     .replace(/\([^)]+\)/g, '')
     .replace(/E\d{2}|F\d{2}|G\d{2}|W\d{3}/gi, '')
     .trim();
-  
+
   return { year, make, model };
 }
 
@@ -47,38 +44,32 @@ function parseCarIdentifiers(car) {
  */
 async function handleGet(request, { params }) {
   const { slug } = params;
-  
+
   if (!slug) {
-    return NextResponse.json(
-      { error: 'Slug is required' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Slug is required' }, { status: 400 });
   }
-  
+
   try {
     const { searchParams } = new URL(request.url);
     const source = searchParams.get('source'); // Optional: nhtsa, iihs
     const includeDetails = searchParams.get('details') !== 'false';
-    
+
     // Find the car in our database via carsClient
     const car = await fetchCarBySlug(slug);
-    
+
     if (!car) {
-      return NextResponse.json(
-        { error: 'Car not found', slug },
-        { status: 404 }
-      );
+      return NextResponse.json({ error: 'Car not found', slug }, { status: 404 });
     }
-    
+
     const { year, make, model } = parseCarIdentifiers(car);
-    
+
     if (!year || !make || !model) {
       return NextResponse.json(
         { error: 'Could not parse vehicle identifiers', slug },
         { status: 400 }
       );
     }
-    
+
     const safetyData = {
       car: {
         slug: car.slug,
@@ -91,89 +82,99 @@ async function handleGet(request, { params }) {
       iihs: null,
       summary: null,
     };
-    
+
     const fetchPromises = [];
-    
+
     // Fetch NHTSA data (free API)
     if (!source || source === 'nhtsa') {
       fetchPromises.push(
-        nhtsaService.fetchComprehensiveSafetyData({ year, make, model }).then(data => {
-          if (data && !data.error) {
-            safetyData.nhtsa = {
-              // Crash test ratings
-              crashTestRatings: data.safetyRatings ? {
-                overall: data.safetyRatings.overallRating,
-                frontCrash: data.safetyRatings.overallFrontCrashRating,
-                sideCrash: data.safetyRatings.overallSideCrashRating,
-                rollover: data.safetyRatings.rolloverRating,
-                hasRatings: data.safetyRatings.hasRatings,
-              } : null,
-              
-              // Recalls
-              recalls: {
-                count: data.recalls?.length || 0,
-                items: includeDetails ? data.recalls?.slice(0, 10) : undefined,
-                hasOpenRecalls: data.recalls?.some(r => r.incomplete),
-              },
-              
-              // Complaints
-              complaints: {
-                count: data.complaints?.length || 0,
-                items: includeDetails ? data.complaints?.slice(0, 10) : undefined,
-                topComponents: nhtsaService.groupComplaintsByComponent(data.complaints)
-                  .slice(0, 3)
-                  .map(g => ({ component: g.component, count: g.count })),
-              },
-              
-              // Investigations
-              investigations: {
-                count: data.investigations?.length || 0,
-                openCount: data.investigations?.filter(i => i.status === 'Open').length || 0,
-                items: includeDetails ? data.investigations : undefined,
-              },
-              
-              // Technical Service Bulletins
-              tsbs: {
-                count: data.tsbs?.length || 0,
-                items: includeDetails ? data.tsbs?.slice(0, 10) : undefined,
-                topComponents: nhtsaService.groupTSBsByComponent(data.tsbs)
-                  .slice(0, 3)
-                  .map(g => ({ component: g.component, count: g.count })),
-              },
-            };
-          }
-        }).catch(err => {
-          console.warn('[Safety API] NHTSA fetch failed:', err.message);
-        })
+        nhtsaService
+          .fetchComprehensiveSafetyData({ year, make, model })
+          .then((data) => {
+            if (data && !data.error) {
+              safetyData.nhtsa = {
+                // Crash test ratings
+                crashTestRatings: data.safetyRatings
+                  ? {
+                      overall: data.safetyRatings.overallRating,
+                      frontCrash: data.safetyRatings.overallFrontCrashRating,
+                      sideCrash: data.safetyRatings.overallSideCrashRating,
+                      rollover: data.safetyRatings.rolloverRating,
+                      hasRatings: data.safetyRatings.hasRatings,
+                    }
+                  : null,
+
+                // Recalls
+                recalls: {
+                  count: data.recalls?.length || 0,
+                  items: includeDetails ? data.recalls?.slice(0, 10) : undefined,
+                  hasOpenRecalls: data.recalls?.some((r) => r.incomplete),
+                },
+
+                // Complaints
+                complaints: {
+                  count: data.complaints?.length || 0,
+                  items: includeDetails ? data.complaints?.slice(0, 10) : undefined,
+                  topComponents: nhtsaService
+                    .groupComplaintsByComponent(data.complaints)
+                    .slice(0, 3)
+                    .map((g) => ({ component: g.component, count: g.count })),
+                },
+
+                // Investigations
+                investigations: {
+                  count: data.investigations?.length || 0,
+                  openCount: data.investigations?.filter((i) => i.status === 'Open').length || 0,
+                  items: includeDetails ? data.investigations : undefined,
+                },
+
+                // Technical Service Bulletins
+                tsbs: {
+                  count: data.tsbs?.length || 0,
+                  items: includeDetails ? data.tsbs?.slice(0, 10) : undefined,
+                  topComponents: nhtsaService
+                    .groupTSBsByComponent(data.tsbs)
+                    .slice(0, 3)
+                    .map((g) => ({ component: g.component, count: g.count })),
+                },
+              };
+            }
+          })
+          .catch((err) => {
+            console.warn('[Safety API] NHTSA fetch failed:', err.message);
+          })
       );
     }
-    
+
     // Fetch IIHS data (scraped)
     if (!source || source === 'iihs') {
       fetchPromises.push(
-        iihsScraper.getIIHSRatings(year, make, model).then(data => {
-          if (data) {
-            safetyData.iihs = {
-              overallAssessment: data.overallAssessment,
-              crashworthiness: data.crashworthiness,
-              crashAvoidance: data.crashAvoidance,
-              headlightRating: data.headlightRating,
-              topSafetyPick: data.topSafetyPick,
-              topSafetyPickPlus: data.topSafetyPickPlus,
-              url: data.url,
-            };
-          }
-        }).catch(err => {
-          console.warn('[Safety API] IIHS fetch failed:', err.message);
-        })
+        iihsScraper
+          .getIIHSRatings(year, make, model)
+          .then((data) => {
+            if (data) {
+              safetyData.iihs = {
+                overallAssessment: data.overallAssessment,
+                crashworthiness: data.crashworthiness,
+                crashAvoidance: data.crashAvoidance,
+                headlightRating: data.headlightRating,
+                topSafetyPick: data.topSafetyPick,
+                topSafetyPickPlus: data.topSafetyPickPlus,
+                url: data.url,
+              };
+            }
+          })
+          .catch((err) => {
+            console.warn('[Safety API] IIHS fetch failed:', err.message);
+          })
       );
     }
-    
+
     await Promise.all(fetchPromises);
-    
+
     // Generate summary
     safetyData.summary = generateSafetySummary(safetyData);
-    
+
     return NextResponse.json({
       success: true,
       slug,
@@ -186,10 +187,7 @@ async function handleGet(request, { params }) {
     });
   } catch (err) {
     console.error('[Safety API] Error:', err);
-    return NextResponse.json(
-      { error: 'Failed to fetch safety data' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch safety data' }, { status: 500 });
   }
 }
 
@@ -203,17 +201,17 @@ function generateSafetySummary(data) {
     highlights: [],
     concerns: [],
   };
-  
+
   let scoreTotal = 0;
   let scoreCount = 0;
-  
+
   // NHTSA crash test ratings
   if (data.nhtsa?.crashTestRatings?.hasRatings) {
     const rating = parseInt(data.nhtsa.crashTestRatings.overall);
     if (rating) {
       scoreTotal += rating * 2; // Scale 1-5 to 2-10
       scoreCount++;
-      
+
       if (rating >= 5) {
         summary.highlights.push('5-star NHTSA overall safety rating');
       } else if (rating >= 4) {
@@ -223,7 +221,7 @@ function generateSafetySummary(data) {
       }
     }
   }
-  
+
   // IIHS ratings
   if (data.iihs) {
     if (data.iihs.topSafetyPickPlus) {
@@ -236,10 +234,10 @@ function generateSafetySummary(data) {
       scoreCount++;
     } else if (data.iihs.overallAssessment) {
       const assessmentScores = {
-        'Excellent': 10,
+        Excellent: 10,
         'Very Good': 8,
-        'Good': 7,
-        'Average': 5,
+        Good: 7,
+        Average: 5,
         'Below Average': 3,
       };
       const score = assessmentScores[data.iihs.overallAssessment];
@@ -248,7 +246,7 @@ function generateSafetySummary(data) {
         scoreCount++;
       }
     }
-    
+
     // Check for poor ratings in specific tests
     const poorRatings = [];
     if (data.iihs.crashworthiness) {
@@ -262,7 +260,7 @@ function generateSafetySummary(data) {
       summary.concerns.push(`Poor/Marginal IIHS ratings: ${poorRatings.join(', ')}`);
     }
   }
-  
+
   // Recalls
   if (data.nhtsa?.recalls?.hasOpenRecalls) {
     summary.concerns.push('Has open (incomplete) recalls');
@@ -270,44 +268,40 @@ function generateSafetySummary(data) {
   if (data.nhtsa?.recalls?.count > 10) {
     summary.concerns.push(`High recall count (${data.nhtsa.recalls.count} total)`);
   }
-  
+
   // Complaints
   if (data.nhtsa?.complaints?.count > 100) {
     summary.concerns.push(`High complaint volume (${data.nhtsa.complaints.count} total)`);
   }
-  
+
   // Open investigations
   if (data.nhtsa?.investigations?.openCount > 0) {
     summary.concerns.push(`${data.nhtsa.investigations.openCount} open NHTSA investigation(s)`);
   }
-  
+
   // Calculate overall score
   if (scoreCount > 0) {
-    summary.overallScore = Math.round(scoreTotal / scoreCount * 10) / 10;
-    summary.grade = summary.overallScore >= 9 ? 'A' :
-                    summary.overallScore >= 8 ? 'B+' :
-                    summary.overallScore >= 7 ? 'B' :
-                    summary.overallScore >= 6 ? 'C+' :
-                    summary.overallScore >= 5 ? 'C' :
-                    summary.overallScore >= 4 ? 'D' : 'F';
+    summary.overallScore = Math.round((scoreTotal / scoreCount) * 10) / 10;
+    summary.grade =
+      summary.overallScore >= 9
+        ? 'A'
+        : summary.overallScore >= 8
+          ? 'B+'
+          : summary.overallScore >= 7
+            ? 'B'
+            : summary.overallScore >= 6
+              ? 'C+'
+              : summary.overallScore >= 5
+                ? 'C'
+                : summary.overallScore >= 4
+                  ? 'D'
+                  : 'F';
   }
-  
+
   return summary;
 }
 
-export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/safety', feature: 'browse-cars' });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export const GET = withErrorLogging(handleGet, {
+  route: 'cars/[slug]/safety',
+  feature: 'browse-cars',
+});

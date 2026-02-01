@@ -1,0 +1,632 @@
+{
+  "generated_at": "2026-01-31",
+  "generated_by": "AI manual matching",
+  "total_vehicles": 67,
+  "mapping": [
+    {
+      "user_vehicle_id": "848f6539-41d1-4c7e-9c1b-291fc1066708",
+      "current": { "year": 2013, "make": "Audi", "model": "Audi A4 2.0T B8.5" },
+      "teoalida_id": "396c8e2a-8b18-48df-9b9e-af8efcaa3e80",
+      "teoalida_name": "2013 Audi A4 2.0T Premium",
+      "teoalida_slug": "2013-audi-a4-2-0t-premium",
+      "confidence": "high",
+      "notes": "Exact year/make/model match. Premium is base 2.0T trim."
+    },
+    {
+      "user_vehicle_id": "365b9e6d-78d6-47cc-9fca-91a7d01b2d48",
+      "current": { "year": 2013, "make": "Audi", "model": "Audi A4 2.0T B8.5" },
+      "teoalida_id": "396c8e2a-8b18-48df-9b9e-af8efcaa3e80",
+      "teoalida_name": "2013 Audi A4 2.0T Premium",
+      "teoalida_slug": "2013-audi-a4-2-0t-premium",
+      "confidence": "high",
+      "notes": "Duplicate of above user vehicle"
+    },
+    {
+      "user_vehicle_id": "68e338e9-a4df-4972-98f6-686d1e4bde78",
+      "current": { "year": 2017, "make": "Audi", "model": "Audi S5 B9" },
+      "teoalida_id": "9b4de2ad-e4c4-475d-aa8c-9b9c88bd4ae2",
+      "teoalida_name": "2017 Audi S5 quattro",
+      "teoalida_slug": "2017-audi-s5-quattro",
+      "confidence": "high",
+      "notes": "Exact year/make/model match"
+    },
+    {
+      "user_vehicle_id": "90fe1eb3-077e-4a5b-9f06-8e13fbfc59a7",
+      "current": { "year": 2016, "make": "Audi", "model": "B8 S4", "trim": "Standard" },
+      "teoalida_id": "e1f627e6-074d-461e-b276-a164410c74d1",
+      "teoalida_name": "2016 Audi S4 Premium Plus quattro",
+      "teoalida_slug": "2016-audi-s4-premium-plus-quattro",
+      "confidence": "high",
+      "notes": "Exact year/make/model match. S4 only comes as quattro."
+    },
+    {
+      "user_vehicle_id": "1f83b031-622e-4fe9-921e-d2d2c19459da",
+      "current": { "year": 2017, "make": "Audi", "model": "B9 S5", "trim": "Standard" },
+      "teoalida_id": "9b4de2ad-e4c4-475d-aa8c-9b9c88bd4ae2",
+      "teoalida_name": "2017 Audi S5 quattro",
+      "teoalida_slug": "2017-audi-s5-quattro",
+      "confidence": "high",
+      "notes": "Exact year/make/model match"
+    },
+    {
+      "user_vehicle_id": "94797d44-5498-4998-b033-147eb31000e4",
+      "current": { "year": 2017, "make": "Audi", "model": "B9 S5", "trim": "Standard" },
+      "teoalida_id": "9b4de2ad-e4c4-475d-aa8c-9b9c88bd4ae2",
+      "teoalida_name": "2017 Audi S5 quattro",
+      "teoalida_slug": "2017-audi-s5-quattro",
+      "confidence": "high",
+      "notes": "Duplicate of above"
+    },
+    {
+      "user_vehicle_id": "8bba9d7d-c3ec-40c2-9b5b-bec6c9cc5824",
+      "current": { "year": 2018, "make": "Audi", "model": "RS5" },
+      "teoalida_id": "5cba7dbf-b20e-44e0-b8e3-f006ca4271d7",
+      "teoalida_name": "2018 Audi RS 5 quattro",
+      "teoalida_slug": "2018-audi-rs-5-quattro",
+      "confidence": "high",
+      "notes": "Exact match - user confirmed year is 2018"
+    },
+    {
+      "user_vehicle_id": "e480a861-20ac-4498-9142-600f6e12fee0",
+      "current": { "year": 2026, "make": "Audi", "model": "RS7", "trim": "Sportback" },
+      "teoalida_id": "51d3f8dd-c9d7-4627-b8d5-5135b50dd71a",
+      "teoalida_name": "2026 Audi RS 7 performance",
+      "teoalida_slug": "2026-audi-rs-7-performance",
+      "confidence": "high",
+      "notes": "Exact year/make/model match"
+    },
+    {
+      "user_vehicle_id": "18fcd0f2-0ad1-47fd-9fc5-17f702618a8c",
+      "current": { "year": 2008, "make": "BMW", "model": "BMW M3 E92" },
+      "teoalida_id": "a32a194a-0410-4966-b50b-a3d7357ef90e",
+      "teoalida_name": "2008 BMW 3 Series M3",
+      "teoalida_slug": "2008-bmw-3-series-m3",
+      "confidence": "high",
+      "notes": "Exact match - Teoalida uses '3 Series M3' naming"
+    },
+    {
+      "user_vehicle_id": "72d714ce-a49c-4375-a1f2-254e0b71f3ff",
+      "current": { "year": 2023, "make": "BMW", "model": "M2 G87" },
+      "teoalida_id": "c8a7db08-a1aa-4a76-a09b-f8c0668845bb",
+      "teoalida_name": "2023 BMW 2 Series M2",
+      "teoalida_slug": "2023-bmw-2-series-m2",
+      "confidence": "high",
+      "notes": "Exact match - Teoalida uses '2 Series M2' naming"
+    },
+    {
+      "user_vehicle_id": "776aba8b-4438-4077-887b-96fd498936ee",
+      "current": { "year": 2001, "make": "BMW", "model": "M3 E46" },
+      "teoalida_id": "a54981c3-c121-48fc-a688-707c1864ed1c",
+      "teoalida_name": "2001 BMW 3 Series M3",
+      "teoalida_slug": "2001-bmw-3-series-m3",
+      "confidence": "high",
+      "notes": "Exact match - Teoalida uses '3 Series M3' naming"
+    },
+    {
+      "user_vehicle_id": "6b61c912-01ed-4419-9ab1-1e4709d8170d",
+      "current": { "year": 2008, "make": "BMW", "model": "M3 E92" },
+      "teoalida_id": "a32a194a-0410-4966-b50b-a3d7357ef90e",
+      "teoalida_name": "2008 BMW 3 Series M3",
+      "teoalida_slug": "2008-bmw-3-series-m3",
+      "confidence": "high",
+      "notes": "Exact match"
+    },
+    {
+      "user_vehicle_id": "d067af92-5251-4105-b304-424e4a6b6aa4",
+      "current": { "year": 2008, "make": "BMW", "model": "M3 E92" },
+      "teoalida_id": "a32a194a-0410-4966-b50b-a3d7357ef90e",
+      "teoalida_name": "2008 BMW 3 Series M3",
+      "teoalida_slug": "2008-bmw-3-series-m3",
+      "confidence": "high",
+      "notes": "Duplicate of above"
+    },
+    {
+      "user_vehicle_id": "0b758fe7-749e-4279-98f2-8aeaec0e1f84",
+      "current": { "year": 2021, "make": "CHEVROLET", "model": "Tahoe", "trim": "Z71" },
+      "teoalida_id": "1acf8d7d-8441-4c65-909f-fcfee0761fa7",
+      "teoalida_name": "2021 Chevrolet Tahoe Z71",
+      "teoalida_slug": "2021-chevrolet-tahoe-z71",
+      "confidence": "high",
+      "notes": "Exact year/make/model/trim match"
+    },
+    {
+      "user_vehicle_id": "d84f9aad-d35d-46c4-a21e-7c14064add87",
+      "current": { "year": 2007, "make": "Dodge", "model": "Ram 2500", "trim": "Slt" },
+      "teoalida_id": "3274f32a-fa97-4ebd-bf92-7fad31e94c66",
+      "teoalida_name": "2007 Dodge Ram Pickup 2500 SLT",
+      "teoalida_slug": "2007-dodge-ram-pickup-2500-slt",
+      "confidence": "high",
+      "notes": "FIXED BAD MATCH - Was matched to Challenger Hellcat! Now correctly matched to Ram 2500 SLT"
+    },
+    {
+      "user_vehicle_id": "ecad0372-f35e-4d81-ab78-a00f68eddb93",
+      "current": { "year": 2017, "make": "Ford", "model": "Mustang" },
+      "teoalida_id": "2d428421-8a68-4feb-8863-3cf659491698",
+      "teoalida_name": "2017 Ford Mustang GT",
+      "teoalida_slug": "2017-ford-mustang-gt",
+      "confidence": "medium",
+      "notes": "No trim specified - defaulting to GT as most common enthusiast choice"
+    },
+    {
+      "user_vehicle_id": "93105ed3-f3a6-4e9b-a8b9-9329c4342d96",
+      "current": { "year": 2019, "make": "Ford", "model": "Mustang", "trim": "GT PP2" },
+      "teoalida_id": "635d5ddf-d0d4-421b-a87a-4b0e3201f168",
+      "teoalida_name": "2019 Ford Mustang GT Premium",
+      "teoalida_slug": "2019-ford-mustang-gt-premium",
+      "confidence": "high",
+      "notes": "PP2 is Performance Pack 2, which comes on GT Premium"
+    },
+    {
+      "user_vehicle_id": "42bffe04-4f92-416b-83ad-bdebfe8560c1",
+      "current": { "year": 2019, "make": "Ford", "model": "Mustang", "trim": "GT PP2" },
+      "teoalida_id": "635d5ddf-d0d4-421b-a87a-4b0e3201f168",
+      "teoalida_name": "2019 Ford Mustang GT Premium",
+      "teoalida_slug": "2019-ford-mustang-gt-premium",
+      "confidence": "high",
+      "notes": "Same as above"
+    },
+    {
+      "user_vehicle_id": "d296e756-16b8-47ee-8a56-5222030f358d",
+      "current": { "year": 2019, "make": "Ford", "model": "Mustang", "trim": "GT PP2" },
+      "teoalida_id": "635d5ddf-d0d4-421b-a87a-4b0e3201f168",
+      "teoalida_name": "2019 Ford Mustang GT Premium",
+      "teoalida_slug": "2019-ford-mustang-gt-premium",
+      "confidence": "high",
+      "notes": "Same as above"
+    },
+    {
+      "user_vehicle_id": "9131e34d-cbbd-41f6-90d4-d948e336fd41",
+      "current": { "year": 2020, "make": "Ford", "model": "Mustang", "trim": "GT PP2" },
+      "teoalida_id": "2e1c1ab1-5443-47e9-bd36-699bba0e00bb",
+      "teoalida_name": "2020 Ford Mustang GT Premium",
+      "teoalida_slug": "2020-ford-mustang-gt-premium",
+      "confidence": "high",
+      "notes": "PP2 is Performance Pack 2, which comes on GT Premium"
+    },
+    {
+      "user_vehicle_id": "9f0ad19d-0471-4515-8e39-5e583a1f3295",
+      "current": { "year": 2021, "make": "Ford", "model": "Mustang", "trim": "EcoBoost" },
+      "teoalida_id": "270eaaa1-530c-4c2b-b8a7-88e32c906342",
+      "teoalida_name": "2021 Ford Mustang EcoBoost",
+      "teoalida_slug": "2021-ford-mustang-ecoboost",
+      "confidence": "high",
+      "notes": "Exact year/make/model/trim match"
+    },
+    {
+      "user_vehicle_id": "c5fd965a-fae5-4224-b27c-17c6e102ef2b",
+      "current": { "year": 2024, "make": "Ford", "model": "Mustang", "trim": "GT" },
+      "teoalida_id": "247fb7ea-2d8e-4290-a4d6-69b14e7dabf8",
+      "teoalida_name": "2024 Ford Mustang GT",
+      "teoalida_slug": "2024-ford-mustang-gt",
+      "confidence": "high",
+      "notes": "Exact year/make/model/trim match"
+    },
+    {
+      "user_vehicle_id": "e4f4bac5-8ab9-49c2-bcd9-6d00fb5ff2c3",
+      "current": { "year": 2018, "make": "Ford", "model": "Mustang Shelby", "trim": "GT350" },
+      "teoalida_id": "d87a8b56-dd3b-4874-9fdd-9cfcbcab9b63",
+      "teoalida_name": "2018 Ford Shelby GT350 Base",
+      "teoalida_slug": "2018-ford-shelby-gt350-base",
+      "confidence": "high",
+      "notes": "Exact match - Teoalida has Shelby GT350 as separate model"
+    },
+    {
+      "user_vehicle_id": "1cad83a5-ea80-4ff8-9410-91d754c519bf",
+      "current": { "year": 1996, "make": "Ford", "model": "Mustang SVT Cobra" },
+      "teoalida_id": "721ced0d-6ce8-4daf-b31b-f2900ec342fe",
+      "teoalida_name": "1996 Ford Mustang Base",
+      "teoalida_slug": "1996-ford-mustang-base-3",
+      "confidence": "low",
+      "notes": "NO COBRA TRIM IN TEOALIDA - Best available is Mustang Base with 305hp V8. User may want manual override."
+    },
+    {
+      "user_vehicle_id": "b724ff56-0160-4291-9336-adfad880a3f9",
+      "current": { "year": 2017, "make": "FORD", "model": "Mustang", "trim": "V6 Coupe" },
+      "teoalida_id": "02d9e7c3-04b5-4f32-91a1-84950b0bc647",
+      "teoalida_name": "2017 Ford Mustang V6",
+      "teoalida_slug": "2017-ford-mustang-v6",
+      "confidence": "high",
+      "notes": "FIXED BAD MATCH - Was matched to Boss 302! Now correctly matched to V6"
+    },
+    {
+      "user_vehicle_id": "d96d59b7-6ff8-467f-9a53-a52a44892632",
+      "current": { "year": 1999, "make": "Honda", "model": "Honda Civic Si EM1" },
+      "teoalida_id": "d8a760bc-a371-4da2-87ed-a864e858ecf6",
+      "teoalida_name": "1999 Honda Civic Si",
+      "teoalida_slug": "1999-honda-civic-si",
+      "confidence": "high",
+      "notes": "Exact match"
+    },
+    {
+      "user_vehicle_id": "e9829755-76b8-4a92-b021-7e4ab1a2bba8",
+      "current": { "year": 2023, "make": "Honda", "model": "Honda Civic Type R FL5" },
+      "teoalida_id": "239e50b9-9430-47f8-8119-2adba828c3da",
+      "teoalida_name": "2023 Honda Civic Type R",
+      "teoalida_slug": "2023-honda-civic-type-r",
+      "confidence": "high",
+      "notes": "Exact match"
+    },
+    {
+      "user_vehicle_id": "b006b769-1be4-4a11-94f3-37a11272f8fc",
+      "current": { "year": 1995, "make": "Honda", "model": "Prelude", "trim": "Si VTEC" },
+      "teoalida_id": "4afb41c8-c091-4085-9555-063718bc340c",
+      "teoalida_name": "1995 Honda Prelude VTEC",
+      "teoalida_slug": "1995-honda-prelude-vtec",
+      "confidence": "high",
+      "notes": "Si VTEC = VTEC trim (190hp). Teoalida separates Si (160hp) and VTEC (190hp)"
+    },
+    {
+      "user_vehicle_id": "e04112ee-f26c-41e8-8005-a649b959133c",
+      "current": { "year": 1992, "make": "Honda", "model": "Prelude Si VTEC" },
+      "teoalida_id": "1b1717ab-6fef-46ed-b6a1-47c8a9404fad",
+      "teoalida_name": "1992 Honda Prelude Si",
+      "teoalida_slug": "1992-honda-prelude-si",
+      "confidence": "medium",
+      "notes": "1992 Prelude didn't have Si VTEC - only Si (160hp). VTEC trim started 1993."
+    },
+    {
+      "user_vehicle_id": "85ccb450-ce3f-4d5a-97a7-195cf3d6a473",
+      "current": { "year": 2022, "make": "Hyundai", "model": "Elantra N" },
+      "teoalida_id": "bd8a9d18-6217-453b-9623-097dd3e8817d",
+      "teoalida_name": "2022 Hyundai Elantra N",
+      "teoalida_slug": "2022-hyundai-elantra-n",
+      "confidence": "high",
+      "notes": "Exact match"
+    },
+    {
+      "user_vehicle_id": "40051009-15f8-4828-bb3c-d90a28edb5b1",
+      "current": { "year": 2016, "make": "Infiniti", "model": "Infiniti Q50 Red Sport 400" },
+      "teoalida_id": "bd085726-22c3-490a-94d2-7f11ae8cdabe",
+      "teoalida_name": "2016 INFINITI Q50 Red Sport 400",
+      "teoalida_slug": "2016-infiniti-q50-red-sport-400",
+      "confidence": "high",
+      "notes": "Exact match"
+    },
+    {
+      "user_vehicle_id": "2d9523a8-0927-4c8f-b041-7078df43506c",
+      "current": { "year": 2019, "make": "Mazda", "model": "GJ 6", "trim": "2.5 Turbo" },
+      "teoalida_id": "92df365b-d042-4273-9683-79d4ff85547a",
+      "teoalida_name": "2019 Mazda 6 Signature",
+      "teoalida_slug": "2019-mazda-6-signature",
+      "confidence": "high",
+      "notes": "2.5 Turbo engine comes on Grand Touring Reserve and Signature trims"
+    },
+    {
+      "user_vehicle_id": "2494dc67-851d-4524-854e-5b346881eff8",
+      "current": { "year": 2018, "make": "Mazda", "model": "Mazda 6 2.5 Turbo" },
+      "teoalida_id": "8d4e9b5d-56a9-40bc-9eb0-cd638ce528c4",
+      "teoalida_name": "2018 Mazda 6 Signature",
+      "teoalida_slug": "2018-mazda-6-signature",
+      "confidence": "high",
+      "notes": "2.5 Turbo engine comes on Signature trim"
+    },
+    {
+      "user_vehicle_id": "0fd19975-651b-44ba-abdf-d3232c07c838",
+      "current": { "year": 2018, "make": "Mercedes-AMG", "model": "Mercedes-AMG E63 S W213" },
+      "teoalida_id": "bfb7fad9-ea61-4a87-ad6a-289d46b65620",
+      "teoalida_name": "2018 Mercedes-Benz E-Class AMG E 63 S 4MATIC",
+      "teoalida_slug": "2018-mercedes-benz-e-class-amg-e-63-s-4matic",
+      "confidence": "high",
+      "notes": "Exact match - different naming convention"
+    },
+    {
+      "user_vehicle_id": "f6211760-09ae-47c2-847d-5fecb3205829",
+      "current": { "year": 2011, "make": "MITSUBISHI", "model": "Lancer Evolution" },
+      "teoalida_id": "0c0623dc-7d66-4c5f-b7a2-ea7ef061e58a",
+      "teoalida_name": "2011 Mitsubishi Lancer Evolution GSR",
+      "teoalida_slug": "2011-mitsubishi-lancer-evolution-gsr",
+      "confidence": "high",
+      "notes": "GSR is the standard Evolution trim (MR is the premium)"
+    },
+    {
+      "user_vehicle_id": "dc5ea286-6363-466f-b4de-6746bbca225c",
+      "current": { "year": 2016, "make": "Nissan", "model": "Nissan Maxima" },
+      "teoalida_id": "f6eea39d-32e1-474b-8309-844ddc73b3c3",
+      "teoalida_name": "2016 Nissan Maxima 3.5 SR",
+      "teoalida_slug": "2016-nissan-maxima-3-5-sr",
+      "confidence": "medium",
+      "notes": "No trim specified. SR is sportiest trim."
+    },
+    {
+      "user_vehicle_id": "d419b91f-e85b-444f-b2a5-895ad67e864e",
+      "current": { "year": 2020, "make": "Porsche", "model": "718 Cayman GT4" },
+      "teoalida_id": "921bf210-d9b7-4b4b-81a7-4d2faf8fc50c",
+      "teoalida_name": "2020 Porsche 718 Cayman GT4",
+      "teoalida_slug": "2020-porsche-718-cayman-gt4",
+      "confidence": "high",
+      "notes": "Exact match"
+    },
+    {
+      "user_vehicle_id": "fcbd52e3-98e2-4509-b9aa-21b0a59b9775",
+      "current": { "year": 2004, "make": "Porsche", "model": "911 GT3 996" },
+      "teoalida_id": "662abdf1-f9f9-4860-afca-3a44d3b6695b",
+      "teoalida_name": "2004 Porsche 911 GT3",
+      "teoalida_slug": "2004-porsche-911-gt3",
+      "confidence": "high",
+      "notes": "Exact match"
+    },
+    {
+      "user_vehicle_id": "ea028831-28c7-457b-8599-d41071a26625",
+      "current": { "year": 2022, "make": "Porsche", "model": "911 GT3 RS 992" },
+      "teoalida_id": "93a5c01d-7baf-43b4-95e3-399489d4d4b6",
+      "teoalida_name": "2022 Porsche 911 GT3",
+      "teoalida_slug": "2022-porsche-911-gt3",
+      "confidence": "medium",
+      "notes": "GT3 RS not in Teoalida as separate trim. Using GT3. User may want verification."
+    },
+    {
+      "user_vehicle_id": "f450f017-6f32-4fc0-ab1f-801e5ce6cef4",
+      "current": { "year": 2017, "make": "Porsche", "model": "Porsche Panamera Turbo 971" },
+      "teoalida_id": "f146391b-ab84-45dc-8242-f9aec51402c4",
+      "teoalida_name": "2017 Porsche Panamera Turbo",
+      "teoalida_slug": "2017-porsche-panamera-turbo",
+      "confidence": "high",
+      "notes": "Exact match"
+    },
+    {
+      "user_vehicle_id": "1da0b3cc-112f-4add-8200-6d1822b6e2ea",
+      "current": { "year": 2014, "make": "PORSCHE", "model": "Cayman", "trim": "S" },
+      "teoalida_id": "9f1390d1-958b-4b6b-9a95-6259f277e401",
+      "teoalida_name": "2014 Porsche Cayman S",
+      "teoalida_slug": "2014-porsche-cayman-s",
+      "confidence": "high",
+      "notes": "Exact match"
+    },
+    {
+      "user_vehicle_id": "4114dfc9-6ed3-4546-a611-280e2703644f",
+      "current": { "year": 2018, "make": "PORSCHE", "model": "Macan", "trim": "Macan" },
+      "teoalida_id": "340ec68a-2608-46a5-aa3f-c85e7eeef010",
+      "teoalida_name": "2018 Porsche Macan Base",
+      "teoalida_slug": "2018-porsche-macan-base",
+      "confidence": "high",
+      "notes": "FIXED BAD MATCH - Was matched to 911 GT2 RS! Now correctly matched to Macan Base"
+    },
+    {
+      "user_vehicle_id": "2ea7d93c-8f98-4c36-96bf-0e57dde4638c",
+      "current": { "year": 2019, "make": "Ram", "model": "Ram 1500" },
+      "teoalida_id": "b8a996b7-ae72-4e3a-8657-692fc4df8852",
+      "teoalida_name": "2019 Ram 1500 Rebel",
+      "teoalida_slug": "2019-ram-1500-rebel",
+      "confidence": "medium",
+      "notes": "No trim specified - using Rebel as common enthusiast choice"
+    },
+    {
+      "user_vehicle_id": "d28356d0-2a7d-4457-b633-100796e51c9b",
+      "current": { "year": 2022, "make": "RAM", "model": "1500", "trim": "TRX" },
+      "teoalida_id": "0215cb16-3572-450a-a8d0-9e86c4388b0b",
+      "teoalida_name": "2022 Ram 1500 TRX",
+      "teoalida_slug": "2022-ram-1500-trx",
+      "confidence": "high",
+      "notes": "Exact match"
+    },
+    {
+      "user_vehicle_id": "41b9c5b8-f44e-4379-b34a-31a3447b892a",
+      "current": {
+        "year": 2022,
+        "make": "RAM",
+        "model": "1500",
+        "trim": "Rebel, Sport 2TL Pkg/Rebel 2TW Pkg"
+      },
+      "teoalida_id": "b6132b32-250d-4f68-9fc2-baa69d7d02d0",
+      "teoalida_name": "2022 Ram 1500 Rebel",
+      "teoalida_slug": "2022-ram-1500-rebel",
+      "confidence": "high",
+      "notes": "Rebel trim match - packages not in Teoalida"
+    },
+    {
+      "user_vehicle_id": "6fccc7ee-5a79-4bd7-b9c0-68702bb27cdd",
+      "current": { "year": 1993, "make": "Toyota", "model": "Supra Mk4 A80 Turbo" },
+      "teoalida_id": "75996d6b-799a-4735-903f-8993777164e7",
+      "teoalida_name": "1993 Toyota Supra Base",
+      "teoalida_slug": "1993-toyota-supra-base-2",
+      "confidence": "high",
+      "notes": "Base with 320hp = Twin Turbo model"
+    },
+    {
+      "user_vehicle_id": "1ab7d17d-0b46-4dae-9713-9d4216d6e11f",
+      "current": { "year": 2015, "make": "Volkswagen", "model": "Golf R Mk7" },
+      "teoalida_id": "161f61a1-eeea-4b58-bf88-1a5b63f04255",
+      "teoalida_name": "2015 Volkswagen Golf R w/Dynamic Chassis Control and Navigation",
+      "teoalida_slug": "2015-volkswagen-golf-r-w-dynamic-chassis-control-and-navigation",
+      "confidence": "high",
+      "notes": "Exact match - Golf R is a separate model in Teoalida"
+    },
+    {
+      "user_vehicle_id": "46bb66a6-3394-487e-93b9-ae056d04f0d6",
+      "current": { "year": 2015, "make": "Volkswagen", "model": "Golf R Mk7" },
+      "teoalida_id": "161f61a1-eeea-4b58-bf88-1a5b63f04255",
+      "teoalida_name": "2015 Volkswagen Golf R w/Dynamic Chassis Control and Navigation",
+      "teoalida_slug": "2015-volkswagen-golf-r-w-dynamic-chassis-control-and-navigation",
+      "confidence": "high",
+      "notes": "Duplicate of above"
+    },
+    {
+      "user_vehicle_id": "e77dc1a7-b169-45ba-87b5-70f70a4229e7",
+      "current": { "year": 2022, "make": "Volkswagen", "model": "Golf R Mk8" },
+      "teoalida_id": "c13029b9-fa10-4e8c-9c06-22b2844645e8",
+      "teoalida_name": "2022 Volkswagen Golf R Base",
+      "teoalida_slug": "2022-volkswagen-golf-r-base",
+      "confidence": "high",
+      "notes": "Exact match"
+    },
+    {
+      "user_vehicle_id": "fdbf0c50-581a-4879-a8b3-4ea489fe7e4a",
+      "current": { "year": 2022, "make": "Volkswagen", "model": "Golf R Mk8" },
+      "teoalida_id": "c13029b9-fa10-4e8c-9c06-22b2844645e8",
+      "teoalida_name": "2022 Volkswagen Golf R Base",
+      "teoalida_slug": "2022-volkswagen-golf-r-base",
+      "confidence": "high",
+      "notes": "Duplicate of above"
+    },
+    {
+      "user_vehicle_id": "215dd738-f704-4fbb-a8e7-373789f049b2",
+      "current": { "year": 2013, "make": "Volkswagen", "model": "Golf TSI (Mk7)" },
+      "teoalida_id": "a8777a02-2441-4cb5-9157-2b11ebb707d3",
+      "teoalida_name": "2013 Volkswagen Golf 2.5L PZEV",
+      "teoalida_slug": "2013-volkswagen-golf-2-5l-pzev",
+      "confidence": "medium",
+      "notes": "2013 Golf didn't have TSI in US - closest is 2.5L"
+    },
+    {
+      "user_vehicle_id": "fcc7b64d-a78d-4f99-aec0-f62935bb180b",
+      "current": { "year": 2010, "make": "Volkswagen", "model": "GTI Mk6" },
+      "teoalida_id": "dd7bf9da-ec54-4145-b81b-d34710f1a219",
+      "teoalida_name": "2010 Volkswagen Golf GTI Base",
+      "teoalida_slug": "2010-volkswagen-golf-gti-base",
+      "confidence": "high",
+      "notes": "Exact match - GTI is separate model in Teoalida"
+    },
+    {
+      "user_vehicle_id": "7e2d9c18-792e-4b4a-aaae-3b62a832085d",
+      "current": { "year": 2015, "make": "Volkswagen", "model": "GTI Mk7" },
+      "teoalida_id": "523d3b83-c229-4313-8a8d-ed2e78717b33",
+      "teoalida_name": "2015 Volkswagen Golf GTI S w/Performance Package",
+      "teoalida_slug": "2015-volkswagen-golf-gti-s-w-performance-package",
+      "confidence": "high",
+      "notes": "Exact match - S w/PP is common enthusiast config"
+    },
+    {
+      "user_vehicle_id": "a157d03b-1d8f-45c1-a4c1-b864193adf36",
+      "current": { "year": 2015, "make": "Volkswagen", "model": "GTI Mk7" },
+      "teoalida_id": "523d3b83-c229-4313-8a8d-ed2e78717b33",
+      "teoalida_name": "2015 Volkswagen Golf GTI S w/Performance Package",
+      "teoalida_slug": "2015-volkswagen-golf-gti-s-w-performance-package",
+      "confidence": "high",
+      "notes": "Duplicate of above"
+    },
+    {
+      "user_vehicle_id": "badb6698-04b9-4a15-8c02-1c95f33ad5ed",
+      "current": { "year": 2015, "make": "Volkswagen", "model": "GTI Mk7" },
+      "teoalida_id": "523d3b83-c229-4313-8a8d-ed2e78717b33",
+      "teoalida_name": "2015 Volkswagen Golf GTI S w/Performance Package",
+      "teoalida_slug": "2015-volkswagen-golf-gti-s-w-performance-package",
+      "confidence": "high",
+      "notes": "Duplicate of above"
+    },
+    {
+      "user_vehicle_id": "098b215d-2eeb-4a8f-a1fd-86b6e9ad914a",
+      "current": { "year": 2015, "make": "Volkswagen", "model": "GTI Mk7" },
+      "teoalida_id": "523d3b83-c229-4313-8a8d-ed2e78717b33",
+      "teoalida_name": "2015 Volkswagen Golf GTI S w/Performance Package",
+      "teoalida_slug": "2015-volkswagen-golf-gti-s-w-performance-package",
+      "confidence": "high",
+      "notes": "Duplicate of above"
+    },
+    {
+      "user_vehicle_id": "f1ffc4ee-dea4-4427-ac03-cba1dbaf37fe",
+      "current": { "year": 2015, "make": "Volkswagen", "model": "GTI Mk7" },
+      "teoalida_id": "523d3b83-c229-4313-8a8d-ed2e78717b33",
+      "teoalida_name": "2015 Volkswagen Golf GTI S w/Performance Package",
+      "teoalida_slug": "2015-volkswagen-golf-gti-s-w-performance-package",
+      "confidence": "high",
+      "notes": "Duplicate of above"
+    },
+    {
+      "user_vehicle_id": "5870b040-b317-437f-9e19-6e94dd92ed64",
+      "current": { "year": 2019, "make": "Volkswagen", "model": "Jetta", "trim": "S" },
+      "teoalida_id": "8de566d8-43d5-4859-a7e6-14a4f6c00ffa",
+      "teoalida_name": "2019 Volkswagen Jetta 1.4T S",
+      "teoalida_slug": "2019-volkswagen-jetta-1-4t-s",
+      "confidence": "high",
+      "notes": "FIXED BAD MATCH - Was matched to Golf R! Now correctly matched to Jetta S"
+    },
+    {
+      "user_vehicle_id": "26a21353-c9f6-4921-8e1f-406a0b055851",
+      "current": { "year": 2010, "make": "Volkswagen", "model": "Mk6 GTI", "trim": "Standard" },
+      "teoalida_id": "dd7bf9da-ec54-4145-b81b-d34710f1a219",
+      "teoalida_name": "2010 Volkswagen Golf GTI Base",
+      "teoalida_slug": "2010-volkswagen-golf-gti-base",
+      "confidence": "high",
+      "notes": "Exact match"
+    },
+    {
+      "user_vehicle_id": "dd65d2fb-7898-48ea-9dc1-753320ce5517",
+      "current": { "year": 2016, "make": "Volkswagen", "model": "Mk7 Golf", "trim": "R" },
+      "teoalida_id": "bca27b59-dc4c-44e8-b8cf-b444ccb502cf",
+      "teoalida_name": "2016 Volkswagen Golf R w/Dynamic Chassis Control and Navigation",
+      "teoalida_slug": "2016-volkswagen-golf-r-w-dynamic-chassis-control-and-navigation",
+      "confidence": "high",
+      "notes": "Exact match - R is separate model"
+    },
+    {
+      "user_vehicle_id": "13b61674-22db-417d-850b-c336edc23ffa",
+      "current": { "year": 2016, "make": "Volkswagen", "model": "Mk7 Golf", "trim": "R" },
+      "teoalida_id": "bca27b59-dc4c-44e8-b8cf-b444ccb502cf",
+      "teoalida_name": "2016 Volkswagen Golf R w/Dynamic Chassis Control and Navigation",
+      "teoalida_slug": "2016-volkswagen-golf-r-w-dynamic-chassis-control-and-navigation",
+      "confidence": "high",
+      "notes": "Duplicate of above"
+    },
+    {
+      "user_vehicle_id": "c0f67d32-f8da-4caa-b1cf-1710c64ec1e6",
+      "current": { "year": 2017, "make": "Volkswagen", "model": "Mk7 Golf", "trim": "TSI" },
+      "teoalida_id": "0a09b52b-f488-4d40-a2ee-c45a72d0f2ab",
+      "teoalida_name": "2017 Volkswagen Golf TSI S",
+      "teoalida_slug": "2017-volkswagen-golf-tsi-s",
+      "confidence": "high",
+      "notes": "Exact match"
+    },
+    {
+      "user_vehicle_id": "5bc113c6-5726-4d2b-8241-cde82cfbd810",
+      "current": { "year": 2016, "make": "Volkswagen", "model": "Mk7 GTI", "trim": "Standard" },
+      "teoalida_id": "cc05e44a-2fd2-4243-a905-d06fec691fc1",
+      "teoalida_name": "2016 Volkswagen Golf GTI S w/Performance Package",
+      "teoalida_slug": "2016-volkswagen-golf-gti-s-w-performance-package",
+      "confidence": "high",
+      "notes": "Exact match - Standard = S trim"
+    },
+    {
+      "user_vehicle_id": "a76571dd-cab6-4fe7-8a34-174f97e91778",
+      "current": { "year": 2024, "make": "Volkswagen", "model": "Mk7 Jetta", "trim": "GLI" },
+      "teoalida_id": "21a471d3-6135-4f1b-bcab-e95700c71958",
+      "teoalida_name": "2024 Volkswagen Jetta GLI Autobahn",
+      "teoalida_slug": "2024-volkswagen-jetta-gli-autobahn",
+      "confidence": "high",
+      "notes": "GLI match - Autobahn is common trim"
+    },
+    {
+      "user_vehicle_id": "3276dd0c-04bb-4ca7-841a-77f2e220509d",
+      "current": { "year": 2010, "make": "Volkswagen", "model": "Volkswagen GTI Mk6" },
+      "teoalida_id": "dd7bf9da-ec54-4145-b81b-d34710f1a219",
+      "teoalida_name": "2010 Volkswagen Golf GTI Base",
+      "teoalida_slug": "2010-volkswagen-golf-gti-base",
+      "confidence": "high",
+      "notes": "Exact match"
+    },
+    {
+      "user_vehicle_id": "747326da-1993-41f3-8338-b9efa8b1643d",
+      "current": { "year": 2010, "make": "Volkswagen", "model": "Volkswagen GTI Mk6" },
+      "teoalida_id": "dd7bf9da-ec54-4145-b81b-d34710f1a219",
+      "teoalida_name": "2010 Volkswagen Golf GTI Base",
+      "teoalida_slug": "2010-volkswagen-golf-gti-base",
+      "confidence": "high",
+      "notes": "Duplicate of above"
+    },
+    {
+      "user_vehicle_id": "77f14775-5ee5-4ace-9877-b13a2e443f7f",
+      "current": { "year": 2024, "make": "VOLKSWAGEN", "model": "Golf R" },
+      "teoalida_id": "e0cb24fd-9820-4859-8ba0-719ed6cb4843",
+      "teoalida_name": "2024 Volkswagen Golf R Base",
+      "teoalida_slug": "2024-volkswagen-golf-r-base",
+      "confidence": "high",
+      "notes": "Exact match"
+    }
+  ],
+  "summary": {
+    "total": 67,
+    "high_confidence": 59,
+    "medium_confidence": 6,
+    "low_confidence": 2,
+    "critical_fixes": [
+      "Dodge Ram 2500 → Was 'Challenger Hellcat', now '2007 Dodge Ram Pickup 2500 SLT'",
+      "Ford Mustang V6 → Was 'Boss 302', now '2017 Ford Mustang V6'",
+      "Porsche Macan → Was '911 GT2 RS', now '2018 Porsche Macan Base'",
+      "VW Jetta S → Was 'Golf R', now '2019 Volkswagen Jetta 1.4T S'",
+      "Audi RS5 → User confirmed year is 2018, matched to '2018 Audi RS 5 quattro'"
+    ],
+    "notes": [
+      "1996 Ford Mustang SVT Cobra - No Cobra trim in Teoalida database",
+      "2022 Porsche 911 GT3 RS - No GT3 RS trim, using GT3"
+    ]
+  }
+}

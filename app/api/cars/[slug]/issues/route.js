@@ -1,16 +1,16 @@
 /**
  * Vehicle Known Issues API Route
- * 
+ *
  * Returns known issues for a specific car.
  * Used by the Analysis tab on the Data page.
- * 
+ *
  * NOTE: Uses car_issues as the source of truth (vehicle_known_issues is DEPRECATED)
  */
 
 import { NextResponse } from 'next/server';
 
 import { errors } from '@/lib/apiErrors';
-import { resolveCarId } from '@/lib/carResolver';
+import { resolveContentCarId } from '@/lib/carResolver';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
@@ -31,10 +31,11 @@ async function handleGet(request, { params }) {
   }
 
   try {
-    // Resolve car_id for efficient queries
-    const carId = await resolveCarId(slug);
-    
-    if (!carId) {
+    // Resolve to content car_id (v1 parent for v2 cars, self for v1)
+    // Issues are linked to v1 cars which hold all the content
+    const resolved = await resolveContentCarId(slug);
+
+    if (!resolved) {
       return NextResponse.json({
         success: true,
         issues: [],
@@ -42,10 +43,11 @@ async function handleGet(request, { params }) {
       });
     }
 
-    // Fetch known issues from car_issues (source of truth)
+    // Fetch known issues from car_issues using content car ID
     const { data: issues, error } = await supabase
       .from('car_issues')
-      .select(`
+      .select(
+        `
         id,
         title,
         kind,
@@ -62,8 +64,9 @@ async function handleGet(request, { params }) {
         estimated_cost_high,
         source_url,
         source_type
-      `)
-      .eq('car_id', carId)
+      `
+      )
+      .eq('car_id', resolved.contentCarId)
       .order('severity', { ascending: true })
       .order('sort_order', { ascending: true });
 
@@ -83,4 +86,7 @@ async function handleGet(request, { params }) {
   }
 }
 
-export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/issues', feature: 'data-analysis' });
+export const GET = withErrorLogging(handleGet, {
+  route: 'cars/[slug]/issues',
+  feature: 'data-analysis',
+});

@@ -2,7 +2,7 @@
  * useCarImages Hook
  *
  * Manages car images that are shared across Garage and Tuning Shop.
- * Images are linked by car_slug so they appear in both features.
+ * Images are linked by car_id so they appear in both features.
  *
  * Features:
  * - Fetch all images for a specific car (from both vehicles and builds)
@@ -42,15 +42,15 @@ const CAR_IMAGES_STALE_TIME = 2 * 60 * 1000;
 // Query key factory
 const carImageKeys = {
   all: ['car-images'],
-  byCarSlug: (userId, carSlug) => [...carImageKeys.all, userId, carSlug],
+  byCarId: (userId, carId) => [...carImageKeys.all, userId, carId],
 };
 
 /**
  * Fetch car images from API
  */
-async function fetchCarImages(userId, carSlug) {
+async function fetchCarImages(userId, carId) {
   const response = await fetch(
-    `/api/users/${userId}/car-images?carSlug=${encodeURIComponent(carSlug)}`
+    `/api/users/${userId}/car-images?carId=${encodeURIComponent(carId)}`
   );
 
   if (!response.ok) {
@@ -64,16 +64,16 @@ async function fetchCarImages(userId, carSlug) {
 /**
  * Hook to manage car images shared across Garage and Tuning Shop
  *
- * @param {string} carSlug - The car slug to fetch images for
+ * @param {string} carId - The car UUID to fetch images for
  * @param {Object} options - Options
  * @param {boolean} options.enabled - Whether to fetch images (default: true)
  * @returns {Object} - { images, heroImage, isLoading, error, setHeroImage, clearHeroImage, refreshImages }
  */
-export function useCarImages(carSlug, { enabled = true } = {}) {
+export function useCarImages(carId, { enabled = true } = {}) {
   const { user, isAuthenticated } = useAuth();
   const queryClient = useQueryClient();
 
-  const queryKey = carImageKeys.byCarSlug(user?.id, carSlug);
+  const queryKey = carImageKeys.byCarId(user?.id, carId);
 
   // Use React Query for data fetching with caching
   const {
@@ -83,9 +83,9 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
     refetch: refreshImages,
   } = useQuery({
     queryKey,
-    queryFn: () => fetchCarImages(user.id, carSlug),
+    queryFn: () => fetchCarImages(user.id, carId),
     staleTime: CAR_IMAGES_STALE_TIME,
-    enabled: enabled && isAuthenticated && !!user?.id && !!carSlug,
+    enabled: enabled && isAuthenticated && !!user?.id && !!carId,
   });
 
   // Mutation for setting hero image
@@ -94,7 +94,7 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
       const response = await fetch(`/api/users/${user.id}/car-images`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ carSlug, imageId }),
+        body: JSON.stringify({ carId, imageId }),
       });
 
       if (!response.ok) {
@@ -133,7 +133,7 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
       const response = await fetch(`/api/users/${user.id}/car-images`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ carSlug, imageId: null }),
+        body: JSON.stringify({ carId, imageId: null }),
       });
 
       if (!response.ok) {
@@ -167,10 +167,7 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
   });
 
   // Check for prefetched hero image (instant, no loading)
-  const prefetchedHero = useMemo(
-    () => getPrefetchedHeroImage(carSlug, user?.id),
-    [carSlug, user?.id]
-  );
+  const prefetchedHero = useMemo(() => getPrefetchedHeroImage(carId, user?.id), [carId, user?.id]);
 
   // Get the current hero image from API data (is_primary = true, and is an image not a video)
   // Also check URL extension as a fallback for cases where media_type might be incorrect
@@ -198,7 +195,7 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
    */
   const setHeroImage = useCallback(
     async (imageId) => {
-      if (!isAuthenticated || !user?.id || !carSlug) {
+      if (!isAuthenticated || !user?.id || !carId) {
         return false;
       }
 
@@ -209,7 +206,7 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
         return false;
       }
     },
-    [isAuthenticated, user?.id, carSlug, setHeroMutation]
+    [isAuthenticated, user?.id, carId, setHeroMutation]
   );
 
   /**
@@ -217,7 +214,7 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
    * @returns {Promise<boolean>} - Success status
    */
   const clearHeroImage = useCallback(async () => {
-    if (!isAuthenticated || !user?.id || !carSlug) {
+    if (!isAuthenticated || !user?.id || !carId) {
       return false;
     }
 
@@ -227,7 +224,7 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
     } catch {
       return false;
     }
-  }, [isAuthenticated, user?.id, carSlug, clearHeroMutation]);
+  }, [isAuthenticated, user?.id, carId, clearHeroMutation]);
 
   // Mutation for reordering images
   const reorderMutation = useMutation({
@@ -235,7 +232,7 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
       const response = await fetch(`/api/users/${user.id}/car-images/reorder`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ carSlug, imageIds: newOrder }),
+        body: JSON.stringify({ carId, imageIds: newOrder }),
       });
 
       if (!response.ok) {
@@ -293,7 +290,7 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
    */
   const reorderImages = useCallback(
     async (newOrder) => {
-      if (!isAuthenticated || !user?.id || !carSlug) {
+      if (!isAuthenticated || !user?.id || !carId) {
         return false;
       }
 
@@ -304,7 +301,7 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
         return false;
       }
     },
-    [isAuthenticated, user?.id, carSlug, reorderMutation]
+    [isAuthenticated, user?.id, carId, reorderMutation]
   );
 
   /**
@@ -355,7 +352,7 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
   }, [heroImage, prefetchedHero]);
 
   // #region agent log
-  if (typeof window !== 'undefined' && carSlug && images.length > 0) {
+  if (typeof window !== 'undefined' && carId && images.length > 0) {
     fetch('http://127.0.0.1:7244/ingest/e28cdfb9-afc8-4c0d-9b4b-3cf0adbc93a8', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -363,7 +360,7 @@ export function useCarImages(carSlug, { enabled = true } = {}) {
         location: 'useCarImages.js:return',
         message: 'Hook data',
         data: {
-          carSlug,
+          carId,
           imageCount: images.length,
           heroImageUrl: heroImageUrl?.slice(0, 100),
           heroMediaType: heroImage?.media_type,

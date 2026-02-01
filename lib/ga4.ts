@@ -265,13 +265,13 @@ export function trackCarDetailView(params: {
   carSlug: string;
   carName: string;
   carCategory?: string;
-  priceRange?: string;
+  msrp?: number;
 }): void {
   trackEvent('Car Detail Viewed', {
     car_slug: params.carSlug,
     car_name: params.carName,
     car_category: params.carCategory,
-    price_range: params.priceRange,
+    msrp: params.msrp,
   });
 }
 

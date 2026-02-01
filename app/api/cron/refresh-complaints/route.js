@@ -81,10 +81,7 @@ async function mapWithConcurrency(items, concurrency, mapper) {
  */
 async function handleGet(request) {
   if (!isAuthorized(request)) {
-    return NextResponse.json(
-      { error: 'Unauthorized', code: 'UNAUTHORIZED' },
-      { status: 401 }
-    );
+    return NextResponse.json({ error: 'Unauthorized', code: 'UNAUTHORIZED' }, { status: 401 });
   }
 
   if (!isSupabaseConfigured || !supabaseServiceRole) {
@@ -101,7 +98,10 @@ async function handleGet(request) {
     const skipCars = Math.max(0, Number(searchParams.get('skipCars') || 0));
     const limitCarsRaw = searchParams.get('limitCars');
     const limitCars = limitCarsRaw ? Math.max(1, Number(limitCarsRaw)) : null;
-    const maxYearsPerCar = Math.max(1, Math.min(Number(searchParams.get('maxYearsPerCar') || 25), 50));
+    const maxYearsPerCar = Math.max(
+      1,
+      Math.min(Number(searchParams.get('maxYearsPerCar') || 25), 50)
+    );
     const concurrency = Math.max(1, Math.min(Number(searchParams.get('concurrency') || 2), 5));
     const delay = Math.max(0, Math.min(Number(searchParams.get('delay') || 500), 5000));
     const mode = searchParams.get('mode') === 'replace' ? 'replace' : 'upsert';
@@ -115,10 +115,10 @@ async function handleGet(request) {
       mode,
     });
 
-    // Fetch all cars with id, slug, name, brand, years
+    // Fetch all cars with id, slug, name, make, year
     const { data: cars, error: carsErr } = await supabaseServiceRole
       .from('cars')
-      .select('id,slug,name,brand,years')
+      .select('id,slug,name,make,year')
       .order('name', { ascending: true });
 
     if (carsErr) throw carsErr;
@@ -127,7 +127,9 @@ async function handleGet(request) {
     let carsToProcess = allCars.slice(skipCars);
     if (limitCars) carsToProcess = carsToProcess.slice(0, limitCars);
 
-    console.log(`[Cron] refresh-complaints: Processing ${carsToProcess.length} of ${allCars.length} cars`);
+    console.log(
+      `[Cron] refresh-complaints: Processing ${carsToProcess.length} of ${allCars.length} cars`
+    );
 
     const startedAt = Date.now();
 
@@ -150,7 +152,7 @@ async function handleGet(request) {
         if (mode === 'replace') {
           dbResult = await replaceComplaintsForCar({
             client: supabaseServiceRole,
-            carSlug: car.slug,
+            carId: car.id,
             rows: fetched.rows,
           });
         } else {
@@ -162,7 +164,9 @@ async function handleGet(request) {
 
         const durationMs = Date.now() - carStartTime;
 
-        console.log(`[Cron] refresh-complaints: ${car.slug} - fetched ${fetched.totalFetched}, rows ${fetched.rows.length}, ${mode === 'replace' ? `deleted ${dbResult.deleted || 0}, inserted ${dbResult.inserted}` : `inserted ${dbResult.inserted || 0}, updated ${dbResult.updated || 0}`} (${durationMs}ms)`);
+        console.log(
+          `[Cron] refresh-complaints: ${car.slug} - fetched ${fetched.totalFetched}, rows ${fetched.rows.length}, ${mode === 'replace' ? `deleted ${dbResult.deleted || 0}, inserted ${dbResult.inserted}` : `inserted ${dbResult.inserted || 0}, updated ${dbResult.updated || 0}`} (${durationMs}ms)`
+        );
 
         return {
           car_slug: car.slug,
@@ -205,7 +209,7 @@ async function handleGet(request) {
       carsWithErrors: perCar.filter((r) => (r?.errors?.length || 0) > 0 || r?.dbError).length,
       carsWithComplaints: perCar.filter((r) => (r?.rows || 0) > 0).length,
       durationMs,
-      durationMinutes: Math.round(durationMs / 60000 * 10) / 10,
+      durationMinutes: Math.round((durationMs / 60000) * 10) / 10,
     };
 
     console.log('[Cron] refresh-complaints completed:', summary);
@@ -235,19 +239,11 @@ async function handleGet(request) {
     console.error('[Cron] refresh-complaints error:', err);
     await logCronError('refresh-complaints', err, { phase: 'processing' });
     notifyCronFailure('Refresh Complaints', err, { phase: 'processing' });
-    return NextResponse.json(
-      { error: 'Complaints refresh cron job failed' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Complaints refresh cron job failed' }, { status: 500 });
   }
 }
 
-export const GET = withErrorLogging(handleGet, { route: 'cron/refresh-complaints', feature: 'cron' });
-
-
-
-
-
-
-
-
+export const GET = withErrorLogging(handleGet, {
+  route: 'cron/refresh-complaints',
+  feature: 'cron',
+});

@@ -12,17 +12,17 @@ import styles from './CarEventsSection.module.css';
 
 /**
  * CarEventsSection - Shows upcoming events for a specific car on its detail page
- * 
+ *
  * Queries events where:
  * - car_slug matches the current car OR
  * - brand matches the current car's brand
- * 
+ *
  * Displayed in the sidebar or after main content on car detail pages.
  */
 
 function CompactEventCard({ event }) {
   if (!event) return null;
-  
+
   return (
     <Link href={`/events/${event.slug}`} className={styles.card}>
       <div className={styles.dateBadge}>
@@ -37,7 +37,8 @@ function CompactEventCard({ event }) {
         <h4 className={styles.eventName}>{event.name}</h4>
         <div className={styles.eventMeta}>
           <span className={styles.location}>
-            {event.city}{event.state ? `, ${event.state}` : ''}
+            {event.city}
+            {event.state ? `, ${event.state}` : ''}
           </span>
           <span className={`${styles.cost} ${event.is_free ? styles.costFree : ''}`}>
             {event.is_free ? 'Free' : event.cost_text || 'See details'}
@@ -51,7 +52,7 @@ function CompactEventCard({ event }) {
 function LoadingState() {
   return (
     <div className={styles.loading}>
-      {[1, 2, 3].map(i => (
+      {[1, 2, 3].map((i) => (
         <div key={i} className={styles.loadingCard} />
       ))}
     </div>
@@ -73,35 +74,33 @@ function EmptyState({ brand }) {
   );
 }
 
-export default function CarEventsSection({ carSlug, carName: _carName, brand }) {
+export default function CarEventsSection({ carId: _carId, car, carName: _carName, brand }) {
   // Build filter params for the query
   const filters = useMemo(() => {
     const f = { limit: 3, sort: 'date' };
-    if (carSlug) {
-      f.carSlug = carSlug;
+    if (car?.slug) {
+      f.carSlug = car.slug;
     } else if (brand) {
       f.brand = brand;
     }
     return f;
-  }, [carSlug, brand]);
-  
+  }, [car, brand]);
+
   // React Query hook for events
-  const { 
-    data: eventsData, 
-    isLoading: loading, 
+  const {
+    data: eventsData,
+    isLoading: loading,
     error: queryError,
   } = useEvents(filters, {
-    enabled: !!(carSlug || brand),
+    enabled: !!(car?.slug || brand),
   });
-  
+
   const events = eventsData?.events || [];
   const error = queryError?.message || null;
-  
+
   // Build link for "find more events"
-  const findMoreLink = brand 
-    ? `/events?brand=${encodeURIComponent(brand)}`
-    : '/events';
-  
+  const findMoreLink = brand ? `/events?brand=${encodeURIComponent(brand)}` : '/events';
+
   return (
     <section className={styles.section}>
       <div className={styles.header}>
@@ -112,23 +111,21 @@ export default function CarEventsSection({ carSlug, carName: _carName, brand }) 
           Upcoming Events
         </h3>
       </div>
-      
+
       {loading ? (
         <LoadingState />
       ) : error ? (
-        <div className={styles.error}>
-          Unable to load events.
-        </div>
+        <div className={styles.error}>Unable to load events.</div>
       ) : events.length === 0 ? (
         <EmptyState brand={brand} />
       ) : (
         <>
           <div className={styles.eventsList}>
-            {events.map(event => (
+            {events.map((event) => (
               <CompactEventCard key={event.slug} event={event} />
             ))}
           </div>
-          
+
           {brand && (
             <Link href={findMoreLink} className={styles.findMoreLink}>
               Find more {brand} events →
@@ -139,4 +136,3 @@ export default function CarEventsSection({ carSlug, carName: _carName, brand }) 
     </section>
   );
 }
-

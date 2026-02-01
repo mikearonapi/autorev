@@ -178,7 +178,7 @@ export default function BuildProgressAnalysis({
   stockHp,
   currentHp: _currentHp,
   carName = null,
-  carSlug = null,
+  carId: _carId = null,
   car = null,
   carLayout = null,
   tuningProfile = null,
@@ -346,7 +346,7 @@ export default function BuildProgressAnalysis({
     <div className={styles.buildProgress}>
       <div className={styles.header}>
         <RocketIcon size={18} />
-        <InfoTooltip topicKey="stageProgression" carName={carName} carSlug={carSlug}>
+        <InfoTooltip topicKey="stageProgression" carName={carName} carSlug={car?.slug}>
           <span className={styles.headerTitle}>Build Progression</span>
         </InfoTooltip>
         {allComplete && <span className={styles.maxedBadge}>Maxed Out!</span>}

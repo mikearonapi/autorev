@@ -2,11 +2,11 @@
 
 /**
  * Share Build Button Component
- * 
+ *
  * Controls community sharing for builds. Shows different states:
  * - Not shared: Shows "Share" button
  * - Shared: Shows "Shared" indicator with checkmark
- * 
+ *
  * When clicked, opens ShareBuildModal for first-time share
  * or opens edit modal for already-shared builds.
  */
@@ -30,8 +30,8 @@ export default function ShareBuildButton({
   const [showModal, setShowModal] = useState(false);
 
   // Fetch linked community post data for this build
-  const { 
-    data: linkedCommunityPost, 
+  const {
+    data: linkedCommunityPost,
     isLoading: checkingCommunityPost,
     refetch: refetchLinkedPost,
   } = useLinkedPost(build?.id, { enabled: !!build?.id });
@@ -50,13 +50,16 @@ export default function ShareBuildButton({
   }, [refetchLinkedPost]);
 
   // Handle share status change from modal
-  const handleShareChange = useCallback(async (newIsShared, shareData) => {
-    // Refetch to get updated linked post data
-    await refetchLinkedPost();
-    if (onShareStatusChange) {
-      await onShareStatusChange(newIsShared, shareData);
-    }
-  }, [onShareStatusChange, refetchLinkedPost]);
+  const handleShareChange = useCallback(
+    async (newIsShared, shareData) => {
+      // Refetch to get updated linked post data
+      await refetchLinkedPost();
+      if (onShareStatusChange) {
+        await onShareStatusChange(newIsShared, shareData);
+      }
+    },
+    [onShareStatusChange, refetchLinkedPost]
+  );
 
   return (
     <>
@@ -86,7 +89,7 @@ export default function ShareBuildButton({
         onClose={handleClose}
         build={build}
         vehicle={vehicle}
-        carSlug={car?.slug}
+        car={car}
         carName={car?.name}
         existingImages={existingImages}
         linkedCommunityPost={linkedCommunityPost}

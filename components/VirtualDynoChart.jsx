@@ -83,7 +83,7 @@ const FORCED_INDUCTION_PROFILES = {
  * Detect forced induction profile from car/build data
  */
 function detectForcedInductionProfile(car, selectedUpgrades = []) {
-  const engine = (car?.engine || '').toLowerCase();
+  const engine = (car?.engineType || '').toLowerCase();
   const upgradeKeys = selectedUpgrades.map((u) => (typeof u === 'string' ? u : u.key)).join(' ');
 
   // Check for big turbo upgrades first
@@ -125,7 +125,8 @@ export default function VirtualDynoChart({
   peakRpm = 6500,
   compact = false,
   carName = null,
-  carSlug = null,
+  carId: _carId = null,
+  carSlug: _carSlug = null, // Keep for backward compatibility, derive from car if available
   car = null, // Full car object for engine detection
   selectedUpgrades = [], // Selected upgrades for turbo detection
   // Data source props for measured vs estimated indication
@@ -133,6 +134,8 @@ export default function VirtualDynoChart({
   dataSource = null, // 'verified' | 'measured' | 'calibrated' | 'estimated' | null
   dynoShop = null, // Optional dyno shop name for detail
 }) {
+  // Derive slug from car object if available
+  const carSlug = car?.slug || _carSlug;
   // Hover state for interactive tooltip
   const [hoverData, setHoverData] = useState(null);
   const chartAreaRef = useRef(null);

@@ -28,36 +28,11 @@ import { calculateWeightedScore, ENTHUSIAST_WEIGHTS } from '@/lib/scoring';
 import styles from './AddVehicleModal.module.css';
 
 /**
- * Parse year ranges like "2020-2024" or "2019-present" into individual years
- */
-function parseYearRange(yearsStr) {
-  if (!yearsStr) return [];
-
-  const currentYear = new Date().getFullYear();
-  const match = yearsStr.match(/(\d{4})(?:\s*[-–]\s*(\d{4}|present))?/i);
-
-  if (!match) return [];
-
-  const startYear = parseInt(match[1]);
-  let endYear = currentYear;
-
-  if (match[2] && match[2].toLowerCase() !== 'present') {
-    endYear = parseInt(match[2]);
-  }
-
-  const years = [];
-  for (let y = startYear; y <= endYear; y++) {
-    years.push(y);
-  }
-  return years;
-}
-
-/**
- * Check if a year falls within a car's year range
+ * Check if a year matches a car's year
+ * With the Teoalida schema, each car record has a single integer year
  */
 function yearMatchesCar(year, car) {
-  const carYears = parseYearRange(car.years);
-  return carYears.includes(year);
+  return car.year === year;
 }
 
 export default function AddVehicleModal({
@@ -124,7 +99,7 @@ export default function AddVehicleModal({
   const availableYears = useMemo(() => {
     const yearsSet = new Set();
     allCars.forEach((car) => {
-      parseYearRange(car.years).forEach((y) => yearsSet.add(y));
+      if (car.year) yearsSet.add(car.year);
     });
     return Array.from(yearsSet).sort((a, b) => b - a);
   }, [allCars]);
@@ -135,8 +110,8 @@ export default function AddVehicleModal({
     const year = parseInt(selectedYear);
     const makesSet = new Set();
     allCars.forEach((car) => {
-      if (yearMatchesCar(year, car) && car.brand) {
-        makesSet.add(car.brand);
+      if (yearMatchesCar(year, car) && car.make) {
+        makesSet.add(car.make);
       }
     });
     return Array.from(makesSet).sort();
@@ -148,7 +123,7 @@ export default function AddVehicleModal({
     const year = parseInt(selectedYear);
     const modelsSet = new Set();
     allCars.forEach((car) => {
-      if (yearMatchesCar(year, car) && car.brand === selectedMake && car.model) {
+      if (yearMatchesCar(year, car) && car.make === selectedMake && car.model) {
         modelsSet.add(car.model);
       }
     });
@@ -163,7 +138,7 @@ export default function AddVehicleModal({
     allCars.forEach((car) => {
       if (
         yearMatchesCar(year, car) &&
-        car.brand === selectedMake &&
+        car.make === selectedMake &&
         car.model === selectedModel &&
         car.trim
       ) {
@@ -180,7 +155,7 @@ export default function AddVehicleModal({
     return allCars.find(
       (car) =>
         yearMatchesCar(year, car) &&
-        car.brand === selectedMake &&
+        car.make === selectedMake &&
         car.model === selectedModel &&
         car.trim === selectedTrim
     );
@@ -239,10 +214,10 @@ export default function AddVehicleModal({
       results = allCars.filter(
         (car) =>
           car.name?.toLowerCase().includes(query) ||
-          car.brand?.toLowerCase().includes(query) ||
+          car.make?.toLowerCase().includes(query) ||
           car.category?.toLowerCase().includes(query) ||
-          car.engine?.toLowerCase().includes(query) ||
-          car.years?.toLowerCase().includes(query)
+          car.engineType?.toLowerCase().includes(query) ||
+          String(car.year || '').includes(query)
       );
     }
 
@@ -271,15 +246,14 @@ export default function AddVehicleModal({
     setAddError(null);
 
     try {
-      // Use override year if provided (from selector), otherwise parse from car data
+      // Use override year if provided (from selector), otherwise use car.year directly
       let year = yearOverride;
       if (!year) {
-        const yearMatch = car.years?.match(/(\d{4})/);
-        year = yearMatch ? parseInt(yearMatch[1]) : new Date().getFullYear();
+        year = car.year || new Date().getFullYear();
       }
 
       // Use new model/trim fields if available, fall back to parsing name
-      let make = car.brand || '';
+      let make = car.make || '';
       let model = car.model || car.name;
 
       // Handle Porsche model numbers (legacy fallback)
@@ -521,8 +495,10 @@ export default function AddVehicleModal({
                     <span className={styles.matchedCarName}>{matchedCar.name}</span>
                     <span className={styles.matchedCarMeta}>
                       {matchedCar.hp && <span>{matchedCar.hp} hp</span>}
-                      {matchedCar.drivetrain && <span> • {matchedCar.drivetrain}</span>}
-                      {matchedCar.engine && <span> • {formatEngine(matchedCar.engine)}</span>}
+                      {matchedCar.driveType && <span> • {matchedCar.driveType}</span>}
+                      {matchedCar.engineType && (
+                        <span> • {formatEngine(matchedCar.engineType)}</span>
+                      )}
                     </span>
                   </div>
                   <button
@@ -630,13 +606,13 @@ export default function AddVehicleModal({
                       <div className={styles.carOptionInfo}>
                         <span className={styles.carOptionName}>{car.name}</span>
                         <span className={styles.carOptionMeta}>
-                          {car.years && <span className={styles.metaItem}>{car.years}</span>}
+                          {car.year && <span className={styles.metaItem}>{car.year}</span>}
                           {car.hp && <span className={styles.metaItem}>{car.hp} hp</span>}
-                          {car.drivetrain && (
-                            <span className={styles.metaItem}>{car.drivetrain}</span>
+                          {car.driveType && (
+                            <span className={styles.metaItem}>{car.driveType}</span>
                           )}
-                          {car.engine && (
-                            <span className={styles.metaItem}>{formatEngine(car.engine)}</span>
+                          {car.engineType && (
+                            <span className={styles.metaItem}>{formatEngine(car.engineType)}</span>
                           )}
                         </span>
                       </div>

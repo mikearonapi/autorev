@@ -1,8 +1,8 @@
 /**
  * Alerts Engine API
- * 
+ *
  * Auto-generates actionable alerts based on platform metrics.
- * 
+ *
  * @route GET /api/admin/alerts
  */
 
@@ -25,21 +25,21 @@ const THRESHOLDS = {
   MONTHLY_BURN_WARNING: 500, // $500
   MONTHLY_BURN_CRITICAL: 1000, // $1000
   VARIABLE_COST_SPIKE: 50, // 50% increase
-  
+
   // Users
   ZERO_SIGNUPS_DAYS: 7, // Alert if no signups for 7 days
   LOW_ENGAGEMENT_PERCENT: 20, // Less than 20% weekly active
-  
+
   // Content
   STALE_CONTENT_DAYS: 30, // Content not updated in 30 days
   LOW_COVERAGE_PERCENT: 50, // Less than 50% coverage
-  
+
   // System
   ERROR_RATE_WARNING: 5, // 5 errors in 24h
   ERROR_RATE_CRITICAL: 20, // 20 errors in 24h
   FAILED_JOBS_WARNING: 3,
   FAILED_JOBS_CRITICAL: 10,
-  
+
   // AI
   HIGH_TOKEN_USAGE: 100000, // 100K tokens/day
   COST_PER_USER_WARNING: 50, // $0.50 per active user
@@ -49,32 +49,36 @@ async function handleGet(request) {
   if (!supabaseUrl || !supabaseServiceKey) {
     return NextResponse.json({ error: 'Database not configured' }, { status: 500 });
   }
-  
+
   // Verify admin access
   const authHeader = request.headers.get('authorization');
   if (!authHeader?.startsWith('Bearer ')) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
-  
+
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
-  
+
   try {
     const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
-    
+    const {
+      data: { user },
+      error: authError,
+    } = await supabase.auth.getUser(token);
+
     if (authError || !user || !isAdminEmail(user.email)) {
       return NextResponse.json({ error: 'Admin access required' }, { status: 403 });
     }
-    
+
     const now = new Date();
     const alerts = [];
-    
+
     // =========================================================================
     // FINANCIAL ALERTS
     // =========================================================================
-    
-    const FINANCIAL_COLS = 'id, fiscal_year, fiscal_month, revenue_cents, total_fixed_costs_cents, total_variable_costs_cents, net_income_cents';
-    
+
+    const FINANCIAL_COLS =
+      'id, fiscal_year, fiscal_month, revenue_cents, total_fixed_costs_cents, total_variable_costs_cents, net_income_cents';
+
     // Get current month financials
     const { data: currentMonth } = await supabase
       .from('monthly_financials')
@@ -82,10 +86,11 @@ async function handleGet(request) {
       .eq('fiscal_year', now.getFullYear())
       .eq('fiscal_month', now.getMonth() + 1)
       .single();
-    
+
     if (currentMonth) {
-      const totalCosts = (currentMonth.total_fixed_costs_cents + currentMonth.total_variable_costs_cents) / 100;
-      
+      const totalCosts =
+        (currentMonth.total_fixed_costs_cents + currentMonth.total_variable_costs_cents) / 100;
+
       if (totalCosts > THRESHOLDS.MONTHLY_BURN_CRITICAL) {
         alerts.push({
           id: 'burn-critical',
@@ -109,7 +114,7 @@ async function handleGet(request) {
           threshold: THRESHOLDS.MONTHLY_BURN_WARNING,
         });
       }
-      
+
       // No revenue alert
       if (currentMonth.total_revenue_cents === 0 && currentMonth.paying_users === 0) {
         alerts.push({
@@ -123,18 +128,18 @@ async function handleGet(request) {
         });
       }
     }
-    
+
     // =========================================================================
     // USER GROWTH ALERTS
     // =========================================================================
-    
+
     // Check recent signups
     const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
     const { count: recentSignups } = await supabase
       .from('user_profiles')
       .select('*', { count: 'exact', head: true })
       .gte('created_at', weekAgo.toISOString());
-    
+
     if (recentSignups === 0) {
       alerts.push({
         id: 'no-signups',
@@ -147,20 +152,20 @@ async function handleGet(request) {
         threshold: THRESHOLDS.ZERO_SIGNUPS_DAYS,
       });
     }
-    
+
     // Check engagement
     const { count: totalUsers } = await supabase
       .from('user_profiles')
       .select('*', { count: 'exact', head: true });
-    
+
     const { data: activeUsers } = await supabase
       .from('al_conversations')
       .select('user_id')
       .gte('last_message_at', weekAgo.toISOString());
-    
-    const uniqueActiveUsers = new Set((activeUsers || []).map(a => a.user_id)).size;
+
+    const uniqueActiveUsers = new Set((activeUsers || []).map((a) => a.user_id)).size;
     const engagementRate = totalUsers > 0 ? (uniqueActiveUsers / totalUsers) * 100 : 0;
-    
+
     if (totalUsers > 5 && engagementRate < THRESHOLDS.LOW_ENGAGEMENT_PERCENT) {
       alerts.push({
         id: 'low-engagement',
@@ -173,20 +178,18 @@ async function handleGet(request) {
         threshold: THRESHOLDS.LOW_ENGAGEMENT_PERCENT,
       });
     }
-    
+
     // =========================================================================
     // CONTENT ALERTS
     // =========================================================================
-    
+
     // Check content coverage
-    const { data: contentStats } = await supabase
-      .from('cars')
-      .select('image_hero_url, embedding');
-    
+    const { data: contentStats } = await supabase.from('cars').select('image_url, embedding');
+
     if (contentStats && contentStats.length > 0) {
-      const withImages = contentStats.filter(c => c.image_hero_url).length;
+      const withImages = contentStats.filter((c) => c.image_url).length;
       const imageCoverage = (withImages / contentStats.length) * 100;
-      
+
       if (imageCoverage < THRESHOLDS.LOW_COVERAGE_PERCENT) {
         alerts.push({
           id: 'low-image-coverage',
@@ -199,10 +202,10 @@ async function handleGet(request) {
           threshold: THRESHOLDS.LOW_COVERAGE_PERCENT,
         });
       }
-      
-      const withEmbeddings = contentStats.filter(c => c.embedding).length;
+
+      const withEmbeddings = contentStats.filter((c) => c.embedding).length;
       const embeddingCoverage = (withEmbeddings / contentStats.length) * 100;
-      
+
       if (embeddingCoverage < THRESHOLDS.LOW_COVERAGE_PERCENT) {
         alerts.push({
           id: 'low-embedding-coverage',
@@ -216,11 +219,11 @@ async function handleGet(request) {
         });
       }
     }
-    
+
     // =========================================================================
     // SYSTEM ALERTS
     // =========================================================================
-    
+
     // Check error rate (ONLY unresolved errors)
     const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
     const RESOLVED_STATUSES = ['resolved', 'fixed', 'closed', 'wont_fix'];
@@ -230,7 +233,7 @@ async function handleGet(request) {
       .eq('category', 'auto-error')
       .gte('created_at', dayAgo.toISOString())
       .not('status', 'in', `(${RESOLVED_STATUSES.join(',')})`);
-    
+
     if ((errorCount || 0) >= THRESHOLDS.ERROR_RATE_CRITICAL) {
       alerts.push({
         id: 'errors-critical',
@@ -254,14 +257,14 @@ async function handleGet(request) {
         threshold: THRESHOLDS.ERROR_RATE_WARNING,
       });
     }
-    
+
     // Check failed jobs
     const { data: failedJobs } = await supabase
       .from('scrape_jobs')
       .select('id')
       .eq('status', 'failed')
       .gte('created_at', dayAgo.toISOString());
-    
+
     const failedCount = failedJobs?.length || 0;
     if (failedCount >= THRESHOLDS.FAILED_JOBS_CRITICAL) {
       alerts.push({
@@ -286,20 +289,23 @@ async function handleGet(request) {
         threshold: THRESHOLDS.FAILED_JOBS_WARNING,
       });
     }
-    
+
     // =========================================================================
     // AI USAGE ALERTS
     // =========================================================================
-    
+
     // Check AI costs per active user
     const { data: usageLogs } = await supabase
       .from('al_usage_logs')
       .select('cost_cents')
       .gte('created_at', dayAgo.toISOString());
-    
-    const dailyAICost = (usageLogs || []).reduce((sum, l) => sum + parseFloat(l.cost_cents || 0), 0);
+
+    const dailyAICost = (usageLogs || []).reduce(
+      (sum, l) => sum + parseFloat(l.cost_cents || 0),
+      0
+    );
     const costPerUser = uniqueActiveUsers > 0 ? dailyAICost / uniqueActiveUsers : 0;
-    
+
     if (costPerUser > THRESHOLDS.COST_PER_USER_WARNING) {
       alerts.push({
         id: 'ai-cost-high',
@@ -312,23 +318,22 @@ async function handleGet(request) {
         threshold: THRESHOLDS.COST_PER_USER_WARNING,
       });
     }
-    
+
     // Sort alerts by severity
     const severityOrder = { critical: 0, warning: 1, info: 2 };
     alerts.sort((a, b) => severityOrder[a.severity] - severityOrder[b.severity]);
-    
+
     return NextResponse.json({
       alerts,
       summary: {
         total: alerts.length,
-        critical: alerts.filter(a => a.severity === 'critical').length,
-        warning: alerts.filter(a => a.severity === 'warning').length,
-        info: alerts.filter(a => a.severity === 'info').length,
+        critical: alerts.filter((a) => a.severity === 'critical').length,
+        warning: alerts.filter((a) => a.severity === 'warning').length,
+        info: alerts.filter((a) => a.severity === 'info').length,
       },
       thresholds: THRESHOLDS,
       timestamp: now.toISOString(),
     });
-    
   } catch (err) {
     console.error('[Alerts API] Error:', err);
     return NextResponse.json({ error: 'Failed to generate alerts' }, { status: 500 });

@@ -21,7 +21,6 @@ import { calculateWeightedScore, ENTHUSIAST_WEIGHTS } from '@/lib/scoring';
 import styles from './AddFavoritesModal.module.css';
 import CarImage from './CarImage';
 
-
 export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavorites = [] }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [addingSlug, setAddingSlug] = useState(null);
@@ -49,10 +48,10 @@ export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavo
       results = allCars.filter(
         (car) =>
           car.name?.toLowerCase().includes(query) ||
-          car.brand?.toLowerCase().includes(query) ||
+          car.make?.toLowerCase().includes(query) ||
           car.category?.toLowerCase().includes(query) ||
-          car.engine?.toLowerCase().includes(query) ||
-          car.years?.toLowerCase().includes(query)
+          car.engineType?.toLowerCase().includes(query) ||
+          String(car.year || '').includes(query)
       );
     }
 
@@ -168,7 +167,8 @@ export default function AddFavoritesModal({ isOpen, onClose, onAdd, existingFavo
                   <div className={styles.carOptionInfo}>
                     <span className={styles.carOptionName}>{car.name}</span>
                     <span className={styles.carOptionMeta}>
-                      {car.hp} hp • {car.category || 'Sports Car'} • {car.priceRange || car.years}
+                      {car.hp} hp • {car.category || 'Sports Car'} •{' '}
+                      {car.msrp ? `$${car.msrp.toLocaleString()}` : car.year}
                     </span>
                   </div>
                   <span className={styles.carOptionAction}>

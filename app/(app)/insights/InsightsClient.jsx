@@ -941,9 +941,11 @@ export default function InsightsClient() {
       }
 
       const vehicle = vehicles.find((v) => v.id === selectedVehicleId);
-      const carSlug = vehicle?.matched_car_slug;
+      const carId = vehicle?.matchedCarId;
+      // Get slug from matched_car object for API call (API route accepts slug)
+      const carSlug = vehicle?.matched_car?.slug;
 
-      if (!carSlug) {
+      if (!carId || !carSlug) {
         setKnownIssues([]);
         return;
       }
@@ -1039,7 +1041,9 @@ export default function InsightsClient() {
 
     return {
       carName: `${vehicle.make} ${vehicle.model}`,
-      carSlug: vehicle.matched_car_slug,
+      carId: vehicle.matchedCarId,
+      // Get slug from matched_car object for API calls that require slug
+      carSlug: vehicle.matched_car?.slug,
       aspiration: vehicle.matched_car?.aspiration || 'NA',
       definingStrengths: vehicle.matched_car?.defining_strengths || [],
       honestWeaknesses: vehicle.matched_car?.honest_weaknesses || [],
@@ -1070,6 +1074,7 @@ export default function InsightsClient() {
   }, [selectedVehicleDetails]);
 
   // Fetch full car details for driving character fields (engine feel, steering, sound)
+  // Note: useCarBySlug requires slug, so we use carSlug from matched_car object
   const { data: _fullCarData } = useCarBySlug(selectedVehicleDetails?.carSlug, {
     enabled: !!selectedVehicleDetails?.carSlug,
   });
@@ -1090,11 +1095,11 @@ export default function InsightsClient() {
         return;
       }
 
-      // Get the matched_car_id from the selected vehicle (car_id FK references cars table, not user_vehicles)
+      // Get the matchedCarId from the selected vehicle (car_id FK references cars table, not user_vehicles)
       let carId = null;
       if (selectedVehicleId && selectedVehicleId !== 'all') {
         const vehicle = vehicles.find((v) => v.id === selectedVehicleId);
-        carId = vehicle?.matched_car_id || null;
+        carId = vehicle?.matchedCarId || null;
       }
 
       try {
@@ -1234,7 +1239,7 @@ export default function InsightsClient() {
               stockHp={vehiclePerformanceData.stockHp}
               currentHp={vehiclePerformanceData.estimatedHp}
               carName={selectedVehicleDetails?.carName}
-              carSlug={selectedVehicleDetails?.carSlug}
+              carId={selectedVehicleDetails?.carId}
               car={selectedVehicleDetails?.matchedCar}
               carLayout={selectedVehicleDetails?.carLayout}
               tuningProfile={tuningProfile}
@@ -1251,7 +1256,7 @@ export default function InsightsClient() {
             installedUpgrades={installedUpgrades}
             aspiration={selectedVehicleDetails?.aspiration || 'NA'}
             currentHp={vehiclePerformanceData.estimatedHp}
-            carSlug={selectedVehicleDetails?.carSlug}
+            carId={selectedVehicleDetails?.carId}
             vehicleId={selectedVehicleId}
             onFeedback={handleFeedback}
             // Data consistency validation props - prevents contradictory recommendations

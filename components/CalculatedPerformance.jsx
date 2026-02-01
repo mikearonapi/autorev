@@ -187,7 +187,9 @@ export default function CalculatedPerformance({
   hasSuspension = false,
   // Car context for Ask AL prompts
   carName = null,
-  carSlug: _carSlug = null,
+  carId: _carId = null,
+  car: _car = null, // Reserved for future use
+  carSlug: _carSlug = null, // Keep for backward compatibility, derive from car if available
   // Data source tracking - NEW for dyno data integration
   // When user has dyno data, these indicate measured vs estimated
   performanceDataSources = null, // { hp: 'measured', torque: 'measured', ... }

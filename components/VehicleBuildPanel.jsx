@@ -2,7 +2,7 @@
 
 /**
  * VehicleBuildPanel
- * 
+ *
  * Wrapper component for BuildEditor that handles:
  * - Fetching turbo options from database
  * - Saving build data to user_vehicles
@@ -18,6 +18,7 @@ import styles from './VehicleBuildPanel.module.css';
 
 export default function VehicleBuildPanel({
   vehicleId,
+  carId,
   carSlug,
   stockHp = 0,
   stockTorque: _stockTorque = 0,
@@ -32,35 +33,38 @@ export default function VehicleBuildPanel({
   // Fetch turbo options via React Query
   const { data: buildData, isLoading: loading } = useVehicleBuild(vehicleId);
   const turboOptions = buildData?.turboOptions || [];
-  
+
   // Mutation for saving build
   const updateBuildMutation = useUpdateVehicleBuild();
   const _saving = updateBuildMutation.isPending;
 
   // Handle save
-  const handleSave = useCallback(async (buildData) => {
-    if (!vehicleId) {
-      setError('No vehicle selected');
-      return;
-    }
-
-    setError(null);
-    setSaveSuccess(false);
-
-    try {
-      const result = await updateBuildMutation.mutateAsync({ vehicleId, buildData });
-      
-      // Notify parent of the update
-      if (onUpdateBuild) {
-        onUpdateBuild(result.vehicle);
+  const handleSave = useCallback(
+    async (buildData) => {
+      if (!vehicleId) {
+        setError('No vehicle selected');
+        return;
       }
 
-      setSaveSuccess(true);
-      setTimeout(() => setSaveSuccess(false), 3000);
-    } catch (err) {
-      setError(err.message);
-    }
-  }, [vehicleId, onUpdateBuild, updateBuildMutation]);
+      setError(null);
+      setSaveSuccess(false);
+
+      try {
+        const result = await updateBuildMutation.mutateAsync({ vehicleId, buildData });
+
+        // Notify parent of the update
+        if (onUpdateBuild) {
+          onUpdateBuild(result.vehicle);
+        }
+
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 3000);
+      } catch (err) {
+        setError(err.message);
+      }
+    },
+    [vehicleId, onUpdateBuild, updateBuildMutation]
+  );
 
   if (loading) {
     return (
@@ -88,6 +92,7 @@ export default function VehicleBuildPanel({
 
       <BuildEditor
         vehicleId={vehicleId}
+        carId={carId}
         carSlug={carSlug}
         initialMods={installedMods}
         initialCustomSpecs={customSpecs}

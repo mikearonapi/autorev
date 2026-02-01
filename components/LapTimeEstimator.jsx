@@ -41,12 +41,17 @@ export default function LapTimeEstimator({
   weightMod = 0,
   driverWeight: _driverWeight = 180,
   user = null,
-  carSlug = null,
+  carId: _carId = null,
+  car,
+  carSlug: _carSlug = null, // Keep for backward compatibility, derive from car if available
   carName = null,
   modsSummary = null,
   compact = false,
   hideLogging = false,
 }) {
+  // Derive carId and slug from car object if available
+  const carId = car?.id || _carId;
+  const carSlug = car?.slug || _carSlug;
   const [selectedTrackSlug, setSelectedTrackSlug] = useState(null); // No default - user must select
   const [driverSkill, setDriverSkill] = useState('intermediate');
   const [showInfo, setShowInfo] = useState(false);
@@ -83,11 +88,12 @@ export default function LapTimeEstimator({
   const { data: allTracks = [], isLoading: _tracksLoading } = useTracks();
 
   // React Query hooks for track times
+  // Note: useUserTrackTimes already accepts carId
   const {
     data: trackHistory = [],
     isLoading: isLoadingHistory,
     refetch: _refetchHistory,
-  } = useUserTrackTimes(user?.id, carSlug, {
+  } = useUserTrackTimes(user?.id, carId, {
     enabled: showHistory && !!user?.id,
     limit: 10,
   });
@@ -226,7 +232,7 @@ export default function LapTimeEstimator({
           estimatedTimeSeconds: moddedLapTime || null,
           driverSkillLevel: driverSkill,
           notes: logForm.notes,
-          carSlug: carSlug,
+          carId: carId,
         },
       });
 
@@ -248,7 +254,7 @@ export default function LapTimeEstimator({
   const requestAnalysis = async () => {
     if (!user?.id) return;
     try {
-      const data = await analyzeTrackTimes.mutateAsync({ userId: user.id, carSlug });
+      const data = await analyzeTrackTimes.mutateAsync({ userId: user.id, carId });
       setAnalysis(data.analysis);
     } catch (err) {
       console.error('Failed to get analysis:', err);

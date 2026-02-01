@@ -16,7 +16,7 @@ import {
  *
  * Query params:
  * - track: Filter by track name
- * - carSlug: Filter by car
+ * - carId: Filter by car ID
  * - limit: Number of results (default 20)
  */
 async function handleGet(request, { params }) {
@@ -53,14 +53,15 @@ async function handleGet(request, { params }) {
 
     const { searchParams } = new URL(request.url);
     const track = searchParams.get('track');
-    const carSlug = searchParams.get('carSlug');
+    const carId = searchParams.get('carId');
     const limit = parseInt(searchParams.get('limit') || '20', 10);
 
     // Try to use the helper function first
+    // Note: RPC may need updating to accept car_id instead of car_slug
     const { data, error } = await supabase.rpc('get_user_track_history', {
       p_user_id: userId,
       p_track_name: track || null,
-      p_car_slug: carSlug || null,
+      p_car_id: carId || null,
       p_limit: limit,
     });
 
@@ -90,11 +91,12 @@ async function handleGet(request, { params }) {
           notes,
           highlights,
           areas_to_improve,
-          car_slug,
+          car_id,
           estimated_time_seconds,
           driver_skill_level,
           al_analysis,
-          created_at
+          created_at,
+          cars:car_id (slug, name)
         `
         )
         .eq('user_id', userId)
@@ -103,7 +105,7 @@ async function handleGet(request, { params }) {
         .limit(limit);
 
       if (track) query.eq('track_name', track);
-      if (carSlug) query.eq('car_slug', carSlug);
+      if (carId) query.eq('car_id', carId);
 
       const { data: fallbackData, error: fallbackError } = await query;
 
@@ -202,7 +204,7 @@ async function handlePost(request, { params }) {
       notes,
       highlights,
       areasToImprove,
-      carSlug,
+      carId,
       userVehicleId,
       timingSystem,
     } = validation.data;
@@ -230,7 +232,7 @@ async function handlePost(request, { params }) {
         notes: notes || null,
         highlights: highlights || null,
         areas_to_improve: areasToImprove || null,
-        car_slug: carSlug || null,
+        car_id: carId || null,
         user_vehicle_id: userVehicleId || null,
         timing_system: timingSystem || null,
       })

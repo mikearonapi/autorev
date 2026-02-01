@@ -164,7 +164,8 @@ export default function PowerBreakdown({
   car,
   totalHpGain: providedTotalGain,
   carName = null,
-  carSlug: _carSlug = null,
+  carId: _carId = null,
+  carSlug: _carSlug = null, // Keep for backward compatibility, derive from car if available
 }) {
   const [hoveredSegment, setHoveredSegment] = useState(null);
 
@@ -199,9 +200,9 @@ export default function PowerBreakdown({
 
     // Fallback: Create breakdown from upgrade keys without full calculation
     // This ensures SOMETHING displays even when car data is incomplete
-    const engineType = car?.engine?.toLowerCase().includes('turbo')
+    const engineType = car?.engineType?.toLowerCase().includes('turbo')
       ? 'turbo'
-      : car?.engine?.toLowerCase().includes('supercharg')
+      : car?.engineType?.toLowerCase().includes('supercharg')
         ? 'sc'
         : 'na';
 

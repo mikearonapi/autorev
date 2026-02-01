@@ -2,11 +2,11 @@
 
 /**
  * Selected Car Banner
- * 
+ *
  * A secondary header bar that displays the currently selected car.
  * Shows key stats and build summary when in Performance Hub context.
  * Provides quick actions to change or clear the selection.
- * 
+ *
  * @module components/SelectedCarBanner
  */
 
@@ -20,10 +20,9 @@ import { Icons } from '@/components/ui/Icons';
 
 import styles from './SelectedCarBanner.module.css';
 
-
 /**
  * Format currency for display
- * @param {number} amount 
+ * @param {number} amount
  * @returns {string}
  */
 function formatCurrency(amount) {
@@ -49,7 +48,7 @@ export default function SelectedCarBanner() {
   // Determine if we're in a Tuning Shop context
   const isPerformanceContext = pathname?.startsWith('/tuning-shop');
   const isCarDetailPage = pathname?.startsWith('/browse-cars/');
-  
+
   // Don't show banner if no car is selected or during SSR
   if (!isHydrated || !hasSelectedCar || !selectedCar) {
     return null;
@@ -65,9 +64,9 @@ export default function SelectedCarBanner() {
         <div className={styles.carInfo}>
           <div className={styles.carIdentity}>
             <span className={styles.carName}>{selectedCar?.name}</span>
-            <span className={styles.carYears}>{selectedCar?.years || ''}</span>
+            <span className={styles.carYears}>{selectedCar?.year || ''}</span>
           </div>
-          
+
           {/* Key Stats - Desktop Only */}
           <div className={styles.statsRow}>
             <div className={styles.stat}>
@@ -85,7 +84,7 @@ export default function SelectedCarBanner() {
               </span>
               <span className={styles.statLabel}>hp</span>
             </div>
-            
+
             {selectedCar.zeroToSixty && (
               <div className={styles.stat}>
                 <Icons.timer size={14} />
@@ -93,20 +92,21 @@ export default function SelectedCarBanner() {
                 <span className={styles.statLabel}>0-60</span>
               </div>
             )}
-            
+
             {hasUpgrades && (
               <>
                 <div className={styles.stat}>
                   <Icons.dollar size={14} />
                   <span className={styles.statValue}>
-                    {buildSummary.totalCostLow && buildSummary.totalCostHigh && buildSummary.totalCostLow !== buildSummary.totalCostHigh
+                    {buildSummary.totalCostLow &&
+                    buildSummary.totalCostHigh &&
+                    buildSummary.totalCostLow !== buildSummary.totalCostHigh
                       ? `${formatCurrency(buildSummary.totalCostLow)} - ${formatCurrency(buildSummary.totalCostHigh)}`
-                      : formatCurrency(buildSummary.totalCost)
-                    }
+                      : formatCurrency(buildSummary.totalCost)}
                   </span>
                   <span className={styles.statLabel}>build</span>
                 </div>
-                
+
                 {buildSummary.costPerHp > 0 && (
                   <div className={styles.stat}>
                     <Icons.trendingUp size={14} />
@@ -122,7 +122,7 @@ export default function SelectedCarBanner() {
         {/* Actions */}
         <div className={styles.actions}>
           {/* Mobile Expand Toggle */}
-          <button 
+          <button
             className={styles.expandToggle}
             onClick={() => setIsExpanded(!isExpanded)}
             aria-label={isExpanded ? 'Collapse details' : 'Expand details'}
@@ -132,7 +132,7 @@ export default function SelectedCarBanner() {
 
           {/* Tuning Shop Link - if not already there */}
           {!isPerformanceContext && (
-            <Link 
+            <Link
               href={`/tuning-shop?car=${selectedCar.slug}`}
               className={styles.actionBtn}
               title="Go to Tuning Shop"
@@ -143,16 +143,12 @@ export default function SelectedCarBanner() {
           )}
 
           {/* Change Car */}
-          <Link 
-            href="/garage"
-            className={styles.actionBtn}
-            title="Change car"
-          >
+          <Link href="/garage" className={styles.actionBtn} title="Change car">
             Change
           </Link>
 
           {/* Clear Selection */}
-          <button 
+          <button
             onClick={clearCar}
             className={styles.clearBtn}
             aria-label="Clear car selection"
@@ -170,32 +166,35 @@ export default function SelectedCarBanner() {
             <div className={styles.expandedStat}>
               <span className={styles.expandedStatLabel}>Power</span>
               <span className={styles.expandedStatValue}>
-                {hasUpgrades ? `${selectedCar.hp} → ${buildSummary.finalHp} hp` : `${selectedCar.hp} hp`}
+                {hasUpgrades
+                  ? `${selectedCar.hp} → ${buildSummary.finalHp} hp`
+                  : `${selectedCar.hp} hp`}
               </span>
             </div>
-            
+
             {selectedCar.zeroToSixty && (
               <div className={styles.expandedStat}>
                 <span className={styles.expandedStatLabel}>0-60 mph</span>
                 <span className={styles.expandedStatValue}>{selectedCar.zeroToSixty}s</span>
               </div>
             )}
-            
+
             {selectedCar.torque && (
               <div className={styles.expandedStat}>
                 <span className={styles.expandedStatLabel}>Torque</span>
                 <span className={styles.expandedStatValue}>
                   {hasUpgrades && buildSummary.finalTorque > selectedCar.torque
                     ? `${selectedCar.torque} → ${buildSummary.finalTorque} lb-ft`
-                    : `${selectedCar.torque} lb-ft`
-                  }
+                    : `${selectedCar.torque} lb-ft`}
                 </span>
               </div>
             )}
-            
+
             <div className={styles.expandedStat}>
-              <span className={styles.expandedStatLabel}>Price Range</span>
-              <span className={styles.expandedStatValue}>{selectedCar?.priceRange || '—'}</span>
+              <span className={styles.expandedStatLabel}>MSRP</span>
+              <span className={styles.expandedStatValue}>
+                {selectedCar?.msrp ? `$${selectedCar.msrp.toLocaleString()}` : '—'}
+              </span>
             </div>
 
             {hasUpgrades && (
@@ -203,18 +202,19 @@ export default function SelectedCarBanner() {
                 <div className={styles.expandedStat}>
                   <span className={styles.expandedStatLabel}>Build Cost</span>
                   <span className={styles.expandedStatValue}>
-                    {buildSummary.totalCostLow && buildSummary.totalCostHigh && buildSummary.totalCostLow !== buildSummary.totalCostHigh
+                    {buildSummary.totalCostLow &&
+                    buildSummary.totalCostHigh &&
+                    buildSummary.totalCostLow !== buildSummary.totalCostHigh
                       ? `${formatCurrency(buildSummary.totalCostLow)} - ${formatCurrency(buildSummary.totalCostHigh)}`
-                      : formatCurrency(buildSummary.totalCost)
-                    }
+                      : formatCurrency(buildSummary.totalCost)}
                   </span>
                 </div>
-                
+
                 <div className={styles.expandedStat}>
                   <span className={styles.expandedStatLabel}>HP Gained</span>
                   <span className={styles.expandedStatValue}>+{buildSummary.totalHpGain} hp</span>
                 </div>
-                
+
                 {buildSummary.costPerHp > 0 && (
                   <div className={styles.expandedStat}>
                     <span className={styles.expandedStatLabel}>Cost per HP</span>
@@ -227,9 +227,11 @@ export default function SelectedCarBanner() {
 
           {hasUpgrades && (
             <div className={styles.upgradesList}>
-              <span className={styles.upgradesTitle}>Applied Upgrades ({appliedUpgrades.length})</span>
+              <span className={styles.upgradesTitle}>
+                Applied Upgrades ({appliedUpgrades.length})
+              </span>
               <div className={styles.upgradesTags}>
-                {appliedUpgrades.slice(0, 5).map(upgrade => (
+                {appliedUpgrades.slice(0, 5).map((upgrade) => (
                   <span key={upgrade.id} className={styles.upgradeTag}>
                     {upgrade.name}
                   </span>
@@ -243,7 +245,7 @@ export default function SelectedCarBanner() {
 
           <div className={styles.expandedActions}>
             {!isPerformanceContext && (
-              <Link 
+              <Link
                 href={`/tuning-shop?car=${selectedCar.slug}`}
                 className={styles.expandedActionBtn}
               >
@@ -252,7 +254,7 @@ export default function SelectedCarBanner() {
               </Link>
             )}
             {!isCarDetailPage && (
-              <Link 
+              <Link
                 href={`/browse-cars/${selectedCar.slug}`}
                 className={styles.expandedActionBtnSecondary}
               >

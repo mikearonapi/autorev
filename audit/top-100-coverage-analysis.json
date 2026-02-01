@@ -1,0 +1,3017 @@
+{
+  "summary": {
+    "totalVehicles": 102,
+    "fullCoverage": 89,
+    "partialCoverage": 6,
+    "noCoverage": 7,
+    "databaseVehicles": 311
+  },
+  "byTier": {
+    "1": {
+      "full": 9,
+      "partial": 1,
+      "missing": 0
+    },
+    "2": {
+      "full": 8,
+      "partial": 2,
+      "missing": 0
+    },
+    "3": {
+      "full": 10,
+      "partial": 0,
+      "missing": 0
+    },
+    "4": {
+      "full": 11,
+      "partial": 1,
+      "missing": 0
+    },
+    "5": {
+      "full": 9,
+      "partial": 1,
+      "missing": 0
+    },
+    "6": {
+      "full": 9,
+      "partial": 0,
+      "missing": 1
+    },
+    "7": {
+      "full": 9,
+      "partial": 0,
+      "missing": 1
+    },
+    "8": {
+      "full": 8,
+      "partial": 0,
+      "missing": 2
+    },
+    "9": {
+      "full": 7,
+      "partial": 1,
+      "missing": 2
+    },
+    "10": {
+      "full": 9,
+      "partial": 0,
+      "missing": 1
+    }
+  },
+  "recommendations": [
+    {
+      "priority": "HIGH",
+      "rank": 5,
+      "make": "Volkswagen",
+      "model": "Mk4 GTI",
+      "trim": "Standard",
+      "years": "2022-2024",
+      "status": "ADD_YEARS"
+    },
+    {
+      "priority": "HIGH",
+      "rank": 11,
+      "make": "Chevrolet",
+      "model": "Camaro",
+      "trim": "SS",
+      "years": "1969",
+      "status": "ADD_YEARS"
+    },
+    {
+      "priority": "HIGH",
+      "rank": 20,
+      "make": "BMW",
+      "model": "E30 M3",
+      "trim": "Competition",
+      "years": "1988-1991",
+      "status": "ADD_TRIM"
+    },
+    {
+      "priority": "MEDIUM",
+      "rank": 37,
+      "make": "BMW",
+      "model": "1 Series M",
+      "trim": "Coupe",
+      "years": "2011",
+      "status": "ADD_YEARS"
+    },
+    {
+      "priority": "MEDIUM",
+      "rank": 49,
+      "make": "Chevrolet",
+      "model": "Camaro 1969",
+      "trim": "SS",
+      "years": "1969",
+      "status": "ADD_YEARS"
+    },
+    {
+      "priority": "MEDIUM",
+      "rank": 57,
+      "make": "Ford",
+      "model": "Fiesta",
+      "trim": "ST",
+      "years": "2013-2019",
+      "status": "NEW"
+    },
+    {
+      "priority": "LOW",
+      "rank": 65,
+      "make": "Jeep",
+      "model": "Renegade",
+      "trim": "Standard",
+      "years": "2015-2024",
+      "status": "NEW"
+    },
+    {
+      "priority": "LOW",
+      "rank": 65,
+      "make": "Jeep",
+      "model": "Compass",
+      "trim": "Standard",
+      "years": "2015-2024",
+      "status": "NEW"
+    },
+    {
+      "priority": "LOW",
+      "rank": 72,
+      "make": "Pontiac",
+      "model": "GTO",
+      "trim": "Standard",
+      "years": "2004-2006",
+      "status": "NEW"
+    },
+    {
+      "priority": "LOW",
+      "rank": 80,
+      "make": "Porsche",
+      "model": "Cayenne",
+      "trim": "Standard",
+      "years": "2011-2024",
+      "status": "NEW"
+    },
+    {
+      "priority": "LOW",
+      "rank": 80,
+      "make": "Porsche",
+      "model": "Cayenne",
+      "trim": "Turbo",
+      "years": "2011-2024",
+      "status": "NEW"
+    },
+    {
+      "priority": "LOW",
+      "rank": 80,
+      "make": "Porsche",
+      "model": "Cayenne",
+      "trim": "GTS",
+      "years": "2011-2024",
+      "status": "NEW"
+    },
+    {
+      "priority": "LOW",
+      "rank": 85,
+      "make": "Pontiac",
+      "model": "G8",
+      "trim": "GT",
+      "years": "2009",
+      "status": "ADD_YEARS"
+    },
+    {
+      "priority": "LOW",
+      "rank": 88,
+      "make": "Nissan",
+      "model": "Titan",
+      "trim": "Standard",
+      "years": "2016-2024",
+      "status": "NEW"
+    },
+    {
+      "priority": "LOW",
+      "rank": 90,
+      "make": "BMW",
+      "model": "5 Series",
+      "trim": "Standard",
+      "years": "2017-2024",
+      "status": "NEW"
+    },
+    {
+      "priority": "LOW",
+      "rank": 98,
+      "make": "Ford",
+      "model": "GT",
+      "trim": "Standard",
+      "years": "2005-2006",
+      "status": "NEW"
+    },
+    {
+      "priority": "LOW",
+      "rank": 98,
+      "make": "Ford",
+      "model": "GT",
+      "trim": "Standard",
+      "years": "2017-2022",
+      "status": "NEW"
+    }
+  ],
+  "fullCoverage": [
+    {
+      "rank": 1,
+      "name": "Ford F-150",
+      "make": "Ford",
+      "models": ["F-150"],
+      "expectedTrims": ["Standard", "Raptor", "Raptor R", "Lightning"],
+      "expectedYears": ["2015-2020", "2021-2024"],
+      "matches": [
+        {
+          "name": "F-150 Lightning",
+          "model": "F-150",
+          "trim": "Lightning",
+          "years": "2022-2024"
+        },
+        {
+          "name": "F-150 Raptor",
+          "model": "F-150",
+          "trim": "Raptor",
+          "years": "2017-2020"
+        },
+        {
+          "name": "F-150 Raptor",
+          "model": "F-150",
+          "trim": "Raptor",
+          "years": "2021-2024"
+        },
+        {
+          "name": "F-150 Raptor R",
+          "model": "F-150",
+          "trim": "Raptor R",
+          "years": "2023-2024"
+        },
+        {
+          "name": "F-150",
+          "model": "F-150",
+          "trim": "Standard",
+          "years": "2015-2020"
+        },
+        {
+          "name": "F-150",
+          "model": "F-150",
+          "trim": "Standard",
+          "years": "2021-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 2,
+      "name": "Jeep Wrangler (JK/JL)",
+      "make": "Jeep",
+      "models": ["JK Wrangler", "JL Wrangler"],
+      "expectedTrims": ["Standard", "Rubicon 392"],
+      "expectedYears": ["2007-2018", "2018-2024"],
+      "matches": [
+        {
+          "name": "Wrangler JK",
+          "model": "JK Wrangler",
+          "trim": "Standard",
+          "years": "2007-2018"
+        },
+        {
+          "name": "Wrangler Rubicon 392",
+          "model": "JL Wrangler",
+          "trim": "Rubicon 392",
+          "years": "2021-2024"
+        },
+        {
+          "name": "Wrangler JL",
+          "model": "JL Wrangler",
+          "trim": "Standard",
+          "years": "2018-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 3,
+      "name": "Ford Mustang (all generations)",
+      "make": "Ford",
+      "models": ["Mustang", "Mustang Shelby", "Fox Body Mustang", "SN95 Mustang"],
+      "expectedTrims": [
+        "Fastback",
+        "GT",
+        "EcoBoost",
+        "Boss 302",
+        "GT PP2",
+        "Mach 1",
+        "SVT Cobra",
+        "SVT Cobra Terminator",
+        "GT350",
+        "GT500"
+      ],
+      "expectedYears": [
+        "1967-1968",
+        "1987-1993",
+        "1996-1998",
+        "2003-2004",
+        "2012-2013",
+        "2015-2023",
+        "2016-2020",
+        "2018-2023",
+        "2020-2022",
+        "2024-present"
+      ],
+      "matches": [
+        {
+          "name": "Mustang GT Fox Body",
+          "model": "Fox Body Mustang",
+          "trim": "GT",
+          "years": "1987-1993"
+        },
+        {
+          "name": "Mustang Boss 302",
+          "model": "Mustang",
+          "trim": "Boss 302",
+          "years": "2012-2013"
+        },
+        {
+          "name": "2015-2023 Ford Mustang EcoBoost",
+          "model": "Mustang",
+          "trim": "EcoBoost",
+          "years": "2015-2023"
+        },
+        {
+          "name": "Mustang Fastback",
+          "model": "Mustang",
+          "trim": "Fastback",
+          "years": "1967-1968"
+        },
+        {
+          "name": "2024 Ford Mustang GT",
+          "model": "Mustang",
+          "trim": "GT",
+          "years": "2024-present"
+        },
+        {
+          "name": "Mustang GT PP2",
+          "model": "Mustang",
+          "trim": "GT PP2",
+          "years": "2018-2023"
+        },
+        {
+          "name": "Mustang Mach 1",
+          "model": "Mustang",
+          "trim": "Mach 1",
+          "years": "2003-2004"
+        },
+        {
+          "name": "Mustang SVT Cobra",
+          "model": "Mustang",
+          "trim": "SVT Cobra",
+          "years": "1996-2004"
+        },
+        {
+          "name": "Mustang SVT Cobra Terminator",
+          "model": "Mustang",
+          "trim": "SVT Cobra Terminator",
+          "years": "2003-2004"
+        },
+        {
+          "name": "Shelby GT350",
+          "model": "Mustang Shelby",
+          "trim": "GT350",
+          "years": "2016-2020"
+        },
+        {
+          "name": "Shelby GT500",
+          "model": "Mustang Shelby",
+          "trim": "GT500",
+          "years": "2020-2022"
+        },
+        {
+          "name": "Mustang GT SN95",
+          "model": "SN95 Mustang",
+          "trim": "GT",
+          "years": "1996-1998"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 4,
+      "name": "Chevrolet Silverado 1500",
+      "make": "Chevrolet",
+      "models": ["Silverado 1500"],
+      "expectedTrims": ["Standard", "ZR2"],
+      "expectedYears": ["2019-2024"],
+      "matches": [
+        {
+          "name": "Silverado ZR2",
+          "model": "Silverado",
+          "trim": "ZR2",
+          "years": "2022-2024"
+        },
+        {
+          "name": "Silverado 1500",
+          "model": "Silverado 1500",
+          "trim": "Standard",
+          "years": "2019-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 6,
+      "name": "Chevrolet Corvette (C5-C8)",
+      "make": "Chevrolet",
+      "models": ["C5 Corvette", "C6 Corvette", "C7 Corvette", "C8 Corvette"],
+      "expectedTrims": ["Z06", "Grand Sport", "Stingray"],
+      "expectedYears": [
+        "2001-2004",
+        "2006-2013",
+        "2010-2013",
+        "2015-2019",
+        "2017-2019",
+        "2020-2024",
+        "2023-2024"
+      ],
+      "matches": [
+        {
+          "name": "Corvette C5 Z06",
+          "model": "C5 Corvette",
+          "trim": "Z06",
+          "years": "2001-2004"
+        },
+        {
+          "name": "Corvette C6 Grand Sport",
+          "model": "C6 Corvette",
+          "trim": "Grand Sport",
+          "years": "2010-2013"
+        },
+        {
+          "name": "Corvette C6 Z06",
+          "model": "C6 Corvette",
+          "trim": "Z06",
+          "years": "2006-2013"
+        },
+        {
+          "name": "C7 Corvette Grand Sport",
+          "model": "C7 Corvette",
+          "trim": "Grand Sport",
+          "years": "2017-2019"
+        },
+        {
+          "name": "C7 Corvette Z06",
+          "model": "C7 Corvette",
+          "trim": "Z06",
+          "years": "2015-2019"
+        },
+        {
+          "name": "C8 Corvette Stingray",
+          "model": "C8 Corvette",
+          "trim": "Stingray",
+          "years": "2020-2024"
+        },
+        {
+          "name": "Corvette C8 Z06",
+          "model": "C8 Corvette",
+          "trim": "Z06",
+          "years": "2023-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 7,
+      "name": "Toyota Tacoma",
+      "make": "Toyota",
+      "models": ["Tacoma", "N300 Tacoma", "Tacoma 3rd Gen"],
+      "expectedTrims": ["Standard", "TRD Pro"],
+      "expectedYears": ["2016-2023", "2024-present"],
+      "matches": [
+        {
+          "name": "Tacoma",
+          "model": "N300 Tacoma",
+          "trim": "Standard",
+          "years": "2016-2023"
+        },
+        {
+          "name": "Tacoma",
+          "model": "Tacoma",
+          "trim": "Standard",
+          "years": "2024-present"
+        },
+        {
+          "name": "Tacoma TRD Pro",
+          "model": "Tacoma 3rd Gen",
+          "trim": "TRD Pro",
+          "years": "2016-2023"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 8,
+      "name": "Subaru WRX/STI",
+      "make": "Subaru",
+      "models": ["GC8 Impreza WRX", "GD Impreza WRX", "GR/GV WRX", "VA WRX"],
+      "expectedTrims": ["Standard", "STI"],
+      "expectedYears": ["1992-2000", "1994-2000", "2004-2007", "2008-2014", "2015-2021"],
+      "matches": [
+        {
+          "name": "Impreza WRX GC8",
+          "model": "GC8 Impreza WRX",
+          "trim": "Standard",
+          "years": "1992-2000"
+        },
+        {
+          "name": "Impreza WRX STI",
+          "model": "GC8 Impreza WRX",
+          "trim": "STI",
+          "years": "1994-2000"
+        },
+        {
+          "name": "Impreza WRX STI GD",
+          "model": "GD Impreza WRX",
+          "trim": "STI",
+          "years": "2004-2007"
+        },
+        {
+          "name": "WRX STI GR/GV",
+          "model": "GR/GV WRX",
+          "trim": "STI",
+          "years": "2008-2014"
+        },
+        {
+          "name": "WRX STI VA",
+          "model": "VA WRX",
+          "trim": "STI",
+          "years": "2015-2021"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 9,
+      "name": "Ram 1500",
+      "make": "Ram",
+      "models": ["1500"],
+      "expectedTrims": ["Standard", "Rebel", "TRX"],
+      "expectedYears": ["2019-2024"],
+      "matches": [
+        {
+          "name": "1500 Rebel",
+          "model": "1500",
+          "trim": "Rebel",
+          "years": "2019-2024"
+        },
+        {
+          "name": "1500",
+          "model": "1500",
+          "trim": "Standard",
+          "years": "2019-2024"
+        },
+        {
+          "name": "1500 TRX",
+          "model": "1500",
+          "trim": "TRX",
+          "years": "2021-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 10,
+      "name": "BMW 3 Series (E46/E90/F30/G20)",
+      "make": "BMW",
+      "models": ["E46 M3", "E90 335i", "F30 340i", "G20 3 Series"],
+      "expectedTrims": ["Standard", "M340i"],
+      "expectedYears": ["2001-2006", "2007-2013", "2016-2019", "2019-2024"],
+      "matches": [
+        {
+          "name": "M3 E46",
+          "model": "E46 M3",
+          "trim": "Standard",
+          "years": "2001-2006"
+        },
+        {
+          "name": "335i E90",
+          "model": "E90 335i",
+          "trim": "Standard",
+          "years": "2007-2013"
+        },
+        {
+          "name": "340i F30",
+          "model": "F30 340i",
+          "trim": "Standard",
+          "years": "2016-2019"
+        },
+        {
+          "name": "M340i G20",
+          "model": "G20 3 Series",
+          "trim": "M340i",
+          "years": "2019-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 12,
+      "name": "Honda Civic (Si/Type R)",
+      "make": "Honda",
+      "models": ["EM1 Civic", "EP3 Civic", "FG2 Civic", "FK8 Civic", "FL5 Civic"],
+      "expectedTrims": ["Si", "Type R"],
+      "expectedYears": ["1999-2000", "2002-2005", "2006-2011", "2017-2021", "2023-2024"],
+      "matches": [
+        {
+          "name": "Civic Si EM1",
+          "model": "EM1 Civic",
+          "trim": "Si",
+          "years": "1999-2000"
+        },
+        {
+          "name": "Civic Si EP3",
+          "model": "EP3 Civic",
+          "trim": "Si",
+          "years": "2002-2005"
+        },
+        {
+          "name": "Civic Si FG2",
+          "model": "FG2 Civic",
+          "trim": "Si",
+          "years": "2006-2011"
+        },
+        {
+          "name": "Civic Type R FK8",
+          "model": "FK8 Civic",
+          "trim": "Type R",
+          "years": "2017-2021"
+        },
+        {
+          "name": "Civic Type R FL5",
+          "model": "FL5 Civic",
+          "trim": "Type R",
+          "years": "2023-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 13,
+      "name": "Ford Bronco (2021+)",
+      "make": "Ford",
+      "models": ["Bronco"],
+      "expectedTrims": ["Standard", "Raptor"],
+      "expectedYears": ["2021-2024"],
+      "matches": [
+        {
+          "name": "Bronco Raptor",
+          "model": "Bronco",
+          "trim": "Raptor",
+          "years": "2022-2024"
+        },
+        {
+          "name": "Bronco",
+          "model": "Bronco",
+          "trim": "Standard",
+          "years": "2021-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 14,
+      "name": "Ram 2500/3500 (Cummins)",
+      "make": "Ram",
+      "models": ["2500"],
+      "expectedTrims": ["Cummins", "Power Wagon"],
+      "expectedYears": ["2017-2024", "2019-2024"],
+      "matches": [
+        {
+          "name": "2500 Cummins",
+          "model": "2500",
+          "trim": "Cummins",
+          "years": "2019-2024"
+        },
+        {
+          "name": "2500 Power Wagon",
+          "model": "2500",
+          "trim": "Power Wagon",
+          "years": "2017-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 15,
+      "name": "Ford F-250/F-350 Super Duty",
+      "make": "Ford",
+      "models": ["F-250"],
+      "expectedTrims": ["Power Stroke"],
+      "expectedYears": ["2017-2024"],
+      "matches": [
+        {
+          "name": "F-250 Power Stroke",
+          "model": "F-250",
+          "trim": "Power Stroke",
+          "years": "2017-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 16,
+      "name": "Mazda MX-5 Miata (NA-ND)",
+      "make": "Mazda",
+      "models": ["NA MX-5 Miata", "NB MX-5 Miata", "NC MX-5 Miata", "ND MX-5 Miata"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["1990-1997", "1999-2005", "2006-2015", "2016-2024"],
+      "matches": [
+        {
+          "name": "MX-5 Miata NA",
+          "model": "NA MX-5 Miata",
+          "trim": "Standard",
+          "years": "1990-1997"
+        },
+        {
+          "name": "MX-5 Miata NB",
+          "model": "NB MX-5 Miata",
+          "trim": "Standard",
+          "years": "1999-2005"
+        },
+        {
+          "name": "MX-5 Miata NC",
+          "model": "NC MX-5 Miata",
+          "trim": "Standard",
+          "years": "2006-2015"
+        },
+        {
+          "name": "MX-5 Miata ND",
+          "model": "ND MX-5 Miata",
+          "trim": "Standard",
+          "years": "2016-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 17,
+      "name": "Toyota 4Runner",
+      "make": "Toyota",
+      "models": ["4Runner"],
+      "expectedTrims": ["TRD Pro"],
+      "expectedYears": ["2015-2024"],
+      "matches": [
+        {
+          "name": "4Runner TRD Pro",
+          "model": "4Runner",
+          "trim": "TRD Pro",
+          "years": "2015-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 18,
+      "name": "Dodge Challenger",
+      "make": "Dodge",
+      "models": ["Challenger"],
+      "expectedTrims": ["SRT 392", "Hellcat"],
+      "expectedYears": ["2011-2023", "2015-2023"],
+      "matches": [
+        {
+          "name": "Challenger Hellcat",
+          "model": "Challenger",
+          "trim": "Hellcat",
+          "years": "2015-2023"
+        },
+        {
+          "name": "Challenger SRT 392",
+          "model": "Challenger",
+          "trim": "SRT 392",
+          "years": "2011-2023"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 19,
+      "name": "Golf R / R32",
+      "make": "Volkswagen",
+      "models": ["Mk4 R32", "Mk7 Golf", "Mk8 Golf"],
+      "expectedTrims": ["Standard", "R"],
+      "expectedYears": ["2003-2004", "2015-2019", "2022-2024"],
+      "matches": [
+        {
+          "name": "R32 Mk4",
+          "model": "Mk4 R32",
+          "trim": "Standard",
+          "years": "2003-2004"
+        },
+        {
+          "name": "Golf R Mk7",
+          "model": "Mk7 Golf",
+          "trim": "R",
+          "years": "2015-2019"
+        },
+        {
+          "name": "Golf TSI (Mk7)",
+          "model": "Mk7 Golf",
+          "trim": "TSI",
+          "years": "2013-2020"
+        },
+        {
+          "name": "Golf R Mk8",
+          "model": "Mk8 Golf",
+          "trim": "R",
+          "years": "2022-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 21,
+      "name": "Porsche 911 (996-992)",
+      "make": "Porsche",
+      "models": [
+        "996 911",
+        "997 911",
+        "991 911",
+        "991.1 Carrera",
+        "991.2 911",
+        "992 911",
+        "997.1 911",
+        "997.2 911",
+        "997.2 Carrera"
+      ],
+      "expectedTrims": ["GT3", "GT2 RS", "GT3 RS", "Turbo", "Turbo S", "S"],
+      "expectedYears": [
+        "2004-2005",
+        "2007-2011",
+        "2007-2009",
+        "2009-2012",
+        "2010-2013",
+        "2012-2016",
+        "2017-2019",
+        "2020-2024",
+        "2021-2024",
+        "2022-2024"
+      ],
+      "matches": [
+        {
+          "name": "911 GT2 RS 991",
+          "model": "991 911",
+          "trim": "GT2 RS",
+          "years": "2017-2019"
+        },
+        {
+          "name": "991.1 Carrera S",
+          "model": "991.1 Carrera",
+          "trim": "S",
+          "years": "2012-2016"
+        },
+        {
+          "name": "911 GT3 991.2",
+          "model": "991.2 911",
+          "trim": "GT3",
+          "years": "2017-2019"
+        },
+        {
+          "name": "911 GT3 992",
+          "model": "992 911",
+          "trim": "GT3",
+          "years": "2021-2024"
+        },
+        {
+          "name": "911 GT3 RS 992",
+          "model": "992 911",
+          "trim": "GT3 RS",
+          "years": "2022-2024"
+        },
+        {
+          "name": "911 Turbo S 992",
+          "model": "992 911",
+          "trim": "Turbo S",
+          "years": "2020-2024"
+        },
+        {
+          "name": "911 GT3 996",
+          "model": "996 911",
+          "trim": "GT3",
+          "years": "2004-2005"
+        },
+        {
+          "name": "911 GT3 997",
+          "model": "997 911",
+          "trim": "GT3",
+          "years": "2007-2011"
+        },
+        {
+          "name": "911 Turbo 997.1",
+          "model": "997.1 911",
+          "trim": "Turbo",
+          "years": "2007-2009"
+        },
+        {
+          "name": "911 Turbo 997.2",
+          "model": "997.2 911",
+          "trim": "Turbo",
+          "years": "2010-2013"
+        },
+        {
+          "name": "997.2 Carrera S",
+          "model": "997.2 Carrera",
+          "trim": "S",
+          "years": "2009-2012"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 22,
+      "name": "Dodge Charger",
+      "make": "Dodge",
+      "models": ["Charger"],
+      "expectedTrims": ["SRT 392", "Hellcat"],
+      "expectedYears": ["2012-2023", "2015-2023"],
+      "matches": [
+        {
+          "name": "Charger Hellcat",
+          "model": "Charger",
+          "trim": "Hellcat",
+          "years": "2015-2023"
+        },
+        {
+          "name": "Charger SRT 392",
+          "model": "Charger",
+          "trim": "SRT 392",
+          "years": "2012-2023"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 23,
+      "name": "Acura RSX / Integra (DC2/DC5)",
+      "make": "Acura",
+      "models": ["RSX", "Integra"],
+      "expectedTrims": ["Type R", "Type-S", "Type S"],
+      "expectedYears": ["1997-2001", "2002-2006", "2024-present"],
+      "matches": [
+        {
+          "name": "Integra Type R",
+          "model": "Integra",
+          "trim": "Type R",
+          "years": "1997-2001"
+        },
+        {
+          "name": "Integra Type S",
+          "model": "Integra",
+          "trim": "Type S",
+          "years": "2024-present"
+        },
+        {
+          "name": "RSX Type-S",
+          "model": "RSX",
+          "trim": "Type-S",
+          "years": "2002-2006"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 24,
+      "name": "GMC Sierra",
+      "make": "GMC",
+      "models": ["Sierra", "Sierra 1500"],
+      "expectedTrims": ["Standard", "AT4X"],
+      "expectedYears": ["2019-2024", "2022-2024"],
+      "matches": [
+        {
+          "name": "Sierra AT4X",
+          "model": "Sierra",
+          "trim": "AT4X",
+          "years": "2022-2024"
+        },
+        {
+          "name": "Sierra 1500",
+          "model": "Sierra 1500",
+          "trim": "Standard",
+          "years": "2019-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 25,
+      "name": "Audi S4/A4 (B5-B9)",
+      "make": "Audi",
+      "models": ["B5 S4", "B6 S4", "B7 S4", "B8 A4", "B8 S4", "B8.5 A4", "B9 S4"],
+      "expectedTrims": ["Standard", "2.0T"],
+      "expectedYears": [
+        "1997-2002",
+        "2004-2005",
+        "2005-2008",
+        "2009-2012",
+        "2010-2016",
+        "2013-2016",
+        "2017-2024"
+      ],
+      "matches": [
+        {
+          "name": "S4 B5",
+          "model": "B5 S4",
+          "trim": "Standard",
+          "years": "1997-2002"
+        },
+        {
+          "name": "S4 B6",
+          "model": "B6 S4",
+          "trim": "Standard",
+          "years": "2004-2005"
+        },
+        {
+          "name": "S4 B7",
+          "model": "B7 S4",
+          "trim": "Standard",
+          "years": "2005-2008"
+        },
+        {
+          "name": "A4 2.0T B8",
+          "model": "B8 A4",
+          "trim": "2.0T",
+          "years": "2009-2012"
+        },
+        {
+          "name": "S4 B8",
+          "model": "B8 S4",
+          "trim": "Standard",
+          "years": "2010-2016"
+        },
+        {
+          "name": "A4 2.0T B8.5",
+          "model": "B8.5 A4",
+          "trim": "2.0T",
+          "years": "2013-2016"
+        },
+        {
+          "name": "S4 B9",
+          "model": "B9 S4",
+          "trim": "Standard",
+          "years": "2017-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 26,
+      "name": "Nissan 240SX/Silvia (S13-S15)",
+      "make": "Nissan",
+      "models": ["S13 240SX", "S14 240SX", "S15 Silvia"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["1989-1994", "1995-1998", "1999-2002"],
+      "matches": [
+        {
+          "name": "240SX S13",
+          "model": "S13 240SX",
+          "trim": "Standard",
+          "years": "1989-1994"
+        },
+        {
+          "name": "240SX S14",
+          "model": "S14 240SX",
+          "trim": "Standard",
+          "years": "1995-1998"
+        },
+        {
+          "name": "Silvia S15",
+          "model": "S15 Silvia",
+          "trim": "Standard",
+          "years": "1999-2002"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 27,
+      "name": "Toyota Tundra",
+      "make": "Toyota",
+      "models": ["Tundra 3rd Gen", "XK70 Tundra"],
+      "expectedTrims": ["Standard", "TRD Pro"],
+      "expectedYears": ["2022-2024"],
+      "matches": [
+        {
+          "name": "Tundra",
+          "model": "Tundra 3rd Gen",
+          "trim": "Standard",
+          "years": "2022-2024"
+        },
+        {
+          "name": "Tundra TRD Pro",
+          "model": "XK70 Tundra",
+          "trim": "TRD Pro",
+          "years": "2022-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 28,
+      "name": "Ford Focus ST",
+      "make": "Ford",
+      "models": ["Mk3 Focus"],
+      "expectedTrims": ["ST"],
+      "expectedYears": ["2013-2018"],
+      "matches": [
+        {
+          "name": "Focus RS",
+          "model": "Focus",
+          "trim": "RS",
+          "years": "2016-2018"
+        },
+        {
+          "name": "Focus ST Mk3",
+          "model": "Mk3 Focus",
+          "trim": "ST",
+          "years": "2013-2018"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 29,
+      "name": "Nissan 350Z/370Z",
+      "make": "Nissan",
+      "models": ["350Z", "370Z"],
+      "expectedTrims": ["Standard", "NISMO"],
+      "expectedYears": ["2003-2008", "2009-2020"],
+      "matches": [
+        {
+          "name": "350Z",
+          "model": "350Z",
+          "trim": "Standard",
+          "years": "2003-2008"
+        },
+        {
+          "name": "370Z NISMO",
+          "model": "370Z",
+          "trim": "NISMO",
+          "years": "2009-2020"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 30,
+      "name": "Jeep Gladiator",
+      "make": "Jeep",
+      "models": ["Gladiator"],
+      "expectedTrims": ["Standard", "Rubicon", "Mojave"],
+      "expectedYears": ["2020-2024"],
+      "matches": [
+        {
+          "name": "Gladiator Mojave",
+          "model": "Gladiator",
+          "trim": "Mojave",
+          "years": "2020-2024"
+        },
+        {
+          "name": "Gladiator Rubicon",
+          "model": "Gladiator",
+          "trim": "Rubicon",
+          "years": "2020-2024"
+        },
+        {
+          "name": "Gladiator",
+          "model": "Gladiator",
+          "trim": "Standard",
+          "years": "2020-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 31,
+      "name": "Honda S2000",
+      "make": "Honda",
+      "models": ["S2000"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["1999-2009"],
+      "matches": [
+        {
+          "name": "S2000",
+          "model": "S2000",
+          "trim": "Standard",
+          "years": "1999-2009"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 32,
+      "name": "Mitsubishi Lancer Evolution",
+      "make": "Mitsubishi",
+      "models": [
+        "Lancer Evolution VIII",
+        "Lancer Evolution VIII/IX",
+        "Lancer Evolution IX",
+        "Lancer Evolution X"
+      ],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2003-2005", "2003-2007", "2005-2007", "2008-2015"],
+      "matches": [
+        {
+          "name": "Lancer Evolution IX",
+          "model": "Lancer Evolution IX",
+          "trim": "Standard",
+          "years": "2005-2007"
+        },
+        {
+          "name": "Lancer Evolution VIII",
+          "model": "Lancer Evolution VIII",
+          "trim": "Standard",
+          "years": "2003-2005"
+        },
+        {
+          "name": "Lancer Evolution VIII/IX",
+          "model": "Lancer Evolution VIII/IX",
+          "trim": "Standard",
+          "years": "2003-2007"
+        },
+        {
+          "name": "Lancer Evolution X",
+          "model": "Lancer Evolution X",
+          "trim": "Standard",
+          "years": "2008-2015"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 33,
+      "name": "Ford Ranger",
+      "make": "Ford",
+      "models": ["Ranger", "T6 Ranger"],
+      "expectedTrims": ["Facelift", "Raptor"],
+      "expectedYears": ["2019-2024", "2023-present"],
+      "matches": [
+        {
+          "name": "Ranger Raptor",
+          "model": "Ranger",
+          "trim": "Raptor",
+          "years": "2023-present"
+        },
+        {
+          "name": "Ranger T6 Facelift",
+          "model": "T6 Ranger",
+          "trim": "Facelift",
+          "years": "2019-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 34,
+      "name": "Chevrolet Colorado / GMC Canyon",
+      "make": "Chevrolet",
+      "models": ["Colorado"],
+      "expectedTrims": ["ZR2"],
+      "expectedYears": ["2017-2024"],
+      "matches": [
+        {
+          "name": "Colorado ZR2",
+          "model": "Colorado",
+          "trim": "ZR2",
+          "years": "2017-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 34.1,
+      "name": "GMC Canyon",
+      "make": "GMC",
+      "models": ["Canyon"],
+      "expectedTrims": ["AT4"],
+      "expectedYears": ["2017-2024"],
+      "matches": [
+        {
+          "name": "Canyon AT4",
+          "model": "Canyon",
+          "trim": "AT4",
+          "years": "2017-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 35,
+      "name": "BRZ/86/FR-S (FT86 platform)",
+      "make": "Subaru",
+      "models": ["BRZ", "BRZ 2nd Gen"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2013-2020", "2022-2024"],
+      "matches": [
+        {
+          "name": "BRZ",
+          "model": "BRZ",
+          "trim": "Standard",
+          "years": "2013-2020"
+        },
+        {
+          "name": "BRZ (2nd Gen)",
+          "model": "BRZ 2nd Gen",
+          "trim": "Standard",
+          "years": "2022-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 35.1,
+      "name": "Toyota 86/GR86",
+      "make": "Toyota",
+      "models": ["86", "GR86"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2013-2020", "2022-2024"],
+      "matches": [
+        {
+          "name": "86 / Scion FR-S",
+          "model": "86",
+          "trim": "Standard",
+          "years": "2013-2020"
+        },
+        {
+          "name": "GR86",
+          "model": "GR86",
+          "trim": "Standard",
+          "years": "2022-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 36,
+      "name": "Audi RS3/S3/A3",
+      "make": "Audi",
+      "models": ["8V A3", "8V RS3", "8Y RS3"],
+      "expectedTrims": ["1.8 TFSI", "Standard"],
+      "expectedYears": ["2014-2020", "2017-2020", "2022-2024"],
+      "matches": [
+        {
+          "name": "A3 1.8 TFSI (8V)",
+          "model": "8V A3",
+          "trim": "1.8 TFSI",
+          "years": "2014-2020"
+        },
+        {
+          "name": "RS3 8V",
+          "model": "8V RS3",
+          "trim": "Standard",
+          "years": "2017-2020"
+        },
+        {
+          "name": "RS3 8Y",
+          "model": "8Y RS3",
+          "trim": "Standard",
+          "years": "2022-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 38,
+      "name": "Mercedes-AMG C63",
+      "make": "Mercedes-AMG",
+      "models": ["W204 C63 AMG", "W205 C63"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2008-2014", "2015-2021"],
+      "matches": [
+        {
+          "name": "Mercedes C63 AMG W204",
+          "model": "W204 C63 AMG",
+          "trim": "Standard",
+          "years": "2008-2014"
+        },
+        {
+          "name": "C63 W205",
+          "model": "W205 C63",
+          "trim": "Standard",
+          "years": "2015-2021"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 39,
+      "name": "Toyota Supra MkIV (A80)",
+      "make": "Toyota",
+      "models": ["A80 Supra"],
+      "expectedTrims": ["Turbo"],
+      "expectedYears": ["1993-2002"],
+      "matches": [
+        {
+          "name": "Supra Mk4 A80 Turbo",
+          "model": "A80 Supra",
+          "trim": "Turbo",
+          "years": "1993-2002"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 40,
+      "name": "Toyota GR Supra (A90/A91)",
+      "make": "Toyota",
+      "models": ["GR Supra"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2020-2024"],
+      "matches": [
+        {
+          "name": "GR Supra",
+          "model": "GR Supra",
+          "trim": "Standard",
+          "years": "2020-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 41,
+      "name": "Porsche Cayman/Boxster",
+      "make": "Porsche",
+      "models": [
+        "986 Boxster",
+        "987 Boxster",
+        "981 Boxster",
+        "981 Cayman",
+        "987.2 Cayman",
+        "718 Boxster",
+        "718 Cayman"
+      ],
+      "expectedTrims": ["S", "GTS", "GT4", "GT4 RS", "GTS 4.0"],
+      "expectedYears": [
+        "1997-2004",
+        "2005-2012",
+        "2009-2012",
+        "2012-2016",
+        "2013-2016",
+        "2015-2016",
+        "2020-2024",
+        "2022-2024"
+      ],
+      "matches": [
+        {
+          "name": "718 Boxster GTS 4.0",
+          "model": "718 Boxster",
+          "trim": "GTS 4.0",
+          "years": "2020-2024"
+        },
+        {
+          "name": "718 Cayman GT4",
+          "model": "718 Cayman",
+          "trim": "GT4",
+          "years": "2020-2024"
+        },
+        {
+          "name": "718 Cayman GT4 RS",
+          "model": "718 Cayman",
+          "trim": "GT4 RS",
+          "years": "2022-2024"
+        },
+        {
+          "name": "718 Cayman GTS 4.0",
+          "model": "718 Cayman",
+          "trim": "GTS 4.0",
+          "years": "2020-2024"
+        },
+        {
+          "name": "Boxster S 981",
+          "model": "981 Boxster",
+          "trim": "S",
+          "years": "2012-2016"
+        },
+        {
+          "name": "981 Cayman GTS",
+          "model": "981 Cayman",
+          "trim": "GTS",
+          "years": "2015-2016"
+        },
+        {
+          "name": "981 Cayman S",
+          "model": "981 Cayman",
+          "trim": "S",
+          "years": "2013-2016"
+        },
+        {
+          "name": "Boxster S 986",
+          "model": "986 Boxster",
+          "trim": "S",
+          "years": "1997-2004"
+        },
+        {
+          "name": "Boxster S 987",
+          "model": "987 Boxster",
+          "trim": "S",
+          "years": "2005-2012"
+        },
+        {
+          "name": "987.2 Cayman S",
+          "model": "987.2 Cayman",
+          "trim": "S",
+          "years": "2009-2012"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 42,
+      "name": "Nissan GT-R R35",
+      "make": "Nissan",
+      "models": ["GT-R", "R35 GT-R"],
+      "expectedTrims": ["Standard", "NISMO"],
+      "expectedYears": ["2014-2024", "2017-2024"],
+      "matches": [
+        {
+          "name": "GT-R",
+          "model": "GT-R",
+          "trim": "Standard",
+          "years": "2017-2024"
+        },
+        {
+          "name": "GT-R NISMO",
+          "model": "R35 GT-R",
+          "trim": "NISMO",
+          "years": "2014-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 43,
+      "name": "Infiniti G35/G37",
+      "make": "Infiniti",
+      "models": ["G35", "G37"],
+      "expectedTrims": ["Coupe", "Sedan"],
+      "expectedYears": ["2003-2007", "2008-2013", "2009-2013"],
+      "matches": [
+        {
+          "name": "G35 Coupe",
+          "model": "G35",
+          "trim": "Coupe",
+          "years": "2003-2007"
+        },
+        {
+          "name": "G37 Coupe",
+          "model": "G37",
+          "trim": "Coupe",
+          "years": "2008-2013"
+        },
+        {
+          "name": "G37 Sedan",
+          "model": "G37",
+          "trim": "Sedan",
+          "years": "2009-2013"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 44,
+      "name": "Jeep Cherokee / Grand Cherokee",
+      "make": "Jeep",
+      "models": ["Grand Cherokee"],
+      "expectedTrims": ["Standard", "Trackhawk"],
+      "expectedYears": ["2011-2024", "2018-2021"],
+      "matches": [
+        {
+          "name": "Grand Cherokee",
+          "model": "Grand Cherokee",
+          "trim": "Standard",
+          "years": "2011-2024"
+        },
+        {
+          "name": "Grand Cherokee Trackhawk",
+          "model": "Grand Cherokee",
+          "trim": "Trackhawk",
+          "years": "2018-2021"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 45,
+      "name": "Mazda RX-7 (FD)",
+      "make": "Mazda",
+      "models": ["FD3S RX-7"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["1992-2002"],
+      "matches": [
+        {
+          "name": "3 2.5 Turbo",
+          "model": "3",
+          "trim": "2.5 Turbo",
+          "years": "2021-2024"
+        },
+        {
+          "name": "RX-7 FD3S",
+          "model": "FD3S RX-7",
+          "trim": "Standard",
+          "years": "1992-2002"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 46,
+      "name": "MINI Cooper S / JCW",
+      "make": "MINI",
+      "models": ["R53 Cooper", "R56 Cooper", "F56 Cooper"],
+      "expectedTrims": ["S", "John Cooper Works"],
+      "expectedYears": ["2002-2006", "2007-2013", "2014-2024"],
+      "matches": [
+        {
+          "name": "John Cooper Works F56",
+          "model": "F56 Cooper",
+          "trim": "John Cooper Works",
+          "years": "2014-2024"
+        },
+        {
+          "name": "Cooper S R53",
+          "model": "R53 Cooper",
+          "trim": "S",
+          "years": "2002-2006"
+        },
+        {
+          "name": "Cooper S R56",
+          "model": "R56 Cooper",
+          "trim": "S",
+          "years": "2007-2013"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 47,
+      "name": "Audi TT/TT RS",
+      "make": "Audi",
+      "models": ["8J TT", "8S TT"],
+      "expectedTrims": ["RS"],
+      "expectedYears": ["2012-2013", "2018-2024"],
+      "matches": [
+        {
+          "name": "TT RS 8J",
+          "model": "8J TT",
+          "trim": "RS",
+          "years": "2012-2013"
+        },
+        {
+          "name": "TT RS 8S",
+          "model": "8S TT",
+          "trim": "RS",
+          "years": "2018-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 48,
+      "name": "Ford Focus RS",
+      "make": "Ford",
+      "models": ["Focus"],
+      "expectedTrims": ["RS"],
+      "expectedYears": ["2016-2018"],
+      "matches": [
+        {
+          "name": "Focus RS",
+          "model": "Focus",
+          "trim": "RS",
+          "years": "2016-2018"
+        },
+        {
+          "name": "Focus ST Mk3",
+          "model": "Mk3 Focus",
+          "trim": "ST",
+          "years": "2013-2018"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 50,
+      "name": "Classic Mustang (1964-1973)",
+      "make": "Ford",
+      "models": ["Mustang"],
+      "expectedTrims": ["Fastback"],
+      "expectedYears": ["1967-1968"],
+      "matches": [
+        {
+          "name": "Mustang GT Fox Body",
+          "model": "Fox Body Mustang",
+          "trim": "GT",
+          "years": "1987-1993"
+        },
+        {
+          "name": "Mustang Boss 302",
+          "model": "Mustang",
+          "trim": "Boss 302",
+          "years": "2012-2013"
+        },
+        {
+          "name": "2015-2023 Ford Mustang EcoBoost",
+          "model": "Mustang",
+          "trim": "EcoBoost",
+          "years": "2015-2023"
+        },
+        {
+          "name": "Mustang Fastback",
+          "model": "Mustang",
+          "trim": "Fastback",
+          "years": "1967-1968"
+        },
+        {
+          "name": "2024 Ford Mustang GT",
+          "model": "Mustang",
+          "trim": "GT",
+          "years": "2024-present"
+        },
+        {
+          "name": "Mustang GT PP2",
+          "model": "Mustang",
+          "trim": "GT PP2",
+          "years": "2018-2023"
+        },
+        {
+          "name": "Mustang Mach 1",
+          "model": "Mustang",
+          "trim": "Mach 1",
+          "years": "2003-2004"
+        },
+        {
+          "name": "Mustang SVT Cobra",
+          "model": "Mustang",
+          "trim": "SVT Cobra",
+          "years": "1996-2004"
+        },
+        {
+          "name": "Mustang SVT Cobra Terminator",
+          "model": "Mustang",
+          "trim": "SVT Cobra Terminator",
+          "years": "2003-2004"
+        },
+        {
+          "name": "Shelby GT350",
+          "model": "Mustang Shelby",
+          "trim": "GT350",
+          "years": "2016-2020"
+        },
+        {
+          "name": "Shelby GT500",
+          "model": "Mustang Shelby",
+          "trim": "GT500",
+          "years": "2020-2022"
+        },
+        {
+          "name": "Mustang GT SN95",
+          "model": "SN95 Mustang",
+          "trim": "GT",
+          "years": "1996-1998"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 51,
+      "name": "Honda Civic Type R (FK8/FL5)",
+      "make": "Honda",
+      "models": ["FK8 Civic", "FL5 Civic"],
+      "expectedTrims": ["Type R"],
+      "expectedYears": ["2017-2021", "2023-2024"],
+      "matches": [
+        {
+          "name": "Civic Type R FK8",
+          "model": "FK8 Civic",
+          "trim": "Type R",
+          "years": "2017-2021"
+        },
+        {
+          "name": "Civic Type R FL5",
+          "model": "FL5 Civic",
+          "trim": "Type R",
+          "years": "2023-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 52,
+      "name": "Toyota GR Corolla",
+      "make": "Toyota",
+      "models": ["GR Corolla"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2023-2024"],
+      "matches": [
+        {
+          "name": "GR Corolla",
+          "model": "GR Corolla",
+          "trim": "Standard",
+          "years": "2023-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 53,
+      "name": "Kia Stinger",
+      "make": "Kia",
+      "models": ["Stinger"],
+      "expectedTrims": ["GT"],
+      "expectedYears": ["2018-2023"],
+      "matches": [
+        {
+          "name": "Stinger GT",
+          "model": "Stinger",
+          "trim": "GT",
+          "years": "2018-2023"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 54,
+      "name": "Hyundai Veloster N",
+      "make": "Hyundai",
+      "models": ["Veloster"],
+      "expectedTrims": ["N"],
+      "expectedYears": ["2019-2023"],
+      "matches": [
+        {
+          "name": "Veloster N",
+          "model": "Veloster",
+          "trim": "N",
+          "years": "2019-2023"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 55,
+      "name": "Pontiac Firebird/Trans Am",
+      "make": "Pontiac",
+      "models": ["Firebird"],
+      "expectedTrims": ["Trans Am WS6"],
+      "expectedYears": ["1998-2002"],
+      "matches": [
+        {
+          "name": "Firebird Trans Am WS6",
+          "model": "Firebird",
+          "trim": "Trans Am WS6",
+          "years": "1998-2002"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 56,
+      "name": "Tesla Model 3/Model Y",
+      "make": "Tesla",
+      "models": ["Model 3", "Model Y"],
+      "expectedTrims": ["Performance"],
+      "expectedYears": ["2018-2024", "2020-2024"],
+      "matches": [
+        {
+          "name": "Model 3 Performance",
+          "model": "Model 3",
+          "trim": "Performance",
+          "years": "2018-2024"
+        },
+        {
+          "name": "Model Y Performance",
+          "model": "Model Y",
+          "trim": "Performance",
+          "years": "2020-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 58,
+      "name": "Mazdaspeed 3",
+      "make": "Mazda",
+      "models": ["BL Mazdaspeed3"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2007-2013"],
+      "matches": [
+        {
+          "name": "3 2.5 Turbo",
+          "model": "3",
+          "trim": "2.5 Turbo",
+          "years": "2021-2024"
+        },
+        {
+          "name": "Mazdaspeed3",
+          "model": "BL Mazdaspeed3",
+          "trim": "Standard",
+          "years": "2007-2013"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 59,
+      "name": "Nissan Frontier",
+      "make": "Nissan",
+      "models": ["D23 Frontier"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2022-2024"],
+      "matches": [
+        {
+          "name": "Frontier",
+          "model": "D23 Frontier",
+          "trim": "Standard",
+          "years": "2022-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 60,
+      "name": "Nissan Skyline GT-R (R32-R34)",
+      "make": "Nissan",
+      "models": ["R32 Skyline", "R33 Skyline", "R34 Skyline"],
+      "expectedTrims": ["GT-R"],
+      "expectedYears": ["1989-1994", "1995-1998", "1999-2002"],
+      "matches": [
+        {
+          "name": "Skyline GT-R R32",
+          "model": "R32 Skyline",
+          "trim": "GT-R",
+          "years": "1989-1994"
+        },
+        {
+          "name": "Skyline GT-R R33",
+          "model": "R33 Skyline",
+          "trim": "GT-R",
+          "years": "1995-1998"
+        },
+        {
+          "name": "Skyline GT-R R34",
+          "model": "R34 Skyline",
+          "trim": "GT-R",
+          "years": "1999-2002"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 61,
+      "name": "Q50/Q60 Red Sport",
+      "make": "Infiniti",
+      "models": ["Q50", "Q60"],
+      "expectedTrims": ["Red Sport 400"],
+      "expectedYears": ["2016-2024", "2017-2024"],
+      "matches": [
+        {
+          "name": "Q50 Red Sport 400",
+          "model": "Q50",
+          "trim": "Red Sport 400",
+          "years": "2016-2024"
+        },
+        {
+          "name": "Q60 Red Sport 400",
+          "model": "Q60",
+          "trim": "Red Sport 400",
+          "years": "2017-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 62,
+      "name": "BMW M5 (E39-F90)",
+      "make": "BMW",
+      "models": ["E39 M5", "E60 M5", "F10 M5", "F90 M5"],
+      "expectedTrims": ["Standard", "Competition"],
+      "expectedYears": ["1999-2003", "2006-2010", "2014-2016", "2018-2024"],
+      "matches": [
+        {
+          "name": "M5 E39",
+          "model": "E39 M5",
+          "trim": "Standard",
+          "years": "1999-2003"
+        },
+        {
+          "name": "M5 E60",
+          "model": "E60 M5",
+          "trim": "Standard",
+          "years": "2006-2010"
+        },
+        {
+          "name": "M5 F10 Competition",
+          "model": "F10 M5",
+          "trim": "Competition",
+          "years": "2014-2016"
+        },
+        {
+          "name": "M5 F90 Competition",
+          "model": "F90 M5",
+          "trim": "Competition",
+          "years": "2018-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 63,
+      "name": "Mazda 3 (standard)",
+      "make": "Mazda",
+      "models": ["3"],
+      "expectedTrims": ["2.5 Turbo"],
+      "expectedYears": ["2021-2024"],
+      "matches": [
+        {
+          "name": "3 2.5 Turbo",
+          "model": "3",
+          "trim": "2.5 Turbo",
+          "years": "2021-2024"
+        },
+        {
+          "name": "Mazdaspeed3",
+          "model": "BL Mazdaspeed3",
+          "trim": "Standard",
+          "years": "2007-2013"
+        },
+        {
+          "name": "RX-7 FD3S",
+          "model": "FD3S RX-7",
+          "trim": "Standard",
+          "years": "1992-2002"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 64,
+      "name": "Nissan Z (400Z)",
+      "make": "Nissan",
+      "models": ["RZ34 Z"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2023-2024"],
+      "matches": [
+        {
+          "name": "Z",
+          "model": "RZ34 Z",
+          "trim": "Standard",
+          "years": "2023-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 66,
+      "name": "Genesis G70",
+      "make": "Genesis",
+      "models": ["G70"],
+      "expectedTrims": ["3.3T"],
+      "expectedYears": ["2019-2024"],
+      "matches": [
+        {
+          "name": "G70 3.3T",
+          "model": "G70",
+          "trim": "3.3T",
+          "years": "2019-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 67,
+      "name": "Mercedes-AMG E63",
+      "make": "Mercedes-AMG",
+      "models": ["W212 E63", "W213 E63"],
+      "expectedTrims": ["Standard", "S"],
+      "expectedYears": ["2012-2016", "2018-2024"],
+      "matches": [
+        {
+          "name": "E63 W212",
+          "model": "W212 E63",
+          "trim": "Standard",
+          "years": "2012-2016"
+        },
+        {
+          "name": "E63 S W213",
+          "model": "W213 E63",
+          "trim": "S",
+          "years": "2018-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 68,
+      "name": "Lexus IS (IS300/IS350)",
+      "make": "Lexus",
+      "models": ["XE10 IS", "XE20 IS", "XE30 IS"],
+      "expectedTrims": ["300", "350", "350 F Sport"],
+      "expectedYears": ["2001-2005", "2006-2013", "2014-2020"],
+      "matches": [
+        {
+          "name": "IS300",
+          "model": "XE10 IS",
+          "trim": "300",
+          "years": "2001-2005"
+        },
+        {
+          "name": "IS350",
+          "model": "XE20 IS",
+          "trim": "350",
+          "years": "2006-2013"
+        },
+        {
+          "name": "IS350 F Sport",
+          "model": "XE30 IS",
+          "trim": "350 F Sport",
+          "years": "2014-2020"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 69,
+      "name": "Audi RS4/RS5",
+      "make": "Audi",
+      "models": ["B8 RS5", "B9 RS5"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2013-2015", "2018-2024"],
+      "matches": [
+        {
+          "name": "RS5 B8",
+          "model": "B8 RS5",
+          "trim": "Standard",
+          "years": "2013-2015"
+        },
+        {
+          "name": "RS5 B9",
+          "model": "B9 RS5",
+          "trim": "Standard",
+          "years": "2018-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 70,
+      "name": "Chevrolet SS (2014-2017)",
+      "make": "Chevrolet",
+      "models": ["SS"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2014-2017"],
+      "matches": [
+        {
+          "name": "SS",
+          "model": "SS",
+          "trim": "Standard",
+          "years": "2014-2017"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 71,
+      "name": "Hyundai Elantra N",
+      "make": "Hyundai",
+      "models": ["Elantra"],
+      "expectedTrims": ["N"],
+      "expectedYears": ["2022-2024"],
+      "matches": [
+        {
+          "name": "Elantra N",
+          "model": "Elantra",
+          "trim": "N",
+          "years": "2022-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 73,
+      "name": "Mazda RX-8",
+      "make": "Mazda",
+      "models": ["RX-8"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2004-2012"],
+      "matches": [
+        {
+          "name": "RX-8",
+          "model": "RX-8",
+          "trim": "Standard",
+          "years": "2004-2012"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 74,
+      "name": "Toyota MR2",
+      "make": "Toyota",
+      "models": ["SW20 MR2", "ZZW30 MR2"],
+      "expectedTrims": ["Turbo", "Spyder"],
+      "expectedYears": ["1991-1995", "1999-2007"],
+      "matches": [
+        {
+          "name": "MR2 Turbo SW20",
+          "model": "SW20 MR2",
+          "trim": "Turbo",
+          "years": "1991-1995"
+        },
+        {
+          "name": "MR2 Spyder",
+          "model": "ZZW30 MR2",
+          "trim": "Spyder",
+          "years": "1999-2007"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 75,
+      "name": "Dodge Viper",
+      "make": "Dodge",
+      "models": ["Viper"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2013-2017"],
+      "matches": [
+        {
+          "name": "Viper",
+          "model": "Viper",
+          "trim": "Standard",
+          "years": "2013-2017"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 76,
+      "name": "Honda Accord (2.0T)",
+      "make": "Honda",
+      "models": ["Accord"],
+      "expectedTrims": ["2.0T Sport"],
+      "expectedYears": ["2018-2022"],
+      "matches": [
+        {
+          "name": "Accord 2.0T Sport",
+          "model": "Accord",
+          "trim": "2.0T Sport",
+          "years": "2018-2022"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 77,
+      "name": "Lexus RC F",
+      "make": "Lexus",
+      "models": ["RC F"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2015-2022"],
+      "matches": [
+        {
+          "name": "RC F",
+          "model": "RC F",
+          "trim": "Standard",
+          "years": "2015-2022"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 78,
+      "name": "Lexus IS F",
+      "make": "Lexus",
+      "models": ["IS-F"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2008-2014"],
+      "matches": [
+        {
+          "name": "IS-F",
+          "model": "IS-F",
+          "trim": "Standard",
+          "years": "2008-2014"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 79,
+      "name": "Acura Integra (2023+)",
+      "make": "Acura",
+      "models": ["Integra"],
+      "expectedTrims": ["Type S"],
+      "expectedYears": ["2024-present"],
+      "matches": [
+        {
+          "name": "Integra Type R",
+          "model": "Integra",
+          "trim": "Type R",
+          "years": "1997-2001"
+        },
+        {
+          "name": "Integra Type S",
+          "model": "Integra",
+          "trim": "Type S",
+          "years": "2024-present"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 81,
+      "name": "Mercedes-AMG GT",
+      "make": "Mercedes-AMG",
+      "models": ["GT", "C190 GT"],
+      "expectedTrims": ["Standard", "R", "Black Series"],
+      "expectedYears": ["2015-2020", "2017-2021", "2020-2022"],
+      "matches": [
+        {
+          "name": "GT Black Series",
+          "model": "C190 GT",
+          "trim": "Black Series",
+          "years": "2020-2022"
+        },
+        {
+          "name": "GT R",
+          "model": "C190 GT",
+          "trim": "R",
+          "years": "2017-2021"
+        },
+        {
+          "name": "GT",
+          "model": "GT",
+          "trim": "Standard",
+          "years": "2015-2020"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 82,
+      "name": "Dodge SRT-4",
+      "make": "Dodge",
+      "models": ["SRT-4"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2003-2005"],
+      "matches": [
+        {
+          "name": "SRT-4",
+          "model": "SRT-4",
+          "trim": "Standard",
+          "years": "2003-2005"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 83,
+      "name": "Subaru Forester XT",
+      "make": "Subaru",
+      "models": ["Forester"],
+      "expectedTrims": ["XT"],
+      "expectedYears": ["2004-2008"],
+      "matches": [
+        {
+          "name": "Forester XT",
+          "model": "Forester",
+          "trim": "XT",
+          "years": "2004-2008"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 84,
+      "name": "Subaru Legacy GT",
+      "make": "Subaru",
+      "models": ["Legacy GT"],
+      "expectedTrims": ["Spec.B"],
+      "expectedYears": ["2006-2009"],
+      "matches": [
+        {
+          "name": "Legacy GT Spec.B",
+          "model": "Legacy GT",
+          "trim": "Spec.B",
+          "years": "2006-2009"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 86,
+      "name": "Mitsubishi Eclipse (DSM)",
+      "make": "Mitsubishi",
+      "models": ["2G Eclipse"],
+      "expectedTrims": ["GSX"],
+      "expectedYears": ["1995-1999"],
+      "matches": [
+        {
+          "name": "Eclipse GSX",
+          "model": "2G Eclipse",
+          "trim": "GSX",
+          "years": "1995-1999"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 87,
+      "name": "Audi R8",
+      "make": "Audi",
+      "models": ["R8"],
+      "expectedTrims": ["V8", "V10"],
+      "expectedYears": ["2008-2015", "2010-2015"],
+      "matches": [
+        {
+          "name": "R8 V10",
+          "model": "R8",
+          "trim": "V10",
+          "years": "2010-2015"
+        },
+        {
+          "name": "R8 V8",
+          "model": "R8",
+          "trim": "V8",
+          "years": "2008-2015"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 89,
+      "name": "Acura NSX (Original)",
+      "make": "Acura",
+      "models": ["NA1 NSX"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["1991-2005"],
+      "matches": [
+        {
+          "name": "NSX NA1",
+          "model": "NA1 NSX",
+          "trim": "Standard",
+          "years": "1991-2005"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 91,
+      "name": "Toyota Land Cruiser",
+      "make": "Toyota",
+      "models": ["Land Cruiser 200 Series"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2008-2021"],
+      "matches": [
+        {
+          "name": "Land Cruiser 200 Series",
+          "model": "Land Cruiser 200 Series",
+          "trim": "Standard",
+          "years": "2008-2021"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 92,
+      "name": "Lexus LC",
+      "make": "Lexus",
+      "models": ["LC"],
+      "expectedTrims": ["500"],
+      "expectedYears": ["2018-2024"],
+      "matches": [
+        {
+          "name": "LC 500",
+          "model": "LC",
+          "trim": "500",
+          "years": "2018-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 93,
+      "name": "Ford Maverick",
+      "make": "Ford",
+      "models": ["Maverick"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2022-2024"],
+      "matches": [
+        {
+          "name": "Maverick",
+          "model": "Maverick",
+          "trim": "Standard",
+          "years": "2022-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 94,
+      "name": "Hyundai Kona N",
+      "make": "Hyundai",
+      "models": ["Kona"],
+      "expectedTrims": ["N"],
+      "expectedYears": ["2022-2024"],
+      "matches": [
+        {
+          "name": "Kona N",
+          "model": "Kona",
+          "trim": "N",
+          "years": "2022-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 95,
+      "name": "Subaru Crosstrek",
+      "make": "Subaru",
+      "models": ["Crosstrek"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2018-2024"],
+      "matches": [
+        {
+          "name": "Crosstrek",
+          "model": "Crosstrek",
+          "trim": "Standard",
+          "years": "2018-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 96,
+      "name": "Toyota GR86 (2nd gen)",
+      "make": "Toyota",
+      "models": ["GR86"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2022-2024"],
+      "matches": [
+        {
+          "name": "86 / Scion FR-S",
+          "model": "86",
+          "trim": "Standard",
+          "years": "2013-2020"
+        },
+        {
+          "name": "GR86",
+          "model": "GR86",
+          "trim": "Standard",
+          "years": "2022-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 97,
+      "name": "VW Jetta GLI",
+      "make": "Volkswagen",
+      "models": ["Mk6 Jetta", "Mk7 Jetta"],
+      "expectedTrims": ["GLI"],
+      "expectedYears": ["2012-2018", "2019-2024"],
+      "matches": [
+        {
+          "name": "Jetta GLI Mk6",
+          "model": "Mk6 Jetta",
+          "trim": "GLI",
+          "years": "2012-2018"
+        },
+        {
+          "name": "Jetta GLI Mk7",
+          "model": "Mk7 Jetta",
+          "trim": "GLI",
+          "years": "2019-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 99,
+      "name": "Rivian R1T/R1S",
+      "make": "Rivian",
+      "models": ["R1T", "R1S"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2022-2024"],
+      "matches": [
+        {
+          "name": "R1S",
+          "model": "R1S",
+          "trim": "Standard",
+          "years": "2022-2024"
+        },
+        {
+          "name": "R1T",
+          "model": "R1T",
+          "trim": "Standard",
+          "years": "2022-2024"
+        }
+      ],
+      "gaps": []
+    },
+    {
+      "rank": 100,
+      "name": "BMW i4 M50 / iX",
+      "make": "BMW",
+      "models": ["i4"],
+      "expectedTrims": ["M50"],
+      "expectedYears": ["2022-2024"],
+      "matches": [
+        {
+          "name": "i4 M50",
+          "model": "i4",
+          "trim": "M50",
+          "years": "2022-2024"
+        }
+      ],
+      "gaps": []
+    }
+  ],
+  "partialCoverage": [
+    {
+      "rank": 5,
+      "name": "Volkswagen Golf GTI (Mk4-Mk8)",
+      "make": "Volkswagen",
+      "models": ["Mk4 GTI", "Mk5 GTI", "Mk6 GTI", "Mk7 GTI", "Mk8 GTI"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["1999-2005", "2006-2009", "2010-2014", "2015-2021", "2022-2024"],
+      "matches": [
+        {
+          "name": "GTI Mk4",
+          "model": "Mk4 GTI",
+          "trim": "Standard",
+          "years": "1999-2005"
+        },
+        {
+          "name": "GTI Mk5",
+          "model": "Mk5 GTI",
+          "trim": "Standard",
+          "years": "2006-2009"
+        },
+        {
+          "name": "GTI Mk6",
+          "model": "Mk6 GTI",
+          "trim": "Standard",
+          "years": "2010-2014"
+        },
+        {
+          "name": "GTI Mk7",
+          "model": "Mk7 GTI",
+          "trim": "Standard",
+          "years": "2015-2021"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "years",
+          "value": "2022-2024"
+        }
+      ]
+    },
+    {
+      "rank": 11,
+      "name": "Chevrolet Camaro (5th/6th gen)",
+      "make": "Chevrolet",
+      "models": ["Camaro", "Camaro LS1", "Camaro 1969"],
+      "expectedTrims": ["SS", "SS 1LE", "Z28", "ZL1"],
+      "expectedYears": ["1969", "1970-1973", "1998-2002", "2017-2023"],
+      "matches": [
+        {
+          "name": "Camaro SS 1LE",
+          "model": "Camaro",
+          "trim": "SS 1LE",
+          "years": "2017-2023"
+        },
+        {
+          "name": "Camaro Z28",
+          "model": "Camaro",
+          "trim": "Z28",
+          "years": "1970-1973"
+        },
+        {
+          "name": "Camaro ZL1",
+          "model": "Camaro",
+          "trim": "ZL1",
+          "years": "2017-2023"
+        },
+        {
+          "name": "Camaro SS (1969)",
+          "model": "Camaro 1969",
+          "trim": "SS",
+          "years": "1969"
+        },
+        {
+          "name": "Camaro SS LS1",
+          "model": "Camaro LS1",
+          "trim": "SS",
+          "years": "1998-2002"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "years",
+          "value": "1969"
+        }
+      ]
+    },
+    {
+      "rank": 20,
+      "name": "BMW M3/M4 (E36-G80)",
+      "make": "BMW",
+      "models": ["E30 M3", "E36 M3", "E46 M3", "E92 M3", "F80 M3", "F82 M4", "G80 M3", "M4"],
+      "expectedTrims": ["Standard", "Competition", "CSL"],
+      "expectedYears": [
+        "1988-1991",
+        "1995-1999",
+        "2001-2006",
+        "2008-2013",
+        "2015-2018",
+        "2015-2020",
+        "2019-2021",
+        "2021-2024",
+        "2022-2023"
+      ],
+      "matches": [
+        {
+          "name": "M3 E30",
+          "model": "E30 M3",
+          "trim": "Standard",
+          "years": "1988-1991"
+        },
+        {
+          "name": "M3 E36",
+          "model": "E36 M3",
+          "trim": "Standard",
+          "years": "1995-1999"
+        },
+        {
+          "name": "M3 E46",
+          "model": "E46 M3",
+          "trim": "Standard",
+          "years": "2001-2006"
+        },
+        {
+          "name": "M3 E92",
+          "model": "E92 M3",
+          "trim": "Standard",
+          "years": "2008-2013"
+        },
+        {
+          "name": "M3 F80",
+          "model": "F80 M3",
+          "trim": "Standard",
+          "years": "2015-2018"
+        },
+        {
+          "name": "M4 F82",
+          "model": "F82 M4",
+          "trim": "Standard",
+          "years": "2015-2020"
+        },
+        {
+          "name": "M3 G80",
+          "model": "G80 M3",
+          "trim": "Standard",
+          "years": "2021-2024"
+        },
+        {
+          "name": "M4 CSL",
+          "model": "M4",
+          "trim": "CSL",
+          "years": "2022-2023"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "trim",
+          "value": "Competition"
+        }
+      ]
+    },
+    {
+      "rank": 37,
+      "name": "BMW M2/1 Series",
+      "make": "BMW",
+      "models": ["1 Series M", "135i", "M2", "G87 M2"],
+      "expectedTrims": ["Coupe", "N54", "Competition", "Standard"],
+      "expectedYears": ["2008-2010", "2011", "2019-2021", "2023-2024"],
+      "matches": [
+        {
+          "name": "1 Series M Coupe",
+          "model": "1 Series M",
+          "trim": "Coupe",
+          "years": "2011"
+        },
+        {
+          "name": "135i N54",
+          "model": "135i",
+          "trim": "N54",
+          "years": "2008-2010"
+        },
+        {
+          "name": "M2 G87",
+          "model": "G87 M2",
+          "trim": "Standard",
+          "years": "2023-2024"
+        },
+        {
+          "name": "M2 Competition",
+          "model": "M2",
+          "trim": "Competition",
+          "years": "2019-2021"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "years",
+          "value": "2011"
+        }
+      ]
+    },
+    {
+      "rank": 49,
+      "name": "Classic Camaro (1967-1981)",
+      "make": "Chevrolet",
+      "models": ["Camaro 1969", "Camaro"],
+      "expectedTrims": ["SS", "Z28"],
+      "expectedYears": ["1969", "1970-1973"],
+      "matches": [
+        {
+          "name": "Camaro SS 1LE",
+          "model": "Camaro",
+          "trim": "SS 1LE",
+          "years": "2017-2023"
+        },
+        {
+          "name": "Camaro Z28",
+          "model": "Camaro",
+          "trim": "Z28",
+          "years": "1970-1973"
+        },
+        {
+          "name": "Camaro ZL1",
+          "model": "Camaro",
+          "trim": "ZL1",
+          "years": "2017-2023"
+        },
+        {
+          "name": "Camaro SS (1969)",
+          "model": "Camaro 1969",
+          "trim": "SS",
+          "years": "1969"
+        },
+        {
+          "name": "Camaro SS LS1",
+          "model": "Camaro LS1",
+          "trim": "SS",
+          "years": "1998-2002"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "years",
+          "value": "1969"
+        }
+      ]
+    },
+    {
+      "rank": 85,
+      "name": "Pontiac G8 GT/GXP",
+      "make": "Pontiac",
+      "models": ["G8"],
+      "expectedTrims": ["GT", "GXP"],
+      "expectedYears": ["2008-2009", "2009"],
+      "matches": [
+        {
+          "name": "G8 GT",
+          "model": "G8",
+          "trim": "GT",
+          "years": "2008-2009"
+        },
+        {
+          "name": "G8 GXP",
+          "model": "G8",
+          "trim": "GXP",
+          "years": "2009"
+        }
+      ],
+      "gaps": [
+        {
+          "type": "years",
+          "value": "2009"
+        }
+      ]
+    }
+  ],
+  "noCoverage": [
+    {
+      "rank": 57,
+      "name": "Ford Fiesta ST",
+      "make": "Ford",
+      "models": ["Fiesta"],
+      "expectedTrims": ["ST"],
+      "expectedYears": ["2013-2019"],
+      "matches": [],
+      "gaps": [
+        {
+          "type": "vehicle",
+          "value": "Not in database"
+        }
+      ]
+    },
+    {
+      "rank": 65,
+      "name": "Jeep Renegade/Compass",
+      "make": "Jeep",
+      "models": ["Renegade", "Compass"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2015-2024"],
+      "matches": [],
+      "gaps": [
+        {
+          "type": "vehicle",
+          "value": "Not in database"
+        }
+      ]
+    },
+    {
+      "rank": 72,
+      "name": "Pontiac GTO (2004-2006)",
+      "make": "Pontiac",
+      "models": ["GTO"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2004-2006"],
+      "matches": [],
+      "gaps": [
+        {
+          "type": "vehicle",
+          "value": "Not in database"
+        }
+      ]
+    },
+    {
+      "rank": 80,
+      "name": "Porsche Cayenne",
+      "make": "Porsche",
+      "models": ["Cayenne"],
+      "expectedTrims": ["Standard", "Turbo", "GTS"],
+      "expectedYears": ["2011-2024"],
+      "matches": [],
+      "gaps": [
+        {
+          "type": "vehicle",
+          "value": "Not in database"
+        }
+      ]
+    },
+    {
+      "rank": 88,
+      "name": "Nissan Titan",
+      "make": "Nissan",
+      "models": ["Titan"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2016-2024"],
+      "matches": [],
+      "gaps": [
+        {
+          "type": "vehicle",
+          "value": "Not in database"
+        }
+      ]
+    },
+    {
+      "rank": 90,
+      "name": "BMW 5 Series (non-M)",
+      "make": "BMW",
+      "models": ["5 Series"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2017-2024"],
+      "matches": [],
+      "gaps": [
+        {
+          "type": "vehicle",
+          "value": "Not in database"
+        }
+      ]
+    },
+    {
+      "rank": 98,
+      "name": "Ford GT",
+      "make": "Ford",
+      "models": ["GT"],
+      "expectedTrims": ["Standard"],
+      "expectedYears": ["2005-2006", "2017-2022"],
+      "matches": [],
+      "gaps": [
+        {
+          "type": "vehicle",
+          "value": "Not in database"
+        }
+      ]
+    }
+  ]
+}

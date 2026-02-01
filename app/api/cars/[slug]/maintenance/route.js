@@ -13,7 +13,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 
 import { errors } from '@/lib/apiErrors';
-import { resolveCarId } from '@/lib/carResolver';
+import { resolveContentCarId } from '@/lib/carResolver';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
@@ -34,17 +34,19 @@ async function handleGet(request, { params }) {
   }
 
   try {
-    // Resolve car_id once for efficient queries
-    // NOTE: All these tables use car_id ONLY (car_slug column was removed)
-    const carId = await resolveCarId(slug);
+    // Resolve to content car_id (v1 parent for v2 cars)
+    // Maintenance data is linked to v1 cars
+    const resolved = await resolveContentCarId(slug);
 
-    if (!carId) {
+    if (!resolved) {
       return NextResponse.json({
         success: true,
         data: { specs: null, knownIssues: [], serviceIntervals: [] },
         message: 'Car not found',
       });
     }
+
+    const carId = resolved.contentCarId;
 
     // NOTE: Column names must match actual DB schema exactly
     // Verified against information_schema.columns for vehicle_maintenance_specs

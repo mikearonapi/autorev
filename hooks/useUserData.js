@@ -42,7 +42,7 @@ export const userKeys = {
   credits: (userId) => [...userKeys.all, userId, 'credits'],
 
   // Track times
-  trackTimes: (userId, carSlug) => [...userKeys.all, userId, 'track-times', carSlug || 'all'],
+  trackTimes: (userId, carId) => [...userKeys.all, userId, 'track-times', carId || 'all'],
 
   // Saved events
   savedEvents: (userId, filters) => [...userKeys.all, userId, 'saved-events', filters],
@@ -94,9 +94,9 @@ async function fetchCredits(userId) {
 /**
  * Fetch user's track times
  */
-async function fetchTrackTimes(userId, carSlug, limit = 10) {
+async function fetchTrackTimes(userId, carId, limit = 10) {
   const params = new URLSearchParams();
-  if (carSlug) params.append('carSlug', carSlug);
+  if (carId) params.append('carId', carId);
   if (limit) params.append('limit', limit.toString());
 
   const data = await apiClient.get(`/api/users/${userId}/track-times?${params.toString()}`);
@@ -186,13 +186,13 @@ export function useUserCredits(userId, options = {}) {
 /**
  * Hook to fetch user's track times
  * @param {string} userId - User ID
- * @param {string} carSlug - Optional car slug to filter by
+ * @param {string} carId - Optional car UUID to filter by
  * @param {object} options - React Query options
  */
-export function useUserTrackTimes(userId, carSlug = null, options = {}) {
+export function useUserTrackTimes(userId, carId = null, options = {}) {
   return useQuery({
-    queryKey: userKeys.trackTimes(userId, carSlug),
-    queryFn: () => fetchTrackTimes(userId, carSlug, options.limit || 10),
+    queryKey: userKeys.trackTimes(userId, carId),
+    queryFn: () => fetchTrackTimes(userId, carId, options.limit || 10),
     staleTime: CACHE_TIMES.STANDARD,
     enabled: !!userId,
     ...options,
@@ -299,11 +299,11 @@ export function useAddTrackTime() {
  */
 export function useAnalyzeTrackTimes() {
   return useMutation({
-    mutationFn: async ({ userId, carSlug }) => {
+    mutationFn: async ({ userId, carId }) => {
       const res = await fetch(`/api/users/${userId}/track-times/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ carSlug }),
+        body: JSON.stringify({ carId }),
       });
       if (!res.ok) {
         const error = new Error('Failed to analyze track times');

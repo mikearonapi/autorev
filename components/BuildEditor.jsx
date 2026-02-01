@@ -175,7 +175,8 @@ const Icons = {
 
 export default function BuildEditor({
   vehicleId: _vehicleId,
-  carSlug: _carSlug,
+  carId: _carId,
+  car: _car,
   initialMods = [],
   initialCustomSpecs = {},
   turboOptions = [],

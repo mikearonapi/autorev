@@ -1,53 +1,50 @@
 import { NextResponse } from 'next/server';
 
-import { resolveCarId } from '@/lib/carResolver';
+import { resolveContentCarId } from '@/lib/carResolver';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 import { supabase, isSupabaseConfigured } from '@/lib/supabase';
 
 /**
  * GET /api/cars/[slug]/lap-times
- * 
+ *
  * Fetches track lap time data for a specific car.
  * Uses the get_car_track_lap_times RPC function.
- * 
+ *
  * Updated 2026-01-11: Uses car_id for fallback queries (car_slug column removed from car_track_lap_times)
  */
 async function handleGet(request, { params }) {
   const { slug } = await params;
-  
+
   if (!slug) {
-    return NextResponse.json(
-      { error: 'Car slug is required' },
-      { status: 400 }
-    );
+    return NextResponse.json({ error: 'Car slug is required' }, { status: 400 });
   }
-  
+
   if (!isSupabaseConfigured || !supabase) {
-    return NextResponse.json(
-      { lapTimes: [], message: 'Database not configured' },
-      { status: 200 }
-    );
+    return NextResponse.json({ lapTimes: [], message: 'Database not configured' }, { status: 200 });
   }
-  
+
   try {
     // Use the RPC function to get lap times with track/layout info
     const { data, error } = await supabase.rpc('get_car_track_lap_times', {
       p_car_slug: slug,
     });
-    
+
     if (error) {
       console.error('[API/lap-times] RPC error:', error);
-      
-      // Resolve car_id for fallback queries (car_slug column no longer exists)
-      const carId = await resolveCarId(slug);
-      if (!carId) {
+
+      // Resolve to content car_id (v1 parent for v2 cars)
+      // Lap times are linked to v1 cars
+      const resolved = await resolveContentCarId(slug);
+      if (!resolved) {
         return NextResponse.json({ lapTimes: [] });
       }
-      
+      const contentCarId = resolved.contentCarId;
+
       // Fallback to direct query with joins if RPC doesn't exist
       const { data: directData, error: directError } = await supabase
         .from('car_track_lap_times')
-        .select(`
+        .select(
+          `
           *,
           track_layouts!inner (
             name,
@@ -58,29 +55,31 @@ async function handleGet(request, { params }) {
               country
             )
           )
-        `)
-        .eq('car_id', carId)
+        `
+        )
+        .eq('car_id', contentCarId)
         .order('lap_time_seconds', { ascending: true });
-      
+
       if (directError) {
-        const LAP_COLS = 'id, car_id, track_id, track_name, lap_time_seconds, driver, conditions, tires, source_url, source_type, recorded_date, notes, created_at';
-        
+        const LAP_COLS =
+          'id, car_id, track_id, track_name, lap_time_seconds, driver, conditions, tires, source_url, source_type, recorded_date, notes, created_at';
+
         // Try simpler query without joins
         const { data: simpleData, error: simpleError } = await supabase
           .from('car_track_lap_times')
           .select(LAP_COLS)
-          .eq('car_id', carId)
+          .eq('car_id', contentCarId)
           .order('lap_time_seconds', { ascending: true });
-        
+
         if (simpleError) {
           throw simpleError;
         }
-        
+
         return NextResponse.json({ lapTimes: simpleData || [] });
       }
-      
+
       // Transform the nested data
-      const transformed = (directData || []).map(row => ({
+      const transformed = (directData || []).map((row) => ({
         id: row.id,
         car_slug: row.car_slug,
         lap_time_seconds: row.lap_time_seconds,
@@ -98,33 +97,18 @@ async function handleGet(request, { params }) {
         track_location: row.track_layouts?.track_venues?.location,
         track_country: row.track_layouts?.track_venues?.country,
       }));
-      
+
       return NextResponse.json({ lapTimes: transformed });
     }
-    
+
     return NextResponse.json({ lapTimes: data || [] });
   } catch (err) {
     console.error('[API/lap-times] Error fetching lap times:', err);
-    return NextResponse.json(
-      { error: 'Failed to fetch lap times' },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: 'Failed to fetch lap times' }, { status: 500 });
   }
 }
 
-export const GET = withErrorLogging(handleGet, { route: 'cars/[slug]/lap-times', feature: 'browse-cars' });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export const GET = withErrorLogging(handleGet, {
+  route: 'cars/[slug]/lap-times',
+  feature: 'browse-cars',
+});

@@ -1536,8 +1536,13 @@ export default function UpgradeCenter({
 
                 {saveToGarage &&
                   (() => {
+                    // Prefer matched_car_id, fall back to matchedCarSlug for backward compat
                     const matchingVehicles =
-                      vehicles?.filter((v) => v.matchedCarSlug === car.slug) || [];
+                      vehicles?.filter(
+                        (v) =>
+                          (v.matchedCarId && car.id && v.matchedCarId === car.id) ||
+                          (!v.matchedCarId && v.matchedCarSlug === car.slug)
+                      ) || [];
 
                     // Show select if we have matching vehicles OR if we already selected one (just added)
                     if (matchingVehicles.length > 0 || selectedGarageVehicle) {
@@ -1585,11 +1590,8 @@ export default function UpgradeCenter({
                             setIsAddingToGarage(true);
                             setSaveError(null);
                             try {
-                              // Parse year from car.years field (e.g., "2017-2024")
-                              const yearMatch = car.years?.match(/(\d{4})/);
-                              const year = yearMatch
-                                ? parseInt(yearMatch[1])
-                                : new Date().getFullYear();
+                              // Use car.year directly (integer in Teoalida schema)
+                              const year = car.year || new Date().getFullYear();
 
                               // Extract make and model from car.name (e.g., "Nissan GT-R")
                               let make = '';
@@ -1616,7 +1618,8 @@ export default function UpgradeCenter({
                                 year,
                                 make,
                                 model,
-                                matchedCarSlug: car.slug,
+                                matchedCarId: car.id, // Preferred: UUID reference
+                                matchedCarSlug: car.slug, // Backward compat: slug for URLs
                                 nickname: '',
                               };
                               console.log('[SaveModal] Adding vehicle:', newVehicle);

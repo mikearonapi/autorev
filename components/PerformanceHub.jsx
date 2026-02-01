@@ -633,14 +633,14 @@ export default function PerformanceHub({
 
   // Auth and saved builds
   const { isAuthenticated: _isAuthenticated } = useAuth();
-  const { saveBuild, updateBuild, getBuildById, getBuildsByCarSlug, canSave } = useSavedBuilds();
+  const { saveBuild, updateBuild, getBuildById, getBuildsByCarId, canSave } = useSavedBuilds();
 
   // Owned vehicles for "Apply to My Vehicle" feature
-  const { vehicles: _vehicles, getVehiclesByCarSlug, applyModifications } = useOwnedVehicles();
+  const { vehicles: _vehicles, getVehiclesByCarId, applyModifications } = useOwnedVehicles();
 
   // Find user's vehicles that match this car, enriched with build data for accurate HP gain
   const matchingVehicles = useMemo(() => {
-    const vehicles = getVehiclesByCarSlug(car.slug);
+    const vehicles = getVehiclesByCarId(car.id);
     // Enrich each vehicle with its active build data for accurate HP gain display
     return vehicles.map((vehicle) => {
       const activeBuild = vehicle.activeBuildId ? getBuildById(vehicle.activeBuildId) : null;
@@ -650,7 +650,7 @@ export default function PerformanceHub({
         displayHpGain: activeBuild?.totalHpGain ?? vehicle.totalHpGain ?? 0,
       };
     });
-  }, [getVehiclesByCarSlug, car.slug, getBuildById]);
+  }, [getVehiclesByCarId, car.id, getBuildById]);
   const hasMatchingVehicle = matchingVehicles.length > 0;
 
   // Initialize to stock - users can select their preferred package
@@ -671,10 +671,7 @@ export default function PerformanceHub({
   const [applySuccess, setApplySuccess] = useState(null);
 
   // Get existing builds for this car
-  const existingBuilds = useMemo(
-    () => getBuildsByCarSlug(car.slug),
-    [getBuildsByCarSlug, car.slug]
-  );
+  const existingBuilds = useMemo(() => getBuildsByCarId(car.id), [getBuildsByCarId, car.id]);
 
   // Reset state when car changes (ensures clean slate when navigating between cars)
   useEffect(() => {
@@ -683,19 +680,19 @@ export default function PerformanceHub({
     setSelectedPackageKey('stock');
     setCurrentBuildId(null);
     setSaveError(null);
-  }, [car.slug]);
+  }, [car.id]);
 
   // Load initial build if provided (after reset, so this overrides if needed)
   useEffect(() => {
     if (initialBuildId) {
       const build = getBuildById(initialBuildId);
-      if (build && build.carSlug === car.slug) {
+      if (build && build.carId === car.id) {
         setSelectedModules(build.upgrades || []);
         setSelectedPackageKey('custom');
         setCurrentBuildId(initialBuildId);
       }
     }
-  }, [initialBuildId, getBuildById, car.slug]);
+  }, [initialBuildId, getBuildById, car.id]);
 
   // Set this car as selected when viewing the performance hub
   // This ensures the car banner shows the correct car
@@ -835,7 +832,8 @@ export default function PerformanceHub({
     setSaveError(null);
 
     const buildData = {
-      carSlug: car.slug,
+      carId: car.id,
+      carSlug: car.slug, // Keep slug for URL generation
       carName: car.name,
       name: buildName.trim(),
       selectedUpgrades: effectiveSelectedModules,
@@ -944,7 +942,7 @@ export default function PerformanceHub({
             <div>
               <h1 className={styles.carName}>{car.name}</h1>
               <p className={styles.carSubtitle}>
-                {car.years} • {car.brand || 'Sports Car'} • {car.country || ''}
+                {car.year} • {car.make || 'Sports Car'} • {car.countryOfOrigin || ''}
               </p>
             </div>
             <div className={styles.carInfoHeaderRight}>
@@ -974,7 +972,7 @@ export default function PerformanceHub({
           <div className={styles.heroSpecs}>
             <div className={styles.heroSpecMain}>
               <span className={styles.heroSpecLabel}>Engine</span>
-              <span className={styles.heroSpecValue}>{car.engine}</span>
+              <span className={styles.heroSpecValue}>{car.engineType}</span>
             </div>
             <div className={styles.heroSpecDivider} />
             <div className={styles.heroSpecHighlight}>
@@ -995,7 +993,7 @@ export default function PerformanceHub({
           <div className={styles.secondarySpecs}>
             <div className={styles.secondarySpec}>
               <span className={styles.secondarySpecLabel}>Drivetrain</span>
-              <span className={styles.secondarySpecValue}>{car.drivetrain || 'RWD'}</span>
+              <span className={styles.secondarySpecValue}>{car.driveType || 'RWD'}</span>
             </div>
             <div className={styles.secondarySpec}>
               <span className={styles.secondarySpecLabel}>0-60 mph</span>

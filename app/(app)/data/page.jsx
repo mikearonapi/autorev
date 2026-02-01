@@ -25,13 +25,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import AuthModal, { useAuthModal } from '@/components/AuthModal';
 import CalculatedPerformance from '@/components/CalculatedPerformance';
 import DynoLogModal from '@/components/DynoLogModal';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import OnboardingPopup, { dataOnboardingSteps } from '@/components/OnboardingPopup';
 import PowerBreakdown from '@/components/PowerBreakdown';
 import { useAuth } from '@/components/providers/AuthProvider';
 import { useOwnedVehicles } from '@/components/providers/OwnedVehiclesProvider';
 import { usePointsNotification } from '@/components/providers/PointsNotificationProvider';
 import { useSavedBuilds } from '@/components/providers/SavedBuildsProvider';
-import LoadingSpinner from '@/components/LoadingSpinner';
 import VirtualDynoChart from '@/components/VirtualDynoChart';
 import { useCarsList } from '@/hooks/useCarData';
 import { useDynoResults } from '@/hooks/useUserData';
@@ -104,7 +104,7 @@ function DynoPageContent() {
   const { isAuthenticated, isLoading: authLoading, isDataFetchReady } = useAuth();
   const { showPointsEarned } = usePointsNotification();
   const { vehicles, isLoading: vehiclesLoading } = useOwnedVehicles();
-  const { builds, getBuildsByCarSlug, isLoading: buildsLoading } = useSavedBuilds();
+  const { builds, getBuildsByCarId, isLoading: buildsLoading } = useSavedBuilds();
   const { data: carsData } = useCarsList();
   const allCars = useMemo(() => carsData || [], [carsData]);
   const authModal = useAuthModal();
@@ -227,10 +227,10 @@ function DynoPageContent() {
     if (!selectedVehicle) return null;
 
     const matchedCar = selectedVehicle.matchedCar;
-    const carSlug = selectedVehicle.matchedCarSlug;
     const carId = selectedVehicle.matchedCarId;
+    const carSlug = selectedVehicle.matchedCarSlug; // Keep for backward compatibility
 
-    const hasCarReference = !!(carSlug || carId);
+    const hasCarReference = !!(carId || carSlug);
     const matchedCarNotFound = hasCarReference && !matchedCar;
 
     if (matchedCarNotFound) {
@@ -273,8 +273,8 @@ function DynoPageContent() {
       };
     }
 
-    if (carSlug) {
-      const carBuilds = getBuildsByCarSlug(carSlug);
+    if (carId) {
+      const carBuilds = getBuildsByCarId(carId);
 
       if (carBuilds && carBuilds.length > 0) {
         const latestBuild = carBuilds[0];
@@ -310,7 +310,7 @@ function DynoPageContent() {
       sourceType: 'stock',
       matchedCarNotFound,
     };
-  }, [selectedVehicle, getBuildsByCarSlug, builds]);
+  }, [selectedVehicle, getBuildsByCarId, builds]);
 
   // Get HP values
   const stockHp = vehicleBuildData?.stockHp ?? selectedVehicle?.matchedCar?.hp ?? 300;
@@ -486,7 +486,14 @@ function DynoPageContent() {
     if (!isAuthenticated) return false;
     if (!isDataFetchReady) return true;
     return vehiclesLoading;
-  }, [authLoading, isAuthenticated, isDataFetchReady, vehiclesLoading, loadingTimedOut, userVehicles.length]);
+  }, [
+    authLoading,
+    isAuthenticated,
+    isDataFetchReady,
+    vehiclesLoading,
+    loadingTimedOut,
+    userVehicles.length,
+  ]);
 
   // Not authenticated - show sign in prompt
   // NOTE: Keep messaging consistent with original combined page
@@ -578,7 +585,7 @@ function DynoPageContent() {
                   estimatedTq={displayTorque}
                   peakRpm={selectedVehicle.matchedCar?.peak_hp_rpm || 6500}
                   carName={`${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`}
-                  carSlug={selectedVehicle.matchedCarSlug}
+                  carId={selectedVehicle.matchedCarId}
                   car={selectedVehicle.matchedCar}
                   selectedUpgrades={installedUpgrades}
                   hasUserDynoData={hasUserDynoData}
@@ -609,7 +616,7 @@ function DynoPageContent() {
                 hasTune={upgradeCategories.hasTune}
                 hasSuspension={upgradeCategories.hasSuspension}
                 carName={`${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`}
-                carSlug={selectedVehicle.matchedCarSlug}
+                carId={selectedVehicle.matchedCarId}
                 performanceDataSources={performanceDataSources}
                 hasUserDynoData={hasUserDynoData}
                 dynoShop={dynoShop}
@@ -623,7 +630,7 @@ function DynoPageContent() {
                   car={selectedVehicle.matchedCar}
                   totalHpGain={hpGain}
                   carName={`${selectedVehicle.year} ${selectedVehicle.make} ${selectedVehicle.model}`}
-                  carSlug={selectedVehicle.matchedCarSlug}
+                  carId={selectedVehicle.matchedCarId}
                 />
               </div>
 

@@ -170,8 +170,8 @@ export default function CarImage({
         {showName && (
           <div className={styles.placeholderContent}>
             <span className={styles.placeholderText}>{car?.name || 'Loading...'}</span>
-            {car?.years && variant === 'hero' && (
-              <span className={styles.placeholderSubtext}>{car.years}</span>
+            {car?.year && variant === 'hero' && (
+              <span className={styles.placeholderSubtext}>{car.year}</span>
             )}
           </div>
         )}

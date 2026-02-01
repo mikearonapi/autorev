@@ -41,6 +41,7 @@ import UpgradeCenter from '@/components/UpgradeCenter';
 import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
 import { submitCarRequest } from '@/lib/carRequestService';
+import { resolveCarId } from '@/lib/carResolver';
 
 import styles from './page.module.css';
 
@@ -52,6 +53,7 @@ function MyBuildContent() {
   const router = useRouter();
   const [selectedCar, setSelectedCar] = useState(null);
   const [currentBuildId, setCurrentBuildId] = useState(null);
+  const [carId, setCarId] = useState(null);
   const [showBuildWizard, setShowBuildWizard] = useState(false);
   const [showCarPicker, setShowCarPicker] = useState(false);
   const [showAddVehicle, setShowAddVehicle] = useState(false);
@@ -89,6 +91,25 @@ function MyBuildContent() {
   // Get URL params
   const buildIdParam = searchParams.get('build');
   const carSlugParam = searchParams.get('car');
+
+  // Resolve carSlugParam to carId
+  useEffect(() => {
+    if (selectedCar?.id) {
+      // Use selectedCar.id directly (it's the carId)
+      setCarId(selectedCar.id);
+    } else if (carSlugParam && !carId) {
+      // Fallback: resolve slug if car not loaded yet
+      resolveCarId(carSlugParam)
+        .then((id) => {
+          if (id) setCarId(id);
+        })
+        .catch((err) => {
+          console.error('[MyBuild] Error resolving carId:', err);
+        });
+    } else if (!carSlugParam && !selectedCar) {
+      setCarId(null);
+    }
+  }, [carSlugParam, carId, selectedCar]);
 
   // Fallback: fetch single car in parallel with full list
   // This provides faster data when the full list is slow or unavailable
@@ -437,7 +458,12 @@ function MyBuildContent() {
   if (!selectedCar) {
     return (
       <div className={styles.page}>
-        <MyGarageSubNav carSlug={carSlugParam} buildId={buildIdParam} onBack={handleBack} />
+        <MyGarageSubNav
+          carId={carId}
+          carSlug={carSlugParam}
+          buildId={buildIdParam}
+          onBack={handleBack}
+        />
 
         {/* Empty State - No build selected */}
         <div className={styles.emptyState}>
@@ -498,6 +524,7 @@ function MyBuildContent() {
   return (
     <div className={styles.page}>
       <MyGarageSubNav
+        carId={carId}
         carSlug={selectedCar.slug}
         buildId={currentBuildId}
         onBack={handleBack}
@@ -515,13 +542,18 @@ function MyBuildContent() {
         }
       />
 
-      <GarageVehicleSelector selectedCarSlug={selectedCar.slug} buildId={currentBuildId} />
+      <GarageVehicleSelector
+        selectedCarId={carId}
+        selectedCarSlug={selectedCar.slug}
+        buildId={currentBuildId}
+      />
 
       {/* AL Build Search Input */}
       <div className={styles.alSearchWrapper}>
         <ALBuildSearchInput
           carName={selectedCar.name}
-          carSlug={selectedCar.slug}
+          carId={selectedCar.id}
+          car={selectedCar}
           selectedUpgrades={buildSummary.selectedUpgrades || []}
           totalHpGain={buildSummary.totalHpGain || 0}
         />

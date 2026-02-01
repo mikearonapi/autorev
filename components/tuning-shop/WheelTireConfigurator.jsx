@@ -11,6 +11,7 @@
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 
+import { resolveCarId } from '@/lib/carResolver';
 import { fetchCarFitments } from '@/lib/fitmentService';
 import { getTireCompoundsForUI, getTireCompound, normalizeTireKey } from '@/lib/tireConfig';
 
@@ -26,7 +27,8 @@ function logWheelTireChange(car, field, oldValue, newValue, oemValue) {
 
   const changeData = {
     timestamp: new Date().toISOString(),
-    carSlug: car?.slug,
+    carId: car?.id,
+    carSlug: car?.slug, // Keep slug for logging/analytics compatibility
     carName: car ? `${car.year || ''} ${car.make} ${car.model}`.trim() : 'Unknown',
     field,
     oldValue,
@@ -176,7 +178,7 @@ export default function WheelTireConfigurator({
 
   // Fetch OEM fitment data when car changes
   useEffect(() => {
-    if (!car?.slug) {
+    if (!car?.slug && !car?.id) {
       setFitmentData(null);
       return;
     }
@@ -187,7 +189,21 @@ export default function WheelTireConfigurator({
       setIsLoading(true);
       setError(null);
 
-      const { data, error: fetchError } = await fetchCarFitments(car.slug);
+      // Use car.id if available, otherwise resolve from slug
+      let carId = car?.id;
+      if (!carId && car?.slug) {
+        carId = await resolveCarId(car.slug);
+      }
+
+      if (!carId) {
+        if (!cancelled) {
+          setError(new Error('Car ID not found'));
+          setIsLoading(false);
+        }
+        return;
+      }
+
+      const { data, error: fetchError } = await fetchCarFitments(carId);
 
       if (!cancelled) {
         if (fetchError) {
@@ -210,7 +226,7 @@ export default function WheelTireConfigurator({
       cancelled = true;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [car?.slug]);
+  }, [car?.id, car?.slug]);
 
   // Initialize wheel config from OEM data
   const initializeFromOEM = useCallback((oem) => {

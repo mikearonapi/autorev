@@ -406,11 +406,11 @@ export default function NextUpgradeRecommendation({
   installedUpgrades,
   aspiration = 'NA',
   currentHp: _currentHp = 300,
-  carSlug,
+  carId: _carId,
+  car, // Car object (for slug access)
   _vehicleId,
   onFeedback,
   // NEW: Consistency validation props
-  car = null, // Car object for tunability calculation
   tuningProfile = null, // Tuning profile with platform_insights
   tunabilityScore = null, // Pre-calculated tunability score (1-10)
   carName = null, // Car name for display in messages
@@ -490,8 +490,8 @@ export default function NextUpgradeRecommendation({
 
   // Build link for the My Build page
   const getBuildLink = (_upgradeId) => {
-    if (!carSlug) return '/garage/my-build';
-    return `/garage/my-build?car=${carSlug}`;
+    if (!car?.slug) return '/garage/my-build';
+    return `/garage/my-build?car=${car.slug}`;
   };
 
   // Show tuning limitation notice if ECU tuning was suppressed

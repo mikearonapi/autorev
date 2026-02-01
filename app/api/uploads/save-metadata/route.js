@@ -95,7 +95,7 @@ async function handlePost(request) {
     caption,
     isPrimary,
     duration,
-    carSlug, // For cross-feature image sharing
+    carId, // For cross-feature image sharing
   } = body;
 
   // Validate required fields
@@ -264,7 +264,7 @@ async function handlePost(request) {
     user_vehicle_id: vehicleId || null,
     user_build_id: buildId || null,
     community_post_id: postId || null,
-    car_slug: carSlug || null, // For cross-feature image sharing (Garage <-> Tuning Shop)
+    car_id: carId || null, // car_id is the single source of truth
     blob_url: finalBlobUrl,
     blob_pathname: finalBlobPathname,
     file_name: fileName || `upload-${Date.now()}`,

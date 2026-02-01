@@ -35,7 +35,7 @@ const ALLOWED_ACTIONS = {
         chunksResult,
         partsResult,
       ] = await Promise.all([
-        supabase.from('cars').select('id, image_hero_url, embedding'),
+        supabase.from('cars').select('id, image_url, embedding'),
         supabase.from('events').select('id, status, start_date'),
         supabase.from('youtube_videos').select('id, processing_status'),
         supabase.from('community_insights').select('id, is_active'),
@@ -51,7 +51,7 @@ const ALLOWED_ACTIONS = {
 
       const metrics = {
         total_vehicles: vehicles.length,
-        vehicles_with_hero_image: vehicles.filter((v) => v.image_hero_url).length,
+        vehicles_with_hero_image: vehicles.filter((v) => v.image_url).length,
         vehicles_with_embedding: vehicles.filter((v) => v.embedding).length,
         approved_events: events.filter((e) => e.status === 'approved').length,
         upcoming_events: events.filter(

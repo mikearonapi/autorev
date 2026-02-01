@@ -2,10 +2,10 @@
 
 /**
  * Batch Recalls Enrichment
- * 
+ *
  * Fetches NHTSA recalls for all cars missing recall data.
  * Uses the existing recallService.js infrastructure.
- * 
+ *
  * Usage:
  *   node scripts/enrichRecallsAll.js                    # All missing cars
  *   node scripts/enrichRecallsAll.js --limit=10        # First 10 missing
@@ -13,10 +13,12 @@
  *   node scripts/enrichRecallsAll.js --car=bmw-m3-e46  # Single car
  */
 
-import { createClient } from '@supabase/supabase-js';
-import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+
+import { createClient } from '@supabase/supabase-js';
+import dotenv from 'dotenv';
+
 import { fetchRecallRowsForCar, upsertRecallRows } from '../lib/recallService.js';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -34,7 +36,7 @@ if (!supabaseUrl || !supabaseKey) {
 }
 
 const supabase = createClient(supabaseUrl, supabaseKey, {
-  auth: { persistSession: false }
+  auth: { persistSession: false },
 });
 
 // Parse arguments
@@ -54,7 +56,7 @@ const SINGLE_CAR = args.car || null;
 const DRY_RUN = args['dry-run'] || false;
 
 function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 async function main() {
@@ -71,7 +73,7 @@ async function main() {
     // Single car mode
     const { data: car, error } = await supabase
       .from('cars')
-      .select('slug, name, brand, years')
+      .select('id, slug, name, brand, years')
       .eq('slug', SINGLE_CAR)
       .single();
 
@@ -85,7 +87,7 @@ async function main() {
     // All cars mode (re-fetch everything)
     const { data: cars, error } = await supabase
       .from('cars')
-      .select('slug, name, brand, years')
+      .select('id, slug, name, brand, years')
       .order('name');
 
     if (error || !cars) {
@@ -96,15 +98,13 @@ async function main() {
     console.log(`All cars mode: ${carsToProcess.length} cars`);
   } else {
     // Missing cars mode (default)
-    const { data: existingRecalls } = await supabase
-      .from('car_recalls')
-      .select('car_slug');
+    const { data: existingRecalls } = await supabase.from('car_recalls').select('car_slug');
 
-    const carsWithRecalls = new Set(existingRecalls?.map(r => r.car_slug) || []);
+    const carsWithRecalls = new Set(existingRecalls?.map((r) => r.car_slug) || []);
 
     const { data: allCars, error } = await supabase
       .from('cars')
-      .select('slug, name, brand, years')
+      .select('id, slug, name, brand, years')
       .order('name');
 
     if (error || !allCars) {
@@ -112,8 +112,10 @@ async function main() {
       process.exit(1);
     }
 
-    carsToProcess = allCars.filter(car => !carsWithRecalls.has(car.slug));
-    console.log(`Missing cars mode: ${carsToProcess.length} of ${allCars.length} cars need recalls`);
+    carsToProcess = allCars.filter((car) => !carsWithRecalls.has(car.slug));
+    console.log(
+      `Missing cars mode: ${carsToProcess.length} of ${allCars.length} cars need recalls`
+    );
   }
 
   // Apply skip and limit
@@ -133,7 +135,9 @@ async function main() {
   for (let i = 0; i < carsToProcess.length; i++) {
     const car = carsToProcess[i];
 
-    process.stdout.write(`[${String(i + 1).padStart(3)}/${carsToProcess.length}] ${car.name.padEnd(45)}`);
+    process.stdout.write(
+      `[${String(i + 1).padStart(3)}/${carsToProcess.length}] ${car.name.padEnd(45)}`
+    );
 
     try {
       const { rows, errors } = await fetchRecallRowsForCar({
@@ -147,7 +151,7 @@ async function main() {
         console.log(` ⚠️  ${errors.length} errors`);
         carsWithErrors++;
         if (args.verbose) {
-          errors.forEach(e => console.log(`      ${e}`));
+          errors.forEach((e) => console.log(`      ${e}`));
         }
       }
 
@@ -200,17 +204,16 @@ async function main() {
     .from('cars')
     .select('*', { count: 'exact', head: true });
 
-  const { data: recallCoverage } = await supabase
-    .from('car_recalls')
-    .select('car_slug');
+  const { data: recallCoverage } = await supabase.from('car_recalls').select('car_slug');
 
-  const uniqueCarsWithRecalls = new Set(recallCoverage?.map(r => r.car_slug) || []);
+  const uniqueCarsWithRecalls = new Set(recallCoverage?.map((r) => r.car_slug) || []);
 
-  console.log(`\n📈 Coverage: ${uniqueCarsWithRecalls.size}/${totalCars} cars (${Math.round(uniqueCarsWithRecalls.size / totalCars * 100)}%)`);
+  console.log(
+    `\n📈 Coverage: ${uniqueCarsWithRecalls.size}/${totalCars} cars (${Math.round((uniqueCarsWithRecalls.size / totalCars) * 100)}%)`
+  );
 }
 
-main().catch(err => {
+main().catch((err) => {
   console.error('Fatal error:', err);
   process.exit(1);
 });
-

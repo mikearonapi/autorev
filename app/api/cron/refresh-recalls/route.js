@@ -56,7 +56,10 @@ async function handleGet(request) {
   }
 
   if (!isSupabaseConfigured || !supabaseServiceRole) {
-    return NextResponse.json({ error: 'Database not configured', code: 'DB_NOT_CONFIGURED' }, { status: 503 });
+    return NextResponse.json(
+      { error: 'Database not configured', code: 'DB_NOT_CONFIGURED' },
+      { status: 503 }
+    );
   }
 
   const startedAt = Date.now();
@@ -67,12 +70,15 @@ async function handleGet(request) {
     const limitCarsRaw = searchParams.get('limitCars');
     const limitCars = limitCarsRaw ? Math.max(1, Number(limitCarsRaw)) : null;
 
-    const maxYearsPerCar = Math.max(1, Math.min(Number(searchParams.get('maxYearsPerCar') || 25), 50));
+    const maxYearsPerCar = Math.max(
+      1,
+      Math.min(Number(searchParams.get('maxYearsPerCar') || 25), 50)
+    );
     const concurrency = Math.max(1, Math.min(Number(searchParams.get('concurrency') || 3), 8));
 
     const { data: cars, error: carsErr } = await supabaseServiceRole
       .from('cars')
-      .select('slug,name,brand,years')
+      .select('id,slug,name,make,year')
       .order('name', { ascending: true });
 
     if (carsErr) throw carsErr;
@@ -92,6 +98,7 @@ async function handleGet(request) {
       const upsert = await upsertRecallRows({ client: supabaseServiceRole, rows: fetched.rows });
 
       return {
+        car_id: car.id,
         car_slug: car.slug,
         fetched: fetched.rows.length,
         upserted: upsert.upserted,
@@ -139,12 +146,3 @@ async function handleGet(request) {
 }
 
 export const GET = withErrorLogging(handleGet, { route: 'cron/refresh-recalls', feature: 'cron' });
-
-
-
-
-
-
-
-
-

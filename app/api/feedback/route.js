@@ -38,6 +38,7 @@ async function handlePost(request) {
       page_url,
       pageUrl,
       page_title,
+      car_id,
       car_slug,
       build_id,
       tags,
@@ -161,8 +162,11 @@ async function handlePost(request) {
       );
     }
 
-    // Resolve car_id from slug if provided (car_slug column no longer exists on user_feedback)
-    const carId = car_slug ? await resolveCarId(car_slug) : null;
+    // Resolve car_id: prefer direct car_id, fall back to resolving from car_slug for backward compatibility
+    let carId = car_id || null;
+    if (!carId && car_slug) {
+      carId = await resolveCarId(car_slug);
+    }
 
     const feedbackData = {
       feedback_type: feedbackTypeToInsert,

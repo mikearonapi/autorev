@@ -34,6 +34,7 @@ import EmptyState from '@/components/ui/EmptyState';
 import { Icons } from '@/components/ui/Icons';
 import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
+import { resolveCarId } from '@/lib/carResolver';
 
 // Placeholder components - will be implemented in subsequent todos
 
@@ -77,6 +78,7 @@ function MyInstallContent() {
   const searchParams = useSearchParams();
   const [selectedCar, setSelectedCar] = useState(null);
   const [currentBuildId, setCurrentBuildId] = useState(null);
+  const [carId, setCarId] = useState(null);
 
   // Path selection state (DIY or Service Center) - defaults to DIY
   const [activePath, setActivePath] = useState('diy'); // 'diy' | 'service'
@@ -97,6 +99,25 @@ function MyInstallContent() {
   // Get URL params
   const buildIdParam = searchParams.get('build');
   const carSlugParam = searchParams.get('car');
+
+  // Resolve carSlugParam to carId
+  useEffect(() => {
+    if (selectedCar?.id) {
+      // Use selectedCar.id directly (it's the carId)
+      setCarId(selectedCar.id);
+    } else if (carSlugParam && !carId) {
+      // Fallback: resolve slug if car not loaded yet
+      resolveCarId(carSlugParam)
+        .then((id) => {
+          if (id) setCarId(id);
+        })
+        .catch((err) => {
+          console.error('[MyInstall] Error resolving carId:', err);
+        });
+    } else if (!carSlugParam && !selectedCar) {
+      setCarId(null);
+    }
+  }, [carSlugParam, carId, selectedCar]);
 
   // Fallback: fetch single car in parallel with full list
   // This provides faster data when the full list is slow or unavailable
@@ -246,6 +267,7 @@ function MyInstallContent() {
     <div className={styles.page}>
       <MyGarageSubNav
         onBack={handleBack}
+        carId={carId}
         carSlug={selectedCar.slug}
         buildId={currentBuildId}
         rightAction={
@@ -261,7 +283,11 @@ function MyInstallContent() {
         }
       />
 
-      <GarageVehicleSelector selectedCarSlug={selectedCar.slug} buildId={currentBuildId} />
+      <GarageVehicleSelector
+        selectedCarId={carId}
+        selectedCarSlug={selectedCar.slug}
+        buildId={currentBuildId}
+      />
 
       {/* Premium Gate for Install Guide */}
       <PremiumGate feature="installTracking" variant="default">

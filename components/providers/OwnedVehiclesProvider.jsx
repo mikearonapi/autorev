@@ -83,7 +83,7 @@ function saveLocalVehicles(vehicles) {
  * @property {string} make - Manufacturer
  * @property {string} model - Model name
  * @property {string} [trim] - Trim level
- * @property {string} [matchedCarSlug] - Link to cars table if in our database
+ * @property {string} [matchedCarId] - UUID link to cars table if in our database (PRIMARY identifier)
  * @property {string} [nickname] - User's name for the car
  * @property {string} [color] - Vehicle color
  * @property {number} [mileage] - Current odometer reading
@@ -156,8 +156,7 @@ function transformVehicle(row) {
     make: row.make,
     model: row.model,
     trim: row.trim,
-    matchedCarSlug: row.matched_car_slug,
-    matchedCarId: row.matched_car_id, // UUID for reliable car lookups
+    matchedCarId: row.matched_car_id, // UUID for reliable car lookups (PRIMARY identifier)
     matchedCarVariantId: row.matched_car_variant_id,
     matchedCarVariantKey: row.matched_car_variant_key,
     vinMatchConfidence: row.vin_match_confidence,
@@ -546,17 +545,17 @@ export function OwnedVehiclesProvider({ children }) {
             const json = await res.json();
             const match = json?.match || null;
             if (match?.carVariantId) {
-              // Only accept carSlug overwrite if we don't already have one.
-              const nextCarSlug = transformed.matchedCarSlug || match.carSlug;
-              // If we *do* have a matchedCarSlug, ensure the resolver agrees before applying variant.
+              // Only accept carId overwrite if we don't already have one.
+              const nextCarId = transformed.matchedCarId || match.carId;
+              // If we *do* have a matchedCarId, ensure the resolver agrees before applying variant.
               const canApplyVariant =
-                !transformed.matchedCarSlug || transformed.matchedCarSlug === match.carSlug;
+                !transformed.matchedCarId || transformed.matchedCarId === match.carId;
               if (canApplyVariant) {
                 const { data: updatedRow, error: updErr } = await updateUserVehicle(
                   user.id,
                   transformed.id,
                   {
-                    matched_car_slug: nextCarSlug,
+                    matched_car_id: nextCarId, // car_id is the single source of truth
                     matched_car_variant_id: match.carVariantId,
                     matched_car_variant_key: match.carVariantKey,
                     vin_match_confidence: match.confidence,
@@ -621,7 +620,7 @@ export function OwnedVehiclesProvider({ children }) {
           make: updates.make,
           model: updates.model,
           trim: updates.trim,
-          matched_car_slug: updates.matchedCarSlug,
+          matched_car_id: updates.matchedCarId, // car_id is the single source of truth
           matched_car_variant_id: updates.matchedCarVariantId,
           matched_car_variant_key: updates.matchedCarVariantKey,
           vin_match_confidence: updates.vinMatchConfidence,
@@ -1047,13 +1046,13 @@ export function OwnedVehiclesProvider({ children }) {
   );
 
   /**
-   * Get vehicles matching a car slug (for Tuning Shop integration)
-   * @param {string} carSlug
+   * Get vehicles matching a car ID (for Tuning Shop integration)
+   * @param {string} carId - UUID of the car
    */
-  const getVehiclesByCarSlug = useCallback(
-    (carSlug) => {
-      if (!carSlug) return [];
-      return state.vehicles.filter((v) => v.matchedCarSlug === carSlug);
+  const getVehiclesByCarId = useCallback(
+    (carId) => {
+      if (!carId) return [];
+      return state.vehicles.filter((v) => v.matchedCarId === carId);
     },
     [state.vehicles]
   );
@@ -1092,7 +1091,7 @@ export function OwnedVehiclesProvider({ children }) {
       clearCustomSpecs,
       // Helpers
       getVehicleById,
-      getVehiclesByCarSlug,
+      getVehiclesByCarId,
       // Refresh
       refresh,
     }),
@@ -1113,7 +1112,7 @@ export function OwnedVehiclesProvider({ children }) {
       updateCustomSpecsSection,
       clearCustomSpecs,
       getVehicleById,
-      getVehiclesByCarSlug,
+      getVehiclesByCarId,
       refresh,
     ]
   );

@@ -41,6 +41,7 @@ generated-images/
 
 # Database backups (contain sensitive data)
 backups/
+scripts/backup/
 *.sql
 *.sql.gz
 

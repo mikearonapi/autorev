@@ -2,15 +2,15 @@
 
 /**
  * ModelVariantComparison Component
- * 
+ *
  * AI-powered comparison of similar car variants.
  * Shows the key differences between related models like:
  * - Porsche Cayman GTS vs Cayman GTS 4.0
  * - BMW M3 vs M3 Competition
  * - Corvette Stingray vs Z06
- * 
+ *
  * Helps users understand what makes each variant unique.
- * 
+ *
  * Now fetches car data from database via carsClient.
  */
 
@@ -28,73 +28,79 @@ import styles from './ModelVariantComparison.module.css';
  */
 function findRelatedVariants(car, allCars) {
   if (!car) return [];
-  
+
   // Extract base model identifiers
   const nameParts = car.name.toLowerCase().split(' ');
-  const brand = car.brand?.toLowerCase() || nameParts[0];
-  
+  const brand = car.make?.toLowerCase() || nameParts[0];
+
   // Find cars that share the same model base
-  const related = allCars.filter(other => {
+  const related = allCars.filter((other) => {
     if (other.slug === car.slug) return false;
-    
-    const otherBrand = other.brand?.toLowerCase() || other.name.split(' ')[0].toLowerCase();
+
+    const otherBrand = other.make?.toLowerCase() || other.name.split(' ')[0].toLowerCase();
     if (brand !== otherBrand) return false;
-    
+
     // Check for similar model identifiers
     const otherName = other.name.toLowerCase();
-    
+
     // Porsche patterns
     if (brand === 'porsche') {
       // Group by chassis code (718, 911, 991, 992, etc.)
       const chassisCodes = ['718', '911', '991', '992', '987', '981', '997', '996', '993'];
-      const thisChassis = chassisCodes.find(c => car.name.includes(c));
-      const otherChassis = chassisCodes.find(c => other.name.includes(c));
+      const thisChassis = chassisCodes.find((c) => car.name.includes(c));
+      const otherChassis = chassisCodes.find((c) => other.name.includes(c));
       if (thisChassis && otherChassis && thisChassis === otherChassis) return true;
-      
+
       // Group Cayman/Boxster
-      if ((car.name.includes('Cayman') || car.name.includes('Boxster')) &&
-          (other.name.includes('Cayman') || other.name.includes('Boxster'))) {
+      if (
+        (car.name.includes('Cayman') || car.name.includes('Boxster')) &&
+        (other.name.includes('Cayman') || other.name.includes('Boxster'))
+      ) {
         return true;
       }
     }
-    
+
     // BMW patterns
     if (brand === 'bmw') {
       // Group by model (M2, M3, M4, etc.)
       const bmwModels = ['M2', 'M3', 'M4', 'M5', 'M8', '1M'];
-      const thisModel = bmwModels.find(m => car.name.includes(m));
-      const otherModel = bmwModels.find(m => other.name.includes(m));
+      const thisModel = bmwModels.find((m) => car.name.includes(m));
+      const otherModel = bmwModels.find((m) => other.name.includes(m));
       if (thisModel && otherModel && thisModel === otherModel) return true;
     }
-    
+
     // Corvette patterns
     if (car.name.includes('Corvette') && other.name.includes('Corvette')) {
-      // Group by generation (C7, C8)
-      if ((car.name.includes('C7') || car.years?.includes('2014')) &&
-          (other.name.includes('C7') || other.years?.includes('2014'))) return true;
-      if ((car.name.includes('C8') || car.years?.includes('2020')) &&
-          (other.name.includes('C8') || other.years?.includes('2020'))) return true;
+      // Group by generation (C7: 2014-2019, C8: 2020+)
+      const isC7 = (c) => c.name.includes('C7') || (c.year >= 2014 && c.year <= 2019);
+      const isC8 = (c) => c.name.includes('C8') || c.year >= 2020;
+      if (isC7(car) && isC7(other)) return true;
+      if (isC8(car) && isC8(other)) return true;
     }
-    
+
     // Toyota/Subaru patterns
-    if ((car.name.includes('86') || car.name.includes('BRZ') || car.name.includes('GR86')) &&
-        (other.name.includes('86') || other.name.includes('BRZ') || other.name.includes('GR86'))) {
+    if (
+      (car.name.includes('86') || car.name.includes('BRZ') || car.name.includes('GR86')) &&
+      (other.name.includes('86') || other.name.includes('BRZ') || other.name.includes('GR86'))
+    ) {
       return true;
     }
-    
+
     // Mustang/Camaro patterns
     if (car.name.includes('Mustang') && other.name.includes('Mustang')) return true;
     if (car.name.includes('Camaro') && other.name.includes('Camaro')) return true;
-    
+
     // Nissan Z patterns
-    if ((car.name.includes('370Z') || car.name.includes('350Z') || car.name.includes('Z ')) &&
-        (other.name.includes('370Z') || other.name.includes('350Z') || other.name.includes('Z '))) {
+    if (
+      (car.name.includes('370Z') || car.name.includes('350Z') || car.name.includes('Z ')) &&
+      (other.name.includes('370Z') || other.name.includes('350Z') || other.name.includes('Z '))
+    ) {
       return true;
     }
-    
+
     // GT-R patterns
     if (car.name.includes('GT-R') && other.name.includes('GT-R')) return true;
-    
+
     // Generic pattern: first two words match
     if (nameParts.length >= 2) {
       const otherParts = otherName.split(' ');
@@ -102,10 +108,10 @@ function findRelatedVariants(car, allCars) {
         return true;
       }
     }
-    
+
     return false;
   });
-  
+
   return related.slice(0, 6); // Limit to 6 variants
 }
 
@@ -115,7 +121,7 @@ function findRelatedVariants(car, allCars) {
 function generateComparison(car1, car2) {
   const differences = [];
   const similarities = [];
-  
+
   // Power comparison
   if (car1.hp && car2.hp) {
     const hpDiff = car2.hp - car1.hp;
@@ -132,7 +138,7 @@ function generateComparison(car1, car2) {
       similarities.push(`Similar power output (~${car1.hp} hp)`);
     }
   }
-  
+
   // Torque comparison
   if (car1.torque && car2.torque) {
     const torqueDiff = car2.torque - car1.torque;
@@ -147,7 +153,7 @@ function generateComparison(car1, car2) {
       });
     }
   }
-  
+
   // 0-60 comparison
   if (car1.zeroToSixty && car2.zeroToSixty) {
     const timeDiff = (car2.zeroToSixty - car1.zeroToSixty).toFixed(1);
@@ -164,7 +170,7 @@ function generateComparison(car1, car2) {
       similarities.push(`Similar acceleration (~${car1.zeroToSixty}s 0-60)`);
     }
   }
-  
+
   // Weight comparison
   if (car1.curbWeight && car2.curbWeight) {
     const weightDiff = car2.curbWeight - car1.curbWeight;
@@ -179,70 +185,65 @@ function generateComparison(car1, car2) {
       });
     }
   }
-  
+
   // Engine differences
-  if (car1.engine && car2.engine && car1.engine !== car2.engine) {
+  if (car1.engineType && car2.engineType && car1.engineType !== car2.engineType) {
     differences.push({
       category: 'Engine',
       icon: Icons.bolt,
-      car1Value: car1.engine,
-      car2Value: car2.engine,
+      car1Value: car1.engineType,
+      car2Value: car2.engineType,
       diff: 'Different engines',
       winner: null,
     });
-  } else if (car1.engine) {
-    similarities.push(`Same engine platform (${car1.engine})`);
+  } else if (car1.engineType) {
+    similarities.push(`Same engine platform (${car1.engineType})`);
   }
-  
+
   // Drivetrain
-  if (car1.drivetrain && car2.drivetrain) {
-    if (car1.drivetrain !== car2.drivetrain) {
+  if (car1.driveType && car2.driveType) {
+    if (car1.driveType !== car2.driveType) {
       differences.push({
         category: 'Drivetrain',
         icon: Icons.gauge,
-        car1Value: car1.drivetrain,
-        car2Value: car2.drivetrain,
+        car1Value: car1.driveType,
+        car2Value: car2.driveType,
         diff: 'Different drivetrain',
         winner: null,
       });
     } else {
-      similarities.push(`Same drivetrain (${car1.drivetrain})`);
+      similarities.push(`Same drivetrain (${car1.driveType})`);
     }
   }
-  
-  // Price comparison
-  if (car1.priceRange && car2.priceRange) {
-    const extractPrice = (range) => {
-      const match = range.match(/\$(\d+)k/i);
-      return match ? parseInt(match[1]) * 1000 : 0;
-    };
-    const price1 = extractPrice(car1.priceRange);
-    const price2 = extractPrice(car2.priceRange);
-    
-    if (price1 && price2 && Math.abs(price2 - price1) > 5000) {
+
+  // Price comparison (using msrp as integer)
+  if (car1.msrp && car2.msrp) {
+    const priceDiff = car2.msrp - car1.msrp;
+
+    if (Math.abs(priceDiff) > 5000) {
       differences.push({
-        category: 'Price Range',
+        category: 'MSRP',
         icon: Icons.dollar,
-        car1Value: car1.priceRange,
-        car2Value: car2.priceRange,
-        diff: price2 > price1 ? 'Higher price' : 'Lower price',
-        winner: price2 < price1 ? 'car2' : 'car1', // Lower is better for value
+        car1Value: `$${car1.msrp.toLocaleString()}`,
+        car2Value: `$${car2.msrp.toLocaleString()}`,
+        diff: priceDiff > 0 ? 'Higher price' : 'Lower price',
+        winner: priceDiff < 0 ? 'car2' : 'car1', // Lower is better for value
       });
     }
   }
-  
+
   // Transmission
-  if (car1.trans && car2.trans && car1.trans !== car2.trans) {
+  if (car1.transmission && car2.transmission && car1.transmission !== car2.transmission) {
     differences.push({
       category: 'Transmission',
       icon: Icons.gauge,
-      car1Value: car1.trans,
-      car2Value: car2.trans,
+      car1Value: car1.transmission,
+      car2Value: car2.transmission,
       diff: 'Different transmission',
       winner: null,
     });
   }
-  
+
   return { differences, similarities };
 }
 
@@ -251,34 +252,39 @@ function generateComparison(car1, car2) {
  */
 function generateSummary(car1, car2, comparison) {
   const { differences, similarities } = comparison;
-  
+
   if (differences.length === 0) {
     return `The ${car1.name} and ${car2.name} are very similar models with minor differences.`;
   }
-  
-  const mainDifferences = differences.slice(0, 3).map(d => d.category.toLowerCase()).join(', ');
-  
+
+  const mainDifferences = differences
+    .slice(0, 3)
+    .map((d) => d.category.toLowerCase())
+    .join(', ');
+
   let summary = `The ${car2.name} differs from the ${car1.name} primarily in ${mainDifferences}. `;
-  
+
   // Add specific insights
-  const powerDiff = differences.find(d => d.category === 'Power');
+  const powerDiff = differences.find((d) => d.category === 'Power');
   if (powerDiff) {
-    summary += powerDiff.winner === 'car2' 
-      ? `It offers ${powerDiff.diff} more power. `
-      : `It has ${Math.abs(parseInt(powerDiff.diff))} hp less. `;
+    summary +=
+      powerDiff.winner === 'car2'
+        ? `It offers ${powerDiff.diff} more power. `
+        : `It has ${Math.abs(parseInt(powerDiff.diff))} hp less. `;
   }
-  
-  const priceDiff = differences.find(d => d.category === 'Price Range');
+
+  const priceDiff = differences.find((d) => d.category === 'Price Range');
   if (priceDiff) {
-    summary += priceDiff.winner === 'car2'
-      ? `It also comes at a lower price point. `
-      : `It comes at a premium. `;
+    summary +=
+      priceDiff.winner === 'car2'
+        ? `It also comes at a lower price point. `
+        : `It comes at a premium. `;
   }
-  
+
   if (similarities.length > 0) {
     summary += `They share ${similarities[0].toLowerCase()}.`;
   }
-  
+
   return summary;
 }
 
@@ -288,33 +294,30 @@ function generateSummary(car1, car2, comparison) {
 export default function ModelVariantComparison({ car, onClose }) {
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [allCars, setAllCars] = useState([]);
-  
+
   // Fetch car data from database on mount
   useEffect(() => {
     fetchCars().then(setAllCars).catch(console.error);
   }, []);
-  
+
   // Find related variants (from database)
-  const relatedVariants = useMemo(() => 
-    findRelatedVariants(car, allCars),
-    [car, allCars]
-  );
-  
+  const relatedVariants = useMemo(() => findRelatedVariants(car, allCars), [car, allCars]);
+
   // Generate comparison when variant selected
   const comparison = useMemo(() => {
     if (!selectedVariant) return null;
     return generateComparison(car, selectedVariant);
   }, [car, selectedVariant]);
-  
+
   const summary = useMemo(() => {
     if (!selectedVariant || !comparison) return null;
     return generateSummary(car, selectedVariant, comparison);
   }, [car, selectedVariant, comparison]);
-  
+
   if (relatedVariants.length === 0) {
     return null;
   }
-  
+
   return (
     <div className={styles.container}>
       <div className={styles.header}>
@@ -325,11 +328,9 @@ export default function ModelVariantComparison({ car, onClose }) {
           </button>
         )}
       </div>
-      
-      <p className={styles.subtitle}>
-        See how the {car.name} compares to similar models
-      </p>
-      
+
+      <p className={styles.subtitle}>See how the {car.name} compares to similar models</p>
+
       {/* Variant Selection */}
       {!selectedVariant ? (
         <div className={styles.variantGrid}>
@@ -356,13 +357,10 @@ export default function ModelVariantComparison({ car, onClose }) {
         /* Comparison View */
         <div className={styles.comparisonView}>
           {/* Back button */}
-          <button 
-            className={styles.backBtn}
-            onClick={() => setSelectedVariant(null)}
-          >
+          <button className={styles.backBtn} onClick={() => setSelectedVariant(null)}>
             ← Choose different variant
           </button>
-          
+
           {/* Cars header */}
           <div className={styles.carsHeader}>
             <div className={styles.carColumn}>
@@ -379,14 +377,14 @@ export default function ModelVariantComparison({ car, onClose }) {
               <h4>{selectedVariant.name}</h4>
             </div>
           </div>
-          
+
           {/* Summary */}
           {summary && (
             <div className={styles.summary}>
               <p>{summary}</p>
             </div>
           )}
-          
+
           {/* Differences */}
           {comparison.differences.length > 0 && (
             <div className={styles.section}>
@@ -400,13 +398,15 @@ export default function ModelVariantComparison({ car, onClose }) {
                         <Icon size={16} />
                         <span>{diff.category}</span>
                       </div>
-                      <div className={`${styles.diffValue} ${diff.winner === 'car1' ? styles.winner : ''}`}>
+                      <div
+                        className={`${styles.diffValue} ${diff.winner === 'car1' ? styles.winner : ''}`}
+                      >
                         {diff.car1Value}
                       </div>
-                      <div className={styles.diffIndicator}>
-                        {diff.diff}
-                      </div>
-                      <div className={`${styles.diffValue} ${diff.winner === 'car2' ? styles.winner : ''}`}>
+                      <div className={styles.diffIndicator}>{diff.diff}</div>
+                      <div
+                        className={`${styles.diffValue} ${diff.winner === 'car2' ? styles.winner : ''}`}
+                      >
                         {diff.car2Value}
                       </div>
                     </div>
@@ -415,7 +415,7 @@ export default function ModelVariantComparison({ car, onClose }) {
               </div>
             </div>
           )}
-          
+
           {/* Similarities */}
           {comparison.similarities.length > 0 && (
             <div className={styles.section}>
@@ -441,19 +441,16 @@ export default function ModelVariantComparison({ car, onClose }) {
  */
 export function RelatedVariantsChips({ car, onSelectVariant }) {
   const [allCars, setAllCars] = useState([]);
-  
+
   // Fetch car data from database on mount
   useEffect(() => {
     fetchCars().then(setAllCars).catch(console.error);
   }, []);
-  
-  const relatedVariants = useMemo(() => 
-    findRelatedVariants(car, allCars),
-    [car, allCars]
-  );
-  
+
+  const relatedVariants = useMemo(() => findRelatedVariants(car, allCars), [car, allCars]);
+
   if (relatedVariants.length === 0) return null;
-  
+
   return (
     <div className={styles.chipsContainer}>
       <span className={styles.chipsLabel}>Compare to:</span>
@@ -471,24 +468,3 @@ export function RelatedVariantsChips({ car, onSelectVariant }) {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

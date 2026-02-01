@@ -31,6 +31,7 @@ import { Skeleton, ListSkeleton } from '@/components/ui/Skeleton';
 import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
 import { useGarageScore } from '@/hooks/useGarageScore';
+import { resolveCarId } from '@/lib/carResolver';
 import { calculateTotalCost } from '@/lib/performance.js';
 import { getPerformanceProfile } from '@/lib/performanceCalculator';
 
@@ -74,6 +75,7 @@ function MyPartsContent() {
   const searchParams = useSearchParams();
   const [selectedCar, setSelectedCar] = useState(null);
   const [currentBuildId, setCurrentBuildId] = useState(null);
+  const [carId, setCarId] = useState(null);
   const partsSelectorRef = useRef(null);
 
   // Parts state - for PartsSelector component
@@ -95,6 +97,25 @@ function MyPartsContent() {
   const buildIdParam = searchParams.get('build');
   const carSlugParam = searchParams.get('car');
   const actionParam = searchParams.get('action');
+
+  // Resolve carSlugParam to carId
+  useEffect(() => {
+    if (selectedCar?.id) {
+      // Use selectedCar.id directly (it's the carId)
+      setCarId(selectedCar.id);
+    } else if (carSlugParam && !carId) {
+      // Fallback: resolve slug if car not loaded yet
+      resolveCarId(carSlugParam)
+        .then((id) => {
+          if (id) setCarId(id);
+        })
+        .catch((err) => {
+          console.error('[MyParts] Error resolving carId:', err);
+        });
+    } else if (!carSlugParam && !selectedCar) {
+      setCarId(null);
+    }
+  }, [carSlugParam, carId, selectedCar]);
 
   // Fallback: fetch single car in parallel with full list
   // This provides faster data when the full list is slow or unavailable
@@ -253,7 +274,12 @@ function MyPartsContent() {
   if (!selectedCar) {
     return (
       <div className={styles.page}>
-        <MyGarageSubNav carSlug={carSlugParam} buildId={buildIdParam} onBack={handleBack} />
+        <MyGarageSubNav
+          carId={carId}
+          carSlug={carSlugParam}
+          buildId={buildIdParam}
+          onBack={handleBack}
+        />
         <NoVehicleSelectedState />
         <AuthModal {...authModal.props} />
       </div>
@@ -263,6 +289,7 @@ function MyPartsContent() {
   return (
     <div className={styles.page}>
       <MyGarageSubNav
+        carId={carId}
         carSlug={selectedCar.slug}
         buildId={currentBuildId}
         onBack={handleBack}
@@ -279,14 +306,19 @@ function MyPartsContent() {
         }
       />
 
-      <GarageVehicleSelector selectedCarSlug={selectedCar.slug} buildId={currentBuildId} />
+      <GarageVehicleSelector
+        selectedCarId={carId}
+        selectedCarSlug={selectedCar.slug}
+        buildId={currentBuildId}
+      />
 
       {/* AL Parts Recommendations - shows when there are upgrades */}
       {effectiveModules.length > 0 && (
         <div className={styles.alRecommendationsContainer}>
           <ALRecommendationsButton
             carName={selectedCar.name}
-            carSlug={selectedCar.slug}
+            carId={selectedCar.id}
+            car={selectedCar}
             carBrand={selectedCar.brand}
             upgrades={profile.selectedUpgrades}
             selectedParts={selectedParts}
@@ -308,7 +340,8 @@ function MyPartsContent() {
             selectedParts={selectedParts}
             onPartsChange={handlePartsChange}
             carName={selectedCar.name}
-            carSlug={selectedCar.slug}
+            carId={selectedCar.id}
+            car={selectedCar}
             carBrand={selectedCar.brand}
             buildId={currentBuildId}
             totalHpGain={hpGain}

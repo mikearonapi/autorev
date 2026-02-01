@@ -2,7 +2,7 @@
 
 /**
  * AskALButton Component
- * 
+ *
  * A small "Ask AL" quick action button for spec sections.
  * When clicked, navigates to the /al page with a prefilled prompt.
  */
@@ -44,50 +44,44 @@ export function getPendingALPrompt() {
 // Sparkle icon for the button - 5-pointed star matching brand guidelines
 // MUST MATCH: app/(app)/garage/my-specs/page.jsx LocalIcons.sparkle
 const SparkleIcon = ({ size = 16, className = '' }) => (
-  <svg 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    fill="currentColor"
-    className={className}
-  >
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className}>
     <path d="M12 2L9.19 8.63L2 9.24L7.46 13.97L5.82 21L12 17.27L18.18 21L16.54 13.97L22 9.24L14.81 8.63L12 2Z" />
   </svg>
 );
 
 /**
  * AskALButton - Navigates to /al page with a contextual prompt
- * 
+ *
  * @param {string} category - The category/section name (e.g., "Fluids", "Brakes")
  * @param {string} prompt - The full detailed question to ask AL
  * @param {string} displayMessage - Short, clear question shown to user before sending (optional, falls back to prompt)
  * @param {string} carName - Optional car name for context
- * @param {string} carSlug - Optional car slug for context metadata
+ * @param {string} carId - Optional car ID for context metadata
  * @param {string} variant - Button variant: 'icon' (just icon), 'compact' (icon + small text), 'full' (icon + full text), 'header' (lime CTA for card headers)
  * @param {string} className - Additional CSS classes
  * @param {object} metadata - Optional additional metadata to pass to chat context
  */
-export default function AskALButton({ 
+export default function AskALButton({
   category,
   prompt,
   displayMessage,
   carName,
-  carSlug,
+  carId,
   variant = 'icon',
   className = '',
   metadata = {},
 }) {
   const router = useRouter();
-  
+
   const handleAskALClick = (e) => {
     e.stopPropagation(); // Prevent triggering parent click handlers
-    
+
     // Build the prompt
     const fullPrompt = prompt || `Tell me about ${category}${carName ? ` for my ${carName}` : ''}`;
-    
+
     // Display message should be short and clear for user preview
     const preview = displayMessage || fullPrompt;
-    
+
     // Store the prompt data for the AL page to pick up
     setPendingALPrompt({
       prompt: fullPrompt,
@@ -95,21 +89,21 @@ export default function AskALButton({
       context: {
         category,
         carName,
-        carSlug,
+        carId,
         ...metadata,
       },
     });
-    
+
     // Navigate to the AL page
     router.push('/al');
   };
-  
+
   const variantClass = styles[`variant${variant.charAt(0).toUpperCase() + variant.slice(1)}`] || '';
-  
+
   // All variants show the AL icon now
   const showIcon = true;
   const showText = variant !== 'icon';
-  
+
   return (
     <button
       className={`${styles.askALButton} ${variantClass} ${className}`}
@@ -117,11 +111,14 @@ export default function AskALButton({
       title={`Ask AL about ${category}`}
       aria-label={`Ask AL about ${category}`}
     >
-      {showIcon && <SparkleIcon size={variant === 'icon' ? 14 : variant === 'header' ? 12 : 10} className={styles.sparkleIcon} />}
+      {showIcon && (
+        <SparkleIcon
+          size={variant === 'icon' ? 14 : variant === 'header' ? 12 : 10}
+          className={styles.sparkleIcon}
+        />
+      )}
       {showText && (
-        <span className={styles.buttonText}>
-          {variant === 'compact' ? 'Ask' : `Ask AL`}
-        </span>
+        <span className={styles.buttonText}>{variant === 'compact' ? 'Ask' : `Ask AL`}</span>
       )}
     </button>
   );
@@ -131,31 +128,24 @@ export default function AskALButton({
  * AskALInline - An inline version that looks like a link
  * For use within text content
  */
-export function AskALInline({ 
-  category,
-  prompt,
-  carName,
-  carSlug,
-  children,
-  className = '',
-}) {
+export function AskALInline({ category, prompt, carName, carId, children, className = '' }) {
   const router = useRouter();
-  
+
   const handleAskALInlineClick = (e) => {
     e.stopPropagation();
     const fullPrompt = prompt || `Tell me about ${category}${carName ? ` for my ${carName}` : ''}`;
-    
+
     // Store the prompt data for the AL page to pick up
     setPendingALPrompt({
       prompt: fullPrompt,
       displayMessage: fullPrompt,
-      context: { category, carName, carSlug },
+      context: { category, carName, carId },
     });
-    
+
     // Navigate to the AL page
     router.push('/al');
   };
-  
+
   return (
     <button
       className={`${styles.askALInline} ${className}`}
@@ -167,15 +157,3 @@ export function AskALInline({
     </button>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-

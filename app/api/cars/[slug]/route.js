@@ -2,7 +2,7 @@
  * GET /api/cars/[slug]
  *
  * Returns a single car by its slug from the database.
- * Used as a fallback when the full cars list isn't available.
+ * Updated for Teoalida schema (Jan 2026).
  */
 
 import { NextResponse } from 'next/server';
@@ -26,68 +26,8 @@ async function handleGet(request, { params }) {
   }
 
   try {
-    const { data: car, error } = await supabase
-      .from('cars')
-      .select(
-        `
-        id,
-        slug,
-        name,
-        model,
-        trim,
-        years,
-        tier,
-        category,
-        brand,
-        country,
-        engine,
-        hp,
-        torque,
-        trans,
-        drivetrain,
-        price_range,
-        price_avg,
-        curb_weight,
-        zero_to_sixty,
-        top_speed,
-        quarter_mile,
-        braking_60_0,
-        lateral_g,
-        layout,
-        msrp_new_low,
-        msrp_new_high,
-        score_sound,
-        score_interior,
-        score_track,
-        score_reliability,
-        score_value,
-        score_driver_fun,
-        score_aftermarket,
-        notes,
-        highlight,
-        tagline,
-        hero_blurb,
-        image_hero_url,
-        manual_available,
-        seats,
-        vehicle_type,
-        daily_usability_tag,
-        common_issues,
-        defining_strengths,
-        honest_weaknesses,
-        engine_character,
-        transmission_feel,
-        chassis_dynamics,
-        steering_feel,
-        sound_signature,
-        track_readiness,
-        community_strength,
-        diy_friendliness,
-        parts_availability
-      `
-      )
-      .eq('slug', slug)
-      .single();
+    // Full Teoalida schema for detail view
+    const { data: car, error } = await supabase.from('cars').select('*').eq('slug', slug).single();
 
     if (error) {
       if (error.code === 'PGRST116') {
@@ -98,63 +38,71 @@ async function handleGet(request, { params }) {
     }
 
     // Transform snake_case to camelCase for frontend compatibility
+    // Include legacy field aliases for backward compatibility
     const transformedCar = {
+      // Core identifiers
       id: car.id,
       slug: car.slug,
       name: car.name,
+      teoalidaId: car.teoalida_id,
+
+      // YMMT (Teoalida)
+      year: car.year,
+      make: car.make,
       model: car.model,
       trim: car.trim,
-      years: car.years,
+      trimDescription: car.trim_description,
+
+      // Classification
       tier: car.tier,
       category: car.category,
-      brand: car.brand,
-      country: car.country,
-      engine: car.engine,
+      bodyType: car.body_type,
+      carClassification: car.car_classification,
+      isSelectable: car.is_selectable,
+      generationId: car.generation_id,
+
+      // Engine specs
       hp: car.hp,
+      hpRpm: car.hp_rpm,
       torque: car.torque,
-      trans: car.trans,
-      drivetrain: car.drivetrain,
-      priceRange: car.price_range,
-      priceAvg: car.price_avg,
+      torqueRpm: car.torque_rpm,
+      engineType: car.engine_type,
+      engineSize: car.engine_size ? parseFloat(car.engine_size) : null,
+      cylinders: car.cylinders,
+      fuelType: car.fuel_type,
+
+      // Drivetrain
+      transmission: car.transmission,
+      driveType: car.drive_type,
+
+      // Physical dimensions
       curbWeight: car.curb_weight,
-      zeroToSixty: car.zero_to_sixty ? parseFloat(car.zero_to_sixty) : null,
-      topSpeed: car.top_speed,
-      quarterMile: car.quarter_mile ? parseFloat(car.quarter_mile) : null,
-      braking60To0: car.braking_60_0,
-      lateralG: car.lateral_g ? parseFloat(car.lateral_g) : null,
-      layout: car.layout,
-      msrpNewLow: car.msrp_new_low,
-      msrpNewHigh: car.msrp_new_high,
-      scoreSound: car.score_sound,
-      scoreInterior: car.score_interior,
-      scoreTrack: car.score_track,
-      scoreReliability: car.score_reliability,
-      scoreValue: car.score_value,
-      scoreDriverFun: car.score_driver_fun,
-      scoreAftermarket: car.score_aftermarket,
-      notes: car.notes,
-      highlight: car.highlight,
-      tagline: car.tagline,
-      heroBlurb: car.hero_blurb,
-      imageHeroUrl: car.image_hero_url,
-      manualAvailable: car.manual_available,
-      seats: car.seats,
-      vehicleType: car.vehicle_type,
-      dailyUsabilityTag: car.daily_usability_tag,
-      commonIssues: car.common_issues,
-      definingStrengths: car.defining_strengths,
-      honestWeaknesses: car.honest_weaknesses,
-      // Driving Character fields
-      engineCharacter: car.engine_character,
-      transmissionFeel: car.transmission_feel,
-      chassisDynamics: car.chassis_dynamics,
-      steeringFeel: car.steering_feel,
-      soundSignature: car.sound_signature,
-      // Track & Tuning fields
-      trackReadiness: car.track_readiness,
-      communityStrength: car.community_strength,
-      diyFriendliness: car.diy_friendliness,
-      partsAvailability: car.parts_availability,
+      lengthIn: car.length_in ? parseFloat(car.length_in) : null,
+      widthIn: car.width_in ? parseFloat(car.width_in) : null,
+      heightIn: car.height_in ? parseFloat(car.height_in) : null,
+      wheelbaseIn: car.wheelbase_in ? parseFloat(car.wheelbase_in) : null,
+      groundClearanceIn: car.ground_clearance_in ? parseFloat(car.ground_clearance_in) : null,
+
+      // Pricing
+      msrp: car.msrp,
+
+      // Fuel economy
+      mpgCity: car.mpg_city,
+      mpgHighway: car.mpg_highway,
+      mpgCombined: car.mpg_combined,
+      fuelTankCapacity: car.fuel_tank_capacity ? parseFloat(car.fuel_tank_capacity) : null,
+
+      // Capability (trucks)
+      maxTowing: car.max_towing,
+      maxPayload: car.max_payload,
+
+      // Origin & platform
+      countryOfOrigin: car.country_of_origin,
+      platformCode: car.platform_code,
+
+      // Media
+      imageUrl: car.image_url,
+      sourceUrl: car.source_url,
     };
 
     return NextResponse.json({ car: transformedCar });

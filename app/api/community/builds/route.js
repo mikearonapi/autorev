@@ -42,20 +42,19 @@ async function getUserContext(userId) {
   if (!userId) return null;
 
   try {
-    // Fetch user's owned vehicles
+    // Fetch user's owned vehicles (JOIN to cars for slug)
     // Note: cars table has 'name' not 'make' - name contains full car name like "2019 BMW M3"
     const { data: vehicles } = await supabaseAdmin
       .from('user_vehicles')
-      .select('car_slug, car_id, cars(name, hp)')
+      .select('matched_car_id, cars:matched_car_id(slug, name, hp)')
       .eq('user_id', userId)
       .limit(10);
 
-    // Fetch user's favorites
+    // Fetch user's favorites (JOIN to cars for slug)
     const { data: favorites } = await supabaseAdmin
       .from('user_favorites')
-      .select('car_slug')
+      .select('car_id, cars:car_id(slug)')
       .eq('user_id', userId)
-      .eq('favorite_type', 'car')
       .limit(50);
 
     // Fetch user's recent car page views (last 7 days)
@@ -174,7 +173,7 @@ async function handleGet(request) {
           const { data: fetchedCarData, error: carError } = await supabaseAdmin
             .from('cars')
             .select(
-              'slug, image_hero_url, hp, torque, engine, drivetrain, zero_to_sixty, top_speed, name, braking_60_0, lateral_g, quarter_mile, curb_weight'
+              'slug, image_url, hp, torque, engine_type, drive_type, zero_to_sixty, top_speed, name, braking_60_0, lateral_g, quarter_mile, curb_weight'
             )
             .eq('slug', build.car_slug)
             .single();
@@ -184,7 +183,7 @@ async function handleGet(request) {
           } else if (fetchedCarData) {
             carData = fetchedCarData;
             if (!build.images || build.images.length === 0) {
-              build.car_image_url = carData.image_hero_url;
+              build.car_image_url = carData.image_url;
             }
 
             build.car_specs = {

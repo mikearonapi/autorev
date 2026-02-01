@@ -2,13 +2,13 @@
 
 /**
  * Factory Configuration Component - Redesigned
- * 
+ *
  * Clean, editable interface for selecting factory-level configuration:
  * - Year / Trim
  * - Engine variant
  * - Transmission
  * - Drivetrain
- * 
+ *
  * @module components/tuning-shop/FactoryConfig
  */
 
@@ -23,10 +23,11 @@ import styles from './FactoryConfig.module.css';
 function logConfigChange(car, field, oldValue, newValue, carDefault) {
   // Skip if no actual change
   if (oldValue === newValue) return;
-  
+
   const changeData = {
     timestamp: new Date().toISOString(),
-    carSlug: car?.slug,
+    carId: car?.id,
+    carSlug: car?.slug, // Keep slug for logging/analytics compatibility
     carName: car ? `${car.year || ''} ${car.make} ${car.model}`.trim() : 'Unknown',
     field,
     oldValue,
@@ -37,13 +38,13 @@ function logConfigChange(car, field, oldValue, newValue, carDefault) {
     // Flag if user is providing data we don't have
     isFillingGap: !carDefault && newValue,
   };
-  
+
   // Log to console for development
   console.log('[FactoryConfig] User change detected:', changeData);
-  
+
   // TODO: Send to analytics endpoint when ready
   // trackEvent('factory_config_change', changeData);
-  
+
   // For now, store in sessionStorage for debugging
   try {
     const existingLogs = JSON.parse(sessionStorage.getItem('factoryConfigChanges') || '[]');
@@ -58,38 +59,65 @@ function logConfigChange(car, field, oldValue, newValue, carDefault) {
 
 // Icons
 const ChevronIcon = ({ isOpen }) => (
-  <svg 
-    width={16} 
-    height={16} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
+  <svg
+    width={16}
+    height={16}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
     strokeLinejoin="round"
     className={`${styles.chevron} ${isOpen ? styles.chevronOpen : ''}`}
   >
-    <polyline points="6 9 12 15 18 9"/>
+    <polyline points="6 9 12 15 18 9" />
   </svg>
 );
 
 const GearIcon = () => (
-  <svg width={18} height={18} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <circle cx="12" cy="12" r="3"/>
-    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+  <svg
+    width={18}
+    height={18}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="3" />
+    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
   </svg>
 );
 
 const EditIcon = () => (
-  <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+  <svg
+    width={14}
+    height={14}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
   </svg>
 );
 
 const CheckIcon = () => (
-  <svg width={14} height={14} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12"/>
+  <svg
+    width={14}
+    height={14}
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <polyline points="20 6 9 17 4 12" />
   </svg>
 );
 
@@ -105,10 +133,10 @@ export default function FactoryConfig({
   compact = false,
 }) {
   const safeInitialConfig = initialConfig || {};
-  
+
   const [isExpanded, setIsExpanded] = useState(defaultExpanded);
   const [isEditing, setIsEditing] = useState(false);
-  
+
   // Configuration state - with car defaults
   const [config, setConfig] = useState({
     year: safeInitialConfig.year || null,
@@ -136,37 +164,55 @@ export default function FactoryConfig({
   }, [car?.slug, initialConfig]);
 
   // Get effective values (user override or car default)
-  const effectiveConfig = useMemo(() => ({
-    year: config.year || car?.years || car?.year || 'TBD',
-    trim: config.trim || car?.trim || 'Base',
-    engine: config.engine || car?.engine || 'TBD',
-    transmission: config.transmission || car?.trans || 'TBD',
-    drivetrain: config.drivetrain || car?.drivetrain || 'TBD',
-    hp: config.hp || car?.hp || 'TBD',
-    torque: config.torque || car?.torque || 'TBD',
-  }), [config, car]);
+  const effectiveConfig = useMemo(
+    () => ({
+      year: config.year || car?.year || 'TBD',
+      trim: config.trim || car?.trim || 'Base',
+      engine: config.engine || car?.engineType || 'TBD',
+      transmission: config.transmission || car?.transmission || 'TBD',
+      drivetrain: config.drivetrain || car?.driveType || 'TBD',
+      hp: config.hp || car?.hp || 'TBD',
+      torque: config.torque || car?.torque || 'TBD',
+    }),
+    [config, car]
+  );
 
   // Check if any config has changed from car default
   const hasChanges = useMemo(() => {
-    return !!(config.year || config.trim || config.engine || 
-              config.transmission || config.drivetrain || 
-              config.hp || config.torque);
+    return !!(
+      config.year ||
+      config.trim ||
+      config.engine ||
+      config.transmission ||
+      config.drivetrain ||
+      config.hp ||
+      config.torque
+    );
   }, [config]);
 
   // Handle configuration changes with logging
-  const handleConfigChange = useCallback((key, value) => {
-    setConfig(prev => {
-      const oldValue = prev[key];
-      const carDefault = car?.[key === 'transmission' ? 'trans' : key];
-      
-      // Log the change for analytics
-      logConfigChange(car, key, oldValue, value || null, carDefault);
-      
-      const newConfig = { ...prev, [key]: value || null };
-      onChange?.(newConfig);
-      return newConfig;
-    });
-  }, [onChange, car]);
+  const handleConfigChange = useCallback(
+    (key, value) => {
+      setConfig((prev) => {
+        const oldValue = prev[key];
+        // Map config keys to new schema field names
+        const keyMapping = {
+          engine: 'engineType',
+          drivetrain: 'driveType',
+          transmission: 'transmission',
+        };
+        const carDefault = car?.[keyMapping[key] || key];
+
+        // Log the change for analytics
+        logConfigChange(car, key, oldValue, value || null, carDefault);
+
+        const newConfig = { ...prev, [key]: value || null };
+        onChange?.(newConfig);
+        return newConfig;
+      });
+    },
+    [onChange, car]
+  );
 
   // Reset to defaults
   const handleReset = useCallback(() => {
@@ -187,14 +233,16 @@ export default function FactoryConfig({
   if (!car) return null;
 
   // Available options (could come from database in future)
-  const transmissionOptions = getTransmissionOptions(car?.trans);
-  const drivetrainOptions = getDrivetrainOptions(car?.drivetrain);
+  const transmissionOptions = getTransmissionOptions(car?.transmission);
+  const drivetrainOptions = getDrivetrainOptions(car?.driveType);
 
   return (
-    <div className={`${styles.container} ${hasChanges ? styles.hasChanges : ''} ${compact ? styles.compact : ''}`}>
+    <div
+      className={`${styles.container} ${hasChanges ? styles.hasChanges : ''} ${compact ? styles.compact : ''}`}
+    >
       {/* Header */}
       <div className={styles.header}>
-        <button 
+        <button
           className={styles.headerToggle}
           onClick={() => setIsExpanded(!isExpanded)}
           disabled={disabled}
@@ -210,16 +258,16 @@ export default function FactoryConfig({
           {isExpanded && (
             <button
               className={`${styles.headerEditBtn} ${isEditing ? styles.headerEditBtnActive : ''}`}
-              onClick={(e) => { e.stopPropagation(); setIsEditing(!isEditing); }}
+              onClick={(e) => {
+                e.stopPropagation();
+                setIsEditing(!isEditing);
+              }}
             >
               {isEditing ? <CheckIcon /> : <EditIcon />}
               <span className={styles.headerEditLabel}>{isEditing ? 'Done' : 'Edit'}</span>
             </button>
           )}
-          <button 
-            className={styles.chevronBtn}
-            onClick={() => setIsExpanded(!isExpanded)}
-          >
+          <button className={styles.chevronBtn} onClick={() => setIsExpanded(!isExpanded)}>
             <ChevronIcon isOpen={isExpanded} />
           </button>
         </div>
@@ -245,7 +293,7 @@ export default function FactoryConfig({
               value={effectiveConfig.year}
               isEditing={isEditing}
               onChange={(val) => handleConfigChange('year', val)}
-              placeholder={car?.years || car?.year || 'e.g., 2024'}
+              placeholder={car?.year ? String(car.year) : 'e.g., 2024'}
               disabled={disabled}
             />
 
@@ -265,7 +313,7 @@ export default function FactoryConfig({
               value={effectiveConfig.engine}
               isEditing={isEditing}
               onChange={(val) => handleConfigChange('engine', val)}
-              placeholder={car?.engine || 'e.g., 3.8L Twin Turbo V6'}
+              placeholder={car?.engineType || 'e.g., 3.8L Twin Turbo V6'}
               disabled={disabled}
             />
 
@@ -276,7 +324,7 @@ export default function FactoryConfig({
               isEditing={isEditing}
               onChange={(val) => handleConfigChange('transmission', val)}
               options={transmissionOptions}
-              placeholder={car?.trans || 'Select...'}
+              placeholder={car?.transmission || 'Select...'}
               disabled={disabled}
             />
 
@@ -287,7 +335,7 @@ export default function FactoryConfig({
               isEditing={isEditing}
               onChange={(val) => handleConfigChange('drivetrain', val)}
               options={drivetrainOptions}
-              placeholder={car?.drivetrain || 'Select...'}
+              placeholder={car?.driveType || 'Select...'}
               disabled={disabled}
             />
 
@@ -307,10 +355,9 @@ export default function FactoryConfig({
           {/* Info Note */}
           <div className={styles.infoNote}>
             <span>
-              {isEditing 
-                ? "Update your specific factory specs. This helps us provide more accurate upgrade recommendations."
-                : "These are your vehicle's factory specifications. Click 'Edit Config' to customize."
-              }
+              {isEditing
+                ? 'Update your specific factory specs. This helps us provide more accurate upgrade recommendations.'
+                : "These are your vehicle's factory specifications. Click 'Edit Config' to customize."}
             </span>
           </div>
         </div>
@@ -322,16 +369,16 @@ export default function FactoryConfig({
 /**
  * Individual Config Field Component
  */
-function ConfigField({ 
-  label, 
-  value, 
-  isEditing, 
-  onChange, 
-  options = null, 
-  placeholder = '', 
+function ConfigField({
+  label,
+  value,
+  isEditing,
+  onChange,
+  options = null,
+  placeholder = '',
   suffix = '',
   type = 'text',
-  disabled = false 
+  disabled = false,
 }) {
   const displayValue = value === 'TBD' || !value ? placeholder : value;
   const isTBD = value === 'TBD' || !value;
@@ -341,7 +388,8 @@ function ConfigField({
       <div className={styles.configField}>
         <span className={styles.fieldLabel}>{label}</span>
         <span className={`${styles.fieldValue} ${isTBD ? styles.fieldValueTBD : ''}`}>
-          {displayValue}{suffix && !isTBD && ` ${suffix}`}
+          {displayValue}
+          {suffix && !isTBD && ` ${suffix}`}
         </span>
       </div>
     );
@@ -359,8 +407,10 @@ function ConfigField({
           disabled={disabled}
         >
           <option value="">{placeholder}</option>
-          {options.map(opt => (
-            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          {options.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
           ))}
         </select>
       </div>
@@ -374,7 +424,7 @@ function ConfigField({
         <input
           type={type}
           className={styles.fieldInput}
-          value={value === 'TBD' ? '' : (value || '')}
+          value={value === 'TBD' ? '' : value || ''}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           disabled={disabled}
@@ -390,10 +440,10 @@ function ConfigField({
  */
 function getTransmissionOptions(transStr) {
   if (!transStr) return [];
-  
+
   const options = [];
   const normalized = transStr.toLowerCase();
-  
+
   // Common transmission types
   if (normalized.includes('mt') || normalized.includes('manual')) {
     const match = transStr.match(/(\d+)/);
@@ -414,12 +464,12 @@ function getTransmissionOptions(transStr) {
   if (normalized.includes('cvt')) {
     options.push({ value: 'cvt', label: 'CVT' });
   }
-  
+
   // If no specific matches, add the raw value
   if (options.length === 0 && transStr) {
     options.push({ value: transStr, label: transStr });
   }
-  
+
   return options;
 }
 
@@ -434,16 +484,16 @@ function getDrivetrainOptions(drivetrainStr) {
     { value: 'AWD', label: 'AWD (All-Wheel Drive)' },
     { value: '4WD', label: '4WD (Four-Wheel Drive)' },
   ];
-  
+
   // If car has a specific drivetrain, put it first
   if (drivetrainStr) {
     const normalized = drivetrainStr.toUpperCase();
-    const matchingOption = allOptions.find(opt => opt.value === normalized);
+    const matchingOption = allOptions.find((opt) => opt.value === normalized);
     if (matchingOption) {
-      return [matchingOption, ...allOptions.filter(opt => opt.value !== normalized)];
+      return [matchingOption, ...allOptions.filter((opt) => opt.value !== normalized)];
     }
   }
-  
+
   return allOptions;
 }
 

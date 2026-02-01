@@ -2,12 +2,12 @@
 
 /**
  * VehicleInfoBar Component
- * 
+ *
  * Displays vehicle info at the top of My Build/Performance/Parts pages.
  * NOT in the header - sits below the navigation as a content element.
- * 
+ *
  * Layout: [Image] [Name + Subtitle] [Page-specific stat]
- * 
+ *
  * Hero Image Priority:
  * 1. User's custom hero image (heroImageUrl prop)
  * 2. Stock car image (CarImage component)
@@ -24,23 +24,18 @@ import styles from './VehicleInfoBar.module.css';
 
 /**
  * VehicleInfoBar
- * 
+ *
  * @param {Object} car - The car object
  * @param {string} buildName - Optional build name to display as primary
  * @param {React.ReactNode} stat - Page-specific stat component
  * @param {string} heroImageUrl - Optional user's custom hero image URL (takes priority over stock)
  */
-export default function VehicleInfoBar({ 
-  car,
-  buildName,
-  stat,
-  heroImageUrl,
-}) {
+export default function VehicleInfoBar({ car, buildName, stat, heroImageUrl }) {
   if (!car) return null;
-  
+
   const displayName = buildName || car.name;
-  const subtitle = buildName ? car.name : car.years;
-  
+  const subtitle = buildName ? car.name : car.year;
+
   return (
     <div className={styles.container}>
       {/* Car Thumbnail - User hero image takes priority over stock */}
@@ -57,19 +52,15 @@ export default function VehicleInfoBar({
           <CarImage car={car} variant="thumbnail" showName={false} />
         )}
       </div>
-      
+
       {/* Name & Subtitle */}
       <div className={styles.info}>
         <span className={styles.name}>{displayName}</span>
         {subtitle && <span className={styles.subtitle}>{subtitle}</span>}
       </div>
-      
+
       {/* Page-specific stat */}
-      {stat && (
-        <div className={styles.stat}>
-          {stat}
-        </div>
-      )}
+      {stat && <div className={styles.stat}>{stat}</div>}
     </div>
   );
 }
@@ -84,7 +75,9 @@ export function UpgradeCountStat({ count }) {
   return (
     <div className={styles.statBadge} data-color="teal">
       <Icons.wrench size={14} />
-      <span>{count} upgrade{count !== 1 ? 's' : ''}</span>
+      <span>
+        {count} upgrade{count !== 1 ? 's' : ''}
+      </span>
     </div>
   );
 }
@@ -112,7 +105,9 @@ export function PartsCountStat({ count, total }) {
   return (
     <div className={styles.statBadge} data-color="yellow">
       <Icons.shoppingCart size={14} />
-      <span>{count}/{total} parts</span>
+      <span>
+        {count}/{total} parts
+      </span>
     </div>
   );
 }

@@ -114,18 +114,36 @@
 
 **These 10 rules prevent 90% of bugs. Violating them WILL cause issues.**
 
-### Rule 1: ALWAYS Use `car_id` for Database Queries
+### Rule 1: ALWAYS Use `car_id` for Database Operations (Normalized Data Model)
+
+The `cars` table is the **single source of truth** for car data. All other tables reference it via `car_id` (UUID).
+
+**Data Model:**
+| Table | Column | Purpose |
+|-------|--------|---------|
+| `cars` | `id`, `slug`, `name`, etc. | **Single source of truth** |
+| `user_favorites` | `car_id` | FK to cars (JOIN for slug) |
+| `user_projects` | `car_id` | FK to cars (JOIN for slug) |
+| `user_vehicles` | `matched_car_id` | FK to cars (JOIN for slug) |
+| `user_track_times` | `car_id` | FK to cars (JOIN for slug) |
 
 ```javascript
-// ✅ CORRECT
-const carId = await resolveCarId(carSlug);
-const { data } = await supabase.from('car_issues').eq('car_id', carId);
+// ✅ CORRECT - Write car_id only, JOIN to get slug when reading
+const carId = await resolveCarId(carSlug); // Resolve slug → UUID at entry point
+await supabase.from('user_favorites').insert({ user_id, car_id: carId });
 
-// ❌ WRONG - car_slug has no index, causes inconsistencies
-const { data } = await supabase.from('car_issues').eq('car_slug', carSlug);
+// ✅ CORRECT - JOIN to cars table to get slug when reading
+const { data } = await supabase
+  .from('user_favorites')
+  .select('*, cars:car_id (slug, name)')
+  .eq('user_id', userId);
+const slug = data[0].cars?.slug; // Get slug from JOIN
+
+// ❌ WRONG - car_slug columns have been removed from user tables
+await supabase.from('user_favorites').insert({ car_slug: carSlug }); // COLUMN DOESN'T EXIST
 ```
 
-**Why**: `car_slug` is for URLs only. All FK relationships use `car_id`.
+**Why**: Single source of truth eliminates sync issues. UUID joins are faster than string comparisons.
 
 ### Rule 2: ONE Source of Truth Per Domain
 
@@ -3295,16 +3313,59 @@ const { data: estimate } = useLapTimeEstimate({
 
 ## Database Tables
 
-### Car Data Tables
+### Car Data Tables (Teoalida Schema - Jan 2026)
 
-| Table                 | Purpose       | Key Columns                          |
-| --------------------- | ------------- | ------------------------------------ |
-| `cars`                | Base car data | `id`, `slug`, `name`, `hp`, `torque` |
-| `car_variants`        | Trim variants | `car_id`, `variant_key`, `specs`     |
-| `car_issues`          | Known issues  | `car_id`, `severity`, `description`  |
-| `car_tuning_profiles` | Tuning data   | `car_id`, `upgrades_by_objective`    |
-| `car_dyno_runs`       | Dyno results  | `car_id`, `whp`, `wtq`               |
-| `car_track_lap_times` | Lap times     | `car_id`, `track`, `time`            |
+The `cars` table uses the Teoalida database as the source of truth for YMMT (Year/Make/Model/Trim) data.
+Each row represents a specific year+make+model+trim combination with accurate manufacturer specs.
+
+| Table                 | Purpose              | Key Columns                                                      |
+| --------------------- | -------------------- | ---------------------------------------------------------------- |
+| `cars`                | Base YMMT car data   | `id`, `slug`, `year`, `make`, `model`, `trim`, `hp`, `torque`    |
+| `car_generations`     | Generation groupings | `id`, `platform_code`, `make`, `model`, `year_start`, `year_end` |
+| `cars_v1_legacy`      | Legacy car data      | Archived pre-Teoalida records (for content migration)            |
+| `car_issues`          | Known issues         | `car_id`, `severity`, `description`                              |
+| `car_tuning_profiles` | Tuning data          | `car_id`, `upgrades_by_objective`                                |
+| `car_dyno_runs`       | Dyno results         | `car_id`, `whp`, `wtq`                                           |
+| `car_track_lap_times` | Lap times            | `car_id`, `track`, `time`                                        |
+
+**`cars` Table Schema (Teoalida):**
+
+| Column          | Type    | Description                                         |
+| --------------- | ------- | --------------------------------------------------- |
+| `id`            | uuid    | Primary key                                         |
+| `teoalida_id`   | text    | Original Teoalida database ID                       |
+| `year`          | integer | Specific model year (e.g., 2024)                    |
+| `make`          | text    | Manufacturer (e.g., "Ford")                         |
+| `model`         | text    | Model name (e.g., "Mustang")                        |
+| `trim`          | text    | Trim level (e.g., "GT Premium")                     |
+| `slug`          | text    | URL slug (e.g., "2024-ford-mustang-gt-premium")     |
+| `name`          | text    | Display name (e.g., "2024 Ford Mustang GT Premium") |
+| `hp`            | integer | Horsepower                                          |
+| `torque`        | integer | Torque (lb-ft)                                      |
+| `engine_type`   | text    | Engine description                                  |
+| `transmission`  | text    | Transmission type                                   |
+| `drive_type`    | text    | Drivetrain (AWD, RWD, FWD, 4WD)                     |
+| `curb_weight`   | integer | Weight in pounds                                    |
+| `msrp`          | integer | Manufacturer's suggested retail price               |
+| `body_type`     | text    | Body style (Coupe, Sedan, SUV, etc.)                |
+| `tier`          | text    | Price tier (budget, mid, upper-mid, premium)        |
+| `category`      | text    | Vehicle category (Sport, Sedan, SUV, Truck, Van)    |
+| `generation_id` | uuid    | FK to car_generations for shared content            |
+
+**Field Mapping (Legacy → Teoalida):**
+
+| Legacy Field        | Teoalida Field      | Notes                         |
+| ------------------- | ------------------- | ----------------------------- |
+| `brand`             | `make`              | Renamed                       |
+| `years`             | `year`              | Text range → specific integer |
+| `engine`            | `engine_type`       | Renamed                       |
+| `trans`             | `transmission`      | Renamed                       |
+| `drivetrain`        | `drive_type`        | Renamed                       |
+| `price_avg`         | `msrp`              | Single value instead of range |
+| `country`           | `country_of_origin` | Renamed                       |
+| `image_hero_url`    | `image_url`         | Renamed                       |
+| `structure_version` | (removed)           | No longer needed              |
+| `parent_car_id`     | `generation_id`     | Content now via generations   |
 
 ### User Data Tables
 

@@ -30,6 +30,7 @@ import EmptyState from '@/components/ui/EmptyState';
 import { Icons } from '@/components/ui/Icons';
 import { useCarsList, useCarBySlug, useCarMaintenance } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
+import { resolveCarId } from '@/lib/carResolver';
 import { calculateAllModificationGains } from '@/lib/performanceCalculator';
 import { whpToCrankHp } from '@/lib/userDynoDataService';
 
@@ -207,6 +208,7 @@ function MySpecsContent() {
   const router = useRouter();
   const [selectedCar, setSelectedCar] = useState(null);
   const [currentBuildId, setCurrentBuildId] = useState(null);
+  const [carId, setCarId] = useState(null);
   const [specsConfirmed, setSpecsConfirmed] = useState(false);
   const [confirmingSpecs, setConfirmingSpecs] = useState(false);
   const [confirmSuccess, setConfirmSuccess] = useState(false);
@@ -232,6 +234,25 @@ function MySpecsContent() {
 
   // Get URL params for fallback fetch
   const carSlugParam = searchParams.get('car');
+
+  // Resolve carSlugParam to carId
+  useEffect(() => {
+    if (selectedCar?.id) {
+      // Use selectedCar.id directly (it's the carId)
+      setCarId(selectedCar.id);
+    } else if (carSlugParam && !carId) {
+      // Fallback: resolve slug if car not loaded yet
+      resolveCarId(carSlugParam)
+        .then((id) => {
+          if (id) setCarId(id);
+        })
+        .catch((err) => {
+          console.error('[MySpecs] Error resolving carId:', err);
+        });
+    } else if (!carSlugParam && !selectedCar) {
+      setCarId(null);
+    }
+  }, [carSlugParam, carId, selectedCar]);
 
   // Fallback: fetch single car in parallel with full list
   // This provides faster data when the full list is slow or unavailable
@@ -439,77 +460,76 @@ function MySpecsContent() {
   //
   // IMPORTANT: When user has dyno data, that takes PRIORITY over calculations
   // NOTE: This must be called before any early returns (React hooks rules)
-  const { hasUserDynoData, dynoData, performanceDataSources } =
-    useMemo(() => {
-      const installedMods = userVehicle?.installedModifications || [];
-      const customSpecs = userVehicle?.customSpecs || {};
+  const { hasUserDynoData, dynoData, performanceDataSources } = useMemo(() => {
+    const installedMods = userVehicle?.installedModifications || [];
+    const customSpecs = userVehicle?.customSpecs || {};
 
-      // Check if user has dyno data - PRIORITY OVER CALCULATIONS
-      const userDyno = customSpecs?.engine || customSpecs?.dyno;
-      const hasDyno = userDyno?.dynoWhp && userDyno.dynoWhp > 0;
+    // Check if user has dyno data - PRIORITY OVER CALCULATIONS
+    const userDyno = customSpecs?.engine || customSpecs?.dyno;
+    const hasDyno = userDyno?.dynoWhp && userDyno.dynoWhp > 0;
 
-      if (hasDyno) {
-        // User has dyno data - USE IT
-        const dynoWhp = userDyno.dynoWhp;
-        const dynoWtq = userDyno.dynoWtq;
-        const isVerified = userDyno.isVerified || false;
+    if (hasDyno) {
+      // User has dyno data - USE IT
+      const dynoWhp = userDyno.dynoWhp;
+      const dynoWtq = userDyno.dynoWtq;
+      const isVerified = userDyno.isVerified || false;
 
-        // Convert WHP to crank HP using drivetrain loss
-        const crankHp = whpToCrankHp(dynoWhp, selectedCar?.drivetrain || 'RWD');
-        const crankTq = dynoWtq ? whpToCrankHp(dynoWtq, selectedCar?.drivetrain || 'RWD') : null;
+      // Convert WHP to crank HP using drivetrain loss
+      const crankHp = whpToCrankHp(dynoWhp, selectedCar?.drivetrain || 'RWD');
+      const crankTq = dynoWtq ? whpToCrankHp(dynoWtq, selectedCar?.drivetrain || 'RWD') : null;
 
-        const hpGainFromDyno = crankHp - (selectedCar?.hp || 0);
-
-        return {
-          hpGain: hpGainFromDyno,
-          finalHp: crankHp,
-          hasBuildUpgrades: hpGainFromDyno > 0,
-          hasUserDynoData: true,
-          dynoData: {
-            whp: dynoWhp,
-            wtq: dynoWtq,
-            crankHp,
-            crankTq,
-            isVerified,
-            dynoShop: userDyno.dynoShop,
-            dynoDate: userDyno.dynoDate,
-            boostPsi: userDyno.boostPsi,
-            fuelType: userDyno.fuelType,
-          },
-          performanceDataSources: {
-            hp: isVerified ? 'verified' : 'measured',
-            torque: dynoWtq ? (isVerified ? 'verified' : 'measured') : 'estimated',
-            whp: isVerified ? 'verified' : 'measured',
-            wtq: dynoWtq ? (isVerified ? 'verified' : 'measured') : null,
-          },
-        };
-      }
-
-      // No dyno data - calculate from mods
-      if (installedMods.length === 0) {
-        return {
-          hpGain: 0,
-          finalHp: selectedCar?.hp || null,
-          hasBuildUpgrades: false,
-          hasUserDynoData: false,
-          dynoData: null,
-          performanceDataSources: null,
-        };
-      }
-
-      const modificationGains = calculateAllModificationGains(installedMods, selectedCar);
-      const calculatedHpGain = modificationGains.hpGain || 0;
-      const calculatedFinalHp = selectedCar?.hp ? selectedCar.hp + calculatedHpGain : null;
+      const hpGainFromDyno = crankHp - (selectedCar?.hp || 0);
 
       return {
-        hpGain: calculatedHpGain,
-        finalHp: calculatedFinalHp,
-        hasBuildUpgrades: calculatedHpGain > 0,
+        hpGain: hpGainFromDyno,
+        finalHp: crankHp,
+        hasBuildUpgrades: hpGainFromDyno > 0,
+        hasUserDynoData: true,
+        dynoData: {
+          whp: dynoWhp,
+          wtq: dynoWtq,
+          crankHp,
+          crankTq,
+          isVerified,
+          dynoShop: userDyno.dynoShop,
+          dynoDate: userDyno.dynoDate,
+          boostPsi: userDyno.boostPsi,
+          fuelType: userDyno.fuelType,
+        },
+        performanceDataSources: {
+          hp: isVerified ? 'verified' : 'measured',
+          torque: dynoWtq ? (isVerified ? 'verified' : 'measured') : 'estimated',
+          whp: isVerified ? 'verified' : 'measured',
+          wtq: dynoWtq ? (isVerified ? 'verified' : 'measured') : null,
+        },
+      };
+    }
+
+    // No dyno data - calculate from mods
+    if (installedMods.length === 0) {
+      return {
+        hpGain: 0,
+        finalHp: selectedCar?.hp || null,
+        hasBuildUpgrades: false,
         hasUserDynoData: false,
         dynoData: null,
         performanceDataSources: null,
       };
-    }, [userVehicle?.installedModifications, userVehicle?.customSpecs, selectedCar]);
+    }
+
+    const modificationGains = calculateAllModificationGains(installedMods, selectedCar);
+    const calculatedHpGain = modificationGains.hpGain || 0;
+    const calculatedFinalHp = selectedCar?.hp ? selectedCar.hp + calculatedHpGain : null;
+
+    return {
+      hpGain: calculatedHpGain,
+      finalHp: calculatedFinalHp,
+      hasBuildUpgrades: calculatedHpGain > 0,
+      hasUserDynoData: false,
+      dynoData: null,
+      performanceDataSources: null,
+    };
+  }, [userVehicle?.installedModifications, userVehicle?.customSpecs, selectedCar]);
 
   // Loading state - only block on auth and build loading, NOT carsLoading
   // The fallbackCar mechanism ensures we have car data when needed
@@ -524,7 +544,12 @@ function MySpecsContent() {
   if (dataError && !selectedCar) {
     return (
       <div className={styles.page}>
-        <MyGarageSubNav carSlug={carSlugParam} buildId={buildIdParam} onBack={handleBack} />
+        <MyGarageSubNav
+          carId={carId}
+          carSlug={carSlugParam}
+          buildId={buildIdParam}
+          onBack={handleBack}
+        />
         <ErrorState error={dataError} onRetry={handleRetry} title="Failed to Load Vehicle Data" />
         <AuthModal {...authModal.props} />
       </div>
@@ -535,7 +560,12 @@ function MySpecsContent() {
   if (!selectedCar) {
     return (
       <div className={styles.page}>
-        <MyGarageSubNav carSlug={carSlugParam} buildId={buildIdParam} onBack={handleBack} />
+        <MyGarageSubNav
+          carId={carId}
+          carSlug={carSlugParam}
+          buildId={buildIdParam}
+          onBack={handleBack}
+        />
         <EmptyState
           icon={Icons.gauge}
           title="Select a Vehicle"
@@ -552,9 +582,18 @@ function MySpecsContent() {
   // Car selected - show specs
   return (
     <div className={styles.page}>
-      <MyGarageSubNav carSlug={selectedCar.slug} buildId={currentBuildId} onBack={handleBack} />
+      <MyGarageSubNav
+        carId={carId}
+        carSlug={selectedCar.slug}
+        buildId={currentBuildId}
+        onBack={handleBack}
+      />
 
-      <GarageVehicleSelector selectedCarSlug={selectedCar.slug} buildId={currentBuildId} />
+      <GarageVehicleSelector
+        selectedCarId={carId}
+        selectedCarSlug={selectedCar.slug}
+        buildId={currentBuildId}
+      />
 
       <div className={styles.content}>
         {/* Data Source Summary - shows when user has dyno data */}
@@ -577,7 +616,10 @@ function MySpecsContent() {
                 Stock Performance
               </h3>
             </div>
-            <SpecTable caption="Stock performance specifications" aria-labelledby="performance-specs">
+            <SpecTable
+              caption="Stock performance specifications"
+              aria-labelledby="performance-specs"
+            >
               <SpecRow label="Horsepower" value={selectedCar.hp} unit="HP" />
               <SpecRow label="Torque" value={selectedCar.torque} unit="lb-ft" />
               <SpecRow label="0-60 mph" value={selectedCar.zeroToSixty} unit="s" />
@@ -704,7 +746,6 @@ function MySpecsContent() {
               </SpecTable>
             </div>
           )}
-
         </div>
 
         {/* Confirm Specs Section */}

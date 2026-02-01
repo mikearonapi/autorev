@@ -1,0 +1,18 @@
+Priority,Rank,Make,Model,Trim,Years,Status
+HIGH,5,Volkswagen,"Mk4 GTI","Standard","2022-2024",ADD_YEARS
+HIGH,11,Chevrolet,"Camaro","SS","1969",ADD_YEARS
+HIGH,20,BMW,"E30 M3","Competition","1988-1991",ADD_TRIM
+MEDIUM,37,BMW,"1 Series M","Coupe","2011",ADD_YEARS
+MEDIUM,49,Chevrolet,"Camaro 1969","SS","1969",ADD_YEARS
+MEDIUM,57,Ford,"Fiesta","ST","2013-2019",NEW
+LOW,65,Jeep,"Renegade","Standard","2015-2024",NEW
+LOW,65,Jeep,"Compass","Standard","2015-2024",NEW
+LOW,72,Pontiac,"GTO","Standard","2004-2006",NEW
+LOW,80,Porsche,"Cayenne","Standard","2011-2024",NEW
+LOW,80,Porsche,"Cayenne","Turbo","2011-2024",NEW
+LOW,80,Porsche,"Cayenne","GTS","2011-2024",NEW
+LOW,85,Pontiac,"G8","GT","2009",ADD_YEARS
+LOW,88,Nissan,"Titan","Standard","2016-2024",NEW
+LOW,90,BMW,"5 Series","Standard","2017-2024",NEW
+LOW,98,Ford,"GT","Standard","2005-2006",NEW
+LOW,98,Ford,"GT","Standard","2017-2022",NEW

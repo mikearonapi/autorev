@@ -40,6 +40,7 @@ import { Icons } from '@/components/ui/Icons';
 import { useCarsList, useCarBySlug } from '@/hooks/useCarData';
 import { useCarImages } from '@/hooks/useCarImages';
 import { useGarageScore } from '@/hooks/useGarageScore';
+import { resolveCarId } from '@/lib/carResolver';
 import { getCarHeroImage } from '@/lib/images';
 import { invalidatePrefetchCache } from '@/lib/prefetch';
 
@@ -57,6 +58,7 @@ function MyPhotosContent() {
   const [selectedCar, setSelectedCar] = useState(null);
   const [currentBuildId, setCurrentBuildId] = useState(null);
   const [vehicleId, setVehicleId] = useState(null);
+  const [carId, setCarId] = useState(null);
   const [slideshowOpen, setSlideshowOpen] = useState(false);
   const uploadSectionRef = useRef(null);
 
@@ -77,6 +79,25 @@ function MyPhotosContent() {
   // Get URL params
   const buildIdParam = searchParams.get('build');
   const carSlugParam = searchParams.get('car');
+
+  // Resolve carSlugParam to carId
+  useEffect(() => {
+    if (selectedCar?.id) {
+      // Use selectedCar.id directly (it's the carId)
+      setCarId(selectedCar.id);
+    } else if (carSlugParam && !carId) {
+      // Fallback: resolve slug if car not loaded yet
+      resolveCarId(carSlugParam)
+        .then((id) => {
+          if (id) setCarId(id);
+        })
+        .catch((err) => {
+          console.error('[MyPhotos] Error resolving carId:', err);
+        });
+    } else if (!carSlugParam && !selectedCar) {
+      setCarId(null);
+    }
+  }, [carSlugParam, carId, selectedCar]);
 
   // Fallback: fetch single car in parallel with full list
   // This provides faster data when the full list is slow or unavailable

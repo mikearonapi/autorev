@@ -3,48 +3,45 @@ import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 
 import { requireAdmin } from '@/lib/adminAuth';
-import { resolveCarId } from '@/lib/carResolver';
 import { withErrorLogging } from '@/lib/serverErrorLogger';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-const supabase = (supabaseUrl && supabaseServiceKey)
-  ? createClient(supabaseUrl, supabaseServiceKey)
-  : null;
+const supabase =
+  supabaseUrl && supabaseServiceKey ? createClient(supabaseUrl, supabaseServiceKey) : null;
 
 /**
- * GET /api/internal/dyno/runs?carSlug=&limit=
+ * GET /api/internal/dyno/runs?carId=&limit=
  * Admin-only listing for QA.
  */
 async function handleGet(request) {
   try {
     const auth = requireAdmin(request);
     if (!auth.ok) {
-      return NextResponse.json({ error: auth.error }, { status: auth.error === 'Unauthorized' ? 401 : 500 });
+      return NextResponse.json(
+        { error: auth.error },
+        { status: auth.error === 'Unauthorized' ? 401 : 500 }
+      );
     }
     if (!supabase) return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
 
     const { searchParams } = new URL(request.url);
-    const carSlug = searchParams.get('carSlug') || null;
+    const carId = searchParams.get('carId') || null;
     const limit = Math.max(1, Math.min(Number(searchParams.get('limit') || 80), 300));
 
     // Note: car_slug column no longer exists on car_dyno_runs, use car_id
     let q = supabase
       .from('car_dyno_runs')
-      .select('id,car_id,run_kind,recorded_at,dyno_type,correction,fuel,is_wheel,peak_hp,peak_tq,peak_whp,peak_wtq,boost_psi_max,conditions,modifications,notes,curve,source_url,confidence,verified,created_at')
+      .select(
+        'id,car_id,run_kind,recorded_at,dyno_type,correction,fuel,is_wheel,peak_hp,peak_tq,peak_whp,peak_wtq,boost_psi_max,conditions,modifications,notes,curve,source_url,confidence,verified,created_at'
+      )
       .order('recorded_at', { ascending: false })
       .order('created_at', { ascending: false })
       .limit(limit);
 
-    if (carSlug) {
-      // Resolve car_id from slug for filtering
-      const carId = await resolveCarId(carSlug);
-      if (carId) {
-        q = q.eq('car_id', carId);
-      } else {
-        return NextResponse.json({ count: 0, rows: [] });
-      }
+    if (carId) {
+      q = q.eq('car_id', carId);
     }
     const { data, error } = await q;
     if (error) throw error;
@@ -59,7 +56,7 @@ async function handleGet(request) {
 /**
  * POST /api/internal/dyno/runs
  * Body:
- * - carSlug (required)
+ * - carId (required)
  * - runKind (baseline|modded|comparison|unknown)
  * - recordedAt (optional) "YYYY-MM-DD"
  * - dynoType/correction/fuel/transmission/gear (optional)
@@ -76,13 +73,16 @@ async function handlePost(request) {
   try {
     const auth = requireAdmin(request);
     if (!auth.ok) {
-      return NextResponse.json({ error: auth.error }, { status: auth.error === 'Unauthorized' ? 401 : 500 });
+      return NextResponse.json(
+        { error: auth.error },
+        { status: auth.error === 'Unauthorized' ? 401 : 500 }
+      );
     }
     if (!supabase) return NextResponse.json({ error: 'Database not configured' }, { status: 503 });
 
     const body = await request.json();
     const {
-      carSlug,
+      carId,
       runKind,
       recordedAt,
       dynoType,
@@ -105,17 +105,23 @@ async function handlePost(request) {
       confidence,
     } = body || {};
 
-    if (!carSlug) return NextResponse.json({ error: 'carSlug is required' }, { status: 400 });
+    if (!carId) return NextResponse.json({ error: 'carId is required' }, { status: 400 });
 
+    // Verify carId exists
     const { data: carRow, error: carErr } = await supabase
       .from('cars')
-      .select('id,slug')
-      .eq('slug', carSlug)
-      .single();
+      .select('id')
+      .eq('id', carId)
+      .maybeSingle();
     if (carErr) throw carErr;
+    if (!carRow?.id) {
+      return NextResponse.json({ error: 'Car not found' }, { status: 404 });
+    }
 
     const allowedKinds = new Set(['baseline', 'modded', 'comparison', 'unknown']);
-    const rk = allowedKinds.has(String(runKind || 'unknown')) ? String(runKind || 'unknown') : 'unknown';
+    const rk = allowedKinds.has(String(runKind || 'unknown'))
+      ? String(runKind || 'unknown')
+      : 'unknown';
 
     let c = null;
     if (confidence !== undefined && confidence !== null && confidence !== '') {
@@ -129,7 +135,7 @@ async function handlePost(request) {
 
     // Note: car_slug column no longer exists on car_dyno_runs
     const payload = {
-      car_id: carRow.id,
+      car_id: carId,
       run_kind: rk,
       recorded_at: recordedAt || null,
       dyno_type: dynoType || null,
@@ -156,7 +162,9 @@ async function handlePost(request) {
     const { data: inserted, error: insErr } = await supabase
       .from('car_dyno_runs')
       .insert(payload)
-      .select('id,car_id,run_kind,recorded_at,dyno_type,correction,fuel,is_wheel,peak_whp,peak_wtq,peak_hp,peak_tq,boost_psi_max,source_url,confidence,verified,created_at')
+      .select(
+        'id,car_id,run_kind,recorded_at,dyno_type,correction,fuel,is_wheel,peak_whp,peak_wtq,peak_hp,peak_tq,boost_psi_max,source_url,confidence,verified,created_at'
+      )
       .single();
 
     if (insErr) throw insErr;
@@ -168,20 +176,11 @@ async function handlePost(request) {
   }
 }
 
-export const GET = withErrorLogging(handleGet, { route: 'internal/dyno/runs', feature: 'internal' });
-export const POST = withErrorLogging(handlePost, { route: 'internal/dyno/runs', feature: 'internal' });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+export const GET = withErrorLogging(handleGet, {
+  route: 'internal/dyno/runs',
+  feature: 'internal',
+});
+export const POST = withErrorLogging(handlePost, {
+  route: 'internal/dyno/runs',
+  feature: 'internal',
+});

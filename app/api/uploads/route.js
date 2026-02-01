@@ -107,7 +107,7 @@ async function handlePost(request) {
   const vehicleId = formData.get('vehicleId');
   const buildId = formData.get('buildId');
   const postId = formData.get('postId');
-  const carSlug = formData.get('carSlug'); // For cross-feature image sharing
+  const carId = formData.get('carId'); // For cross-feature image sharing
   const caption = formData.get('caption');
   const isPrimary = formData.get('isPrimary') === 'true';
 
@@ -221,7 +221,7 @@ async function handlePost(request) {
     user_vehicle_id: vehicleId || null,
     user_build_id: buildId || null,
     community_post_id: postId || null,
-    car_slug: carSlug || null, // For cross-feature image sharing (Garage <-> Tuning Shop)
+    car_id: carId || null, // car_id is the single source of truth
     blob_url: blob.url,
     blob_pathname: blob.pathname,
     file_name: file.name || `upload-${timestamp}`,

@@ -2,7 +2,7 @@
 
 /**
  * BuildDetailView Component
- * 
+ *
  * Comprehensive view of a saved build showing everything needed to understand
  * and execute the build:
  * - All upgrades organized by category
@@ -19,10 +19,18 @@ import { useMemo } from 'react';
 import Link from 'next/link';
 
 import { Icons } from '@/components/ui/Icons';
-import { getToolsForBuild, calculateBuildComplexity, difficultyLevels } from '@/data/upgradeTools.js';
+import {
+  getToolsForBuild,
+  calculateBuildComplexity,
+  difficultyLevels,
+} from '@/data/upgradeTools.js';
 import { formatEventDate } from '@/lib/dateUtils';
 import { validateUpgradeSelection, getSystemImpactOverview } from '@/lib/dependencyChecker.js';
-import { getUpgradeByKey, getCanonicalCategories, getCanonicalCategoryKey } from '@/lib/upgrades.js';
+import {
+  getUpgradeByKey,
+  getCanonicalCategories,
+  getCanonicalCategoryKey,
+} from '@/lib/upgrades.js';
 
 import styles from './BuildDetailView.module.css';
 import CarImage from './CarImage';
@@ -32,7 +40,7 @@ import InfoTooltip from './ui/InfoTooltip';
  * Build Summary Header Card
  */
 function BuildSummaryCard({ build, car, complexity }) {
-  const partsCount = (build?.parts?.length || build?.selectedParts?.length || 0);
+  const partsCount = build?.parts?.length || build?.selectedParts?.length || 0;
   return (
     <div className={styles.summaryCard}>
       <div className={styles.summaryImage}>
@@ -46,7 +54,7 @@ function BuildSummaryCard({ build, car, complexity }) {
           </span>
         </div>
         <p className={styles.carName}>{car.name}</p>
-        
+
         <div className={styles.summaryStats}>
           <div className={styles.summaryStat}>
             <Icons.wrench size={16} />
@@ -65,18 +73,22 @@ function BuildSummaryCard({ build, car, complexity }) {
           </div>
           <div className={styles.summaryStat}>
             <Icons.clock size={16} />
-            <span className={styles.summaryStatValue}>{complexity.timeEstimate?.display || '—'}</span>
+            <span className={styles.summaryStatValue}>
+              {complexity.timeEstimate?.display || '—'}
+            </span>
             <span className={styles.summaryStatLabel}>Est. Time</span>
           </div>
           <div className={styles.summaryStat}>
             <Icons.dollar size={16} />
-            <span className={styles.summaryStatValue}>${(Number(build?.totalCostLow) || 0).toLocaleString()}</span>
+            <span className={styles.summaryStatValue}>
+              ${(Number(build?.totalCostLow) || 0).toLocaleString()}
+            </span>
             <span className={styles.summaryStatLabel}>Est. Cost</span>
           </div>
         </div>
 
         <div className={styles.summaryActions}>
-          <Link 
+          <Link
             href={`/garage/my-build?car=${car.slug}&build=${build.id}`}
             className={styles.modifyButton}
           >
@@ -94,7 +106,7 @@ function BuildSummaryCard({ build, car, complexity }) {
  */
 function DifficultyBadge({ difficulty }) {
   const info = difficultyLevels[difficulty] || difficultyLevels.moderate;
-  
+
   return (
     <div className={styles.difficultyBadge} data-difficulty={difficulty}>
       <span className={styles.difficultyDot} style={{ backgroundColor: info.color }} />
@@ -108,14 +120,14 @@ function DifficultyBadge({ difficulty }) {
  */
 function BuildComplexitySection({ complexity }) {
   const info = complexity.difficultyInfo || difficultyLevels.moderate;
-  
+
   return (
     <section className={styles.section}>
       <h3 className={styles.sectionTitle}>
         <Icons.gauge size={18} />
         Build Complexity
       </h3>
-      
+
       <div className={styles.complexityCard}>
         <div className={styles.complexityHeader}>
           <DifficultyBadge difficulty={complexity.difficulty} />
@@ -124,21 +136,22 @@ function BuildComplexitySection({ complexity }) {
             {complexity.timeEstimate?.display || 'Variable'}
           </span>
         </div>
-        
+
         <p className={styles.complexityDescription}>{info.description}</p>
-        
+
         <div className={styles.complexityMeta}>
           <div className={styles.complexityMetaItem}>
             <Icons.home size={14} />
             <span>{info.garageRequirement}</span>
           </div>
         </div>
-        
+
         <div className={styles.diyAssessment} data-feasibility={complexity.diyFeasibility}>
           <div className={styles.diyAssessmentIcon}>
             {complexity.diyFeasibility === 'fully-diy' && <Icons.check size={16} />}
             {complexity.diyFeasibility === 'partial-diy' && <Icons.info size={16} />}
-            {(complexity.diyFeasibility === 'shop-recommended' || complexity.diyFeasibility === 'mostly-shop') && <Icons.alert size={16} />}
+            {(complexity.diyFeasibility === 'shop-recommended' ||
+              complexity.diyFeasibility === 'mostly-shop') && <Icons.alert size={16} />}
           </div>
           <div className={styles.diyAssessmentContent}>
             <span className={styles.diyAssessmentLabel}>
@@ -160,12 +173,12 @@ function BuildComplexitySection({ complexity }) {
  */
 function UpgradesListSection({ upgrades, upgradeDetails }) {
   const categories = getCanonicalCategories();
-  
+
   // Group upgrades by category
   const upgradesByCategory = useMemo(() => {
     const grouped = {};
-    
-    upgradeDetails.forEach(upgrade => {
+
+    upgradeDetails.forEach((upgrade) => {
       if (!upgrade) return;
       const catKey = getCanonicalCategoryKey(upgrade.category) || 'power';
       if (!grouped[catKey]) {
@@ -176,23 +189,23 @@ function UpgradesListSection({ upgrades, upgradeDetails }) {
       }
       grouped[catKey].upgrades.push(upgrade);
     });
-    
-    return Object.values(grouped).filter(cat => cat.upgrades.length > 0);
+
+    return Object.values(grouped).filter((cat) => cat.upgrades.length > 0);
   }, [upgradeDetails, categories]);
-  
+
   return (
     <section className={styles.section}>
       <h3 className={styles.sectionTitle}>
         <Icons.list size={18} />
         Build Plan ({upgrades.length} Upgrades)
       </h3>
-      
+
       <div className={styles.upgradesGrid}>
-        {upgradesByCategory.map(category => (
+        {upgradesByCategory.map((category) => (
           <div key={category.key} className={styles.categoryCard}>
             <h4 className={styles.categoryTitle}>{category.name}</h4>
             <ul className={styles.upgradeList}>
-              {category.upgrades.map(upgrade => (
+              {category.upgrades.map((upgrade) => (
                 <li key={upgrade.key} className={styles.upgradeItem}>
                   <Icons.check size={14} className={styles.upgradeCheck} />
                   <div className={styles.upgradeInfo}>
@@ -221,41 +234,37 @@ function UpgradesListSection({ upgrades, upgradeDetails }) {
  */
 function ToolsSection({ toolsData }) {
   const { essential, recommended, byCategory } = toolsData;
-  
+
   if (essential.length === 0 && recommended.length === 0) {
     return null;
   }
-  
+
   return (
     <section className={styles.section}>
       <h3 className={styles.sectionTitle}>
         <Icons.wrench size={18} />
         Tools & Equipment Required
       </h3>
-      
+
       <div className={styles.toolsGrid}>
-        {Object.values(byCategory).map(category => (
+        {Object.values(byCategory).map((category) => (
           <div key={category.key} className={styles.toolCategory}>
-            <h4 className={styles.toolCategoryTitle}>
-              {category.name}
-            </h4>
+            <h4 className={styles.toolCategoryTitle}>{category.name}</h4>
             <ul className={styles.toolList}>
-              {category.tools.map(tool => (
+              {category.tools.map((tool) => (
                 <li key={tool.key} className={styles.toolItem}>
                   <span className={styles.toolName}>{tool.name}</span>
-                  {tool.essential && (
-                    <span className={styles.toolEssential}>Essential</span>
-                  )}
+                  {tool.essential && <span className={styles.toolEssential}>Essential</span>}
                 </li>
               ))}
             </ul>
           </div>
         ))}
       </div>
-      
+
       {essential.length > 0 && (
         <div className={styles.toolsSummary}>
-          <strong>{essential.length}</strong> essential tools • 
+          <strong>{essential.length}</strong> essential tools •
           <strong> {recommended.length}</strong> recommended
         </div>
       )}
@@ -270,38 +279,37 @@ function SystemsImpactSection({ impacts, validation }) {
   if (!impacts || impacts.length === 0) {
     return null;
   }
-  
+
   return (
     <section className={styles.section}>
       <h3 className={styles.sectionTitle}>
         <Icons.gauge size={18} />
         Systems Affected
       </h3>
-      
+
       <div className={styles.systemsGrid}>
-        {impacts.map(impact => (
-          <div 
-            key={impact.system.key} 
+        {impacts.map((impact) => (
+          <div
+            key={impact.system.key}
             className={styles.systemCard}
-            data-has-stress={(impact.stresses + impact.compromises) > 0}
+            data-has-stress={impact.stresses + impact.compromises > 0}
           >
             <h4 className={styles.systemName}>{impact.system.name}</h4>
             <div className={styles.systemStats}>
               {impact.improves > 0 && (
-                <span className={styles.systemImproves}>
-                  +{impact.improves} improvements
-                </span>
+                <span className={styles.systemImproves}>+{impact.improves} improvements</span>
               )}
-              {(impact.stresses + impact.compromises) > 0 && (
+              {impact.stresses + impact.compromises > 0 && (
                 <span className={styles.systemStress}>
-                  {impact.stresses + impact.compromises} stress point{(impact.stresses + impact.compromises) > 1 ? 's' : ''}
+                  {impact.stresses + impact.compromises} stress point
+                  {impact.stresses + impact.compromises > 1 ? 's' : ''}
                 </span>
               )}
             </div>
           </div>
         ))}
       </div>
-      
+
       {/* Synergies */}
       {validation?.synergies?.length > 0 && (
         <div className={styles.synergiesBox}>
@@ -316,7 +324,7 @@ function SystemsImpactSection({ impacts, validation }) {
           ))}
         </div>
       )}
-      
+
       {/* Warnings */}
       {(validation?.warnings?.length > 0 || validation?.critical?.length > 0) && (
         <div className={styles.warningsBox}>
@@ -345,18 +353,18 @@ function SystemsImpactSection({ impacts, validation }) {
  */
 function InstallationNotesSection({ complexity }) {
   const notes = complexity.notes || [];
-  
+
   if (notes.length === 0) {
     return null;
   }
-  
+
   return (
     <section className={styles.section}>
       <h3 className={styles.sectionTitle}>
         <Icons.info size={18} />
         Installation Notes
       </h3>
-      
+
       <ul className={styles.notesList}>
         {notes.map((item, idx) => (
           <li key={idx} className={styles.noteItem}>
@@ -371,7 +379,7 @@ function InstallationNotesSection({ complexity }) {
 /**
  * Selected Parts Section - snapshot list (fitment/pricing)
  */
-function PartsListSection({ parts, carName, carSlug }) {
+function PartsListSection({ parts, carName, carId }) {
   if (!Array.isArray(parts) || parts.length === 0) return null;
 
   return (
@@ -387,7 +395,12 @@ function PartsListSection({ parts, carName, carSlug }) {
             <div className={styles.partHeader}>
               <div className={styles.partName}>{p.name}</div>
               {p.productUrl && (
-                <a className={styles.partLink} href={p.productUrl} target="_blank" rel="noopener noreferrer">
+                <a
+                  className={styles.partLink}
+                  href={p.productUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   View
                 </a>
               )}
@@ -402,17 +415,21 @@ function PartsListSection({ parts, carName, carSlug }) {
             <div className={styles.partBadges}>
               {p.verified && <span className={styles.badgeVerified}>Verified</span>}
               {typeof p.confidence === 'number' && (
-                <InfoTooltip topicKey="fitmentConfidence" carName={carName} carSlug={carSlug}>
+                <InfoTooltip topicKey="fitmentConfidence" carName={carName} carId={carId}>
                   <span className={styles.badge}>Conf {Math.round(p.confidence * 100)}%</span>
                 </InfoTooltip>
               )}
               {p.requiresTune && <span className={styles.badgeWarn}>Requires tune</span>}
               {p.installDifficulty && (
-                <InfoTooltip topicKey="installDifficulty" carName={carName} carSlug={carSlug}>
+                <InfoTooltip topicKey="installDifficulty" carName={carName} carId={carId}>
                   <span className={styles.badge}>{p.installDifficulty}</span>
                 </InfoTooltip>
               )}
-              {Number.isFinite(p.priceCents) && <span className={styles.badgePrice}>${Math.round(p.priceCents / 100).toLocaleString()}</span>}
+              {Number.isFinite(p.priceCents) && (
+                <span className={styles.badgePrice}>
+                  ${Math.round(p.priceCents / 100).toLocaleString()}
+                </span>
+              )}
             </div>
             {p.fitmentNotes && <div className={styles.partNotes}>{p.fitmentNotes}</div>}
           </div>
@@ -427,32 +444,32 @@ function PartsListSection({ parts, carName, carSlug }) {
  */
 export default function BuildDetailView({ build, car, onBack }) {
   // Memoize derived values to prevent unnecessary recalculations
-  const buildUpgrades = useMemo(() => 
-    Array.isArray(build?.upgrades) ? build.upgrades : [], 
+  const buildUpgrades = useMemo(
+    () => (Array.isArray(build?.upgrades) ? build.upgrades : []),
     [build?.upgrades]
   );
   const safeCar = useMemo(() => car || {}, [car]);
 
   // Resolve upgrade keys to full upgrade objects
   const upgradeDetails = useMemo(() => {
-    return buildUpgrades.map(key => getUpgradeByKey(key)).filter(Boolean);
+    return buildUpgrades.map((key) => getUpgradeByKey(key)).filter(Boolean);
   }, [buildUpgrades]);
-  
+
   // Calculate build complexity
   const complexity = useMemo(() => {
     return calculateBuildComplexity(buildUpgrades);
   }, [buildUpgrades]);
-  
+
   // Get tools required
   const toolsData = useMemo(() => {
     return getToolsForBuild(buildUpgrades);
   }, [buildUpgrades]);
-  
+
   // Get system impacts
   const impacts = useMemo(() => {
     return getSystemImpactOverview(buildUpgrades);
   }, [buildUpgrades]);
-  
+
   // Validate build
   const validation = useMemo(() => {
     return validateUpgradeSelection(buildUpgrades, safeCar);
@@ -480,10 +497,29 @@ export default function BuildDetailView({ build, car, onBack }) {
           currency: p?.currency || latestPrice?.currency || null,
           priceCents: Number.isFinite(Number(p?.priceCents))
             ? Number(p.priceCents)
-            : (Number.isFinite(Number(p?.price_cents)) ? Number(p.price_cents) : (Number.isFinite(Number(latestPrice?.price_cents)) ? Number(latestPrice.price_cents) : null)),
-          requiresTune: typeof p?.requiresTune === 'boolean' ? p.requiresTune : (typeof p?.requires_tune === 'boolean' ? p.requires_tune : (typeof fitment?.requires_tune === 'boolean' ? fitment.requires_tune : null)),
-          installDifficulty: p?.installDifficulty || p?.install_difficulty || fitment?.install_difficulty || null,
-          verified: typeof p?.fitmentVerified === 'boolean' ? p.fitmentVerified : (typeof p?.fitment_verified === 'boolean' ? p.fitment_verified : (typeof fitment?.verified === 'boolean' ? fitment.verified : null)),
+            : Number.isFinite(Number(p?.price_cents))
+              ? Number(p.price_cents)
+              : Number.isFinite(Number(latestPrice?.price_cents))
+                ? Number(latestPrice.price_cents)
+                : null,
+          requiresTune:
+            typeof p?.requiresTune === 'boolean'
+              ? p.requiresTune
+              : typeof p?.requires_tune === 'boolean'
+                ? p.requires_tune
+                : typeof fitment?.requires_tune === 'boolean'
+                  ? fitment.requires_tune
+                  : null,
+          installDifficulty:
+            p?.installDifficulty || p?.install_difficulty || fitment?.install_difficulty || null,
+          verified:
+            typeof p?.fitmentVerified === 'boolean'
+              ? p.fitmentVerified
+              : typeof p?.fitment_verified === 'boolean'
+                ? p.fitment_verified
+                : typeof fitment?.verified === 'boolean'
+                  ? fitment.verified
+                  : null,
           confidence: p?.fitmentConfidence ?? p?.fitment_confidence ?? fitment?.confidence ?? null,
           fitmentNotes: p?.fitmentNotes || p?.fitment_notes || fitment?.fitment_notes || null,
         };
@@ -504,34 +540,31 @@ export default function BuildDetailView({ build, car, onBack }) {
           Back to Builds
         </button>
       </div>
-      
+
       {/* Summary Card */}
       <BuildSummaryCard build={build} car={car} complexity={complexity} />
-      
+
       {/* Build Complexity */}
       <BuildComplexitySection complexity={complexity} />
-      
+
       {/* Upgrades List */}
-      <UpgradesListSection 
-        upgrades={build.upgrades || []} 
-        upgradeDetails={upgradeDetails} 
-      />
+      <UpgradesListSection upgrades={build.upgrades || []} upgradeDetails={upgradeDetails} />
 
       {/* Selected Parts */}
-      <PartsListSection parts={selectedParts} carName={car.name} carSlug={car.slug} />
-      
+      <PartsListSection parts={selectedParts} carName={car.name} carId={car.id} />
+
       {/* Tools Required */}
       <ToolsSection toolsData={toolsData} />
-      
+
       {/* Systems Impact */}
       <SystemsImpactSection impacts={impacts} validation={validation} />
-      
+
       {/* Installation Notes */}
       <InstallationNotesSection complexity={complexity} />
-      
+
       {/* Bottom CTA */}
       <div className={styles.bottomCta}>
-        <Link 
+        <Link
           href={`/garage/my-build?car=${car.slug}&build=${build.id}`}
           className={styles.ctaButton}
         >

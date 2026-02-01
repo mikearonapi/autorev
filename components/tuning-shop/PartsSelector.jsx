@@ -73,6 +73,7 @@ function ShoppingListItem({
   onUpdatePart,
   onSeeOptions,
   onSelectRecommendation,
+  carId: _carId, // Reserved for future part lookup
   carSlug,
   recommendations = [],
 }) {
@@ -321,7 +322,8 @@ export default function PartsSelector({
   selectedParts = [],
   onPartsChange,
   carName,
-  carSlug,
+  carId,
+  car, // Full car object (has both id and slug)
   carBrand = null, // Brand name for constructing full display name
   buildId: _buildId = null, // Optional build ID for linking to install page
   totalHpGain = 0,
@@ -329,6 +331,10 @@ export default function PartsSelector({
   hideALRecommendations = false, // Hide AL button when rendered at page level
 }) {
   const { openChatWithPrompt } = useAIChat();
+
+  // Get carId and carSlug from props or car object
+  const effectiveCarId = carId || car?.id;
+  const effectiveCarSlug = car?.slug;
 
   // Construct full display name with brand if available (e.g., "Ford Mustang SVT Cobra")
   // This ensures the AI knows the exact make/model for parts research
@@ -338,10 +344,11 @@ export default function PartsSelector({
       : carName;
 
   // Fetch AL recommendations for all upgrade types (up to 5 per category)
-  const { data: recommendations = {} } = usePartRecommendations(carSlug, {
+  // Use car.slug for the hook since API route uses slug in URL
+  const { data: recommendations = {} } = usePartRecommendations(effectiveCarSlug, {
     upgradeKeys: selectedUpgrades,
     limit: 5,
-    enabled: !!carSlug && selectedUpgrades.length > 0,
+    enabled: !!effectiveCarSlug && selectedUpgrades.length > 0,
   });
 
   // Get full upgrade objects from keys
@@ -515,7 +522,7 @@ REQUIRED: After your user-facing response, include a <parts_to_save> JSON block 
         prompt,
         {
           category: `${upgrade.name} for ${fullCarName}`,
-          carSlug: slug,
+          carSlug: slug, // Use slug for navigation/chat context
         },
         `Top 5 ${upgrade.name} for ${fullCarName}`,
         { autoSend: true }
@@ -576,7 +583,7 @@ Be specific to my ${fullCarName} and this exact build configuration.`;
       reviewPrompt,
       {
         category: `Build Review for ${fullCarName}`,
-        carSlug,
+        carSlug: effectiveCarSlug, // Use slug for navigation/chat context
       },
       `Review my ${fullCarName} build (${upgrades.length} mods, +${totalHpGain} HP)`
     );
@@ -584,7 +591,7 @@ Be specific to my ${fullCarName} and this exact build configuration.`;
     upgrades,
     selectedParts,
     fullCarName,
-    carSlug,
+    effectiveCarSlug,
     totalHpGain,
     totalCost,
     totalCostRange,
@@ -638,7 +645,8 @@ Be specific to my ${fullCarName} and this exact build configuration.`;
             onUpdatePart={handleUpdatePart}
             onSeeOptions={handleSeeOptions}
             onSelectRecommendation={handleSelectRecommendation}
-            carSlug={carSlug}
+            carId={effectiveCarId}
+            carSlug={effectiveCarSlug}
             recommendations={getRecommendationsForUpgrade(recommendations, upgrade.key)}
           />
         ))}
