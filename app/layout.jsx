@@ -37,7 +37,6 @@ import { FavoritesProvider } from '@/components/providers/FavoritesProvider';
 import { LoadingProgressProvider } from '@/components/providers/LoadingProgressProvider';
 import { OwnedVehiclesProvider } from '@/components/providers/OwnedVehiclesProvider';
 import { PointsNotificationProvider } from '@/components/providers/PointsNotificationProvider';
-import { PostHogProvider } from '@/components/providers/PostHogProvider';
 import { QueryProvider } from '@/components/providers/QueryProvider';
 import { SavedBuildsProvider } from '@/components/providers/SavedBuildsProvider';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
@@ -68,6 +67,13 @@ const CookieConsent = dynamic(() => import('@/components/CookieConsent'), { ssr:
 // Feedback Host - renders feedback widget when triggered from anywhere in the app
 const FeedbackHost = dynamic(
   () => import('@/components/FeedbackContext').then((mod) => mod.FeedbackHost),
+  { ssr: false }
+);
+
+// PostHog Provider - Lazy loaded to defer ~21 KiB of polyfills from initial bundle
+// This removes core-js polyfills from the critical path, improving LCP
+const PostHogProvider = dynamic(
+  () => import('@/components/providers/PostHogProvider').then((mod) => mod.PostHogProvider),
   { ssr: false }
 );
 

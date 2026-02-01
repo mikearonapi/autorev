@@ -28,7 +28,6 @@ import Image from 'next/image';
 
 import { HeroCTA } from '@/components/homepage';
 import IPhoneFrame from '@/components/IPhoneFrame';
-import SafeAreaHeader from '@/components/SafeAreaHeader';
 import { SITE_DESIGN_IMAGES } from '@/lib/images';
 
 import styles from './page.module.css';
@@ -71,9 +70,9 @@ const FinalCTASection = dynamic(() => import('./FinalCTASection'), {
 export default function Home() {
   return (
     <div className={styles.page} data-no-main-offset>
-      {/* Hero Section - Wrapped in SafeAreaHeader for PWA safe area fix
-          This matches the pattern used in DataHeader which works correctly */}
-      <SafeAreaHeader className={styles.hero}>
+      {/* Hero Section - CSS handles safe-area padding via env(safe-area-inset-top)
+          Removed SafeAreaHeader wrapper to eliminate Suspense delay for faster LCP */}
+      <section className={styles.hero}>
         {/* Hero Content - Text on left for desktop */}
         <div className={styles.heroContent}>
           {/* Logo with icon on desktop */}
@@ -84,7 +83,7 @@ export default function Home() {
               width={100}
               height={100}
               className={styles.logoIcon}
-              loading="eager"
+              priority
             />
             <span className={styles.logoText}>
               <span className={styles.logoAuto}>AUTO</span>
@@ -130,7 +129,7 @@ export default function Home() {
             </IPhoneFrame>
           </div>
 
-          {/* Center Phone (front) - HERO: Most compelling image */}
+          {/* Center Phone (front) - HERO: Most compelling image (LCP element) */}
           <div className={styles.phoneCenter}>
             <IPhoneFrame size="small">
               <Image
@@ -140,6 +139,7 @@ export default function Home() {
                 sizes="224px"
                 className={styles.screenImage}
                 priority
+                fetchPriority="high"
               />
             </IPhoneFrame>
           </div>
@@ -158,7 +158,7 @@ export default function Home() {
             </IPhoneFrame>
           </div>
         </div>
-      </SafeAreaHeader>
+      </section>
 
       {/* =============================================================================
           LAZY-LOADED BELOW-FOLD SECTIONS

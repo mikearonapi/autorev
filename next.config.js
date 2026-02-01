@@ -1,4 +1,9 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 import { withSentryConfig } from '@sentry/nextjs';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -36,21 +41,28 @@ const nextConfig = {
   webpack: (config, { isServer }) => {
     if (!isServer) {
       // =============================================================================
-      // STUB OUT CORE-JS POLYFILLS
-      // posthog-js includes core-js, but our browserslist targets modern browsers
-      // that natively support all these features. Stubbing saves ~21 KiB.
+      // STUB OUT CORE-JS POLYFILLS FROM DEPENDENCIES
+      // Some npm packages include core-js polyfills that modern browsers don't need.
+      // We alias these to an empty module to reduce bundle size.
+      //
+      // NOTE: This does NOT affect Next.js's built-in polyfills (in polyfill-module.js),
+      // which are a known limitation. See: https://github.com/vercel/next.js/issues/63469
+      //
+      // We use a real empty module, not `false` - the `false` alias value
+      // only works for Node.js built-ins (fs, path, etc), not npm packages.
       // =============================================================================
+      const emptyModule = path.resolve(__dirname, 'lib/shims/empty-module.js');
       config.resolve.alias = {
         ...config.resolve.alias,
-        // Stub core-js polyfills - modern browsers don't need them
-        'core-js/modules/es.array.at': false,
-        'core-js/modules/es.array.flat': false,
-        'core-js/modules/es.array.flat-map': false,
-        'core-js/modules/es.object.from-entries': false,
-        'core-js/modules/es.object.has-own': false,
-        'core-js/modules/es.string.trim-end': false,
-        'core-js/modules/es.string.trim-start': false,
-        'core-js/modules/es.math.trunc': false,
+        // Stub core-js polyfills from npm dependencies (not Next.js internal)
+        'core-js/modules/es.array.at': emptyModule,
+        'core-js/modules/es.array.flat': emptyModule,
+        'core-js/modules/es.array.flat-map': emptyModule,
+        'core-js/modules/es.object.from-entries': emptyModule,
+        'core-js/modules/es.object.has-own': emptyModule,
+        'core-js/modules/es.string.trim-end': emptyModule,
+        'core-js/modules/es.string.trim-start': emptyModule,
+        'core-js/modules/es.math.trunc': emptyModule,
       };
       // =============================================================================
       // PERFORMANCE BUDGETS
