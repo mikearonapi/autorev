@@ -19,6 +19,7 @@
 import AppDataPrefetcher from '@/components/AppDataPrefetcher';
 import BottomTabBar from '@/components/BottomTabBar';
 import DesktopHeader from '@/components/DesktopHeader';
+import PitLaneNotice from '@/components/PitLaneNotice';
 import PWAInstallPrompt from '@/components/PWAInstallPrompt';
 
 import styles from './layout.module.css';
@@ -39,6 +40,9 @@ export default function AppLayout({ children }) {
 
       {/* PWA Install Banner - shows after 5 page views, 3s delay */}
       <PWAInstallPrompt variant="banner" showAfterViews={5} delay={3000} />
+
+      {/* Pit Lane Notice - shows after login during active development */}
+      <PitLaneNotice enabled={true} />
     </div>
   );
 }
